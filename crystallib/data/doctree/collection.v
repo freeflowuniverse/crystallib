@@ -19,7 +19,7 @@ pub:
 	name string
 pub mut:
 	title  string
-	pages  map[string]&Page // markdown pages in playbook
+	pages  map[string]&Page // markdown pages in collection
 	files  map[string]&File
 	images map[string]&File
 	path   Path
@@ -29,37 +29,37 @@ pub mut:
 	heal   bool
 }
 
-// format of name is $playbookname:$pagename or $pagename
-// look if we can find page in the local playbook is playbook name not specified
-// if playbookname specified will look for page in that specific playbook
-pub fn (playbook Collection) page_get(name_ string) !&Page {
+// format of name is $collectionname:$pagename or $pagename
+// look if we can find page in the local collection is collection name not specified
+// if collectionname specified will look for page in that specific collection
+pub fn (collection Collection) page_get(name_ string) !&Page {
 	_, name := name_parse(name_)!
-	return playbook.pages[name] or { return ObjNotFound{
-		playbook: playbook.name
+	return collection.pages[name] or { return ObjNotFound{
+		collection: collection.name
 		name: name
 	} }
 }
 
-pub fn (playbook Collection) image_get(name_ string) !&File {
+pub fn (collection Collection) image_get(name_ string) !&File {
 	_, name := name_parse(name_)!
-	return playbook.images[name] or {
+	return collection.images[name] or {
 		return ObjNotFound{
-			playbook: playbook.name
+			collection: collection.name
 			name: name
 		}
 	}
 }
 
-pub fn (playbook Collection) file_get(name_ string) !&File {
+pub fn (collection Collection) file_get(name_ string) !&File {
 	_, name := name_parse(name_)!
-	return playbook.files[name] or { return ObjNotFound{
-		playbook: playbook.name
+	return collection.files[name] or { return ObjNotFound{
+		collection: collection.name
 		name: name
 	} }
 }
 
-pub fn (playbook Collection) page_exists(name string) bool {
-	_ := playbook.page_get(name) or {
+pub fn (collection Collection) page_exists(name string) bool {
+	_ := collection.page_get(name) or {
 		if err is ObjNotFound {
 			return false
 		} else {
@@ -69,8 +69,8 @@ pub fn (playbook Collection) page_exists(name string) bool {
 	return true
 }
 
-pub fn (playbook Collection) image_exists(name string) bool {
-	_ := playbook.image_get(name) or {
+pub fn (collection Collection) image_exists(name string) bool {
+	_ := collection.image_get(name) or {
 		if err is ObjNotFound {
 			return false
 		} else {
@@ -80,8 +80,8 @@ pub fn (playbook Collection) image_exists(name string) bool {
 	return true
 }
 
-pub fn (playbook Collection) file_exists(name string) bool {
-	_ := playbook.file_get(name) or {
+pub fn (collection Collection) file_exists(name string) bool {
+	_ := collection.file_get(name) or {
 		if err is ObjNotFound {
 			return false
 		} else {
@@ -95,14 +95,14 @@ pub fn (playbook Collection) file_exists(name string) bool {
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
-fn (mut playbook Collection) file_image_remember(mut p Path) ! {
+fn (mut collection Collection) file_image_remember(mut p Path) ! {
 	$if debug {
 		println('file or image remember: ${p.path}')
 	}
-	mut ptr := pointerpath_new(path: p.path, path_normalize: playbook.heal, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	p = ptr.path
 	if ptr.is_image() {
-		if playbook.heal && imagemagick.installed() {
+		if collection.heal && imagemagick.installed() {
 			mut image := imagemagick.image_new(mut p) or {
 				panic('Cannot get new image:\n${p}\n${err}')
 			}
@@ -116,8 +116,8 @@ fn (mut playbook Collection) file_image_remember(mut p Path) ! {
 				p.check()
 			}
 		}
-		if playbook.image_exists(ptr.pointer.name) {
-			mut filedouble := playbook.image_get(ptr.pointer.name) or {
+		if collection.image_exists(ptr.pointer.name) {
+			mut filedouble := collection.image_get(ptr.pointer.name) or {
 				panic('if image exists, I should be able to get it. \n${err}')
 			}
 			mut pathdouble := filedouble.path.path
@@ -129,43 +129,43 @@ fn (mut playbook Collection) file_image_remember(mut p Path) ! {
 			// file double is the one who already existed, need to change the path and can delete original
 			filedouble.path = filedouble.path
 			filedouble.init()
-			if playbook.heal {
+			if collection.heal {
 				p.delete()!
 			}
 			return
 		} else {
 			// means the its a new one, lets add it, first see if it needs to be downsized
-			playbook.image_new(mut p)!
+			collection.image_new(mut p)!
 		}
 	} else if ptr.is_file_video_html() {
 		// now we are working on non image
-		// if playbook.file_exists(ptr.pointer.name) {
-		// 	mut filedouble := playbook.file_get(ptr.pointer.name)!
+		// if collection.file_exists(ptr.pointer.name) {
+		// 	mut filedouble := collection.file_get(ptr.pointer.name)!
 		// 	mut pathdouble := filedouble.path
-		// 	playbook.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
+		// 	collection.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
 		// } else {
 		// }
 
 		// file existence is checked in file_new
-		playbook.file_new(mut ptr.path)!
+		collection.file_new(mut ptr.path)!
 	} else {
 		panic('unknown obj type, bug')
 	}
 }
 
-// add a page to the playbook, specify existing path
+// add a page to the collection, specify existing path
 // the page will be parsed as markdown
-pub fn (mut playbook Collection) page_new(mut p Path) ! {
+pub fn (mut collection Collection) page_new(mut p Path) ! {
 	$if debug {
-		println('playbook: ${playbook.name} page new: ${p.path}')
+		println('collection: ${collection.name} page new: ${p.path}')
 	}
-	mut ptr := pointerpath_new(path: p.path, path_normalize: playbook.heal, needs_to_exist: false)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: false)!
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
-	if playbook.page_exists(ptr.pointer.name) {
-		playbook.error(
+	if collection.page_exists(ptr.pointer.name) {
+		collection.error(
 			path: p
-			msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the playbook'
+			msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection'
 			cat: .page_double
 		)
 		return
@@ -173,29 +173,29 @@ pub fn (mut playbook Collection) page_new(mut p Path) ! {
 	mut doc := markdownparser.new(path: p.path)!
 	mut page := &Page{
 		doc: doc
-		pathrel: p.path_relative(playbook.path.path)!.trim('/')
+		pathrel: p.path_relative(collection.path.path)!.trim('/')
 		name: ptr.pointer.name
 		path: p
 		readonly: false
 		pages_linked: []&Page{}
-		tree: playbook.tree
-		playbook_name: playbook.name
+		tree: collection.tree
+		collection_name: collection.name
 	}
-	playbook.pages[ptr.pointer.name] = page
+	collection.pages[ptr.pointer.name] = page
 }
 
-// add a file to the playbook, specify existing path
-pub fn (mut playbook Collection) file_new(mut p Path) ! {
+// add a file to the collection, specify existing path
+pub fn (mut collection Collection) file_new(mut p Path) ! {
 	$if debug {
-		println('playbook: ${playbook.name} file new: ${p.path}')
+		println('collection: ${collection.name} file new: ${p.path}')
 	}
-	mut ptr := pointerpath_new(path: p.path, path_normalize: playbook.heal, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
-	if playbook.file_exists(ptr.pointer.name) {
-		playbook.error(
+	if collection.file_exists(ptr.pointer.name) {
+		collection.error(
 			path: p
-			msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the playbook'
+			msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection'
 			cat: .file_double
 		)
 		return
@@ -203,26 +203,26 @@ pub fn (mut playbook Collection) file_new(mut p Path) ! {
 
 	mut ff := &File{
 		path: p
-		playbook: &playbook
+		collection: &collection
 	}
 	ff.init()
-	playbook.files[ptr.pointer.name] = ff
+	collection.files[ptr.pointer.name] = ff
 }
 
-// add a image to the playbook, specify existing path
-pub fn (mut playbook Collection) image_new(mut p Path) ! {
+// add a image to the collection, specify existing path
+pub fn (mut collection Collection) image_new(mut p Path) ! {
 	$if debug {
-		println('playbook: ${playbook.name} image new: ${p.path}')
+		println('collection: ${collection.name} image new: ${p.path}')
 	}
-	mut ptr := pointerpath_new(path: p.path, path_normalize: playbook.heal, needs_to_exist: true)!
+	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	if ptr.pointer.name.starts_with('.') {
 		panic('should not start with . \n${p}')
 	}
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
-	if playbook.image_exists(ptr.pointer.name) {
+	if collection.image_exists(ptr.pointer.name) {
 		// remove this one
-		mut file_double := playbook.image_get(p.name())!
+		mut file_double := collection.image_get(p.name())!
 		mut path_double := file_double.path
 		if p.path.len > path_double.path.len {
 			p.delete()!
@@ -234,37 +234,37 @@ pub fn (mut playbook Collection) image_new(mut p Path) ! {
 	}
 	mut ff := &File{
 		path: p
-		playbook: &playbook
+		collection: &collection
 	}
 	ff.init()
-	playbook.images[ptr.pointer.name] = ff
+	collection.images[ptr.pointer.name] = ff
 }
 
 // go over all pages, fix the links, check the images are there
-pub fn (mut playbook Collection) fix() ! {
+pub fn (mut collection Collection) fix() ! {
 	$if debug {
-		println('playbook fix: ${playbook.name}')
+		println('collection fix: ${collection.name}')
 	}
-	for _, mut page in playbook.pages {
+	for _, mut page in collection.pages {
 		page.fix()!
 	}
-	playbook.errors_report('${playbook.path.path}/errors.md')!
+	collection.errors_report('${collection.path.path}/errors.md')!
 }
 
-// return all pagenames for a playbook
-pub fn (playbook Collection) pagenames() []string {
+// return all pagenames for a collection
+pub fn (collection Collection) pagenames() []string {
 	mut res := []string{}
-	for key, _ in playbook.pages {
+	for key, _ in collection.pages {
 		res << key
 	}
 	res.sort()
 	return res
 }
 
-// write errors.md in the playbook, this allows us to see what the errors are
-fn (playbook Collection) errors_report(where string) ! {
+// write errors.md in the collection, this allows us to see what the errors are
+fn (collection Collection) errors_report(where string) ! {
 	mut p := pathlib.get('${where}')
-	if playbook.errors.len == 0 {
+	if collection.errors.len == 0 {
 		p.delete()!
 		return
 	}

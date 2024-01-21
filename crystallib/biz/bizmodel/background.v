@@ -5,10 +5,10 @@ import freeflowuniverse.crystallib.biz.spreadsheet
 import json
 import sync
 
-pub struct BizModelBackground {
-pub mut:
-	ourthread &spawner.OurThread
-}
+// pub struct BizModelBackground {
+// pub mut:
+// 	ourthread &spawner.OurThread
+// }
 
 // run the business tool in a thread .
 // .

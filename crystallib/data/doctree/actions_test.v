@@ -2,16 +2,16 @@ module doctree
 
 import os
 
-const playbooks_path = os.dir(@FILE) + '/testdata/playbooks'
+const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 fn test_actionscan() ! {
 	mut tree := tree_create()!
 	tree.scan(
-		path: doctree.playbooks_path
+		path: doctree.collections_path
 		heal: false
 	)!
 	println(tree)
-	mut c := tree.playbook_get('actions')!
+	mut c := tree.collection_get('actions')!
 
 	assert c.page_exists('actions1')
 	assert c.page_exists('actions2')

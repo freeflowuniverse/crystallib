@@ -13,7 +13,7 @@ pub enum PointerCat {
 // links to a page, image or file
 pub struct Pointer {
 pub mut:
-	playbook  string // is the key of a playbook
+	collection  string // is the key of a collection
 	name      string // is name without extension, all namefixed (lowercase...)
 	cat       PointerCat
 	extension string // e.g. jpg
@@ -23,7 +23,7 @@ pub mut:
 
 // will return a clean pointer to a page, image or file
 //```
-// input is e.g. myplaybook:filename.jpg
+// input is e.g. mycollection:filename.jpg
 // 	or filename.jpg
 // 	or mypage.md
 //
@@ -38,7 +38,7 @@ pub fn pointer_new(txt_ string) !Pointer {
 	if nrcolon > 2 {
 		return error("pointer can only have 2 ':' inside. ${txt}")
 	} else if nrcolon == 1 {
-		p.playbook = texttools.name_fix_keepext(splitted_colons[0])
+		p.collection = texttools.name_fix_keepext(splitted_colons[0])
 		p.name = texttools.name_fix_keepext(splitted_colons[1])
 	} else {
 		p.name = texttools.name_fix_keepext(splitted_colons[0])
@@ -73,8 +73,8 @@ pub fn pointer_new(txt_ string) !Pointer {
 // represents the pointer in minimal string format
 pub fn (p Pointer) str() string {
 	mut out := ''
-	if p.playbook.len > 0 {
-		out = '${p.playbook}:${p.name}'
+	if p.collection.len > 0 {
+		out = '${p.collection}:${p.name}'
 	} else {
 		out = p.name
 	}

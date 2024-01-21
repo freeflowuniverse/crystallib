@@ -12,26 +12,26 @@ mut:
 	load bool = true
 }
 
-// get a new playbook
-pub fn (mut tree Tree) playbook_new(args_ CollectionNewArgs) !&Collection {
+// get a new collection
+pub fn (mut tree Tree) collection_new(args_ CollectionNewArgs) !&Collection {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 
-	if args.name in tree.playbooks {
+	if args.name in tree.collections {
 		return error('Collection already exits')
 	}
 
 	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist
-	mut playbook := &Collection{
+	mut collection := &Collection{
 		name: args.name
 		tree: tree
 		path: pp
 		heal: args.heal
 	}
 	if args.load {
-		playbook.scan()!
+		collection.scan()!
 	}
 
-	tree.playbooks[playbook.name] = playbook
-	return playbook
+	tree.collections[collection.name] = collection
+	return collection
 }

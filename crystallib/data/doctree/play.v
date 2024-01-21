@@ -8,8 +8,8 @@ import freeflowuniverse.crystallib.core.play as playm
 // 	mut session := playm.session(args)!
 // 	for action in session.actions.find(filter: ['doctree', 'otheractor:add']) {
 // 		match action.name {
-// 			'playbooks_scan' {
-// 				// playbooks_scan(p)!
+// 			'collections_scan' {
+// 				// collections_scan(p)!
 // 				panic('implement')
 // 			}
 // 			else {
@@ -19,8 +19,8 @@ import freeflowuniverse.crystallib.core.play as playm
 // 	}
 // }
 
-// // playbooks_scan scans a path for playbooks and adds the playbooks to actor's doctree
-// fn (mut actor PublisherActor) playbooks_scan(action playbook.Action) ! {
+// // collections_scan scans a path for collections and adds the collections to actor's doctree
+// fn (mut actor PublisherActor) collections_scan(action collection.Action) ! {
 // 	git_url := action.params.get('git_url')!
 // 	git_root := action.params.get('git_root')!
 // 	lock actor.doctree {

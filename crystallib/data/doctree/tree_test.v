@@ -5,7 +5,7 @@ import v.embed_file
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import os
 
-const playbooks_path = os.dir(@FILE) + '/testdata/playbooks'
+const collections_path = os.dir(@FILE) + '/testdata/collections'
 const tree_name = 'tree_test_tree'
 const book1_path = os.dir(@FILE) + '/testdata/book1'
 const book1_dest = os.dir(@FILE) + '/testdata/_book1'
@@ -35,7 +35,7 @@ pub struct TestMacroProcessor {
 fn test_page_get() {
 	mut tree := tree_create(name: doctree.tree_name)!
 	tree.scan(
-		path: doctree.playbooks_path
+		path: doctree.collections_path
 	)!
 
 	// these page pointers are correct and page_get should work
