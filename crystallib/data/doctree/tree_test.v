@@ -4,6 +4,8 @@ import log
 import v.embed_file
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import os
+import crypto.sha256
+import freeflowuniverse.crystallib.core.pathlib
 
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 const tree_name = 'tree_test_tree'
@@ -80,24 +82,70 @@ fn test_page_get() {
 	}
 }
 
-fn test_write_tree(){
+fn match_files(mut files1 map[string]&File, mut files2 map[string]&File) ! {
+	assert files1.len == files2.len
+	for name, mut file1 in files1 {
+		mut file2 := files2[name] or { return error("${name} doesn't exist in both collections") }
+		file1_cont := file1.path.read()!
+		file2_cont := file2.path.read()!
+		if file1_cont != file2_cont {
+			return error('${name} content mismatch')
+		}
+	}
+}
+
+
+fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
+	assert pages1.len == pages2.len
+	for name, mut page1 in pages1 {
+		mut page2 := pages2[name] or { return error("${name} doesn't exist in both collections") }
+
+		if page1_doc := page1.doc{
+			if page2_doc := page2.doc{
+				assert  page1_doc.markdown() == page2_doc.markdown()
+			}else{
+			return error("page2 doc not found")	
+			}
+		}else{
+			return error("page1 doc not found")
+		}
+		
+	}
+}
+
+
+fn match_collections(mut col1 Collection, mut col2 Collection) ! {
+	match_files(mut col1.files, mut col2.files)!
+	match_files(mut col1.images, mut col2.images)!
+	match_pages(mut col1.pages, mut col2.pages)!
+}
+
+fn test_write_tree() {
+	// read tree1
 	mut tree1 := tree_create(name: doctree.tree_name)!
 	tree1.scan(
 		path: doctree.collections_path
 	)!
-
+	// write tree1 to another dir
 	tree1.write('/tmp/tree_write')!
-
+	// create tree2 from the written tree
 	mut tree2 := tree_create(name: doctree.tree_name)!
 	tree2.scan(path: '/tmp/tree_write')!
+	tree2.write('/tmp/tree_write2')!
+	// write tree2 another time to compare the output of the two 
+	mut tree3 := tree_create(name: doctree.tree_name)!
+	tree3.scan(path: '/tmp/tree_write2')!
 
-
+	// assert the first tree matches the second one
 	assert tree1.collections.len == tree2.collections.len
-	for k, collection1 in tree1.collections{
-		collection2 := tree2.collections[k] or{
-			assert false, 'collection ${k} is not in tree copy'
-		}
-
-		
+	for k, mut col1 in tree1.collections {
+		mut col2 := tree2.collections[k] or { panic('collection ${k} is not in tree copy') }
+		match_collections(mut *col1, mut *col2)!
+	}
+	// assert the first tree matches the third one
+	assert tree1.collections.len == tree3.collections.len
+	for k, mut col1 in tree1.collections {
+		mut col3 := tree3.collections[k] or { panic('collection ${k} is not in tree copy') }
+		match_collections(mut *col1, mut *col3)!
 	}
 }
