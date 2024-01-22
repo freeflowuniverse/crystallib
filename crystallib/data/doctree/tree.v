@@ -184,6 +184,9 @@ pub fn (mut tree Tree) write(p string)!{
 	
 	for name, mut collection in tree.collections{
 		dir := pathlib.get_dir(path: path.path + '/' + name, create: true)!
+		mut collection_file := pathlib.get_file(path: dir.path + '/.collection', create: true)!
+		collection_file.write(name)!
+
 		for _, mut page in collection.pages{
 			page.export(dest: dir.path + '/' + page.path.name())!
 		}

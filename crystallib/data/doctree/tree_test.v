@@ -81,10 +81,23 @@ fn test_page_get() {
 }
 
 fn test_write_tree(){
-	mut tree := tree_create(name: doctree.tree_name)!
-	tree.scan(
+	mut tree1 := tree_create(name: doctree.tree_name)!
+	tree1.scan(
 		path: doctree.collections_path
 	)!
 
-	tree.write('/tmp/tree_write')!
+	tree1.write('/tmp/tree_write')!
+
+	mut tree2 := tree_create(name: doctree.tree_name)!
+	tree2.scan(path: '/tmp/tree_write')!
+
+
+	assert tree1.collections.len == tree2.collections.len
+	for k, collection1 in tree1.collections{
+		collection2 := tree2.collections[k] or{
+			assert false, 'collection ${k} is not in tree copy'
+		}
+
+		
+	}
 }
