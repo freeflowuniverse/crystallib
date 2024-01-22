@@ -46,7 +46,6 @@ pub fn (mut self Doc) process_elements() !int {
 pub fn (self Doc) markdown() string {
 	mut out := ''
 	for element in self.children {
-		print('element ${element.id} markdown: ${element.markdown()}')
 		out += element.markdown()
 	}
 	return out
