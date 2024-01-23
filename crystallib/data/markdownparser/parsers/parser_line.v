@@ -24,12 +24,12 @@ fn parser_line_new(mut doc elements.Doc) !Parser {
 	mut parser := Parser{
 		doc: doc
 	}
-	doc.paragraph_new()
+	doc.paragraph_new('')
 	parser.lines = doc.content.split_into_lines()
 	if doc.content.ends_with('\n') {
 		parser.endlf = true
 	}
-	parser.lines.map(it.replace('\t', '    ')) // remove the tabs
+	parser.lines = parser.lines.map(it.replace('\t', '    ')) // remove the tabs
 	parser.linenr = 0
 	return parser
 }
@@ -101,14 +101,14 @@ fn (mut parser Parser) next() {
 fn (mut parser Parser) next_start() ! {
 	// means we need to add paragraph because we don't know what comes next
 	if parser.doc.last()! !is elements.Paragraph {
-		parser.doc.paragraph_new()
+		parser.doc.paragraph_new('')
 	}
 	parser.next()
 }
 
 fn (mut parser Parser) ensure_last_is_paragraph() ! {
 	if parser.doc.last()! !is elements.Paragraph {
-		parser.doc.paragraph_new()
+		parser.doc.paragraph_new('')
 	}
 }
 

@@ -42,7 +42,7 @@ pub enum LinkState {
 	error
 }
 
-pub fn (mut self Link) process(mut doc Doc) !int {
+pub fn (mut self Link) process() !int {
 	if self.processed {
 		return 0
 	}
@@ -103,11 +103,6 @@ pub fn (self Link) html() string {
 	panic('implement')
 	// TODO: implement	
 	return ''
-}
-
-@[params]
-pub struct LinkNewArgs {
-	ElementNewArgs
 }
 
 // return path of the filename in the site

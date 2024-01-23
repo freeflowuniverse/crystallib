@@ -12,7 +12,7 @@ fn test_link1() {
 	link := paragraph.children[0]
 	if link is elements.Link {
 		assert *link == elements.Link{
-			id: 3
+			id: 0
 			processed: true
 			type_name: 'link'
 			content: '[Architecture](architecture/architecture.md)'
@@ -46,7 +46,7 @@ fn test_link2() {
 
 	if link is elements.Link {
 		assert *link == elements.Link{
-			id: 3
+			id: 0
 			processed: true
 			type_name: 'link'
 			content: '[Architecture](@*!architecture/architecture.md)'
@@ -80,7 +80,7 @@ fn test_link3() {
 	link := paragraph.children[0]
 	if link is elements.Link {
 		assert link == elements.Link{
-			id: 3
+			id: 0
 			processed: true
 			type_name: 'link'
 			content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
@@ -116,7 +116,7 @@ fn test_link4() {
 	link := paragraph.children[0]
 	if link is elements.Link {
 		assert link == elements.Link{
-			id: 3
+			id: 0
 			processed: true
 			type_name: 'link'
 			content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'

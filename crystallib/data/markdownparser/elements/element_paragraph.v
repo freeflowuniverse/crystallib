@@ -6,14 +6,14 @@ pub struct Paragraph {
 	// elements   []ParagraphElement
 }
 
-fn (mut self Paragraph) process(mut doc Doc) !int {
+fn (mut self Paragraph) process() !int {
 	if self.processed {
 		return 0
 	}
 
-	paragraph_parse(mut doc, mut self)!
+	self.paragraph_parse()!
 	self.process_base()!
-	self.process_elements(mut doc)!
+	self.process_elements()!
 	self.processed = true
 	return 1
 }
@@ -27,9 +27,4 @@ fn (self Paragraph) markdown() string {
 fn (self Paragraph) html() string {
 	mut out := self.DocBase.html() // the children should have all the content
 	return out
-}
-
-@[params]
-pub struct ParagraphNewArgs {
-	ElementNewArgs
 }

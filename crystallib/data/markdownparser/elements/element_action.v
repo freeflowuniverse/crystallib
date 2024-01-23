@@ -9,7 +9,7 @@ pub mut:
 	action playbook.Action
 }
 
-fn (mut self Action) process(mut doc Doc) !int {
+fn (mut self Action) process() !int {
 	if self.processed {
 		return 0
 	}
@@ -21,7 +21,7 @@ fn (mut self Action) process(mut doc Doc) !int {
 
 	self.action = p.actions[0]
 	self.process_base()!
-	self.process_elements(mut doc)!
+	self.process_elements()!
 	self.processed = true
 	return 1
 }

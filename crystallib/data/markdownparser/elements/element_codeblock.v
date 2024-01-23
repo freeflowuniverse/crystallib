@@ -9,33 +9,23 @@ pub mut:
 	category string
 }
 
-pub fn (mut self Codeblock) process(mut doc Doc) !int {
+pub fn (mut self Codeblock) process() !int {
 	if self.processed {
 		return 0
 	}
 	mut pb := playbook.new(text: self.content)!
 	for mut action in pb.actions {
-		mut a := doc.action_new(
-			parent: ElementRef{
-				ref: self
-			}
-			content: action.script3()
-		)
+		mut a := self.action_new(action.script3())
 		a.action = *action
 		a.processed = true
 	}
 
 	// now see if there is something left in codeblock, if yes add that one to the parent_elements
 	if pb.othertext.len > 0 {
-		doc.text_new(
-			parent: ElementRef{
-				ref: self
-			}
-			content: pb.othertext
-		)
+		self.text_new(pb.othertext)
 	}
 
-	self.process_elements(mut doc)!
+	self.process_elements()!
 	self.processed = true
 	return 1
 }

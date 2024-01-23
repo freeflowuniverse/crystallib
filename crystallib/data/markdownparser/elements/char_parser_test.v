@@ -6,7 +6,7 @@ fn test_charparser1() {
 		content: txt
 	}
 	mut doc := Doc{}
-	paragraph_parse(mut doc, mut p2)!
+	p2.paragraph_parse()!
 	p2.process_base()!
 	assert p2 == Paragraph{
 		content: ''
@@ -56,15 +56,15 @@ fn test_charparser3() {
 		content: txt
 	}
 	mut doc := Doc{}
-	paragraph_parse(mut doc, mut p2)!
+	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements(mut doc)!
+	p2.process_elements()!
 	// TODO decide what to do in this case
 	assert p2 == Paragraph{
 		content: '!['
 		children: [
 			Link{
-				id: 2
+				id: 0
 				processed: true
 				type_name: 'link'
 				content: '!['
@@ -92,15 +92,15 @@ fn test_charparser_link() {
 		content: txt
 	}
 	mut doc := Doc{}
-	paragraph_parse(mut doc, mut p2)!
+	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements(mut doc)!
+	p2.process_elements()!
 
 	assert p2 == Paragraph{
 		content: '![a](b)'
 		children: [
 			Link{
-				id: 2
+				id: 0
 				processed: true
 				type_name: 'link'
 				content: '![a](b)'
@@ -129,9 +129,9 @@ fn test_charparser_link_ignore_trailing_spaces() {
 		content: txt
 	}
 	mut doc := Doc{}
-	paragraph_parse(mut doc, mut p2)!
+	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements(mut doc)!
+	p2.process_elements()!
 
 	assert p2.children.len == 1
 	assert p2.children.last().content == '![a](b)'
@@ -143,9 +143,9 @@ fn test_charparser_link_ignore_trailing_newlines() {
 		content: txt
 	}
 	mut doc := Doc{}
-	paragraph_parse(mut doc, mut p2)!
+	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements(mut doc)!
+	p2.process_elements()!
 
 	assert p2.children.len == 1
 	assert p2.children.last().content == '![a](b)'
@@ -160,10 +160,10 @@ sometext
 	mut p2 := Paragraph{
 		content: txt
 	}
-	mut doc := Doc{}
-	paragraph_parse(mut doc, mut p2)!
+
+	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements(mut doc)!
+	p2.process_elements()!
 
 	assert p2.children.len == 5
 	assert p2.children[0] is Text
@@ -200,9 +200,9 @@ sometext
 		content: txt
 	}
 	mut doc := Doc{}
-	paragraph_parse(mut doc, mut p2)!
+	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements(mut doc)!
+	p2.process_elements()!
 
 	assert p2.children.len == 6
 	assert p2.children[0] is Text
