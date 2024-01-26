@@ -10,7 +10,7 @@ import freeflowuniverse.crystallib.core.texttools
 // - investment is month:amount,month:amount, ... .
 // - type: loan or capital .
 fn (mut m BizModel) funding_actions(plbook_ PlayBook) ! {
-	mut plbook:=plbook_
+	mut plbook := plbook_
 	mut actions2 := plbook.actions_find_by_name(actor: 'funding')!
 	for action in actions2 {
 		if action.name == 'define' {

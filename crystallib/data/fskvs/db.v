@@ -7,12 +7,11 @@ import freeflowuniverse.crystallib.crypt.aes_symmetric
 @[heap]
 pub struct DB {
 pub mut:
-	name       string
-	path       pathlib.Path
+	name      string
+	path      pathlib.Path
 	encrypted bool
-	parent     &ContextDB  @[skip; str: skip]
+	parent    &ContextDB   @[skip; str: skip]
 }
-
 
 pub fn (mut db DB) get(name_ string) !string {
 	name := texttools.name_fix(name_)

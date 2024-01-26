@@ -16,7 +16,7 @@ pub mut:
 }
 
 // get new request
-// 
+//
 // ```
 // method        Method (.get, .post, .put, ...)
 // prefix        string
@@ -30,11 +30,10 @@ pub mut:
 // for header see https://modules.vlang.io/net.http.html#Method .
 // for method see https://modules.vlang.io/net.http.html#Header
 pub fn new_request(args_ Request) !&Request {
-	mut args:=args_
+	mut args := args_
 	mut header := http.new_header_from_map({
 		http.CommonHeader.content_type: 'application/json'
 	})
 	args.header = header
 	return &args
-
 }

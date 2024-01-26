@@ -14,20 +14,20 @@ pub enum PageStatus {
 @[heap]
 pub struct Page {
 pub mut:
-	name           string // received a name fix
-	path           pathlib.Path
-	pathrel        string // relative path in the collection
-	state          PageStatus
-	pages_included []&Page      @[str: skip]
-	pages_linked   []&Page      @[str: skip]
-	files_linked   []&File      @[str: skip]
-	categories     []string
-	doc            ?Doc         @[str: skip]
-	readonly       bool
-	changed        bool
-	tree_name      string
-	tree           &Tree        @[str: skip]
-	collection_name  string
+	name            string // received a name fix
+	path            pathlib.Path
+	pathrel         string // relative path in the collection
+	state           PageStatus
+	pages_included  []&Page      @[str: skip]
+	pages_linked    []&Page      @[str: skip]
+	files_linked    []&File      @[str: skip]
+	categories      []string
+	doc             ?Doc         @[str: skip]
+	readonly        bool
+	changed         bool
+	tree_name       string
+	tree            &Tree        @[str: skip]
+	collection_name string
 }
 
 fn (mut page Page) link_to_page_update(mut link Link) ! {
@@ -261,14 +261,16 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 			mut page_to_include := page.tree.page_get(include.content) or {
 				println('debugzo')
 				msg := "include:'${include.content}' not found for page:${page.path.path}"
-				if mut p := page.tree.collections[collection.name]{
+				if mut p := page.tree.collections[collection.name] {
 					p.error(
 						path: page.path
 						msg: 'include ${msg}'
 						cat: .page_not_found
 					)
 					continue
-				}else {panic('bug')}
+				} else {
+					panic('bug')
+				}
 			}
 			$if debug {
 				println('Found page in collection ${page_to_include.collection_name}')

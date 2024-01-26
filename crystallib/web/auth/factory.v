@@ -20,30 +20,31 @@ pub struct Authenticator {
 	refresh_secret string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 	access_secret  string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 pub mut:
-	identity   identity.IdentityManager 
-	email      ?email.Authenticator     
-	// analytics  analytics.Analyzer       
-	authorizer authorization.Authorizer 
-	session    session.SessionAuth      
-	tokens     tokens.Tokens            
+	identity identity.IdentityManager
+	email    ?email.Authenticator
+	// analytics  analytics.Analyzer
+	authorizer authorization.Authorizer
+	session    session.SessionAuth
+	tokens     tokens.Tokens
 	route      string
 	// backend   DatabaseBackend
 	logger &log.Logger = &log.Logger(&log.Log{
 	level: .debug
 })
 }
+
 // Authenticator deals and authenticates refresh and access tokens
 pub struct Authenticator2 {
 	// vweb.Context
 	refresh_secret string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 	access_secret  string = jwt.create_secret() // secret used for signing/verifying refresh tokens
 pub mut:
-	identity   identity.IdentityManager 
-	email      ?email.Authenticator     
-	// analytics  analytics.Analyzer       
-	authorizer authorization.Authorizer 
-	session    session.SessionAuth      
-	tokens     tokens.Tokens            
+	identity identity.IdentityManager
+	email    ?email.Authenticator
+	// analytics  analytics.Analyzer
+	authorizer authorization.Authorizer
+	session    session.SessionAuth
+	tokens     tokens.Tokens
 	route      string
 	// backend   DatabaseBackend
 	logger &log.Logger = &log.Logger(&log.Log{

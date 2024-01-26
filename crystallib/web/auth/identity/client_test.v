@@ -12,7 +12,7 @@ fn testsuite_begin() {
 		create table User
 	} or { panic(err) }
 	ctrl := &Controller{
-		db:db
+		db: db
 	}
 	spawn vweb.run(ctrl, 8080)
 }
@@ -34,5 +34,3 @@ fn test_register() {
 // 	}
 // 	return ctrl.json(logs)
 // }
-
-

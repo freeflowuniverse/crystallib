@@ -16,7 +16,7 @@ pub mut:
 	name         string
 	path_content pathlib.Path
 	path_build   pathlib.Path
-	path_static   pathlib.Path
+	path_static  pathlib.Path
 	path_publish pathlib.Path
 	collections  []ZSiteCollection
 	gitrepokey   string
@@ -28,7 +28,7 @@ pub struct SiteConfig {
 	name         string
 	url          string
 	path_content string
-	path_static string
+	path_static  string
 	path_build   string = '/tmp/zola/build' @[required]
 	path_publish string = '/tmp/zola/publish' @[required]
 }
@@ -37,7 +37,7 @@ pub fn (mut sites Zola) site_new(args SiteConfig) !&ZolaSite {
 	path_build := '${sites.path_build}/${args.name}'
 	path_publish := '${sites.path_publish}/${args.name}'
 
-	mut site :=  ZolaSite{
+	mut site := ZolaSite{
 		path_content: pathlib.get_dir(
 			path: args.path_content
 			create: true
@@ -79,7 +79,7 @@ pub fn (mut site ZolaSite) generate(gitrepos_status map[string]RepoStatus) ! {
 		return
 	}
 	console.print_header(' site generate: ${site.name} on ${site.path_build.path}')
-	
+
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
 	site.tailwind.compile(css_source, css_dest)!
@@ -167,6 +167,7 @@ fn (mut site ZolaSite) template_install() ! {
 
 	os.cp('${os.dir(@FILE)}/templates/vercel.json', '${site.path_build.path}/vercel.json')!
 	os.cp_all('${os.dir(@FILE)}/templates/css', '${site.path_build.path}/css', true)!
-	os.cp_all('${os.dir(@FILE)}/templates/templates', '${site.path_build.path}/templates', true)!
+	os.cp_all('${os.dir(@FILE)}/templates/templates', '${site.path_build.path}/templates',
+		true)!
 	os.cp_all('${os.dir(@FILE)}/templates/static', '${site.path_build.path}/static', true)!
 }

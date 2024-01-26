@@ -179,23 +179,23 @@ pub fn (mut tree Tree) file_exists(name string) bool {
 	return true
 }
 
-pub fn (mut tree Tree) write(p string)!{
+pub fn (mut tree Tree) write(p string) ! {
 	path := pathlib.get_dir(path: p, create: true)!
-	
-	for name, mut collection in tree.collections{
+
+	for name, mut collection in tree.collections {
 		dir := pathlib.get_dir(path: path.path + '/' + name, create: true)!
 		mut collection_file := pathlib.get_file(path: dir.path + '/.collection', create: true)!
 		collection_file.write(name)!
 
-		for _, mut page in collection.pages{
+		for _, mut page in collection.pages {
 			page.export(dest: dir.path + '/' + page.path.name())!
 		}
 
-		for _, mut file in collection.files{
+		for _, mut file in collection.files {
 			file.copy(dir.path + '/' + file.path.name())!
 		}
 
-		for _, mut image in collection.images{
+		for _, mut image in collection.images {
 			image.copy(dir.path + '/' + image.path.name())!
 		}
 	}

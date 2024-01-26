@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.osal.gittools
 
 pub struct ZSiteCollection {
 pub mut:
-	site       &ZolaSite       @[skip; str: skip]
+	site       &ZolaSite    @[skip; str: skip]
 	name       string
 	url        string
 	reset      bool

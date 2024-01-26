@@ -11,7 +11,7 @@ const server_url = 'http://localhost:8091'
 
 fn testsuite_begin() {
 	controller := configure_controller()!
-	spawn vweb.run_at(&controller, port:8091, nr_workers:1)
+	spawn vweb.run_at(&controller, port: 8091, nr_workers: 1)
 }
 
 fn configure_controller() !AuthServer {

@@ -20,16 +20,16 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	version:="0.3.0"
-	mut installed_version:=""
+	version := '0.3.0'
+	mut installed_version := ''
 
 	if osal.done_exists('mycelium_installed') {
-		installed_version=osal.done_get('mycelium_installed') or {panic("bug")}
+		installed_version = osal.done_get('mycelium_installed') or { panic('bug') }
 	}
 
-	if texttools.version(version)>texttools.version(installed_version) {
+	if texttools.version(version) > texttools.version(installed_version) {
 		args.reset = true
-	}	
+	}
 
 	// res := os.execute('source ${osal.profile_path()} && mycelium -V')
 	// if res.exit_code == 0 {
@@ -78,7 +78,6 @@ pub fn install(args_ InstallArgs) ! {
 	restart()!
 
 	osal.done_set('mycelium_installed', version)!
-	
 }
 
 pub fn restart() ! {
@@ -88,9 +87,7 @@ pub fn restart() ! {
 	start()!
 }
 
-
 pub fn start() ! {
-
 	// println("start")
 
 	mut scr := screen.new(reset: false)!
@@ -101,12 +98,12 @@ pub fn start() ! {
 		return
 	}
 
-	mut s := scr.add(name: name,start:true)!
+	mut s := scr.add(name: name, start: true)!
 
-	mut cmd2:=""
+	mut cmd2 := ''
 
 	if osal.is_osx() {
-		cmd2="sudo -s "
+		cmd2 = 'sudo -s '
 	}
 
 	cmd2 += 'sudo -s mycelium --tun-name utun9 --peers tcp://83.231.240.31:9651 quic://83.231.240.31:9651 quic://185.206.122.71:9651'
@@ -115,11 +112,10 @@ pub fn start() ! {
 
 	println(s)
 
-	println("send done")
+	println('send done')
 
 	if osal.is_osx() {
-
-		mut myui:=ui.new()!
+		mut myui := ui.new()!
 		console.clear()
 
 		console.print_stderr("
@@ -128,27 +124,25 @@ pub fn start() ! {
 		
 		")
 
-		ok2delete:=myui.ask_yesno(question:"Please confirm you understand?")!
+		ok2delete := myui.ask_yesno(question: 'Please confirm you understand?')!
 
-		s.attach()! //to allow filling in passwd
+		s.attach()! // to allow filling in passwd
 	}
 
 	console.print_header('mycelium is running')
 
 	time.sleep(1000000)
 
-	if !running()!{
-		return error("cound not start mycelium")
+	if !running()! {
+		return error('cound not start mycelium')
 	}
 }
 
-
 pub fn running() !bool {
-
 	mut scr := screen.new(reset: false)!
 	name := 'mycelium'
 
-	if ! scr.exists(name) {
+	if !scr.exists(name) {
 		return false
 	}
 
@@ -159,7 +153,6 @@ pub fn running() !bool {
 	return true
 	// println(scr)
 }
-
 
 // install mycelium will return true if it was already installed
 pub fn build() ! {

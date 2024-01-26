@@ -2,44 +2,43 @@ module fskvs
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-
 import os
 
 @[heap]
 pub struct ContextDB {
 pub mut:
 	path   pathlib.Path
-	name string
+	name   string
 	secret string
 }
-
 
 @[params]
 pub struct DBConfigureArgs {
 pub mut:
-	dbname       string = 'default'
+	dbname    string = 'default'
 	encrypted bool
 }
 
 // get a DB from the contextdb, will configure encrypted if set, default is false
-pub fn (mut db ContextDB) db_configure(args_ DBConfigureArgs) !{
+pub fn (mut db ContextDB) db_configure(args_ DBConfigureArgs) ! {
 	mut args := args_
 	args.dbname = texttools.name_fix(args.dbname)
 	pathlib.get_dir(create: true, path: '${db.path.path}/${args.dbname}')!
-	if args.encrypted{
-		//put pointer that encrypted is on
+	if args.encrypted {
+		// put pointer that encrypted is on
 		pathlib.get_file(create: true, path: '${db.path.path}/${args.dbname}/encrypted')!
-	}else{
-		mut p2:=pathlib.get_file(create: false, path: '${db.path.path}/${args.dbname}/encrypted') or {return}
+	} else {
+		mut p2 := pathlib.get_file(create: false, path: '${db.path.path}/${args.dbname}/encrypted') or {
+			return
+		}
 		p2.delete()!
 	}
 }
 
-
 @[params]
 pub struct DBGetArgs {
 pub mut:
-	dbname       string = 'default'
+	dbname string = 'default'
 }
 
 // get a DB from the contextdb
@@ -48,7 +47,7 @@ pub fn (mut db ContextDB) db_get(args_ DBGetArgs) !DB {
 	args.dbname = texttools.name_fix(args.dbname)
 	mut p := pathlib.get_dir(create: true, path: '${db.path.path}/${args.dbname}')!
 	mut encrypted := false
-	if os.exists('${db.path.path}/${args.dbname}/encrypted'){
+	if os.exists('${db.path.path}/${args.dbname}/encrypted') {
 		encrypted = true
 	}
 	mut db2 := DB{
@@ -58,8 +57,8 @@ pub fn (mut db ContextDB) db_get(args_ DBGetArgs) !DB {
 		parent: &db
 	}
 	if encrypted {
-		if db.secret.len <4{
-			return error("secret needs to be specified on contextdb level, now < 4 chars. \nDB: $db")
+		if db.secret.len < 4 {
+			return error('secret needs to be specified on contextdb level, now < 4 chars. \nDB: ${db}')
 		}
 	}
 	return db2

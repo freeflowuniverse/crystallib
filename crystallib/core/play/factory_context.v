@@ -9,26 +9,26 @@ import freeflowuniverse.crystallib.data.fskvs
 @[heap]
 pub struct Context {
 mut:
-	gitstructure_ ?&gittools.GitStructure @[skip; str: skip]	
+	gitstructure_ ?&gittools.GitStructure @[skip; str: skip]
 pub mut:
-	cid          string // rid.cid or just cid
-	name         string // a unique name in cid
-	params       paramsparser.Params
-	snippets     map[string]string
-	redis        &redisclient.Redis     @[skip; str: skip]
-	contextdb    &fskvs.ContextDB      @[skip; str: skip]
+	cid       string // rid.cid or just cid
+	name      string // a unique name in cid
+	params    paramsparser.Params
+	snippets  map[string]string
+	redis     &redisclient.Redis  @[skip; str: skip]
+	contextdb &fskvs.ContextDB    @[skip; str: skip]
 }
 
 @[params]
 pub struct ContextConfigureArgs {
 pub mut:
-	cid             string = '000' // rid.cid or cid allone
-	name            string // a unique name in cid
-	params          string
-	coderoot        string
-	interactive     bool
+	cid            string = '000' // rid.cid or cid allone
+	name           string // a unique name in cid
+	params         string
+	coderoot       string
+	interactive    bool
 	fsdb_encrypted bool
-	secret string
+	secret         string
 }
 
 // create context object, gets coderoot from before .
@@ -51,16 +51,16 @@ fn context_configure(args_ ContextConfigureArgs) ! {
 	}
 
 	mut r := redisclient.core_get()!
-	if args.params.len>0{
+	if args.params.len > 0 {
 		mut p := paramsparser.new(args.params)!
-		rkey:="hero:context:params:${args.name}"
-		r.set(rkey,args.params)!
+		rkey := 'hero:context:params:${args.name}'
+		r.set(rkey, args.params)!
 	}
 
 	fskvs.contextdb_configure(
 		name: args.name
 		encrypted: args.fsdb_encrypted
-		secret:args.secret
+		secret: args.secret
 	)!
 
 	mut contextdb := fskvs.contextdb_get(
@@ -68,34 +68,31 @@ fn context_configure(args_ ContextConfigureArgs) ! {
 		interactive: args.interactive
 	)!
 
-	//need this dbname for the basic configuration
-	contextdb.db_configure(dbname:"context",encrypted:false)!
+	// need this dbname for the basic configuration
+	contextdb.db_configure(dbname: 'context', encrypted: false)!
 
-	mut db:=contextdb.db_get(dbname:"context")!
+	mut db := contextdb.db_get(dbname: 'context')!
 
-	db.set("coderoot",args.coderoot)!
-
+	db.set('coderoot', args.coderoot)!
 }
-
 
 @[params]
 pub struct ContextGetArgs {
 pub mut:
-	name            string // a unique name in cid
-	interactive     bool
+	name        string // a unique name in cid
+	interactive bool
 }
 
 fn context_get(args_ ContextGetArgs) !Context {
-
 	mut args := args_
 
 	mut contextdb := fskvs.contextdb_get(
 		name: args.name
 		interactive: args.interactive
-	) or {return error("cannot get contextdb: ${args.name}")}
+	) or { return error('cannot get contextdb: ${args.name}') }
 
 	mut r := redisclient.core_get()!
-	mut p := paramsparser.new("")!
+	mut p := paramsparser.new('')!
 
 	mut c := Context{
 		name: args.name
@@ -105,30 +102,27 @@ fn context_get(args_ ContextGetArgs) !Context {
 	}
 	c.load()!
 	return c
-}	
-
-
-
+}
 
 pub fn (mut self Context) gitstructure() !&gittools.GitStructure {
-	mut gs2:=self.gitstructure_ or {
-		cr:=self.coderoot()!
-		mut gs:=gittools.get(coderoot:cr)!
+	mut gs2 := self.gitstructure_ or {
+		cr := self.coderoot()!
+		mut gs := gittools.get(coderoot: cr)!
 		self.gitstructure_ = &gs
 		&gs
 	}
+
 	return gs2
 }
 
 pub fn (mut self Context) gitstructure_reload() ! {
-	cr:=self.coderoot()!
-	mut gs:=gittools.get(coderoot:cr)!
+	cr := self.coderoot()!
+	mut gs := gittools.get(coderoot: cr)!
 	self.gitstructure_ = &gs
 }
 
-
 pub fn (mut self Context) coderoot() !string {
-	mut db:=self.contextdb.db_get(dbname:"context")!	
+	mut db := self.contextdb.db_get(dbname: 'context')!
 	coderoot := db.get('coderoot')!
 	return coderoot
 }
@@ -142,20 +136,19 @@ fn (mut self Context) key() string {
 // load the params from redis
 pub fn (mut self Context) load() ! {
 	mut r := self.redis
-	rkey:="hero:context:params:${self.name}"
-	if r.exists(rkey)!{
-		paramtxt:=r.get(rkey)!
+	rkey := 'hero:context:params:${self.name}'
+	if r.exists(rkey)! {
+		paramtxt := r.get(rkey)!
 		self.params = paramsparser.new(paramtxt)!
 	}
-
 }
 
-//save the params to redis
+// save the params to redis
 pub fn (mut self Context) save() ! {
 	self.check()!
 	mut r := self.redis
-	rkey:="hero:context:params:${self.name}"
-	r.set(rkey,self.params.str())!
+	rkey := 'hero:context:params:${self.name}'
+	r.set(rkey, self.params.str())!
 }
 
 //////DATA
@@ -195,7 +188,7 @@ pub fn (mut self Context) guid() string {
 }
 
 fn (mut self Context) db_get(dbname string) !fskvs.DB {
-	return self.contextdb.db_get(dbname:dbname)!
+	return self.contextdb.db_get(dbname: dbname)!
 }
 
 fn (mut self Context) db_config_get() !fskvs.DB {

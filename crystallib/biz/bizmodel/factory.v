@@ -8,7 +8,6 @@ import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.playbook
 
-
 // import os
 
 pub struct BizModel {
@@ -21,17 +20,17 @@ pub mut:
 @[params]
 pub struct BizModelArgs {
 pub mut:
-	name        string = 'default' // name of bizmodel
-	path        string
-	git_url     string
-	git_reset   bool
-	git_root    string
-	git_pull    bool
-	mdbook_source string 
-	mdbook_name string // if empty will be same as name of bizmodel
-	mdbook_path string
-	mdbook_dest string // if empty is /tmp/mdbooks/$name
-	cid         smartid.CID
+	name          string = 'default' // name of bizmodel
+	path          string
+	git_url       string
+	git_reset     bool
+	git_root      string
+	git_pull      bool
+	mdbook_source string
+	mdbook_name   string // if empty will be same as name of bizmodel
+	mdbook_path   string
+	mdbook_dest   string // if empty is /tmp/mdbooks/$name
+	cid           smartid.CID
 }
 
 pub fn new(args_ BizModelArgs) !BizModel {
@@ -71,8 +70,6 @@ pub fn new(args_ BizModelArgs) !BizModel {
 			reload: false
 		)!
 	}
-
-
 
 	// tree.scan(
 	// 	name: 'crystal_manual'
@@ -143,10 +140,4 @@ pub fn (mut m BizModel) load() ! {
 	// )!
 
 	m.process_macros()!
-
 }
-
-
-
-
-

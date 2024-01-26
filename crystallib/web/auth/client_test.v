@@ -25,9 +25,11 @@ fn (h EchoHandler) handle(req http.Request) http.Response {
 }
 
 fn testsuite_begin() {
-	client = Client{url:server_url}
+	client = Client{
+		url: auth.server_url
+	}
 	mut server := &http.Server{
-		accept_timeout: atimeout
+		accept_timeout: auth.atimeout
 		handler: EchoHandler{}
 		show_startup_message: false
 	}

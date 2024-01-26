@@ -7,9 +7,7 @@ import time
 
 fn check_input(input_string string, seconds int) {
 	nnow := time.now().unix_time()
-	thetime := parse(input_string) or {
-		panic('cannot get expiration for ${input_string}')
-	}
+	thetime := parse(input_string) or { panic('cannot get expiration for ${input_string}') }
 	assert thetime == (nnow + seconds), 'expiration was incorrect for ${input_string}'
 }
 
@@ -106,15 +104,13 @@ fn test_absolute_time() {
 
 fn test_parse_date() {
 	input_strings := {
-		'12/01/1999':    916099200
-		'2000/09/09':    968457600
+		'12/01/1999': 916099200
+		'2000/09/09': 968457600
 	}
 
 	for key, value in input_strings {
-		test_value := new(key) or {
-			panic('parse_date failed for ${key}, with error ${err}')
-		}
-		
+		test_value := new(key) or { panic('parse_date failed for ${key}, with error ${err}') }
+
 		assert test_value.unix_time() == value
 	}
 }

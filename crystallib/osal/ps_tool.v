@@ -25,7 +25,7 @@ pub mut:
 	mem_perc f32
 	cmd      string
 	pid      int
-	ppid     int //parentpid
+	ppid     int // parentpid
 	// resident memory
 	rss int
 }
@@ -62,58 +62,57 @@ pub fn procesinfo_get(pid int) !ProcessInfo {
 	return error('Cannot find process with pid: ${pid}, to get process info from.')
 }
 
-//return the process and its children
-pub fn processinfo_with_children(pid int) !ProcessMap{
-	mut pi:=procesinfo_get(pid)!
-	mut res:=processinfo_children(pid)!
+// return the process and its children
+pub fn processinfo_with_children(pid int) !ProcessMap {
+	mut pi := procesinfo_get(pid)!
+	mut res := processinfo_children(pid)!
 	res.processes << pi
 	return res
 }
 
-//get all children of 1 process
-pub fn processinfo_children(pid int) !ProcessMap{
+// get all children of 1 process
+pub fn processinfo_children(pid int) !ProcessMap {
 	mut pm := processmap_get()!
-	mut res:=[]ProcessInfo{}
-	pm.children_(mut res,pid)!
+	mut res := []ProcessInfo{}
+	pm.children_(mut res, pid)!
 	return ProcessMap{
-		processes:res
-		lastscan:pm.lastscan
-		state:pm.state
+		processes: res
+		lastscan: pm.lastscan
+		state: pm.state
 	}
 }
 
-//kill process and all the ones underneith
-pub fn process_kill_recursive(pid int) !{
-	pm:=processinfo_with_children(pid)!
-	for p in  pm.processes{
-		os.execute("kill -9 ${p.pid}")
+// kill process and all the ones underneith
+pub fn process_kill_recursive(pid int) ! {
+	pm := processinfo_with_children(pid)!
+	for p in pm.processes {
+		os.execute('kill -9 ${p.pid}')
 	}
 }
 
-
-fn (pm ProcessMap) children_(mut result []ProcessInfo, pid int) !{	
+fn (pm ProcessMap) children_(mut result []ProcessInfo, pid int) ! {
 	// println("children: $pid")
-	for p in pm.processes{
-		if p.ppid == pid{
+	for p in pm.processes {
+		if p.ppid == pid {
 			// println("found parent: ${p}")
-			if result.filter(it.pid==p.pid).len==0{
+			if result.filter(it.pid == p.pid).len == 0 {
 				result << p
-				pm.children_(mut result,p.pid)! //find children of the one we found
+				pm.children_(mut result, p.pid)! // find children of the one we found
 			}
 		}
 	}
 }
 
 pub fn (mut p ProcessInfo) str() string {
-	x:=math.min(60,p.cmd.len)
-	subst:=p.cmd.substr(0,x)
-	return "pid:${p.pid:-7} parent:${p.ppid:-7} cmd:${subst}"
+	x := math.min(60, p.cmd.len)
+	subst := p.cmd.substr(0, x)
+	return 'pid:${p.pid:-7} parent:${p.ppid:-7} cmd:${subst}'
 }
 
-fn (mut pm ProcessMap) str()string {
-	mut out:=""
-	for p in pm.processes{
-		out+="${p}\n"
+fn (mut pm ProcessMap) str() string {
+	mut out := ''
+	for p in pm.processes {
+		out += '${p}\n'
 	}
 	return out
 }
@@ -129,9 +128,11 @@ fn (mut pm ProcessMap) scan() ! {
 	}
 
 	cmd := 'ps ax -o pid,ppid,stat,%cpu,%mem,rss,command'
-	res := os.execute(cmd) 
+	res := os.execute(cmd)
 
-	if res.exit_code > 0 { return error('Cannot get process info \n${cmd}') }
+	if res.exit_code > 0 {
+		return error('Cannot get process info \n${cmd}')
+	}
 
 	pm.processes = []ProcessInfo{}
 

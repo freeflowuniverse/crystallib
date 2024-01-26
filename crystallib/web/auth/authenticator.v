@@ -116,16 +116,14 @@ pub fn (mut app Authenticator) get_access_token(context vweb.Context) ?SignedJWT
 	return SignedJWT(access_token_str)
 }
 
-
-
 pub struct AccessRequest {
 	asset_id    string
 	access_type authorization.AccessType
 }
 
 pub struct AuthorizeParams {
-	asset_id    string
-	access_type authorization.AccessType
+	asset_id     string
+	access_type  authorization.AccessType
 	access_token string
 }
 
@@ -141,9 +139,7 @@ pub struct AuthorizeParams {
 // TODO
 pub fn (mut app Authenticator) authorize(params AuthorizeParams) !bool {
 	app.logger.debug('Authorizing access request')
-	user := app.get_user(params.access_token) or { 
-		return error('user not logged in') 
-	}
+	user := app.get_user(params.access_token) or { return error('user not logged in') }
 	return app.authorizer.authorize(
 		accessor: user.id
 	)

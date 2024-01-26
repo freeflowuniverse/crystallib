@@ -71,30 +71,28 @@ fn cmd_init_execute(cmd Command) ! {
 	mut nix := cmd.flags.get_bool('nix') or { false }
 	mut redis := cmd.flags.get_bool('redis') or { false }
 
-	if !(develop || hero || nix || redis){
+	if !(develop || hero || nix || redis) {
 		// cmd.help_message()
 		return error(cmd.help_message())
 	}
 
-	if develop || hero || nix || redis{
+	if develop || hero || nix || redis {
 		base.install()!
 	}
 
-	if redis{
+	if redis {
 		redisinstaller.install()!
 	}
 
-
 	if develop || hero {
 		base.develop(reset: reset)!
-	} 
+	}
 	if hero {
 		base.hero_compile()!
 		r := osal.profile_path_add_hero()!
 		console.print_header(' add path ${r} to profile.')
 	}
-	if nix{
+	if nix {
 		base.nix_install(reset: reset)!
 	}
-
 }

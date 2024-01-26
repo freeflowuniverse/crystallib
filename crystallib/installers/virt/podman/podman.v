@@ -15,7 +15,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version:="4.8.3"
+	version := '4.8.3'
 
 	// if  args.uninstall {
 	// 		console.print_header('uninstall podman')
@@ -25,14 +25,13 @@ pub fn install(args_ InstallArgs) ! {
 
 	res := os.execute('source ${osal.profile_path()} && podman -v')
 	if res.exit_code == 0 {
-
-		r:=res.output.split_into_lines().filter(it.contains("podman version"))
-		if r.len != 1{
-			return error("couldn't parse podman version, expected 'podman version' on 1 row.\n$res.output")
+		r := res.output.split_into_lines().filter(it.contains('podman version'))
+		if r.len != 1 {
+			return error("couldn't parse podman version, expected 'podman version' on 1 row.\n${res.output}")
 		}
 
-		v:=texttools.version(r[0].all_after("version"))
-		if v<texttools.version(version) {
+		v := texttools.version(r[0].all_after('version'))
+		if v < texttools.version(version) {
 			args.reset = true
 		}
 	} else {
@@ -42,7 +41,7 @@ pub fn install(args_ InstallArgs) ! {
 	if args.reset == false {
 		return
 	}
-	
+
 	console.print_header('install podman')
 
 	mut url := ''
@@ -68,7 +67,6 @@ pub fn install(args_ InstallArgs) ! {
 		'
 		osal.execute_interactive(cmd)!
 		console.print_header(' - pkg installed.')
-
 	} else if osal.platform() in [.alpine, .arch, .ubuntu] {
 		if osal.cputype() == .arm {
 			url = 'https://github.com/containers/podman/releases/download/v${version}/podman-remote-static-linux_arm64.tar.gz'
@@ -86,13 +84,11 @@ pub fn install(args_ InstallArgs) ! {
 		)!
 
 		panic('implement')
-
 	}
 
 	if exists()! {
 		console.print_header(' - podman exists check ok.')
 	}
-
 }
 
 // @[params]

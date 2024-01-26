@@ -17,12 +17,12 @@ pub mut:
 // install zola will return true if it was already installed
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version:="0.18.0"
+	version := '0.18.0'
 
 	res := os.execute('source ${osal.profile_path()} && zola -V')
 	if res.exit_code == 0 {
-		v:=texttools.version(res.output)
-		if v<texttools.version(version) {
+		v := texttools.version(res.output)
+		if v < texttools.version(version) {
 			args.reset = true
 		}
 	} else {
@@ -44,7 +44,7 @@ pub fn install(args_ InstallArgs) ! {
 	if osal.is_linux() {
 		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v${version}-x86_64-unknown-linux-gnu.tar.gz'
 	} else if osal.is_osx_arm() {
-		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v${version}-aarch64-apple-darwin.tar.gz'		
+		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v${version}-aarch64-apple-darwin.tar.gz'
 	} else if osal.is_osx_intel() {
 		url = 'https://github.com/getzola/zola/releases/download/v0.18.0/zola-v${version}-x86_64-apple-darwin.tar.gz'
 	} else {

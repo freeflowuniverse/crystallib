@@ -82,7 +82,6 @@ pub fn play_mdbook(mut session play.Session) ! {
 		action.done = true
 	}
 
-
 	mut init_done := false
 	for mut action in session.plbook.find_max_one(filter: 'books:pull')! {
 		books.pull(reset)!

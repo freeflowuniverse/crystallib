@@ -50,10 +50,10 @@ fn (mut session Session) pre_process() ! {
 
 				path = gs.code_get(reset: reset, pull: pull, url: url)!
 			}
-			
-			mut p:=pathlib.get(path)
-			out << p.recursive_text()!	
-			continue			
+
+			mut p := pathlib.get(path)
+			out << p.recursive_text()!
+			continue
 		}
 
 		if line_strip.contains('!!include') {
@@ -99,11 +99,9 @@ fn (mut session Session) check_for_further_process() bool {
 	return false
 }
 
-
-
-//apply snippets to the text given
- fn (mut session Session) snippets_apply() ! {
-	for key,snippet in session.context.snippets{
-		session.script3_preprocess=session.script3_preprocess.replace("{${key}}",snippet)
+// apply snippets to the text given
+fn (mut session Session) snippets_apply() ! {
+	for key, snippet in session.context.snippets {
+		session.script3_preprocess = session.script3_preprocess.replace('{${key}}', snippet)
 	}
 }

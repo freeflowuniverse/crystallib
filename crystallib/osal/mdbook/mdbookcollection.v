@@ -29,7 +29,7 @@ pub mut:
 
 pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
 	mut args := args_
-	mut path := pathlib.get_dir(create:false, path:args.path)!
+	mut path := pathlib.get_dir(create: false, path: args.path)!
 	mut c := MDBookCollection{
 		url: args.url
 		name: args.name
@@ -40,9 +40,8 @@ pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
 	book.collections << c
 }
 
-
 fn (mut self MDBookCollection) clone() ! {
-	if self.url==""{
+	if self.url == '' {
 		self.link()!
 		return
 	}

@@ -12,7 +12,7 @@ pub mut:
 }
 
 pub struct Event {
-	name string
+	name        string
 	description string
 }
 

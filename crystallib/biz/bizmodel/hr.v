@@ -17,7 +17,7 @@ import rand
 //	   cost_percent_revenue e.g. 4%, will make sure the cost will be at least 4% of revenue
 
 fn (mut m BizModel) hr_actions(plbook_ PlayBook) ! {
-	mut plbook:=plbook_
+	mut plbook := plbook_
 	mut actions2 := plbook.actions_find_by_name(actor: 'hr')!
 	for action in actions2 {
 		if action.name == 'employee_define' {

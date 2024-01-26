@@ -34,10 +34,12 @@ pub mut:
 // if collectionname specified will look for page in that specific collection
 pub fn (collection Collection) page_get(name_ string) !&Page {
 	_, name := name_parse(name_)!
-	return collection.pages[name] or { return ObjNotFound{
-		collection: collection.name
-		name: name
-	} }
+	return collection.pages[name] or {
+		return ObjNotFound{
+			collection: collection.name
+			name: name
+		}
+	}
 }
 
 pub fn (collection Collection) image_get(name_ string) !&File {
@@ -52,10 +54,12 @@ pub fn (collection Collection) image_get(name_ string) !&File {
 
 pub fn (collection Collection) file_get(name_ string) !&File {
 	_, name := name_parse(name_)!
-	return collection.files[name] or { return ObjNotFound{
-		collection: collection.name
-		name: name
-	} }
+	return collection.files[name] or {
+		return ObjNotFound{
+			collection: collection.name
+			name: name
+		}
+	}
 }
 
 pub fn (collection Collection) page_exists(name string) bool {

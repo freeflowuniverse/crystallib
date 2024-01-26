@@ -7,7 +7,7 @@ import json
 
 pub struct Controller {
 	vweb.Context
-pub mut: 
+pub mut:
 	db sqlite.DB
 }
 

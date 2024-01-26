@@ -2,7 +2,7 @@ module tfrobot
 
 import freeflowuniverse.crystallib.installers.tfrobot as tfrobot_installer
 
-pub struct TFRobot{
+pub struct TFRobot {
 pub mut:
 	jobs map[string]Job
 }

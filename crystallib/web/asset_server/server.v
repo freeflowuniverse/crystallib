@@ -10,11 +10,11 @@ import log
 pub struct ResourceServer {
 	vweb.Context
 pub mut:
-	auth auth_server.Client
-	assets []Resource       @[required; vweb_global]
+	auth   auth_server.Client
+	assets []Resource         @[required; vweb_global]
 	logger &log.Logger = &log.Logger(&log.Log{
 	level: .debug
-})   @[vweb_global]
+})        @[vweb_global]
 }
 
 pub struct Resource {
@@ -25,7 +25,7 @@ pub struct Resource {
 
 pub struct ResourceServerConfig {
 	auth   Authenticator @[required] // Authenticator to be used
-	assets []Resource       @[required]
+	assets []Resource    @[required]
 	logger log.Logger
 }
 

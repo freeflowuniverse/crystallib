@@ -115,12 +115,10 @@ pub fn is_linux() bool {
 		|| platform() == .alpine
 }
 
-
 pub fn is_linux_arm() bool {
-	return is_linux() &&  cputype() != .arm
+	return is_linux() && cputype() != .arm
 }
 
-
 pub fn is_linux_intel() bool {
-	return is_linux() &&  cputype() != .intel
+	return is_linux() && cputype() != .intel
 }

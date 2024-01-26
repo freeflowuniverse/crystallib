@@ -1,34 +1,32 @@
 module tfrobot
 
-const (
-	test_ssh_key = ''
-	test_mneumonic = ''
-	test_flist = 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
-)
+const test_ssh_key = ''
+const test_mneumonic = ''
+const test_flist = 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
 
 fn test_job_new() {
 	mut bot := new()!
 	bot.job_new(
-		name:'test_job'
-		mneumonic: test_mneumonic
+		name: 'test_job'
+		mneumonic: tfrobot.test_mneumonic
 	)!
 }
 
 fn test_job_run() {
 	mut bot := new()!
 	mut job := bot.job_new(
-		name:'test_job'
-		mneumonic: test_mneumonic
+		name: 'test_job'
+		mneumonic: tfrobot.test_mneumonic
 	)!
-	
-	job.add_ssh_key('my_key', test_ssh_key)
-	vm_config := tfrobot.VMConfig {
-		name: 'holo_vm',
-		region:"europe",
-		nrcores:4,
-		memory_mb:4096,
-		ssh_key: 'my_key',
-		flist: test_flist
+
+	job.add_ssh_key('my_key', tfrobot.test_ssh_key)
+	vm_config := VMConfig{
+		name: 'holo_vm'
+		region: 'europe'
+		nrcores: 4
+		memory_mb: 4096
+		ssh_key: 'my_key'
+		flist: tfrobot.test_flist
 		pub_ip: true
 	}
 

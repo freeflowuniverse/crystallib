@@ -44,8 +44,7 @@ pub fn (mut book MDBook) collections_add(args_ CollectionScannerArgs) ! {
 	book.scan(mut path)!
 }
 
-fn (mut book MDBook) scan(mut path pathlib.Path) ! {	
-
+fn (mut book MDBook) scan(mut path pathlib.Path) ! {
 	if path.is_dir() {
 		mut name := path.name()
 		if path.file_exists('.collection') {
@@ -61,11 +60,10 @@ fn (mut book MDBook) scan(mut path pathlib.Path) ! {
 				}
 			}
 			console.print_header('Collection found: ${path.path} name:${name}')
-					
-			book.collection_add(name:name, path:path.path)!
+
+			book.collection_add(name: name, path: path.path)!
 			return
 		}
-
 
 		mut pl := path.list(recursive: false) or {
 			return error('cannot list: ${path.path} \n${error}')

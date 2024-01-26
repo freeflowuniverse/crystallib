@@ -13,18 +13,17 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version:="3.3.6"
+	version := '3.3.6'
 
 	res := os.execute('source ${osal.profile_path()} && tailwind -h')
 	if res.exit_code == 0 {
-
-		r:=res.output.split_into_lines().filter(it.contains("tailwindcss v"))
-		if r.len != 1{
-			return error("couldn't parse tailwind version, expected 'tailwindcss v' on 1 row.\n$res.output")
+		r := res.output.split_into_lines().filter(it.contains('tailwindcss v'))
+		if r.len != 1 {
+			return error("couldn't parse tailwind version, expected 'tailwindcss v' on 1 row.\n${res.output}")
 		}
 
-		v:=texttools.version(r[0].all_after(" "))
-		if v<texttools.version(version) {
+		v := texttools.version(r[0].all_after(' '))
+		if v < texttools.version(version) {
 			args.reset = true
 		}
 	} else {
@@ -41,7 +40,7 @@ pub fn install(args_ InstallArgs) ! {
 	if osal.is_linux_arm() {
 		url = 'https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-linux-arm64'
 	} else if osal.is_linux_intel() {
-		url = 'https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-linux-x64'		
+		url = 'https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-linux-x64'
 	} else if osal.is_osx_arm() {
 		url = 'https://github.com/tailwindlabs/tailwindcss/releases/download/v${version}/tailwindcss-macos-arm64'
 	} else if osal.is_osx_intel() {

@@ -8,7 +8,6 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import os
 
-
 pub fn nix_install(args InstallArgs) ! {
 	console.print_header('nix prepare')
 	pl := osal.platform()
@@ -18,9 +17,8 @@ pub fn nix_install(args InstallArgs) ! {
 		return
 	}
 
-	cmd:="sh <(curl -L https://nixos.org/nix/install) --daemon"
+	cmd := 'sh <(curl -L https://nixos.org/nix/install) --daemon'
 	osal.execute_interactive(cmd)!
-
 
 	// osal.done_set('nix_install', 'OK')!
 }

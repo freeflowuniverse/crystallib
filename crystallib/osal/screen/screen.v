@@ -20,8 +20,6 @@ enum ScreenState {
 	detached
 }
 
-
-
 // checks whether screen server is running
 pub fn (mut t Screen) is_running() !bool {
 	panic('implement')
@@ -42,16 +40,16 @@ pub fn (mut t Screen) is_running() !bool {
 }
 
 fn (mut self Screen) kill_() ! {
-	println("kill screen: $self")
+	println('kill screen: ${self}')
 	if self.pid == 0 || self.pid < 50 {
-		return error("pid was <50 for $self, can't kill")
+		return error("pid was <50 for ${self}, can't kill")
 	}
 	osal.process_kill_recursive(self.pid)!
 	res := os.execute('export TERM=xterm-color && screen -X -S ${self.name} kill')
 	if res.exit_code > 1 {
 		return error('could not kill a screen.\n${res.output}')
 	}
-	time.sleep(100000) //0.1 sec wait
+	time.sleep(100000) // 0.1 sec wait
 	os.execute('screen -wipe')
 	// self.scan()!
 }
@@ -60,7 +58,6 @@ fn (mut self Screen) kill_() ! {
 // 	mut f:=self.factory or {panic("bug, no factory attached to screen.")}
 // 	f.scan(false)!
 // }
-
 
 pub fn (mut self Screen) attach() ! {
 	cmd := 'screen -r ${self.pid}.${self.name}'
@@ -83,7 +80,6 @@ pub fn (mut self Screen) str() string {
 	return ' - screen:${green}${self.name:-20}${reset} pid:${yellow}${self.pid:-10}${reset} state:${green}${self.state}${reset}'
 }
 
-
 fn (mut self Screen) start_() ! {
 	if self.pid != 0 {
 		return
@@ -101,5 +97,4 @@ fn (mut self Screen) start_() ! {
 	if res.exit_code > 1 {
 		return error('could not find screen or other error, make sure screen is installed.\n${res.output}')
 	}
-	
 }

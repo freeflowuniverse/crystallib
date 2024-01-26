@@ -13,18 +13,17 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version:="0.16.2"
+	version := '0.16.2'
 
 	res := os.execute('source ${osal.profile_path()} && restic version')
 	if res.exit_code == 0 {
-
-		r:=res.output.split_into_lines().filter(it.contains("restic 0"))
-		if r.len != 1{
-			return error("couldn't parse restic version, expected 'restic 0' on 1 row.\n$res.output")
+		r := res.output.split_into_lines().filter(it.contains('restic 0'))
+		if r.len != 1 {
+			return error("couldn't parse restic version, expected 'restic 0' on 1 row.\n${res.output}")
 		}
 
-		v:=texttools.version(r[0].all_before("compiled").all_after("restic"))
-		if v<texttools.version(version) {
+		v := texttools.version(r[0].all_before('compiled').all_after('restic'))
+		if v < texttools.version(version) {
 			args.reset = true
 		}
 	} else {
@@ -51,7 +50,7 @@ pub fn install(args_ InstallArgs) ! {
 	mut dest := osal.download(
 		url: url
 		minsize_kb: 7000
-		expand_file: "/tmp/restic"
+		expand_file: '/tmp/restic'
 	)!
 
 	// println(dest)

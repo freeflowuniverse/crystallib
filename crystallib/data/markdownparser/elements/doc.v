@@ -8,12 +8,12 @@ import freeflowuniverse.crystallib.core.playbook
 @[heap]
 pub struct Doc {
 pub mut:
-	children []Element
-	gid      smartid.GID
-	pre      []HtmlSource
-	lastid   int
-	id      int
-	content string
+	children  []Element
+	gid       smartid.GID
+	pre       []HtmlSource
+	lastid    int
+	id        int
+	content   string
 	path      pathlib.Path
 	processed bool
 	params    paramsparser.Params

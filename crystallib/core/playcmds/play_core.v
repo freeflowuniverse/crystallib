@@ -22,10 +22,10 @@ pub fn play_core(mut session play.Session) ! {
 		// }
 		if p.exists('coderoot') {
 			mut coderoot := p.get_path_create('coderoot')!
-			mut gs:=session.context.gitstructure()!
+			mut gs := session.context.gitstructure()!
 			if gs.rootpath.path != coderoot {
-				mut db:=session.context.contextdb.db_get(dbname:"context")!
-				db.set("coderoot",coderoot)!				
+				mut db := session.context.contextdb.db_get(dbname: 'context')!
+				db.set('coderoot', coderoot)!
 				session.context.gitstructure_reload()!
 			}
 		}
@@ -36,10 +36,10 @@ pub fn play_core(mut session play.Session) ! {
 		mut p := action.params
 		if p.exists('coderoot') {
 			coderoot := p.get_path_create('coderoot')!
-			mut gs:=session.context.gitstructure()!
+			mut gs := session.context.gitstructure()!
 			if gs.rootpath.path != coderoot {
-				mut db:=session.context.contextdb.db_get(dbname:"context")!
-				db.set("coderoot",coderoot)!				
+				mut db := session.context.contextdb.db_get(dbname: 'context')!
+				db.set('coderoot', coderoot)!
 				session.context.gitstructure_reload()!
 			}
 		} else {

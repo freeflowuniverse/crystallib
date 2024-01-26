@@ -3,7 +3,7 @@ module authorization
 import net.http
 import json
 
-pub struct Client{
+pub struct Client {
 	url string
 }
 
