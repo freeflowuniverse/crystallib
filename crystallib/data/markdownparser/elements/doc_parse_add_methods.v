@@ -1,9 +1,5 @@
 module elements
 
-import freeflowuniverse.crystallib.data.paramsparser
-
-
-
 @[params]
 pub struct ElementNewArgs {
 pub mut:

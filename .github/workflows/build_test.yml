@@ -13,7 +13,7 @@ jobs:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
-    
+
       - name: Install dependencies
         run: |
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
@@ -22,7 +22,7 @@ jobs:
           else
             brew install libgc tmux git rsync curl redis libpq
           fi
-          # redis-cli ping    
+          # redis-cli ping
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
@@ -41,7 +41,7 @@ jobs:
       - name: Check formatting
         run: |
           v fmt -w $(pwd)/crystallib
-      
+
       - name: Run tests
         env:
           VJOBS: 1
@@ -56,5 +56,4 @@ jobs:
           v -enable-globals -stats test crystallib/data/markdownparser
           v -enable-globals -stats test crystallib/data/ourtime
           v -enable-globals -stats test crystallib/data/paramsparser
-
-
+          v -enable-globals -stats test crystallib/data/doctree

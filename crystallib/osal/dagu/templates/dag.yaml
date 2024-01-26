@@ -1,0 +1,64 @@
+name: @{dag.name}
+description: @{dag.description}
+schedule: @{dag.schedule}
+group: @{dag.group}
+tags: @{dag.tags}
+env:
+  @for key, val in dag.env
+  - @{key}: @{val}
+  @end
+logDir: @{dag.log_dir}
+restartWaitSec: @{dag.restart_wait_sec}
+histRetentionDays: @{dag.hist.retention.days}
+delaySec: @{dag.delay_sec}
+maxActiveRuns: @{dag.max_active_runs}
+params: @{dag.params}
+preconditions:
+  @for precondition in dag.preconditions
+  - condition: @{precondition.condition}
+    expected: @{precondition.expected}
+  @end
+mailOn:
+  failure: @{dag.mail_on.failure}
+  success: @{dag.mail_on.success}
+MaxCleanUpTimeSec: @{dag.max_cleanup_time_sec}
+handlerOn:
+  success:
+    command: @{dag.handler_on.success}
+  failure:
+    command: @{dag.handler_on.failure}
+  cancel:
+    command: @{dag.handler_on.cancel}
+  exit:
+    command: @{dag.handler_on.exit}
+
+steps:
+  @for step in dag.steps
+  - name: @{step.name}
+    description: @{step.description}
+    dir: @{step.dir}
+    command: @{step.command}
+    stdout: @{step.stdout}
+    ouptut: @{step.output}
+    script: |
+      @{step.script}
+    signalOnStop: @{step.signal_on_stop}
+    mailOn:
+      failure: @{step.mail_on.failure}
+      success: @{step.mail_on.success}
+    continueOn:
+      failure: @{step.continue_on.failure}
+      skipped: @{step.continue_on.skipped}
+    retryPolicy:
+      limit: @{step.retry_policy.limit}
+      intervalSec: @{step.retry_policy.interval_sec}
+    repeatPolicy:
+      repeat: @{step.repeat_policy.repeat}
+      intervalSec: @{step.repeat_policy.interval_sec}
+    preconditions:
+      @for precondition in step.preconditions
+      - condition: 
+        expected: @{precondition}
+      @end
+    depends:
+      -  @{step.depends}

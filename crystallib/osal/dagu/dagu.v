@@ -1,18 +1,19 @@
 module dagu
 
-// import freeflowuniverse.crystallib.osal
+@[noinit]
+struct DAGU {
+	dags []DAG
+}
 
-@[heap]
-pub struct Dagu {
-pub mut:
-	config Config
+pub fn new(config Config) DAGU {
+	config_yaml := $tmpl('./templates/config.yaml')
+	os.write_file('~/.dagu/config.yaml', config_yaml)
+	return DAGU{}
 }
 
 
-pub fn new() !Dagu {
-	mut obj := Dagu{
-	}
-
-	return obj
+pub fn (mut d DAGU) new_dag(dag DAG) DAG {
+	config_yaml := $tmpl('./templates/config.yaml')
+	os.write_file('~/.dagu/config.yaml', config_yaml)
+	return DAGU{}
 }
-
