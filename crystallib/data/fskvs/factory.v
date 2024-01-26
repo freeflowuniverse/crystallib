@@ -96,7 +96,7 @@ pub fn contextdb_get(args_ DBGetArgsArgs) !ContextDB {
 		if secret=="" && args.interactive{
 			//we can ask interactive
 			mut ui := gui.new()!
-			secret = ui.ask_question(question: '\nPlease specify your secret for contextdb: ${args.name}.')!
+			secret = ui.ask_question(question: '\nPlease specify your secret for your hero environment. (context:${args.name})')!
 			secret=secret.trim_space()
 			redis.set(key,secret)!
 			redis.expire(key, 3600 * 24)! 

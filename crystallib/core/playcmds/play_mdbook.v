@@ -72,6 +72,17 @@ pub fn play_mdbook(mut session play.Session) ! {
 		action.done = true
 	}
 
+	for mut action in session.plbook.find(filter: 'book:collections_add')! {
+		mut p := action.params
+		book := p.get('book')!
+		url := p.get('url')!
+
+		mut book2 := books.get(book)!
+		book2.collections_add(git_url: url)!
+		action.done = true
+	}
+
+
 	mut init_done := false
 	for mut action in session.plbook.find_max_one(filter: 'books:pull')! {
 		books.pull(reset)!

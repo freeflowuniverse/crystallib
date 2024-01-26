@@ -24,20 +24,28 @@ pub struct MDBookCollectionArgs {
 pub mut:
 	name string
 	url  string
+	path string
 }
 
 pub fn (mut book MDBook) collection_add(args_ MDBookCollectionArgs) ! {
 	mut args := args_
+	mut path := pathlib.get_dir(create:false, path:args.path)!
 	mut c := MDBookCollection{
 		url: args.url
 		name: args.name
 		book: &book
+		path: path
 	}
 	c.clone()! // don't pull if it exists
 	book.collections << c
 }
 
+
 fn (mut self MDBookCollection) clone() ! {
+	if self.url==""{
+		self.link()!
+		return
+	}
 	console.print_header(' mdbook collection clone no pull: ${self.url}')
 	mut gs := self.book.books.gitstructure
 	mut locator := gs.locator_new(self.url)!

@@ -14,7 +14,6 @@ pub mut:
 	lastid   int
 	id      int
 	content string
-	// doc      ?&Doc        @[skip; str: skip]
 	path      pathlib.Path
 	processed bool
 	params    paramsparser.Params

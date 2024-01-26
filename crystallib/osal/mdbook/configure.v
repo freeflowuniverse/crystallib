@@ -22,7 +22,7 @@ pub mut:
 	name string
 	url  string
 	// gitrepokey string
-	// path       pathlib.Path //TODO: need to do path
+	path       string
 }
 
 // get the configurator
@@ -69,7 +69,7 @@ pub fn new_from_config(args_ NewFromConfigArgs) !&MDBook {
 	)!
 
 	for collection in myconfig.collections {
-		book.collection_add(name: collection.name, url: collection.url)!
+		book.collection_add(name: collection.name, url: collection.url,path:collection.path)!
 	}
 
 	books.init()!
@@ -96,6 +96,7 @@ pub fn save_to_config(mdbook MDBook, mut context play.Context) ! {
 		myconfig.collections << MDBookCollectionConfig{
 			name: collection.name
 			url: collection.url
+			path: collection.path.path
 		}
 	}
 
