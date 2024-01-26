@@ -1,6 +1,7 @@
 module dagu
 
 pub struct DAG {
+pub:
 	name string // The name of the DAG, which is optional. The default name is the name of the file.
 	description string // A brief description of the DAG.
 	schedule string // The execution schedule of the DAG in Cron expression format.
@@ -31,11 +32,17 @@ pub struct MailOn {
 	success bool
 }
 
-pub struct HandlerOn {
-	success string
-	failure string
-	cancel string
-	exit string
+struct HandlerOn {
+pub mut:	
+	success Handler
+	failure Handler
+	cancel  Handler
+	exit    Handler
+}
+
+struct Handler {
+pub mut:	
+	command string
 }
 
 // https://dagu.readthedocs.io/en/latest/yaml_format.html#id9
@@ -46,6 +53,7 @@ pub struct Function {
 }
 
 pub struct Step {
+	pub:
 	name string //The name of the step.
 	description string //A brief description of the step.
 	dir string //The working directory for the step.
@@ -64,30 +72,35 @@ pub struct Step {
 }
 
 pub struct ContinueOn {
+	pub:
 	failure bool
 	skipped bool
 }
 
 pub struct RetryPolicy {
+	pub:
 	limit int
 	interval_sec int
 }
 
 pub struct RepeatPolicy {
+	pub:
 	repeat bool
 	interval_sec int
 }
 
 // https://dagu.readthedocs.io/en/latest/yaml_format.html#id9
 pub struct Call {
+	pub:
 	function string
 	args map[string]string
 }
 
 @[params]
 pub struct Config {
+pub:
 	log_dir string // directory path to save logs from standard output
-	history_retention_days int // history retention days (default: 30)
+	hist_retention_days int // history retention days (default: 30)
 	mail_on MailOn // Email notification settings
 	smtp SMTP // SMTP server settings
 	error_mail Mail // Error mail configuration
@@ -95,6 +108,7 @@ pub struct Config {
 }
 
 pub struct SMTP {
+	pub:
 	host string
 	port string
 	username string
@@ -103,38 +117,10 @@ pub struct SMTP {
 }
 
 pub struct Mail {
+	pub:
 	from string
 	to string
 	prefix string
-}pub struct Step {
-pub mut:
-	name    string
-	command string
-	script  string [json: raw]
-	output  string [json: 'output']
-	depends []string [skip]
-}
-
-[heap]
-struct DAG {
-pub mut:
-	name                string
-	description         string
-	steps []Step	
-	schedule            string //in cron format
-	group               string
-	tags                string
-	env                 map[string]string
-	log_dir             string [json: 'logDir']
-	restart_wait_sec    int    [json: 'restartWaitSec']
-	hist_retention_days int    [json: 'histRetentionDays']
-	delay_sec           int    [json: 'delaySec']
-	max_active_runs     int    [json: 'maxActiveRuns']
-	params              []string
-	preconditions       []Precondition
-	mail_on             MailOn [json: 'mailOn']
-	max_clean_up_time_sec int  [json: 'MaxCleanUpTimeSec']
-	handler_on          HandlerOn [json: 'handlerOn']
 }
 
 struct Precondition {
@@ -142,26 +128,6 @@ pub mut:
 	condition string
 	expected  string
 }
-
-struct MailOn {
-pub mut:	
-	failure bool
-	success bool
-}
-
-struct Handler {
-pub mut:	
-	command string
-}
-
-struct HandlerOn {
-pub mut:	
-	success Handler
-	failure Handler
-	cancel  Handler
-	exit    Handler
-}
-
 
 // handlerOn:
 //   failure:

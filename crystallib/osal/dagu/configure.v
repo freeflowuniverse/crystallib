@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.play
 // import freeflowuniverse.crystallib.ui.console
 
 @[params]
-pub struct Config {
+pub struct PlayConfig {
 pub mut:
 	instance    string
 	addr 		string
@@ -14,7 +14,7 @@ pub mut:
 }
 
 // return a config object even if from partial info
-pub fn config(args Config) Config {
+pub fn config(args PlayConfig) PlayConfig {
 	return args
 }
 
@@ -27,13 +27,13 @@ pub mut:
 
 
 // get the configurator
-pub fn configurator(args ConfiguratorGetArgs) !play.Configurator[Config] {
+pub fn configurator(args ConfiguratorGetArgs) !play.Configurator[PlayConfig] {
 
 	mut session:=play.session_new(
 		context_name:args.context_name
 	)!
 
-	mut c := play.configurator_new[Config](
+	mut c := play.configurator_new[PlayConfig](
 		name: 'dagu'
 		instance: args.instance
 		context: &session.context
