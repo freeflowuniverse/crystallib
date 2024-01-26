@@ -1,0 +1,29 @@
+# directory path to save logs from standard output
+logDir: @{config.log_dir}
+
+# history retention days (default: 30)
+histRetentionDays: @{config.hist_retention_days}
+
+# Email notification settings
+mailOn:
+  failure: @{config.mail_on.failure}
+  success: @{config.mail_on.success}
+
+# SMTP server settings
+smtp:
+  host: @{config.smtp.host}
+  port: @{config.smtp.port}
+  username: @{config.smtp.username}
+  password: @{config.smtp.password}
+
+# Error mail configuration
+errorMail:
+  from: @{config.error_mail.from}
+  to: @{config.error_mail.to}
+  prefix: @{config.error_mail.prefix}
+
+# Info mail configuration
+infoMail:
+  from: @{config.info_mail.from}
+  to: @{config.info_mail.to}
+  prefix: @{config.info_mail.prefix}
