@@ -112,7 +112,7 @@ pub fn (mut h HTTPConnection) post_json_str(req_ Request) !string {
 pub fn (mut h HTTPConnection) get_json_dict(req Request) !map[string]json2.Any {
 	data_ := h.get(req)!
 	mut data := map[string]json2.Any{}
-	// println(data)
+	// println(data_)
 	data = crystaljson.json_dict_filter_any(data_, false, [], [])!
 	return data
 }

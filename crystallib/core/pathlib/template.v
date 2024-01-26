@@ -15,3 +15,8 @@ pub fn template_write(template_ string, dest string, overwrite bool) ! {
 		p.write(template)!
 	}
 }
+
+
+pub fn (mut path Path) template_write(template_ string, overwrite bool) ! {
+	template_write(template_,path.path,overwrite)!
+}

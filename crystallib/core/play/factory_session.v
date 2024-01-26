@@ -10,10 +10,8 @@ pub mut:
 	session             ?&Session      @[skip; str: skip]
 	context_name        string = 'default'
 	session_name        string
-	coderoot            string
 	interactive         bool
-	fsdb_encrypted      bool
-	playbook_priorities map[int]string // filter and give priority
+	playbook_priorities map[int]string
 }
 
 // return a session which has link to the actions and params on context and session level
@@ -22,12 +20,7 @@ pub fn session_new(args_ PlayArgs) !&Session {
 	mut args := args_
 
 	mut context := args.context or {
-		mut c := new(
-			name: args.context_name
-			coderoot: args.coderoot
-			interactive: args.interactive
-			fsdb_encryption: args.fsdb_encrypted
-		)!
+		mut c:=context_get(name:args.context_name,interactive:args.interactive)!
 		&c
 	}
 

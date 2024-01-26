@@ -20,7 +20,7 @@ pub fn (mut params Params) replace(args map[string]string) {
 			i2 := texttools.name_fix(i)
 			if i2 in args {
 				println('${i} -> ${args[i2]}')
-				p.value = p.value.replace('\{${i}\}', args[i2])
+				p.value = p.value.replace('{${i}}', args[i2])
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 module playbook
 
 import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct FilterSortArgs {

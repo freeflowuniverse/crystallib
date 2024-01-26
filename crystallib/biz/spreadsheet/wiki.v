@@ -32,13 +32,13 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 	header := sheet.header()!
 
 	// get the width of name and optionally description
-	names_width := sheet.names_width()
+	names_width := sheet.rows_names_width_max()
 
 	mut header_wiki_items := []string{}
 	mut header_wiki_items2 := []string{}
-	if args.rowname_show && names_width[0] > 0 {
-		header_wiki_items << texttools.expand('|', names_width[0] + 1, ' ')
-		header_wiki_items2 << texttools.expand('|', names_width[0] + 1, '-')
+	if args.rowname_show && names_width > 0 {
+		header_wiki_items << texttools.expand('|', names_width + 1, ' ')
+		header_wiki_items2 << texttools.expand('|', names_width + 1, '-')
 	}
 	for x in 0 .. sheet.nrcol {
 		colmaxval := colmax[x]
@@ -58,8 +58,8 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 
 	for _, mut row in sheet.rows {
 		mut wiki_items := []string{}
-		if args.rowname_show && names_width[0] > 0 {
-			wiki_items << texttools.expand('|${row.name}', names_width[0] + 1, ' ')
+		if args.rowname_show && names_width > 0 {
+			wiki_items << texttools.expand('|${row.name}', names_width + 1, ' ')
 		}
 		for x in 0 .. sheet.nrcol {
 			colmaxval := colmax[x]

@@ -30,6 +30,9 @@ fn (mut self DocBase) process_base() ! {
 	self.delete_from_children(to_delete)
 }
 
+
+
+
 fn (mut self DocBase) delete_from_children(to_delete []int) {
 	mut write := 0
 	mut delete_ind := 0

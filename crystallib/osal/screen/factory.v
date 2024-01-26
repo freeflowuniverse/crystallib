@@ -1,14 +1,15 @@
 module screen
 
-import freeflowuniverse.crystallib.osal
+// import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.screen
 import os
+import time
 
 @[heap]
 pub struct ScreensFactory {
 pub mut:
-	screens map[string]&Screen
+	screens []Screen
 }
 
 @[params]
@@ -19,16 +20,29 @@ pub struct ScreensNewArgs {
 // return screen instance
 pub fn new(args ScreensNewArgs) !ScreensFactory {
 	mut t := ScreensFactory{}
-	t.scan(args.reset)!
+	t.scan()!
 	if args.reset {
 		t.reset()!
 	}
 	return t
 }
 
+pub fn init_screen_object(item_ map[string]string) Screen {
+	mut item := Screen{}
+	state_item := item_['state'] or { panic('bug') }
+	item.state = match state_item.trim('() ').to_lower() {
+		'detached' { .detached }
+		else { .unknown }
+	}
+	pre := item_['pre'] or { panic('bug') }
+	item.pid = pre.all_before('.').trim_space().int()
+	item.name = pre.all_after('.').trim_space()
+	return item
+}
+
 // loads screen screen, populate the object
-pub fn (mut self ScreensFactory) scan(reset bool) ! {
-	self.screens = map[string]&Screen{}
+pub fn (mut self ScreensFactory) scan() ! {
+	self.screens = []Screen{}
 	res := os.execute('screen -ls')
 	if res.exit_code > 1 {
 		return error('could not find screen or other error, make sure screen is installed.\n${res.output}')
@@ -42,18 +56,14 @@ pub fn (mut self ScreensFactory) scan(reset bool) ! {
 		.split_into_lines()
 		.filter(it.starts_with(' ') || it.starts_with('\t'))
 		.join_lines()
-	mut res2 := texttools.to_list_map('pre,state', res1, '').map(find_screen(it))
+	mut res2 := texttools.to_list_map('pre,state', res1, '').map(init_screen_object(it))
 	for mut item in res2 {
-		if item.name in self.screens {
-			if reset {
-				item.kill()!
-				continue
-			} else {
-				return error('duplicate screen with name: ${item.name}')
-			}
+		if self.exists(item.name){
+			return error('duplicate screen with name: ${item.name}')
 		}
-		self.screens[item.name] = &item
+		self.screens << item
 	}
+	println(self)
 }
 
 pub struct ScreenAddArgs {
@@ -65,55 +75,83 @@ pub mut:
 	attach bool
 }
 
-pub fn (mut self ScreensFactory) get(name string) ?&Screen {
-	// println("get ${name}")
-	// println(self)
-	if name in self.screens {
-		// println("found screen")
-		return self.screens[name] or { panic('bug') }
-	}
-	return none
-}
-
-pub fn (mut self ScreensFactory) exists(name string) bool {
-	if name in self.screens {
-		return true
-	}
-	return false
-}
 
 // print list of screen screens
-pub fn (mut self ScreensFactory) add(args_ ScreenAddArgs) !&Screen {
+pub fn (mut self ScreensFactory) add(args_ ScreenAddArgs) !Screen {
 	mut args := args_
 	if args.cmd == '' {
 		args.cmd = '/bin/bash'
 	}
-	mut screen := self.get(args.name) or {
-		mut s := Screen{
-			name: args.name
-			cmd: args.cmd
-		}
-		&s
+	if args.name.len<3{
+		return error("name needs to be at least 3 chars.")
 	}
-	if args.reset {
-		screen.kill()!
-	}
+	if self.exists(args.name){
+		if args.reset{
+			self.kill(args.name)!
+		}else{
+			return self.get(args.name)!
+		}		
+	}	
+	self.screens << Screen{name:args.name,cmd:args.cmd}
 	if args.start {
-		screen.start()!
+		self.start(args.name)!
 	}
+	mut myscreen:=self.get(args.name)!
+
 	if args.attach {
-		screen.attach()!
+		myscreen.attach()!
 	}
-	self.scan(false)!
-	return screen
+	return myscreen
+}
+
+// print list of screen screens
+pub fn (mut self ScreensFactory) exists(name string) bool {
+	for mut screen in self.screens {
+		if screen.name == name{
+			return true
+		}
+	}
+	return false
+}
+
+pub fn (mut self ScreensFactory) get(name string) !Screen {
+	for mut screen in self.screens {
+		if screen.name == name{
+			return screen
+		}
+	}
+	return error("couldnt find screen with name $name")
+}
+
+
+pub fn (mut self ScreensFactory) start(name string) ! {
+	mut s:=self.get(name)!
+	s.start_()!
+	for {
+		self.scan()!
+		mut s2:=self.get(name)!
+		if s2.pid>0{			
+			return 
+		}
+		println(s2)
+		time.sleep(100000)
+	}
+}
+
+pub fn (mut self ScreensFactory) kill(name string) ! {
+	if self.exists(name){
+		mut s:=self.get(name)!
+		s.kill_()!
+	}
+	self.scan()!
 }
 
 // print list of screen screens
 pub fn (mut self ScreensFactory) reset() ! {
-	for _, mut screen in self.screens {
-		screen.kill()!
+	for mut screen in self.screens {
+		screen.kill_()!
 	}
-	self.scan(false)!
+	self.scan()!
 }
 
 pub fn (mut self ScreensFactory) str() string {
@@ -121,8 +159,11 @@ pub fn (mut self ScreensFactory) str() string {
 		return 'No screens found.'
 	}
 	mut out := '# Screens\n'
-	for key, s in self.screens {
-		out += '${*s}\n'
+	for s in self.screens {
+		out += '${s}\n'
 	}
 	return out
 }
+
+
+

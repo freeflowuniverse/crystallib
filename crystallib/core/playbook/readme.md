@@ -30,14 +30,6 @@ plbook.add(path:...)!
 ```
 
 
-## to select cid, actor or circle
-
-```go
-!!select_cid core
-!!select_circle aaa
-!!select_actor people
-```
-
 Depending specified cid or circle or actor, we make a default selection
 
 ## way how to use for a module

@@ -37,7 +37,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 	}
 
 	if coderoot == '' {
-		coderoot = session.context.coderoot()
+		coderoot = session.context.coderoot()!
 	}
 
 	mut books := mdbook.new(

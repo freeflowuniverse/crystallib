@@ -36,28 +36,28 @@ fn (mut self Configurator[T]) config_key() string {
 pub fn (mut self Configurator[T]) set(args_ T) ! {
 	mut args := args_
 	args.instance = self.instance
-	mut kvs := self.context.db_config_get()!
+	mut contextdb := self.context.db_config_get()!
 	data := json.encode_pretty(args)
-	kvs.set(self.config_key(), data)!
+	contextdb.set(self.config_key(), data)!
 }
 
 pub fn (mut self Configurator[T]) get() !T {
-	mut kvs := self.context.db_config_get()!
-	if !kvs.exists(self.config_key()) {
+	mut contextdb := self.context.db_config_get()!
+	if !contextdb.exists(self.config_key()) {
 		return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
 	}
-	data := kvs.get(self.config_key())!
+	data := contextdb.get(self.config_key())!
 	return json.decode(T, data)!
 }
 
 pub fn (mut self Configurator[T]) reset() ! {
-	mut kvs := self.context.db_config_get()!
-	kvs.delete(self.config_key())!
+	mut contextdb := self.context.db_config_get()!
+	contextdb.delete(self.config_key())!
 }
 
 pub fn (mut self Configurator[T]) getset(args T) !T {
-	mut kvs := self.context.db_config_get()!
-	if kvs.exists(self.config_key()) {
+	mut contextdb := self.context.db_config_get()!
+	if contextdb.exists(self.config_key()) {
 		return self.get()!
 	}
 	self.set(args)!
@@ -75,10 +75,10 @@ pub fn (mut self Configurator[T]) list() ![]string {
 }
 
 pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
-	mut kvs := self.context.db_config_get()!
+	mut contextdb := self.context.db_config_get()!
 	if args.name.len > 0 {
-		if kvs.exists(self.config_key()) {
-			data := kvs.get(self.config_key())!
+		if contextdb.exists(self.config_key()) {
+			data := contextdb.get(self.config_key())!
 			c := json.decode(T, data)!
 			println(c)
 			println('')

@@ -12,7 +12,7 @@ import freeflowuniverse.crystallib.installers.base
 
 mut names := ["Guy De Spiegeleer ","Apple Tie","My Tree"," to remove because starts with"]
 
-mut res:=names.filter(!it.starts_with(" ")).map(texttools.name_fix(it)).sorted()s
+mut res:=names.filter(!it.starts_with(" ")).map(texttools.name_fix(it)).sorted()
 
 println(res)
 

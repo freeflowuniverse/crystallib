@@ -2,7 +2,6 @@ module gittools
 
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
 import os
 

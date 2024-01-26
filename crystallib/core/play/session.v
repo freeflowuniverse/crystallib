@@ -153,32 +153,37 @@ fn (mut self Session) key() string {
 	return 'sessions:${self.guid()}'
 }
 
-fn (mut self Session) db_get(name string) !fskvs.KVS {
-	return self.context.kvs.get(name: name)!
+//get db of the session, is unique per session
+fn (mut self Session) db_get() !fskvs.DB {
+	return self.context.db_get("session_${self.name}")!
 }
 
-fn (mut self Session) db_config_get() !fskvs.KVS {
-	return self.context.kvs.get(name: 'config')!
+
+//get the db of the config, is unique per context
+fn (mut self Session) db_config_get() !fskvs.DB {
+	return self.context.db_get('config')!
 }
 
-// save the session to redis & mem
+
+// load the params from redis
 pub fn (mut self Session) load() ! {
 	mut r := self.context.redis
-	t := r.get(self.key())!
-	if t == '' {
-		return
+	rkey:="hero:session:params:${self.name}"
+	if r.exists(rkey)!{
+		paramtxt:=r.get(rkey)!
+		self.params = paramsparser.new(paramtxt)!
 	}
-	// self.script3_load(t)!
-	panic('to implement')
+
 }
 
-// save the self to redis & mem
+//save the params to redis
 pub fn (mut self Session) save() ! {
 	self.check()!
 	mut r := self.context.redis
-	r.set(self.key(), self.script3()!)!
-	r.expire(self.key(), 3600 * 48)!
+	rkey:="hero:session:params:${self.name}"
+	r.set(rkey,self.params.str())!
 }
+
 
 ////////// REPRESENTATION
 

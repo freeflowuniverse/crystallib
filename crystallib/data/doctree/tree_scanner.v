@@ -3,9 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.texttools
 import os
-import freeflowuniverse.crystallib.core.smartid
 
 @[params]
 pub struct TreeScannerArgs {
@@ -16,11 +14,11 @@ pub mut:
 	git_reset bool
 	git_root  string
 	git_pull  bool
-	load      bool = true // means we scan automatically the added playbook
+	load      bool = true // means we scan automatically the added collection
 }
 
-// walk over directory find dirs with .book or .playbook inside and add to the tree .
-// a path will not be added unless .playbook is in the path of a playbook dir or .book in a book
+// walk over directory find dirs with .book or .collection inside and add to the tree .
+// a path will not be added unless .collection is in the path of a collection dir or .book in a book
 // ```
 // path string
 // heal bool // healing means we fix images, if selected will automatically load, remove stale links
@@ -30,7 +28,7 @@ pub mut:
 // git_pull  bool
 // ```	
 pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
-	// $if debug{println(" - playbooks find recursive: $path.path")}
+	// $if debug{println(" - collections find recursive: $path.path")}
 	mut args := args_
 	if args.git_url.len > 0 {
 		args.path = gittools.code_get(
@@ -50,12 +48,12 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	if path.is_dir() {
 		mut name := path.name()
 		if path.file_exists('.site') {
-			// mv .site file to .playbook file
-			playbookfilepath1 := path.extend_file('.site')!
-			playbookfilepath2 := path.extend_file('.playbook')!
-			os.mv(playbookfilepath1.path, playbookfilepath2.path)!
+			// mv .site file to .collection file
+			collectionfilepath1 := path.extend_file('.site')!
+			collectionfilepath2 := path.extend_file('.collection')!
+			os.mv(collectionfilepath1.path, collectionfilepath2.path)!
 		}
-		for type_of_file in ['.playbook', '.book'] {
+		for type_of_file in ['.collection', '.book'] {
 			if path.file_exists(type_of_file) {
 				mut filepath := path.file_get(type_of_file)!
 
@@ -70,8 +68,8 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 				}
 				tree.logger.debug(' - ${type_of_file[1..]} new: ${filepath.path} name:${name}')
 				match type_of_file {
-					'.playbook' {
-						tree.playbook_new(
+					'.collection' {
+						tree.collection_new(
 							path: path.path
 							name: name
 							heal: args.heal
@@ -110,24 +108,24 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 }
 
 pub fn (mut tree Tree) heal() ! {
-	for _, mut playbook in tree.playbooks {
-		playbook.fix()!
+	for _, mut collection in tree.collections {
+		collection.fix()!
 	}
 }
 
 // pub fn (mut tree Tree) get_external_assets() ! {
-// 	tree.playbook_new(name: '_external', path: '')!
-// 	for key, mut playbook in tree.playbooks {
+// 	tree.collection_new(name: '_external', path: '')!
+// 	for key, mut collection in tree.collections {
 // 		external_links := []markdownparser.Link{}
 // 		for link in external_links {
-// 			if tree.playbooks.values().any(fn (mut it) {
+// 			if tree.collections.values().any(fn (mut it) {
 // 				link.path.starts_with(mut it)
 // 			})
 // 			{
-// 				// means that link external to playbook exists in another playbook belonging to tree, so skip
+// 				// means that link external to collection exists in another collection belonging to tree, so skip
 // 				continue
 // 			}
-// 			playbook.page_new(link.path)
+// 			collection.page_new(link.path)
 // 		}
 // 	}
 // }

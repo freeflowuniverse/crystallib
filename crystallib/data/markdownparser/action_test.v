@@ -43,9 +43,6 @@ fn test_action_some_params_multiline() {
 		assert action.action.name == 'define'
 		assert action.action.params == Params{
 			params: [Param{
-				key: 'id'
-				value: '15'
-			}, Param{
 				key: 'twinid'
 				value: '20'
 			}, Param{
@@ -76,9 +73,6 @@ fn test_action_some_params_inline() {
 		assert action.action.name == 'define'
 		assert action.action.params == Params{
 			params: [Param{
-				key: 'id'
-				value: '15'
-			}, Param{
 				key: 'twinid'
 				value: '20'
 			}, Param{
@@ -113,9 +107,6 @@ fn test_action_some_params_some_arguments_multi_line() {
 		assert action.action.name == 'define'
 		assert action.action.params == Params{
 			params: [Param{
-				key: 'id'
-				value: '15'
-			}, Param{
 				key: 'has_public_ip'
 				value: 'yes'
 			}]
@@ -140,9 +131,6 @@ fn test_action_some_params_some_arguments_single_line() {
 		assert action.action.name == 'define'
 		assert action.action.params == Params{
 			params: [Param{
-				key: 'id'
-				value: '15'
-			}, Param{
 				key: 'has_public_ip'
 				value: 'yes'
 			}]
@@ -188,13 +176,10 @@ fn test_action() {
 	actions := doc.actions()
 	assert actions[0].actor == 'farmerbot'
 	assert actions[0].name == 'nodemanager_define'
-	assert actions[0].params.get('id')! == '15'
 
 	assert actions[1].actor == 'farmerbot'
 	assert actions[1].name == 'nodemanager_delete'
-	assert actions[1].params.get('id')! == '16'
 
 	assert actions[2].actor == 'farmerbot'
 	assert actions[2].name == 'nodemanager_start'
-	assert actions[2].params.get('id')! == '17'
 }

@@ -1,0 +1,31 @@
+host: "::"                          # default: 127.0.0.1
+port: 3333                       # default: 8080
+
+# path to the DAGs directory
+# dags: <the location of DAG configuration files>              # default: {DAGU_HOME}/dags
+
+# Web UI Color & Title
+# navbarColor: <ui header color>                               # header color for web UI (e.g. "#ff0000")
+navbarTitle: ${args.title}                                 # header title for web UI (e.g. "PROD")
+
+@if args.passwd.len>0
+isBasicAuth: true
+basicAuthUsername: admin
+basicAuthPassword: ${args.passwd}
+@end
+
+@if args.secret.len>0
+isAuthToken: true                                    # enables API token
+authToken: ${args.secret}
+@end
+
+# Base Config
+# baseConfig: <base DAG config path>                           # default: {DAGU_HOME}/config.yaml
+
+# Working Directory
+# workDir: <working directory for DAGs>                        # default: DAG location
+
+# SSL Configuration
+# tls:
+#     certFile: <path to SSL certificate file>
+#     keyFile: <path to SSL key file>

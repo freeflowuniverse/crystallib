@@ -2,7 +2,6 @@ module zola
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.web.zola as zola_installer
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.ui.console
@@ -12,7 +11,7 @@ import os
 @[heap]
 pub struct Zola {
 pub mut:
-	sites           []&ZSite                    @[skip; str: skip]
+	sites           []&ZolaSite                    @[skip; str: skip]
 	gitrepos        map[string]gittools.GitRepo
 	gitrepos_status map[string]RepoStatus
 	coderoot        string
@@ -55,7 +54,7 @@ pub fn new(args ZolaArgs) !Zola {
 fn (mut self Zola) generate() ! {
 	// now we generate all sites
 	for mut site in self.sites {
-		site.generate()!
+		site.generate(self.gitrepos_status)!
 	}
 	// now we have to reset the rev keys, so we remember current status
 	for key, mut status in self.gitrepos_status {

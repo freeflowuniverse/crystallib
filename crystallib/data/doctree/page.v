@@ -16,7 +16,7 @@ pub struct Page {
 pub mut:
 	name           string // received a name fix
 	path           pathlib.Path
-	pathrel        string // relative path in the playbook
+	pathrel        string // relative path in the collection
 	state          PageStatus
 	pages_included []&Page      @[str: skip]
 	pages_linked   []&Page      @[str: skip]
@@ -27,7 +27,7 @@ pub mut:
 	changed        bool
 	tree_name      string
 	tree           &Tree        @[str: skip]
-	playbook_name  string
+	collection_name  string
 }
 
 fn (mut page Page) link_to_page_update(mut link Link) ! {
@@ -40,16 +40,16 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 		tree: page.tree
 	}
 
-	mut playbook := page.tree.playbooks[page.playbook_name] or {
-		return error("could not find playbook:'${page.playbook_name}' in tree: ${page.tree_name}")
+	mut collection := page.tree.collections[page.collection_name] or {
+		return error("could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 	}
 
-	if file_name in playbook.pages {
-		other_page = playbook.pages[file_name] or { panic('bug') }
+	if file_name in collection.pages {
+		other_page = collection.pages[file_name] or { panic('bug') }
 	} else if page.tree.page_exists(file_name) {
 		other_page = page.tree.page_get(file_name)!
 	} else {
-		playbook.error(
+		collection.error(
 			path: page.path
 			msg: 'link to unknown page: ${link.str()}'
 			cat: .page_not_found
@@ -71,55 +71,55 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 	}
 }
 
-// update link on the page, find the link into the playbook
+// update link on the page, find the link into the collection
 fn (mut page Page) link_update(mut link Link) ! {
 	// mut linkout := link
 	mut file_name := link.filename
 	println('get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
 	name_without_ext := file_name.all_before('.')
 
-	mut playbook := page.tree.playbooks[page.playbook_name] or {
-		return error("2could not find playbook:'${page.playbook_name}' in tree: ${page.tree_name}")
+	mut collection := page.tree.collections[page.collection_name] or {
+		return error("2could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 	}
 
 	// check if the file or image is there, if yes we can return, nothing to do
 	mut file_search := true
-	// fileobj := File{playbook: }
+	// fileobj := File{collection: }
 
 	mut fileobj := &File{
-		playbook: playbook
+		collection: collection
 	}
 	if link.cat == .image {
-		if playbook.image_exists(name_without_ext) {
+		if collection.image_exists(name_without_ext) {
 			file_search = false
-			fileobj = playbook.image_get(name_without_ext)!
+			fileobj = collection.image_get(name_without_ext)!
 		} else {
-			msg := "'${name_without_ext}' not found for page:${page.path.path}, we looked over all playbooks."
-			playbook.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
+			msg := "'${name_without_ext}' not found for page:${page.path.path}, we looked over all collections."
+			collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 		}
 	} else if link.cat == .file {
-		if playbook.file_exists(name_without_ext) {
+		if collection.file_exists(name_without_ext) {
 			file_search = false
-			fileobj = playbook.file_get(name_without_ext)!
+			fileobj = collection.file_get(name_without_ext)!
 		} else {
-			playbook.error(path: page.path, msg: 'file not found', cat: .file_not_found)
+			collection.error(path: page.path, msg: 'file not found', cat: .file_not_found)
 		}
 	} else {
 		panic('link should be of type image or file, not ${link.cat}')
 	}
 
 	if file_search {
-		// if the playbook is filled in then it means we need to copy the file here,
+		// if the collection is filled in then it means we need to copy the file here,
 		// or the image is not found, then we need to try and find it somewhere else
 		// we need to copy the image here
 		fileobj = page.tree.image_get(name_without_ext) or {
-			msg := "'${name_without_ext}' not found for page:${page.path.path}, we looked over all playbooks."
-			playbook.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
+			msg := "'${name_without_ext}' not found for page:${page.path.path}, we looked over all collections."
+			collection.error(path: page.path, msg: 'image ${msg}', cat: .image_not_found)
 			return
 		}
-		// we found the image should copy to the playbook now
+		// we found the image should copy to the collection now
 		$if debug {
-			println('image or file found in other playbook: ${fileobj}')
+			println('image or file found in other collection: ${fileobj}')
 		}
 		$if debug {
 			println('${link}')
@@ -133,7 +133,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 			panic('source and destination is same when trying to fix link (copy).')
 		}
 		fileobj.path.copy(dest: dest.path)!
-		playbook.image_new(mut dest)! // make sure playbook knows about the new file
+		collection.image_new(mut dest)! // make sure collection knows about the new file
 		fileobj.path = dest
 
 		fileobj.path.check()
@@ -234,14 +234,14 @@ fn (mut page Page) include(pages_to_include map[int]Page) ! {
 // process_includes recursively processes the include actiona in a page
 // and includes pages into the markdown doc if found in tree
 fn (mut page Page) process_includes(mut include_tree []string) ! {
-	mut playbook := page.tree.playbook_get(page.playbook_name) or {
-		return error("1could not find playbook:'${page.playbook_name}' in tree: ${page.tree_name}")
+	mut collection := page.tree.collection_get(page.collection_name) or {
+		return error("1could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 	}
 	mut doc := page.doc or { return error('no doc yet on page') }
 	// check for circular imports
 	if page.name in include_tree {
 		history := include_tree.join(' -> ')
-		playbook.error(
+		collection.error(
 			path: page.path
 			msg: 'Found a circular include: ${history} in '
 			cat: .circular_import
@@ -261,22 +261,24 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 			mut page_to_include := page.tree.page_get(include.content) or {
 				println('debugzo')
 				msg := "include:'${include.content}' not found for page:${page.path.path}"
-				page.tree.playbooks[playbook.name].error(
-					path: page.path
-					msg: 'include ${msg}'
-					cat: .page_not_found
-				)
-				continue
+				if mut p := page.tree.collections[collection.name]{
+					p.error(
+						path: page.path
+						msg: 'include ${msg}'
+						cat: .page_not_found
+					)
+					continue
+				}else {panic('bug')}
 			}
 			$if debug {
-				println('Found page in playbook ${page_to_include.playbook_name}')
+				println('Found page in collection ${page_to_include.collection_name}')
 			}
 			page_to_include.process_includes(mut include_tree)!
 			included_pages[x] = page_to_include
 		}
 	}
 
-	println(page.tree.playbooks[playbook.name])
+	println(page.tree.collections[collection.name])
 
 	// now we need to remove the links and replace them with the items from the doc of the page to insert
 	mut offset := 0

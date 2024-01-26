@@ -17,5 +17,3 @@ pub fn (mut d DAGU) new_dag(dag DAG) DAG {
 	os.write_file('~/.dagu/config.yaml', config_yaml)
 	return DAGU{}
 }
-
-pub fn 

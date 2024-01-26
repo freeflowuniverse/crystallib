@@ -99,8 +99,6 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 //returns the session and the path of the fetched repo
 fn session_run_get(cmd Command) !(&play.Session,string) {	
 
-	//TODO: need to use gitstructure in session !!!
-
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
 
@@ -112,6 +110,10 @@ fn session_run_get(cmd Command) !(&play.Session,string) {
 		coderoot = os.environ()['CODEROOT']
 	}
 
+	if coderoot.len>0{
+		panic("coderoot >0 not supported yet, not imeplemented.")
+	}
+
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	interactive := !cmd.flags.get_bool('script') or { false }
@@ -120,11 +122,10 @@ fn session_run_get(cmd Command) !(&play.Session,string) {
 	mut session := play.session_new(
 		session_name: sessionname
 		context_name: contextname
-		coderoot: coderoot
 		interactive: interactive
 	)!
 
-	mut gs := session.context.gitstructure
+	mut gs := session.context.gitstructure()!
 	if url.len > 0 {
 		path = gs.code_get(
 			pull: pull

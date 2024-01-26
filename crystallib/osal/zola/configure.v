@@ -50,7 +50,7 @@ pub mut:
 }
 
 // load the object from a configuration instance, which comes from context
-pub fn new_from_config(args_ NewFromConfigArgs) !&ZSite {
+pub fn new_from_config(args_ NewFromConfigArgs) !&ZolaSite {
 	mut args := args_
 
 	mut c := configurator(args.instance, mut args.context)!

@@ -15,8 +15,9 @@ import freeflowuniverse.crystallib.data.paramsparser
 // - revenue_monthly_delay
 // - cogs_perc: what is percentage of the cogs (can change over time) e.g. 0:5%,12:10%.
 //
-fn (mut m BizModel) revenue_actions(actions_ PlayBook) ! {
-	mut actions2 := actions_.find(actor: 'revenue')
+fn (mut m BizModel) revenue_actions(plbook_ PlayBook) ! {
+	mut plbook:=plbook_
+	mut actions2 := plbook.actions_find_by_name(actor: 'revenue')!
 	for action in actions2 {
 		if action.name == 'define' {
 			// !!revenue.define

@@ -1,24 +1,26 @@
-import data.doctree
-import freeflowuniverse.crystallib.core.play
+module doctree
 
-pub fn play(args play.PlayArgs) ! {
-	mut session := play.session(args)!
-	for action in session.actions.find(filter: ['doctree', 'otheractor:add']) {
-		mut p := action.params
-		match action.name {
-			'playbooks_scan' {
-				// playbooks_scan(p)!
-				panic('implement')
-			}
-			else {
-				return error('action name ${action.name} not supported')
-			}
-		}
-	}
-}
+import freeflowuniverse.crystallib.core.play as playm
 
-// // playbooks_scan scans a path for playbooks and adds the playbooks to actor's doctree
-// fn (mut actor PublisherActor) playbooks_scan(action playbook.Action) ! {
+// TODO: implement
+
+// pub fn play(args playm.PlayArgs) ! {
+// 	mut session := playm.session(args)!
+// 	for action in session.actions.find(filter: ['doctree', 'otheractor:add']) {
+// 		match action.name {
+// 			'collections_scan' {
+// 				// collections_scan(p)!
+// 				panic('implement')
+// 			}
+// 			else {
+// 				return error('action name ${action.name} not supported')
+// 			}
+// 		}
+// 	}
+// }
+
+// // collections_scan scans a path for collections and adds the collections to actor's doctree
+// fn (mut actor PublisherActor) collections_scan(action collection.Action) ! {
 // 	git_url := action.params.get('git_url')!
 // 	git_root := action.params.get('git_root')!
 // 	lock actor.doctree {

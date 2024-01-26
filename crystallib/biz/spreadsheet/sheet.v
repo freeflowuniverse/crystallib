@@ -35,18 +35,26 @@ pub fn (mut s Sheet) cells_width(colnr int) !int {
 	return lmax
 }
 
-// return name or alias, comment max width in 2 size list
-pub fn (mut s Sheet) names_width() []int {
-	mut res := [0, 0]
+//walk over all rows, return the max width of the name and/or alias field of a row
+pub fn (mut s Sheet) rows_names_width_max() int {
+	mut res := 0
 	for _, mut row in s.rows {
-		if row.name.len > res[0] {
-			res[0] = row.name.len
+		if row.name.len > res {
+			res = row.name.len
 		}
-		if row.alias.len > res[0] {
-			res[0] = row.alias.len
+		if row.alias.len > res {
+			res = row.alias.len
 		}
-		if row.description.len > res[1] {
-			res[1] = row.description.len
+	}
+	return res
+}
+
+//walk over all rows, return the max width of the description field of a row
+pub fn (mut s Sheet) rows_description_width_max() int {
+	mut res := 0
+	for _, mut row in s.rows {
+		if row.description.len > res {
+			res = row.description.len
 		}
 	}
 	return res

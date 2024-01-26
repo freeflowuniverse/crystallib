@@ -12,7 +12,6 @@ pub mut:
 	gid      smartid.GID
 	pre      []HtmlSource
 	lastid   int
-
 	id      int
 	content string
 	// doc      ?&Doc        @[skip; str: skip]

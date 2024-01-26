@@ -69,7 +69,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 
 	if path.name().to_lower().ends_with('.tar.gz') || path.name().to_lower().ends_with('.tgz') {
 		cmd := 'tar -xzvf ${path.path} -C ${desto.path}'
-		// println(cmd)
+		println(cmd)
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('Could not expand.\n${res}')

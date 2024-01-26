@@ -17,9 +17,6 @@ const text1 = "
 	description: 'TF Wallet for TFT' 
 	preferred: false
 
-//free comment
-a:=this is something else
-
 //comment2
 !!payment.add person:despiegk
 	name: 'TF Wallet2'
@@ -30,9 +27,6 @@ const text2 = "
 //comment for the action
 !!payment.add person:fatayera
 	name: 'TF Wallet'
-
-//free comment
-a:=this is something else
 
 !!payment.else person:despiegk
 	name: 'TF Wallet2'
@@ -55,14 +49,9 @@ fn test_parse_1() {
 
 		// comment2
 		!!payment.add name:'TF Wallet2' person:despiegk
-
-
-
-		free comment
-		a:=this is something else
 		")
 
-	assert sha256.hexhash(a.str()) == '7b2bbe3f6e356adac403fe056652b35e5750a287a4d87f1fd02fa6d088bbd638'
+	assert sha256.hexhash(a.str()) == 'aaab9b1f5b0a21fd9c172fa1249cd34c1d2b6fa8666dd609a69376742022e425'
 }
 
 fn test_hashkey() {
@@ -77,18 +66,18 @@ fn test_hashkey() {
 fn test_filter() {
 	mut a := new(text: playbook.text2) or { panic(err) }
 
-	mut b := a.find('payment.*')!
+	mut b := a.find(filter: 'payment.*')!
 	assert b.len == 2
 
-	mut c := a.find('payment.else')!
+	mut c := a.find(filter: 'payment.else')!
 	assert c.len == 1
 
-	mut d := a.find('actor2.*')!
+	mut d := a.find(filter: 'actor2.*')!
 	assert d.len == 1
 
-	mut e := a.find('actor2.else')!
+	mut e := a.find(filter: 'actor2.else')!
 	assert e.len == 1
 
-	mut f := a.find('actor2:else2')!
+	mut f := a.find(filter: 'actor2:else2')!
 	assert f.len == 0
 }

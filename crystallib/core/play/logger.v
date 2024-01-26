@@ -2,8 +2,6 @@ module play
 
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.data.paramsparser
-// import os
 
 @[heap]
 pub struct Logger {
