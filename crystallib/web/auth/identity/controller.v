@@ -15,9 +15,9 @@ pub fn (mut ctrl Controller) before_request() {
 	println(ctrl.req)
 }
 
-[post]
+@[post]
 pub fn (mut ctrl Controller) register() vweb.Result {
-	user_ := json.decode(User, ctrl.req.data) or { 
+	user_ := json.decode(User, ctrl.req.data) or {
 		ctrl.set_status(400, '')
 		return ctrl.text('Failed to decode request data.')
 	}
@@ -37,9 +37,9 @@ pub fn (mut ctrl Controller) register() vweb.Result {
 	return ctrl.text(user.id)
 }
 
-[post]
+@[post]
 pub fn (mut ctrl Controller) create_group() vweb.Result {
-	group := json.decode(Group, ctrl.req.data) or { 
+	group := json.decode(Group, ctrl.req.data) or {
 		ctrl.set_status(400, '')
 		return ctrl.text('Failed to decode request data.')
 	}
@@ -85,5 +85,3 @@ pub fn (mut ctrl Controller) get_groups() vweb.Result {
 // 	}
 // 	return ctrl.json(logs)
 // }
-
-

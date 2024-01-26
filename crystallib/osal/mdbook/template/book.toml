@@ -31,6 +31,15 @@ command = "mdbook-mermaid"
 #use as mdbook preprocessor
 [preprocessor.echarts]
 
+[preprocessor.embed]
+
+[preprocessor.kroki-preprocessor]
+
+[output.linkcheck]
+follow-web-links = true
+traverse-parent-directories = true
+warning-policy = "warn"
+
 # [output.pdf]
 # landscape = false
 # display-header-footer = true

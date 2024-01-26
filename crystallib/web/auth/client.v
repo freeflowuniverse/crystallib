@@ -11,23 +11,27 @@ import freeflowuniverse.crystallib.web.auth.jwt
 
 // // session controller that be be added to vweb projects
 pub struct Client {
-	url string [required]
+	url string @[required]
 mut:
-	identity identity.Client
-	tokens tokens.Tokens
-	session session.Client
+	identity      identity.Client
+	tokens        tokens.Tokens
+	session       session.Client
 	authorization authorization.Client
 }
 
-pub struct ClientConfig{
+pub struct ClientConfig {
 	url string
 }
 
 pub fn new_client(config ClientConfig) Client {
 	return Client{
 		url: config.url
-		identity: identity.Client{url:'${config.url}/identity'}
-		session: session.Client{url:'${config.url}/session'}
+		identity: identity.Client{
+			url: '${config.url}/identity'
+		}
+		session: session.Client{
+			url: '${config.url}/session'
+		}
 	}
 }
 
@@ -75,9 +79,6 @@ pub fn (c Client) create_group(group identity.Group) ! {
 pub fn (mut c Client) register(user identity.User) !string {
 	return c.identity.register(user)!
 }
-
-
-
 
 // pub fn (client Client) new_auth_tokens(params RefreshTokenParams) !AuthTokens {
 // 	resp := client.post_request(

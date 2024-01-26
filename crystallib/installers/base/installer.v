@@ -111,7 +111,7 @@ pub fn develop(args InstallArgs) ! {
 	osal.done_set('crystal_development', 'OK')!
 }
 
-//compile the hero command line
+// compile the hero command line
 pub fn hero_compile(args InstallArgs) ! {
 	pl := osal.platform()
 

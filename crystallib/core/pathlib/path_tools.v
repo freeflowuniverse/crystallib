@@ -91,10 +91,10 @@ pub fn (mut path Path) expand(dest string) !Path {
 		if res.exit_code > 0 {
 			return error('Could not expand bz2.\n${res.output}')
 		}
-		dest_tmp := path.path.all_before_last(".bz2")
+		dest_tmp := path.path.all_before_last('.bz2')
 		desto.delete()!
 		mut desto2 := get_file(path: dest, create: false)!
-		os.mv(dest_tmp,desto2.path)!
+		os.mv(dest_tmp, desto2.path)!
 		return desto2
 	} else {
 		panic('expand not implemented yet for : ${path.path}')

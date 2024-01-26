@@ -12,7 +12,6 @@ pub mut:
 	ref Element
 }
 
-
 fn set_children(mut doc Doc, element Element, args ?ElementRef) {
 	if mut parent := args {
 		parent.ref.children << element
@@ -20,7 +19,6 @@ fn set_children(mut doc Doc, element Element, args ?ElementRef) {
 		doc.children << element
 	}
 }
-
 
 pub fn (mut doc Doc) paragraph_new(args ElementNewArgs) &Paragraph {
 	mut a := Paragraph{
@@ -111,7 +109,6 @@ pub fn (mut doc Doc) link_new(args ElementNewArgs) &Link {
 	set_children(mut doc, &a, args.parent)
 	return &a
 }
-
 
 pub fn (mut doc Doc) html_new(args ElementNewArgs) &Html {
 	mut a := Html{

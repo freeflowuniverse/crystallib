@@ -37,13 +37,11 @@ The -r will run it, can also do -e or -st to see sourcetree
 		description: 'name of the zola.'
 	})
 
-
 	cmdroot.add_command(cmd_zola)
 }
 
 fn cmd_zola_execute(cmd Command) ! {
-
-	mut session,path := session_run_do(cmd)!
+	mut session, path := session_run_do(cmd)!
 
 	mut name := cmd.flags.get_string('name') or { '' }
 	reset := cmd.flags.get_bool('gitreset') or { false }

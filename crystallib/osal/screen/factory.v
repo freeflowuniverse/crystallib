@@ -58,7 +58,7 @@ pub fn (mut self ScreensFactory) scan() ! {
 		.join_lines()
 	mut res2 := texttools.to_list_map('pre,state', res1, '').map(init_screen_object(it))
 	for mut item in res2 {
-		if self.exists(item.name){
+		if self.exists(item.name) {
 			return error('duplicate screen with name: ${item.name}')
 		}
 		self.screens << item
@@ -75,28 +75,30 @@ pub mut:
 	attach bool
 }
 
-
 // print list of screen screens
 pub fn (mut self ScreensFactory) add(args_ ScreenAddArgs) !Screen {
 	mut args := args_
 	if args.cmd == '' {
 		args.cmd = '/bin/bash'
 	}
-	if args.name.len<3{
-		return error("name needs to be at least 3 chars.")
+	if args.name.len < 3 {
+		return error('name needs to be at least 3 chars.')
 	}
-	if self.exists(args.name){
-		if args.reset{
+	if self.exists(args.name) {
+		if args.reset {
 			self.kill(args.name)!
-		}else{
+		} else {
 			return self.get(args.name)!
-		}		
-	}	
-	self.screens << Screen{name:args.name,cmd:args.cmd}
+		}
+	}
+	self.screens << Screen{
+		name: args.name
+		cmd: args.cmd
+	}
 	if args.start {
 		self.start(args.name)!
 	}
-	mut myscreen:=self.get(args.name)!
+	mut myscreen := self.get(args.name)!
 
 	if args.attach {
 		myscreen.attach()!
@@ -107,7 +109,7 @@ pub fn (mut self ScreensFactory) add(args_ ScreenAddArgs) !Screen {
 // print list of screen screens
 pub fn (mut self ScreensFactory) exists(name string) bool {
 	for mut screen in self.screens {
-		if screen.name == name{
+		if screen.name == name {
 			return true
 		}
 	}
@@ -116,22 +118,21 @@ pub fn (mut self ScreensFactory) exists(name string) bool {
 
 pub fn (mut self ScreensFactory) get(name string) !Screen {
 	for mut screen in self.screens {
-		if screen.name == name{
+		if screen.name == name {
 			return screen
 		}
 	}
-	return error("couldnt find screen with name $name")
+	return error('couldnt find screen with name ${name}')
 }
 
-
 pub fn (mut self ScreensFactory) start(name string) ! {
-	mut s:=self.get(name)!
+	mut s := self.get(name)!
 	s.start_()!
 	for {
 		self.scan()!
-		mut s2:=self.get(name)!
-		if s2.pid>0{			
-			return 
+		mut s2 := self.get(name)!
+		if s2.pid > 0 {
+			return
 		}
 		println(s2)
 		time.sleep(100000)
@@ -139,8 +140,8 @@ pub fn (mut self ScreensFactory) start(name string) ! {
 }
 
 pub fn (mut self ScreensFactory) kill(name string) ! {
-	if self.exists(name){
-		mut s:=self.get(name)!
+	if self.exists(name) {
+		mut s := self.get(name)!
 		s.kill_()!
 	}
 	self.scan()!
@@ -164,6 +165,3 @@ pub fn (mut self ScreensFactory) str() string {
 	}
 	return out
 }
-
-
-

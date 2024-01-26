@@ -1,6 +1,5 @@
 module dagu
 
-
 // pub fn get(args GetArgs) !bool {
 // 	//this checks health of dagu
 // 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works

@@ -1,7 +1,6 @@
 module identity
 
 pub interface IIdentity {
-mut: 
+mut:
 	register(User) !string
 }
-

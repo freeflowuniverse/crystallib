@@ -77,7 +77,7 @@ pub fn (mut gitstructure GitStructure) repo_exists(l GitLocator) !bool {
 		return false
 	}
 	if res.len > 1 {
-		return error('Found more than 1 repo with locator (exist).\n${l}\n$res')
+		return error('Found more than 1 repo with locator (exist).\n${l}\n${res}')
 	}
 	return true
 }

@@ -17,7 +17,7 @@ pub enum FileType {
 @[heap]
 pub struct File {
 pub mut:
-	collection     &Collection  @[str: skip]
+	collection   &Collection  @[str: skip]
 	name         string // received a name fix
 	path         pathlib.Path
 	pathrel      string

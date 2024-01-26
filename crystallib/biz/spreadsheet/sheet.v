@@ -35,7 +35,7 @@ pub fn (mut s Sheet) cells_width(colnr int) !int {
 	return lmax
 }
 
-//walk over all rows, return the max width of the name and/or alias field of a row
+// walk over all rows, return the max width of the name and/or alias field of a row
 pub fn (mut s Sheet) rows_names_width_max() int {
 	mut res := 0
 	for _, mut row in s.rows {
@@ -49,7 +49,7 @@ pub fn (mut s Sheet) rows_names_width_max() int {
 	return res
 }
 
-//walk over all rows, return the max width of the description field of a row
+// walk over all rows, return the max width of the description field of a row
 pub fn (mut s Sheet) rows_description_width_max() int {
 	mut res := 0
 	for _, mut row in s.rows {

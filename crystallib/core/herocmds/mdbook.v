@@ -36,23 +36,21 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 		description: 'name of the mdbook.'
 	})
 
-
 	cmdroot.add_command(cmd_mdbook)
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
-
-	mut session,_ := session_run_do(cmd)!
+	mut session, _ := session_run_do(cmd)!
 
 	mut name := cmd.flags.get_string('name') or { '' }
 
-	if name==""{
-		mut a:=session.plbook.action_get_by_name(actor:"book",name:"define")!
-		name = a.params.get("name") or {""}
+	if name == '' {
+		mut a := session.plbook.action_get_by_name(actor: 'book', name: 'define')!
+		name = a.params.get('name') or { '' }
 	}
 
-	if name==""{
-		println("did not find defined book, or name not specified")
+	if name == '' {
+		println('did not find defined book, or name not specified')
 		return error(cmd.help_message())
 	}
 
@@ -68,5 +66,4 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	if edit {
 		book2.edit()!
 	}
-
 }

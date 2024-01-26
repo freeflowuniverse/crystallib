@@ -20,7 +20,7 @@ pub fn test_site_new() ! {
 // 		return
 // 	}
 // 	console.print_header(' site generate: ${site.name} on ${site.path_build.path}')
-	
+
 // 	css_source := '${site.path_build.path}/css/index.css'
 // 	css_dest := '${site.path_build.path}/static/css/index.css'
 // 	site.tailwind.compile(css_source, css_dest)!

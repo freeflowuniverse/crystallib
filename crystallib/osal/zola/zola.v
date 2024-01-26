@@ -11,7 +11,7 @@ import os
 @[heap]
 pub struct Zola {
 pub mut:
-	sites           []&ZolaSite                    @[skip; str: skip]
+	sites           []&ZolaSite                 @[skip; str: skip]
 	gitrepos        map[string]gittools.GitRepo
 	gitrepos_status map[string]RepoStatus
 	coderoot        string

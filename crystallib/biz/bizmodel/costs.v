@@ -13,7 +13,7 @@ import freeflowuniverse.crystallib.core.texttools
 //	   cost_percent_revenue e.g. 4%, will make sure the cost will be at least 4% of revenue
 
 fn (mut m BizModel) overhead_actions(plbook_ PlayBook) ! {
-	mut plbook:=plbook_
+	mut plbook := plbook_
 	mut actions2 := plbook.actions_find_by_name(actor: 'costs')!
 	for action in actions2 {
 		if action.name == 'define' {

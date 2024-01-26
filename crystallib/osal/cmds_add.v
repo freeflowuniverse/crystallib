@@ -31,7 +31,7 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	if res.exit_code == 0 {
 		existing_path := res.output.trim_space()
 		if destpath != existing_path {
-				println(" - did find a cmd which is not in path we expect:\n    expected:${destpath}\n    got:${existing_path}")
+			println(' - did find a cmd which is not in path we expect:\n    expected:${destpath}\n    got:${existing_path}')
 			if args.reset {
 				os.rm(existing_path)!
 			} else {
@@ -51,26 +51,26 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	destfile.chmod(0o770)! // includes read & write & execute
 
 	// lets make sure this path is in profile
-	profile_path_add(path:dest)!
+	profile_path_add(path: dest)!
 }
 
 pub fn profile_path_add_hero() !string {
 	mut dest := bin_path()!
-	profile_path_add(path:dest)!
+	profile_path_add(path: dest)!
 	return dest
 }
 
-[params]
-pub struct ProfilePathAddArgs{
+@[params]
+pub struct ProfilePathAddArgs {
 pub mut:
-	path string [required]
-	todelete string //see which one to remove
+	path     string @[required]
+	todelete string // see which one to remove
 }
 
 // add the following path to a profile
 pub fn profile_path_add(args ProfilePathAddArgs) ! {
 	mut toadd := []string{}
-	path:=args.path
+	path := args.path
 	if is_osx() {
 		toadd << '${os.home_dir()}/.zprofile'
 		toadd << '${os.home_dir()}/.zshrc'
@@ -93,7 +93,7 @@ pub fn profile_path() string {
 }
 
 pub fn bin_path() !string {
-	mut dest:=""
+	mut dest := ''
 	if is_osx() {
 		dest = '${os.home_dir()}/hero/bin'
 		dir_ensure(dest)!
@@ -104,7 +104,7 @@ pub fn bin_path() !string {
 }
 
 pub fn hero_path() !string {
-	mut dest:=""
+	mut dest := ''
 	dest = '${os.home_dir()}/hero'
 	dir_ensure(dest)!
 	return dest
@@ -112,7 +112,7 @@ pub fn hero_path() !string {
 
 ///usr/local on linux, ${os.home_dir()}/hero on osx
 pub fn usr_local_path() !string {
-	mut dest:=""
+	mut dest := ''
 	if is_osx() {
 		dest = '${os.home_dir()}/hero'
 		dir_ensure(dest)!
@@ -163,10 +163,10 @@ fn profile_path_add_(profile_path_ string, path2add string, todelete string) ! {
 	mut profile_path := pathlib.get_file(path: profile_path_, create: true)!
 	mut c := profile_path.read()!
 
-	if todelete.len>0{
-		c=c.split_into_lines().filter(! it.contains(todelete)).join_lines()
+	if todelete.len > 0 {
+		c = c.split_into_lines().filter(!it.contains(todelete)).join_lines()
 	}
-	
+
 	paths := profile_paths_get(c)
 	if path2add in paths {
 		return

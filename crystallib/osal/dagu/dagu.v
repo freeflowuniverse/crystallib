@@ -14,7 +14,6 @@ pub fn new(config Config) DAGU {
 	return DAGU{}
 }
 
-
 pub fn (mut d DAGU) new_dag(dag DAG) DAG {
 	dag_yaml := $tmpl('./templates/dag.yaml')
 	os.write_file('~/.dagu/dags/${texttools.namefix(dag.name)}.yaml', config_yaml)

@@ -77,7 +77,6 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		description: 'reset, means lose changes of your repos, BE CAREFUL.'
 	})
 
-
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
@@ -93,12 +92,10 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		abbrev: 'st'
 		description: 'Open sourcetree (git mgmt) for the repo where we found the content.'
 	})
-
 }
 
-//returns the session and the path of the fetched repo
-fn session_run_get(cmd Command) !(&play.Session,string) {	
-
+// returns the session and the path of the fetched repo
+fn session_run_get(cmd Command) !(&play.Session, string) {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
 
@@ -110,14 +107,13 @@ fn session_run_get(cmd Command) !(&play.Session,string) {
 		coderoot = os.environ()['CODEROOT']
 	}
 
-	if coderoot.len>0{
-		panic("coderoot >0 not supported yet, not imeplemented.")
+	if coderoot.len > 0 {
+		panic('coderoot >0 not supported yet, not imeplemented.')
 	}
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	interactive := !cmd.flags.get_bool('script') or { false }
-
 
 	mut session := play.session_new(
 		session_name: sessionname
@@ -135,36 +131,32 @@ fn session_run_get(cmd Command) !(&play.Session,string) {
 		)!
 	}
 
-
-	return session,path
+	return session, path
 }
 
-//same as session_run_get but will also run the playbook
-fn session_run_do(cmd Command) !(&play.Session,string)  {
+// same as session_run_get but will also run the playbook
+fn session_run_do(cmd Command) !(&play.Session, string) {
+	mut session, path := session_run_get(cmd)!
 
-	mut session,path := session_run_get(cmd)!
-
-	if path.len>0{
+	if path.len > 0 {
 		// add all actions inside to the playbook
 		session.playbook_add(path: path)!
 		session.process()!
 		console.print_stdout(session.plbook.str())
 		playcmds.run(mut session)!
 	}
-	return session,path
+	return session, path
 }
 
-//get the repo, check if we need to do 
-fn session_run_edit_sourcecode(cmd Command) !(&play.Session,string) {
-
-
+// get the repo, check if we need to do
+fn session_run_edit_sourcecode(cmd Command) !(&play.Session, string) {
 	edit := cmd.flags.get_bool('edit') or { false }
 	treedo := cmd.flags.get_bool('sourcetree') or { false }
 
 	mut session, path := session_run_do(cmd)!
 
-	if path.len==0{
-		return error("path or url needs to be specified")
+	if path.len == 0 {
+		return error('path or url needs to be specified')
 	}
 
 	if treedo {
@@ -175,5 +167,5 @@ fn session_run_edit_sourcecode(cmd Command) !(&play.Session,string) {
 		vscode.open(path: path)!
 	}
 
-	return session,path
+	return session, path
 }

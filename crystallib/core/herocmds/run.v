@@ -1,7 +1,6 @@
 module herocmds
 
-import cli { Command, Flag }
-
+import cli { Command }
 
 // path string //if location on filessytem, if exists, this has prio on git_url
 // git_url   string // location of where the hero scripts are

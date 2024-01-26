@@ -28,7 +28,7 @@ pub fn (mut c Controller) index() vweb.Result {
 }
 
 pub fn (mut c Controller) users() vweb.Result {
-	users := c.identity.get_users() or { 
+	users := c.identity.get_users() or {
 		c.set_status(500, '')
 		return c.text('error: ${err}')
 	}
@@ -36,7 +36,7 @@ pub fn (mut c Controller) users() vweb.Result {
 }
 
 pub fn (mut c Controller) groups() vweb.Result {
-	groups := c.identity.get_groups() or { 
+	groups := c.identity.get_groups() or {
 		c.set_status(500, '')
 		return c.text('error: ${err}')
 	}

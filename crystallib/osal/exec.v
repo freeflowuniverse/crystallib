@@ -302,7 +302,7 @@ pub fn (mut job Job) wait() ! {
 	if job.status != .running && job.status != .init {
 		return error('can only wait for running job')
 	}
-	
+
 	for {
 		result := job.process()!
 		// println(result)

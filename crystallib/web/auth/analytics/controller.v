@@ -6,26 +6,26 @@ import json
 
 pub struct Controller {
 	vweb.Context
-pub mut: 
+pub mut:
 	db sqlite.DB
 }
 
-[post]
+@[post]
 pub fn (mut ctrl Controller) log() vweb.Result {
-	log := json.decode(Log, ctrl.req.data) or { 
+	log := json.decode(Log, ctrl.req.data) or {
 		ctrl.set_status(400, '')
 		return ctrl.text('Failed to decode request data.')
 	}
 	sql ctrl.db {
 		insert log into Log
-	} or { 
+	} or {
 		ctrl.set_status(500, '')
 		return ctrl.text('Failed insert log into db.')
 	}
 	return ctrl.ok('')
 }
 
-[get]
+@[get]
 pub fn (mut ctrl Controller) logs() vweb.Result {
 	logs := sql ctrl.db {
 		select from Log
@@ -35,5 +35,3 @@ pub fn (mut ctrl Controller) logs() vweb.Result {
 	}
 	return ctrl.json(logs)
 }
-
-

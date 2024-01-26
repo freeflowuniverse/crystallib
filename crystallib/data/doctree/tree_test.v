@@ -94,25 +94,22 @@ fn match_files(mut files1 map[string]&File, mut files2 map[string]&File) ! {
 	}
 }
 
-
 fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 	assert pages1.len == pages2.len
 	for name, mut page1 in pages1 {
 		mut page2 := pages2[name] or { return error("${name} doesn't exist in both collections") }
 
-		if page1_doc := page1.doc{
-			if page2_doc := page2.doc{
-				assert  page1_doc.markdown() == page2_doc.markdown()
-			}else{
-			return error("page2 doc not found")	
+		if page1_doc := page1.doc {
+			if page2_doc := page2.doc {
+				assert page1_doc.markdown() == page2_doc.markdown()
+			} else {
+				return error('page2 doc not found')
 			}
-		}else{
-			return error("page1 doc not found")
+		} else {
+			return error('page1 doc not found')
 		}
-		
 	}
 }
-
 
 fn match_collections(mut col1 Collection, mut col2 Collection) ! {
 	match_files(mut col1.files, mut col2.files)!
@@ -132,7 +129,7 @@ fn test_write_tree() {
 	mut tree2 := tree_create(name: doctree.tree_name)!
 	tree2.scan(path: '/tmp/tree_write')!
 	tree2.write('/tmp/tree_write2')!
-	// write tree2 another time to compare the output of the two 
+	// write tree2 another time to compare the output of the two
 	mut tree3 := tree_create(name: doctree.tree_name)!
 	tree3.scan(path: '/tmp/tree_write2')!
 

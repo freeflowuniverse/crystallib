@@ -129,14 +129,14 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		dest.check()
 	}
 	if args.expand_dir.len > 0 {
-		if os.exists(args.expand_dir){
+		if os.exists(args.expand_dir) {
 			os.rmdir_all(args.expand_dir)!
 		}
-		
+
 		return dest.expand(args.expand_dir)!
 	}
 	if args.expand_file.len > 0 {
-		if os.exists(args.expand_file){
+		if os.exists(args.expand_file) {
 			os.rm(args.expand_file)!
 		}
 		return dest.expand(args.expand_file)!

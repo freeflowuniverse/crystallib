@@ -12,26 +12,25 @@ import time
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset bool
-	passwd string
-	secret string
-	title string
-	start bool = true
+	reset   bool
+	passwd  string
+	secret  string
+	title   string
+	start   bool = true
 	restart bool
 }
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version:="1.12.9"
+	version := '1.12.9'
 
 	res := os.execute('source ${osal.profile_path()} && dagu version')
 	if res.exit_code == 0 {
-
-		r:=res.output.split_into_lines().filter(it.trim_space().len>0)
-		if r.len != 1{
-			return error("couldn't parse dagu version.\n$res.output")
+		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
+		if r.len != 1 {
+			return error("couldn't parse dagu version.\n${res.output}")
 		}
-		if texttools.version(version)>texttools.version(r[0]) {
+		if texttools.version(version) > texttools.version(r[0]) {
 			args.reset = true
 		}
 	} else {
@@ -39,7 +38,6 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	if args.reset {
-
 		console.print_header('install dagu')
 
 		mut url := ''
@@ -58,7 +56,7 @@ pub fn install(args_ InstallArgs) ! {
 		mut dest := osal.download(
 			url: url
 			minsize_kb: 9000
-			expand_dir: "/tmp/dagu"
+			expand_dir: '/tmp/dagu'
 		)!
 
 		mut binpath := dest.file_get('dagu')!
@@ -68,28 +66,25 @@ pub fn install(args_ InstallArgs) ! {
 		)!
 	}
 
-	if args.restart{
+	if args.restart {
 		restart(args)!
 		return
-	}		
-
-	if args.start{
-		start(args)!
 	}
 
+	if args.start {
+		start(args)!
+	}
 }
-
 
 pub fn configure(args_ InstallArgs) ! {
 	mut args := args_
-	if args.title==""{
-		args.title="HERO"
+	if args.title == '' {
+		args.title = 'HERO'
 	}
 	mycode := $tmpl('templates/admin.yaml')
 
-	mut path:=pathlib.get_file(path: '${os.home_dir()}/.dagu/admin.yaml', create: true)!
+	mut path := pathlib.get_file(path: '${os.home_dir()}/.dagu/admin.yaml', create: true)!
 	path.write(mycode)!
-	
 }
 
 pub fn restart(args_ InstallArgs) ! {
@@ -104,15 +99,14 @@ pub fn stop(args_ InstallArgs) ! {
 
 	mut scr := screen.new()!
 	scr.kill(name)!
-
 }
 
 pub fn start(args_ InstallArgs) ! {
 	mut args := args_
 	configure(args)!
 
-	if check(args)!{
-		return 
+	if check(args)! {
+		return
 	}
 
 	console.print_header('dagu start')
@@ -121,35 +115,32 @@ pub fn start(args_ InstallArgs) ! {
 
 	mut scr := screen.new()!
 
-	mut s := scr.add(name: name,reset:true)!
+	mut s := scr.add(name: name, reset: true)!
 
 	cmd2 := 'dagu server'
 
 	s.cmd_send(cmd2)!
 
-	for _ in 0..50{
-		if check(args)!{
-			return 
+	for _ in 0 .. 50 {
+		if check(args)! {
+			return
 		}
 		time.sleep(100000)
 	}
-	return error("dagu did not install propertly, could not call api.")
-
-
+	return error('dagu did not install propertly, could not call api.')
 }
 
-
 pub fn check(args InstallArgs) !bool {
-	//this checks health of dagu
+	// this checks health of dagu
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
-	mut conn := httpconnection.new(name: 'dagu', url: 'http://localhost:3333/api/v1/')!	
-	if args.secret.len>0{
+	mut conn := httpconnection.new(name: 'dagu', url: 'http://localhost:3333/api/v1/')!
+	if args.secret.len > 0 {
 		conn.default_header.add(.authorization, 'Bearer ${args.secret}')
 	}
-	conn.default_header.add(.content_type, 'application/json')	
-	r := conn.get_json_dict(prefix: 'dags') or {return false}
+	conn.default_header.add(.content_type, 'application/json')
+	r := conn.get_json_dict(prefix: 'dags') or { return false }
 	// r := conn.get_json_dict(prefix: 'dags')!
-	dags:=r["DAGs"] or {return false}
+	dags := r['DAGs'] or { return false }
 	// println(dags)
 	// dags:=r["DAGs"] or {return error("can't find DAG's in json.\n$r")}
 	// println(dags)
@@ -158,5 +149,4 @@ pub fn check(args InstallArgs) !bool {
 	// 	return true
 	// }
 	return true
-
 }

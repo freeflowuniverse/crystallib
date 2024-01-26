@@ -14,7 +14,7 @@ import log
 pub struct Authenticator {
 	secret string
 mut:
-	config  SmtpConfig @[required]
+	config  SmtpConfig  @[required]
 	backend IBackend // Backend for authenticator
 	logger  &log.Logger = &log.Logger(&log.Log{
 	level: .info
@@ -67,7 +67,7 @@ pub fn new(config AuthenticatorConfig) !Authenticator {
 	}
 }
 
-@[params] 
+@[params]
 pub struct SendMailConfig {
 	email string
 	mail  VerificationMail
@@ -113,13 +113,13 @@ pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! 
 		body: '${config.mail.body}\n${link}'
 	}
 
-		mut client:= smtp.new_client(
-			server: auth.config.server
-			from: auth.config.from
-			port: auth.config.port
-			username: auth.config.username
-			password: auth.config.password
-		)!
+	mut client := smtp.new_client(
+		server: auth.config.server
+		from: auth.config.from
+		port: auth.config.port
+		username: auth.config.username
+		password: auth.config.password
+	)!
 
 	client.send(mail) or { panic('Error resolving email address') }
 	auth.logger.debug('Email Authenticator: Sent authentication email to ${config.email}')
@@ -145,14 +145,13 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 		body: '${config.mail.body}\n${link}'
 	}
 
-	mut client:= smtp.new_client(
-			server: auth.config.server
-			from: auth.config.from
-			port: auth.config.port
-			username: auth.config.username
-			password: auth.config.password
-		)!
-
+	mut client := smtp.new_client(
+		server: auth.config.server
+		from: auth.config.from
+		port: auth.config.port
+		username: auth.config.username
+		password: auth.config.password
+	)!
 
 	client.send(mail) or { panic('Error resolving email address') }
 	auth.logger.debug('Email Authenticator: Sent login link to ${config.email}')

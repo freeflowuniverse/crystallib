@@ -19,4 +19,3 @@ module analytics
 // 		db: db
 // 	}
 // }
-

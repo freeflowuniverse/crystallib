@@ -29,8 +29,7 @@ fn test_collection_exists() {
 
 	collections := ['btc_examples', 'eth_examples', 'explorer_examples', 'ipfs_examples',
 		'metrics_examples', 'nostr_examples', 'sftpgo_examples', 'stellar_examples',
-		'tfchain_examples', 'tfgrid_examples', 'fruits', 'rpc', 'server',
-		'test_vegetables']
+		'tfchain_examples', 'tfgrid_examples', 'fruits', 'rpc', 'server', 'test_vegetables']
 	for collection in collections {
 		assert tree.collection_exists(collection)
 	}

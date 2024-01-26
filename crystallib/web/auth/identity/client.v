@@ -6,10 +6,10 @@ import rand
 import json
 
 pub struct Client {
-	url string [required]
+	url string @[required]
 }
 
-[post]
+@[post]
 pub fn (mut c Client) register(user User) !string {
 	data := json.encode(user)
 	req := http.new_request(.post, '${c.url}/register', data)
@@ -20,7 +20,7 @@ pub fn (mut c Client) register(user User) !string {
 	return resp.body
 }
 
-[post]
+@[post]
 pub fn (c Client) get_user(user User) !User {
 	data := json.encode(user)
 	req := http.new_request(.get, '${c.url}/get_user', data)
@@ -31,7 +31,7 @@ pub fn (c Client) get_user(user User) !User {
 	return json.decode(User, resp.body)
 }
 
-[post]
+@[post]
 pub fn (c Client) get_users() ![]User {
 	println('${c.url}/get_users')
 	req := http.new_request(.get, '${c.url}/get_users', '')
@@ -52,7 +52,7 @@ pub fn (c Client) get_groups() ![]Group {
 	return json.decode([]Group, resp.body)
 }
 
-[get]
+@[get]
 pub fn (c Client) user_exists(user User) !bool {
 	data := json.encode(user)
 	req := http.new_request(.post, '${c.url}/user_exists', data)
@@ -82,5 +82,3 @@ pub fn (c Client) create_group(group Group) ! {
 // 	}
 // 	return ctrl.json(logs)
 // }
-
-

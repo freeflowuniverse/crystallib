@@ -20,7 +20,7 @@ pub fn session_new(args_ PlayArgs) !&Session {
 	mut args := args_
 
 	mut context := args.context or {
-		mut c:=context_get(name:args.context_name,interactive:args.interactive)!
+		mut c := context_get(name: args.context_name, interactive: args.interactive)!
 		&c
 	}
 

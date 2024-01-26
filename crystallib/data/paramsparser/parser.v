@@ -34,7 +34,7 @@ pub fn parse(text string) !Params {
 	// println("****PARSER")
 	// println(text2)
 	// println("****PARSER END")
-	text2 = text2.replace("\"","'")
+	text2 = text2.replace('"', "'")
 	text2 = texttools.multiline_to_single(text2)!
 	// println("1")
 	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,./'
