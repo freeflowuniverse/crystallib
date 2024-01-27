@@ -1,45 +1,13 @@
 module elements
 
 import freeflowuniverse.crystallib.core.smartid
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.core.playbook
 
 @[heap]
 pub struct Doc {
+	DocBase
 pub mut:
-	children  []Element
-	gid       smartid.GID
-	pre       []HtmlSource
-	lastid    int
-	id        int
-	content   string
-	path      pathlib.Path
-	processed bool
-	params    paramsparser.Params
-	type_name string
-	changed   bool
-}
-
-pub fn (mut self Doc) newid() int {
-	self.lastid += 1
-	return self.lastid
-}
-
-pub fn (mut self Doc) last() !Element {
-	if self.children.len == 0 {
-		return error('doc has no children')
-	}
-
-	return self.children.last()
-}
-
-pub fn (mut self Doc) delete_last() ! {
-	if self.children.len == 0 {
-		return error('doc has no children')
-	}
-
-	self.children.delete_last()
+	gid smartid.GID
+	pre []HtmlSource
 }
 
 // add a css or script link to a document
@@ -71,10 +39,10 @@ enum HtmlSourceCat {
 
 @[params]
 pub struct DocNewArgs {
-	ElementNewArgs
 pub mut:
-	gid smartid.GID
-	pre []HtmlSource
+	gid     smartid.GID
+	pre     []HtmlSource
+	content string
 }
 
 pub fn doc_new(args DocNewArgs) !Doc {
@@ -85,14 +53,14 @@ pub fn doc_new(args DocNewArgs) !Doc {
 	return d
 }
 
-pub fn (self Doc) actions() []playbook.Action {
-	mut out := []playbook.Action{}
-	for element in self.children {
-		if element is Action {
-			out << element.action
+pub fn (mut self Doc) remove_empty_elements() ! {
+	mut to_delete := []int{}
+	for id, element in self.children {
+		// remove the elements which are empty
+		if element.content.trim_space() == '' {
+			to_delete << id
 		}
-
-		out << element.actions()
 	}
-	return out
+
+	self.delete_from_children(to_delete)
 }

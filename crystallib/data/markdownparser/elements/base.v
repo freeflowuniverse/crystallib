@@ -67,11 +67,11 @@ pub fn (self DocBase) children() []Element {
 	return self.children
 }
 
-pub fn (mut self DocBase) process_elements(mut doc Doc) !int {
+pub fn (mut self DocBase) process_elements() !int {
 	for {
 		mut changes := 0
 		for mut element in self.children {
-			changes += element.process(mut doc)!
+			changes += element.process()!
 		}
 		if changes == 0 {
 			break
@@ -101,4 +101,20 @@ pub fn (self DocBase) markdown() string {
 		out += element.markdown()
 	}
 	return out
+}
+
+pub fn (mut self DocBase) last() !Element {
+	if self.children.len == 0 {
+		return error('doc has no children')
+	}
+
+	return self.children.last()
+}
+
+pub fn (mut self DocBase) delete_last() ! {
+	if self.children.len == 0 {
+		return error('doc has no children')
+	}
+
+	self.children.delete_last()
 }

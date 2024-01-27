@@ -7,7 +7,7 @@ pub mut:
 	depth int
 }
 
-pub fn (mut self Header) process(mut doc Doc) !int {
+pub fn (mut self Header) process() !int {
 	if self.processed {
 		return 0
 	}
@@ -25,11 +25,4 @@ pub fn (self Header) markdown() string {
 
 pub fn (self Header) html() string {
 	return '<h${self.depth}>${self.content}</h${self.depth}>\n'
-}
-
-@[params]
-pub struct HeaderNewArgs {
-	ElementNewArgs
-pub mut:
-	depth int
 }

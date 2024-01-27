@@ -7,7 +7,7 @@ pub mut:
 	replaceme string
 }
 
-pub fn (mut self Html) process(mut doc Doc) !int {
+pub fn (mut self Html) process() !int {
 	if self.processed {
 		return 0
 	}
@@ -27,9 +27,4 @@ pub fn (self Html) html() string {
 	mut out := self.content
 	out += self.DocBase.html()
 	return out
-}
-
-@[params]
-pub struct HtmlNewArgs {
-	ElementNewArgs
 }

@@ -23,7 +23,7 @@ pub enum Alignment as u8 {
 	right
 }
 
-pub fn (mut self Table) process(mut doc Doc) !int {
+pub fn (mut self Table) process() !int {
 	if self.processed {
 		return 0
 	}
@@ -53,11 +53,6 @@ pub fn (self Table) markdown() string {
 pub fn (self Table) html() string {
 	// TODO: implement html
 	panic('implement')
-}
-
-@[params]
-pub struct TableNewArgs {
-	ElementNewArgs
 }
 
 // get all relevant info out of table

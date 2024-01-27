@@ -15,6 +15,6 @@ mut:
 	type_name string
 	changed   bool
 	children  []Element
-	process(mut doc Doc) !int
+	process() !int
 	treeview_(prefix string, mut out []string)
 }

@@ -15,7 +15,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		mut line := parser.line_current()
-		line = line.replace('\t', '    ')
 		trimmed_line := line.trim_space()
 
 		mut llast := parser.lastitem()!
@@ -64,24 +63,23 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			continue
 		}
 
-		if mut llast is elements.Paragraph {
-			// parse includes
+		if mut llast is elements.Paragraph{
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
-				doc.include_new(content: content)
+				doc.include_new(content)
 				parser.next_start()!
 				continue
 			}
 			// parse action
 			if line.starts_with('!!') {
-				doc.action_new(content: line)
+				doc.action_new(line)
 				parser.next()
 				continue
 			}
 
 			// find codeblock
 			if line.starts_with('```') || line.starts_with("'''") {
-				mut e := doc.codeblock_new()
+				mut e := doc.codeblock_new('')
 				e.category = line.substr(3, line.len).to_lower().trim_space()
 				parser.next()
 				continue
@@ -99,7 +97,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 						parser.next_start()!
 						continue
 					}
-					mut e := doc.header_new(content: line.all_after_first(line[..d]).trim_space())
+					mut e := doc.header_new(line.all_after_first(line[..d]).trim_space())
 					e.depth = d
 					parser.next_start()!
 					continue
@@ -109,13 +107,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
-				doc.table_new(content: '${line}\n')
+				doc.table_new('${line}\n')
 				parser.next()
 				continue
 			}
 
 			if trimmed_line.to_lower().starts_with('<html>') {
-				doc.html_new()
+				doc.html_new('')
 				parser.next()
 				continue
 			}
@@ -123,7 +121,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if trimmed_line.starts_with('<!--') && trimmed_line.ends_with('-->') {
 				mut comment := trimmed_line.all_after_first('<!--')
 				comment = comment.all_before('-->')
-				doc.comment_new(content: comment)
+				doc.comment_new(comment)
 				parser.next_start()!
 				continue
 			}
@@ -138,14 +136,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				}
 			}
 			else {
-				// println(line)
-				// println(llast)
 				panic('parser error, means we got element which is not supported')
 			}
 		}
-
+		
 		parser.next()
 	}
 
+	doc.remove_empty_elements()!
 	doc.process_elements()! // now do the processing
 }
