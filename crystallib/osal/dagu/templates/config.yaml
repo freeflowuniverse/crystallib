@@ -2,7 +2,7 @@
 logDir: @{config.log_dir}
 
 # history retention days (default: 30)
-histRetentionDays: @{config.hist_retention_days}
+histRetentionDays: @{config.history_retention_days}
 
 # Email notification settings
 mailOn:
