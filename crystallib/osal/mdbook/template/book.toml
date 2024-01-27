@@ -35,10 +35,10 @@ command = "mdbook-mermaid"
 
 [preprocessor.kroki-preprocessor]
 
-[output.linkcheck]
-follow-web-links = true
-traverse-parent-directories = true
-warning-policy = "warn"
+# [output.linkcheck]
+# follow-web-links = true
+# traverse-parent-directories = true
+# warning-policy = "warn"
 
 # [output.pdf]
 # landscape = false
