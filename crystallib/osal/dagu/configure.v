@@ -14,7 +14,7 @@ pub mut:
 }
 
 // return a config object even if from partial info
-pub fn config(args Config) MyConfig {
+pub fn config(args MyConfig) MyConfig {
 	return args
 }
 

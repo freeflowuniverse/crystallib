@@ -3,35 +3,42 @@ description: @{dag.description}
 schedule: @{dag.schedule}
 group: @{dag.group}
 tags: @{dag.tags}
+@if env := dag.env
 env:
-  @for key, val in dag.env
+  @for key, val in env
   - @{key}: @{val}
   @end
+@end
 logDir: @{dag.log_dir}
 restartWaitSec: @{dag.restart_wait_sec}
-histRetentionDays: @{dag.hist.retention.days}
+histRetentionDays: @{dag.hist_retention_days}
 delaySec: @{dag.delay_sec}
 maxActiveRuns: @{dag.max_active_runs}
 params: @{dag.params}
+@if preconditions := dag.preconditions
 preconditions:
-  @for precondition in dag.preconditions
+  @for precondition in preconditions
   - condition: @{precondition.condition}
     expected: @{precondition.expected}
   @end
+@end
+  @if mail_on := dag.mail_on
 mailOn:
-  failure: @{dag.mail_on.failure}
-  success: @{dag.mail_on.success}
+  failure: @{mail_on.failure}
+  success: @{mail_on.success}
+  @end
 MaxCleanUpTimeSec: @{dag.max_cleanup_time_sec}
+@if handler_on := dag.handler_on
 handlerOn:
   success:
-    command: @{dag.handler_on.success}
+    command: @{handler_on.success}
   failure:
-    command: @{dag.handler_on.failure}
+    command: @{handler_on.failure}
   cancel:
-    command: @{dag.handler_on.cancel}
+    command: @{handler_on.cancel}
   exit:
-    command: @{dag.handler_on.exit}
-
+    command: @{handler_on.exit}
+@end
 steps:
   @for step in dag.steps
   - name: @{step.name}
@@ -39,26 +46,43 @@ steps:
     dir: @{step.dir}
     command: @{step.command}
     stdout: @{step.stdout}
-    ouptut: @{step.output}
+    @if output := step.output
+    output: @{output}
+    @end
+    @if script := step.script
     script: |
-      @{step.script}
+      @{script}
+    @end
     signalOnStop: @{step.signal_on_stop}
+    @if mail_on := step.mail_on
     mailOn:
-      failure: @{step.mail_on.failure}
-      success: @{step.mail_on.success}
+      failure: @{mail_on.failure}
+      success: @{mail_on.success}
+    @end
+    @if continue_on := step.continue_on
     continueOn:
-      failure: @{step.continue_on.failure}
-      skipped: @{step.continue_on.skipped}
+      failure: @{continue_on.failure}
+      skipped: @{continue_on.skipped}
+    @end
+    @if retry_policy := step.retry_policy
     retryPolicy:
-      limit: @{step.retry_policy.limit}
-      intervalSec: @{step.retry_policy.interval_sec}
+      limit: @{retry_policy.limit}
+      intervalSec: @{retry_policy.interval_sec}
+    @end
+    @if repeat_policy := step.repeat_policy
     repeatPolicy:
-      repeat: @{step.repeat_policy.repeat}
-      intervalSec: @{step.repeat_policy.interval_sec}
+      repeat: @{repeat_policy.repeat}
+      intervalSec: @{repeat_policy.interval_sec}
+    @end
+    @if preconditions := step.preconditions
     preconditions:
-      @for precondition in step.preconditions
+      @for precondition in preconditions
       - condition: 
         expected: @{precondition}
       @end
+    @end
+    @if depends := step.depends
     depends:
-      -  @{step.depends}
+      -  @{depends}
+    @end
+  @end

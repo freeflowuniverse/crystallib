@@ -4,7 +4,7 @@ import os
 import freeflowuniverse.crystallib.osal
 
 @[params]
-struct CompletionBashOptions {
+pub struct CompletionBashOptions {
 	no_descriptions ?bool // disable completion descriptions
 }
 
@@ -16,7 +16,7 @@ pub fn completion_bash(options CompletionBashOptions) !string {
 }
 
 @[params]
-struct CompletionFishOptions {
+pub struct CompletionFishOptions {
 	no_descriptions ?bool // disable completion descriptions
 }
 
@@ -28,7 +28,7 @@ pub fn completion_fish(options CompletionFishOptions) !string {
 }
 
 @[params]
-struct CompletionPowershellOptions {
+pub struct CompletionPowershellOptions {
 	no_descriptions ?bool // disable completion descriptions
 }
 
@@ -40,7 +40,7 @@ pub fn completion_powershell(options CompletionPowershellOptions) !string {
 }
 
 @[params]
-struct CompletionZshOptions {
+pub struct CompletionZshOptions {
 	no_descriptions ?bool // disable completion descriptions
 }
 
@@ -52,7 +52,7 @@ pub fn completion_zsh(options CompletionZshOptions) !string {
 }
 
 @[params]
-struct DryOptions {
+pub struct DryOptions {
 	params string // parameters
 }
 
@@ -94,7 +94,7 @@ pub fn scheduler(options SchedulerOptions) !string {
 }
 
 @[params]
-struct ServerOptions {
+pub struct ServerOptions {
 	dags string // location of DAG files (default is /Users/timurgordon/.dagu/dags)
 	host string // server host (default is localhost)
 	port string // server port (default is 8080)
@@ -108,7 +108,7 @@ pub fn server(options ServerOptions) !string {
 }
 
 @[params]
-struct StartOptions {
+pub struct StartOptions {
 	params string // parameters
 }
 
@@ -120,7 +120,7 @@ pub fn start(dag_file string, options StartOptions) !string {
 }
 
 @[params]
-struct StartAllOptions {
+pub struct StartAllOptions {
 	dags string // location of DAG files (default is /Users/timurgordon/.dagu/dags)
 	host string // server host (default is localhost)
 	port string // server port (default is 8080)
