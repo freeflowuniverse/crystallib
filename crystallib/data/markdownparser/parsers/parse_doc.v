@@ -63,7 +63,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			continue
 		}
 
-		if mut llast is elements.Paragraph{
+		if mut llast is elements.Paragraph {
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
 				doc.include_new(content)
@@ -139,7 +139,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				panic('parser error, means we got element which is not supported')
 			}
 		}
-		
+
 		parser.next()
 	}
 
