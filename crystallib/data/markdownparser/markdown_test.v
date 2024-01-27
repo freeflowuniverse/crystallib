@@ -181,7 +181,7 @@ fn test_wiki_action() {
 			}, Param{
 				key: 'has_public_ip'
 				value: 'yes'
-			}, Param{
+			},Param{
 				key: 'twinid'
 				value: '20'
 			}]
