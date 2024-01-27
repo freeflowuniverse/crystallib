@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.smartid
 pub struct Doc {
 	DocBase
 pub mut:
-	gid smartid.GID
+	// gid smartid.GID
 	pre []HtmlSource
 }
 
@@ -40,27 +40,51 @@ enum HtmlSourceCat {
 @[params]
 pub struct DocNewArgs {
 pub mut:
-	gid     smartid.GID
 	pre     []HtmlSource
 	content string
 }
 
 pub fn doc_new(args DocNewArgs) !Doc {
 	mut d := Doc{
-		gid: args.gid
 		pre: args.pre
 	}
 	return d
 }
 
-pub fn (mut self Doc) remove_empty_elements() ! {
-	mut to_delete := []int{}
-	for id, element in self.children {
-		// remove the elements which are empty
-		if element.content.trim_space() == '' {
-			to_delete << id
+
+pub fn (mut self Doc) process() !int {	
+	if self.processed {
+		return 0
+	}
+	self.remove_empty_children()
+	self.process_base()!
+	self.process_children()!
+	self.content = "" //because now the content is in children	
+	mut last := self.children[0] or { panic("bug") }
+	last = Paragraph{} //to make sure we start from right base
+	mut type_name:=""
+	mut type_name_last:=""
+	if self.children.len>0{		
+		for mut element in self.children {
+			type_name=element.type_name().all_after_last(".").to_lower()
+			if type_name in ["list"] && type_name == type_name_last{
+				last.trailing_lf = false
+			}
+			last = element
+			type_name_last=type_name
 		}
+
 	}
 
-	self.delete_from_children(to_delete)
+	self.processed = true
+	return 1
 }
+
+
+// pub fn (self Doc) markdown() string {
+// 	return ""
+// }
+
+// pub fn (self Doc) html() string {
+// 	return ""
+// }

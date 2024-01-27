@@ -15,7 +15,6 @@ pub fn (mut base DocBase) action_new(content string) &Action {
 		content: content
 		type_name: 'action'
 	}
-
 	base.children << a
 	return &a
 }
@@ -40,12 +39,23 @@ pub fn (mut base DocBase) header_new(content string) &Header {
 	return &a
 }
 
+pub fn (mut base DocBase) list_new(content string) &List {
+	mut a := List{
+		content: content
+		type_name: 'list'
+	}
+	a.process() or { panic(err) }
+	base.children << a
+	return &a
+}
+
+
 pub fn (mut base DocBase) text_new(content string) &Text {
 	mut a := Text{
 		content: content
 		type_name: 'text'
 	}
-
+	a.trailing_lf = false
 	base.children << a
 	return &a
 }
@@ -85,7 +95,7 @@ pub fn (mut base DocBase) link_new(content string) &Link {
 		content: content
 		type_name: 'link'
 	}
-
+	a.trailing_lf = false
 	base.children << a
 	return &a
 }

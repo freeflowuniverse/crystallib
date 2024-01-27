@@ -58,7 +58,7 @@ fn test_charparser3() {
 	mut doc := Doc{}
 	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements()!
+	p2.process_children()!
 	// TODO decide what to do in this case
 	assert p2 == Paragraph{
 		content: '!['
@@ -94,7 +94,7 @@ fn test_charparser_link() {
 	mut doc := Doc{}
 	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements()!
+	p2.process_children()!
 
 	assert p2 == Paragraph{
 		content: '![a](b)'
@@ -131,7 +131,7 @@ fn test_charparser_link_ignore_trailing_spaces() {
 	mut doc := Doc{}
 	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements()!
+	p2.process_children()!
 
 	assert p2.children.len == 1
 	assert p2.children.last().content == '![a](b)'
@@ -145,7 +145,7 @@ fn test_charparser_link_ignore_trailing_newlines() {
 	mut doc := Doc{}
 	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements()!
+	p2.process_children()!
 
 	assert p2.children.len == 1
 	assert p2.children.last().content == '![a](b)'
@@ -163,7 +163,7 @@ sometext
 
 	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements()!
+	p2.process_children()!
 
 	assert p2.children.len == 5
 	assert p2.children[0] is Text
@@ -202,7 +202,7 @@ sometext
 	mut doc := Doc{}
 	p2.paragraph_parse()!
 	p2.process_base()!
-	p2.process_elements()!
+	p2.process_children()!
 
 	assert p2.children.len == 6
 	assert p2.children[0] is Text

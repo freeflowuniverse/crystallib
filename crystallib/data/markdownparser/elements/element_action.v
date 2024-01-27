@@ -21,12 +21,16 @@ fn (mut self Action) process() !int {
 
 	self.action = p.actions[0]
 	self.process_base()!
-	self.process_elements()!
+	self.process_children()!
 	self.processed = true
 	return 1
 }
 
 fn (self Action) markdown() string {
+	if self.content.len>0{
+		return self.content
+	}
+	// println(self.action.script3())
 	return self.action.script3()
 }
 

@@ -14,18 +14,21 @@ pub fn (mut self Codeblock) process() !int {
 		return 0
 	}
 	mut pb := playbook.new(text: self.content)!
-	for mut action in pb.actions {
-		mut a := self.action_new(action.script3())
-		a.action = *action
-		a.processed = true
+	if  pb.actions.len>0{
+		for mut action in pb.actions {
+			mut a := self.action_new("")
+			a.action = *action
+			a.processed = true
+			a.content = action.script3()
+		}
+		// now see if there is something left in codeblock, if yes add that one to the parent_elements
+		if pb.othertext.len > 0 {
+			self.text_new(pb.othertext)
+		}
+		self.content = "" //because is now in the children
 	}
 
-	// now see if there is something left in codeblock, if yes add that one to the parent_elements
-	if pb.othertext.len > 0 {
-		self.text_new(pb.othertext)
-	}
-
-	self.process_elements()!
+	self.process_children()!
 	self.processed = true
 	return 1
 }
@@ -33,8 +36,17 @@ pub fn (mut self Codeblock) process() !int {
 pub fn (self Codeblock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
-	out += self.content.trim_space()
-	out += '\n```\n'
+
+	for action in self.actions(){
+		out+=action.str()+"\n"
+	}
+	if self.content.len>0{
+		out += self.content.trim_space()
+		out += '\n```\n'
+	}else{
+		out += '```\n'
+	}
+	
 	return out
 }
 

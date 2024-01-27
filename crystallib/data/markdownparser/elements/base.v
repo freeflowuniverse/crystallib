@@ -10,52 +10,76 @@ pub struct DocBase {
 pub mut:
 	id        int
 	content   string
-	path      pathlib.Path
+	path      ?pathlib.Path
 	processed bool
-	params    paramsparser.Params
+	// params    paramsparser.Params
 	type_name string
 	changed   bool
 	children  []Element
+	parent ?&Element @[skip; str: skip]
+	trailing_lf bool = true //do we need to do a line feed (enter) at end of this element, default yes
 }
 
-fn (mut self DocBase) process_base() ! {
-	mut to_delete := []int{}
-	for id, element in self.children {
-		// remove the elements which are empty
-		if element.content == '' {
-			to_delete << id
-		}
+fn (mut self DocBase) process_base() ! {	
+}
+
+fn (mut self DocBase) remove_empty_children()  {	
+	self.children = self.children.filter(!(it.content.trim_space() == '' && it.children.len==0 ))
+}
+
+pub fn (mut self DocBase) process() !int {	
+	if self.processed {
+		return 0
 	}
-
-	self.delete_from_children(to_delete)
+	self.remove_empty_children()
+	self.process_base()!
+	self.process_children()!
+	self.content = "" //because now the content is in children	
+	self.processed = true
+	return 1
 }
 
-fn (mut self DocBase) delete_from_children(to_delete []int) {
-	mut write := 0
-	mut delete_ind := 0
-	for i := 0; i < self.children.len; i++ {
-		if delete_ind < to_delete.len && i == to_delete[delete_ind] {
-			delete_ind++
-			continue
-		}
-		self.children[write] = self.children[i]
-		write++
-	}
-
-	self.children = self.children[0..write]
+@[params]
+pub struct ActionsGetArgs {
+pub mut:
+	actor     string
+	name   string
 }
 
-pub fn (self DocBase) actions() []playbook.Action {
+//get all actions from the children
+pub fn (self DocBase) actions(args ActionsGetArgs) []playbook.Action {
 	mut out := []playbook.Action{}
 	for element in self.children {
 		if element is Action {
-			out << element.action
+			mut found:=true
+			if args.actor.len>0 && args.actor!=element.action.actor{found=false}
+			if args.name.len>0 && args.name!=element.action.name{found=false}
+			if found{
+				out << element.action
+			}			
+		}else{
+			out << element.actions(args)
 		}
-
-		out << element.actions()
 	}
 	return out
 }
+
+pub fn (mut self DocBase) action_pointers(args ActionsGetArgs) []ActionPointer {
+	mut out := []ActionPointer{}
+	for mut element in self.children {
+		if mut element is Action {
+			mut found:=true
+			if args.actor.len>0 && args.actor!=element.action.actor{found=false}
+			if args.name.len>0 && args.name!=element.action.name{found=false}
+			if found{
+				out << ActionPointer{action:element.action,doc_element:&element}
+			}			
+		}
+		out << element.action_pointers(args)
+	}
+	return out
+}
+
 
 pub fn (self DocBase) treeview() string {
 	mut out := []string{}
@@ -67,21 +91,21 @@ pub fn (self DocBase) children() []Element {
 	return self.children
 }
 
-pub fn (mut self DocBase) process_elements() !int {
-	for {
-		mut changes := 0
-		for mut element in self.children {
-			changes += element.process()!
-		}
-		if changes == 0 {
-			break
-		}
+pub fn (mut self DocBase) process_children() !int {
+	mut changes := 0
+	for mut element in self.children {
+		changes += element.process()!
 	}
-	return 0
+	return changes
 }
 
 fn (self DocBase) treeview_(prefix string, mut out []string) {
-	out << '${prefix}- ${self.type_name:-30} ${self.content.len}'
+	mut c:=self.content
+	c=c.replace("\n","\\n").replace("  "," ")
+	if c.len>80{
+		c=c[0..80]
+	}
+	out << '${prefix}- ${self.type_name:-30} ${c.len}  $c'
 	for mut element in self.children() {
 		element.treeview_(prefix + ' ', mut out)
 	}
@@ -99,16 +123,19 @@ pub fn (self DocBase) markdown() string {
 	mut out := ''
 	for mut element in self.children() {
 		out += element.markdown()
+		if element.trailing_lf{
+			out+="\n"
+		}
 	}
 	return out
 }
 
-pub fn (mut self DocBase) last() !Element {
+pub fn (self DocBase) last() !Element {
 	if self.children.len == 0 {
 		return error('doc has no children')
 	}
-
-	return self.children.last()
+	mut l:=self.children.last()
+	return l
 }
 
 pub fn (mut self DocBase) delete_last() ! {

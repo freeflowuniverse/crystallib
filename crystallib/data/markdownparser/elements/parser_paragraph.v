@@ -106,4 +106,5 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 		llast.content += char_
 		parser.next()
 	}
+	paragraph.remove_empty_children()
 }

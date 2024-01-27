@@ -44,7 +44,7 @@ mut tree:=knowledgetree.tree_get(cid:"abc",name:"test")!
 //the next scan operation will pull information from git and process
 tree.scan(
 	heal:true
-	git_url:'https://git.ourworld.tf/threefold_coop/mydocs/src'
+	git_url:'https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/collections'
 	git_root:'/tmp/code'
 	git_pull:true
 )!
