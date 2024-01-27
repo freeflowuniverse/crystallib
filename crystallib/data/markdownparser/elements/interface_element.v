@@ -1,13 +1,15 @@
 module elements
 
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.data.paramsparser
+// import freeflowuniverse.crystallib.data.paramsparser
 
+@[heap]
 interface Element {
 	markdown() string
 	html() string
 	actions(args ActionsGetArgs) []playbook.Action
 	treeview_(prefix string, mut out []string)
+	action_pointers(args ActionsGetArgs) []ActionPointer
 mut:
 	id        int
 	content   string
@@ -17,13 +19,14 @@ mut:
 	changed   bool
 	trailing_lf bool
 	children  []Element
-
-	action_pointers(args ActionsGetArgs) []ActionPointer
 	process() !int
+	content_set( int, string)
+	id_set( int) int
 }
 
+@[heap]
 pub struct ActionPointer{
 pub mut:
 	action playbook.Action
-	doc_element &Element @[skip; str: skip]
+	element_id int
 }

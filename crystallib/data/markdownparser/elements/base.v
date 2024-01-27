@@ -2,7 +2,7 @@ module elements
 
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.smartid
-import freeflowuniverse.crystallib.data.paramsparser
+// import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
 
 @[heap]
@@ -64,15 +64,15 @@ pub fn (self DocBase) actions(args ActionsGetArgs) []playbook.Action {
 	return out
 }
 
-pub fn (mut self DocBase) action_pointers(args ActionsGetArgs) []ActionPointer {
+pub fn (self DocBase) action_pointers(args ActionsGetArgs) []ActionPointer {
 	mut out := []ActionPointer{}
-	for mut element in self.children {
-		if mut element is Action {
+	for element in self.children {
+		if element is Action {
 			mut found:=true
 			if args.actor.len>0 && args.actor!=element.action.actor{found=false}
 			if args.name.len>0 && args.name!=element.action.name{found=false}
 			if found{
-				out << ActionPointer{action:element.action,doc_element:&element}
+				out << ActionPointer{action:element.action,element_id:element.id}
 			}			
 		}
 		out << element.action_pointers(args)
@@ -105,7 +105,7 @@ fn (self DocBase) treeview_(prefix string, mut out []string) {
 	if c.len>80{
 		c=c[0..80]
 	}
-	out << '${prefix}- ${self.type_name:-30} ${c.len}  $c'
+	out << '${prefix}- ${self.id} : ${self.type_name:-30}  ${c.len}  $c'
 	for mut element in self.children() {
 		element.treeview_(prefix + ' ', mut out)
 	}
@@ -145,3 +145,24 @@ pub fn (mut self DocBase) delete_last() ! {
 
 	self.children.delete_last()
 }
+
+
+pub fn (mut self DocBase) content_set(element_id int, c string) {
+	for mut element in self.children() {
+		if element.id==element_id{
+			element.content = c
+		}
+		element.content_set(element_id,c)
+	}
+}
+
+pub fn (mut self DocBase) id_set(latestid_ int)int {
+	mut latestid:=latestid_	
+	latestid+=1
+	self.id=latestid	
+	for mut element in self.children() {
+		latestid=element.id_set(latestid)		
+	}
+	return latestid
+}
+

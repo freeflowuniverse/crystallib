@@ -1,6 +1,6 @@
 module elements
 
-import freeflowuniverse.crystallib.core.smartid
+// import freeflowuniverse.crystallib.core.smartid
 
 @[heap]
 pub struct Doc {
@@ -64,18 +64,15 @@ pub fn (mut self Doc) process() !int {
 	last = Paragraph{} //to make sure we start from right base
 	mut type_name:=""
 	mut type_name_last:=""
-	if self.children.len>0{		
-		for mut element in self.children {
-			type_name=element.type_name().all_after_last(".").to_lower()
-			if type_name in ["list"] && type_name == type_name_last{
-				last.trailing_lf = false
-			}
-			last = element
-			type_name_last=type_name
+	for mut element in self.children {
+		type_name=element.type_name().all_after_last(".").to_lower()
+		if type_name in ["list"] && type_name == type_name_last{
+			last.trailing_lf = false
 		}
-
+		last = element
+		type_name_last=type_name
 	}
-
+	self.id_set(0)
 	self.processed = true
 	return 1
 }

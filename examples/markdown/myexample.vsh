@@ -38,18 +38,13 @@ println(doc1.actions(actor:"myactor",name:"myname"))
 
 console.print_header("Action Pointers:")
 println("")
-for mut a in doc1.action_pointers(actor:"myactor",name:"myname"){	
-	a.doc_element.content="> THIS IS WHAT WE FILL IN FROM ACTOR"
+for a in doc1.action_pointers(actor:"myactor",name:"myname"){	
+	doc1.content_set(a.element_id,"> THIS IS WHAT WE FILL IN FROM ACTOR")
 	println(a)
 }
 
 console.print_header("Markdown output after macro's:")
 println("")
-println(doc1)
-// content2 := doc1.markdown()
-// println(content2)
-// println(doc1)
-
-
-// println(content1)
+content2 := doc1.treeview()
+println(content2)
 
