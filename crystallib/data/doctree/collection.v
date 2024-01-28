@@ -4,6 +4,7 @@ module doctree
 import freeflowuniverse.crystallib.tools.imagemagick
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.ui.console
 
 pub enum CollectionState {
 	init
@@ -26,7 +27,7 @@ pub mut:
 	errors []CollectionError
 	state  CollectionState
 	tree   &Tree             @[str: skip]
-	heal   bool
+	heal   bool = true
 }
 
 // format of name is $collectionname:$pagename or $pagename
@@ -101,7 +102,7 @@ pub fn (collection Collection) file_exists(name string) bool {
 // also fixes the name
 fn (mut collection Collection) file_image_remember(mut p Path) ! {
 	$if debug {
-		println('file or image remember: ${p.path}')
+		console.print_debug('file or image remember: ${p.path}')
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	p = ptr.path
@@ -111,7 +112,7 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 				panic('Cannot get new image:\n${p}\n${err}')
 			}
 			$if debug {
-				println('downsizing image ${p.path}')
+				console.print_debug('downsizing image ${p.path}')
 			}
 			imagemagick.downsize(path: p.path)!
 			// after downsize it could be the path has been changed, need to set it on the file
@@ -161,7 +162,7 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 // the page will be parsed as markdown
 pub fn (mut collection Collection) page_new(mut p Path) ! {
 	$if debug {
-		println('collection: ${collection.name} page new: ${p.path}')
+		console.print_debug('collection: ${collection.name} page new: ${p.path}')
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: false)!
 	// in case heal is true pointerpath_new can normalize the path
@@ -174,14 +175,12 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		)
 		return
 	}
-	mut doc := markdownparser.new(path: p.path)!
 	mut page := &Page{
-		doc: doc
 		pathrel: p.path_relative(collection.path.path)!.trim('/')
 		name: ptr.pointer.name
 		path: p
 		readonly: false
-		pages_linked: []&Page{}
+		// pages_linked: []&Page{}
 		tree: collection.tree
 		collection_name: collection.name
 	}
@@ -191,7 +190,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 // add a file to the collection, specify existing path
 pub fn (mut collection Collection) file_new(mut p Path) ! {
 	$if debug {
-		println('collection: ${collection.name} file new: ${p.path}')
+		console.print_debug('collection: ${collection.name} file new: ${p.path}')
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	// in case heal is true pointerpath_new can normalize the path
@@ -216,7 +215,7 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 // add a image to the collection, specify existing path
 pub fn (mut collection Collection) image_new(mut p Path) ! {
 	$if debug {
-		println('collection: ${collection.name} image new: ${p.path}')
+		console.print_debug('collection: ${collection.name} image new: ${p.path}')
 	}
 	mut ptr := pointerpath_new(path: p.path, path_normalize: collection.heal, needs_to_exist: true)!
 	if ptr.pointer.name.starts_with('.') {
@@ -247,7 +246,7 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 // go over all pages, fix the links, check the images are there
 pub fn (mut collection Collection) fix() ! {
 	$if debug {
-		println('collection fix: ${collection.name}')
+		console.print_debug('collection fix: ${collection.name}')
 	}
 	for _, mut page in collection.pages {
 		page.fix()!
@@ -266,12 +265,12 @@ pub fn (collection Collection) pagenames() []string {
 }
 
 // write errors.md in the collection, this allows us to see what the errors are
-fn (collection Collection) errors_report(where string) ! {
-	mut p := pathlib.get('${where}')
+fn (collection Collection) errors_report(dest_ string) ! {	
+	mut dest:=pathlib.get_file(path:dest_,create:true)!
 	if collection.errors.len == 0 {
-		p.delete()!
+		dest.delete()!
 		return
 	}
 	c := $tmpl('template/errors.md')
-	p.write(c)!
+	dest.write(c)!
 }

@@ -46,5 +46,19 @@ fn (mut image Image) skip() bool {
 		// println("SMALLER  $image.path (size: $image.size_kbyte)")
 		return true
 	}
+
+	mut parent := image.path.parent() or {panic("bug")}
+	//here we check that the file was already processed
+	// println(" check .done file: ${parent.path}")
+	if parent.file_exists('.done') {
+		// println("DONE")
+		mut p := parent.file_get('.done') or {panic("bug")}
+		c := p.read() or {panic("bug")}
+		// println(" image contains: ${path.name()}")
+		if c.contains(image.path.name()) {
+			return true
+		}
+	}
+
 	return false
 }

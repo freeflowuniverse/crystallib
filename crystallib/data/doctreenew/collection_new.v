@@ -2,14 +2,14 @@ module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct CollectionNewArgs {
 mut:
-	name string @[required]
-	path string @[required]
-	heal bool = true // healing means we fix images, if selected will automatically load, remove stale links
+	name string
+	path string
+	
+	heal bool // healing means we fix images, if selected will automatically load, remove stale links
 	load bool = true
 }
 

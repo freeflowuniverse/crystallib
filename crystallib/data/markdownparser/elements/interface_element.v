@@ -10,6 +10,8 @@ interface Element {
 	actions(args ActionsGetArgs) []playbook.Action
 	treeview_(prefix string, mut out []string)
 	action_pointers(args ActionsGetArgs) []ActionPointer
+	children_recursive()[]Element
+	children_recursive_(mut []Element)
 mut:
 	id        int
 	content   string

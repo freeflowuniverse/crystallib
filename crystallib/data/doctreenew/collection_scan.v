@@ -1,24 +1,22 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
-
 
 // walk over one specific collection, find all files and pages
 pub fn (mut collection Collection) scan() ! {
 	$if debug {
-		console.print_debug('load collection: ${collection.name} - ${collection.path.path}')
+		println('load collection: ${collection.name} - ${collection.path.path}')
 	}
 	collection.scan_internal(mut collection.path)!
 	$if debug {
-		console.print_debug('scan done')
+		println('scan done')
 	}
 }
 
 // path is the full path
 fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 	$if debug {
-		console.print_debug('scan ${p.path}')
+		println('scan ${p.path}')
 	}
 	mut pl := p.list(recursive: false)!
 	for mut p_in in pl.paths {
@@ -82,7 +80,7 @@ fn (mut collection Collection) scan_internal(mut p pathlib.Path) ! {
 				// } else if p_name.starts_with('_'){
 				//  && !(p_name.starts_with('_sidebar'))
 				// 	&& !(p_name.starts_with('_glossary')) && !(p_name.starts_with('_navbar')) {
-				// 	// console.print_debug('SKIP: $item')
+				// 	// println('SKIP: $item')
 				// continue
 			} else if p_in.path.starts_with('sidebar') {
 				continue

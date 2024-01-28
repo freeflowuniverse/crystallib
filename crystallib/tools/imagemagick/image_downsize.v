@@ -78,6 +78,7 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	mut p := parent.file_get_new('.done')!
 	mut c := p.read()!
 	if c.contains(image.path.name()) {
+		print(image)
 		print_backtrace()
 		panic('bug')
 	}

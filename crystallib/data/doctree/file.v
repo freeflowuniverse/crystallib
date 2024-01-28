@@ -1,6 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 import os
 
 pub enum FileStatus {
@@ -19,11 +20,16 @@ pub struct File {
 pub mut:
 	collection   &Collection  @[str: skip]
 	name         string // received a name fix
+	ext    		 string
 	path         pathlib.Path
 	pathrel      string
 	state        FileStatus
 	pages_linked []&Page // pointer to pages which use this file
 	ftype        FileType
+}
+
+fn ( file File) file_name()string {
+	return "${file.name}.${file.ext}"
 }
 
 fn (mut file File) init() {
@@ -32,6 +38,7 @@ fn (mut file File) init() {
 	}
 
 	file.name = file.path.name_fix_no_ext()
+	file.ext = file.path.path.all_after_last('.').to_lower()
 
 	path_rel := file.path.path_relative(file.collection.path.path) or {
 		panic('cannot get relative path.\n${err}')
@@ -60,7 +67,7 @@ fn (mut file File) exists() !bool {
 
 fn (mut file File) copy(dest string) ! {
 	mut dest2 := pathlib.get(dest)
-	file.path.copy(dest: dest2.path) or {
+	file.path.copy(dest: dest2.path,rsync:false) or {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')
 	}
 }

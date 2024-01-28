@@ -19,7 +19,6 @@ path_my_content := '${os.dir(@FILE)}/content'
 
 
 mut doc1 := markdownparser.new(
-	// path: '${path_my_content}/test_para.md'
 	path: '${path_my_content}/test.md'
 )!
 content1 := doc1.markdown()

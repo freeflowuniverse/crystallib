@@ -1,6 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub struct PointerPath {
 pub mut:
@@ -12,7 +13,7 @@ pub mut:
 pub struct PointerPathArgs {
 pub mut:
 	path           string
-	path_normalize bool // if this is set, it means it will change the path so the filename is clean
+	path_normalize bool = true // if this is set, it means it will change the path so the filename is clean
 	needs_to_exist bool // if set will check the file exists
 }
 

@@ -1,8 +1,8 @@
 module doctree
 
-import freeflowuniverse.crystallib.osal
+// import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
-import log
+import freeflowuniverse.crystallib.ui.console
 
 __global (
 	knowledgetrees shared map[string]&Tree
@@ -12,7 +12,7 @@ __global (
 pub struct TreeArgsGet {
 pub mut:
 	name string = 'default'
-	cid  string = '000'
+	cid string = "000"
 }
 
 pub fn tree_key(args_ TreeArgsGet) string {
@@ -31,19 +31,8 @@ pub fn tree_key(args_ TreeArgsGet) string {
 pub fn tree_create(args_ TreeArgsGet) !&Tree {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
-	level := match osal.env_get_default('KNOWLEDGETREE_LOG_LEVEL', 'INFO') {
-		'DEBUG' {
-			log.Level.debug
-		}
-		else {
-			log.Level.info
-		}
-	}
 	mut t := Tree{
 		name: args.name
-		logger: &log.Log{
-			level: level
-		}
 		cid: args.cid
 	}
 	return &t

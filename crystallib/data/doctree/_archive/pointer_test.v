@@ -5,7 +5,7 @@ module doctree
 
 // fn test_pointerpath() {
 // 	p1 := pointerpath_new(path: '/tmp/A file.md') or { panic(err) }
-// 	println(p1)
+// 	console.print_debug(p1)
 // 	p1_compare := PointerPath{
 // 		pointer: Pointer{
 // 			collection: ''
@@ -45,7 +45,7 @@ module doctree
 
 fn test_pointer() {
 	// p := pointer_new('Page__.md') or { panic(err) }
-	// println(p)
+	// console.print_debug(p)
 	// p_compare := Pointer{
 	// 	collection: ''
 	// 	name: 'page'
@@ -59,7 +59,7 @@ fn test_pointer() {
 
 // fn test_pointer2() {
 // 	p := pointer_new('collectionAAA:Page__.md') or { panic(err) }
-// 	println(p)
+// 	console.print_debug(p)
 // 	p_compare := Pointer{
 // 		name: 'page'
 // 		cat: .page
@@ -73,7 +73,7 @@ fn test_pointer() {
 
 // fn test_pointer3() {
 // 	p := pointer_new('MY_Book:collection_AAA:Page__.md') or { panic(err) }
-// 	println(p)
+// 	console.print_debug(p)
 // 	p_compare := Pointer{
 // 		name: 'page'
 // 		cat: .page
@@ -88,7 +88,7 @@ fn test_pointer() {
 
 // fn test_pointer4() {
 // 	p := pointer_new('MY_Book:collection_AAA:aImage__.jpg') or { panic(err) }
-// 	println(p)
+// 	console.print_debug(p)
 // 	p_compare := Pointer{
 // 		name: 'aimage'
 // 		cat: .image
@@ -103,7 +103,7 @@ fn test_pointer() {
 
 // fn test_pointer5() {
 // 	p := pointer_new('MY_Book::aImage__.jpg') or { panic(err) }
-// 	println(p)
+// 	console.print_debug(p)
 // 	p_compare := Pointer{
 // 		name: 'aimage'
 // 		cat: .image

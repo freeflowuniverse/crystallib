@@ -53,7 +53,7 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 			os.mkdir_all(dest.path_dir())!
 		}
 		$if debug {
-			console.print_header(' copy: ${path.path} ${dest.path}')
+			console.print_debug(' copy: ${path.path} ${dest.path}')
 		}
 		os.cp_all(path.path, dest.path, true)! // Always overwite if needed
 

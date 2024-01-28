@@ -1,26 +1,16 @@
 module doctree
+import freeflowuniverse.crystallib.ui.console
 
-import log
-import freeflowuniverse.crystallib.core.pathlib
-// import v.embed_file
-
-// import freeflowuniverse.crystallib.core.smartid
 
 @[heap]
 pub struct Tree {
 pub:
 	name string
 pub mut:
-	logger &log.Logger = &log.Log{
-	level: .info
-} @[skip; str: skip]
 	collections map[string]&Collection
-	// embedded_files  []embed_file.EmbedFileData // this where we have the templates for exporting a book
 	state TreeState
-	// macroprocessors []IMacroProcessor
-	// spawner         &spawner.Spawner
 	// context context.Context
-	cid string
+	cid string = "000"
 }
 
 pub enum TreeState {
@@ -98,12 +88,12 @@ pub fn (tree Tree) page_get(pointerstr string) !&Page {
 // $collection:$name or $name
 pub fn (tree Tree) image_get(pointerstr string) !&File {
 	p := pointer_new(pointerstr)!
-	// println("collection:'$p.collection' name:'$p.name'")
+	// console.print_debug("collection:'$p.collection' name:'$p.name'")
 	mut res := []&File{}
 	for _, collection in tree.collections {
-		// println(collection.name)
+		// console.print_debug(collection.name)
 		if p.collection == '' || p.collection == collection.name {
-			// println("in collection")
+			// console.print_debug("in collection")
 			if collection.image_exists(pointerstr) {
 				res << collection.image_get(pointerstr) or { panic('BUG') }
 			}
@@ -177,26 +167,4 @@ pub fn (mut tree Tree) file_exists(name string) bool {
 		}
 	}
 	return true
-}
-
-pub fn (mut tree Tree) write(p string) ! {
-	path := pathlib.get_dir(path: p, create: true)!
-
-	for name, mut collection in tree.collections {
-		dir := pathlib.get_dir(path: path.path + '/' + name, create: true)!
-		mut collection_file := pathlib.get_file(path: dir.path + '/.collection', create: true)!
-		collection_file.write(name)!
-
-		for _, mut page in collection.pages {
-			page.export(dest: dir.path + '/' + page.path.name())!
-		}
-
-		for _, mut file in collection.files {
-			file.copy(dir.path + '/' + file.path.name())!
-		}
-
-		for _, mut image in collection.images {
-			image.copy(dir.path + '/' + image.path.name())!
-		}
-	}
 }

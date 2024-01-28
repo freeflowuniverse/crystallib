@@ -3,13 +3,16 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.ui.console
+
+
 import os
 
 @[params]
 pub struct TreeScannerArgs {
 pub mut:
 	path      string
-	heal      bool // healing means we fix images, if selected will automatically load, remove stale links
+	heal      bool = true// healing means we fix images, if selected will automatically load, remove stale links
 	git_url   string
 	git_reset bool
 	git_root  string
@@ -28,7 +31,7 @@ pub mut:
 // git_pull  bool
 // ```	
 pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
-	// $if debug{println(" - collections find recursive: $path.path")}
+	// $if debug{console.print_debug(" - collections find recursive: $path.path")}
 	mut args := args_
 	if args.git_url.len > 0 {
 		args.path = gittools.code_get(
@@ -53,35 +56,25 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 			collectionfilepath2 := path.extend_file('.collection')!
 			os.mv(collectionfilepath1.path, collectionfilepath2.path)!
 		}
-		for type_of_file in ['.collection', '.book'] {
-			if path.file_exists(type_of_file) {
-				mut filepath := path.file_get(type_of_file)!
+		if path.file_exists('.collection') {
+			mut filepath := path.file_get('.collection')!
 
-				// now we found a tree we need to add
-				content := filepath.read()!
-				if content.trim_space() != '' {
-					// means there are params in there
-					mut params_ := paramsparser.parse(content)!
-					if params_.exists('name') {
-						name = params_.get('name')!
-					}
-				}
-				tree.logger.debug(' - ${type_of_file[1..]} new: ${filepath.path} name:${name}')
-				match type_of_file {
-					'.collection' {
-						tree.collection_new(
-							path: path.path
-							name: name
-							heal: args.heal
-							load: args.load
-						)!
-						return
-					}
-					else {
-						panic('not implemented: please add the new type to the match statement')
-					}
+			// now we found a collection we need to add
+			content := filepath.read()!
+			if content.trim_space() != '' {
+				// means there are params in there
+				mut params_ := paramsparser.parse(content)!
+				if params_.exists('name') {
+					name = params_.get('name')!
 				}
 			}
+			console.print_debug('new collection: ${path.path} name:${name}')
+			tree.collection_new(
+				path: path.path
+				name: name
+				heal: args.heal
+				load: args.load
+			)!
 		}
 
 		mut pl := path.list(recursive: false) or {
@@ -113,19 +106,3 @@ pub fn (mut tree Tree) heal() ! {
 	}
 }
 
-// pub fn (mut tree Tree) get_external_assets() ! {
-// 	tree.collection_new(name: '_external', path: '')!
-// 	for key, mut collection in tree.collections {
-// 		external_links := []markdownparser.Link{}
-// 		for link in external_links {
-// 			if tree.collections.values().any(fn (mut it) {
-// 				link.path.starts_with(mut it)
-// 			})
-// 			{
-// 				// means that link external to collection exists in another collection belonging to tree, so skip
-// 				continue
-// 			}
-// 			collection.page_new(link.path)
-// 		}
-// 	}
-// }

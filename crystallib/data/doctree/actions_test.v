@@ -1,5 +1,5 @@
 module doctree
-
+import freeflowuniverse.crystallib.ui.console
 import os
 
 const collections_path = os.dir(@FILE) + '/testdata/collections'
@@ -10,7 +10,7 @@ fn test_actionscan() ! {
 		path: doctree.collections_path
 		heal: false
 	)!
-	println(tree)
+	console.print_debug(tree)
 	mut c := tree.collection_get('actions')!
 
 	assert c.page_exists('actions1')

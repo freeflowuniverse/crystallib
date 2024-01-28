@@ -1,6 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib { Path }
+import freeflowuniverse.crystallib.ui.console
 
 pub enum CollectionErrorCat {
 	unknown
@@ -12,6 +13,7 @@ pub enum CollectionErrorCat {
 	page_not_found
 	sidebar
 	circular_import
+	summary
 }
 
 pub struct CollectionError {
@@ -28,6 +30,7 @@ pub fn (mut collection Collection) error(args CollectionError) {
 		msg: args.msg
 		cat: args.cat
 	}
+	console.print_stderr(args.msg)
 }
 
 pub struct ObjNotFound {

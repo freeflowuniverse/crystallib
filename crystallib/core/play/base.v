@@ -6,7 +6,7 @@ pub mut:
 	name    string
 }
 
-fn (mut self Base) session() !&Session {
+pub fn (mut self Base) session() !&Session {
 	mut session := self.session or {
 		mut s := session_new()!
 		self.session = s
@@ -14,4 +14,9 @@ fn (mut self Base) session() !&Session {
 	}
 
 	return session
+}
+
+pub fn (mut self Base) context() !&Context {
+	mut session := self.session()!
+	return &session.context
 }

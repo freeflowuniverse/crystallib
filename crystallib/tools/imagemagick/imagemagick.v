@@ -85,9 +85,13 @@ fn filter_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !bo
 		return false
 	}
 	mut parent := path.parent()!
+	//here we check that the file was already processed
+	// println(" check .done file: ${parent.path}")
 	if parent.file_exists('.done') {
+		// println("DONE")
 		mut p := parent.file_get('.done')!
 		c := p.read()!
+		println(" image contains: ${path.name()}")
 		if c.contains(path.name()) {
 			return false
 		}

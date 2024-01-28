@@ -25,14 +25,14 @@ fn test_fix_external_link() ! {}
 fn test_fix() ! {
 	// defer {
 	// 	// copy back the original
-	// 	restore() or { println('failed to restore tree') }
+	// 	restore() or { console.print_debug('failed to restore tree') }
 	// }
 
 	mut tree := tree_create(cid: 'abc', name: 'test')!
 	tree.scan(path: doctree.collections_path)!
 
 	mut test_collection := tree.collection_get('broken')!
-	println('testcoll: ${test_collection}')
+	console.print_debug('testcoll: ${test_collection}')
 	mut page_path := pathlib.get('${doctree.collections_path}/wrong_links/page_with_wrong_links.md')
 	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 	mut test_page := test_collection.page_get('page_with_wrong_links')!

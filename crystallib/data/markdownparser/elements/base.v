@@ -156,6 +156,19 @@ pub fn (mut self DocBase) content_set(element_id int, c string) {
 	}
 }
 
+pub fn (self DocBase) children_recursive() []Element {
+	mut elements:=[]Element{}
+	self.children_recursive_(mut elements)
+	return elements
+}
+
+fn (self DocBase) children_recursive_(mut elements []Element) {
+	for element in self.children() {
+		elements<<element
+		element.children_recursive_(mut elements)
+	}
+}
+
 pub fn (mut self DocBase) id_set(latestid_ int)int {
 	mut latestid:=latestid_	
 	latestid+=1

@@ -33,5 +33,5 @@ fn test_scan() ! {
 
 	assert c2.image_exists('digital_twin')
 	mut i := c2.image_get('digital_twin')!
-	println(i)
+	console.print_debug(i)
 }

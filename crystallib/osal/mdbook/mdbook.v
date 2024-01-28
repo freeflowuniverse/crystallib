@@ -2,7 +2,7 @@ module mdbook
 
 import freeflowuniverse.crystallib.osal
 import os
-// import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.play
@@ -11,15 +11,11 @@ import freeflowuniverse.crystallib.core.play
 pub struct MDBook {
 	play.Base
 pub mut:
-	books        &MDBooks           @[skip; str: skip]
-	name         string
-	url          string
+	factory      &MDBooksFactory           @[skip; str: skip]
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	collections  []MDBookCollection
-	gitrepokey   string
-	title        string
-	initdone     bool
+	args		 MDBookArgs
+	errors		 []doctree.CollectionError
 }
 
 @[params]
@@ -27,46 +23,166 @@ pub struct MDBookArgs {
 pub mut:
 	name  string @[required]
 	title string
-	url   string @[required] // url of the summary.md file
+	summary_url   string  // url of the summary.md file
+	summary_path  string  // can also give the path to the summary file (can be the dir or the summary itself)
+	doctree_url string
+	doctree_path string
+
 }
 
-pub fn (mut books MDBooks) book_new(args MDBookArgs) !&MDBook {
-	path_build := '${books.path_build}/${args.name}'
-	path_publish := '${books.path_publish}/${args.name}'
+pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
+
+	console.print_header(' mdbook: ${args_.name}')
+
+	mut args:=args_
+	if args.title==""{
+		args.title=args.name
+	}
+	path_build := '${factory.path_build}/${args.name}'
+	path_publish := '${factory.path_publish}/${args.name}'
+
+	mut context:=factory.context()!
+	mut gs := context.gitstructure()!
+
+	if args.summary_url.len>0{
+		mut locator1 := gs.locator_new(args.summary_url)!
+		gs.repo_get(locator: locator1, reset: false, pull: false)!
+		mut path_summary := locator1.path_on_fs()!
+		if !path_summary.exists(){
+			return error("cannot find path for summary: ${path_summary.path}")
+		}
+		if path_summary.is_file(){
+			args.summary_path = path_summary.path
+		}else if path_summary.is_dir(){
+			path_summary_path:=path_summary.file_get_ignorecase('summary.md')!
+			args.summary_path = path_summary_path.path
+		}else{
+			return error("summary from git needs to be dir or file")
+		}
+	}
+		
+	if args.doctree_url.len>0{
+		mut locator2 := gs.locator_new(args.doctree_url)!
+		gs.repo_get(locator: locator2, reset: false, pull: false)! 
+		mut path_doctree := locator2.path_on_fs()!
+		if !path_doctree.exists(){
+			return error("cannot find path for doctree: ${path_doctree.path}")
+		}
+		if path_doctree.is_dir(){
+			args.doctree_path = path_doctree.path
+		}else{
+			return error("doctree from git needs to be dir. ${path_doctree.path}")
+		}
+	}
 
 	mut book := MDBook{
-		name: args.name
-		url: args.url
-		title: args.title
+		args: args
 		path_build: pathlib.get_dir(path: path_build, create: true)!
 		path_publish: pathlib.get_dir(path: path_publish, create: true)!
-		books: &books
+		factory: &factory
+		session: factory.session
 	}
 
-	mut gs := books.gitstructure
-	mut locator := gs.locator_new(book.url)!
-	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)! // don't pull this happens later
-	books.gitrepos[repo.key()] = repo
-	book.gitrepokey = repo.key()
+	mut summary := book.summary()!
 
-	books.books << &book
+	//create the additional collection (is a system collection)
+	addpath:='${book.path_build.path}/src/additional'
+	mut a:=pathlib.get_file(path:"${addpath}/additional.md",create:true)!
+	mut b:=pathlib.get_file(path:"${addpath}/errors.md",create:true)!
+	mut c:=pathlib.get_file(path:"${addpath}/pages.md",create:true)!
+
+	a.write("
+# Additional pages
+
+A normal user can ignore these pages, they are for the authors to see e.g. errors
+
+	")!
+
+	b.write("
+# Errors
+
+Be the mother for our errors.
+
+	")!
+	c.write("
+# Additional pages
+
+A normal user can ignore these pages, they are for the authors to see e.g. errors
+
+	")!
+
+
+	for collectionname in summary.collections{
+		collection_dir_str:="${args.doctree_path}/${collectionname}"
+		mut collection_dir_path:=pathlib.get_dir(path:collection_dir_str,create:false) or {panic("bug")} //should always work because done in summary
+		//check if there are errors, if yes add to summary
+		if collection_dir_path.file_exists("errors.md"){
+			summary.add_error_page(collectionname,"errors.md")
+		}
+		//now link the collection into the build dir
+		collection_dirbuild_str:='${book.path_build.path}/src/${collectionname}'
+		collection_dir_path.link(collection_dirbuild_str,true)!
+	}
+
+	if book.errors.len>0{
+		
+		book.errors_report()!
+		
+		summary.errors << SummaryItem{level:2,description:"errors mdbook",
+			pagename:"errors_mdbook.md",collection:"additional"
+		}		
+	}
+	
+	
+	println(summary)
+
+	path_summary_str:='${book.path_build.path}/src/SUMMARY.md'
+	mut path_summary:=pathlib.get_file(path:path_summary_str,create:true)!
+	path_summary.write(summary.str())!
+
+	book.template_install()!
+
+	book.generate()!
+
+	console.print_header(' mdbook prepared: ${book.path_build.path}')
 
 	return &book
+
 }
 
-// only executes at init time
-fn (mut book MDBook) clone() ! {
-	for mut c in book.collections {
-		c.clone()!
+// write errors.md in the collection, this allows us to see what the errors are
+fn (book MDBook) errors_report() ! {	
+	errors_path_str:='${book.path_build.path}/src/additional/errors_mdbook.md'
+	mut dest:=pathlib.get_file(path:errors_path_str,create:true)!
+	if book.errors.len == 0 {
+		dest.delete()!
+		return
 	}
+	c := $tmpl('template/errors.md')
+	dest.write(c)!
 }
 
-pub fn (mut book MDBook) edit() ! {
-	console.print_header('edit book: ${book.name}')
-	cmd := 'code \'${book.path_build.path}/src\''
-	console.print_debug(cmd)
-	osal.exec(cmd: cmd)!
+
+[params]
+pub struct ErrorArgs {
+pub mut:
+	path string
+	msg  string
+	cat  doctree.CollectionErrorCat
 }
+
+
+pub fn (mut book MDBook) error(args ErrorArgs) {
+	path2:=pathlib.get(args.path)
+	e:=doctree.CollectionError{
+		path:path2
+		msg:args.msg
+		cat:args.cat
+	}
+	book.errors<<e
+	console.print_stderr(args.msg)
+}
+
 
 pub fn (mut book MDBook) open() ! {
 	console.print_header('open book: ${book.name}')
@@ -76,31 +192,11 @@ pub fn (mut book MDBook) open() ! {
 	osal.exec(cmd: cmd)!
 }
 
-fn (mut book MDBook) prepare() ! {
-	mut gs := book.books.gitstructure
-	mut locator := gs.locator_new(book.url)!
-	mut path_summary_dir := locator.path_on_fs()!
-	mut path_summary := path_summary_dir.file_get_ignorecase('summary.md')!
-	os.mkdir_all('${book.path_build.path}/src')!
-	path_summary.link('${book.path_build.path}/src/SUMMARY.md', true)!
-	console.print_header(' mdbook summary: ${path_summary.path}')
-	book.template_install()!
-	console.print_header(' mdbook prepared: ${book.path_build.path}')
-}
-
 pub fn (mut book MDBook) generate() ! {
-	// TODO: uncomment when fixed
-	// if book.changed() == false {
-	// 	return
-	// }
 	console.print_header(' book generate: ${book.name} on ${book.path_build.path}')
 
-	if book.initdone == false {
-		book.books.init()!
-	}
-
 	// write the css files
-	for item in book.books.embedded_files {
+	for item in book.factory.embedded_files {
 		if item.path.ends_with('.css') {
 			css_name := item.path.all_after_last('/')
 			// osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
@@ -121,12 +217,9 @@ pub fn (mut book MDBook) generate() ! {
 }
 
 fn (mut book MDBook) template_install() ! {
-	if book.title == '' {
-		book.title = book.name
-	}
 
 	// get embedded files to the mdbook dir
-	for item in book.books.embedded_files {
+	for item in book.factory.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
 		// console.print_debug(' embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
@@ -152,7 +245,7 @@ fn (mut book MDBook) summary_image_set() ! {
 	// this is needed to link the first image dir in the summary to the src, otherwise empty home image
 
 	summaryfile := '${book.path_build.path}/src/SUMMARY.md'
-	mut p := pathlib.get_linked_file(path: summaryfile)!
+	mut p := pathlib.get_file(path: summaryfile)!
 	c := p.read()!
 	mut first := true
 	for line in c.split_into_lines() {
@@ -166,7 +259,7 @@ fn (mut book MDBook) summary_image_set() ! {
 			// if true{panic("s")}
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!
-				image_dir.copy(dest: '${book.path_build.path}/src/img')!
+				image_dir.link('${book.path_build.path}/src/img',true)!
 			}
 
 			first = false
@@ -174,29 +267,3 @@ fn (mut book MDBook) summary_image_set() ! {
 	}
 }
 
-// all the gitrepo keys
-fn (mut book MDBook) gitrepo_keys() []string {
-	mut res := []string{}
-	res << book.gitrepokey
-	for collection in book.collections {
-		if collection.gitrepokey !in res {
-			res << collection.gitrepokey
-		}
-	}
-	return res
-}
-
-// is there change in repo since last build?
-fn (mut book MDBook) changed() bool {
-	mut change := false
-	gitrepokeys := book.gitrepo_keys()
-	for key, status in book.books.gitrepos_status {
-		if key in gitrepokeys {
-			// means this book is using that gitrepo, so if it changed the book changed
-			if status.revlast != status.revlast {
-				change = true
-			}
-		}
-	}
-	return change
-}

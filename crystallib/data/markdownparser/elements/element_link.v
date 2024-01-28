@@ -17,7 +17,7 @@ pub mut:
 	// identification of link:
 	filename string // is the name of the page/file where the link points too
 	path     string // is path in the site
-	site     string // is the sitename where the link points too
+	site     string // is the sitename where the link points too (collection)
 	extra    string // e.g. ':size=800x900'
 	// internal
 	state     LinkState
@@ -49,15 +49,19 @@ pub fn (mut self Link) process() !int {
 
 	self.parse()
 	self.processed = true
+	self.content = self.markdown()
 	return 1
 }
 
 pub fn (self Link) markdown() string {
+	if self.content.len>0{
+		return self.content
+	}	
 	mut link_filename := self.filename
 	mut out := ''
-	if self.path != '' {
-		link_filename = '${self.path}/${link_filename}'
-	}
+	// if self.path != '' {
+	// 	link_filename = '${self.path}/${link_filename}'
+	// }
 	if self.cat == LinkType.image {
 		if self.extra.trim_space() == '' {
 			out = '![${self.description}](${link_filename})'
@@ -83,15 +87,15 @@ pub fn (self Link) markdown() string {
 		if self.site != '' {
 			link_filename = '${self.site}:${link_filename}'
 		}
-		if self.include {
-			link_filename = '@${link_filename}'
-		}
-		if self.newtab {
-			link_filename = '!${link_filename}'
-		}
-		if self.moresites {
-			link_filename = '*${link_filename}'
-		}
+		// if self.include {
+		// 	link_filename = '@${link_filename}'
+		// }
+		// if self.newtab {
+		// 	link_filename = '!${link_filename}'
+		// }
+		// if self.moresites {
+		// 	link_filename = '*${link_filename}'
+		// }
 
 		out = '[${self.description}](${link_filename})'
 	}
@@ -123,23 +127,14 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 	// return link.filename.all_before_last('.').trim_right('_').to_lower()
 }
 
-// add link to a paragraph of a doc
 fn (mut link Link) parse() {
 	link.content = link.content.trim_space()
 	if link.content.starts_with('!') {
 		link.cat = LinkType.image
 	}
 
-	index := link.content.index_after('](', 0)
-	start := if link.content.starts_with('[') { 1 } else { 2 }
-	if index > start {
-		link.description = link.content[start..index]
-	}
-	if index + 2 < link.content.len - 1 {
-		link.url = link.content[index + 2..link.content.len - 1]
-	}
-	// link.description = link.content.all_after('[').all_before(']').trim_space()
-	// link.url = link.content.all_after('(').all_before(')').trim_space()
+	link.description = link.content.all_after('[').all_before(']').trim_space()
+	link.url = link.content.all_after('(').all_before(')').trim_space()
 	if link.url.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
@@ -184,41 +179,42 @@ fn (mut link Link) parse() {
 		link.path = ''
 	}
 
-	// find the prefix
-	mut prefix_done := false
-	mut filename := []string{}
-	for x in link.filename.trim(' ').split('') {
-		if !prefix_done {
-			if x == '!' {
-				link.newtab = true
-				continue
-			}
-			if x == '@' {
-				link.include = true
-				continue
-			}
-			if x == '*' {
-				link.moresites = true
-				continue
-			}
-		} else {
-			prefix_done = true
-		}
-		filename << x
-	}
-	link.filename = filename.join('')
 
-	// trims prefixes from path
-	link.path = link.path.trim_left('!@*')
+	// // find the prefix
+	// mut prefix_done := false
+	// mut filename := []string{}
+	// for x in link.filename.trim(' ').split('') {
+	// 	if !prefix_done {
+	// 		if x == '!' {
+	// 			link.newtab = true
+	// 			continue
+	// 		}
+	// 		if x == '@' {
+	// 			link.include = true
+	// 			continue
+	// 		}
+	// 		if x == '*' {
+	// 			link.moresites = true
+	// 			continue
+	// 		}
+	// 	} else {
+	// 		prefix_done = true
+	// 	}
+	// 	filename << x
+	// }
+	// link.filename = filename.join('')
+
+	// // trims prefixes from path
+	// link.path = link.path.trim_left('!@*')
 
 	// lets now check if there is site info in there
 	if link.filename.contains(':') {
 		splitted2 := link.filename.split(':')
 		if splitted2.len == 2 {
 			link.site = texttools.name_fix(splitted2[0])
-			if link.site.starts_with('info_') {
-				link.site = link.site[5..]
-			}
+			// if link.site.starts_with('info_') {
+			// 	link.site = link.site[5..]
+			// }
 			link.filename = splitted2[1]
 		} else if splitted2.len > 2 {
 			link.error('link can only have 1 x ":"/n${link}')
@@ -231,19 +227,13 @@ fn (mut link Link) parse() {
 		link.site = link.site.all_after_last('/')
 	}
 
-	// lets strip site info from link path
-	link.path = link.path.trim_string_left('${link.site}:')
-
-	link.filename = os.base(link.filename)
+	link.filename = os.base(link.filename).replace('\\', '/')
 
 	if link.path.starts_with('./') {
-		x := link.path.after('./')
-		link.path = string(x)
+		link.path = link.path.after('./')
 	}
 
 	if link.filename != '' {
-		link.filename = os.base(link.filename.replace('\\', '/'))
-
 		// check which link type
 		ext := os.file_ext(link.filename).trim('.').to_lower()
 
@@ -287,4 +277,6 @@ fn (mut link Link) parse() {
 			return
 		}
 	}
+
+	println(link)
 }

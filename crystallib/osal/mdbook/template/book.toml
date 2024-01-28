@@ -3,7 +3,7 @@ authors = []
 language = "en"
 multilingual = false
 src = "src"
-title = "@book.title"
+title = "@book.args.title"
 
 [output.html.fold]
 enable = true
