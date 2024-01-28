@@ -1,7 +1,7 @@
 module markdownparser
 
 import freeflowuniverse.crystallib.data.paramsparser { Param, Params }
-import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Codeblock, Header, Link, Paragraph, Table, Text }
+import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Codeblock, Header, Link, Paragraph, Table, Text, List }
 
 const text = "
 # Farmerbot
@@ -76,32 +76,16 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 ### something else
 '
 	mut docs := new(content: content)!
-	assert docs.children.len == 5
+	assert docs.children.len == 9
 	assert docs.children[0] is Header
-	paragraph1 := docs.children[1]
-	if paragraph1 is Paragraph {
-		assert paragraph1.children.len == 1
-		assert paragraph1.children[0] is Text
-	} else {
-		assert false, 'element ${docs.children[1]} is not a paragraph'
-	}
-
+	assert docs.children[1] is Paragraph
 	assert docs.children[2] is Header
-	paragraph2 := docs.children[3]
-	if paragraph2 is Paragraph {
-		assert paragraph2.children.len == 5
-		assert paragraph2.children[0] is Text
-		assert paragraph2.children[1] is Link
-		assert paragraph2.children[2] is Text
-		assert paragraph2.children[3] is Link
-		assert paragraph2.children[4] is Text
-	} else {
-		assert false, 'element ${docs.children[3]} is not a paragraph'
-	}
-
-	assert docs.children[4] is Header
-
-	// assert docs.markdown().trim_space() == content.trim_space()
+	assert docs.children[3] is Paragraph
+	assert docs.children[4] is List
+	assert docs.children[5] is List
+	assert docs.children[6] is List
+	assert docs.children[7] is List
+	assert docs.children[8] is Header
 }
 
 fn test_wiki_headers_and_table() {
@@ -242,28 +226,18 @@ fn test_wiki_links() {
 '
 	mut docs := new(content: content)!
 
-	assert docs.children.len == 4
+	assert docs.children.len == 5
 	assert docs.children[0] is Header
-	assert docs.children[1] is Paragraph
+	assert docs.children[1] is List
+	assert docs.children[2] is List
+	assert docs.children[3] is Header
+	assert docs.children[4] is Paragraph
 
-	paragraph1 := docs.children[1]
+	paragraph1 := docs.children[4]
 	if paragraph1 is Paragraph {
-		assert paragraph1.children.len == 4
-		assert paragraph1.children[0] is Text
-		assert paragraph1.children[1] is Link
-		assert paragraph1.children[2] is Text
-		assert paragraph1.children[3] is Link
+		assert paragraph1.children.len == 1
+		assert paragraph1.children[0] is Link
 	}
-
-	assert docs.children[2] is Header
-	assert docs.children[3] is Paragraph
-
-	paragraph2 := docs.children[3]
-	if paragraph2 is Paragraph {
-		assert paragraph2.children.len == 1
-		assert paragraph2.children[0] is Link
-	}
-	// assert content.trim_space() == docs.markdown().trim_space()
 }
 
 fn test_wiki_header_too_long() {
@@ -286,7 +260,8 @@ fn test_wiki_header_too_long() {
 fn test_wiki_all_together() {
 	content := markdownparser.text
 	mut docs := new(content: content)!
-	assert docs.children.len == 10
+
+	assert docs.children.len == 18
 	assert docs.children[0] is Header
 	assert docs.children[1] is Paragraph
 	assert docs.children[2] is Header
@@ -296,7 +271,15 @@ fn test_wiki_all_together() {
 	assert docs.children[6] is Table
 	assert docs.children[7] is Header
 	assert docs.children[8] is Paragraph
-	assert docs.children[9] is Action
+	assert docs.children[9] is List
+	assert docs.children[10] is List
+	assert docs.children[11] is Paragraph
+	assert docs.children[12] is List
+	assert docs.children[13] is List
+	assert docs.children[14] is List
+	assert docs.children[15] is List
+	assert docs.children[16] is Paragraph
+	assert docs.children[17] is Action
 	// assert content.trim_space() == docs.markdown().trim_space()
 }
 

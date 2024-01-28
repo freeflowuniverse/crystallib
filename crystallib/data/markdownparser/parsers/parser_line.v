@@ -90,11 +90,7 @@ fn (mut parser Parser) line_prev() string {
 
 // move further
 fn (mut parser Parser) next() {
-	// println("line old (${parser.elementname()}): '${parser.line_current()}'")	
 	parser.linenr += 1
-	// if ! parser.eof(){
-	// 	println("line new (${parser.elementname()}): '${parser.line_current()}'")	
-	// }
 }
 
 // move further and reset the state

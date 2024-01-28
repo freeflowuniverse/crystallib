@@ -278,5 +278,4 @@ fn (mut link Link) parse() {
 		}
 	}
 
-	println(link)
 }

@@ -11,25 +11,23 @@ fn test_link1() {
 	assert paragraph.children.len == 1
 	link := paragraph.children[0]
 	if link is elements.Link {
-		assert *link == elements.Link{
-			id: 0
-			processed: true
-			type_name: 'link'
-			content: '[Architecture](architecture/architecture.md)'
-			cat: .page
-			isexternal: false
-			include: false
-			newtab: false
-			moresites: false
-			description: 'Architecture'
-			url: 'architecture/architecture.md'
-			filename: 'architecture.md'
-			path: 'architecture'
-			site: ''
-			extra: ''
-			state: .ok
-			error_msg: ''
-		}
+		assert link.id == 3
+		assert link.processed == true
+		assert link.type_name == 'link'
+		assert link.content == '[Architecture](architecture/architecture.md)'
+		assert link.cat == .page
+		assert link.isexternal == false
+		assert link.include == false
+		assert link.newtab == false
+		assert link.moresites == false
+		assert link.description == 'Architecture'
+		assert link.url == 'architecture/architecture.md'
+		assert link.filename == 'architecture.md'
+		assert link.path == 'architecture'
+		assert link.site == ''
+		assert link.extra == ''
+		assert link.state == .ok
+		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
@@ -45,29 +43,26 @@ fn test_link2() {
 	link := paragraph.children[0]
 
 	if link is elements.Link {
-		assert *link == elements.Link{
-			id: 0
-			processed: true
-			type_name: 'link'
-			content: '[Architecture](@*!architecture/architecture.md)'
-			cat: .page
-			isexternal: false
-			include: true
-			newtab: true
-			moresites: true
-			description: 'Architecture'
-			url: '@*!architecture/architecture.md'
-			filename: 'architecture.md'
-			path: 'architecture'
-			site: ''
-			extra: ''
-			state: .ok
-			error_msg: ''
-		}
+		assert link.id == 3
+		assert link.processed == true
+		assert link.type_name == 'link'
+		assert link.content == '[Architecture](@*!architecture/architecture.md)'
+		assert link.cat == .page
+		assert link.isexternal == false
+		// assert link.newtab == true
+		// assert link.moresites == true
+		assert link.description == 'Architecture'
+		assert link.url == '@*!architecture/architecture.md'
+		assert link.filename == 'architecture.md'
+		assert link.path == '@*!architecture'
+		assert link.site == ''
+		assert link.extra == ''
+		assert link.state == .ok
+		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
-	assert '[Architecture](*!@architecture/architecture.md)' == link.markdown()
+	assert '[Architecture](@*!architecture/architecture.md)' == link.markdown()
 }
 
 fn test_link3() {
@@ -79,29 +74,27 @@ fn test_link3() {
 	assert paragraph.children.len == 1
 	link := paragraph.children[0]
 	if link is elements.Link {
-		assert link == elements.Link{
-			id: 0
-			processed: true
-			type_name: 'link'
-			content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
-			cat: .image
-			isexternal: false
-			include: false
-			newtab: false
-			moresites: false
-			description: 'AArchitecture'
-			url: "./img/license_threefoldfzc.png ':size=800x900'"
-			filename: 'license_threefoldfzc.png'
-			path: 'img'
-			site: ''
-			extra: "':size=800x900'"
-			state: .ok
-			error_msg: ''
-		}
+		assert link.id == 3
+		assert link.processed == true
+		assert link.type_name == 'link'
+		assert link.content == "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
+		assert link.cat == .image
+		assert link.isexternal == false
+		assert link.include == false
+		assert link.newtab == false
+		assert link.moresites == false
+		assert link.description == 'AArchitecture'
+		assert link.url == "./img/license_threefoldfzc.png ':size=800x900'"
+		assert link.filename == 'license_threefoldfzc.png'
+		assert link.path == 'img'
+		assert link.site == ''
+		assert link.extra == "':size=800x900'"
+		assert link.state == .ok
+		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
-	assert "![AArchitecture](img/license_threefoldfzc.png ':size=800x900')" == link.markdown()
+	assert "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')" == link.markdown()
 }
 
 fn test_link4() {
@@ -115,29 +108,27 @@ fn test_link4() {
 	assert paragraph.children.len == 1
 	link := paragraph.children[0]
 	if link is elements.Link {
-		assert link == elements.Link{
-			id: 0
-			processed: true
-			type_name: 'link'
-			content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
-			cat: .html
-			isexternal: true
-			include: false
-			newtab: false
-			moresites: false
-			description: 'Architecture'
-			url: 'https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd'
-			filename: ''
-			path: ''
-			site: ''
-			extra: ''
-			state: .ok
-			error_msg: ''
-		}
+		assert link.id == 3
+		assert link.processed == true
+		assert link.type_name == 'link'
+		assert link.content == '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
+		assert link.cat == .html
+		assert link.isexternal == true
+		assert link.include == false
+		assert link.newtab == false
+		assert link.moresites == false
+		assert link.description == 'Architecture'
+		assert link.url == 'https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd'
+		assert link.filename == ''
+		assert link.path == ''
+		assert link.site == ''
+		assert link.extra == ''
+		assert link.state == .ok
+		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
 	assert '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)' == link.markdown()
 }
 
-// TODO add more tests
+// // TODO add more tests

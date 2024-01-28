@@ -30,7 +30,7 @@ pub fn new(args_ NewDocArgs) !elements.Doc {
 			return error('Failed to load file ${args.path}: ${err}')
 		}
 	}
-	println(doc.content)
+	
 	parsers.parse_doc(mut doc)!
 	return doc
 }

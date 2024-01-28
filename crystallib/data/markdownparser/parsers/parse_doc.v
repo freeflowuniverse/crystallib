@@ -79,6 +79,11 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue				
 			}
 
+			if mut llast is elements.List{
+				parser.ensure_last_is_paragraph()!
+				continue
+			}
+
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
 				doc.include_new(content).parent=&doc
@@ -131,7 +136,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			if trimmed_line.to_lower().starts_with('<html>') {
-				doc.html_new('').parent=&doc	
+				doc.html_new(trimmed_line.after('<html>')).parent=&doc	
 				parser.next()
 				continue
 			}

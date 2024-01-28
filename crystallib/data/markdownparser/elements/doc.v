@@ -70,7 +70,7 @@ pub fn (mut self Doc) process() !int {
 			if type_name in ["list"] && type_name == type_name_last{
 				last.trailing_lf = false
 			}
-			last = element
+			// last = element
 			type_name_last=type_name
 		}
 		self.id_set(0)

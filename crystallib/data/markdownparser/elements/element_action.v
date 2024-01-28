@@ -27,9 +27,9 @@ fn (mut self Action) process() !int {
 }
 
 fn (self Action) markdown() string {
-	if self.content.len>0{
-		return self.content
-	}
+	// if self.content.len>0{
+	// 	return self.content
+	// }
 	// println(self.action.script3())
 	return self.action.script3()
 }

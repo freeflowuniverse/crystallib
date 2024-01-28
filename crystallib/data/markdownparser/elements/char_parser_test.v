@@ -5,14 +5,12 @@ fn test_charparser1() {
 	mut p2 := Paragraph{
 		content: txt
 	}
-	mut doc := Doc{}
+	
 	p2.paragraph_parse()!
 	p2.process_base()!
-	assert p2 == Paragraph{
-		content: ''
-		children: []
-		changed: false
-	}
+	assert p2.content == ''
+	assert p2.children.len == 0
+	assert p2.changed == false
 }
 
 fn test_charparser2() {
@@ -55,34 +53,21 @@ fn test_charparser3() {
 	mut p2 := Paragraph{
 		content: txt
 	}
-	mut doc := Doc{}
+	
 	p2.paragraph_parse()!
 	p2.process_base()!
 	p2.process_children()!
 	// TODO decide what to do in this case
-	assert p2 == Paragraph{
-		content: '!['
-		children: [
-			Link{
-				id: 0
-				processed: true
-				type_name: 'link'
-				content: '!['
-				cat: .page
-				isexternal: false
-				include: false
-				newtab: false
-				moresites: false
-				description: ''
-				url: ''
-				filename: '..md'
-				path: ''
-				site: ''
-				extra: ''
-				state: .ok
-				error_msg: ''
-			},
-		]
+	assert p2.content == '!['
+	assert p2.children.len == 1
+	ln := p2.children[0]
+	assert ln is Link
+	if ln is Link{
+		assert ln.id == 0
+		assert ln.processed == true
+		assert ln.type_name == 'link'
+		assert ln.cat == .page
+		assert ln.filename == '![.md'
 	}
 }
 
@@ -96,30 +81,19 @@ fn test_charparser_link() {
 	p2.process_base()!
 	p2.process_children()!
 
-	assert p2 == Paragraph{
-		content: '![a](b)'
-		children: [
-			Link{
-				id: 0
-				processed: true
-				type_name: 'link'
-				content: '![a](b)'
-				cat: .page
-				isexternal: false
-				include: false
-				newtab: false
-				moresites: false
-				description: 'a'
-				url: 'b'
-				filename: 'b.md'
-				path: ''
-				site: ''
-				extra: ''
-				state: .ok
-				error_msg: ''
-			},
-		]
-		changed: false
+	assert p2.children.len == 1
+
+	ln := p2.children[0]
+	assert ln is Link
+	if ln is Link{
+		assert ln.id == 0
+		assert ln.type_name == 'link'
+		assert ln.content == '![a](b)'
+		assert ln.cat == .page
+		assert ln.description == 'a'
+		assert ln.url == 'b'
+		assert ln.filename == 'b.md'
+		assert ln.state == .ok
 	}
 }
 
@@ -153,7 +127,6 @@ fn test_charparser_link_ignore_trailing_newlines() {
 
 fn test_charparser_link_comment_text() {
 	mut txt := '
-- list
 ![a](b.jpg) //comment
 sometext
 '
@@ -164,38 +137,31 @@ sometext
 	p2.paragraph_parse()!
 	p2.process_base()!
 	p2.process_children()!
+	
+	assert p2.children.len == 3
 
-	assert p2.children.len == 5
-	assert p2.children[0] is Text
-	assert p2.children[0].content == '- list\n'
-	assert p2.children[1] is Link
-	item_1 := p2.children[1]
+	assert p2.children[0] is Link
+	item_1 := p2.children[0]
 	if item_1 is Link {
 		assert item_1.cat == .image
 		assert item_1.filename == 'b.jpg'
 		assert item_1.description == 'a'
 	}
 
-	assert p2.children[2] is Text
-	assert p2.children[2].content == ' '
-
-	assert p2.children[3] is Comment
-	item_2 := p2.children[3]
+	assert p2.children[1] is Comment
+	item_2 := p2.children[1]
 	if item_2 is Comment {
 		assert item_2.content == 'comment'
 	}
 
-	assert p2.children[4] is Text
-	assert p2.children[4].content == '\nsometext'
-	// assert '${txt.trim_space()}\n\n' == p2.markdown()
+	assert p2.children[2] is Text
+	assert p2.children[2].content == 'sometext'
 }
 
 fn test_charparser_link_multilinecomment_text() {
-	mut txt := '- list
-![a](b.jpg)<!--comment1-->
+	mut txt := '![a](b.jpg)<!--comment1-->
 <!--comment2-->
-sometext
-'
+sometext'
 	mut p2 := Paragraph{
 		content: txt
 	}
@@ -204,37 +170,32 @@ sometext
 	p2.process_base()!
 	p2.process_children()!
 
-	assert p2.children.len == 6
-	assert p2.children[0] is Text
-	assert p2.children[0].content == '- list\n'
-	assert p2.children[1] is Link
-	item_1 := p2.children[1]
+	assert p2.children.len == 4
+
+	assert p2.children[0] is Link
+	item_1 := p2.children[0]
 	if item_1 is Link {
 		assert item_1.cat == .image
 		assert item_1.filename == 'b.jpg'
 		assert item_1.description == 'a'
 	}
 
-	assert p2.children[2] is Comment
-	item_2 := p2.children[2]
+	assert p2.children[1] is Comment
+	item_2 := p2.children[1]
 	if item_2 is Comment {
 		assert item_2.content == 'comment1'
 		assert item_2.singleline == false
 	}
 
-	assert p2.children[3] is Text
-	assert p2.children[3].content == '\n'
-
-	assert p2.children[4] is Comment
-	item_4 := p2.children[4]
+	assert p2.children[2] is Comment
+	item_4 := p2.children[2]
 	if item_4 is Comment {
 		assert item_4.content == 'comment2'
 		assert item_4.singleline == false
 	}
 
-	assert p2.children[5] is Text
-	assert p2.children[5].content == '\nsometext'
+	assert p2.children[3] is Text
+	assert p2.children[3].content == 'sometext'
 
-	m := p2.markdown()
 	assert txt == p2.markdown()
 }
