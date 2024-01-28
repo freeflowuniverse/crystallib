@@ -2,7 +2,7 @@ module builder
 
 import json
 import freeflowuniverse.crystallib.data.paramsparser { Params }
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 pub enum PlatformType {
 	unknown

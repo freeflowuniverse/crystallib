@@ -130,6 +130,7 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 		ignore: args.ignore
 		ignore_default: args.ignore_default
 		stdout: args.stdout
+		fast_rsync: args.fast_rsync
 	}
 	osal.rsync(rsargs)!
 }

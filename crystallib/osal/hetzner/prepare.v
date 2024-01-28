@@ -1,6 +1,8 @@
 
 module hetzner
 
+//TODO: couldn't get ssh lib to work
+
 // pub fn (h HetznerClient) server_prepare(name string) !bool {
 // 	srvs := h.servers_list()!
 
@@ -34,13 +36,13 @@ module hetzner
 // 	reset := h.server_reset(srvid)!
 // 	// println(reset)
 
-// 	time.sleep(3000000000)
+// 	time.sleep(30000 * time.millisecond)
 
 // 	println("[+] waiting for rescue to be ready")
 // 	for {
 // 		target := vssh.new(srvip, 22) or {
 // 			println("$err")
-// 			time.sleep(1000000000)
+// 			time.sleep(30000 * time.millisecond)
 // 			continue
 // 		}
 

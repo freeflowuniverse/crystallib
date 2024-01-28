@@ -142,7 +142,7 @@ fn (mut node Node) platform_load() ! {
 	// 	return
 	// }
 
-	console.print_header('platform load')
+	console.print_header('platform load ${node.name}')
 	cmd := '
     if [[ "\$OSTYPE" == "darwin"* ]]; then
         export OSNAME="darwin"
@@ -190,6 +190,8 @@ fn (mut node Node) platform_load() ! {
 		console.print_stderr(osname)
 		panic('only ubuntu, arch and osx supported for now')
 	}
+	console.print_debug('platform loaded')
+	
 }
 
 pub fn (mut node Node) package_refresh() ! {

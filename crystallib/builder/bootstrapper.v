@@ -2,7 +2,7 @@ module builder
 
 import os
 import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.pathlib
 import v.embed_file
 
 const crystalpath_ = os.dir(@FILE) + '/../'
@@ -15,7 +15,7 @@ pub mut:
 @[params]
 pub struct BootstrapperArgs {
 pub mut:
-	name  string
+	name string = "bootstrap"
 	addr  string // format:  root@something:33, 192.168.7.7:222, 192.168.7.7, despiegk@something
 	reset bool
 	debug bool
@@ -36,8 +36,11 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 	mut args := args_
 	addr := texttools.to_array(args.addr)
 	mut b := new()!
+	mut counter:=0
 	for a in addr {
-		mut n := b.node_new(ipaddr: a, name: args.name)!
+		counter+=1
+		name:="${args.name}_${counter}"
+		mut n := b.node_new(ipaddr: a, name:name )!
 		n.crystal_install()!
 	}
 }
@@ -55,76 +58,106 @@ pub fn (mut node Node) upgrade() ! {
 	)!
 }
 
+pub fn (mut node Node) hero_install() ! {
+	panic("implement")
+	// if node.platform == .osx {
+	// 	// we have no choice then to do it interactive
+	// 	myenv := node.environ_get()!
+	// 	homedir := myenv['HOME'] or { return error("can't find HOME in env") }
+	// 	node.exec_silent('mkdir -p ${homedir}/hero/bin')!
+	// 	node.file_write('${homedir}/hero/bin/install.sh', cmd)!
+	// 	node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
+	// 	node.exec_interactive('${homedir}/hero/bin/install.sh')!
+	// } else {
+	// 	node.exec_cmd(cmd: cmd)!
+	// }
+}
+
+//be carefull this will remove changes on the node
 pub fn (mut node Node) crystal_install() ! {
 	mut bs := bootstrapper()
 	installer_base_content_ := bs.embedded_files['installer_base.sh'] or { panic('bug') }
 	installer_base_content := installer_base_content_.to_string()
-	cmd := '${installer_base_content}\nfreeflow_dev_env_install\n'
-	if node.platform == .osx {
-		// we have no choice then to do it interactive
-		myenv := node.environ_get()!
-		homedir := myenv['HOME'] or { return error("can't find HOME in env") }
-		node.exec_silent('mkdir -p ${homedir}/hero/bin')!
-		node.file_write('${homedir}/hero/bin/install.sh', cmd)!
-		node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
-		node.exec_interactive('${homedir}/hero/bin/install.sh')!
-	} else {
-		node.exec_cmd(cmd: cmd)!
+	cmd := '
+		${installer_base_content}
+
+		rm -rf ~/code/github/freeflowuniverse/crystallib
+		
+		rm -f /usr/local/bin/hero
+		freeflow_dev_env_install
+
+		~/code/github/freeflowuniverse/crystallib/install.sh
+		
+		echo HERO, V, CRYSTAL ALL INSTALL OK
+		echo WE ARE READY TO HERO...
+		
+		'
+	node.exec_cmd(cmd: cmd)!
+
+}
+
+@[params]
+pub struct CrystalUpdateArgs {
+pub mut:
+	all bool
+	fast_rsync  bool = true
+}
+
+//sync local crystal code to rmote and then compile hero
+pub fn (mut node Node) crystal_update(args CrystalUpdateArgs) ! {
+	if args.all{
+		node.sync_code("crystal",builder.crystalpath_+"/..",'~/code/github/freeflowuniverse/crystallib',args.fast_rsync)!
+	}else{
+		node.sync_code("crystal_lib",builder.crystalpath_,'~/code/github/freeflowuniverse/crystallib/crystallib',args.fast_rsync)!
 	}
 }
 
-// println(n)
-// // will only upload if changes for the cli's
-// mut heropath := pathlib.get_dir(path: os.abs_path(builder.heropath_), create: false)!
-// herohex := heropath.md5hex()!
-// herohexsystem := n.done_get('herohex') or { '' }
-// if herohex != herohexsystem {
-// 	n.upload(
-// 		source: heropath.path
-// 		dest: '~/code/github/freeflowuniverse/crystallib/cli'
-// 		ignore: [
-// 			'.git/*',
-// 		]
-// 		delete: true
-// 	)!
-// 	n.done_set('herohex', herohex)!
-// }
+pub fn (mut node Node) sync_code(name string,src_ string, dest string, fast_rsync bool) ! {
+	mut src := pathlib.get_dir(path: os.abs_path(src_), create: false)!
+	node.upload(
+		source: src.path
+		dest: dest
+		ignore: [
+			'.git/*','_archive','.vscode','examples'
+		]
+		delete: true
+		fast_rsync: fast_rsync
+	)!
+}
 
-// // will only upload if changes
-// mut crystalpath := pathlib.get_dir(path: os.abs_path(builder.crystalpath_), create: false)!
-// crystalhex := crystalpath.md5hex()!
-// crystalhexsystem := n.done_get('crystalhex') or { '' }
-// if crystalhex != crystalhexsystem {
-// 	n.upload(
-// 		source: crystalpath.path
-// 		dest: '~/.vmodules/freeflowuniverse/crystallib/'
-// 		ignore: [
-// 			'.git/*',
-// 		]
-// 		delete: true
-// 	)!
-// 	// means new crystal, we need to now build hero again
-// 	n.exec_cmd(
-// 		cmd: 'bash -c ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_bin.sh'
-// 		reset: true
-// 		description: 'hero build'
-// 	)!
-// 	n.done_set('crystalhex', crystalhex)!
-// }
 
-// if true {
-// 	println(crystalpath)
-// 	panic('sdsdsds')
-// }
+//sync local crystal code to rmote and then compile hero
+pub fn (mut node Node) hero_compile_debug() ! {
+	if !node.file_exists("~/code/github/freeflowuniverse/crystallib/cli/readme.md"){
+		node.crystal_install()!
+	}
+	node.crystal_update()!
+	node.exec_cmd(cmd:'
+		~/code/github/freeflowuniverse/crystallib/install.sh
+		~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh		
+		')!
 
-// if !n.done_exists('keydb') {
-// 	n.exec_cmd(
-// 		cmd: '
-// 			echo "deb https://download.keydb.dev/open-source-dist $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/keydb.list
-// 			wget -O /etc/apt/trusted.gpg.d/keydb.gpg https://download.keydb.dev/open-source-dist/keyring.gpg
-// 			apt update
-// 			apt install keydb
-// 			'
-// 	)!
-// 	n.done_set('keydb', 'OK')!
-// }
+}
+
+
+@[params]
+pub struct VScriptArgs {
+pub mut:
+	path string
+	crystal_update bool
+}
+
+pub fn (mut node Node) vscript(args_ VScriptArgs) ! {
+	mut args:=args_
+	if args.crystal_update{
+		node.crystal_update()!
+	}	
+	mut p:=pathlib.get_file(path:args.path,create:false)!
+
+	node.upload(source:p.path,dest:"/tmp/remote_${p.name()}")!
+	node.exec_cmd(cmd:'
+		cd /tmp/remote
+		v -w -enable-globals /tmp/remote_${p.name()}
+		')!
+
+}

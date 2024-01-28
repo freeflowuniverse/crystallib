@@ -23,7 +23,7 @@ pub fn install(args_ InstallArgs) ! {
 	// 		println(' - ok')
 	// 	}
 
-	res := os.execute('source ${osal.profile_path()} && podman -v')
+	res := os.execute('${osal.profile_path_source_and()} podman -v')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.contains('podman version'))
 		if r.len != 1 {

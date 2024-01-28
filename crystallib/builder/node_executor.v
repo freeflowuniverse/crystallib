@@ -152,6 +152,7 @@ pub mut:
 	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
 	ignore_default bool = true // if set will ignore a common set
 	stdout         bool = true
+	fast_rsync bool = true
 }
 
 // download files using rsync (can be ssh or local) .

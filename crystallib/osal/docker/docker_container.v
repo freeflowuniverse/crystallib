@@ -132,6 +132,6 @@ pub fn (mut container DockerContainer) execute(cmd_ string, silent bool) ! {
 // 	// }
 
 // 	// wait  making sure container started correctly
-// 	// time.sleep_ms(200)
+// 	// time.sleep_ms(100 * time.millisecond)
 // 	// container.engine.node.executor.exec(cmd) !	
 // }

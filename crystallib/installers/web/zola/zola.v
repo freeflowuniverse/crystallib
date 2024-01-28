@@ -19,7 +19,7 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '0.18.0'
 
-	res := os.execute('source ${osal.profile_path()} && zola -V')
+	res := os.execute('${osal.profile_path_source_and()} zola -V')
 	if res.exit_code == 0 {
 		v := texttools.version(res.output)
 		if v < texttools.version(version) {

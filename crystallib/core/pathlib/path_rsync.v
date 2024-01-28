@@ -14,6 +14,7 @@ pub mut:
 	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
 	ignore_default bool = true // if set will ignore a common set
 	debug          bool = true
+	fast_rsync   bool
 }
 
 // flexible tool to sync files from to, does even support ssh .
@@ -66,7 +67,10 @@ pub fn rsync_cmd_options(args_ RsyncArgs) !string {
 	if args.delete {
 		delete = '--delete'
 	}
-	options := '-avz --no-perms'
+	mut options := '-rvz --no-perms'
+	if args.fast_rsync{
+		options += " --size-only"
+	}
 	mut sshpart := ''
 	mut addrpart := ''
 

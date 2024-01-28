@@ -36,7 +36,7 @@ pub fn bash_installers_package() !string {
 	p.write(out)!
 	os.chmod(p.path, 0o777)!
 
-	out += '\nfreeflow_dev_env_install\n'
+	out += '\nfreeflow_dev_env_install\n\n\necho HERO, V, CRYSTAL ALL INSTALL OK\necho WE ARE READY TO HERO...'
 
 	mut p2 := pathlib.get_file(path: '${base.scriptspath}/installer.sh', create: true)!
 	p2.write(out)!

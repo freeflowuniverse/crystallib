@@ -16,7 +16,7 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	res := os.execute('source ${osal.profile_path()} && mdbook --version')
+	res := os.execute('${osal.profile_path_source_and()} mdbook --version')
 	if res.exit_code == 0 {
 		v := texttools.version(res.output)
 		if v < 4036 {

@@ -15,7 +15,7 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '1.65.1'
 
-	res := os.execute('source ${osal.profile_path()} && rclone version')
+	res := os.execute('${osal.profile_path_source_and()} rclone version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.contains('rclone v'))
 		if r.len != 1 {

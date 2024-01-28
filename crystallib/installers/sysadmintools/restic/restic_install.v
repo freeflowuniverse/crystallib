@@ -15,7 +15,7 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '0.16.2'
 
-	res := os.execute('source ${osal.profile_path()} && restic version')
+	res := os.execute('${osal.profile_path_source_and()} restic version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.contains('restic 0'))
 		if r.len != 1 {

@@ -9,6 +9,10 @@ mkdir -p ~/.vmodules/freeflowuniverse
 rm -f ~/.vmodules/freeflowuniverse/crystallib
 ln -s $ABS_DIR_OF_SCRIPT/crystallib ~/.vmodules/freeflowuniverse/crystallib
 
+set +e
+ln -s ~/code/github/freeflowuniverse/webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
+set -e
+
 
 cp ~/code/github/freeflowuniverse/crystallib/scripts/node/vrun /usr/local/bin/
 chmod 770  /usr/local/bin/vrun
