@@ -15,14 +15,14 @@ function crystal_lib_get {
         else
             git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
         fi               
-        # if [[ $(git status -s) ]]; then
-        #     echo "There are uncommitted changes in the Git repository crystallib."
-        #     # git add . -A
-        #     # git commit -m "just to be sure"
-        #     exit 1
-        # fi
-        # git pull
-        # git checkout $CLBRANCH
+        if [[ $(git status -s) ]]; then
+            echo "There are uncommitted changes in the Git repository crystallib."
+            exit 1
+        fi
+        git pull
+        set +e
+        git checkout $CLBRANCH
+        set -e
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
@@ -33,7 +33,9 @@ function crystal_lib_get {
         fi        
         
         cd crystallib
+        set +e
         git checkout $CLBRANCH
+        set -e
         popd 2>&1 >> /dev/null
     fi
 

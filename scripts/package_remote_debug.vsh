@@ -23,6 +23,7 @@ mut n := b.node_new(ipaddr: server)!
 
 
 n.upload(source: "${mypath}/installer.sh", dest: '/tmp/installer.sh')!
-n.exec(cmd:"bash /tmp/installer.sh")!
+println("execute installer")
+n.exec(cmd:"bash /tmp/installer.sh",stdout:true)!
 
 

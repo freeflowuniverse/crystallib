@@ -13,10 +13,10 @@ function os_update {
         apt-mark hold grub-efi-amd64-signed
         set -e
         apt update -y
-        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        # apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        # apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release screen"
+        package_install "mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release screen"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         # if command -v brew >/dev/null 2>&1; then
         #     echo 'homebrew installed'

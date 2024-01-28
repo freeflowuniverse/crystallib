@@ -5,12 +5,11 @@ export HEROPATH='/usr/local/bin/hero'
 if [[ "$OSTYPE" == "darwin"* ]]; then
     export HEROPATH=$HOME/hero/bin/hero
     # brew install libpq
+    prf="$HOME/.profile"
+    [ -f "$prf" ] && source "$prf"
 fi
 
 #!/bin/bash
-
-prf="$HOME/.profile"
-[ -f "$prf" ] && source "$prf"
 
 v -enable-globals -w hero.v
 

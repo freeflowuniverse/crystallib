@@ -424,10 +424,10 @@ function os_update {
         apt-mark hold grub-efi-amd64-signed
         set -e
         apt update -y
-        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        # apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        # apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release screen"
+        package_install "mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release screen"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         # if command -v brew >/dev/null 2>&1; then
         #     echo 'homebrew installed'
@@ -448,61 +448,59 @@ function os_update {
     fi
 }
 
-function redis_install {
+# function redis_install {
 
-    local response=$(redis-cli PING)
+#     # local response=$(redis-cli PING)
 
-    # Check if the response is PONG
-    if [[ "${response}" == "PONG" ]]; then
-        return 
-    fi
+#     # # Check if the response is PONG
+#     # if [[ "${response}" == "PONG" ]]; then
+#     #     return 
+#     # fi
 
-     nix-env --install redis
-
-    # if [[ "${OSTYPE}" == "linux-gnu"* ]]; then 
-    #     # package_install "libssl-dev redis"
-    #     package_install "redis"
-    #     set +e
-    #     /etc/init.d/redis-server stop
-    #     update-rc.d redis-server disable
-    #     set -e
-    #     if pgrep redis >/dev/null; then
-    #         # If running, kill Redis server
-    #         echo "redis is running. Stopping..."
-    #         pkill redis-server
-    #         echo "redis server has been stopped."
-    #     else
-    #         echo "redis server is not running."
-    #     fi
-    # elif [[ "${OSTYPE}" == "darwin"* ]]; then
-    #     if ! [ -x "$(command -v redis-server)" ]; then
-    #         brew install redis
-    #         brew services start redis
-    #     fi        
-    # fi
-}
+#     if [[ "${OSTYPE}" == "linux-gnu"* ]]; then 
+#         # package_install "libssl-dev redis"
+#         package_install "redis"
+#         set +e
+#         /etc/init.d/redis-server stop
+#         update-rc.d redis-server disable
+#         set -e
+#         if pgrep redis >/dev/null; then
+#             # If running, kill Redis server
+#             echo "redis is running. Stopping..."
+#             pkill redis-server
+#             echo "redis server has been stopped."
+#         else
+#             echo "redis server is not running."
+#         fi
+#     elif [[ "${OSTYPE}" == "darwin"* ]]; then
+#         if ! [ -x "$(command -v redis-server)" ]; then
+#             brew install redis
+#             brew services start redis
+#         fi        
+#     fi
+# }
 
 
-#configure the redis in zinit
-function zinit_add_redis {
-    redis_install
-    local cmd="
-#!/bin/bash
-if pgrep redis >/dev/null; then
-    echo redis is running. Stopping...
-    pkill redis-server
-fi
-redis-server
-"
-    # --port 7777
+# #configure the redis in zinit
+# function zinit_add_redis {
+#     redis_install
+#     local cmd="
+# #!/bin/bash
+# if pgrep redis >/dev/null; then
+#     echo redis is running. Stopping...
+#     pkill redis-server
+# fi
+# redis-server
+# "
+#     # --port 7777
 
-    local zinitcmd="
-test: redis-cli  PING
-"
-    #-p 7777
-    zinitinstall "redis" "${cmd}" "${zinitcmd}"
-    unset zinitcmd
-}
+#     local zinitcmd="
+# test: redis-cli  PING
+# "
+#     #-p 7777
+#     zinitinstall "redis" "${cmd}" "${zinitcmd}"
+#     unset zinitcmd
+# }
 
 function v_install {
     if [[ -z "${DIR_CODE_INT}" ]]; then 
@@ -590,14 +588,14 @@ function crystal_lib_get {
         else
             git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
         fi               
-        # if [[ $(git status -s) ]]; then
-        #     echo "There are uncommitted changes in the Git repository crystallib."
-        #     # git add . -A
-        #     # git commit -m "just to be sure"
-        #     exit 1
-        # fi
-        # git pull
-        # git checkout $CLBRANCH
+        if [[ $(git status -s) ]]; then
+            echo "There are uncommitted changes in the Git repository crystallib."
+            exit 1
+        fi
+        git pull
+        set +e
+        git checkout $CLBRANCH
+        set -e
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
@@ -608,7 +606,9 @@ function crystal_lib_get {
         fi        
         
         cd crystallib
+        set +e
         git checkout $CLBRANCH
+        set -e
         popd 2>&1 >> /dev/null
     fi
 
@@ -690,42 +690,9 @@ function hero_install {
     chmod +x hero
     mv hero $HEROPATH
 
-    $HEROPATH init
+    # $HEROPATH init
 
     echo " - Successfully installed hero on $HEROPATH!"
-
-}function dagu_install {
-
-    platform=$(uname -m)
-    url="https://github.com/dagu-dev/dagu/releases/download/v1.12.7/dagu_1.12.7_linux_amd64.tar.gz"
-    if [ "$platform" == "aarch64" ]; then
-        url="https://github.com/dagu-dev/dagu/releases/download/v1.12.7/dagu_1.12.7_linux_arm64.tar.gz"
-    fi
-    target_dir="/tmp/dagu"
-    min_size_bytes=9000000
-    mkdir -p "$target_dir"
-    filename=$(basename "$url")
-    curl -L -o "$target_dir/$filename" "$url"
-    file_size=$(stat -c %s "$target_dir/$filename")
-    if [ "$file_size" -ge "$min_size_bytes" ]; then
-        tar -xzf "$target_dir/$filename" -C "$target_dir"
-        echo "Extraction complete."
-    else
-        echo "$filename is too small (size: $file_size bytes). Removing the file."
-        rm -f "$target_dir"
-        exit 1
-    fi
-    mkdir -p ~/hero/bin/
-    cp /tmp/dagu/dagu /usr/local/bin
-}
-
-
-function dagu_tmux {
-    SESSION_NAME="dagu"
-    if tmux has-session -t $SESSION_NAME 2>/dev/null; then
-        tmux kill-session -t $SESSION_NAME
-    fi
-    tmux new-session -d -s $SESSION_NAME 'dagu server -s 0.0.0.0'
 
 }
 function freeflow_dev_env_install {
@@ -736,12 +703,23 @@ function freeflow_dev_env_install {
         v_install
     fi
     if ! [ -x "$(command -v redis-cli)" ]; then
-        redis_install
+        echo "CANNOT FIND REDIS-SERVER"
+        exit 1
     fi
+
+    local response=$(redis-cli PING)
+
+    # Check if the response is PONG
+    if [[ "${response}" == "PONG" ]]; then
+        echo "REDIS OK"
+    else
+        echo "REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING" 
+        exit 1
+    fi    
 
     echo " - compile hero"
     ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
-    source ~/.profile
+    # source ~/.profile
 
     hero init
 
