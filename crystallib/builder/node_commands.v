@@ -180,7 +180,7 @@ fn (mut node Node) platform_load() ! {
 
 	if osname == 'arch' {
 		node.platform = PlatformType.arch
-	} else if osname == 'ubuntu' {
+	} else if osname == 'ubuntu' ||  osname == 'debian'{
 		node.platform = PlatformType.ubuntu
 	} else if osname == 'darwin' {
 		node.platform = PlatformType.osx

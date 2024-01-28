@@ -36,94 +36,90 @@ pub fn play_mdbook(mut session play.Session) ! {
 		config_actions[0].done = true
 	}
 
-	if coderoot == '' {
-		coderoot = session.context.coderoot()!
-	}
 
-	mut books := mdbook.new(
-		coderoot: coderoot
-		buildroot: buildroot
-		publishroot: publishroot
-		install: install
-	)!
+	// mut books := mdbook.new(
+	// 	buildroot: buildroot
+	// 	publishroot: publishroot
+	// 	install: install
+	// )!
 
-	for mut action in session.plbook.find(filter: 'book:define')! {
-		mut p := action.params
-		name := p.get('name')!
-		title := p.get_default('title', name)!
-		url := p.get('url')!
-		// make sure we know the books
-		books.book_new(
-			name: name
-			url: url
-			title: title
-		)!
-		action.done = true
-	}
+	// for mut action in session.plbook.find(filter: 'book:define')! {
+	// 	mut p := action.params
+	// 	name := p.get('name')!
+	// 	title := p.get_default('title', name)!
+	// 	url := p.get('url')!
+	// 	// make sure we know the books
+	// 	books.book_new(
+	// 		name: name
+	// 		url: url
+	// 		title: title
+	// 	)!
+	// 	action.done = true
+	// }
 
-	for mut action in session.plbook.find(filter: 'book:collection_add')! {
-		mut p := action.params
-		name := p.get('name')!
-		book := p.get('book')!
-		url := p.get('url')!
+	// for mut action in session.plbook.find(filter: 'book:collection_add')! {
+	// 	mut p := action.params
+	// 	name := p.get('name')!
+	// 	book := p.get('book')!
+	// 	url := p.get('url')!
 
-		mut book2 := books.get(book)!
-		book2.collection_add(name: name, url: url)!
-		action.done = true
-	}
+	// 	mut book2 := books.get(book)!
+	// 	book2.collection_add(name: name, url: url)!
+	// 	action.done = true
+	// }
 
-	for mut action in session.plbook.find(filter: 'book:collections_add')! {
-		mut p := action.params
-		book := p.get('book')!
-		url := p.get('url')!
+	// for mut action in session.plbook.find(filter: 'book:collections_add')! {
+	// 	mut p := action.params
+	// 	book := p.get('book')!
+	// 	url := p.get('url')!
 
-		mut book2 := books.get(book)!
-		book2.collections_add(git_url: url)!
-		action.done = true
-	}
+	// 	mut book2 := books.get(book)!
+	// 	book2.collections_add(git_url: url)!
+	// 	action.done = true
+	// }
 
-	mut init_done := false
-	for mut action in session.plbook.find_max_one(filter: 'books:pull')! {
-		books.pull(reset)!
-		action.done = true
-		init_done = true
-	}
+	// mut init_done := false
+	// for mut action in session.plbook.find_max_one(filter: 'books:pull')! {
+	// 	books.pull(reset)!
+	// 	action.done = true
+	// 	init_done = true
+	// }
 
-	for mut action in session.plbook.find(filter: 'books:generate')! {
-		mut p := action.params
-		mut pull2 := p.get_default_false('pull')
-		if pull2 {
-			books.pull(reset)!
-		}
-		mut name := p.get_default('name', '')!
-		if name.contains(',') {
-			names := texttools.to_array(name)
-			for name2 in names {
-				mut book2 := mdbook.new_from_config(
-					books: &books
-					instance: name2
-					reset: reset
-					context: &session.context
-				)!
-				book2.generate()!
-			}
-		} else if name == '' {
-			for mut book2 in books.books {
-				book2.generate()!
-				mdbook.save_to_config(*book2, mut session.context)!
-			}
-		} else {
-			mut book2 := mdbook.new_from_config(
-				books: &books
-				instance: name
-				reset: reset
-				context: &session.context
-			)!
-			book2.generate()!
-			mdbook.save_to_config(*book2, mut session.context)!
-		}
-		action.done = true
-	}
+	// for mut action in session.plbook.find(filter: 'books:generate')! {
+	// 	mut p := action.params
+	// 	mut pull2 := p.get_default_false('pull')
+	// 	if pull2 {
+	// 		books.pull(reset)!
+	// 	}
+	// 	mut name := p.get_default('name', '')!
+	// 	if name.contains(',') {
+	// 		names := texttools.to_array(name)
+	// 		for name2 in names {
+	// 			mut book2 := mdbook.new_from_config(
+	// 				books: &books
+	// 				instance: name2
+	// 				reset: reset
+	// 				context: &session.context
+	// 			)!
+	// 			book2.generate()!
+	// 		}
+	// 	} else if name == '' {
+	// 		for mut book2 in books.books {
+	// 			book2.generate()!
+	// 			mdbook.save_to_config(*book2, mut session.context)!
+	// 		}
+	// 	} else {
+	// 		mut book2 := mdbook.new_from_config(
+	// 			books: &books
+	// 			instance: name
+	// 			reset: reset
+	// 			context: &session.context
+	// 		)!
+	// 		book2.generate()!
+	// 		mdbook.save_to_config(*book2, mut session.context)!
+	// 	}
+	// 	action.done = true
+	// }
 
 	// for mut action in session.plbook.find(filter:'book:edit')! {
 	// 	mut p := action.params

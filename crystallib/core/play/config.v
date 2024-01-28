@@ -41,6 +41,12 @@ pub fn (mut self Configurator[T]) set(args_ T) ! {
 	contextdb.set(self.config_key(), data)!
 }
 
+pub fn (mut self Configurator[T]) exists() !bool {
+	mut contextdb := self.context.db_config_get()!
+	return contextdb.exists(self.config_key())
+}
+
+
 pub fn (mut self Configurator[T]) get() !T {
 	mut contextdb := self.context.db_config_get()!
 	if !contextdb.exists(self.config_key()) {

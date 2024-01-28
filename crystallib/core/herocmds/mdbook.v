@@ -56,14 +56,14 @@ fn cmd_mdbook_execute(cmd Command) ! {
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 
-	mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
+	// mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
 
-	book2.generate()!
-	book2.open()!
+	// book2.generate()!
+	// book2.open()!
 
-	edit := cmd.flags.get_bool('edit') or { false }
+	// edit := cmd.flags.get_bool('edit') or { false }
 
-	if edit {
-		book2.edit()!
-	}
+	// if edit {
+	// 	book2.edit()!
+	// }
 }

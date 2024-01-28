@@ -27,8 +27,8 @@ function os_update {
         # fi
         nix-env --install redis mc curl 
     elif [[ "${OSNAME}" == "alpine"* ]]; then
-        sudo -s apk update screen git htop tmux
-        sudo -s apk add mc nushell curl rsync htop redis bash bash-completion screen git
+        apk update screen git htop tmux
+        apk add mc nushell curl rsync htop redis bash bash-completion screen git
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm

@@ -5,17 +5,17 @@ rm -f ${HOME}/.env.sh
 
 touch ~/.profile
 
-remove_include_shell() {
-    for file in "$@"; do
-        if [[ -f "$file" ]]; then
-            sed -i '' '/env\.sh/d' "$file"
-            sed -i '' '/hero\/bin/d' "$file"
-            echo 'export PATH="$HOME/hero/bin:$PATH"' >> "$file"
-        fi
-    done
-}
+# remove_include_shell() {
+#     for file in "$@"; do
+#         if [[ -f "$file" ]]; then
+#             sed -i '' '/env\.sh/d' "$file"
+#             sed -i '' '/hero\/bin/d' "$file"
+#             echo 'export PATH="$HOME/hero/bin:$PATH"' >> "$file"
+#         fi
+#     done
+# }
 
-remove_include_shell "$HOME/.zprofile" "$HOME/.bashrc" "$HOME/.profile" "$HOME/.config/fish/config.fish" "$HOME/.zshrc"
+# remove_include_shell "$HOME/.zprofile" "$HOME/.bashrc" "$HOME/.profile" "$HOME/.config/fish/config.fish" "$HOME/.zshrc"
 
 if [[ -z "${CLBRANCH}" ]]; then 
     export CLBRANCH="development"
@@ -80,6 +80,9 @@ function myplatform {
         if [ "${OSNAME}" == "archarm" ]; then
             export OSNAME="arch"          
         fi        
+        if [ "${OSNAME}" == "debian" ]; then
+            export OSNAME="ubuntu"          
+        fi            
     else
         echo "Unable to determine the operating system."
         exit 1        
@@ -174,9 +177,9 @@ function package_install {
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         brew install $command_name
     elif [[ "${OSNAME}" == "alpine"* ]]; then
-        sudo -s apk add $command_name
+        apk add $command_name
     elif [[ "${OSNAME}" == "arch"* ]]; then
-        sudo -s pacman --noconfirm -Su $command_name
+        pacman --noconfirm -Su $command_name
     else
         echo "platform : ${OSNAME} not supported"
         exit 1
@@ -290,7 +293,7 @@ function zinit_install {
 			echo "Downloaded file is larger than 5MB."
 			echo "Moving the file to $destination_path."
 			rm -f destination_path
-			sudo mv "$destination_tmp_path" "$destination_path"
+			mv "$destination_tmp_path" "$destination_path"
 			if [ $? -eq 0 ]; then
 				echo "File moved successfully."
 			else
@@ -424,7 +427,7 @@ function os_update {
         apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release"
+        package_install "fish mc curl tmux net-tools git htop ca-certificates lsb-release screen"
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         # if command -v brew >/dev/null 2>&1; then
         #     echo 'homebrew installed'
@@ -435,8 +438,8 @@ function os_update {
         # fi
         nix-env --install redis mc curl 
     elif [[ "${OSNAME}" == "alpine"* ]]; then
-        sudo -s apk update screen git
-        sudo -s apk add mc nushell curl rsync htop redis bash bash-completion screen git
+        apk update screen git htop tmux
+        apk add mc nushell curl rsync htop redis bash bash-completion screen git
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
@@ -509,10 +512,10 @@ function v_install {
     if [ -d "$HOME/.vmodules" ]
     then
         if [[ -z "${USER}" ]]; then
-            sudo chown -R $USER:$USER ~/.vmodules
+            chown -R $USER:$USER ~/.vmodules
         else
             USER="$(whoami)"
-            sudo chown -R $USER ~/.vmodules
+            chown -R $USER ~/.vmodules
         fi
     fi
 
@@ -536,27 +539,33 @@ function v_install {
     else
         mkdir -p $DIR_CODE_INT
         pushd $DIR_CODE_INT
-        sudo rm -rf $DIR_CODE_INT/v
+        rm -rf $DIR_CODE_INT/v
         git clone  --depth 1  https://github.com/vlang/v
         popd "$@" > /dev/null
     fi
 
     pushd $DIR_CODE_INT/v
     make
-    mkdir -p ${HOME}/hero/bin
-    rm -f ${HOME}/hero/bin/v
-    ln -s ${DIR_CODE_INT}/v/v ${HOME}/hero/bin/v
-    popd "$@" > /dev/null
-    export PATH="${HOME}/hero/bin:$PATH"
 
-    # set -x
-    pushd /tmp
-    source ~/.profile
-    rm -f install.sh
-    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
-    v run install.vsh  --no-interaction
-    popd "$@" > /dev/null
-    # set +x
+    if [[ ${OSNAME} == "darwin"* ]]; then
+        mkdir -p ${HOME}/hero/bin
+        rm -f ${HOME}/hero/bin/v
+        ln -s ${DIR_CODE_INT}/v/v ${HOME}/hero/bin/v
+        popd "$@" > /dev/null
+        export PATH="${HOME}/hero/bin:$PATH"
+	else
+        ${HOME}/hero/bin/v symlink
+    fi
+
+    ##LETS NOT USE v-analyzer by default
+    # # set -x
+    # pushd /tmp
+    # source ~/.profile
+    # rm -f install.sh
+    # curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    # v run install.vsh  --no-interaction
+    # popd "$@" > /dev/null
+    # # set +x
 
     if ! [ -x "$(command -v v)" ]; then
     echo 'vlang is not installed.' >&2

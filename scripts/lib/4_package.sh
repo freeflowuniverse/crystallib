@@ -15,9 +15,9 @@ function package_install {
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         brew install $command_name
     elif [[ "${OSNAME}" == "alpine"* ]]; then
-        sudo -s apk add $command_name
+        apk add $command_name
     elif [[ "${OSNAME}" == "arch"* ]]; then
-        sudo -s pacman --noconfirm -Su $command_name
+        pacman --noconfirm -Su $command_name
     else
         echo "platform : ${OSNAME} not supported"
         exit 1

@@ -74,9 +74,9 @@ pub fn develop(args InstallArgs) ! {
 		panic('only ubuntu and osx supported for now')
 	}
 
-	mut b := builder.new()!
-	mut n := b.node_new()!
-	n.crystal_install()!
+	// mut b := builder.new()!
+	// mut n := b.node_new()!
+	// n.crystal_install()!
 
 	// coderoot := '${os.home_dir()}/code_'
 	// iam := osal.whoami()!

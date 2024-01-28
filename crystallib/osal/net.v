@@ -22,7 +22,7 @@ pub fn ping(args PingArgs) PingResult {
 	mut cmd := ''
 	platform_ := platform()
 	if platform_ == .osx {
-		cmd = 'ping -c ${args.count} -t ${args.timeout} ${args.address}'
+		cmd = 'ping -c ${args.count} -W ${args.timeout*1000} ${args.address}'
 	} else if platform_ == .ubuntu {
 		cmd = 'ping -c ${args.count} -w ${args.timeout} ${args.address}'
 	} else {

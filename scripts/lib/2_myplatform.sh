@@ -11,6 +11,9 @@ function myplatform {
         if [ "${OSNAME}" == "archarm" ]; then
             export OSNAME="arch"          
         fi        
+        if [ "${OSNAME}" == "debian" ]; then
+            export OSNAME="ubuntu"          
+        fi            
     else
         echo "Unable to determine the operating system."
         exit 1        

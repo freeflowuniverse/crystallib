@@ -62,7 +62,7 @@ function zinit_install {
 			echo "Downloaded file is larger than 5MB."
 			echo "Moving the file to $destination_path."
 			rm -f destination_path
-			sudo mv "$destination_tmp_path" "$destination_path"
+			mv "$destination_tmp_path" "$destination_path"
 			if [ $? -eq 0 ]; then
 				echo "File moved successfully."
 			else

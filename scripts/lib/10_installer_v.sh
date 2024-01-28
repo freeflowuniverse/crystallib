@@ -7,10 +7,10 @@ function v_install {
     if [ -d "$HOME/.vmodules" ]
     then
         if [[ -z "${USER}" ]]; then
-            sudo chown -R $USER:$USER ~/.vmodules
+            chown -R $USER:$USER ~/.vmodules
         else
             USER="$(whoami)"
-            sudo chown -R $USER ~/.vmodules
+            chown -R $USER ~/.vmodules
         fi
     fi
 
@@ -34,27 +34,33 @@ function v_install {
     else
         mkdir -p $DIR_CODE_INT
         pushd $DIR_CODE_INT
-        sudo rm -rf $DIR_CODE_INT/v
+        rm -rf $DIR_CODE_INT/v
         git clone  --depth 1  https://github.com/vlang/v
         popd "$@" > /dev/null
     fi
 
     pushd $DIR_CODE_INT/v
     make
-    mkdir -p ${HOME}/hero/bin
-    rm -f ${HOME}/hero/bin/v
-    ln -s ${DIR_CODE_INT}/v/v ${HOME}/hero/bin/v
-    popd "$@" > /dev/null
-    export PATH="${HOME}/hero/bin:$PATH"
 
-    # set -x
-    pushd /tmp
-    source ~/.profile
-    rm -f install.sh
-    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
-    v run install.vsh  --no-interaction
-    popd "$@" > /dev/null
-    # set +x
+    if [[ ${OSNAME} == "darwin"* ]]; then
+        mkdir -p ${HOME}/hero/bin
+        rm -f ${HOME}/hero/bin/v
+        ln -s ${DIR_CODE_INT}/v/v ${HOME}/hero/bin/v
+        popd "$@" > /dev/null
+        export PATH="${HOME}/hero/bin:$PATH"
+	else
+        ${HOME}/hero/bin/v symlink
+    fi
+
+    ##LETS NOT USE v-analyzer by default
+    # # set -x
+    # pushd /tmp
+    # source ~/.profile
+    # rm -f install.sh
+    # curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    # v run install.vsh  --no-interaction
+    # popd "$@" > /dev/null
+    # # set +x
 
     if ! [ -x "$(command -v v)" ]; then
     echo 'vlang is not installed.' >&2
