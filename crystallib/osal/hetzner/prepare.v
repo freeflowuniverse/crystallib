@@ -1,7 +1,6 @@
-
 module hetzner
 
-//TODO: couldn't get ssh lib to work
+// TODO: couldn't get ssh lib to work
 
 // pub fn (h HetznerClient) server_prepare(name string) !bool {
 // 	srvs := h.servers_list()!

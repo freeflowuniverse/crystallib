@@ -8,7 +8,7 @@
 // import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.osal.mdbook
-// 
+//
 // import os
 
 // __global (

@@ -138,7 +138,7 @@ pub fn check(args InstallArgs) !bool {
 		conn.default_header.add(.authorization, 'Bearer ${args.secret}')
 	}
 	conn.default_header.add(.content_type, 'application/json')
-	console.print_debug("check connection to dagu")
+	console.print_debug('check connection to dagu')
 	r := conn.get_json_dict(prefix: 'dags') or { return false }
 	// r := conn.get_json_dict(prefix: 'dags')!
 	dags := r['DAGs'] or { return false }
@@ -149,6 +149,6 @@ pub fn check(args InstallArgs) !bool {
 	// if r.trim_space() == "OK" {
 	// 	return true
 	// }
-	console.print_debug("Dagu is answering.")
+	console.print_debug('Dagu is answering.')
 	return true
 }

@@ -14,64 +14,62 @@ pub mut:
 	factory      &MDBooksFactory           @[skip; str: skip]
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	args		 MDBookArgs
-	errors		 []doctree.CollectionError
+	args         MDBookArgs
+	errors       []doctree.CollectionError
 }
 
 @[params]
 pub struct MDBookArgs {
 pub mut:
-	name  string @[required]
-	title string
-	summary_url   string  // url of the summary.md file
-	summary_path  string  // can also give the path to the summary file (can be the dir or the summary itself)
-	doctree_url string
+	name         string @[required]
+	title        string
+	summary_url  string // url of the summary.md file
+	summary_path string // can also give the path to the summary file (can be the dir or the summary itself)
+	doctree_url  string
 	doctree_path string
-
 }
 
 pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
-
 	console.print_header(' mdbook: ${args_.name}')
 
-	mut args:=args_
-	if args.title==""{
-		args.title=args.name
+	mut args := args_
+	if args.title == '' {
+		args.title = args.name
 	}
 	path_build := '${factory.path_build}/${args.name}'
 	path_publish := '${factory.path_publish}/${args.name}'
 
-	mut context:=factory.context()!
+	mut context := factory.context()!
 	mut gs := context.gitstructure()!
 
-	if args.summary_url.len>0{
+	if args.summary_url.len > 0 {
 		mut locator1 := gs.locator_new(args.summary_url)!
 		gs.repo_get(locator: locator1, reset: false, pull: false)!
 		mut path_summary := locator1.path_on_fs()!
-		if !path_summary.exists(){
-			return error("cannot find path for summary: ${path_summary.path}")
+		if !path_summary.exists() {
+			return error('cannot find path for summary: ${path_summary.path}')
 		}
-		if path_summary.is_file(){
+		if path_summary.is_file() {
 			args.summary_path = path_summary.path
-		}else if path_summary.is_dir(){
-			path_summary_path:=path_summary.file_get_ignorecase('summary.md')!
+		} else if path_summary.is_dir() {
+			path_summary_path := path_summary.file_get_ignorecase('summary.md')!
 			args.summary_path = path_summary_path.path
-		}else{
-			return error("summary from git needs to be dir or file")
+		} else {
+			return error('summary from git needs to be dir or file')
 		}
 	}
-		
-	if args.doctree_url.len>0{
+
+	if args.doctree_url.len > 0 {
 		mut locator2 := gs.locator_new(args.doctree_url)!
-		gs.repo_get(locator: locator2, reset: false, pull: false)! 
+		gs.repo_get(locator: locator2, reset: false, pull: false)!
 		mut path_doctree := locator2.path_on_fs()!
-		if !path_doctree.exists(){
-			return error("cannot find path for doctree: ${path_doctree.path}")
+		if !path_doctree.exists() {
+			return error('cannot find path for doctree: ${path_doctree.path}')
 		}
-		if path_doctree.is_dir(){
+		if path_doctree.is_dir() {
 			args.doctree_path = path_doctree.path
-		}else{
-			return error("doctree from git needs to be dir. ${path_doctree.path}")
+		} else {
+			return error('doctree from git needs to be dir. ${path_doctree.path}')
 		}
 	}
 
@@ -85,59 +83,61 @@ pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
 
 	mut summary := book.summary()!
 
-	//create the additional collection (is a system collection)
-	addpath:='${book.path_build.path}/src/additional'
-	mut a:=pathlib.get_file(path:"${addpath}/additional.md",create:true)!
-	mut b:=pathlib.get_file(path:"${addpath}/errors.md",create:true)!
-	mut c:=pathlib.get_file(path:"${addpath}/pages.md",create:true)!
+	// create the additional collection (is a system collection)
+	addpath := '${book.path_build.path}/src/additional'
+	mut a := pathlib.get_file(path: '${addpath}/additional.md', create: true)!
+	mut b := pathlib.get_file(path: '${addpath}/errors.md', create: true)!
+	mut c := pathlib.get_file(path: '${addpath}/pages.md', create: true)!
 
-	a.write("
+	a.write('
 # Additional pages
 
 A normal user can ignore these pages, they are for the authors to see e.g. errors
 
-	")!
+	')!
 
-	b.write("
+	b.write('
 # Errors
 
 Be the mother for our errors.
 
-	")!
-	c.write("
+	')!
+	c.write('
 # Additional pages
 
 A normal user can ignore these pages, they are for the authors to see e.g. errors
 
-	")!
+	')!
 
-
-	for collectionname in summary.collections{
-		collection_dir_str:="${args.doctree_path}/${collectionname}"
-		mut collection_dir_path:=pathlib.get_dir(path:collection_dir_str,create:false) or {panic("bug")} //should always work because done in summary
-		//check if there are errors, if yes add to summary
-		if collection_dir_path.file_exists("errors.md"){
-			summary.add_error_page(collectionname,"errors.md")
+	for collectionname in summary.collections {
+		collection_dir_str := '${args.doctree_path}/${collectionname}'
+		mut collection_dir_path := pathlib.get_dir(path: collection_dir_str, create: false) or {
+			panic('bug')
+		} // should always work because done in summary
+		// check if there are errors, if yes add to summary
+		if collection_dir_path.file_exists('errors.md') {
+			summary.add_error_page(collectionname, 'errors.md')
 		}
-		//now link the collection into the build dir
-		collection_dirbuild_str:='${book.path_build.path}/src/${collectionname}'
-		collection_dir_path.link(collection_dirbuild_str,true)!
+		// now link the collection into the build dir
+		collection_dirbuild_str := '${book.path_build.path}/src/${collectionname}'
+		collection_dir_path.link(collection_dirbuild_str, true)!
 	}
 
-	if book.errors.len>0{
-		
+	if book.errors.len > 0 {
 		book.errors_report()!
-		
-		summary.errors << SummaryItem{level:2,description:"errors mdbook",
-			pagename:"errors_mdbook.md",collection:"additional"
-		}		
+
+		summary.errors << SummaryItem{
+			level: 2
+			description: 'errors mdbook'
+			pagename: 'errors_mdbook.md'
+			collection: 'additional'
+		}
 	}
-	
-	
+
 	println(summary)
 
-	path_summary_str:='${book.path_build.path}/src/SUMMARY.md'
-	mut path_summary:=pathlib.get_file(path:path_summary_str,create:true)!
+	path_summary_str := '${book.path_build.path}/src/SUMMARY.md'
+	mut path_summary := pathlib.get_file(path: path_summary_str, create: true)!
 	path_summary.write(summary.str())!
 
 	book.template_install()!
@@ -147,13 +147,12 @@ A normal user can ignore these pages, they are for the authors to see e.g. error
 	console.print_header(' mdbook prepared: ${book.path_build.path}')
 
 	return &book
-
 }
 
 // write errors.md in the collection, this allows us to see what the errors are
-fn (book MDBook) errors_report() ! {	
-	errors_path_str:='${book.path_build.path}/src/additional/errors_mdbook.md'
-	mut dest:=pathlib.get_file(path:errors_path_str,create:true)!
+fn (book MDBook) errors_report() ! {
+	errors_path_str := '${book.path_build.path}/src/additional/errors_mdbook.md'
+	mut dest := pathlib.get_file(path: errors_path_str, create: true)!
 	if book.errors.len == 0 {
 		dest.delete()!
 		return
@@ -162,8 +161,7 @@ fn (book MDBook) errors_report() ! {
 	dest.write(c)!
 }
 
-
-[params]
+@[params]
 pub struct ErrorArgs {
 pub mut:
 	path string
@@ -171,18 +169,16 @@ pub mut:
 	cat  doctree.CollectionErrorCat
 }
 
-
 pub fn (mut book MDBook) error(args ErrorArgs) {
-	path2:=pathlib.get(args.path)
-	e:=doctree.CollectionError{
-		path:path2
-		msg:args.msg
-		cat:args.cat
+	path2 := pathlib.get(args.path)
+	e := doctree.CollectionError{
+		path: path2
+		msg: args.msg
+		cat: args.cat
 	}
-	book.errors<<e
+	book.errors << e
 	console.print_stderr(args.msg)
 }
-
 
 pub fn (mut book MDBook) open() ! {
 	console.print_header('open book: ${book.name}')
@@ -217,7 +213,6 @@ pub fn (mut book MDBook) generate() ! {
 }
 
 fn (mut book MDBook) template_install() ! {
-
 	// get embedded files to the mdbook dir
 	for item in book.factory.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
@@ -259,11 +254,10 @@ fn (mut book MDBook) summary_image_set() ! {
 			// if true{panic("s")}
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!
-				image_dir.link('${book.path_build.path}/src/img',true)!
+				image_dir.link('${book.path_build.path}/src/img', true)!
 			}
 
 			first = false
 		}
 	}
 }
-

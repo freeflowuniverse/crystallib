@@ -180,7 +180,7 @@ fn (mut node Node) platform_load() ! {
 
 	if osname == 'arch' {
 		node.platform = PlatformType.arch
-	} else if osname == 'ubuntu' ||  osname == 'debian'{
+	} else if osname == 'ubuntu' || osname == 'debian' {
 		node.platform = PlatformType.ubuntu
 	} else if osname == 'darwin' {
 		node.platform = PlatformType.osx
@@ -191,7 +191,6 @@ fn (mut node Node) platform_load() ! {
 		panic('only ubuntu, arch and osx supported for now')
 	}
 	console.print_debug('platform loaded')
-	
 }
 
 pub fn (mut node Node) package_refresh() ! {

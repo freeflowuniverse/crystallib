@@ -3,7 +3,6 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 
-
 // walk over one specific collection, find all files and pages
 pub fn (mut collection Collection) scan() ! {
 	$if debug {

@@ -265,8 +265,8 @@ pub fn (collection Collection) pagenames() []string {
 }
 
 // write errors.md in the collection, this allows us to see what the errors are
-fn (collection Collection) errors_report(dest_ string) ! {	
-	mut dest:=pathlib.get_file(path:dest_,create:true)!
+fn (collection Collection) errors_report(dest_ string) ! {
+	mut dest := pathlib.get_file(path: dest_, create: true)!
 	if collection.errors.len == 0 {
 		dest.delete()!
 		return

@@ -13,13 +13,12 @@ import freeflowuniverse.crystallib.core.play
 
 @[heap]
 pub struct MDBooksFactory {
-	play.Base	
+	play.Base
 pub mut:
-	path_build      string
-	path_publish    string	
-	embedded_files  []embed_file.EmbedFileData  @[skip; str: skip]
+	path_build     string
+	path_publish   string
+	embedded_files []embed_file.EmbedFileData @[skip; str: skip]
 }
-
 
 @[params]
 pub struct MDBooksFactoryArgs {
@@ -28,7 +27,7 @@ pub mut:
 	buildroot   string = '${os.home_dir()}/hero/var/mdbuild'
 	publishroot string = '${os.home_dir()}/hero/www/info'
 	install     bool   = true
-	session 	?&play.Session @[skip; str: skip]
+	session     ?&play.Session @[skip; str: skip]
 }
 
 pub fn new(args MDBooksFactoryArgs) !MDBooksFactory {
@@ -38,7 +37,7 @@ pub fn new(args MDBooksFactoryArgs) !MDBooksFactory {
 	mut books := MDBooksFactory{
 		path_build: args.buildroot
 		path_publish: args.publishroot
-		session:args.session
+		session: args.session
 	}
 	books.load()!
 	return books
@@ -52,7 +51,6 @@ fn (mut books MDBooksFactory) load() ! {
 	books.embedded_files << $embed_file('template/echarts.min.js')
 	books.embedded_files << $embed_file('template/mermaid.min.js')
 }
-
 
 // if true {
 // 	panic('generate')
@@ -68,7 +66,6 @@ fn (mut books MDBooksFactory) load() ! {
 // 	revlast string
 // 	revnew  string
 // }
-
 
 // make sure all intial states for the revisions are reset
 // fn (mut self MDBooksFactory) reset_state() ! {

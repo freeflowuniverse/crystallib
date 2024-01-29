@@ -4,8 +4,8 @@ import os
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 
-if true{
-	panic("DONTUSE")
+if true {
+	panic('DONTUSE')
 }
 
 @[params]

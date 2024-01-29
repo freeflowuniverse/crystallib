@@ -49,7 +49,6 @@ pub fn (mut base DocBase) list_new(content string) &List {
 	return &a
 }
 
-
 pub fn (mut base DocBase) text_new(content string) &Text {
 	mut a := Text{
 		content: content

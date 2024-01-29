@@ -55,7 +55,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 					llast = paragraph.children.last() // fetch last again
 					llast.content += c + char_ // need to add current content
 					parser.next()
-					
+
 					char_ = ''
 					continue
 				}

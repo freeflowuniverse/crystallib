@@ -1,11 +1,10 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Doc, Include, Link, Paragraph }
+import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.ui.console
 import os
-
 
 // fn (mut page Page) link_to_page_update(mut link Link) ! {
 // 	if link.cat != .page {
@@ -153,8 +152,6 @@ import os
 // 	// TODO: do error if not exist
 // }
 
-
-
 // // walk over all links and fix them with location
 // fn (mut page Page) fix_links() ! {
 // 	mut doc := page.doc or { return error('no doc yet on page') }
@@ -288,7 +285,6 @@ import os
 // 	}
 // 	page.doc = doc
 // }
-
 
 // // save the page on the requested dest
 // // make sure the macro's are being executed

@@ -36,7 +36,6 @@ pub fn play_mdbook(mut session play.Session) ! {
 		config_actions[0].done = true
 	}
 
-
 	// mut books := mdbook.new(
 	// 	buildroot: buildroot
 	// 	publishroot: publishroot

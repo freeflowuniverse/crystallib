@@ -1,6 +1,6 @@
 module doctree
-import freeflowuniverse.crystallib.ui.console
 
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Tree {
@@ -8,9 +8,9 @@ pub:
 	name string
 pub mut:
 	collections map[string]&Collection
-	state TreeState
+	state       TreeState
 	// context context.Context
-	cid string = "000"
+	cid string = '000'
 }
 
 pub enum TreeState {

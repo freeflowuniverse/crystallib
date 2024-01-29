@@ -1,7 +1,7 @@
 module markdownparser
 
 import freeflowuniverse.crystallib.data.paramsparser { Param, Params }
-import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Codeblock, Header, Link, Paragraph, Table, Text, List }
+import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Codeblock, Header, Link, List, Paragraph, Table, Text }
 
 const text = "
 # Farmerbot
@@ -165,7 +165,7 @@ fn test_wiki_action() {
 			}, Param{
 				key: 'has_public_ip'
 				value: 'yes'
-			},Param{
+			}, Param{
 				key: 'twinid'
 				value: '20'
 			}]

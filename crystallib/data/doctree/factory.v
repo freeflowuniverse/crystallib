@@ -12,7 +12,7 @@ __global (
 pub struct TreeArgsGet {
 pub mut:
 	name string = 'default'
-	cid string = "000"
+	cid  string = '000'
 }
 
 pub fn tree_key(args_ TreeArgsGet) string {

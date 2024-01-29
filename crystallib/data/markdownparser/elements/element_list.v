@@ -12,9 +12,9 @@ pub fn (mut self List) process() !int {
 		return 0
 	}
 
-	pre:=self.content.all_before("-")
+	pre := self.content.all_before('-')
 	self.depth = pre.len
-	self.content  = self.content.all_after_first("- ")
+	self.content = self.content.all_after_first('- ')
 
 	self.processed = true
 	return 1
@@ -29,6 +29,6 @@ pub fn (self List) markdown() string {
 }
 
 pub fn (self List) html() string {
-	panic("implement")
+	panic('implement')
 	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
 }

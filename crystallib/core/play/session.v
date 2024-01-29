@@ -18,7 +18,7 @@ mut:
 pub mut:
 	name                string // unique id for session (session id), can be more than one per context
 	plbook              playbook.PlayBook
-	interactive 				 bool = true
+	interactive         bool = true
 	params              paramsparser.Params
 	start               ourtime.OurTime
 	end                 ourtime.OurTime

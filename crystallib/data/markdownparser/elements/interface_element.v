@@ -10,25 +10,25 @@ interface Element {
 	actions(args ActionsGetArgs) []playbook.Action
 	treeview_(prefix string, mut out []string)
 	action_pointers(args ActionsGetArgs) []ActionPointer
-	children_recursive()[]Element
+	children_recursive() []Element
 	children_recursive_(mut []Element)
 mut:
 	id        int
 	content   string
 	processed bool
 	// params    paramsparser.Params
-	type_name string
-	changed   bool
+	type_name   string
+	changed     bool
 	trailing_lf bool
-	children  []Element
+	children    []Element
 	process() !int
-	content_set( int, string)
-	id_set( int) int
+	content_set(int, string)
+	id_set(int) int
 }
 
 @[heap]
-pub struct ActionPointer{
+pub struct ActionPointer {
 pub mut:
-	action playbook.Action
+	action     playbook.Action
 	element_id int
 }

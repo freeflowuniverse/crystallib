@@ -5,7 +5,7 @@ fn test_charparser1() {
 	mut p2 := Paragraph{
 		content: txt
 	}
-	
+
 	p2.paragraph_parse()!
 	p2.process_base()!
 	assert p2.content == ''
@@ -53,7 +53,7 @@ fn test_charparser3() {
 	mut p2 := Paragraph{
 		content: txt
 	}
-	
+
 	p2.paragraph_parse()!
 	p2.process_base()!
 	p2.process_children()!
@@ -62,7 +62,7 @@ fn test_charparser3() {
 	assert p2.children.len == 1
 	ln := p2.children[0]
 	assert ln is Link
-	if ln is Link{
+	if ln is Link {
 		assert ln.id == 0
 		assert ln.processed == true
 		assert ln.type_name == 'link'
@@ -85,7 +85,7 @@ fn test_charparser_link() {
 
 	ln := p2.children[0]
 	assert ln is Link
-	if ln is Link{
+	if ln is Link {
 		assert ln.id == 0
 		assert ln.type_name == 'link'
 		assert ln.content == '![a](b)'
@@ -137,7 +137,7 @@ sometext
 	p2.paragraph_parse()!
 	p2.process_base()!
 	p2.process_children()!
-	
+
 	assert p2.children.len == 3
 
 	assert p2.children[0] is Link

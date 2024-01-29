@@ -15,7 +15,7 @@ pub mut:
 @[params]
 pub struct BootstrapperArgs {
 pub mut:
-	name string = "bootstrap"
+	name  string = 'bootstrap'
 	addr  string // format:  root@something:33, 192.168.7.7:222, 192.168.7.7, despiegk@something
 	reset bool
 	debug bool
@@ -36,11 +36,11 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 	mut args := args_
 	addr := texttools.to_array(args.addr)
 	mut b := new()!
-	mut counter:=0
+	mut counter := 0
 	for a in addr {
-		counter+=1
-		name:="${args.name}_${counter}"
-		mut n := b.node_new(ipaddr: a, name:name )!
+		counter += 1
+		name := '${args.name}_${counter}'
+		mut n := b.node_new(ipaddr: a, name: name)!
 		n.crystal_install()!
 	}
 }
@@ -59,7 +59,7 @@ pub fn (mut node Node) upgrade() ! {
 }
 
 pub fn (mut node Node) hero_install() ! {
-	panic("implement")
+	panic('implement')
 	// if node.platform == .osx {
 	// 	// we have no choice then to do it interactive
 	// 	myenv := node.environ_get()!
@@ -73,7 +73,7 @@ pub fn (mut node Node) hero_install() ! {
 	// }
 }
 
-//be carefull this will remove changes on the node
+// be carefull this will remove changes on the node
 pub fn (mut node Node) crystal_install() ! {
 	mut bs := bootstrapper()
 	installer_base_content_ := bs.embedded_files['installer_base.sh'] or { panic('bug') }
@@ -93,71 +93,75 @@ pub fn (mut node Node) crystal_install() ! {
 		
 		'
 	node.exec_cmd(cmd: cmd)!
-
 }
 
 @[params]
 pub struct CrystalUpdateArgs {
 pub mut:
-	all bool
-	fast_rsync  bool = true
+	all        bool
+	fast_rsync bool = true
 }
 
-//sync local crystal code to rmote and then compile hero
+// sync local crystal code to rmote and then compile hero
 pub fn (mut node Node) crystal_update(args CrystalUpdateArgs) ! {
-	if args.all{
-		node.sync_code("crystal",builder.crystalpath_+"/..",'~/code/github/freeflowuniverse/crystallib',args.fast_rsync)!
-	}else{
-		node.sync_code("crystal_lib",builder.crystalpath_,'~/code/github/freeflowuniverse/crystallib/crystallib',args.fast_rsync)!
+	if args.all {
+		node.sync_code('crystal', builder.crystalpath_ + '/..', '~/code/github/freeflowuniverse/crystallib',
+			args.fast_rsync)!
+	} else {
+		node.sync_code('crystal_lib', builder.crystalpath_, '~/code/github/freeflowuniverse/crystallib/crystallib',
+			args.fast_rsync)!
 	}
 }
 
-pub fn (mut node Node) sync_code(name string,src_ string, dest string, fast_rsync bool) ! {
+pub fn (mut node Node) sync_code(name string, src_ string, dest string, fast_rsync bool) ! {
 	mut src := pathlib.get_dir(path: os.abs_path(src_), create: false)!
 	node.upload(
 		source: src.path
 		dest: dest
 		ignore: [
-			'.git/*','_archive','.vscode','examples'
+			'.git/*',
+			'_archive',
+			'.vscode',
+			'examples',
 		]
 		delete: true
 		fast_rsync: fast_rsync
 	)!
 }
 
-
-//sync local crystal code to rmote and then compile hero
+// sync local crystal code to rmote and then compile hero
 pub fn (mut node Node) hero_compile_debug() ! {
-	if !node.file_exists("~/code/github/freeflowuniverse/crystallib/cli/readme.md"){
+	if !node.file_exists('~/code/github/freeflowuniverse/crystallib/cli/readme.md') {
 		node.crystal_install()!
 	}
 	node.crystal_update()!
-	node.exec_cmd(cmd:'
+	node.exec_cmd(
+		cmd: '
 		~/code/github/freeflowuniverse/crystallib/install.sh
 		~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh		
-		')!
-
+		'
+	)!
 }
-
 
 @[params]
 pub struct VScriptArgs {
 pub mut:
-	path string
+	path           string
 	crystal_update bool
 }
 
 pub fn (mut node Node) vscript(args_ VScriptArgs) ! {
-	mut args:=args_
-	if args.crystal_update{
+	mut args := args_
+	if args.crystal_update {
 		node.crystal_update()!
-	}	
-	mut p:=pathlib.get_file(path:args.path,create:false)!
+	}
+	mut p := pathlib.get_file(path: args.path, create: false)!
 
-	node.upload(source:p.path,dest:"/tmp/remote_${p.name()}")!
-	node.exec_cmd(cmd:'
+	node.upload(source: p.path, dest: '/tmp/remote_${p.name()}')!
+	node.exec_cmd(
+		cmd: '
 		cd /tmp/remote
 		v -w -enable-globals /tmp/remote_${p.name()}
-		')!
-
+		'
+	)!
 }

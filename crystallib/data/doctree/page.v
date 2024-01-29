@@ -1,9 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
-
 import freeflowuniverse.crystallib.ui.console
-
 
 pub enum PageStatus {
 	unknown
@@ -14,29 +12,26 @@ pub enum PageStatus {
 @[heap]
 pub struct Page {
 pub mut:
-	name            string // received a name fix
-	path            pathlib.Path
-	pathrel         string // relative path in the collection
-	state           PageStatus
+	name    string // received a name fix
+	path    pathlib.Path
+	pathrel string // relative path in the collection
+	state   PageStatus
 	// pages_included  []&Page      @[str: skip]
 	// pages_linked    []&Page      @[str: skip]
 	// files_linked    []&File      @[str: skip]
 	categories      []string
 	readonly        bool
 	changed         bool
-	tree            &Tree        @[str: skip]
+	tree            &Tree    @[str: skip]
 	collection_name string
 }
 
-
-fn ( page Page) collection() !&Collection {
-
+fn (page Page) collection() !&Collection {
 	collection := page.tree.collections[page.collection_name] or {
 		return error("could not find collection:'${page.collection_name}' in tree: ${page.tree.name}")
 	}
 	return collection
 }
-
 
 fn (mut page Page) fix() ! {
 	// page.fix_links()!
@@ -50,8 +45,6 @@ fn (mut page Page) fix() ! {
 	// }
 }
 
-
-
 @[params]
 pub struct PageExportArgs {
 pub mut:
@@ -60,18 +53,16 @@ pub mut:
 
 // save the page on the requested dest
 // make sure the macro's are being executed
-pub fn (mut page Page) export(args_ PageExportArgs	) ! {
+pub fn (mut page Page) export(args_ PageExportArgs) ! {
 	mut args := args_
 	if args.dest == '' {
 		args.dest = page.path.path
 	}
-	
+
 	mut p := pathlib.get_file(path: args.dest, create: true)!
-	dirpath:=p.parent()!
-	mut mydoc:=page.doc(dest:dirpath.path)!
+	dirpath := p.parent()!
+	mut mydoc := page.doc(dest: dirpath.path)!
 	p.write(mydoc.markdown())!
-
-
 }
 
 // save the page on the requested dest
@@ -92,5 +83,3 @@ pub fn (mut page Page) export(args_ PageExportArgs	) ! {
 // 	updated_doc := markdownparser.new(path: p.path) or { panic('cannot parse,${err}') }
 // 	page.doc = updated_doc
 // }
-
-

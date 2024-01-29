@@ -1,6 +1,5 @@
 module doctree
 
-
 import v.embed_file
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import os

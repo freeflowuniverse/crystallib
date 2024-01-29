@@ -4,15 +4,13 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.ui.console
-
-
 import os
 
 @[params]
 pub struct TreeScannerArgs {
 pub mut:
 	path      string
-	heal      bool = true// healing means we fix images, if selected will automatically load, remove stale links
+	heal      bool = true // healing means we fix images, if selected will automatically load, remove stale links
 	git_url   string
 	git_reset bool
 	git_root  string
@@ -105,4 +103,3 @@ pub fn (mut tree Tree) heal() ! {
 		collection.fix()!
 	}
 }
-

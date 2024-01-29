@@ -14,9 +14,9 @@ pub fn (mut self Codeblock) process() !int {
 		return 0
 	}
 	mut pb := playbook.new(text: self.content)!
-	if  pb.actions.len>0{
+	if pb.actions.len > 0 {
 		for mut action in pb.actions {
-			mut a := self.action_new("")
+			mut a := self.action_new('')
 			a.action = *action
 			a.processed = true
 			a.content = action.script3()
@@ -25,7 +25,7 @@ pub fn (mut self Codeblock) process() !int {
 		if pb.othertext.len > 0 {
 			self.text_new(pb.othertext)
 		}
-		self.content = "" //because is now in the children
+		self.content = '' // because is now in the children
 	}
 
 	self.process_children()!
@@ -37,16 +37,16 @@ pub fn (self Codeblock) markdown() string {
 	mut out := ''
 	out += '```${self.category}\n'
 
-	for action in self.actions(){
-		out+=action.str()+"\n"
+	for action in self.actions() {
+		out += action.str() + '\n'
 	}
-	if self.content.len>0{
+	if self.content.len > 0 {
 		out += self.content.trim_space()
 		out += '\n```\n'
-	}else{
+	} else {
 		out += '```\n'
 	}
-	
+
 	return out
 }
 

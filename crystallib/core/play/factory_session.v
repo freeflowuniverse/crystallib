@@ -12,7 +12,7 @@ pub mut:
 	session_name        string
 	interactive         bool
 	playbook_priorities map[int]string
-	coderoot			string
+	coderoot            string
 }
 
 // return a session which has link to the actions and params on context and session level
@@ -20,34 +20,38 @@ pub mut:
 pub fn session_new(args_ PlayArgs) !&Session {
 	mut args := args_
 
-	if args.session!=none{
-		mut session := args.session or { panic("bug")}
+	if args.session != none {
+		mut session := args.session or { panic('bug') }
 		args.context = &session.context
 	}
 
-	if args.context_name.len>0{
+	if args.context_name.len > 0 {
 		if args.context != none {
-			return error("cannot have context_name specified and context")
-		}	
-		if args.session != none {
-			return error("cannot have context_name specified and session")
-		}					
-	}
-
-	if args.coderoot.len>0{
-		if args.context != none {
-			return error("cannot have coderoot specified and context")
-		}	
-		if args.session != none {
-			return error("cannot have coderoot specified and session")
-		}					
-	}
-
-	if args.coderoot.len>0{
-		if args.context_name.len==0{
-			return error("if coderoot specified, also need to specify a context_name")
+			return error('cannot have context_name specified and context')
 		}
-		context_configure(coderoot:args.coderoot,name:args.context_name,interactive:args.interactive)!
+		if args.session != none {
+			return error('cannot have context_name specified and session')
+		}
+	}
+
+	if args.coderoot.len > 0 {
+		if args.context != none {
+			return error('cannot have coderoot specified and context')
+		}
+		if args.session != none {
+			return error('cannot have coderoot specified and session')
+		}
+	}
+
+	if args.coderoot.len > 0 {
+		if args.context_name.len == 0 {
+			return error('if coderoot specified, also need to specify a context_name')
+		}
+		context_configure(
+			coderoot: args.coderoot
+			name: args.context_name
+			interactive: args.interactive
+		)!
 	}
 
 	mut context := args.context or {

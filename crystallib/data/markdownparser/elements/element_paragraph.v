@@ -15,12 +15,12 @@ fn (mut self Paragraph) process() !int {
 	self.process_base()!
 	self.process_children()!
 	self.processed = true
-	self.content = ""
-	if self.children.len>0{
-		mut l:=self.children.last()
+	self.content = ''
+	if self.children.len > 0 {
+		mut l := self.children.last()
 		l.trailing_lf = true
 	}
-	
+
 	return 1
 }
 

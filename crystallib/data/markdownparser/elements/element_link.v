@@ -54,9 +54,9 @@ pub fn (mut self Link) process() !int {
 }
 
 pub fn (self Link) markdown() string {
-	if self.content.len>0{
+	if self.content.len > 0 {
 		return self.content
-	}	
+	}
 	mut link_filename := self.filename
 	mut out := ''
 	// if self.path != '' {
@@ -179,7 +179,6 @@ fn (mut link Link) parse() {
 		link.path = ''
 	}
 
-
 	// // find the prefix
 	// mut prefix_done := false
 	// mut filename := []string{}
@@ -277,5 +276,4 @@ fn (mut link Link) parse() {
 			return
 		}
 	}
-
 }

@@ -20,7 +20,7 @@ pub struct File {
 pub mut:
 	collection   &Collection  @[str: skip]
 	name         string // received a name fix
-	ext    		 string
+	ext          string
 	path         pathlib.Path
 	pathrel      string
 	state        FileStatus
@@ -28,8 +28,8 @@ pub mut:
 	ftype        FileType
 }
 
-fn ( file File) file_name()string {
-	return "${file.name}.${file.ext}"
+fn (file File) file_name() string {
+	return '${file.name}.${file.ext}'
 }
 
 fn (mut file File) init() {
@@ -67,7 +67,7 @@ fn (mut file File) exists() !bool {
 
 fn (mut file File) copy(dest string) ! {
 	mut dest2 := pathlib.get(dest)
-	file.path.copy(dest: dest2.path,rsync:false) or {
+	file.path.copy(dest: dest2.path, rsync: false) or {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')
 	}
 }

@@ -71,10 +71,9 @@ pub fn install(args_ InstallArgs) ! {
 		)!
 
 		restart()!
-	}else{
+	} else {
 		start()!
 	}
-
 }
 
 pub fn restart() ! {
@@ -143,7 +142,7 @@ pub fn running() !bool {
 		return false
 	}
 
-	if !(osal.proces_exists_byname("mycelium")!){
+	if !(osal.proces_exists_byname('mycelium')!) {
 		return false
 	}
 
