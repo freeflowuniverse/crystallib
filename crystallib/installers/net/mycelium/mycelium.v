@@ -20,64 +20,61 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	version := '0.3.0'
+	version := '0.3.1'
 	mut installed_version := ''
 
-	if osal.done_exists('mycelium_installed') {
-		installed_version = osal.done_get('mycelium_installed') or { panic('bug') }
-	}
-
-	if texttools.version(version) > texttools.version(installed_version) {
+	res := os.execute('${osal.profile_path_source_and()} mycelium -V')
+	if res.exit_code == 0 {
+		r := res.output.split_into_lines().filter(it.trim_space().starts_with('mycelium'))
+		if r.len != 1 {
+			return error("couldn't parse mycelium version.\n${res.output}")
+		}
+		if texttools.version(version) > texttools.version(r[0].all_after_first('mycelium')) {
+			args.reset = true
+		}
+	} else {
 		args.reset = true
 	}
 
-	// res := os.execute('source ${osal.profile_path()} && mycelium -V')
-	// if res.exit_code == 0 {
-	// 	if !(res.output.contains('0.17.2')) {
-	// 		args.reset = true
-	// 	}
-	// } else {
-	// 	args.reset = true
-	// }
+	if args.reset {
+		console.print_header('install mycelium')
 
-	if args.reset == false {
-		return
+		// install mycelium if it was already done will return true
+		console.print_header('install mycelium')
+
+		mut url := ''
+		if osal.is_linux_arm() {
+			url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-aarch64-unknown-linux-musl.tar.gz'
+		} else if osal.is_linux_intel() {
+			url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-x86_64-unknown-linux-musl.tar.gz'
+		} else if osal.is_osx_arm() {
+			url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-aarch64-apple-darwin.tar.gz'
+		} else if osal.is_osx_intel() {
+			url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-x86_64-apple-darwin.tar.gz'
+		} else {
+			return error('unsported platform')
+		}
+		println(url)
+		mut dest := osal.download(
+			url: url
+			minsize_kb: 1000
+			reset: true
+			expand_dir: '/tmp/myceliumnet'
+		)!
+
+		mut myceliumfile := dest.file_get('mycelium')! // file in the dest
+
+		println(myceliumfile)
+
+		osal.cmd_add(
+			source: myceliumfile.path
+		)!
+
+		restart()!
+	}else{
+		start()!
 	}
 
-	// install mycelium if it was already done will return true
-	console.print_header('install mycelium')
-
-	mut url := ''
-	if osal.is_linux_arm() {
-		url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-aarch64-unknown-linux-musl.tar.gz'
-	} else if osal.is_linux_intel() {
-		url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-x86_64-unknown-linux-musl.tar.gz'
-	} else if osal.is_osx_arm() {
-		url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-aarch64-apple-darwin.tar.gz'
-	} else if osal.is_osx_intel() {
-		url = 'https://github.com/threefoldtech/mycelium/releases/download/v${version}/mycelium-x86_64-apple-darwin.tar.gz'
-	} else {
-		return error('unsported platform')
-	}
-
-	mut dest := osal.download(
-		url: url
-		minsize_kb: 1000
-		reset: true
-		expand_dir: '/tmp/myceliumnet'
-	)!
-
-	mut myceliumfile := dest.file_get('mycelium')! // file in the dest
-
-	println(myceliumfile)
-
-	osal.cmd_add(
-		source: myceliumfile.path
-	)!
-
-	restart()!
-
-	osal.done_set('mycelium_installed', version)!
 }
 
 pub fn restart() ! {
@@ -106,7 +103,7 @@ pub fn start() ! {
 		cmd2 = 'sudo -s '
 	}
 
-	cmd2 += 'sudo -s mycelium --tun-name utun9 --peers tcp://83.231.240.31:9651 quic://83.231.240.31:9651 quic://185.206.122.71:9651'
+	cmd2 += 'mycelium --tun-name utun9 --peers tcp://83.231.240.31:9651 quic://83.231.240.31:9651 quic://185.206.122.71:9651'
 
 	s.cmd_send(cmd2)!
 
@@ -131,7 +128,7 @@ pub fn start() ! {
 
 	console.print_header('mycelium is running')
 
-	time.sleep(1000000)
+	time.sleep(100 * time.millisecond)
 
 	if !running()! {
 		return error('cound not start mycelium')
@@ -146,10 +143,14 @@ pub fn running() !bool {
 		return false
 	}
 
-	res := os.execute('mycelium -c ping')
-	if res.exit_code > 0 {
-		return error("mycelium did not install propertly could not do:'mycelium-cli -c ping'\n${res.output}")
+	if !(osal.proces_exists_byname("mycelium")!){
+		return false
 	}
+
+	// res := os.execute('mycelium -c ping')
+	// if res.exit_code > 0 {
+	// 	return error("mycelium did not install propertly could not do:'mycelium-cli -c ping'\n${res.output}")
+	// }
 	return true
 	// println(scr)
 }

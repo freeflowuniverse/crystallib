@@ -23,7 +23,7 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '1.11.1'
 
-	res := os.execute('source ${osal.profile_path()} && coredns version')
+	res := os.execute('${osal.profile_path_source_and()} coredns version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().starts_with('CoreDNS-'))
 		if r.len != 1 {

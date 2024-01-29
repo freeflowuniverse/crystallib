@@ -24,7 +24,7 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '1.12.9'
 
-	res := os.execute('source ${osal.profile_path()} && dagu version')
+	res := os.execute('${osal.profile_path_source_and()} dagu version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
 		if r.len != 1 {
@@ -125,7 +125,7 @@ pub fn start(args_ InstallArgs) ! {
 		if check(args)! {
 			return
 		}
-		time.sleep(100000)
+		time.sleep(100 * time.millisecond)
 	}
 	return error('dagu did not install propertly, could not call api.')
 }
@@ -138,6 +138,7 @@ pub fn check(args InstallArgs) !bool {
 		conn.default_header.add(.authorization, 'Bearer ${args.secret}')
 	}
 	conn.default_header.add(.content_type, 'application/json')
+	console.print_debug("check connection to dagu")
 	r := conn.get_json_dict(prefix: 'dags') or { return false }
 	// r := conn.get_json_dict(prefix: 'dags')!
 	dags := r['DAGs'] or { return false }
@@ -148,5 +149,6 @@ pub fn check(args InstallArgs) !bool {
 	// if r.trim_space() == "OK" {
 	// 	return true
 	// }
+	console.print_debug("Dagu is answering.")
 	return true
 }

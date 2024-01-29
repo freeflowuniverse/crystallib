@@ -15,7 +15,7 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '3.3.6'
 
-	res := os.execute('source ${osal.profile_path()} && tailwind -h')
+	res := os.execute('${osal.profile_path_source_and()} tailwind -h')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.contains('tailwindcss v'))
 		if r.len != 1 {

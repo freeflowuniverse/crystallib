@@ -721,7 +721,7 @@ function freeflow_dev_env_install {
     ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
     # source ~/.profile
 
-    hero init
+    # hero init
 
 }
 
@@ -731,3 +731,7 @@ github_keyscan
 
 
 freeflow_dev_env_install
+
+
+echo HERO, V, CRYSTAL ALL INSTALL OK
+echo WE ARE READY TO HERO...

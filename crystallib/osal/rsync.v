@@ -14,6 +14,7 @@ pub mut:
 	ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
 	ignore_default bool = true // if set will ignore a common set
 	stdout         bool = true
+	fast_rsync	   bool
 }
 
 // flexible tool to sync files from to, does even support ssh .
@@ -43,6 +44,7 @@ pub fn rsync(args_ RsyncArgs) ! {
 		delete: args.delete
 		ignore: args.ignore
 		ignore_default: args.ignore_default
+		fast_rsync: args.fast_rsync
 	}
 
 	cmdoptions := pathlib.rsync_cmd_options(args2)!
@@ -50,5 +52,6 @@ pub fn rsync(args_ RsyncArgs) ! {
 	$if debug {
 		console.print_debug('rsync command (osal):\n${cmd}')
 	}
+	// println(cmd)
 	exec(cmd: cmd, stdout: args_.stdout)!
 }

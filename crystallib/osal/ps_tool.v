@@ -16,6 +16,7 @@ pub mut:
 	processes []ProcessInfo
 	lastscan  time.Time
 	state     PMState
+	pids []int
 }
 
 @[heap]
@@ -60,6 +61,29 @@ pub fn procesinfo_get(pid int) !ProcessInfo {
 		}
 	}
 	return error('Cannot find process with pid: ${pid}, to get process info from.')
+}
+
+pub fn procesinfo_get_byname(name string) ![]ProcessInfo {
+	mut pm := processmap_get()!
+	mut res:=[]ProcessInfo{}
+	for pi in pm.processes {
+		// println(pi.cmd)
+		if pi.cmd.contains(name){
+			if pi.cmd.starts_with("sudo "){
+				continue
+			}
+			if pi.cmd.to_lower().starts_with("screen "){
+				continue
+			}
+			res << pi
+		}
+	}
+	return res
+}
+
+pub fn proces_exists_byname(name string) !bool {
+	res:=procesinfo_get_byname(name)!
+	return res.len>0
 }
 
 // return the process and its children
@@ -156,7 +180,11 @@ fn (mut pm ProcessMap) scan() ! {
 			fields.delete_many(0, 6)
 			pi.cmd = fields.join(' ')
 			// println(pi.cmd)
-			pm.processes << pi
+			if !(pi.pid in pm.pids){
+				pm.processes << pi
+				pm.pids << pi.pid
+			}
+			
 		}
 	}
 

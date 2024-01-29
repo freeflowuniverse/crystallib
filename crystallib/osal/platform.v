@@ -1,5 +1,5 @@
 module osal
-
+import os
 // Returns the enum value that matches the provided string for PlatformType
 pub fn platform_enum_from_string(platform string) PlatformType {
 	return match platform.to_lower() {
@@ -116,9 +116,19 @@ pub fn is_linux() bool {
 }
 
 pub fn is_linux_arm() bool {
-	return is_linux() && cputype() != .arm
+	// println("islinux:${is_linux()} cputype:${cputype()}")
+	return is_linux() && cputype() == .arm
 }
 
 pub fn is_linux_intel() bool {
-	return is_linux() && cputype() != .intel
+	return is_linux() && cputype() == .intel
+}
+
+
+pub fn hostname() !string {
+	res:=os.execute("hostname")
+	if res.exit_code>0{
+		return error("can't get hostname. Error.")
+	}
+	return res.output.trim_space()
 }

@@ -6,7 +6,7 @@ import time
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal { ping }
 import net.urllib
-
+import freeflowuniverse.crystallib.builder
 
 /////////////////////////// LIST
 
@@ -119,15 +119,16 @@ struct RescueRoot{
 	rescue RescueInfo
 }
 
-pub struct ServerRebootArgs {
+pub struct ServerRescueArgs {
 pub mut:	
 	id int
 	name string
 	wait bool = true
+	crystal_install bool
 }
 
 //put server in rescue mode
-pub fn (h HetznerClient) server_rescue(args ServerRebootArgs) !RescueInfo {
+pub fn (h HetznerClient) server_rescue(args ServerRescueArgs) !RescueInfo {
 
 	mut serverinfo:= h.server_info_get(id:args.id,name:args.name)!
 
@@ -158,7 +159,13 @@ pub fn (h HetznerClient) server_rescue(args ServerRebootArgs) !RescueInfo {
 		return error("could not process request.\n$response.body")
 	}
 
-	h.server_reset(args)!
+	h.server_reset(id:args.id,name:args.name,wait:args.wait)!
+
+	if args.crystal_install{
+		mut b := builder.new()!
+		mut n := b.node_new(ipaddr: serverinfo.server_ip)!
+		n.crystal_install()!
+	}
 
 	return rescue.rescue
 }
@@ -180,6 +187,13 @@ struct ResetInfo {
 
 struct ResetRoot {
 	reset ResetInfo
+}
+
+pub struct ServerRebootArgs {
+pub mut:	
+	id int
+	name string
+	wait bool = true
 }
 
 
@@ -215,14 +229,14 @@ pub fn (h HetznerClient) server_reset(args ServerRebootArgs) !ResetInfo {
 				console.print_debug("server ${serverinfo.server_name} is now down, now waitig for reboot.")
 				break
 			}
-			time.sleep(1000000)
+			time.sleep(1000 * time.millisecond)
 		}		
 	}
 
 	mut x:=0
 	if args.wait{
 		for{
-			time.sleep(1000000)
+			time.sleep(1000 * time.millisecond)
 			console.print_debug("wait for ${serverinfo.server_name}")
 			if ping(address: serverinfo.server_ip) == .ok{
 				console.print_header("server is rebooted: ${serverinfo.server_name}")

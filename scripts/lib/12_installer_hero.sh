@@ -28,7 +28,7 @@ function hero_install {
     chmod +x hero
     mv hero $HEROPATH
 
-    $HEROPATH init
+    # $HEROPATH init
 
     echo " - Successfully installed hero on $HEROPATH!"
 
