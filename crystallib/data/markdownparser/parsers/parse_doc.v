@@ -68,10 +68,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				mut e := doc.list_new(line)
 				e.parent = &doc
 				if mut llast is elements.List {
+					llast.trailing_lf = false
 					if e.depth > llast.depth {
-						e.depth = llast.depth + 1
+						e.indent = llast.indent + 1
 					} else if e.depth < llast.depth && e.depth != 0 {
-						e.depth = llast.depth - 1
+						e.indent = llast.indent - 1
+					}else{
+						e.indent = llast.indent
 					}
 				}
 				parser.next()
@@ -86,7 +89,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 			// parse action
 			if line.starts_with('!!') {
-				doc.action_new(line).parent = &doc
+				doc.action_new('${line}\n').parent = &doc
 				parser.next()
 				continue
 			}

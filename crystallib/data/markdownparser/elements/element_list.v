@@ -5,6 +5,7 @@ pub struct List {
 	DocBase
 pub mut:
 	depth int
+	indent int
 }
 
 pub fn (mut self List) process() !int {
@@ -22,7 +23,7 @@ pub fn (mut self List) process() !int {
 
 pub fn (self List) markdown() string {
 	mut h := ''
-	for _ in 0 .. self.depth {
+	for _ in 0 .. self.indent {
 		h += '  '
 	}
 	return '${h}- ${self.content}\n'

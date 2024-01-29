@@ -1,7 +1,6 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 pub enum PointerCat {
 	page

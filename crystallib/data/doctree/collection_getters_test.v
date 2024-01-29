@@ -13,7 +13,7 @@ fn test_collection_get() {
 
 	mut c := tree.collection_get('fruits')!
 	assert c.name == 'fruits'
-	assert c.pages.keys().len == 4
+	assert c.pages.keys().len == 3
 
 	c = tree.collection_get('rpc')!
 	assert c.name == 'rpc'

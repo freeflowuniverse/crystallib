@@ -2,7 +2,6 @@ module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct CollectionNewArgs {

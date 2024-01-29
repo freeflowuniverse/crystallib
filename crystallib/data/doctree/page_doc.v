@@ -25,7 +25,6 @@ fn (mut page Page) doc(args DocArgs) !Doc {
 	// }
 
 	if args.heal_export {
-		d := mydoc.children_recursive()
 		// find the links, and for each link check if collection is same, is not need to copy
 		for mut element in mydoc.children_recursive() {
 			if mut element is Link {

@@ -1,10 +1,6 @@
 module doctree
 
-import v.embed_file
-import freeflowuniverse.crystallib.data.markdownparser.elements
 import os
-import crypto.sha256
-import freeflowuniverse.crystallib.core.pathlib
 
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 const tree_name = 'tree_test_tree'
@@ -98,15 +94,12 @@ fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 	for name, mut page1 in pages1 {
 		mut page2 := pages2[name] or { return error("${name} doesn't exist in both collections") }
 
-		if page1_doc := page1.doc {
-			if page2_doc := page2.doc {
-				assert page1_doc.markdown() == page2_doc.markdown()
-			} else {
-				return error('page2 doc not found')
-			}
-		} else {
-			return error('page1 doc not found')
-		}
+		page1_doc := page1.doc(dest: page1.path.parent()!.path)!
+
+		page2_doc := page2.doc(dest: page2.path.parent()!.path)!
+		
+		assert page1_doc.markdown() == page2_doc.markdown()
+		
 	}
 }
 
@@ -123,11 +116,11 @@ fn test_write_tree() {
 		path: doctree.collections_path
 	)!
 	// write tree1 to another dir
-	tree1.write('/tmp/tree_write')!
+	tree1.export(dest: '/tmp/tree_write')!
 	// create tree2 from the written tree
 	mut tree2 := tree_create(name: doctree.tree_name)!
 	tree2.scan(path: '/tmp/tree_write')!
-	tree2.write('/tmp/tree_write2')!
+	tree2.export(dest: '/tmp/tree_write2')!
 	// write tree2 another time to compare the output of the two
 	mut tree3 := tree_create(name: doctree.tree_name)!
 	tree3.scan(path: '/tmp/tree_write2')!

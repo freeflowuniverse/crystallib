@@ -1,6 +1,5 @@
 module doctree
 
-import freeflowuniverse.crystallib.ui.console
 import os
 
 const collections_path = os.dir(@FILE) + '/testdata/collections'
@@ -11,27 +10,25 @@ fn test_actionscan() ! {
 		path: doctree.collections_path
 		heal: false
 	)!
-	console.print_debug(tree)
+	
 	mut c := tree.collection_get('actions')!
 
 	assert c.page_exists('actions1')
 	assert c.page_exists('actions2')
 
-	if d1 := c.page_get('actions1')!.doc {
-		mut a1 := d1.actions()
-		assert a1.len == 1
-		assert a1[0].actor == 'payment3'
-		assert a1[0].name == 'add'
-	} else {
-		assert false, 'doc for page actions1 is missing'
-	}
+	mut actions1_page := c.page_get('actions1')!
+	d1 := actions1_page.doc(dest: actions1_page.path.parent()!.path)! 
+	mut a1 := d1.actions()
+	assert a1.len == 1
+	assert a1[0].actor == 'payment3'
+	assert a1[0].name == 'add'
+	
 
-	if d2 := c.page_get('actions2')!.doc {
-		mut a2 := d2.actions()
-		assert a2.len == 2
-		assert a2[0].name == 'add'
-		assert a2[1].name == 'add2'
-	} else {
-		assert false, 'doc for page actions2 is missing'
-	}
+	mut actions2_page := c.page_get('actions2')!
+	d2 := actions2_page.doc(dest: actions2_page.path.parent()!.path)! 
+	mut a2 := d2.actions()
+	assert a2.len == 2
+	assert a2[0].name == 'add'
+	assert a2[1].name == 'add2'
+
 }
