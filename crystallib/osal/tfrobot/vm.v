@@ -1,6 +1,8 @@
 module tfrobot
 
 import os
+import freeflowuniverse.crystallib.builder
+import freeflowuniverse.crystallib.osal
 
 // VirtualMachine represents the VM info outputted by tfrobot
 pub struct VirtualMachine {
@@ -13,5 +15,8 @@ pub struct VirtualMachine {
 }
 
 pub fn (vm VirtualMachine) ssh_interactive() ! {
-	os.execvp('ssh', ['root@${vm.ip4}'])!
+	// b := builder.new()
+	// node := b.node_new(ipaddr:"root@${vm.ip4}")!
+	// node.exec_interactive('${homedir}/hero/bin/install.sh')!
+	osal.execute_interactive('ssh root@${vm.ip4.all_before('/')}')!
 }

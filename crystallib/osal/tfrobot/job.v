@@ -92,14 +92,13 @@ fn parse_output(output string) ![]VirtualMachine {
 	if output.contains('error:') {
 		return error('TFRobot CLI Error, output:\n${output}')
 	}
-	out_str_split := output.split('\nok:\n')
-	if out_str_split.len == 0 {
-		return error('error parsing output')
+	if !output.trim_space().starts_with('ok:') {
+		return error('TFRobot CLI Error, output:\n${output}')
 	}
-	to_parse := out_str_split[1]
 
-	vms_lst := arrays.chunk(to_parse.all_after('[').trim_string_right('\n]\n').split_into_lines(),
-		6)
+	to_parse := output.trim_space().trim_string_left('ok:\n')
+	trimmed := to_parse.trim_space().trim_string_left('[').trim_string_right(']').trim_space()
+	vms_lst := arrays.chunk(trimmed.split_into_lines()[1..],6)
 	vms := vms_lst.map(VirtualMachine{
 		name: it[0].trim_space().trim_string_left('name: ')
 		ip4: it[1].trim_string_left('publicip4: ')
