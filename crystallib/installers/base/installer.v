@@ -32,6 +32,7 @@ pub fn install(args InstallArgs) ! {
 			}
 		}
 		osal.package_install('mc,tmux,git,rsync,curl,tmux')!
+		osal.exec(cmd:"brew services start redis")!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils')!
@@ -42,6 +43,7 @@ pub fn install(args InstallArgs) ! {
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
+	console.print_header('platform prepare DONE')
 	osal.done_set('platform_prepare', 'OK')!
 }
 

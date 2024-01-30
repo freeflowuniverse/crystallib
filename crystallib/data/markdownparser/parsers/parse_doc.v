@@ -64,7 +64,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		if mut llast is elements.Paragraph || mut llast is elements.List {
-			if line.len > 0 && line.trim_space().starts_with('- ') {
+			if line.len > 0 && (line.trim_space().starts_with('- ') || line.trim_space().starts_with('* ')) {
 				mut e := doc.list_new(line)
 				e.parent = &doc
 				if mut llast is elements.List {
@@ -75,11 +75,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 					}
 				}
 				parser.next()
-				continue
-			}
-
-			if mut llast is elements.List {
-				parser.ensure_last_is_paragraph()!
 				continue
 			}
 

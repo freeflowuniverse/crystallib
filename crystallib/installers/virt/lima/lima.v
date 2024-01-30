@@ -3,6 +3,7 @@ module lima
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.texttools
 import os
 
 @[params]
@@ -14,6 +15,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
+	version := '0.20.0'
 
 	if args.reset || args.uninstall {
 		console.print_header('uninstall lima')
@@ -24,46 +26,64 @@ pub fn install(args_ InstallArgs) ! {
 		}
 	}
 	console.print_header('install install lima')
-	if !args.reset && osal.done_exists('install_lima') && exists()! {
-		println(' - already installed')
+
+	base.install()!
+
+	res := os.execute('${osal.profile_path_source_and()} lima -v')
+	if res.exit_code == 0 {
+		r := res.output.split_into_lines().filter(it.contains('limactl version'))
+		if r.len != 1 {
+			return error("couldn't parse lima version, expected 'lima version' on 1 row.\n${res.output}")
+		}
+
+		v := texttools.version(r[0].all_after('version'))
+		if v < texttools.version(version) {
+			args.reset = true
+		}
+	} else {
+		args.reset = true
+	}
+
+	if args.reset == false {
 		return
 	}
-	mut url := ''
-	mut dest := '/tmp/lima.tar.gz'
-	mut dest_on_os := '${os.home_dir()}/hero/'
-	if osal.platform() == .osx {
-		if osal.cputype() == .arm {
-			url = 'https://github.com/lima-vm/lima/releases/download/v0.19.1/lima-0.19.1-Darwin-arm64.tar.gz'
+
+	if args.reset {
+		console.print_header('install lima')
+		mut url := ''
+		mut dest_on_os:="${os.home_dir()}/hero/bin"
+		if osal.is_linux_arm() {
+			dest_on_os="/usr/local/bin"
+			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Linux-aarch64.tar.gz'
+		} else if osal.is_linux_intel() {
+			dest_on_os="/usr/local/bin"
+			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Linux-x86_64.tar.gz'			
+		} else if osal.is_osx_arm() {
+			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-arm64.tar.gz'			
+		} else if osal.is_osx_intel() {
+			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-x86_64.tar.gz'			
 		} else {
-			url = 'https://github.com/lima-vm/lima/releases/download/v0.19.1/lima-0.19.1-Darwin-x86_64.tar.gz'
+			return error('unsported platform')
 		}
-	} else if osal.platform() in [.alpine, .arch, .ubuntu] {
-		if osal.cputype() == .arm {
-			url = 'https://github.com/lima-vm/lima/releases/download/v0.19.1/lima-0.19.1-Linux-aarch64.tar.gz'
-		} else {
-			url = 'https://github.com/lima-vm/lima/releases/download/v0.19.1/lima-0.19.1-Linux-x86_64.tar.gz'
-		}
-		dest_on_os = '/'
+
+		console.print_header('download ${url}')
+		osal.download(
+			url: url
+			minsize_kb: 45000
+			reset: args.reset
+			dest: '/tmp/lima.tar.gz'
+			expand_file: '/tmp/download/lima'
+		)!
+
+		cmd := '
+		rsync -rv /tmp/download/lima/ ${dest_on_os}
+		'
+		osal.exec(cmd: cmd)!
+
 	}
-	console.print_header('download ${url}')
-	osal.download(
-		url: url
-		minsize_kb: 45000
-		reset: args.reset
-		dest: dest
-		expand_file: '/tmp/download/lima'
-	)!
 
-	cmd := '
-	rsync -rav /tmp/download/lima/ ${dest_on_os}
-	'
-	osal.exec(cmd: cmd)!
 
-	// if exists()!{
-	// 	println(" - exists check ok.")
-	// }
 
-	osal.done_set('install_lima', 'OK')!
 }
 
 @[params]
