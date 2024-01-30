@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 cd ~/code/github/freeflowuniverse/crystallib
 SOURCE=${BASH_SOURCE[0]}
@@ -13,7 +13,10 @@ ln -s $ABS_DIR_OF_SCRIPT/crystallib ~/.vmodules/freeflowuniverse/crystallib
 rm -f ~/.vmodules/freeflowuniverse/webcomponents
 ln -s ~/code/github/freeflowuniverse/webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
 
-if [[ "${OSNAME}" == "darwin"* ]]; then
+
+
+
+if [[ "${OSTYPE}" == "darwin"* ]]; then
     cp ~/code/github/freeflowuniverse/crystallib/scripts/node/vrun ~/hero/bin
     cp ~/code/github/freeflowuniverse/crystallib/scripts/node/vtest ~/hero/bin
     chmod 770 ~/hero/bin/vrun
@@ -34,4 +37,5 @@ fi
 
 
 echo "INSTALL OK"
+
 
