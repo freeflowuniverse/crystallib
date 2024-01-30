@@ -1,6 +1,6 @@
 import json
 
-// SERVES AS EXAMPLE
+// SERVES AS EXAMPLE (prob not working)
 
 struct AuthDetail {
 mut:

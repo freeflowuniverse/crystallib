@@ -58,7 +58,7 @@ pub fn get(args_ ClientArgsGet) !HetznerClient {
 
 	sl := h.servers_list()!
 
-	println(sl)
+	// println(sl)
 
 	return h
 }

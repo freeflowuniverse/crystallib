@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.clients.redisclient
 import time
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.osal { ping }
+import freeflowuniverse.crystallib.osal
 import net.urllib
 import freeflowuniverse.crystallib.builder
 
@@ -191,7 +191,7 @@ pub fn (h HetznerClient) server_reset(args ServerRebootArgs) !ResetInfo {
 	console.print_header('server ${serverinfo.server_name} goes for reset')
 
 	mut serveractive := false
-	if ping(address: serverinfo.server_ip) == .ok {
+	if osal.ping(address: serverinfo.server_ip) == .ok {
 		serveractive = true
 		console.print_debug('server ${serverinfo.server_name} is active')
 	} else {
@@ -210,7 +210,7 @@ pub fn (h HetznerClient) server_reset(args ServerRebootArgs) !ResetInfo {
 	if serveractive {
 		for {
 			console.print_debug('wait for server ${serverinfo.server_name} to go down.')
-			if ping(address: serverinfo.server_ip) != .ok {
+			if osal.ping(address: serverinfo.server_ip) != .ok {
 				console.print_debug('server ${serverinfo.server_name} is now down, now waitig for reboot.')
 				break
 			}
@@ -223,7 +223,10 @@ pub fn (h HetznerClient) server_reset(args ServerRebootArgs) !ResetInfo {
 		for {
 			time.sleep(1000 * time.millisecond)
 			console.print_debug('wait for ${serverinfo.server_name}')
-			if ping(address: serverinfo.server_ip) == .ok {
+			if osal.ping(address: serverinfo.server_ip) == .ok {
+				console.print_debug('ping ok')
+				osal.tcp_port_test(address:serverinfo.server_ip,port:22,timeout:3000)
+				console.print_debug('ssh ok')
 				console.print_header('server is rebooted: ${serverinfo.server_name}')
 				break
 			}

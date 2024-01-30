@@ -1,4 +1,6 @@
 module osal
+import net
+import time
 
 pub enum PingResult {
 	ok
@@ -49,6 +51,39 @@ pub fn ping(args PingArgs) PingResult {
 		}
 	}
 	return .ok
+}
+
+@[params]
+pub struct TcpPortTestArgs {
+pub mut:
+	address string @[required] //192.168.8.8
+	port int = 22
+	timeout u16 = 2000 // total time in milliseconds to keep on trying
+}
+
+
+//test if a tcp port answers
+//```
+// address string //192.168.8.8
+// port int = 22
+// timeout u16 = 2000 // total time in milliseconds to keep on trying
+//```
+pub fn tcp_port_test(args TcpPortTestArgs) bool {
+	start_time := time.now().unix_time_milli()
+	mut run_time := 0.0
+	for true {
+		run_time = time.now().unix_time_milli()
+		if run_time > start_time + args.timeout {
+			return false
+		}
+		socket := net.dial_tcp("${args.address}:${args.port}") or {
+				time.sleep(100 * time.millisecond)
+				continue
+			}
+		// println(socket)
+		return true		
+	}
+	return false
 }
 
 // Returns the ipaddress as known on the public side

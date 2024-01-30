@@ -9,6 +9,8 @@ import freeflowuniverse.crystallib.installers.restic
 import freeflowuniverse.crystallib.installers.zola
 import os
 
+//TODO: fix, not working, is the old one
+
 console.print_header('Install some tools')
 mdbook.install()!
 restic.install()!

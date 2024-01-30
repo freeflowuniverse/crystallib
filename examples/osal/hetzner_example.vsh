@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal.hetzner
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.builder
+import time
 
 import os
 
@@ -39,15 +40,14 @@ println(serverinfo)
 
 // cl.server_rescue(name:"kristof2",wait:true)!
 
-// hetzner.crystal_install(serverinfo.server_ip)!
-
+console.print_header("SSH login")
 mut b := builder.new()!
 mut n := b.node_new(ipaddr: serverinfo.server_ip)!
 
-// n.crystal_install()!
+n.crystal_install()!
 n.hero_compile_debug()!
+
 
 // mut ks:=cl.keys_get()!
 // println(ks)
-
 
