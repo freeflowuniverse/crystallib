@@ -1,9 +1,7 @@
 #!/usr/bin/env v -w -enable-globals run
 
 import freeflowuniverse.crystallib.osal.tfrobot
-import freeflowuniverse.crystallib.osal.sshagent
-import freeflowuniverse.crystallib.ui.console
-// import toml
+import toml
 import os
 
 // env := toml.parse_file(os.dir(@FILE) + '/.env')!
@@ -39,14 +37,14 @@ job.add_ssh_key('my_key',sshkey)
 vm_config := tfrobot.VMConfig{
 	name: 'holo_vm',
 	region:"europe",
-	nrcores:1,
-	memory_mb:256,
+	nrcores:2,
+	memory_mb:2048,
 	ssh_key: 'my_key',
 	flist: "https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist"
 	pub_ip: true
 }
 
-job.deploy_vms(vm_config, 3)
+job.deploy_vms(vm_config, 1)
 job.run()!
 vm:=job.vm_get("holo_vm2")?
 // vm := tfrobot.VirtualMachine{}
