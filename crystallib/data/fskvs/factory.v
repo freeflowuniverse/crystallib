@@ -89,22 +89,22 @@ pub fn contextdb_get(args_ DBGetArgsArgs) !ContextDB {
 				return error("format: 'export MYCONTEXT=contextname:mysecret'")
 			}
 		}
-		if secret == '' && args.interactive {
-			// we can ask interactive
-			mut ui := gui.new()!
-			secret = ui.ask_question(
-				question: '\nPlease specify your secret for your hero environment. (context:${args.name})'
-			)!
-			secret = secret.trim_space()
-			redis.set(key, secret)!
-			redis.expire(key, 3600 * 24)!
-		}
-		if secret == '' {
-			return error('we did not find a way how to get to the secret, is not in redis or was non interactive')
-		}
-		if secret.len < 6 {
-			return error('secret needs to be at least 6 chars')
-		}
+		// if secret == '' && args.interactive {
+		// 	// we can ask interactive
+		// 	mut ui := gui.new()!
+		// 	secret = ui.ask_question(
+		// 		question: '\nPlease specify your secret for your hero environment. (context:${args.name})'
+		// 	)!
+		// 	secret = secret.trim_space()
+		// 	redis.set(key, secret)!
+		// 	redis.expire(key, 3600 * 24)!
+		// }
+		// if secret == '' {
+		// 	return error('we did not find a way how to get to the secret, is not in redis or was non interactive')
+		// }
+		// if secret.len < 6 {
+		// 	return error('secret needs to be at least 6 chars')
+		// }
 	}
 
 	mut db := ContextDB{

@@ -7,7 +7,7 @@ fn foo()!{
 	// !!core.snippet name:codeargs pull:true reset:false
 
 	text := "
-		!!core.context_set name:'mybooks' cid:'000' interactive:false fsdb_encrypted:true coderoot:'~/hero/code'
+		!!core.context_set name:'mybooks' cid:'000' interactive:false coderoot:'~/hero/code'
 
 		!!core.coderoot_set coderoot:'~/hero/code'
 

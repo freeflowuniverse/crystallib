@@ -61,7 +61,6 @@ pub fn (mut j Job) run() ! {
 		return error('Job requires at least one ssh key.')
 	}
 
-	os.mkdir_all('~/hero/tfrobot/jobs')!
 	ymlfile := pathlib.get_file(
 		path: '${os.home_dir()}/hero/tfrobot/jobs/${j.name}.yaml'
 		create: true

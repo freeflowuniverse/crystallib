@@ -33,7 +33,7 @@ pub fn dbcontext_init_default() ! {
 	mut contextdb := contextdb_get(interactive: true)!
 
 	if !contextdb.db_exists('default') {
-		contextdb.db_configure(dbname: 'default', encrypted: true)!
+		contextdb.db_configure(dbname: 'default')!
 	}
 
 	contextdb.db_get()! // should ask encryption passwd if not set

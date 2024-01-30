@@ -27,12 +27,37 @@ pub fn install(args InstallArgs) ! {
 	if pl == .osx {
 		console.print_header(' - OSX prepare')
 		if !osal.cmd_exists('brew') {
-			osal.execute_interactive('/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"') or {
+			console.print_header(' -Install Brew')
+			osal.exec(cmd:'
+					/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+					(echo; echo \'eval "$(/opt/homebrew/bin/brew shellenv)"\') >> ${os.home_dir()}/.zprofile
+					reset
+					echo
+					echo
+					echo "execute: \'source ~/.zprofile\'"
+					echo "or restart your shell"
+					echo "and execute the hero command again"
+					echo
+					',stdout:true,shell:true) or {
 				return error('cannot install brew, something went wrong.\n${err}')
-			}
+			}			
 		}
-		osal.package_install('mc,tmux,git,rsync,curl,tmux')!
-		osal.exec(cmd:"brew services start redis")!
+		osal.package_install('mc,tmux,git,rsync,curl,screen,redis')!
+		osal.exec(cmd:"
+			brew services start redis
+			sleep 2
+			response=\$(redis-cli PING)
+
+			# Check if the response is PONG
+			if [[ \"\${response}\" == \"PONG\" ]]; then
+				echo
+				echo \"REDIS OK\"
+			else
+				echo \"REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING\" 
+				exit 1
+			fi 			
+
+		")!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils')!
@@ -76,9 +101,9 @@ pub fn develop(args InstallArgs) ! {
 		panic('only ubuntu and osx supported for now')
 	}
 
-	// mut b := builder.new()!
-	// mut n := b.node_new()!
-	// n.crystal_install()!
+	mut b := builder.new()!
+	mut n := b.node_new()!
+	n.crystal_install()!
 
 	// coderoot := '${os.home_dir()}/code_'
 	// iam := osal.whoami()!

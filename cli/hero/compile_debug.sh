@@ -17,6 +17,7 @@ chmod +x hero
 
 
 cp hero $HEROPATH
+cp hero /tmp/hero
 rm -f hero
 
 echo "**COMPILE OK**"

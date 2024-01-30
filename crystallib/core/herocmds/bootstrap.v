@@ -36,13 +36,13 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 		description: 'will compile hero.'
 	})
 
-	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
-		name: 'crystal'
-		abbrev: 'cr'
-		description: 'install crystal lib + vlang.'
-	})
+	// cmd_run.add_flag(Flag{
+	// 	flag: .bool
+	// 	required: false
+	// 	name: 'crystal'
+	// 	abbrev: 'cr'
+	// 	description: 'install crystal lib + vlang.'
+	// })
 
 	cmd_run.add_flag(Flag{
 		flag: .string
@@ -58,7 +58,6 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut hero := cmd.flags.get_bool('hero') or { false }
-	mut crystal := cmd.flags.get_bool('crystal') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
 	if address == '' {
 		address = 'localhost'
@@ -67,8 +66,9 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	mut b := builder.new()!
 	mut n := b.node_new(ipaddr: address)!
 
-	if crystal {
-		n.crystal_install()!
+	if develop {
+		n.crystal_install(reset:reset)!
+		n.hero_install()!
 	} else {
 		return error(cmd.help_message())
 	}

@@ -6,6 +6,7 @@ pub fn clear() {
 	print('\033[2J')
 }
 
+
 pub fn print_header(txt string) {
 	txt2 := trim(texttools.indent(txt.trim_left(' -'), ' - '))
 	mut c := get()

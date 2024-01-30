@@ -75,7 +75,7 @@ chech in params how to get values from params
 
 ```js
 
-!!core.context_set name:'mybooks' cid:'000' interactive:false fsdb_encrypted:true coderoot:'~/hero/code'
+!!core.context_set name:'mybooks' cid:'000' interactive:false coderoot:'~/hero/code'
 
 !!core.coderoot_set coderoot:'~/hero/code'
 
@@ -108,7 +108,7 @@ is a context which is passed when executing wal actions
 // fsdb_encrypted bool	
 // script3      string //if context is created from a 3script
 
-mut context:=context.new(name:'mycontext',coderoot:'/tmp/code',interactive:true,fsdb_encrypted:true)!
+mut context:=context.new(name:'mycontext',coderoot:'/tmp/code',interactive:true)!
 
 // uid	string //unique id
 // name string

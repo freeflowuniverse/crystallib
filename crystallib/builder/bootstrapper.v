@@ -3,6 +3,8 @@ module builder
 import os
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.ui
 import v.embed_file
 
 const crystalpath_ = os.dir(@FILE) + '/../'
@@ -23,7 +25,7 @@ pub mut:
 
 fn (mut bs BootStrapper) load() {
 	bs.embedded_files['installer_base.sh'] = $embed_file('../../scripts/installer_base.sh')
-	bs.embedded_files['installer_hero.sh'] = $embed_file('../../scripts/installer_base.sh')
+	bs.embedded_files['installer_hero.sh'] = $embed_file('../../scripts/installer_hero.sh')
 }
 
 // to use do something like: export NODES="195.192.213.3" .
@@ -63,7 +65,7 @@ pub fn (mut node Node) upgrade() ! {
 }
 
 pub fn (mut node Node) hero_install() ! {
-	println('installin hero')
+	println('install hero')
 	mut bs := bootstrapper()
 	installer_hero_content_ := bs.embedded_files['installer_hero.sh'] or { panic('bug') }
 	installer_hero_content := installer_hero_content_.to_string()
@@ -81,10 +83,38 @@ pub fn (mut node Node) hero_install() ! {
 	}
 }
 
-pub fn (mut node Node) crystal_install() ! {
+@[params]
+pub struct CrystalInstallArgs {
+pub mut:
+	reset        bool
+}
+
+
+pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 	mut bs := bootstrapper()
 	installer_base_content_ := bs.embedded_files['installer_base.sh'] or { panic('bug') }
 	installer_base_content := installer_base_content_.to_string()
+
+	if args.reset{
+
+		console.clear()
+		println("")
+		console.print_stderr("will remove: .vmodules, crystal lib code and ~/hero")
+		println("")
+		mut myui := ui.new()!
+		toinstall := myui.ask_yesno(
+			question: 'Ok to reset?'
+			default: true
+		)!
+		if !toinstall{
+			exit(1)
+		}			
+		os.rmdir_all("${os.home_dir()}/.vmodules")!
+		os.rmdir_all("${os.home_dir()}/hero")!
+		os.rmdir_all("${os.home_dir()}/code/github/freeflowuniverse/crystallib")!
+		os.rmdir_all("${os.home_dir()}/code/github/freeflowuniverse/webcomponents")!
+	}
+
 	cmd := '
 		${installer_base_content}
 		
