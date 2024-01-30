@@ -2,7 +2,6 @@ module doctree
 
 // import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 __global (
 	knowledgetrees shared map[string]&Tree

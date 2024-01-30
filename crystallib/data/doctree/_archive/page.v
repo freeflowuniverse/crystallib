@@ -75,7 +75,7 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 fn (mut page Page) link_update(mut link Link) ! {
 	// mut linkout := link
 	mut file_name := link.filename
-	console.print_debug('get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
+	// console.print_debug('get link ${link.content} with name:\'${file_name}\' for page: ${page.path.path}')
 	name_without_ext := file_name.all_before('.')
 
 	mut collection := page.tree.collections[page.collection_name] or {
@@ -259,7 +259,6 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 				console.print_debug('Including page ${include.content} into ${page.path.path}')
 			}
 			mut page_to_include := page.tree.page_get(include.content) or {
-				console.print_debug('debugzo')
 				msg := "include:'${include.content}' not found for page:${page.path.path}"
 				if mut p := page.tree.collections[collection.name] {
 					p.error(
@@ -279,8 +278,6 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 			included_pages[x] = page_to_include
 		}
 	}
-
-	console.print_debug(page.tree.collections[collection.name])
 
 	// now we need to remove the links and replace them with the items from the doc of the page to insert
 	mut offset := 0

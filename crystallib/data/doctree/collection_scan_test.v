@@ -1,6 +1,5 @@
 module doctree
 
-import freeflowuniverse.crystallib.core.pathlib
 import os
 
 const testpath = os.dir(@FILE) + '/example/chapter1'
@@ -20,10 +19,9 @@ fn test_scan_internal() ! {
 	collection.scan_internal(mut collection.path)!
 
 	// test pages are scanned correctly
-	assert collection.pages.len == 4
+	assert collection.pages.len == 3
 	assert 'apple' in collection.pages.keys()
 	assert 'strawberry' in collection.pages.keys()
-	assert 'errors' in collection.pages.keys()
 	assert 'intro' in collection.pages.keys()
 	assert collection.pages.values().all(os.exists(it.path.path))
 

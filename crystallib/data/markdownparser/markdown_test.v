@@ -288,7 +288,6 @@ fn test_deterministic_output() {
 		content: markdownparser.text
 	)!
 	content1 := doc1.markdown()
-
 	mut doc2 := new(content: content1)!
 	content2 := doc2.markdown()
 
