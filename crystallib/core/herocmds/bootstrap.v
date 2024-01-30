@@ -67,6 +67,7 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	mut n := b.node_new(ipaddr: address)!
 
 	if develop {
+		osal.profile_path_add_hero()!
 		n.crystal_install(reset:reset)!
 		n.hero_install()!
 	} else {

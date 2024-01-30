@@ -20,6 +20,9 @@ jobs:
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
             short-name: linux-i64
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            short-name: linux-i64            
           - target: x86_64-apple-darwin
             os: macos-latest
             short-name: macos-i64
@@ -118,6 +121,7 @@ jobs:
           b2 authorize-account
           export bucket=threefold
           b2 upload-file ${bucket}  download/hero-linux-i64  linux-i64/hero
+          b2 upload-file ${bucket}  download/hero-linux-arm64 linux-arm64/hero
           b2 upload-file ${bucket}  download/hero-macos-arm64 macos-arm64/hero
           b2 upload-file ${bucket}  download/hero-macos-i64 macos-i64/hero
           # b2 sync download b2://${bucket}/hero

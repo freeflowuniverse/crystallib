@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 cd ~/code/github/freeflowuniverse/crystallib
 SOURCE=${BASH_SOURCE[0]}
@@ -26,7 +26,6 @@ else
     cp ~/code/github/freeflowuniverse/crystallib/scripts/node/vtest /usr/local/bin/
     chmod 770  /usr/local/bin/vrun
     chmod 770  /usr/local/bin/vtest
-
 fi
 
 #TODO: needs to become part of hero
