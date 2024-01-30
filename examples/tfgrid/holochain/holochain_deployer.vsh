@@ -29,7 +29,8 @@ if ssha.keys.len==0{
 	println("can't find ssh keys in agent, please load")
 	exit(1)
 }
-sshkey:=ssha.keys[0].pubkey
+// sshkey:=ssha.keys[0].keypub()!
+sshkey:="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIahWiRRm9cWAKktH9dndn3R45grKqzPC3mKX8IjGgH6 kristof@incubaid.com"
 
 // job.add_ssh_key('my_key', env.value('SSH_KEY').string())
 

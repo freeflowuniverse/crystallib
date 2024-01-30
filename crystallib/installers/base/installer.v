@@ -42,7 +42,7 @@ pub fn install(args InstallArgs) ! {
 				return error('cannot install brew, something went wrong.\n${err}')
 			}			
 		}
-		osal.package_install('mc,tmux,git,rsync,curl,screen,redis')!
+		osal.package_install('mc,tmux,git,rsync,curl,screen,redis,wget')!
 		osal.exec(cmd:"
 			brew services start redis
 			sleep 2
