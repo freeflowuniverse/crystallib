@@ -1,5 +1,6 @@
 # holochain
 
+
 in the vm we have
 
 - codeserver
@@ -7,6 +8,11 @@ in the vm we have
 - mycelium
 - hero calls back home: 
 
+## todo
+
+```bash
+export TFGRID_MNEMONIC="jelly fork  ..."
+```
 
 ## principle
 

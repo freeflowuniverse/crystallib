@@ -4,18 +4,35 @@ import freeflowuniverse.crystallib.osal.tfrobot
 import toml
 import os
 
-env := toml.parse_file(os.dir(@FILE) + '/.env')!
+// env := toml.parse_file(os.dir(@FILE) + '/.env')!
 
+
+if 'TFGRID_MNEMONIC' !in os.environ() {
+	println("Cannot continue, do 'export TFGRID_MNEMONIC=...' ")
+	exit(1)
+}
+mnemonic := os.environ()['TFGRID_MNEMONIC'].trim_space()
+
+println("robot new")
 mut bot:=tfrobot.new()!
 
+println("job new")
 // configure TFRobot job
 mut job:= bot.job_new(
 	name:"my_holo_deployment"
 	network: .main
-	mneumonic: env.value('MNEUMONIC').string()
+	mneumonic: mnemonic
 )!
+mut ssha := sshagent.new()!
+if ssha.keys.len==0{
+	println("can't find ssh keys in agent, please load")
+	exit(1)
+}
+sshkey:=ssha.keys[0].pubkey
 
-job.add_ssh_key('my_key', env.value('SSH_KEY').string())
+// job.add_ssh_key('my_key', env.value('SSH_KEY').string())
+
+job.add_ssh_key('my_key',sshkey)
 
 vm_config := tfrobot.VMConfig{
 	name: 'holo_vm',

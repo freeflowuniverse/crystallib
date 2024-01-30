@@ -26,16 +26,21 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
+	for plname in ["mdbook-mermaid","mdbook-echarts",
+					"mdbook-embed",
+					"mdbook-kroki-preprocessor","mdbook-pdf"]{
+		if !osal.cmd_exists(plname) {
+			console.print_header('did not find: ${plname}')
+			args.reset = true
+		}
+	}
+
 	if args.reset == false {
 		return
 	}
 
 	console.print_header('install mdbook')
-	if false && osal.cmd_exists('nix-env') {
-		osal.package_install('mdbook,mdbook-toc,mdbook-pdf,mdbook-mermaid,mdbook-footnote,mdbook-linkcheck,mdbook-kroki-preprocessor')!
-	} else {
-		build()!
-	}
+	build()!
 }
 
 // install mdbook will return true if it was already installed
@@ -51,7 +56,7 @@ pub fn build() ! {
 	#cargo install mdbook-plantuml
 	cargo install mdbook-kroki-preprocessor
 	cargo install mdbook-pdf --features fetch
-	cargo install mdbook-linkcheck
+	#cargo install mdbook-linkcheck
 	
 	'
 	osal.execute_stdout(cmd)!
