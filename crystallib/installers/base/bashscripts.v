@@ -15,7 +15,6 @@ pub fn bash_installers_package() !string {
 		6_reset.sh
 		7_zinit.sh
 		8_osupdate.sh
-		9_installer_redis.sh
 		10_installer_v.sh
 		11_installer_crystallib.sh
 		12_installer_hero.sh
