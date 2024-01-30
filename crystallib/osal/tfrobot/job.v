@@ -68,9 +68,9 @@ pub fn (mut j Job) run() ! {
 	)!
 	config := $tmpl('./templates/config.yaml')
 	pathlib.template_write(config, ymlfile.path, true)!
-	result := os.exec(cmd:'tfrobot -c ${ymlfile.path}',stdout:true)!
+	result := osal.exec(cmd:'tfrobot -c ${ymlfile.path}',stdout:true)!
 
-	vms := parse_output(result.output)!
+	vms := parse_output(result.output.join_lines())!
 	for vm in vms {
 		j.vms[vm.name] = vm
 	}

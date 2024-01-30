@@ -33,15 +33,15 @@ pub fn package_refresh() ! {
 pub fn package_install(name_ string) ! {
 	names := texttools.to_array(name_)
 
-	if cmd_exists('nix-env') {
-		// means nix package manager is installed
-		names_list := names.join(' ')
-		console.print_header('package install: ${names_list}')
-		exec(cmd: 'nix-env --install ${names_list}') or {
-			return error('could not install package using nix:${names_list}\nerror:\n${err}')
-		}
-		return
-	}
+	// if cmd_exists('nix-env') {
+	// 	// means nix package manager is installed
+	// 	names_list := names.join(' ')
+	// 	console.print_header('package install: ${names_list}')
+	// 	exec(cmd: 'nix-env --install ${names_list}') or {
+	// 		return error('could not install package using nix:${names_list}\nerror:\n${err}')
+	// 	}
+	// 	return
+	// }
 
 	for name in names {
 		console.print_header('package install: ${name}')
