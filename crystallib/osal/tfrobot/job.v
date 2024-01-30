@@ -3,6 +3,7 @@ module tfrobot
 import os
 import arrays
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal
 
 pub struct Job {
 pub:
@@ -67,7 +68,7 @@ pub fn (mut j Job) run() ! {
 	)!
 	config := $tmpl('./templates/config.yaml')
 	pathlib.template_write(config, ymlfile.path, true)!
-	result := os.execute_opt('tfrobot -c ${ymlfile.path}')!
+	result := os.exec(cmd:'tfrobot -c ${ymlfile.path}',stdout:true)!
 
 	vms := parse_output(result.output)!
 	for vm in vms {
