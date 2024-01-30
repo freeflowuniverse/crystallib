@@ -15,8 +15,10 @@ if 'TFGRID_MNEMONIC' !in os.environ() {
 }
 mnemonic := os.environ()['TFGRID_MNEMONIC'].trim_space()
 
+println("robot new")
 mut bot:=tfrobot.new()!
 
+println("job new")
 // configure TFRobot job
 mut job:= bot.job_new(
 	name:"my_holo_deployment"
