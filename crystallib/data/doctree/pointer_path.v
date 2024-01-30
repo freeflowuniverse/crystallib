@@ -1,7 +1,6 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
 
 pub struct PointerPath {
 pub mut:

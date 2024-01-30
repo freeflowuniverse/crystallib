@@ -2,7 +2,6 @@ module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
 import os
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct TreeExportArgs {

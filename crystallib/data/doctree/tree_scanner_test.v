@@ -1,8 +1,5 @@
 module doctree
 
-import freeflowuniverse.crystallib.osal.gittools
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.paramsparser
 import os
 
 const collections_path = os.dir(@FILE) + '/testdata/collections'
@@ -33,5 +30,4 @@ fn test_scan() ! {
 
 	assert c2.image_exists('digital_twin')
 	mut i := c2.image_get('digital_twin')!
-	console.print_debug(i)
 }
