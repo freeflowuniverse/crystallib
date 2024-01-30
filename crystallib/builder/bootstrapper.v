@@ -23,6 +23,7 @@ pub mut:
 
 fn (mut bs BootStrapper) load() {
 	bs.embedded_files['installer_base.sh'] = $embed_file('../../scripts/installer_base.sh')
+	bs.embedded_files['installer_hero.sh'] = $embed_file('../../scripts/installer_base.sh')
 }
 
 // to use do something like: export NODES="195.192.213.3" .
@@ -37,11 +38,14 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 	addr := texttools.to_array(args.addr)
 	mut b := new()!
 	mut counter := 0
+	println('running running')
 	for a in addr {
 		counter += 1
 		name := '${args.name}_${counter}'
 		mut n := b.node_new(ipaddr: a, name: name)!
 		n.crystal_install()!
+		println('installed crys')
+		n.hero_install()!
 	}
 }
 
@@ -59,18 +63,22 @@ pub fn (mut node Node) upgrade() ! {
 }
 
 pub fn (mut node Node) hero_install() ! {
-	panic('implement')
-	// if node.platform == .osx {
-	// 	// we have no choice then to do it interactive
-	// 	myenv := node.environ_get()!
-	// 	homedir := myenv['HOME'] or { return error("can't find HOME in env") }
-	// 	node.exec_silent('mkdir -p ${homedir}/hero/bin')!
-	// 	node.file_write('${homedir}/hero/bin/install.sh', cmd)!
-	// 	node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
-	// 	node.exec_interactive('${homedir}/hero/bin/install.sh')!
-	// } else {
-	// 	node.exec_cmd(cmd: cmd)!
-	// }
+	println('installin hero')
+	mut bs := bootstrapper()
+	installer_hero_content_ := bs.embedded_files['installer_hero.sh'] or { panic('bug') }
+	installer_hero_content := installer_hero_content_.to_string()
+	if node.platform == .osx {
+		// we have no choice then to do it interactive
+		myenv := node.environ_get()!
+		homedir := myenv['HOME'] or { return error("can't find HOME in env") }
+		node.exec_silent('mkdir -p ${homedir}/hero/bin')!
+		node.file_write('${homedir}/hero/bin/install.sh', installer_hero_content)!
+		node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
+		node.exec_interactive('${homedir}/hero/bin/install.sh')!
+	} else {
+		panic('not implemented')
+		// node.exec_cmd(installer_hero_content)!
+	}
 }
 
 // be carefull this will remove changes on the node
@@ -92,6 +100,7 @@ pub fn (mut node Node) crystal_install() ! {
 		echo WE ARE READY TO HERO...
 		
 		'
+	println('executing cmd ${cmd}')
 	node.exec_cmd(cmd: cmd)!
 }
 
