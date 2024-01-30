@@ -22,7 +22,7 @@ vms:
     pubip4: @{deployment.config.pub_ip}
     pubip6: @{deployment.config.pub_ip}
     flist: @{deployment.config.flist}
-    entry_point: /sbin/zinit init
+    entry_point: /usr/local/bin/entrypoint.sh
     root_size: 0 # root size in GB
     ssh_key: @{deployment.config.ssh_key} # the name of the predefined ssh key
 @end
