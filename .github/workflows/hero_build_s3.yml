@@ -22,7 +22,7 @@ jobs:
             short-name: linux-i64
           - target: aarch64-unknown-linux-musl
             os: ubuntu-latest
-            short-name: linux-i64            
+            short-name: linux-arm64            
           - target: x86_64-apple-darwin
             os: macos-latest
             short-name: macos-i64
