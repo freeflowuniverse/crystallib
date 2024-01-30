@@ -73,15 +73,12 @@ pub fn (mut node Node) hero_install() ! {
 	// }
 }
 
-// be carefull this will remove changes on the node
 pub fn (mut node Node) crystal_install() ! {
 	mut bs := bootstrapper()
 	installer_base_content_ := bs.embedded_files['installer_base.sh'] or { panic('bug') }
 	installer_base_content := installer_base_content_.to_string()
 	cmd := '
 		${installer_base_content}
-
-		rm -rf ~/code/github/freeflowuniverse/crystallib
 		
 		rm -f /usr/local/bin/hero
 		freeflow_dev_env_install

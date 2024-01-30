@@ -1,6 +1,6 @@
 module tfrobot
 
-import freeflowuniverse.crystallib.installers.tfrobot as tfrobot_installer
+import freeflowuniverse.crystallib.installers.tfgrid.tfrobot as tfrobot_installer
 
 pub struct TFRobot {
 pub mut:

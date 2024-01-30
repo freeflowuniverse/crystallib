@@ -34,3 +34,4 @@ mut mdbook_factory := mdbook.new(session:session)!
 mut mybook := mdbook_factory.generate(doctree_path:'/tmp/doctree_test',name:"mytestbook",title:"My Title",
 	summary_url:"https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/books/duniayetu_dar")!
 
+mybook.open()!
