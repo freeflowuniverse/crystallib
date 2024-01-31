@@ -9,8 +9,6 @@ import flag
 import freeflowuniverse.crystallib.threefold.gridproxy
 import rand
 
-const gb = int(1024) * 1024 * 1024
-
 fn main() {
 	mut fp := flag.new_flag_parser(os.args)
 	fp.application('Holochain dev tool')
@@ -32,27 +30,7 @@ fn main() {
 	chain_net_enum := get_chain_network(chain_network)!
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_net_enum, mut logger)!
 
-	// TODO: wrap in a function
-	gp_net := match chain_net_enum {
-		.dev { gridproxy.TFGridNet.dev }
-		.qa { gridproxy.TFGridNet.qa }
-		.test { gridproxy.TFGridNet.test }
-		.main { gridproxy.TFGridNet.main }
-	}
-
-	mut gridproxy_client := gridproxy.get(gp_net, false)!
-	mut node_it := gridproxy_client.get_nodes_has_resources(
-		free_mru_gb: u64(memory)
-		free_sru_gb: u64(disk)
-		free_cpu: u64(cpu)
-	)
-	nodes := node_it.next()
-	mut node_id := u32(0) // get from user or use gridproxy to get nodeid
-	if nodes_list := nodes {
-		node_id = u32(nodes_list[0].node_id)
-	} else {
-		panic('cannot find a suitable node matching your specs')
-	}
+	node_id := get_node_id(chain_net_enum, memory, disk, cpu)!
 
 	network_name := 'net_${rand.string(5).to_lower()}' // autocreate a network
 	wg_port := deployer.assign_wg_port(node_id)!
@@ -153,6 +131,31 @@ fn get_chain_network(network string) !tfgrid.ChainNetwork {
 	}
 
 	return chain_net_enum
+}
+
+fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int) !u32{
+	gp_net := match network {
+		.dev { gridproxy.TFGridNet.dev }
+		.qa { gridproxy.TFGridNet.qa }
+		.test { gridproxy.TFGridNet.test }
+		.main { gridproxy.TFGridNet.main }
+	}
+
+	mut gridproxy_client := gridproxy.get(gp_net, false)!
+	mut node_it := gridproxy_client.get_nodes_has_resources(
+		free_mru_gb: u64(memory)
+		free_sru_gb: u64(disk)
+		free_cpu: u64(cpu)
+	)
+	nodes := node_it.next()
+	mut node_id := u32(0) // get from user or use gridproxy to get nodeid
+	if nodes_list := nodes {
+		node_id = u32(nodes_list[0].node_id)
+	} else {
+		return error('cannot find a suitable node matching your specs')
+	}
+
+	return node_id
 }
 
 /*
