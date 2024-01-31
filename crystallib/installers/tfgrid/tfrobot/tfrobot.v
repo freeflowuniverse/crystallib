@@ -17,7 +17,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.13.19'
+	version := '0.13.21'
 
 	res := os.execute('${osal.profile_path_source_and()} tfrobot version')
 	if res.exit_code == 0 {

@@ -29,8 +29,7 @@ pub:
 	region    string
 	nrcores   int
 	flist     string
-	memory_mb int
-	memory_gb int // todo
+	memory_gb int
 	ssh_key   string
 	pub_ip    bool
 }
