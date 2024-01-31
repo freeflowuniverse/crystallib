@@ -24,22 +24,25 @@ mut job := bot.job_new(
 	network: .main
 	mneumonic: mnemonic
 )!
-// mut ssha := sshagent.new()!
-// if ssha.keys.len==0{
-// 	println("can't find ssh keys in agent, please load")
-// 	exit(1)
-// }
+
+if ssha.keys.len==0{
+	println("can't find ssh keys in agent, please load")
+	exit(1)
+}
+
+mut ssha := sshagent.new()!
+for key in ssha.keys{
+	job.add_ssh_key(key.name, key.keypub()!)	
+}
 // sshkey:=ssha.keys[0].keypub()!
-sshkey:="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIahWiRRm9cWAKktH9dndn3R45grKqzPC3mKX8IjGgH6 kristof@incubaid.com"
-
 // job.add_ssh_key('my_key', env.value('SSH_KEY').string())
-
-job.add_ssh_key('my_key', sshkey)
+// sshkey:="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIahWiRRm9cWAKktH9dndn3R45grKqzPC3mKX8IjGgH6 kristof@incubaid.com"
+// job.add_ssh_key('my_key', sshkey)
 
 vm_config := tfrobot.VMConfig{
 	name: 'holo_vm'
 	region: 'europe'
-	nrcores: 2
+	nrcores: 4
 	memory_gb: 8
 	ssh_key: 'my_key'
 	flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
@@ -49,7 +52,7 @@ vm_config := tfrobot.VMConfig{
 	}
 }
 
-job.deploy_vms(vm_config, 1)
+job.deploy_vms(vm_config, 4)
 job.run()!
 vm := job.vm_get('holo_vm2')?
 // vm := tfrobot.VirtualMachine{}
