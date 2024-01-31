@@ -55,8 +55,13 @@ vm_config := tfrobot.VMConfig{
 job.deploy_vms(vm_config, 4)
 job.run()!
 vm := job.vm_get('holo_vm2')?
-// vm := tfrobot.VirtualMachine{}
-vm.ssh_interactive()!
+
+// vm.ssh_interactive()!
+
+node:=vm.node()!
+
+node.crystal_install()!
+
 // vm.code_server()!
 
 // console.print_debug_title("MYVM", vm.str())
