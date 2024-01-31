@@ -3,7 +3,7 @@ node_groups:
   - name: @{deployment.config.name}_group
     nodes_count: @{deployment.quantity} # amount of nodes to be found
     free_cpu: @{deployment.config.nrcores} # number of logical cores
-    free_mru: @{deployment.config.memory_mb} # amount of memory in MB
+    free_mru: @{deployment.config.memory_gb} # amount of memory in GB
     free_ssd: 100 # amount of ssd storage in GB
     free_hdd: 50 # amount of hdd storage in GB
     dedicated: false # are nodes dedicated
@@ -18,13 +18,17 @@ vms:
     vms_count: @{deployment.quantity} # amount of vms with the same configurations
     node_group: @{deployment.config.name}_group # the name of the predefined group of nodes
     cpu: @{deployment.config.nrcores} # number of logical cores
-    mem: @{deployment.config.memory_mb} # amount of memory in MB
+    mem: @{deployment.config.memory_gb} # amount of memory in GB
     public_ip4: @{deployment.config.pub_ip}
     public_ip6: true
     flist: @{deployment.config.flist}
     entry_point: /usr/local/bin/entrypoint.sh
     root_size: 0 # root size in GB
     ssh_key: @{deployment.config.ssh_key} # the name of the predefined ssh key
+    env_vars: # env vars are passed to the newly created vms
+      @for key, val in deployment.config.env_vars
+        @{key}: "${val}"
+      @end
 @end
 
 ssh_keys: # map of ssh keys with key=name and value=the actual ssh key
