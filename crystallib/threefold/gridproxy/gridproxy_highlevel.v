@@ -120,9 +120,10 @@ pub fn (mut c GridProxyClient) get_contracts_by_node_id(node_id u64) ContractIte
 pub fn (mut c GridProxyClient) get_nodes_has_resources(filter ResourceFilter) NodeIterator {
 	mut filter_ := NodeFilter{
 		free_ips: filter.free_ips
-		free_mru: filter.free_mru_gb * (1204 * 1204 * 1204 * 1204)
-		free_sru: filter.free_sru_gb * (1204 * 1204 * 1204 * 1204)
-		free_hru: filter.free_hru_gb * (1204 * 1204 * 1204 * 1204)
+		free_mru: filter.free_mru_gb * (1204 * 1204 * 1204)
+		free_sru: filter.free_sru_gb * (1204 * 1204 * 1204)
+		free_hru: filter.free_hru_gb * (1204 * 1204 * 1204)
+		total_cru: filter.free_cpu
 	}
 	mut iter := c.get_nodes_iterator(filter_)
 

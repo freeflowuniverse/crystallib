@@ -65,10 +65,13 @@ pub fn (mut m Zmachine) challenge() string {
 		out += mnt.challenge()
 	}
 	out += m.entrypoint
-	for k, v in m.env {
-		out += k
+
+	mut keys := m.env.keys()
+	keys.sort()
+	for key in keys {
+		out += key
 		out += '='
-		out += v
+		out += m.env[key]
 	}
 	return out
 }

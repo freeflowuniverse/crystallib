@@ -38,10 +38,7 @@ pub fn (mut d Deployer) get_node_pub_config(node_id u32) !models.PublicConfig {
 
 pub fn (mut d Deployer) assign_wg_port(node_id u32) !u16 {
 	node_twin := d.client.get_node_twin(node_id)!
-	res := d.client.rmb_call(node_twin, 'zos.network.list_wg_ports', '')!
-	taken_ports := json.decode([]u16, res) or {
-		return error("can't parse node taken ports: ${err}")
-	}
+	taken_ports := d.client.list_wg_ports(node_twin)!
 	port := models.rand_port(taken_ports) or { return error("can't assign wireguard port: ${err}") }
 	return port
 }

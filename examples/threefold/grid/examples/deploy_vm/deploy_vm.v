@@ -1,8 +1,8 @@
 module main
 
 import json
-import threefoldtech.tfgrid.models
-import threefoldtech.tfgrid
+import freeflowuniverse.crystallib.threefold.grid.models
+import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import log
 import os
 
