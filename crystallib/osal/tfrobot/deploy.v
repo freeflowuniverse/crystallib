@@ -39,10 +39,12 @@ pub:
 	mem int @[required]
 	public_ip4 bool 
 	public_ip6 bool 
+	planetary bool
 	flist string @[required]
 	entry_point string @[required]
 	root_size int
 	ssh_key   string @[required]
+	env_vars map[string]string
 }
 
 // pub struct SSHKey
@@ -67,6 +69,7 @@ pub struct Mount {
 }
 
 pub fn (mut robot TFRobot) deploy(config DeployConfig) !DeployResult {
+	check_deploy_config(config)!
 
 	mut config_file := pathlib.get_file(
 		path: '${tfrobot_dir}/deployments/${config.name}_config.json'
