@@ -32,6 +32,7 @@ pub:
 	memory_gb int
 	ssh_key   string
 	pub_ip    bool
+	env_vars  map[string]string
 }
 
 pub enum Network {
@@ -66,7 +67,7 @@ pub fn (mut j Job) run() ! {
 	)!
 	config := $tmpl('./templates/config.yaml')
 	pathlib.template_write(config, ymlfile.path, true)!
-	result := osal.exec(cmd:'tfrobot -c ${ymlfile.path}',stdout:true)!
+	result := osal.exec(cmd: 'tfrobot deploy -c ${ymlfile.path}', stdout: true)!
 
 	vms := parse_output(result.output.join_lines())!
 	for vm in vms {
@@ -87,16 +88,13 @@ pub fn (mut j Job) add_ssh_key(name string, key string) {
 
 // parse_output parses the output of the tfrobot cli command
 fn parse_output(output string) ![]VirtualMachine {
-	if output.contains('error:') {
-		return error('TFRobot CLI Error, output:\n${output}')
-	}
 	if !output.trim_space().starts_with('ok:') {
 		return error('TFRobot CLI Error, output:\n${output}')
 	}
 
 	to_parse := output.trim_space().trim_string_left('ok:\n')
 	trimmed := to_parse.trim_space().trim_string_left('[').trim_string_right(']').trim_space()
-	vms_lst := arrays.chunk(trimmed.split_into_lines()[1..],6)
+	vms_lst := arrays.chunk(trimmed.split_into_lines()[1..], 6)
 	vms := vms_lst.map(VirtualMachine{
 		name: it[0].trim_space().trim_string_left('name: ')
 		ip4: it[1].trim_string_left('publicip4: ')
