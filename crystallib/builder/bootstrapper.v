@@ -79,8 +79,7 @@ pub fn (mut node Node) hero_install() ! {
 		node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
 		node.exec_interactive('${homedir}/hero/bin/install.sh')!
 	} else {
-		panic('not implemented')
-		// node.exec_cmd(installer_hero_content)!
+		node.exec_cmd(installer_hero_content)!
 	}
 }
 
