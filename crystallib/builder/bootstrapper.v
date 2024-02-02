@@ -3,6 +3,7 @@ module builder
 import os
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui
 import v.embed_file
@@ -80,6 +81,14 @@ pub fn (mut node Node) hero_install() ! {
 	} else {
 		panic('not implemented')
 		// node.exec_cmd(installer_hero_content)!
+	}
+}
+
+pub fn (mut node Node) dagu_install() ! {
+	println('install dagu')
+	if !osal.cmd_exists('dagu') {
+		mut bs := bootstrapper()
+		node.exec_silent('curl -L https://raw.githubusercontent.com/yohamta/dagu/main/scripts/downloader.sh | bash')!
 	}
 }
 

@@ -501,7 +501,7 @@ function v_install {
         popd "$@" > /dev/null
         export PATH="${HOME}/hero/bin:$PATH"
 	else
-        ${HOME}/hero/bin/v symlink
+        ${HOME}/v/v symlink
     fi
 
     ##LETS NOT USE v-analyzer by default
