@@ -71,6 +71,23 @@ pub fn receive_msg(wait bool) !InboundMessage {
 	return msg
 }
 
+pub fn receive_msg_opt(wait bool) ?InboundMessage {
+	mut url := mycelium.server_url
+	if wait {
+		url = '${url}?timeout=60'
+	}
+	mut req := http.new_request(http.Method.get, url, '')
+	if wait {
+		req.read_timeout = 600000000000
+	}
+	res := req.do() or {panic(error)}
+	if res.status_code == 204 {
+		return none
+	}
+	msg := json.decode(InboundMessage, res.body) or {panic(err)}
+	return msg
+}
+
 pub fn get_msg_status(id string) !MessageStatusResponse {
 	mut url := '${mycelium.server_url}/status/${id}'
 	res := http.get(url)!
