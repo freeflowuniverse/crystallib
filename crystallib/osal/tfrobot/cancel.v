@@ -26,7 +26,7 @@ pub fn (mut robot TFRobot) cancel(config CancelConfig) ! {
 	
 	cancel_file.write(json.encode(config))!
 	osal.exec(
-		cmd:'tfrobot deploy -c ${cancel_file.path}', 
+		cmd:'tfrobot cancel -c ${cancel_file.path}', 
 		stdout:true
 	)!
 }

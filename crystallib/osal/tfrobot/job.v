@@ -4,6 +4,7 @@ import os
 import arrays
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
+import json
 
 pub struct Job {
 pub:
@@ -23,21 +24,41 @@ pub:
 	quantity int
 }
 
-pub struct VMConfig {
-pub:
-	name      string
-	region    string
-	nrcores   int
-	flist     string
-	memory_gb int
-	ssh_key   string
-	pub_ip    bool
-	env_vars  map[string]string
-}
+// pub struct VMConfig {
+// pub:
+// 	name      string
+// 	region    string
+// 	nrcores   int
+// 	flist     string
+// 	memory_gb int
+// 	ssh_key   string
+// 	pub_ip    bool
+// 	env_vars  map[string]string
+// }
+
+// pub struct Output {
+// 	ok    map[string][]VMOutput
+// 	error map[string]string
+// }
+
+// pub struct VMOutput {
+// 	name       string
+// 	public_ip4 string
+// 	public_ip6 string
+// 	ygg_ip     string
+// 	ip         string
+// 	mounts     []Mount
+// }
+
+// pub struct Mount {
+// 	disk_name   string 
+// 	mount_point string 
+// }
 
 pub enum Network {
 	main
 	dev
+	qa
 	test
 }
 
@@ -53,27 +74,30 @@ pub fn (mut j Job) deploy_vms(config VMConfig, quantity int) {
 	}
 }
 
-pub fn (mut j Job) run() ! {
-	if j.deployments.len == 0 {
-		return error('Nothing to deploy.')
-	}
-	if j.ssh_keys.keys().len == 0 {
-		return error('Job requires at least one ssh key.')
-	}
+// pub fn (mut j Job) run() ![]VMOutput {
+// 	if j.deployments.len == 0 {
+// 		return error('Nothing to deploy.')
+// 	}
+// 	if j.ssh_keys.keys().len == 0 {
+// 		return error('Job requires at least one ssh key.')
+// 	}
 
-	ymlfile := pathlib.get_file(
-		path: '${os.home_dir()}/hero/tfrobot/jobs/${j.name}.yaml'
-		create: true
-	)!
-	config := $tmpl('./templates/config.yaml')
-	pathlib.template_write(config, ymlfile.path, true)!
-	result := osal.exec(cmd: 'tfrobot deploy -c ${ymlfile.path}', stdout: true)!
+// 	jsonfile := pathlib.get_file(
+// 		path: '${os.home_dir()}/hero/tfrobot/jobs/${j.name}.json'
+// 		create: true
+// 	)!
+// 	config := $tmpl('./templates/config.json')
+// 	// println('config file*******\n${config}\n****')
+// 	pathlib.template_write(config, jsonfile.path, true)!
+// 	j.
+// 	result := osal.exec(cmd: 'tfrobot deploy -c ${jsonfile.path}', stdout: true)!
 
-	vms := parse_output(result.output.join_lines())!
-	for vm in vms {
-		j.vms[vm.name] = vm
-	}
-}
+// 	vms := parse_output(result.output.join_lines())!
+// 	// for vm in vms {
+// 	// 	j.vms[vm.name] = vm
+// 	// }
+// 	return vms
+// }
 
 pub fn (j Job) vm_get(name string) ?VirtualMachine {
 	if name !in j.vms {
@@ -86,22 +110,33 @@ pub fn (mut j Job) add_ssh_key(name string, key string) {
 	j.ssh_keys[name] = key
 }
 
-// parse_output parses the output of the tfrobot cli command
-fn parse_output(output string) ![]VirtualMachine {
-	if !output.trim_space().starts_with('ok:') {
-		return error('TFRobot CLI Error, output:\n${output}')
-	}
+// // parse_output parses the output of the tfrobot cli command
+// fn parse_output(output string) ![]VMOutput {
+// 	res := json.decode(Output, output) or { return error('invalid json syntax. output:\n${output}') }
+// 	if res.error.len > 0{
+// 		return error('TFRobot CLI Error, output:\n${output}')
+// 	}
 
-	to_parse := output.trim_space().trim_string_left('ok:\n')
-	trimmed := to_parse.trim_space().trim_string_left('[').trim_string_right(']').trim_space()
-	vms_lst := arrays.chunk(trimmed.split_into_lines()[1..], 6)
-	vms := vms_lst.map(VirtualMachine{
-		name: it[0].trim_space().trim_string_left('name: ')
-		ip4: it[1].trim_string_left('publicip4: ')
-		ip6: it[2].trim_string_left('publicip6: ')
-		yggip: it[3].trim_string_left('yggip: ')
-		ip: it[4].trim_string_left('ip: ')
-		mounts: []
-	})
-	return vms
-}
+// 	mut vms := []VMOutput{}
+// 	for k, v in res.ok{
+// 		vms << v
+// 	}
+
+// 	return vms
+// 	// if !output.trim_space().starts_with('ok:') {
+// 	// 	return error('TFRobot CLI Error, output:\n${output}')
+// 	// }
+
+// 	// to_parse := output.trim_space().trim_string_left('ok:\n')
+// 	// trimmed := to_parse.trim_space().trim_string_left('[').trim_string_right(']').trim_space()
+// 	// vms_lst := arrays.chunk(trimmed.split_into_lines()[1..], 6)
+// 	// vms := vms_lst.map(VirtualMachine{
+// 	// 	name: it[0].trim_space().trim_string_left('name: ')
+// 	// 	ip4: it[1].trim_string_left('publicip4: ')
+// 	// 	ip6: it[2].trim_string_left('publicip6: ')
+// 	// 	yggip: it[3].trim_string_left('yggip: ')
+// 	// 	ip: it[4].trim_string_left('ip: ')
+// 	// 	mounts: []
+// 	// })
+// 	// return vms
+// }

@@ -3,6 +3,7 @@ module tfrobot
 import os
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.osal
+import time
 
 // VirtualMachine represents the VM info outputted by tfrobot
 pub struct VirtualMachine {
@@ -14,9 +15,10 @@ pub struct VirtualMachine {
 	mounts []string
 }
 
-pub fn (vm VirtualMachine) ssh_interactive() ! {
+pub fn (vm VMOutput) ssh_interactive(key_path string) ! {
 	// b := builder.new()
 	// node := b.node_new(ipaddr:"root@${vm.ip4}")!
 	// node.exec_interactive('${homedir}/hero/bin/install.sh')!
-	osal.execute_interactive('ssh root@${vm.ip4.all_before('/')}')!
+	time.sleep(15*time.second)
+	osal.execute_interactive('ssh -i ${key_path} root@${vm.public_ip4.all_before("/")}')!
 }
