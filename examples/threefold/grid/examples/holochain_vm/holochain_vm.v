@@ -22,6 +22,7 @@ fn main() {
 	cpu := fp.int('cpu', `c`, 4, 'Machine CPU provisioning. Defaults to 4')
 	memory := fp.int('ram', `r`, 8, 'Machine memory provisioning in GB. Defaults to 8')
 	disk := fp.int('disk', `d`, 30, 'Machine Disk space provisioning in GB. Defaults to 30')
+	public_ip := fp.bool('public_ip', `i`, false, 'True to allow public ip v4')
 
 	mut logger := log.Log{
 		level: .debug
@@ -30,7 +31,8 @@ fn main() {
 	chain_net_enum := get_chain_network(chain_network)!
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_net_enum, mut logger)!
 
-	node_id := get_node_id(chain_net_enum, memory, disk, cpu)!
+	mut workloads := []models.Workload{}
+	node_id := get_node_id(chain_net_enum, memory, disk, cpu, public_ip)!
 
 	network_name := 'net_${rand.string(5).to_lower()}' // autocreate a network
 	wg_port := deployer.assign_wg_port(node_id)!
@@ -48,21 +50,29 @@ fn main() {
 		// ]
 	}
 
-	mut znet_workload := network.to_workload(name: network_name, description: 'test_network1')
+	workloads << network.to_workload(name: network_name, description: 'test_network1')
+
+	mut public_ip_name := ''
+	if public_ip{
+		public_ip_name = rand.string(5).to_lower()
+		workloads << models.PublicIP{
+			v4: true
+		}.to_workload(name: public_ip_name)
+	}
 
 	zmachine := models.Zmachine{
-		flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
+		flist: 'https://hub.grid.tf/ashraf.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
 		network: models.ZmachineNetwork{
-			public_ip: ''
 			interfaces: [
 				models.ZNetworkInterface{
 					network: network_name
 					ip: '10.1.1.3'
 				},
 			]
+			public_ip: public_ip_name
 			planetary: true
 		}
-		entrypoint: '/usr/local/bin/entrypoint.sh' // from user or default
+		entrypoint: '/sbin/zinit init' // from user or default
 		compute_capacity: models.ComputeCapacity{
 			cpu: u8(cpu)
 			memory: i64(memory) * 1024 * 1024 * 1024
@@ -73,7 +83,9 @@ fn main() {
 			'CODE_SERVER_PASSWORD': code_server_pass
 		}
 	}
-	mut zmachine_workload := zmachine.to_workload(
+
+	
+	workloads << zmachine.to_workload(
 		name: 'vm_${rand.string(5).to_lower()}'
 		description: 'zmachine_test'
 	)
@@ -91,7 +103,7 @@ fn main() {
 	mut deployment := models.new_deployment(
 		twin_id: deployer.twin_id
 		description: 'holochain deployment'
-		workloads: [znet_workload, zmachine_workload]
+		workloads: workloads
 		signature_requirement: signature_requirement
 	)
 	deployment.add_metadata('vm', 'SimpleVM')
@@ -106,8 +118,9 @@ fn main() {
 		exit(1)
 	}
 
-	machine_res := get_machine_result(dl)!
-	logger.info('zmachine result: ${machine_res}')
+	logger.info('deployment:\n${dl}')
+	// machine_res := get_machine_result(dl)!
+	// logger.info('zmachine result: ${machine_res}')
 }
 
 fn get_machine_result(dl models.Deployment) !models.ZmachineResult {
@@ -133,7 +146,7 @@ fn get_chain_network(network string) !tfgrid.ChainNetwork {
 	return chain_net_enum
 }
 
-fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int) !u32{
+fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, public_ip bool) !u32{
 	gp_net := match network {
 		.dev { gridproxy.TFGridNet.dev }
 		.qa { gridproxy.TFGridNet.qa }
@@ -142,10 +155,16 @@ fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int) !u32{
 	}
 
 	mut gridproxy_client := gridproxy.get(gp_net, false)!
+	mut free_ips := u64(0)
+	if public_ip{
+		free_ips = 1
+	}
+
 	mut node_it := gridproxy_client.get_nodes_has_resources(
 		free_mru_gb: u64(memory)
 		free_sru_gb: u64(disk)
 		free_cpu: u64(cpu)
+		free_ips: free_ips
 	)
 	nodes := node_it.next()
 	mut node_id := u32(0) // get from user or use gridproxy to get nodeid
