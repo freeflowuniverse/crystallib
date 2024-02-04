@@ -70,10 +70,17 @@ pub fn (context Context) session_new(args_ SessionNewArgs) !Session {
 // path    string
 // text    string
 // prio    int = 99
+// url     string
 //```	
 pub fn (mut session Session) playbook_add(args_ playbook.PLayBookAddArgs) ! {
 	session.processed = false
 	mut args := args_
+
+	if args.url.len>0{
+		mut gs := session.context.gitstructure
+		mut repo := gs.repo_get_from_url(url: args.url)?
+		args.path = repo.path_content_get()
+	}
 
 	// walk over directory
 	if args.path.len > 0 {
