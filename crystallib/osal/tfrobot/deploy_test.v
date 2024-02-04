@@ -56,6 +56,6 @@ fn test_deploy() ! {
 	assert result.ok['test_group'][0].name == 'test0'
 	assert result.ok['test_group'][0].public_ip4 == ''
 	assert result.ok['test_group'][0].public_ip6 == ''
-	assert result.ok['test_group'][0].ygg_ip == ''
+	assert result.ok['test_group'][0].planetary_ip == ''
 	assert result.ok['test_group'][0].mounts.len == 0
 }

@@ -80,10 +80,10 @@ pub fn (mut m Zmachine) challenge() string {
 pub struct ZmachineResult {
 pub mut:
 	// name unique per deployment, re-used in request & response
-	id          string
-	ip          string
-	ygg_ip      string
-	console_url string
+	id           string
+	ip           string
+	planetary_ip string
+	console_url  string
 }
 
 pub fn (z Zmachine) to_workload(args WorkloadArgs) Workload {

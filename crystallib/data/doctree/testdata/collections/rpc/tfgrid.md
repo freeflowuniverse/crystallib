@@ -603,7 +603,7 @@ Once created you can always retrieve the [data](#model_gatewayfqdnresult) relate
     "computed_ip4": string,
     "computed_ip6": string,
     "wg_ip": string,
-    "ygg_ip": string
+    "planetary_ip": string
 }
 ```
 
