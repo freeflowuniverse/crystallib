@@ -3,6 +3,7 @@ module builder
 import os
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui
 import v.embed_file
@@ -77,9 +78,21 @@ pub fn (mut node Node) hero_install() ! {
 		node.file_write('${homedir}/hero/bin/install.sh', installer_hero_content)!
 		node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
 		node.exec_interactive('${homedir}/hero/bin/install.sh')!
-	} else {
-		panic('not implemented')
-		// node.exec_cmd(installer_hero_content)!
+	} else if node.platform == .ubuntu {
+		myenv := node.environ_get()!
+		homedir := myenv['HOME'] or { return error("can't find HOME in env") }
+		node.exec_silent('mkdir -p ${homedir}/hero/bin')!
+		node.file_write('${homedir}/hero/bin/install.sh', installer_hero_content)!
+		node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
+		node.exec_interactive('${homedir}/hero/bin/install.sh')!
+	}
+}
+
+pub fn (mut node Node) dagu_install() ! {
+	println('install dagu')
+	if !osal.cmd_exists('dagu') {
+		mut bs := bootstrapper()
+		node.exec_silent('curl -L https://raw.githubusercontent.com/yohamta/dagu/main/scripts/downloader.sh | bash')!
 	}
 }
 

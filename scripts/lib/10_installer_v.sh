@@ -49,7 +49,7 @@ function v_install {
         popd "$@" > /dev/null
         export PATH="${HOME}/hero/bin:$PATH"
 	else
-        ${HOME}/hero/bin/v symlink
+        ${DIR_CODE_INT}/v/v symlink
     fi
 
     ##LETS NOT USE v-analyzer by default
