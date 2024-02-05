@@ -198,11 +198,11 @@ node_id := u32(14)
 ```
 res_deployment := deployer.get_deployment(contract_id, node_id)!
 
-	mut zmachine_ygg_ip := ''
+	mut zmachine_planetary_ip := ''
 	for wl in res_deployment.workloads {
 		if wl.name == zmachine_workload.name {
 			res := json.decode(models.ZmachineResult, wl.result.data)!
-			zmachine_ygg_ip = res.ygg_ip
+			zmachine_planetary_ip = res.planetary_ip
 			break
 		}
 	}
@@ -217,7 +217,7 @@ res_deployment := deployer.get_deployment(contract_id, node_id)!
 ```
 gw_name := models.GatewayNameProxy{
 		name: 'mygwname1'
-		backends: ['http://[${zmachine_ygg_ip}]:9000']
+		backends: ['http://[${zmachine_planetary_ip}]:9000']
 	}
 	gw_name_wl := gw_name.to_workload(name: 'mygwname1')
 

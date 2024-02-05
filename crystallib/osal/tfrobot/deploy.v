@@ -57,14 +57,14 @@ pub:
 
 pub struct VMOutput {
 pub:
-	name        string  @[json: 'Name'; required]
-	public_ip4  string  @[json: 'PublicIP4'; required]
-	public_ip6  string  @[json: 'PublicIP6'; required]
-	ygg_ip      string  @[json: 'PlanetaryIP'; required]
-	ip          string  @[json: 'IP'; required]
-	mounts      []Mount @[json: 'Mounts'; required]
-	node_id     u32     @[json: 'NodeID']
-	contract_id u64     @[json: 'ContractID']
+	name         string  @[json: 'Name'; required]
+	public_ip4   string  @[json: 'PublicIP4'; required]
+	public_ip6   string  @[json: 'PublicIP6'; required]
+	planetary_ip string  @[json: 'PlanetaryIP'; required]
+	ip           string  @[json: 'IP'; required]
+	mounts       []Mount @[json: 'Mounts'; required]
+	node_id      u32     @[json: 'NodeID']
+	contract_id  u64     @[json: 'ContractID']
 }
 
 pub struct Mount {

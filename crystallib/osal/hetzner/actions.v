@@ -225,7 +225,7 @@ pub fn (h HetznerClient) server_reset(args ServerRebootArgs) !ResetInfo {
 			console.print_debug('wait for ${serverinfo.server_name}')
 			if osal.ping(address: serverinfo.server_ip) == .ok {
 				console.print_debug('ping ok')
-				osal.tcp_port_test(address:serverinfo.server_ip,port:22,timeout:3000)
+				osal.tcp_port_test(address: serverinfo.server_ip, port: 22, timeout: 3000)
 				console.print_debug('ssh ok')
 				console.print_header('server is rebooted: ${serverinfo.server_name}')
 				break

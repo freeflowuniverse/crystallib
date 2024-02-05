@@ -3,19 +3,24 @@
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.installers.web.mdbook as mdbookinstaller
-import freeflowuniverse.crystallib.installers.sysadmintools.restic
-import freeflowuniverse.crystallib.installers.web.zola
 import os
 
-//TODO: fix, not working, is the old one
 
-console.print_header('Install some tools')
+console.print_header('Lets use a 3script to generate an mdbook')
 mdbookinstaller.install()!
-// restic.install()!
-// zola.install()!
 
 
-console.print_header("Some test with mdbook.")
+//will create session and run a playbook from a 3script
 
+mut session := play.session_new(
+	context_name: "test"
+	interactive: true
+	url:"https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/script3"
+	run:true
+)!
+
+//now run them for the generic and understood playcmds
+playcmds.run(session)!

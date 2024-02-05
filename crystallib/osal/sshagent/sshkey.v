@@ -38,10 +38,9 @@ pub fn (mut key SSHKey) keypath_pub() !pathlib.Path {
 }
 
 pub fn (mut key SSHKey) keypub() !string {
-	mut p:=key.keypath_pub()!
+	mut p := key.keypath_pub()!
 	return p.read()!
 }
-
 
 // load the key, they key is content, other keys will be unloaded
 pub fn (mut key SSHKey) forget() ! {
@@ -60,8 +59,6 @@ pub fn (mut key SSHKey) forget() ! {
 	}
 	key.agent.init()!
 }
-
-
 
 pub fn (mut key SSHKey) str() string {
 	patho := key.keypath_pub() or { pathlib.Path{} }

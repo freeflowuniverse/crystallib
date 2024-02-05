@@ -31,7 +31,7 @@ pub mut:
 	entrypoint  string = '/sbin/zinit init' // entry point for the machine
 	public_ip   bool   // if true, a public ipv4 will be added to the node
 	public_ip6  bool   // if true, a public ipv6 will be added to the node
-	planetary   bool = true // if true, a yggdrasil ip will be added to the node
+	planetary   bool = true // if true, a planetary ip will be added to the node
 	cpu         u32  = 1 // number of vcpu cores
 	memory      u64  = 1024 // memory of the machine in MBs
 	rootfs_size u64    // root file system size in MBs
@@ -44,7 +44,7 @@ pub mut:
 	computed_ip4 string // public ipv4 attached to this machine, if any
 	computed_ip6 string // public ipv6 attached to this machine, if any
 	wireguard_ip string // private wireguard ip of this machine
-	ygg_ip       string // yggdrasil ip attached to this machine, if any
+	planetary_ip string // planetary ip attached to this machine, if any
 }
 
 pub struct Disk {
@@ -164,7 +164,7 @@ pub mut:
 	computed_ip4 string // public ipv4 attached to this node, if any
 	computed_ip6 string // public ipv6 attached to this node, if any
 	wg_ip        string // wireguard private ip of this node
-	ygg_ip       string // ygg ip attached to this node, if any
+	planetary_ip string // planetary ip attached to this node, if any
 }
 
 @[params]
@@ -490,10 +490,10 @@ pub:
 
 pub struct DiscourseDeployment {
 pub:
-	name   string // identifier for the instance
-	ygg_ip string // instance ygg ip
-	ipv6   string // instance ipv6, if any
-	fqdn   string // fully qualified domain name pointing to the instance
+	name         string // identifier for the instance
+	planetary_ip string // instance planetary ip
+	ipv6         string // instance ipv6, if any
+	fqdn         string // fully qualified domain name pointing to the instance
 }
 
 @[params]
@@ -512,10 +512,10 @@ pub:
 
 pub struct FunkwhaleDeployment {
 pub:
-	name   string // identifier for the instance
-	ygg_ip string // instance ygg ip
-	ipv6   string // instance ipv6, if any
-	fqdn   string // fully qualified domain name pointing to the instance
+	name         string // identifier for the instance
+	planetary_ip string // instance planetary ip
+	ipv6         string // instance ipv6, if any
+	fqdn         string // fully qualified domain name pointing to the instance
 }
 
 @[params]
@@ -535,10 +535,10 @@ pub:
 
 pub struct PeertubeDeployment {
 pub:
-	name   string // identifier for the instance
-	ygg_ip string // instance ygg ip
-	ipv6   string // instance ipv6, if any
-	fqdn   string // fully qualified domain name pointing to the instance
+	name         string // identifier for the instance
+	planetary_ip string // instance planetary ip
+	ipv6         string // instance ipv6, if any
+	fqdn         string // fully qualified domain name pointing to the instance
 }
 
 @[params]
@@ -558,10 +558,10 @@ pub:
 
 pub struct PresearchDeployment {
 pub:
-	name   string // identifier for the instance
-	ygg_ip string // instance ygg ip
-	ipv6   string // instance ipv6, if any
-	fqdn   string // fully qualified domain name pointing to the instance
+	name         string // identifier for the instance
+	planetary_ip string // instance planetary ip
+	ipv6         string // instance ipv6, if any
+	fqdn         string // fully qualified domain name pointing to the instance
 }
 
 @[params]
@@ -581,10 +581,10 @@ pub:
 
 pub struct TaigaDeployment {
 pub:
-	name   string // identifier for the instance
-	ygg_ip string // instance ygg ip
-	ipv6   string // instance ipv6, if any
-	fqdn   string // fully qualified domain name pointing to the instance
+	name         string // identifier for the instance
+	planetary_ip string // instance planetary ip
+	ipv6         string // instance ipv6, if any
+	fqdn         string // fully qualified domain name pointing to the instance
 }
 
 pub struct ZOSNodeRequest {

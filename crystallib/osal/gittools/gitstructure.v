@@ -117,7 +117,7 @@ pub fn (mut gs GitStructure) code_get(args GSCodeGetFromUrlArgs) !string {
 	}
 	if args.pull {
 		g.pull()!
-	}	
+	}
 	s := locator.path_on_fs()!
 	return s.path
 }

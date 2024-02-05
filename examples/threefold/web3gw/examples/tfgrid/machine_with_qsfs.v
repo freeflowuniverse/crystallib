@@ -31,7 +31,7 @@ pub struct MachineWithQSFS {
 pub struct MachineWithQSFSResult {
 pub:
 	name                  string
-	ygg_ip                string
+	planetary_ip          string
 	ipv4                  string
 	qsfs_metrics_endpoint string
 }
@@ -133,7 +133,7 @@ fn deploy_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs Ma
 	machine := machines_model
 	return MachineWithQSFSResult{
 		name: machine_with_qsfs.name
-		ygg_ip: machine.ygg_ip
+		planetary_ip: machine.planetary_ip
 		ipv4: machine.computed_ip4
 		qsfs_metrics_endpoint: machine.qsfss[0].metrics_endpoint
 	}
@@ -171,7 +171,7 @@ fn get_machine_with_qsfs(mut client tfgrid.TFGridClient, machine_with_qsfs_name 
 	machine := machines_model
 	return MachineWithQSFSResult{
 		name: machine_with_qsfs_name
-		ygg_ip: machine.ygg_ip
+		planetary_ip: machine.planetary_ip
 		ipv4: machine.computed_ip4
 		qsfs_metrics_endpoint: machine.qsfss[0].metrics_endpoint
 	}

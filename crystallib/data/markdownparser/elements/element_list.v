@@ -4,7 +4,7 @@ module elements
 pub struct List {
 	DocBase
 pub mut:
-	depth int
+	depth  int
 	indent int
 }
 

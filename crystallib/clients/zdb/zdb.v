@@ -1,6 +1,7 @@
 module zdb
 
 import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.ui.console
 
 pub struct ZDB {
 pub mut:

@@ -23,7 +23,7 @@ pub fn (mut c Client) get_zos_version(dst u32) !Version {
 	return ver
 }
 
-pub fn(mut c Client) list_wg_ports(dst u32) ![]u16{
+pub fn (mut c Client) list_wg_ports(dst u32) ![]u16 {
 	res := os.execute("griddriver rmb-taken-ports --dst ${dst} --substrate \"${c.substrate}\" --mnemonics \"${c.mnemonic}\" --relay \"${c.relay}\"")
 	if res.exit_code != 0 {
 		return error(res.output)

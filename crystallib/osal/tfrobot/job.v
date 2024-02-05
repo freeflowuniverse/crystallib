@@ -51,8 +51,8 @@ pub:
 // }
 
 // pub struct Mount {
-// 	disk_name   string 
-// 	mount_point string 
+// 	disk_name   string
+// 	mount_point string
 // }
 
 pub enum Network {

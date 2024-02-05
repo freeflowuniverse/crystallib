@@ -13,6 +13,10 @@ pub mut:
 	interactive         bool
 	playbook_priorities map[int]string
 	coderoot            string
+	url                 string
+	path                string
+	text                string
+	run                 bool = true
 }
 
 // return a session which has link to the actions and params on context and session level
@@ -70,7 +74,8 @@ pub fn session_new(args_ PlayArgs) !&Session {
 
 	session.playbook_priorities = args.playbook_priorities.clone()
 
-	mut plbook := playbook.new()!
+	mut plbook := playbook.new(text: args.text, url: args.url, path: args.path) or { panic(err) }
+
 	session.plbook = plbook
 
 	return session
