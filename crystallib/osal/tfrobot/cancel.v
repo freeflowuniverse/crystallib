@@ -6,9 +6,9 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 
 pub struct CancelConfig {
-	name string @[required]
-	mnemonic string @[required]
-	network Network @[required]
+	name        string        @[required]
+	mnemonic    string        @[required]
+	network     Network       @[required]
 	node_groups []CancelGroup @[required]
 }
 
@@ -23,11 +23,11 @@ pub fn (mut robot TFRobot) cancel(config CancelConfig) ! {
 		path: '${tfrobot_dir}/deployments/${config.name}_cancel.json'
 		create: true
 	)!
-	
+
 	cancel_file.write(json.encode(config))!
 	osal.exec(
-		cmd:'tfrobot cancel -c ${cancel_file.path}', 
-		stdout:true
+		cmd: 'tfrobot cancel -c ${cancel_file.path}'
+		stdout: true
 	)!
 }
 

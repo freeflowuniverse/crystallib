@@ -1,4 +1,5 @@
 module osal
+
 import net
 import time
 
@@ -56,13 +57,12 @@ pub fn ping(args PingArgs) PingResult {
 @[params]
 pub struct TcpPortTestArgs {
 pub mut:
-	address string @[required] //192.168.8.8
-	port int = 22
+	address string @[required] // 192.168.8.8
+	port    int = 22
 	timeout u16 = 2000 // total time in milliseconds to keep on trying
 }
 
-
-//test if a tcp port answers
+// test if a tcp port answers
 //```
 // address string //192.168.8.8
 // port int = 22
@@ -76,12 +76,12 @@ pub fn tcp_port_test(args TcpPortTestArgs) bool {
 		if run_time > start_time + args.timeout {
 			return false
 		}
-		socket := net.dial_tcp("${args.address}:${args.port}") or {
-				time.sleep(100 * time.millisecond)
-				continue
-			}
+		socket := net.dial_tcp('${args.address}:${args.port}') or {
+			time.sleep(100 * time.millisecond)
+			continue
+		}
 		// println(socket)
-		return true		
+		return true
 	}
 	return false
 }

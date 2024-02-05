@@ -68,7 +68,7 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 
 	if develop {
 		osal.profile_path_add_hero()!
-		n.crystal_install(reset:reset)!
+		n.crystal_install(reset: reset)!
 		n.hero_install()!
 		n.dagu_install()!
 	} else {

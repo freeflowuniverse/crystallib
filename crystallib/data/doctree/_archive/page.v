@@ -79,7 +79,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	name_without_ext := file_name.all_before('.')
 
 	mut collection := page.tree.collections[page.collection_name] or {
-		return error("2could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
+		return error("could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 	}
 
 	// check if the file or image is there, if yes we can return, nothing to do
@@ -235,7 +235,7 @@ fn (mut page Page) include(pages_to_include map[int]Page) ! {
 // and includes pages into the markdown doc if found in tree
 fn (mut page Page) process_includes(mut include_tree []string) ! {
 	mut collection := page.tree.collection_get(page.collection_name) or {
-		return error("1could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
+		return error("could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 	}
 	mut doc := page.doc or { return error('no doc yet on page') }
 	// check for circular imports

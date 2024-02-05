@@ -64,7 +64,8 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		if mut llast is elements.Paragraph || mut llast is elements.List {
-			if line.len > 0 && (line.trim_space().starts_with('- ') || line.trim_space().starts_with('* ')) {
+			if line.len > 0 && (line.trim_space().starts_with('- ')
+				|| line.trim_space().starts_with('* ')) {
 				mut e := doc.list_new(line)
 				e.parent = &doc
 				if mut llast is elements.List {
@@ -73,7 +74,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 						e.indent = llast.indent + 1
 					} else if e.depth < llast.depth && e.depth != 0 {
 						e.indent = llast.indent - 1
-					}else{
+					} else {
 						e.indent = llast.indent
 					}
 				}
@@ -81,7 +82,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				continue
 			}
 
-			if mut llast is elements.List{
+			if mut llast is elements.List {
 				parser.ensure_last_is_paragraph()!
 				continue
 			}

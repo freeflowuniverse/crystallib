@@ -23,22 +23,34 @@ pub mut:
 @[params]
 pub struct MDBooksFactoryArgs {
 pub mut:
-	// coderoot    string = '${os.home_dir()}/hero/code'
-	buildroot   string = '${os.home_dir()}/hero/var/mdbuild'
-	publishroot string = '${os.home_dir()}/hero/www/info'
+	buildroot   string
+	publishroot   string
 	install     bool   = true
 	session     ?&play.Session @[skip; str: skip]
 }
 
-pub fn new(args MDBooksFactoryArgs) !MDBooksFactory {
+pub fn new(args_ MDBooksFactoryArgs) !MDBooksFactory {
+	mut args:=args_
 	if args.install {
 		mdbook_installer.install()!
 	}
+
+	if args.buildroot==""{
+		args.buildroot = '${os.home_dir()}/hero/var/mdbuild'
+	}
+	if args.publishroot==""{
+		args.publishroot = '${os.home_dir()}/hero/www/info'
+	}
+
+	args.publishroot=args.publishroot.replace("~",os.home_dir())
+	args.buildroot=args.buildroot.replace("~",os.home_dir())
+
 	mut books := MDBooksFactory{
 		path_build: args.buildroot
 		path_publish: args.publishroot
 		session: args.session
 	}
+
 	books.load()!
 	return books
 }

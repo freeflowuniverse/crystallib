@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.osal.gittools
 import freeflowuniverse.crystallib.ui.console
 
 @[heap]
@@ -65,15 +66,33 @@ pub fn (context Context) session_new(args_ SessionNewArgs) !Session {
 	return s
 }
 
+@[params]
+pub struct PLayBookAddArgs {
+pub mut:
+	path string
+	text string
+	git_url string
+	git_pull   bool 		 // will pull if this is set
+	git_reset  bool // this means will pull and reset all changes	
+	prio int = 10
+}
+
+
 // add playbook context to session
 //```
 // path    string
 // text    string
 // prio    int = 99
+// url     string
 //```	
-pub fn (mut session Session) playbook_add(args_ playbook.PLayBookAddArgs) ! {
+pub fn (mut session Session) playbook_add(args_ PLayBookAddArgs) ! {
 	session.processed = false
 	mut args := args_
+
+	if args.git_url.len > 0 {
+		mut gs := session.context.gitstructure()!
+		args.path = gs.code_get(url: args.git_url,pull:args.git_pull,reset:args.git_reset)!
+	}
 
 	// walk over directory
 	if args.path.len > 0 {

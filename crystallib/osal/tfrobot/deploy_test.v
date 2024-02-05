@@ -3,19 +3,22 @@ module tfrobot
 import os
 import toml
 
-__global(mneumonics string ssh_key string)
+__global (
+	mneumonics string
+	ssh_key    string
+)
 
 fn testsuite_begin() ! {
-	env := toml.parse_file(os.dir(@FILE) + '/.env') or {toml.Doc{}}
-	mneumonics = os.getenv_opt('MNEUMONICS') or { 
+	env := toml.parse_file(os.dir(@FILE) + '/.env') or { toml.Doc{} }
+	mneumonics = os.getenv_opt('MNEUMONICS') or {
 		env.value_opt('MNEUMONICS') or {
 			panic('MNEUMONICS variable should either be set as environment variable or set in .env file for this test')
-		}.string() 
+		}.string()
 	}
-	ssh_key = os.getenv_opt('SSH_KEY') or { 
+	ssh_key = os.getenv_opt('SSH_KEY') or {
 		env.value_opt('SSH_KEY') or {
 			panic('SSH_KEY variable should either be set as environment variable or set in .env file for this test')
-		}.string() 
+		}.string()
 	}
 }
 
@@ -27,11 +30,11 @@ fn test_deploy() ! {
 		network: .main
 		node_groups: [
 			NodeGroup{
-				name:'test_group'
+				name: 'test_group'
 				nodes_count: 1
 				free_cpu: 1
 				free_mru: 256
-			}
+			},
 		]
 		vms: [
 			VMConfig{
@@ -43,7 +46,7 @@ fn test_deploy() ! {
 				ssh_key: 'test_key'
 				entry_point: '/usr/local/bin/entrypoint.sh'
 				flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
-			}
+			},
 		]
 		ssh_keys: {
 			'test_key': ssh_key

@@ -80,11 +80,11 @@ pub fn receive_msg_opt(wait bool) ?InboundMessage {
 	if wait {
 		req.read_timeout = 600000000000
 	}
-	res := req.do() or {panic(error)}
+	res := req.do() or { panic(error) }
 	if res.status_code == 204 {
 		return none
 	}
-	msg := json.decode(InboundMessage, res.body) or {panic(err)}
+	msg := json.decode(InboundMessage, res.body) or { panic(err) }
 	return msg
 }
 

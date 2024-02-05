@@ -16,7 +16,7 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 
 example:
 
-hero mdbook -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3
+hero mdbook -u https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/script3
 
 If you do -gp it will pull newest book content from git and give error if there are local changes.
 If you do -gr it will pull newest book content from git and overwrite local changes (careful).
@@ -36,34 +36,59 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 		description: 'name of the mdbook.'
 	})
 
+	// cmd_mdbook.add_flag(Flag{
+	// 	flag: .bool
+	// 	required: false
+	// 	name: 'edit'
+	// 	description: 'will open vscode for collections & summary.'
+	// })
+
+	cmd_mdbook.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'open'
+		abbrev: 'o'
+		description: 'will open the generated book.'
+	})
+
 	cmdroot.add_command(cmd_mdbook)
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
-	mut session, _ := session_run_do(cmd)!
 
 	mut name := cmd.flags.get_string('name') or { '' }
 
-	if name == '' {
-		mut a := session.plbook.action_get_by_name(actor: 'book', name: 'define')!
-		name = a.params.get('name') or { '' }
-	}
 
-	if name == '' {
-		println('did not find defined book, or name not specified')
+	mut url := cmd.flags.get_string('url') or { '' }
+	mut path := cmd.flags.get_string('path') or { '' }
+	if path.len>0 || url.len>0 {
+
+		//execute the attached playbook
+		mut session, _ := session_run_do(cmd)!
+
+		//get name from the book.generate action
+		if name == '' {
+			mut a := session.plbook.action_get_by_name(actor: 'book', name: 'generate')!
+			name = a.params.get('name') or { '' }
+		}
+
+	}else{
 		return error(cmd.help_message())
 	}
 
-	reset := cmd.flags.get_bool('gitreset') or { false }
+	if name == '' {
+		println('did not find name of book to generate, check in 3script or specify with --name')
+		return error(cmd.help_message())
+	}
 
-	// mut book2 := mdbook.new_from_config(instance: name, reset: reset, context: &session.context)!
+	edit := cmd.flags.get_bool('edit') or { false }
+	open := cmd.flags.get_bool('open') or { false }
+	if edit || open {
+		mdbook.book_open(name)!
+	}
 
-	// book2.generate()!
-	// book2.open()!
+	if edit {
+		mdbook.book_edit(name)!
+	}
 
-	// edit := cmd.flags.get_bool('edit') or { false }
-
-	// if edit {
-	// 	book2.edit()!
-	// }
 }

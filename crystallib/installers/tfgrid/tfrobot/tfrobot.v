@@ -14,19 +14,18 @@ pub mut:
 	uninstall bool
 }
 
-
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.13.21'
+	version := '0.13.22'
 
 	res := os.execute('${osal.profile_path_source_and()} tfrobot version')
 	if res.exit_code == 0 {
-		r := res.output.split_into_lines().filter(it.trim_space().contains("v0."))
+		r := res.output.split_into_lines().filter(it.trim_space().contains('v0.'))
 		if r.len != 1 {
 			println(r)
 			return error("couldn't parse tfrobot version.\n${res.output}")
 		}
-		if texttools.version(version) > texttools.version(r[0].replace("v","")) {
+		if texttools.version(version) > texttools.version(r[0].replace('v', '')) {
 			args.reset = true
 		}
 	} else {
@@ -37,18 +36,20 @@ pub fn install(args_ InstallArgs) ! {
 		console.print_header('install tfrobot')
 		build()!
 	}
-
 }
-
 
 pub fn build() ! {
 	golang.install()!
 	console.print_header('build tfrobot')
-	mut dest_on_os:="${os.home_dir()}/hero/bin"
+	mut dest_on_os := '${os.home_dir()}/hero/bin'
 	if osal.is_linux() {
-		dest_on_os="/usr/local/bin"
+		dest_on_os = '/usr/local/bin'
 	}
-	path := gittools.code_get(url: 'https://github.com/threefoldtech/tfgrid-sdk-go', reset: true, pull:true)!
+	path := gittools.code_get(
+		url: 'https://github.com/threefoldtech/tfgrid-sdk-go'
+		reset: true
+		pull: true
+	)!
 	cmd := '
 	cd ${path}
 	cd mass-deployer

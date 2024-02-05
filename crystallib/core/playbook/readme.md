@@ -20,10 +20,11 @@ the first one is the action, the rest are the params
 
 ```v
 import freeflowuniverse.crystallib.core.playbook
-mut plbook := new(text: "....") or { panic(err) }
+mut plbook := playbook.new(text: "....") or { panic(err) }
 
 //path    string
 //text    string
+//url     sstring
 //prio    int   = 99
 plbook.add(path:...)!
 
