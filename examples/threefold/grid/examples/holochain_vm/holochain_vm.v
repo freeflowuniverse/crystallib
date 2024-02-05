@@ -33,7 +33,7 @@ fn main() {
 
 	mut workloads := []models.Workload{}
 	node_id := get_node_id(chain_net_enum, memory, disk, cpu, public_ip)!
-
+	
 	network_name := 'net_${rand.string(5).to_lower()}' // autocreate a network
 	wg_port := deployer.assign_wg_port(node_id)!
 	mut network := models.Znet{
@@ -61,7 +61,7 @@ fn main() {
 	}
 
 	zmachine := models.Zmachine{
-		flist: 'https://hub.grid.tf/ashraf.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
+		flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
 		network: models.ZmachineNetwork{
 			interfaces: [
 				models.ZNetworkInterface{

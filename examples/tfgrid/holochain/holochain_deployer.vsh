@@ -37,6 +37,7 @@ mut deploy_config := tfrobot.DeployConfig{
 			nodes_count: 1
 			free_cpu: 4
 			free_mru: 8
+			free_ssd: 30
 		},
 	]
 	vms: [
@@ -47,7 +48,7 @@ mut deploy_config := tfrobot.DeployConfig{
 			mem: 8
 			node_group: 'test_group'
 			ssh_key: ssh_key_name
-			entry_point: '/usr/local/bin/entrypoint.sh'
+			entry_point: '/sbin/zinit init'
 			flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
 			env_vars: {
 				'CODE_SERVER_PASSWORD': 'mypass'
@@ -63,7 +64,7 @@ mut deploy_config := tfrobot.DeployConfig{
 res := bot.deploy(deploy_config)!
 
 vm := res.ok['test_group'][0]
-println('ssh interactive****')
+
 vm.ssh_interactive(ssh_key_path.path)!
 
 // println("job new")
