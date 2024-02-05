@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.clients.redisclient
 
 @[heap]
 pub struct MDBook {
@@ -27,6 +28,8 @@ pub mut:
 	summary_path string // can also give the path to the summary file (can be the dir or the summary itself)
 	doctree_url  string
 	doctree_path string
+	publish_path  string
+	build_path string
 }
 
 pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
@@ -36,8 +39,18 @@ pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
 	if args.title == '' {
 		args.title = args.name
 	}
-	path_build := '${factory.path_build}/${args.name}'
-	path_publish := '${factory.path_publish}/${args.name}'
+	if args.build_path.len==0{
+		args.build_path = '${factory.path_build}/${args.name}'
+	}
+	if args.publish_path.len==0{
+		args.publish_path = '${factory.path_publish}/${args.name}'
+	}
+
+	mut r := redisclient.core_get()!
+	r.set('mdbook:${args.name}:build', args.build_path)!
+	r.set('mdbook:${args.name}:publish', args.publish_path)!
+	r.expire('mdbook:${args.name}:build',3600*12)! //expire after 12h
+	r.expire('mdbook:${args.name}:publish',3600*12)!
 
 	mut context := factory.context()!
 	mut gs := context.gitstructure()!
@@ -75,8 +88,8 @@ pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
 
 	mut book := MDBook{
 		args: args
-		path_build: pathlib.get_dir(path: path_build, create: true)!
-		path_publish: pathlib.get_dir(path: path_publish, create: true)!
+		path_build: pathlib.get_dir(path: args.build_path, create: true)!
+		path_publish: pathlib.get_dir(path: args.publish_path, create: true)!
 		factory: &factory
 		session: factory.session
 	}
@@ -110,7 +123,14 @@ A normal user can ignore these pages, they are for the authors to see e.g. error
 	')!
 
 	for collectionname in summary.collections {
-		collection_dir_str := '${args.doctree_path}/${collectionname}'
+		collection_dir_str := '${args.doctree_path}/src/${collectionname}'.replace("~",os.home_dir())
+		if !os.exists(collection_dir_str){
+			book.error(
+				msg: "Could not find collection: '${collection_dir_str}' "
+			)
+			continue
+		}
+
 		mut collection_dir_path := pathlib.get_dir(path: collection_dir_str, create: false) or {
 			panic('bug')
 		} // should always work because done in summary
@@ -118,9 +138,11 @@ A normal user can ignore these pages, they are for the authors to see e.g. error
 		if collection_dir_path.file_exists('errors.md') {
 			summary.add_error_page(collectionname, 'errors.md')
 		}
-		// now link the collection into the build dir
-		collection_dirbuild_str := '${book.path_build.path}/src/${collectionname}'
-		collection_dir_path.link(collection_dirbuild_str, true)!
+		// // now link the collection into the build dir
+		collection_dirbuild_str := '${book.path_build.path}/src/${collectionname}'.replace("~",os.home_dir())
+		if ! pathlib.path_equal(collection_dirbuild_str,collection_dir_path.path){
+			collection_dir_path.link(collection_dirbuild_str, true)!	
+		}		
 	}
 
 	if book.errors.len > 0 {
@@ -134,7 +156,7 @@ A normal user can ignore these pages, they are for the authors to see e.g. error
 		}
 	}
 
-	println(summary)
+	// println(summary)
 
 	path_summary_str := '${book.path_build.path}/src/SUMMARY.md'
 	mut path_summary := pathlib.get_file(path: path_summary_str, create: true)!

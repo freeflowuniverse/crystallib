@@ -1,8 +1,10 @@
 module playbook
+
 import freeflowuniverse.crystallib.osal.gittools
+
 @[params]
 pub struct PlayBookNewArgs {
-pub:
+pub mut:
 	path string
 	text string
 	url  string
@@ -15,11 +17,14 @@ pub:
 // text    string
 // url  string
 // ```
-pub fn new(args PlayBookNewArgs) !PlayBook {
+pub fn new(args_ PlayBookNewArgs) !PlayBook {
+	mut args:=args_
 	mut plbook := PlayBook{}
-	mut gs := gittools.get()!
-	mut repo := gs.repo_get_from_url(url: args.url)?
-	args.path = repo.path_content_get()
+	// mut gs := gittools.get()!
+	if args.url.len>0{
+		mut repo := gittools.repo_get(url: args.url)!
+		args.path = repo.addr.path()!.path
+	}
 	if args.path.len > 0 || args.text.len > 0 {
 		plbook.add(path: args.path, text: args.text)!
 	}

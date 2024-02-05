@@ -138,6 +138,10 @@ fn session_run_get(cmd Command) !(&play.Session, string) {
 fn session_run_do(cmd Command) !(&play.Session, string) {
 	mut session, path := session_run_get(cmd)!
 
+	if path.len==0{
+		return error(cmd.help_message())
+	}
+
 	if path.len > 0 {
 		// add all actions inside to the playbook
 		session.playbook_add(path: path)!

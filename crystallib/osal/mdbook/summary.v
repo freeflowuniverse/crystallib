@@ -2,6 +2,7 @@ module mdbook
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import os
 
 @[heap]
 pub struct Summary {
@@ -26,6 +27,8 @@ pub fn (mut book MDBook) summary() !Summary {
 	mut summary_path := pathlib.get_file(path: book.args.summary_path, create: false)!
 	c := summary_path.read()!
 
+	summary_path.link("${book.path_build.path}/edit/summary.md",true)!
+
 	mut level := 0
 	mut pre_last := ''
 
@@ -33,12 +36,14 @@ pub fn (mut book MDBook) summary() !Summary {
 		if !(line.trim_space().starts_with('-')) {
 			continue
 		}
-
 		pre := line.all_before('-')
+		// println("${line}  ===  '${pre}'")
 		if pre.len > pre_last.len {
+			// println("+")
 			level += 1 // increase level
 		} else if pre.len < pre_last.len {
 			level -= 1
+			// println("-")
 			if level < 0 {
 				panic('bug, level should never be below 0')
 			}
@@ -76,7 +81,7 @@ pub fn (mut book MDBook) summary() !Summary {
 			summary.collections << collection
 		}
 
-		mut path_collection_str := '${book.args.doctree_path}/${collection}'
+		mut path_collection_str := '${book.args.doctree_path}/src/${collection}'.replace("~",os.home_dir())
 		mut path_collection := pathlib.get_dir(path: path_collection_str, create: false) or {
 			book.error(
 				msg: "collection find error in summary: '${line}', can't find collection:${path_collection_str} "

@@ -52,7 +52,7 @@ mut deploy_config := tfrobot.DeployConfig{
 			env_vars: {
 				'CODE_SERVER_PASSWORD': 'mypass'
 			}
-			public_ip4: true
+			public_ip4: false
 			root_size: 30
 			planetary: true
 		},

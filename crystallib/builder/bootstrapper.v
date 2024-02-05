@@ -99,33 +99,31 @@ pub fn (mut node Node) dagu_install() ! {
 @[params]
 pub struct CrystalInstallArgs {
 pub mut:
-	reset        bool
+	reset bool
 }
-
 
 pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 	mut bs := bootstrapper()
 	installer_base_content_ := bs.embedded_files['installer_base.sh'] or { panic('bug') }
 	installer_base_content := installer_base_content_.to_string()
 
-	if args.reset{
-
+	if args.reset {
 		console.clear()
-		println("")
-		console.print_stderr("will remove: .vmodules, crystal lib code and ~/hero")
-		println("")
+		println('')
+		console.print_stderr('will remove: .vmodules, crystal lib code and ~/hero')
+		println('')
 		mut myui := ui.new()!
 		toinstall := myui.ask_yesno(
 			question: 'Ok to reset?'
 			default: true
 		)!
-		if !toinstall{
+		if !toinstall {
 			exit(1)
-		}			
-		os.rmdir_all("${os.home_dir()}/.vmodules")!
-		os.rmdir_all("${os.home_dir()}/hero")!
-		os.rmdir_all("${os.home_dir()}/code/github/freeflowuniverse/crystallib")!
-		os.rmdir_all("${os.home_dir()}/code/github/freeflowuniverse/webcomponents")!
+		}
+		os.rmdir_all('${os.home_dir()}/.vmodules')!
+		os.rmdir_all('${os.home_dir()}/hero')!
+		os.rmdir_all('${os.home_dir()}/code/github/freeflowuniverse/crystallib')!
+		os.rmdir_all('${os.home_dir()}/code/github/freeflowuniverse/webcomponents')!
 	}
 
 	cmd := '

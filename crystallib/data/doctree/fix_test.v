@@ -37,7 +37,7 @@ fn test_fix() ! {
 	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 	mut test_page := test_collection.page_get('page_with_wrong_links')!
 
-	doc_before := test_page.doc(dest: test_page.path.parent()!.path)! //or { panic('doesnt exist') }
+	doc_before := test_page.doc(dest: test_page.path.parent()!.path)! // or { panic('doesnt exist') }
 
 	assert !test_page.changed // should be set to false after fix
 

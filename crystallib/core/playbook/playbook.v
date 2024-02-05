@@ -184,6 +184,6 @@ pub fn (mut plbook PlayBook) empty_check() ! {
 	}
 	if actions.len > 0 {
 		msg := plbook.script3(show_done: false)!
-		return error('There are actions left to execute.\n\n${msg}')
+		return error('There are actions left to execute, see below:\n\n${msg}\n\n')
 	}
 }
