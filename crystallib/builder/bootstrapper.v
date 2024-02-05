@@ -41,13 +41,11 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 	addr := texttools.to_array(args.addr)
 	mut b := new()!
 	mut counter := 0
-	println('running running')
 	for a in addr {
 		counter += 1
 		name := '${args.name}_${counter}'
 		mut n := b.node_new(ipaddr: a, name: name)!
 		n.crystal_install()!
-		println('installed crys')
 		n.hero_install()!
 	}
 }
