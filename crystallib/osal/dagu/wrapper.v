@@ -83,7 +83,7 @@ pub fn retry(request_id string, dag_file string, req string) !string {
 
 @[params]
 pub struct SchedulerOptions {
-	dags ?string // location of DAG files (default is /Users/timurgordon/.dagu/dags)
+	dags ?string // location of DAG files (default is /Users/<user>/.dagu/dags)
 }
 
 // Start the scheduler
@@ -95,9 +95,9 @@ pub fn scheduler(options SchedulerOptions) !string {
 
 @[params]
 pub struct ServerOptions {
-	dags string // location of DAG files (default is /Users/timurgordon/.dagu/dags)
-	host string // server host (default is localhost)
-	port string // server port (default is 8080)
+	dags ?string // location of DAG files (default is /Users/<user>/.dagu/dags)
+	host ?string // server host (default is localhost)
+	port ?string // server port (default is 8080)
 }
 
 // Start the server
@@ -109,19 +109,20 @@ pub fn server(options ServerOptions) !string {
 
 @[params]
 pub struct StartOptions {
-	params string // parameters
+	params ?string // parameters
 }
 
 // Runs the DAG
 pub fn start(dag_file string, options StartOptions) !string {
 	flags := osal.write_flags[StartOptions](options)
+	println('debugzo: dagu start  ${dag_file} ${flags}')
 	result := os.execute_opt('dagu start  ${dag_file} ${flags}')!
 	return result.output
 }
 
 @[params]
 pub struct StartAllOptions {
-	dags string // location of DAG files (default is /Users/timurgordon/.dagu/dags)
+	dags string // location of DAG files (default is /Users/<user>/.dagu/dags)
 	host string // server host (default is localhost)
 	port string // server port (default is 8080)
 }
