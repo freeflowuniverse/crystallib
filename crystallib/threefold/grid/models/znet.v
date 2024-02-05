@@ -20,6 +20,13 @@ pub mut:
 	wireguard_private_key string // can be generated using `wg genkey` command
 	wireguard_listen_port u16
 	peers                 []Peer
+	mycelium              ?Mycelium
+}
+
+pub struct Mycelium {
+pub mut:
+	hex_key string
+	peers   []string
 }
 
 pub fn (mut n Znet) challenge() string {
@@ -30,6 +37,20 @@ pub fn (mut n Znet) challenge() string {
 	out += n.wireguard_listen_port.str()
 	for mut p in n.peers {
 		out += p.challenge()
+	}
+
+	if m := n.mycelium {
+		out += m.challenge()
+	}
+
+	return out
+}
+
+pub fn (m Mycelium) challenge() string {
+	mut out := ''
+	out += m.hex_key
+	for p in m.peers {
+		out += p
 	}
 
 	return out
