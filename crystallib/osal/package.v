@@ -47,9 +47,16 @@ pub fn package_install(name_ string) ! {
 		console.print_header('package install: ${name}')
 
 		platform_ := platform()
+		cpu := cputype()
 		if platform_ == .osx {
-			exec(cmd: 'brew install ${name}') or {
-				return error('could not install package:${name}\nerror:\n${err}')
+			if cpu == .arm{
+				exec(cmd: 'arch --arm64 brew install ${name}') or {
+					return error('could not install package: ${name}\nerror:\n${err}')
+				}
+			}else {
+				exec(cmd: 'brew install ${name}') or {
+					return error('could not install package:${name}\nerror:\n${err}')
+				}
 			}
 		} else if platform_ == .ubuntu {
 			exec(
