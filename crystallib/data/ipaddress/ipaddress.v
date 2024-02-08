@@ -33,13 +33,13 @@ pub enum IpAddressType {
 // TODO: implementation not correct !!!
 
 // format: localhost:7777
+// format: localhost:7777/24
 // format: 192.168.6.6:7777
 // format: 192.168.6.6
-// format: any ipv6 addr
-// format: localhost:7777/24
-// format ipv6: [x:x:x:x:x:x:x:x]:p TODO: implement
+// format ipv6: [x:x:x:x:x:x:x:x]:p 
+// format ipv6: [x:x:x:x:x:x:x:x]:p/96
 // format ipv6: x:x:x:x:x:x:x:x
-// format ipv6: x::x/96
+// format ipv6: x:x:x:x.../96
 pub fn new(addr_string string) !IPAddress {
 	mut cat := IpAddressType.ipv4
 	mut addr := addr_string
@@ -60,20 +60,35 @@ pub fn new(addr_string string) !IPAddress {
 		}
 	}
 
-	if addr.contains('::') && addr.count('::') == 1 {
+	//parse the ip addr
+	if addr.count(':') > 4 && ! addr.contains('[') {
 		cat = IpAddressType.ipv6
-		s := addr.split('::')
-		addr, port = s[0], s[1]
-	} else if addr.contains(':') && addr.count(':') == 1 {
-		cat = IpAddressType.ipv4
-		s := addr.split(':')
-		addr, port = s[0], s[1]
-	} else if addr.contains(':') && addr.count(':') > 1 {
+		addr = addr.trim_space()
+		port = "0"
+	} else if addr.contains('[') && addr.count(']') == 1 {
+		post :=  addr.all_after_last("]").trim_space()
+		addr = addr.all_before_last("]").all_after_first("[").trim_space()		
 		cat = IpAddressType.ipv6
-	} else if addr.contains('.') && addr.count('.') == 3 {
+		port = "0"
+		if post.len>0{
+			if post.contains(":"){
+				port = post.all_after(":").trim_space()
+			}else{
+				return error("syntax error in ip addr: '${addr}' should have : after ] if port")
+			}
+		}
+	} else if addr.count('.') == 3 {
 		cat = IpAddressType.ipv4
-		// } else {
-		// 	return error('Invalid Ip address string')
+		addr = addr.trim_space()
+		port = "0"
+		if addr.count(":")==1{
+			port = addr.all_after_last(":").trim_space()
+			addr = addr.all_before(":").trim_space()
+		}else if addr.count(":")>1{
+			return error('Invalid IP address string, port part \'${addr}\'')			
+		}
+	} else {
+		return error('Invalid IP address string \'${addr}\'')
 	}
 
 	mut ip := IPAddress{

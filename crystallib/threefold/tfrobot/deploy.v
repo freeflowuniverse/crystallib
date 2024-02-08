@@ -61,8 +61,9 @@ pub:
 }
 
 pub struct VMOutput {
-pub:
+pub mut:
 	name         string  @[json: 'Name'; required]
+	node_group   string   
 	public_ip4   string  @[json: 'PublicIP4'; required]
 	public_ip6   string  @[json: 'PublicIP6'; required]
 	planetary_ip string  @[json: 'PlanetaryIP'; required]
@@ -123,8 +124,6 @@ pub fn (mut robot TFRobot) deploy(config_ DeployConfig) !DeployResult {
 		}
 	}
 
-	println(config)
-
 	check_deploy_config(config)!
 
 	mut config_file := pathlib.get_file(
@@ -135,8 +134,8 @@ pub fn (mut robot TFRobot) deploy(config_ DeployConfig) !DeployResult {
 		path: '${tfrobot.tfrobot_dir}/deployments/${config.name}_output.json'
 		create: false
 	)!
-
-	config_file.write(json.encode(config))!
+	config_json:=json.encode(config)
+	config_file.write(config_json)!
 	cmd:='tfrobot deploy -c ${config_file.path} -o ${output_file.path}'
 	if config.debug{
 		console.print_debug(config.str())
@@ -155,17 +154,18 @@ pub fn (mut robot TFRobot) deploy(config_ DeployConfig) !DeployResult {
 
 	mut redis := redisclient.core_get()!
 
-	for groupname, vms in res.ok{
-		for vm in vms{
+	redis.hset('tfrobot:${config.name}', "config", config_json)!
+	for groupname, mut vms in res.ok{
+		for mut vm in vms{
 			if config.debug{
 				console.print_header("vm deployed: ${vm.name}")
 				console.print_debug(vm.str())
 			}
+			vm.node_group=groupname //remember the groupname
 			vm_json:=json.encode(vm)
-			redis.hset('tfrobot:${groupname}', vm.name, vm_json)!
+			redis.hset('tfrobot:${config.name}', vm.name, vm_json)!
 		}
 	}
-
 	return res
 }
 
