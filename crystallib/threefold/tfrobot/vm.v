@@ -1,7 +1,7 @@
 module tfrobot
 
-import os
-import freeflowuniverse.crystallib.builder
+// import os
+// import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.osal
 import time
 
@@ -28,3 +28,4 @@ pub fn (vm VMOutput) ssh_interactive(key_path string) ! {
 		return error('no public nor planetary ip available to use')
 	}
 }
+

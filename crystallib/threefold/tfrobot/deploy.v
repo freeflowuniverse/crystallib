@@ -1,19 +1,24 @@
 module tfrobot
+import freeflowuniverse.crystallib.clients.redisclient
 
 import json
 import os
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.sshagent
 
 const tfrobot_dir = '${os.home_dir()}/hero/tfrobot' // path to tfrobot dir in fs
 
 pub struct DeployConfig {
+pub mut:
 	name        string
-	mnemonic    string            @[required]
-	network     Network           @[required]
+	mnemonic    string           
+	network     Network  = .main
 	node_groups []NodeGroup       @[required]
 	vms         []VMConfig        @[required]
 	ssh_keys    map[string]string
+	debug bool
 }
 
 pub struct NodeGroup {
@@ -31,19 +36,19 @@ pub struct NodeGroup {
 }
 
 pub struct VMConfig {
-pub:
+pub mut:
 	name        string            @[required]
-	vms_count   int               @[required]
-	node_group  string            @[required]
-	cpu         int               @[required]
-	mem         int               @[required] // in GB
+	vms_count   int = 1              @[required]
+	node_group  string           
+	cpu         int = 4              @[required]
+	mem         int = 4              @[required] // in GB
 	public_ip4  bool
 	public_ip6  bool
-	planetary   bool
+	planetary   bool = true
 	flist       string            @[required]
 	entry_point string            @[required]
-	root_size   int
-	ssh_key     string            @[required]
+	root_size   int	= 20
+	ssh_key     string
 	env_vars    map[string]string
 }
 
@@ -73,7 +78,53 @@ pub:
 	mount_point string
 }
 
-pub fn (mut robot TFRobot) deploy(config DeployConfig) !DeployResult {
+//get all keys from ssh_agent and add to the config
+pub fn sshagent_keys_add(mut config DeployConfig) ! {
+	mut ssha := sshagent.new()!
+	if ssha.keys.len == 0{
+		return error("no ssh-keys found in ssh-agent, cannot add to tfrobot deploy config.")
+	}
+	for mut key in ssha.keys_loaded()!{
+		config.ssh_keys[key.name] = key.keypub()!.trim('\n')
+	}
+}
+
+pub fn (mut robot TFRobot) deploy(config_ DeployConfig) !DeployResult {
+
+	mut config:=config_
+
+	if config.mnemonic == ""{
+		if 'TFGRID_MNEMONIC' !in os.environ() {
+			return error("Cannot continue, didn't find mnemonic, do 'export TFGRID_MNEMONIC=...' ")
+		}
+		config.mnemonic = os.environ()['TFGRID_MNEMONIC'].trim_space()
+	}
+
+
+	if config.ssh_keys.len==0{
+		return error("no ssh-keys found in config")
+	}
+
+	if config.node_groups.len==0{
+		return error("there are no node requirement groups defined")
+	}
+
+	node_group:=config.node_groups.first().name
+
+	for mut vm in config.vms{
+		if vm.ssh_key.len==0{
+			vm.ssh_key = config.ssh_keys.keys().first() //first one of the dict
+		}
+		if !(vm.ssh_key in config.ssh_keys){
+			return error("Could not find specified sshkey: ${vm.ssh_key} in known sshkeys.\n${config.ssh_keys}")
+		}
+		if vm.node_group==""{
+			vm.node_group = node_group
+		}
+	}
+
+	println(config)
+
 	check_deploy_config(config)!
 
 	mut config_file := pathlib.get_file(
@@ -86,15 +137,41 @@ pub fn (mut robot TFRobot) deploy(config DeployConfig) !DeployResult {
 	)!
 
 	config_file.write(json.encode(config))!
+	cmd:='tfrobot deploy -c ${config_file.path} -o ${output_file.path}'
+	if config.debug{
+		console.print_debug(config.str())
+		console.print_debug(cmd)
+	}
 	_ := osal.exec(
-		cmd: 'tfrobot deploy -c ${config_file.path} -o ${output_file.path}'
+		cmd: cmd
 		stdout: true
 	)!
 	output := output_file.read()!
-	return json.decode(DeployResult, output)
+	mut res:=json.decode(DeployResult, output)!
+
+	if res.ok.len==0{
+		return error("No vm was deployed, empty result")
+	}
+
+	mut redis := redisclient.core_get()!
+
+	for groupname, vms in res.ok{
+		for vm in vms{
+			if config.debug{
+				console.print_header("vm deployed: ${vm.name}")
+				console.print_debug(vm.str())
+			}
+			vm_json:=json.encode(vm)
+			redis.hset('tfrobot:${groupname}', vm.name, vm_json)!
+		}
+	}
+
+	return res
 }
 
 fn check_deploy_config(config DeployConfig) ! {
+	//Checking if configuration is valid. For instance that there is no ssh_key key that isnt defined, 
+	// or that the specified node group of a vm configuration exists
 	vms := config.vms.filter(it.node_group !in config.node_groups.map(it.name))
 	if vms.len > 0 {
 		error_msgs := vms.map('Node group: `${it.node_group}` for VM: `${it.name}`')
