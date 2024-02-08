@@ -52,14 +52,14 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 			console.print_debug("test ipv4 to: ${vm.public_ip4} for ${vm.name}")
 			if osal.tcp_port_test(address:vm.public_ip4,port:22, timeout:2000) {
 				console.print_debug("SSH port test ok")
-				return b.node_new(ipaddr:"root@${vm.public_ip4}")!
+				return b.node_new(ipaddr:"root@${vm.public_ip4}",name:"${vm.deployment_name}_${vm.name}")!
 			}
 		}
 		if args.ip6 && vm.public_ip6.len>0 {
 			console.print_debug("test ipv6 to: ${vm.public_ip6} for ${vm.name}")
 			if osal.tcp_port_test(address:vm.public_ip6, port:22, timeout:2000) {				
 				console.print_debug("SSH port test ok")
-				return b.node_new(ipaddr:"root@[${vm.public_ip6}]")!
+				return b.node_new(ipaddr:"root@[${vm.public_ip6}]",name:"${vm.deployment_name}_${vm.name}")!
 			}
 		}
 		if args.planetary && vm.planetary_ip.len>0 {

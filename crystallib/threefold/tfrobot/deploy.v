@@ -64,6 +64,7 @@ pub struct VMOutput {
 pub mut:
 	name         string  @[json: 'Name'; required]
 	node_group   string   
+	deployment_name string
 	public_ip4   string  @[json: 'PublicIP4'; required]
 	public_ip6   string  @[json: 'PublicIP6'; required]
 	planetary_ip string  @[json: 'PlanetaryIP'; required]
@@ -162,6 +163,7 @@ pub fn (mut robot TFRobot) deploy(config_ DeployConfig) !DeployResult {
 				console.print_debug(vm.str())
 			}
 			vm.node_group=groupname //remember the groupname
+			vm.deployment_name=config.name
 			vm_json:=json.encode(vm)
 			redis.hset('tfrobot:${config.name}', vm.name, vm_json)!
 		}

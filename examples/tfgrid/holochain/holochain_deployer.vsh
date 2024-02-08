@@ -47,13 +47,13 @@ console.print_header("nr of ssh keys in ssh-agent:${deploy_config.ssh_keys.len}"
 res := bot.deploy(deploy_config)!
 
 
-console.print_header("Get VM's.")
-
+console.print_header("Get VM's and ssh into it.")
 
 for vm in tfrobot.vms_get('holotest')!{
 	console.print_debug(vm.str())
 	mut node:=vm.node()!
-	node.exec(cmd:"ls /")!
+	r:=node.exec(cmd:"ls /")!
+	println(r)
 }
 
 

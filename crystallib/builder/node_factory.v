@@ -9,19 +9,6 @@ pub fn (mut bldr BuilderFactory) node_local() !&Node {
 	return bldr.node_new(name: 'localhost')
 }
 
-// retrieve node from the factory, will throw error if not there
-pub fn (mut bldr BuilderFactory) node_get(name string) !&Node {
-	if name == '' {
-		return error('need to specify name')
-	}
-	for node in bldr.nodes {
-		if node.name == name {
-			return &node
-		}
-	}
-	return error("can't find node '${name}'")
-}
-
 // format ipaddr: localhost:7777 .
 // format ipaddr: 192.168.6.6:7777 .
 // format ipaddr: 192.168.6.6 .
@@ -71,12 +58,6 @@ pub fn (mut bldr BuilderFactory) node_new(args_ NodeArguments) !&Node {
 		args.name = texttools.name_fix(args.name).replace('.', '_')
 	}
 
-	// for node in bldr.nodes {
-	// 	if node.name == args.name{
-	// 		return &node
-	// 	}
-	// }
-
 	if args.ipaddr.contains('@') {
 		args.user, args.ipaddr = args.ipaddr.split_once('@') or { panic('bug') }
 	}
@@ -93,15 +74,11 @@ pub fn (mut bldr BuilderFactory) node_new(args_ NodeArguments) !&Node {
 		factory: &bldr
 	}
 
-	// wasincache := node.load()!
+	wasincache := node.load()!
 
-	// if wasincache && args.reload {
-	// node.readfromsystem()!
-	// }
-
-	node.readfromsystem()!
-
-	bldr.nodes << node
+	if wasincache && args.reload {
+		node.readfromsystem()!
+	}
 
 	return &node
 }

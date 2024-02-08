@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.clients.redisclient
 @[heap]
 pub struct BuilderFactory {
 pub mut:
-	nodes []Node
 	redis &redisclient.Redis
 }
 
