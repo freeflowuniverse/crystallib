@@ -27,9 +27,12 @@ mut deploy_config := tfrobot.DeployConfig{
 			cpu: 4
 			mem: 4
 			entry_point: '/sbin/zinit init'
-			flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
+			// flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
+			flist: 'https://hub.grid.tf/ashraf.3bot/threefolddev-holochain-latest.flist'
 			env_vars: {
-				'CODE_SERVER_PASSWORD': 'mypass'
+				'CODE_SERVER_PASSWORD': 'planetfirst'
+"				'DAGU_BASICAUTH_USERNAME': 'admin'
+				'DAGU_BASICAUTH_PASSWORD': 'planetfirst'
 			}
 			public_ip4: false
 			root_size: 50
