@@ -1,6 +1,6 @@
 module playbook
 
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 
 @[params]
 pub struct PlayBookNewArgs {
@@ -18,10 +18,10 @@ pub mut:
 // url  string
 // ```
 pub fn new(args_ PlayBookNewArgs) !PlayBook {
-	mut args:=args_
+	mut args := args_
 	mut plbook := PlayBook{}
 	// mut gs := gittools.get()!
-	if args.url.len>0{
+	if args.url.len > 0 {
 		mut repo := gittools.repo_get(url: args.url)!
 		args.path = repo.addr.path()!.path
 	}

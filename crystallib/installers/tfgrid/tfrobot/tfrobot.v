@@ -3,7 +3,7 @@ module tfrobot
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.installers.lang.golang
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.texttools
 import os
 

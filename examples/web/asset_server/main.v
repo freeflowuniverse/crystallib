@@ -1,5 +1,5 @@
-import freeflowuniverse.crystallib.web.asset_server { Asset }
-import freeflowuniverse.crystallib.web.auth
+import freeflowuniverse.crystallib.webserver.asset_server { Asset }
+import freeflowuniverse.crystallib.webserver.auth
 import vweb
 import os
 import log

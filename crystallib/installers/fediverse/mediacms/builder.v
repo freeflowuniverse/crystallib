@@ -3,7 +3,7 @@ module mediacms
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.docker
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
 
 // install mediacms will return true if it was already installed

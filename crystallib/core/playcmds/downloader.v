@@ -1,7 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.osal.downloader
+import freeflowuniverse.crystallib.sysadmin.downloader
 
 // can start with sal, dal, ... the 2nd name is typicall the actor (or topic)
 // do this function public and then it breaches out to detail functionality

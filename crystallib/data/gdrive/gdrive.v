@@ -1,6 +1,6 @@
 module gdrive
 
-import freeflowuniverse.crystallib.osal.python
+import freeflowuniverse.crystallib.lang.python
 // import  json
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.ui.console

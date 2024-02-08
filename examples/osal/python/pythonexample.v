@@ -1,7 +1,7 @@
 #!/usr/bin/env v -enable-globals run
 
 
-import freeflowuniverse.crystallib.osal.python
+import freeflowuniverse.crystallib.lang.python
 import  json
 
 

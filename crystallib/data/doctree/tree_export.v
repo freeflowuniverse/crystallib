@@ -16,8 +16,8 @@ pub mut:
 pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 	mut args := args_
 
-	mut path_src := pathlib.get_dir(path: "${args.dest}/src", create: true)!
-	mut path_edit := pathlib.get_dir(path: "${args.dest}/edit", create: true)!
+	mut path_src := pathlib.get_dir(path: '${args.dest}/src', create: true)!
+	mut path_edit := pathlib.get_dir(path: '${args.dest}/edit', create: true)!
 
 	if args.reset {
 		path_src.empty()!
@@ -27,9 +27,9 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 	for name, mut collection in tree.collections {
 		dir_src := pathlib.get_dir(path: path_src.path + '/' + name, create: true)!
 
-		collection.path.link("${path_edit.path}/${name}",true)!
+		collection.path.link('${path_edit.path}/${name}', true)!
 
-		mut cfile:=pathlib.get_file(path: dir_src.path + '/.collection', create: true)! // will auto safe it
+		mut cfile := pathlib.get_file(path: dir_src.path + '/.collection', create: true)! // will auto safe it
 		cfile.write("name:${name} src:'${collection.path.path}'")!
 
 		for _, mut page in collection.pages {

@@ -1,6 +1,6 @@
 module herocmds
 
-import freeflowuniverse.crystallib.osal.mdbook
+import freeflowuniverse.crystallib.webtools.mdbook
 import cli { Command, Flag }
 
 // path string //if location on filessytem, if exists, this has prio on git_url
@@ -55,24 +55,20 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
-
 	mut name := cmd.flags.get_string('name') or { '' }
-
 
 	mut url := cmd.flags.get_string('url') or { '' }
 	mut path := cmd.flags.get_string('path') or { '' }
-	if path.len>0 || url.len>0 {
-
-		//execute the attached playbook
+	if path.len > 0 || url.len > 0 {
+		// execute the attached playbook
 		mut session, _ := session_run_do(cmd)!
 
-		//get name from the book.generate action
+		// get name from the book.generate action
 		if name == '' {
 			mut a := session.plbook.action_get_by_name(actor: 'book', name: 'generate')!
 			name = a.params.get('name') or { '' }
 		}
-
-	}else{
+	} else {
 		return error(cmd.help_message())
 	}
 
@@ -90,5 +86,4 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	if edit {
 		mdbook.book_edit(name)!
 	}
-
 }

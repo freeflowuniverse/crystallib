@@ -18,7 +18,7 @@
 
 ```v
 import freeflowuniverse.crystallib.core.play
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 
 mut session:=play.session_new(
     context_name:'default'

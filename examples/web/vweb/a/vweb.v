@@ -2,7 +2,7 @@ module main
 
 import vweb
 import db.sqlite
-// import freeflowuniverse.crystallib.web.components
+// import freeflowuniverse.crystallib.webserver.components
 import os
 
 const pubpath = os.dir(@FILE) + '/public'

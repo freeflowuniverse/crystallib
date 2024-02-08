@@ -1,13 +1,13 @@
 // module doctree
 
-// import freeflowuniverse.crystallib.osal.gittools
-// import freeflowuniverse.crystallib.tools.imagemagick
+// import freeflowuniverse.crystallib.develop.gittools
+// import freeflowuniverse.crystallib.conversiontools.imagemagick
 // import freeflowuniverse.crystallib.data.markdownparser
 // import freeflowuniverse.crystallib.data.markdownparser.elements
 // import freeflowuniverse.crystallib.core.pathlib { Path }
 // import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.osal
-// import freeflowuniverse.crystallib.osal.mdbook
+// import freeflowuniverse.crystallib.webtools.mdbook
 //
 // import os
 

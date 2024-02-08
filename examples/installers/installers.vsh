@@ -4,11 +4,12 @@ import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.installers.db.redis as redis_installer
 import freeflowuniverse.crystallib.installers.infra.coredns as coredns_installer
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu as dagu_installer
+import freeflowuniverse.crystallib.installers.sysadmintools.b2 as b2_installer
 import freeflowuniverse.crystallib.installers.net.mycelium as mycelium_installer
 import freeflowuniverse.crystallib.osal.screen
 // import freeflowuniverse.crystallib.osal
 
-fskvs.dbcontext_init_default()!
+// fskvs.dbcontext_init_default()!
 
 // redis_installer.new()!
 // dagu_installer.install(passwd:"1234",secret:"1234",restart:true)!
@@ -21,3 +22,6 @@ fskvs.dbcontext_init_default()!
 
 
 // dagu_installer.check(secret:"1234")!
+
+
+b2_installer.install()!

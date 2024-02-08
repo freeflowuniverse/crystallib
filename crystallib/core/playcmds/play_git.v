@@ -1,6 +1,6 @@
 module playcmds
 
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.play
 
 pub fn play_git(mut session play.Session) ! {

@@ -1,6 +1,6 @@
 #!/usr/bin/env v -w -enable-globals run
 
-import freeflowuniverse.crystallib.osal.hetzner
+import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.builder

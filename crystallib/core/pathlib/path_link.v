@@ -13,8 +13,8 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 		return error('cannot link because source ${path.path} can only be dir or file')
 	}
 
-	if path_equal(path.path,linkpath){
-		return error("try to link to myself. Link dest & source same. ${linkpath}")
+	if path_equal(path.path, linkpath) {
+		return error('try to link to myself. Link dest & source same. ${linkpath}')
 	}
 	// TODO: add test to confirm existing faulty link also  are removed
 	// os.exists for faulty links returns false so also checks if path is link

@@ -1,6 +1,6 @@
 #!/usr/bin/env v -w -enable-globals run
 
-import freeflowuniverse.crystallib.osal.tfrobot
+import freeflowuniverse.crystallib.threefold.tfrobot
 import freeflowuniverse.crystallib.osal.sshagent
 import toml
 import os

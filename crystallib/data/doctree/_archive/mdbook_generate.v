@@ -1,6 +1,6 @@
 // module doctree
 
-// import freeflowuniverse.crystallib.osal.gittools
+// import freeflowuniverse.crystallib.develop.gittools
 // import freeflowuniverse.crystallib.data.markdownparser
 // import freeflowuniverse.crystallib.data.markdownparser.elements
 // import freeflowuniverse.crystallib.core.pathlib

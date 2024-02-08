@@ -2,7 +2,7 @@ module ${args.name}
 
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.installers
 @if "rust" in args.build_deps
 import freeflowuniverse.crystallib.installers.lang.rust
@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.installers.golang
 @end
 @if "python" in args.build_deps
-import freeflowuniverse.crystallib.installers.python
+import freeflowuniverse.crystallib.installers.lang.python
 @end
 @if "docker" in args.build_deps
 import freeflowuniverse.crystallib.installers.docker

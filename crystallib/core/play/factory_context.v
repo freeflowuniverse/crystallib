@@ -1,7 +1,7 @@
 module play
 
 import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.fskvs

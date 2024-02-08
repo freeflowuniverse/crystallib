@@ -2,7 +2,7 @@ module rclone
 
 import freeflowuniverse.crystallib.installers.lang.golang
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.ui.console
 
 const url = 'https://github.com/rclone/rclone'

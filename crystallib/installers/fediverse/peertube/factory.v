@@ -2,7 +2,7 @@ module peertube
 
 // import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.core.pathlib
-// import freeflowuniverse.crystallib.osal.gittools
+// import freeflowuniverse.crystallib.develop.gittools
 // import freeflowuniverse.crystallib.clients.mail
 import freeflowuniverse.crystallib.core.texttools
 import os

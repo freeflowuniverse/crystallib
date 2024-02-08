@@ -3,7 +3,7 @@ module bizmodel
 import freeflowuniverse.crystallib.biz.spreadsheet
 import freeflowuniverse.crystallib.core.smartid
 // import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.playbook

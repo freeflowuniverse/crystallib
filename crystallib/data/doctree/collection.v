@@ -1,7 +1,7 @@
 module doctree
 
 // import os
-import freeflowuniverse.crystallib.tools.imagemagick
+import freeflowuniverse.crystallib.conversiontools.imagemagick
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.ui.console
 

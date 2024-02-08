@@ -1,6 +1,6 @@
 module playcmds
 
-import freeflowuniverse.crystallib.osal.zola
+import freeflowuniverse.crystallib.webtools.zola
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.play
 

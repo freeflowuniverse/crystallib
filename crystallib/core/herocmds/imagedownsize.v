@@ -1,6 +1,6 @@
 module herocmds
 
-import freeflowuniverse.crystallib.tools.imagemagick
+import freeflowuniverse.crystallib.conversiontools.imagemagick
 import cli { Command, Flag }
 import os
 

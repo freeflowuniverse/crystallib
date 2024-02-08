@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 @end
-// import freeflowuniverse.crystallib.osal.gittools
+// import freeflowuniverse.crystallib.develop.gittools
 import os
 
 ^^[params]

@@ -1,7 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.tools.vault
+import freeflowuniverse.crystallib.conversiontools.vault
 import freeflowuniverse.crystallib.data.paramsparser
 import os
 

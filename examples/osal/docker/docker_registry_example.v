@@ -1,6 +1,6 @@
 module main2
 
-import osal.docker
+import virt.docker
 
 fn do() ! {
 	mut engine := docker.new()!

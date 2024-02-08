@@ -1,7 +1,7 @@
 module macros
 
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import os
 
 enum State {

@@ -1,6 +1,6 @@
 module hero
 
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.baobab.actionsexecutor
 
 // walk over all actions of the session & execute them

@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.osal.dagu
+import freeflowuniverse.crystallib.sysadmin.dagu
 
 fn main() {
 	do() or {panic(err)}

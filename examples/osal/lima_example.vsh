@@ -1,6 +1,6 @@
 #!/usr/bin/env v -w -enable-globals run
 
-import freeflowuniverse.crystallib.osal.lima
+import freeflowuniverse.crystallib.virt.lima
 import freeflowuniverse.crystallib.installers.lima as limainstaller
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console

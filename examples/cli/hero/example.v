@@ -1,7 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.baobab.hero
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 
 pub fn main() {
 	do() or { panic(err) }

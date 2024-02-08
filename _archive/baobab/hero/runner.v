@@ -1,7 +1,7 @@
 module hero
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 
 // runs different session
 // a session is a set of actions, can even load actions recursive

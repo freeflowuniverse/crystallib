@@ -2,7 +2,7 @@ module peertube
 
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.installers
 import freeflowuniverse.crystallib.installers.docker
 

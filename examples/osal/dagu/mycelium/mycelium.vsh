@@ -1,7 +1,7 @@
 #!/usr/bin/env v
 
-import freeflowuniverse.crystallib.osal.dagu
-import freeflowuniverse.crystallib.osal.tfrobot
+import freeflowuniverse.crystallib.sysadmin.dagu
+import freeflowuniverse.crystallib.threefold.tfrobot
 import os
 
 os.execute_opt('chmod +x ${os.dir(@FILE)}/ping.vsh')!

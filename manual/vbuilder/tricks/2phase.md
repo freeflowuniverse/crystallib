@@ -3,7 +3,7 @@
 ```golang
 module goca
 
-import freeflowuniverse.crystallib.osal.docker
+import freeflowuniverse.crystallib.virt.docker
 import threefoldtech.vbuilder.core.gobuilder
 
 pub fn build(args docker.BuildArgs) ! {

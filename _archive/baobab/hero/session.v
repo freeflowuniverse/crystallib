@@ -1,10 +1,10 @@
 module hero
 
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.osal.downloader
+import freeflowuniverse.crystallib.sysadmin.downloader
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 
 // a session is where in execute on actions inside a runner, a runner can have multiple sessions
 // as session result in a recipe which is a 3script which is fully included and has all actions readable what will be done

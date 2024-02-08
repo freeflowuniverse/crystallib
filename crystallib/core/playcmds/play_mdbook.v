@@ -1,7 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.installers.web.mdbook as mdbookinstaller
-import freeflowuniverse.crystallib.osal.mdbook
+import freeflowuniverse.crystallib.webtools.mdbook
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.data.doctree
@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.data.doctree
 pub fn play_mdbook(mut session play.Session) ! {
 	mut buildroot := ''
 	mut publishroot := ''
-	mut coderoot:=''
+	mut coderoot := ''
 	// mut install := false
 	mut reset := false
 	mut pull := false
@@ -25,12 +25,11 @@ pub fn play_mdbook(mut session play.Session) ! {
 		}
 		if p.exists('coderoot') {
 			coderoot = p.get('coderoot')!
-		}	
+		}
 		if p.exists('publishroot') {
 			publishroot = p.get('publishroot')!
 		}
 		if p.exists('reset') {
-
 			reset = p.get_default_false('reset')
 		}
 		config_actions[0].done = true
@@ -39,8 +38,8 @@ pub fn play_mdbook(mut session play.Session) ! {
 	mdbookinstaller.install()!
 
 	mut tree := doctree.tree_create(
-				name: 'main'				
-			)!
+		name: 'main'
+	)!
 
 	for mut action in session.plbook.find(filter: 'doctree:add')! {
 		mut p := action.params
@@ -55,32 +54,30 @@ pub fn play_mdbook(mut session play.Session) ! {
 	}
 
 	for mut action in session.plbook.find(filter: 'book:generate')! {
-
 		mut p := action.params
 		name := p.get('name')!
 		url := p.get('url')!
 		title := p.get_default('title', name)!
-		publish_path := p.get_default('publish_path','')!
-		build_path := p.get_default('build_path','')!
+		publish_path := p.get_default('publish_path', '')!
+		build_path := p.get_default('build_path', '')!
 
-		buildroot_book:="${buildroot}/${name}"
+		buildroot_book := '${buildroot}/${name}'
 		tree.export(dest: buildroot_book, reset: true)!
 
 		mut mdbook_factory := mdbook.new(
-				session: session
-				buildroot:buildroot
-				publishroot:publishroot				
-				)!
+			session: session
+			buildroot: buildroot
+			publishroot: publishroot
+		)!
 
 		mdbook_factory.generate(
 			doctree_path: buildroot_book
 			name: name
 			title: title
 			summary_url: url
-			publish_path:publish_path
-			build_path:build_path
+			publish_path: publish_path
+			build_path: build_path
 		)!
 		action.done = true
 	}
-
 }

@@ -1,6 +1,6 @@
 module herocmds
 
-import freeflowuniverse.crystallib.osal.gittools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
 import cli { Command, Flag }
 import os

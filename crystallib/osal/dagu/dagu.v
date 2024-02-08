@@ -36,7 +36,7 @@ pub fn (mut d DAGU) new_dag(dag DAG) DAG {
 		path: '${os.home_dir()}/.dagu/dags/${texttools.name_fix(dag.name)}.yaml'
 	}
 	return dag
-}	
+}
 
 pub fn (d DAGU) start(dag_name string, options StartOptions) !string {
 	filtered := d.dags.filter(it.name == dag_name)

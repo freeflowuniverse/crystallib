@@ -16,11 +16,11 @@ pub fn (mut path Path) exists() bool {
 	return path.exist == .yes
 }
 
-//case insentive check on paths
-pub fn path_equal(a_ string, b_ string)bool{
-	a:=os.abs_path(a_.replace("~",os.home_dir())).to_lower()
-	b:=os.abs_path(b_.replace("~",os.home_dir())).to_lower()
-	return a==b
+// case insentive check on paths
+pub fn path_equal(a_ string, b_ string) bool {
+	a := os.abs_path(a_.replace('~', os.home_dir())).to_lower()
+	b := os.abs_path(b_.replace('~', os.home_dir())).to_lower()
+	return a == b
 }
 
 // rename the file or directory

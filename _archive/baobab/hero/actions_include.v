@@ -1,7 +1,7 @@
 module hero
 
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.osal.downloader
+import freeflowuniverse.crystallib.sysadmin.downloader
 
 // recursive include of actions
 fn (mut s Session) actions_include(myactions []playbook.Action) ![]playbook.Action {

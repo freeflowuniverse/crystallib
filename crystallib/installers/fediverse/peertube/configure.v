@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import json
 import freeflowuniverse.crystallib.data.fskvs
-// import freeflowuniverse.crystallib.osal.gittools
+// import freeflowuniverse.crystallib.develop.gittools
 import os
 
 @[params]

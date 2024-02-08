@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.osal.docker
+import freeflowuniverse.crystallib.virt.docker
 import os
 
 pub fn main() {

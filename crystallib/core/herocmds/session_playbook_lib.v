@@ -3,8 +3,8 @@ module herocmds
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.osal.vscode
-import freeflowuniverse.crystallib.osal.sourcetree
+import freeflowuniverse.crystallib.develop.vscode
+import freeflowuniverse.crystallib.develop.sourcetree
 import cli { Command, Flag }
 import os
 
@@ -138,7 +138,7 @@ fn session_run_get(cmd Command) !(&play.Session, string) {
 fn session_run_do(cmd Command) !(&play.Session, string) {
 	mut session, path := session_run_get(cmd)!
 
-	if path.len==0{
+	if path.len == 0 {
 		return error(cmd.help_message())
 	}
 
