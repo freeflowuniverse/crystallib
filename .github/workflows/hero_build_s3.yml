@@ -70,6 +70,7 @@ jobs:
 
       - name: Build hero
         run: |
+          set -x
           pushd cli/hero
           if [[ "${OSNAME}" == "darwin"* ]]; then
           v -enable-globals -w hero.v
