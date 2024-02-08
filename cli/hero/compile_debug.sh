@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e
 cd ~/code/github/freeflowuniverse/crystallib/cli/hero
 
@@ -7,11 +9,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # brew install libpq
     prf="$HOME/.profile"
     [ -f "$prf" ] && source "$prf"
+    # v -cg -enable-globals -w -cflags -static -cc gcc hero.v
+    v -cg -enable-globals -w hero.v
+else
+    v -cg -enable-globals -w -cflags -static -cc gcc hero.v
 fi
 
-#!/bin/bash
 
-v -cg -enable-globals -w hero.v
+
 
 chmod +x hero
 

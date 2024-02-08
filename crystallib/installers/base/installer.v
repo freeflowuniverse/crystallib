@@ -44,7 +44,7 @@ pub fn install(args InstallArgs) ! {
 				shell: true
 			) or { return error('cannot install brew, something went wrong.\n${err}') }
 		}
-		osal.package_install('mc,tmux,git,rsync,curl,screen,redis,wget')!
+		osal.package_install('mc,tmux,git,rsync,curl,screen,redis,wget,git-lfs')!
 		osal.exec(
 			cmd: '
 			brew services start redis
@@ -64,11 +64,11 @@ pub fn install(args InstallArgs) ! {
 		)!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
-		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils')!
+		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs')!
 	} else if pl == .alpine {
-		osal.package_install('git,curl,mc,tmux')!
+		osal.package_install('git,curl,mc,tmux,screen,git-lfs')!
 	} else if pl == .arch {
-		osal.package_install('git,curl,mc,tmux')!
+		osal.package_install('git,curl,mc,tmux,screen,git-lfs')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
