@@ -34,9 +34,12 @@ file_size=$(du -m  /tmp/downloaded_file | cut -f1)
 if [ "$file_size" -ge 1 ]; then
     # Create the target directory if it doesn't exist
     mkdir -p ~/hero/bin
-
-    # Move and rename the file
-    mv  /tmp/downloaded_file ~/hero/bin/hero
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        # Move and rename the file
+        mv  /tmp/downloaded_file ~/hero/bin/hero
+    else
+        mv  /tmp/downloaded_file /usr/local/bin/hero
+    fi
 
     # Make the file executable
     chmod +x ~/hero/bin/hero
