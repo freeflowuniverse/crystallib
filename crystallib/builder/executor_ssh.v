@@ -160,8 +160,8 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 		if executor.ipaddr.cat == .ipv6{
 			addr2='\'${executor.user}@[${executor.ipaddr.addr}]\':${args.dest}'
 		}
-		cmd:="scp -P ${executor.ipaddr.port} ${args.source} ${addr2}"
-		println(cmd)
+		cmd:="scp -o \"StrictHostKeyChecking=no\" -P ${executor.ipaddr.port} ${args.source} ${addr2}"
+		// println(cmd)
 		res:=os.execute(cmd)		
 		if res.exit_code>0{
 			return error("cannot upload over ssh: $cmd")
