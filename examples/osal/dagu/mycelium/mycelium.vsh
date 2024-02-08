@@ -7,8 +7,6 @@ import os
 os.execute_opt('chmod +x ${os.dir(@FILE)}/ping.vsh')!
 os.execute_opt('chmod +x ${os.dir(@FILE)}/receive.vsh')!
 
-vms := tfrobot.deploy()
-
 mut d := dagu.new()!
 d.basic_auth('example_username', 'example_password')!
 d.new_dag(
