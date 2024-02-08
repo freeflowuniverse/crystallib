@@ -65,7 +65,7 @@ res := bot.deploy(deploy_config)!
 
 vm := res.ok['test_group'][0]
 
-vm.ssh_interactive(ssh_key_path.path)!
+vm.ssh_interactive(ssh_key_path.path)! //NO CLEAN
 
 // println("job new")
 // // configure TFRobot job

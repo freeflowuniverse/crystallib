@@ -127,7 +127,7 @@ jobs:
           b2 authorize-account
           export bucket=threefold
           b2 upload-file ${bucket}  download/hero-linux-i64  linux-i64/hero
-          b2 upload-file ${bucket}  download/hero-linux-arm64 linux-arm64/hero
-          b2 upload-file ${bucket}  download/hero-macos-arm64 macos-arm64/hero
+          # b2 upload-file ${bucket}  download/hero-linux-arm64 linux-arm64/hero
+          # b2 upload-file ${bucket}  download/hero-macos-arm64 macos-arm64/hero
           b2 upload-file ${bucket}  download/hero-macos-i64 macos-i64/hero
           # b2 sync download b2://${bucket}/hero
