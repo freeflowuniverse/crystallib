@@ -46,15 +46,14 @@ console.print_header("nr of ssh keys in ssh-agent:${deploy_config.ssh_keys.len}"
 
 res := bot.deploy(deploy_config)!
 
-// vm.ssh_interactive(ssh_key_path.path)! //NO CLEAN
 
-// job.deploy_vms(vm_config, 1)
-// output := job.run()!
-// println('output:\n${output}')
-// vm := job.vm_get('holo_vm2')?
-// vm := tfrobot.VirtualMachine{}
-// vm.ssh_interactive()!
-// vm.code_server()!
+console.print_header("Get VM's.")
 
-// console.print_debug_title("MYVM", vm.str())
-// env:={"tfrobot":"ourmiceliumipaddr"}
+
+for vm in tfrobot.vms_get('holotest')!{
+	console.print_debug(vm.str())
+	mut node:=vm.node()!
+	node.exec(cmd:"ls /")!
+}
+
+
