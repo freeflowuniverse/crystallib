@@ -6,8 +6,9 @@ import os
 
 mut b := builder.new()!
 mut n := b.node_new(ipaddr: 'root@51.195.61.5')!
+// mut n := b.node_new(ipaddr: 'info.ourworld.tf')!
 
-// info.ourworld.tf
+println(n)
 
 r:=n.exec(cmd:"ls /")!
 println(r)

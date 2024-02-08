@@ -66,7 +66,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 			console.print_debug("test planetary to: ${vm.planetary_ip} for ${vm.name}")
 			if osal.tcp_port_test(address:vm.planetary_ip, port:22, timeout:2000) {
 				console.print_debug("SSH port test ok")
-				return b.node_new(ipaddr:"root@[${vm.planetary_ip}]")!
+				return b.node_new(ipaddr:"root@[${vm.planetary_ip}]",name:"${vm.deployment_name}_${vm.name}")!
 			}
 		}
 		run_time = time.now().unix_time_milli()

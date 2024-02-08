@@ -215,6 +215,16 @@ pub fn name_check(addr_ string)bool{
 }
 
 
+pub fn (mut ipaddr IPAddress) toname() !string {
+	if ipaddr.cat == IpAddressType.ipv4 {
+		return ipaddr.addr.replace(".","_")
+	}
+	if ipaddr.cat == IpAddressType.name {
+		return ipaddr.addr.replace(".","_")
+	}
+	return ipaddr.addr.replace(":","_")
+}
+
 pub fn (mut ipaddr IPAddress) address() !string {
 	if ipaddr.cat == IpAddressType.ipv4 {
 		if ipaddr.port > 0 {

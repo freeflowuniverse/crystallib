@@ -25,15 +25,15 @@ pub enum CPUType {
 pub struct Node {
 mut:
 	factory  &BuilderFactory @[skip; str: skip]
-pub:
-	name string = 'mymachine'
 pub mut:
+	name string = 'unknown'
 	executor Executor        @[skip; str: skip]
 	platform    PlatformType
 	cputype     CPUType
 	done        map[string]string
 	environment map[string]string
 	params      Params
+	hostname		   string	
 }
 
 // get unique key for the node, as used in caching environment

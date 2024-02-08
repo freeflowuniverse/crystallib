@@ -138,9 +138,6 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 }
 
 fn (mut node Node) platform_load() ! {
-	// if node.platform != PlatformType.unknown {
-	// 	return
-	// }
 
 	console.print_header('platform load ${node.name}')
 	cmd := '
@@ -159,16 +156,21 @@ fn (mut node Node) platform_load() ! {
         echo "Unable to determine the operating system."
         exit 1        
     fi
-
+	export HOSTNAME=\$(hostname)
 	export UNAME=\$(uname -m)
-	echo ***\${OSNAME}:\${UNAME}
+	echo ***\${OSNAME}:\${UNAME}:\${HOSTNAME}
 
 	'
 	out := node.exec_cmd(cmd: cmd, name: 'platform_load', stdout: false)!
 
 	out2 := out.split_into_lines().map(if it.starts_with('***') { it.trim_left('*') } else { '' }).first()
-	osname := out2.all_before(':').trim_space()
-	cputype := out2.all_after(':').trim_space()
+	if out2.count(":")!=2{
+		panic("platform loader bug")
+	}
+	splitted:=out2.split(":").map(it.trim_space())
+	osname:=splitted[0] 
+	cputype:=splitted[1]
+	node.hostname=splitted[2]
 
 	if cputype == 'x86_64' {
 		node.cputype = CPUType.intel
