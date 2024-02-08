@@ -31,7 +31,7 @@ mut deploy_config := tfrobot.DeployConfig{
 			flist: 'https://hub.grid.tf/ashraf.3bot/threefolddev-holochain-latest.flist'
 			env_vars: {
 				'CODE_SERVER_PASSWORD': 'planetfirst'
-"				'DAGU_BASICAUTH_USERNAME': 'admin'
+				'DAGU_BASICAUTH_USERNAME': 'admin'
 				'DAGU_BASICAUTH_PASSWORD': 'planetfirst'
 			}
 			public_ip4: false
@@ -45,6 +45,7 @@ mut deploy_config := tfrobot.DeployConfig{
 
 //DEAL WITH SSH KEYS
 tfrobot.sshagent_keys_add(mut deploy_config)!
+
 console.print_header("nr of ssh keys in ssh-agent:${deploy_config.ssh_keys.len}")
 
 res := bot.deploy(deploy_config)!
