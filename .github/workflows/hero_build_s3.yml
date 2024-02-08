@@ -37,7 +37,7 @@ jobs:
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
             set -x
             sudo apt update
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis gcc
             redis-server --daemonize yes      
           else
             brew install libgc tmux git rsync curl redis libpq
@@ -71,7 +71,11 @@ jobs:
       - name: Build hero
         run: |
           pushd cli/hero
+          if [[ "${OSNAME}" == "darwin"* ]]; then
           v -enable-globals -w hero.v
+          else
+          v -enable-globals -w -cflags -static -cc gcc hero.v
+          fi
           chmod +x hero
           mkdir -p ~/upload
           mv hero ~/upload/hero-${{ matrix.short-name }}
