@@ -34,7 +34,7 @@ file_size=$(du -m  /tmp/downloaded_file | cut -f1)
 if [ "$file_size" -ge 1 ]; then
     # Create the target directory if it doesn't exist
     mkdir -p ~/hero/bin
-    if [[ "\$OSTYPE" == "darwin"* ]]; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
         # Move and rename the file
         mv  /tmp/downloaded_file ~/hero/bin/hero
     else

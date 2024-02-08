@@ -72,7 +72,8 @@ jobs:
         run: |
           set -x
           pushd cli/hero
-          if [[ "\$OSTYPE" == "darwin"* ]]; then
+          uname -m
+          if [[ "$OSTYPE" == "darwin"* ]]; then
           v -enable-globals -w hero.v
           else
           v -enable-globals -w -cflags -static -cc gcc hero.v
