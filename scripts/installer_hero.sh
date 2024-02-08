@@ -37,12 +37,12 @@ if [ "$file_size" -ge 1 ]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # Move and rename the file
         mv  /tmp/downloaded_file ~/hero/bin/hero
+        chmod +x ~/hero/bin/hero
     else
         mv  /tmp/downloaded_file /usr/local/bin/hero
+        chmod +x /usr/local/bin/hero
     fi
 
-    # Make the file executable
-    chmod +x ~/hero/bin/hero
     echo "Hero installed properly"
 else
     echo "Downloaded file is less than 1 MB. Process aborted."
