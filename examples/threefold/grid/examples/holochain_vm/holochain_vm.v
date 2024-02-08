@@ -30,9 +30,11 @@ fn main() {
 
 	chain_net_enum := get_chain_network(chain_network)!
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_net_enum, mut logger)!
-
+	
 	mut workloads := []models.Workload{}
 	node_id := get_node_id(chain_net_enum, memory, disk, cpu, public_ip)!
+	// node_id := u32(150)
+	logger.info('deploying on node: ${node_id}')
 
 	network_name := 'net_${rand.string(5).to_lower()}' // autocreate a network
 	wg_port := deployer.assign_wg_port(node_id)!
@@ -41,15 +43,12 @@ fn main() {
 		subnet: '10.1.1.0/24' // auto-assign
 		wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE=' // autocreate
 		wireguard_listen_port: wg_port
-		// peers: [
-		// 	models.Peer{
-		// 		subnet: '10.1.2.0/24' // auto-assign
-		// 		wireguard_public_key: '4KTvZS2KPWYfMr+GbiUUly0ANVg8jBC7xP9Bl79Z8zM=' // get from autocreated private key
-		// 		allowed_ips: ['10.1.2.0/24', '100.64.1.2/32'] // auto-assign
-		// 	},
-		// ]
-	}
+		mycelium: models.Mycelium{
+			hex_key: rand.string(32).bytes().hex()
+		}
 
+	}
+	
 	workloads << network.to_workload(name: network_name, description: 'test_network1')
 
 	mut public_ip_name := ''
@@ -61,7 +60,7 @@ fn main() {
 	}
 
 	zmachine := models.Zmachine{
-		flist: 'https://hub.grid.tf/ashraf.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
+		flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist' // from user or default to ubuntu
 		network: models.ZmachineNetwork{
 			interfaces: [
 				models.ZNetworkInterface{
@@ -71,6 +70,10 @@ fn main() {
 			]
 			public_ip: public_ip_name
 			planetary: true
+			mycelium: models.MyceliumIP{
+				network: network_name
+				hex_seed: rand.string(6).bytes().hex()
+			}
 		}
 		entrypoint: '/sbin/zinit init' // from user or default
 		compute_capacity: models.ComputeCapacity{
@@ -84,7 +87,6 @@ fn main() {
 		}
 	}
 
-	
 	workloads << zmachine.to_workload(
 		name: 'vm_${rand.string(5).to_lower()}'
 		description: 'zmachine_test'
@@ -118,9 +120,9 @@ fn main() {
 		exit(1)
 	}
 
-	logger.info('deployment:\n${dl}')
-	// machine_res := get_machine_result(dl)!
-	// logger.info('zmachine result: ${machine_res}')
+	// logger.info('deployment:\n${dl}')
+	machine_res := get_machine_result(dl)!
+	logger.info('zmachine result: ${machine_res}')
 }
 
 fn get_machine_result(dl models.Deployment) !models.ZmachineResult {

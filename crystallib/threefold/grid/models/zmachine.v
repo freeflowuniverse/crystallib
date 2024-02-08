@@ -20,12 +20,19 @@ pub mut:
 	public_ip  string // PublicIP optional public IP attached to this machine. If set it must be a valid name of a PublicIP workload in the same deployment
 	interfaces []ZNetworkInterface // Interfaces list of user znets to join
 	planetary  bool // Planetary support planetary network
+	mycelium   ?MyceliumIP
 }
 
 pub struct ZNetworkInterface {
 pub mut:
 	network string // Network name (znet name) to join
 	ip      string // IP of the zmachine on this network must be a valid Ip in the selected network
+}
+
+pub struct MyceliumIP {
+pub mut:
+	network  string
+	hex_seed string
 }
 
 pub fn (mut n ZmachineNetwork) challenge() string {
@@ -37,6 +44,17 @@ pub fn (mut n ZmachineNetwork) challenge() string {
 		out += iface.network
 		out += iface.ip
 	}
+
+	if m := n.mycelium{
+		out += m.challenge()
+	}
+	return out
+}
+
+pub fn (m MyceliumIP) challenge() string{
+	mut out := ''
+	out += m.network
+	out += m.hex_seed
 	return out
 }
 
