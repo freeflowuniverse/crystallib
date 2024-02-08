@@ -24,10 +24,10 @@ pub enum CPUType {
 pub struct Node {
 mut:
 	factory  &BuilderFactory @[skip; str: skip]
-	executor Executor        @[skip; str: skip]
 pub:
 	name string = 'mymachine'
 pub mut:
+	executor Executor        @[skip; str: skip]
 	platform    PlatformType
 	cputype     CPUType
 	done        map[string]string

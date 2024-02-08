@@ -8,12 +8,12 @@ console.print_header("Deploy test of vmachines on TFGrid using TFRobot.")
 mut bot := tfrobot.new()!
 
 mut deploy_config := tfrobot.DeployConfig{
-	name: 'test'
+	name: 'holotest'
 	network: .main
 	debug: true
 	node_groups: [
 		tfrobot.NodeGroup{
-			name: 'holotest'
+			name: 'holotestgroup'
 			nodes_count: 4
 			free_cpu: 4
 			free_mru: 8
@@ -45,9 +45,6 @@ tfrobot.sshagent_keys_add(mut deploy_config)!
 console.print_header("nr of ssh keys in ssh-agent:${deploy_config.ssh_keys.len}")
 
 res := bot.deploy(deploy_config)!
-
-vm := res.ok['test_group'][0]
-console.print_debug(vm.str())
 
 // vm.ssh_interactive(ssh_key_path.path)! //NO CLEAN
 

@@ -22,6 +22,7 @@ pub mut:
 // 	}
 //- format ipaddr: 192.168.6.6:7777
 //- format ipaddr: 192.168.6.6
+//- format ipadd6: [666:555:555:...]
 //- format ipaddr: any ipv6 addr
 //- if ipaddr is empty or starts with localhost or 127.0.0.1 -> will be the ExecutorLocal
 fn executor_new(args_ ExecutorNewArguments) !Executor {

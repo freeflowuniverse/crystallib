@@ -3,6 +3,7 @@ module builder
 import os
 import rand
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.ipaddress
 import freeflowuniverse.crystallib.ui.console
 
@@ -14,24 +15,26 @@ pub mut:
 	user        string = 'root' // default will be root
 	initialized bool
 	retry       int = 1 // nr of times something will be retried before failing, need to check also what error is, only things which should be retried need to be done
-	debug       bool
+	debug       bool = true
 }
 
 fn (mut executor ExecutorSSH) init() ! {
 	if !executor.initialized {
-		if executor.ipaddr.port == 0 {
-			return error('port cannot be 0.\n${executor}')
-		}
-		// TODO: need to call code from SSHAGENT do not reimplement here
-		osal.exec(cmd: 'pgrep -x ssh-agent || eval `ssh-agent -s`', stdout: false) or {
-			return error('Could not start ssh-agent, error was: ${err}')
-		}
+		// if executor.ipaddr.port == 0 {
+		// 	return error('port cannot be 0.\n${executor}')
+		// }
+		// TODO: need to call code from SSHAGENT do not reimplement here, not nicely done
+		os.execute('pgrep -x ssh-agent || eval `ssh-agent -s`')
+		
 		if executor.sshkey != '' {
 			osal.exec(cmd: 'ssh-add ${executor.sshkey}')!
 		}
 		mut addr := executor.ipaddr.addr
 		if addr == '' {
 			addr = 'localhost'
+		}
+		if executor.ipaddr.port==0{
+			executor.ipaddr.port=22
 		}
 		// TODO: doesn't work with ipv6 after working with ipv4, need better check too, because this slows everything down
 		// cmd := "sh -c 'ssh-keyscan -H ${executor.ipaddr.addr} -p ${executor.ipaddr.port} -t ecdsa-sha2-nistp256 2>/dev/null >> ~/.ssh/known_hosts'"
@@ -53,14 +56,22 @@ pub fn (mut executor ExecutorSSH) exec(args_ ExecArgs) !string {
 	if executor.debug {
 		console.print_debug('execute ${executor.ipaddr.addr}: ${args.cmd}')
 	}
-	args.cmd = 'ssh -o StrictHostKeyChecking=no ${executor.user}@${executor.ipaddr.addr} -p ${executor.ipaddr.port} "${args.cmd}"'
+	mut port:=""
+	if executor.ipaddr.port>10 {
+		port="-p ${executor.ipaddr.port}"
+	}
+	args.cmd = 'ssh -o StrictHostKeyChecking=no ${executor.user}@${executor.ipaddr.addr} ${port} "${args.cmd}"'
 	res := osal.exec(cmd: args.cmd, stdout: args.stdout, debug: executor.debug)!
 	return res.output.join_lines()
 }
 
 pub fn (mut executor ExecutorSSH) exec_interactive(args_ ExecArgs) ! {
 	mut args := args_
-	args.cmd = 'ssh -tt -o StrictHostKeyChecking=no ${executor.user}@${executor.ipaddr.addr} -p ${executor.ipaddr.port} "${args.cmd}"'
+	mut port:=""
+	if executor.ipaddr.port>10 {
+		port="-p ${executor.ipaddr.port}"
+	}
+	args.cmd = 'ssh -tt -o StrictHostKeyChecking=no ${executor.user}@${executor.ipaddr.addr} ${port} "${args.cmd}"'
 	osal.execute_interactive(args.cmd)!
 }
 
@@ -108,11 +119,15 @@ pub fn (mut executor ExecutorSSH) delete(path string) ! {
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
+	mut addr:='${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+	if executor.ipaddr.cat == .ipv6{
+		addr='\'${executor.user}@[${executor.ipaddr.addr}]\':${executor.ipaddr.port}'
+	}
 	mut rsargs := osal.RsyncArgs{
 		source: args.source
 		dest: args.dest
 		delete: args.delete
-		ipaddr_src: '${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+		ipaddr_src: addr
 		ignore: args.ignore
 		ignore_default: args.ignore_default
 		stdout: args.stdout
@@ -122,11 +137,48 @@ pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
+
+
+	mut p:=pathlib.get(args.source)
+	if ! p.exists(){
+		return error("Cannot upload $args")
+	}
+
+	mut psize:=p.size_kb()!
+
+	// source         string
+	// dest           string
+	// delete         bool     // do we want to delete the destination
+	// ipaddr         string   // e.g. root@192.168.5.5:33 (can be without root@ or :port)
+	// ignore         []string // arguments to ignore e.g. ['*.pyc','*.bak']
+	// ignore_default bool = true // if set will ignore a common set
+	// stdout         bool = true
+	// fast_rsync     bool = true	
+	if args.ignore.len==0 && psize < 100{
+
+		mut addr2:='${executor.user}@${executor.ipaddr.addr}:${args.dest}'
+		if executor.ipaddr.cat == .ipv6{
+			addr2='\'${executor.user}@[${executor.ipaddr.addr}]\':${args.dest}'
+		}
+		cmd:="scp -o \"StrictHostKeyChecking=no\" -P ${executor.ipaddr.port} ${args.source} ${addr2}"
+		// println(cmd)
+		res:=os.execute(cmd)		
+		if res.exit_code>0{
+			return error("cannot upload over ssh: $cmd")
+		}
+		return
+	}
+
+	mut addr:='${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+	if executor.ipaddr.cat == .ipv6{
+		addr='\'${executor.user}@[${executor.ipaddr.addr}]\':${executor.ipaddr.port}'
+	}
+
 	mut rsargs := osal.RsyncArgs{
 		source: args.source
 		dest: args.dest
 		delete: args.delete
-		ipaddr_dst: '${executor.user}@${executor.ipaddr.addr}:${executor.ipaddr.port}'
+		ipaddr_dst:addr
 		ignore: args.ignore
 		ignore_default: args.ignore_default
 		stdout: args.stdout
@@ -175,12 +227,11 @@ pub fn (mut executor ExecutorSSH) info() map[string]string {
 // forwarding ssh traffic to certain container
 
 pub fn (mut executor ExecutorSSH) shell(cmd string) ! {
-	mut p := '${executor.ipaddr.port}'
 	if cmd.len > 0 {
 		panic('TODO IMPLEMENT SHELL EXEC OVER SSH')
 	}
 	os.execvp('ssh', ['-o StrictHostKeyChecking=no', '${executor.user}@${executor.ipaddr.addr}',
-		'-p ${p}'])!
+		'-p ${executor.ipaddr.port}'])!
 }
 
 pub fn (mut executor ExecutorSSH) list(path string) ![]string {
