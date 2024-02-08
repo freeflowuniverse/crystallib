@@ -45,13 +45,13 @@ pub fn (mut n ZmachineNetwork) challenge() string {
 		out += iface.ip
 	}
 
-	if m := n.mycelium{
+	if m := n.mycelium {
 		out += m.challenge()
 	}
 	return out
 }
 
-pub fn (m MyceliumIP) challenge() string{
+pub fn (m MyceliumIP) challenge() string {
 	mut out := ''
 	out += m.network
 	out += m.hex_seed

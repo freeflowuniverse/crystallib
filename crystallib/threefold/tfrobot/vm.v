@@ -20,11 +20,11 @@ pub fn (vm VMOutput) ssh_interactive(key_path string) ! {
 	// node := b.node_new(ipaddr:"root@${vm.ip4}")!
 	// node.exec_interactive('${homedir}/hero/bin/install.sh')!
 	time.sleep(15 * time.second)
-	if vm.public_ip4 != ''{
+	if vm.public_ip4 != '' {
 		osal.execute_interactive('ssh -i ${key_path} root@${vm.public_ip4.all_before('/')}')!
-	}else if vm.planetary_ip != ''{
+	} else if vm.planetary_ip != '' {
 		osal.execute_interactive('ssh -i ${key_path} root@${vm.planetary_ip}')!
-	}else{
+	} else {
 		return error('no public nor planetary ip available to use')
 	}
 }
