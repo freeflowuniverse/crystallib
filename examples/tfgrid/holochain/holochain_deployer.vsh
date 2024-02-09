@@ -9,7 +9,7 @@ console.print_header("Deploy test of vmachines on TFGrid using TFRobot.")
 mut bot := tfrobot.new()!
 
 mut deploy_config := tfrobot.DeployConfig{
-	name: 'holotest'
+	name: 'holotest2'
 	network: .main
 	debug: true
 	node_groups: [
@@ -19,12 +19,13 @@ mut deploy_config := tfrobot.DeployConfig{
 			free_cpu: 4
 			free_mru: 8
 			free_ssd: 100
+			// region:"europe"
 		},
 	]
 	vms: [
 		tfrobot.VMConfig{
 			name: 'test'
-			vms_count: 4
+			vms_count: 1
 			cpu: 4
 			mem: 4
 			entry_point: '/sbin/zinit init'
@@ -61,16 +62,6 @@ for vm in tfrobot.vms_get('holotest')!{
 	println(r)
 }
 
-console.print_header("Get VM's and send DAGs.")
 
-for vm in tfrobot.vms_get('holotest')!{
-	client := dagu.new(
-		url:vm.public_ip4
-		username: 'admin'
-		password: 'planetfirst'
-	)
 
-	// TODO: paste dag_example.vsh script to send and run Holo web app scaffolding DAG after testing
-	// client.run('holochain_scaffold')!
-}
 

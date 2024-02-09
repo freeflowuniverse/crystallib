@@ -160,6 +160,7 @@ pub fn (vm VMOutput) tasks_run(dag &dagu.DAG) ! {
 	console.print_header("send dag to node: ${dag.name}")
 	console.print_debug(dag.str())
 	client.new_dag(dag)! //will post it
+	client.start_dag(dag.name)! 
 
 }
 

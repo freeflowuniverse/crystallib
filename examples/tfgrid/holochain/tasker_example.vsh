@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 
 console.print_header("Tasker Example.")
 
-mut vm := tfrobot.vm_get('holotest','test1')!
+mut vm := tfrobot.vm_get('holotest','test2')!
 
 //get a set of tasks as we want to execute on the vm
 mut tasks:=vm.tasks_new(name:'holochain_scaffold')
@@ -42,9 +42,9 @@ tasks.step_add(
 	)!
 
 
-// vm.tasks_run(tasks)!
-// vm.tasks_see(tasks)!
+vm.tasks_run(tasks)!
+vm.tasks_see(tasks)!
 
-// vm.vscode_holochain()!
+vm.vscode_holochain()!
 
 vm.vscode_holochain_proxy()!
