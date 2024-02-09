@@ -14,17 +14,17 @@ mut deploy_config := tfrobot.DeployConfig{
 	debug: true
 	node_groups: [
 		tfrobot.NodeGroup{
-			name: 'holotestgroup'
+			name: 'hologroup2'
 			nodes_count: 4
 			free_cpu: 4
 			free_mru: 8
 			free_ssd: 100
-			// region:"europe"
+			region:"europe"
 		},
 	]
 	vms: [
 		tfrobot.VMConfig{
-			name: 'test'
+			name: 'myvm'
 			vms_count: 1
 			cpu: 4
 			mem: 4
