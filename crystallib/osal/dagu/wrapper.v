@@ -107,6 +107,13 @@ pub fn server(options ServerOptions) !string {
 	return result.output
 }
 
+// Start the server
+pub fn server_bg(options ServerOptions) !string {
+	flags := osal.write_flags[ServerOptions](options)
+	result := os.execute_opt('& dagu server ${flags}')!
+	return result.output
+}
+
 @[params]
 pub struct StartOptions {
 	params ?string // parameters

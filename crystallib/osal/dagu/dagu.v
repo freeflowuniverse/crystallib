@@ -38,6 +38,14 @@ pub fn (mut d DAGU) new_dag(dag DAG) DAG {
 	return dag
 }
 
+pub fn (mut d DAGU) server_bg(options ServerOptions) !string {
+	return server_bg(options)!
+}
+
+pub fn (mut d DAGU) delete_dag(dag string) ! {
+	os.rm('${os.home_dir()}/.dagu/dags/${texttools.name_fix(dag)}.yaml')!
+}
+
 pub fn (d DAGU) start(dag_name string, options StartOptions) !string {
 	filtered := d.dags.filter(it.name == dag_name)
 	if filtered.len == 0 {
