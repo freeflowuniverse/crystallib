@@ -1,7 +1,7 @@
 module dagu
 
 import json
-import freeflowuniverse.crystallib.clients.httpconnection
+// import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.osal.dagu {DAG}
 
 pub fn (mut client DaguClient) new_dag(dag DAG) !PostDagActionResponse {

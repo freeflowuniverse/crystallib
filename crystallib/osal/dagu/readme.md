@@ -6,7 +6,7 @@ Is a very nice task management system see [https://dagu.readthedocs.io/](https:/
 ## Example
 
 ```golang
-import freeflowuniverse.crystallib.sysadmin.dagu
+import freeflowuniverse.crystallib.osal.dagu
 
 mut z:=dagu.new()!
 

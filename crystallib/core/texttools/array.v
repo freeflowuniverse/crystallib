@@ -18,6 +18,11 @@ pub fn to_array(r string) []string {
 	return res
 }
 
+pub fn to_array_int(r string) []int {
+	mut r2:=to_array(r).map(it.int())
+	return r2
+}
+
 // intelligent way how to map a line to a map
 //```
 // r:=texttools.to_map("name,-,-,-,-,pid,-,-,-,-,path",

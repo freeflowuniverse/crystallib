@@ -74,15 +74,17 @@ steps:
       repeat: @{repeat_policy.repeat}
       intervalSec: @{repeat_policy.interval_sec}
     @end
-    @if preconditions := step.preconditions
+    @if step.preconditions.len>0
     preconditions:
-      @for precondition in preconditions
+      @for precondition in step.preconditions
       - condition: 
         expected: @{precondition}
       @end
     @end
-    @if depends := step.depends
+    @if step.depends.len>0
     depends:
-      -  @{depends}
+      @for depend in step.depends
+      -  @{depend}
+      @end
     @end
   @end

@@ -1,7 +1,8 @@
 module dagu
 
+@[heap]
 pub struct DAG {
-pub:
+pub mut:
 	path                 string @[skip]
 	name                 string // The name of the DAG, which is optional. The default name is the name of the file.
 	description          ?string // A brief description of the DAG.
@@ -25,7 +26,7 @@ pub:
 
 pub struct Condition {
 pub:
-	condition string
+	condition string //QUESTION: how to use this?
 	expected  string
 }
 
@@ -52,7 +53,8 @@ pub:
 }
 
 pub struct Step {
-pub:
+pub mut:
+	nr             int @[skip]
 	name           string        // The name of the step.
 	description    string        // A brief description of the step.
 	dir            string        // The working directory for the step.
@@ -65,8 +67,8 @@ pub:
 	continue_on    ?ContinueOn   [json: 'continueOn']// Whether to continue to the next step, regardless of whether the step failed or not or the preconditions are met or not.
 	retry_policy   ?RetryPolicy  // The retry policy for the step.
 	repeat_policy  ?RepeatPolicy // The repeat policy for the step.
-	preconditions  ?[]string     // The conditions that must be met before a step can run.
-	depends        ?[]string       // The step depends on the other step.
+	preconditions  []string     // The conditions that must be met before a step can run.
+	depends        []string       // The step depends on the other step.
 	call           ?Call // User defined function call
 	executor ?Executor
 }
@@ -83,8 +85,8 @@ pub:
 
 pub struct RetryPolicy {
 pub:
-	limit        int
-	interval_sec int
+	limit        int //nr of times to retry
+	interval_sec int //sec between the retries in seconds
 }
 
 pub struct RepeatPolicy {
@@ -127,67 +129,4 @@ pub:
 	prefix string
 }
 
-// pub struct Step {
-// pub mut:
-// 	name    string
-// 	command string
-// 	script  string [json: raw]
-// 	output  string [json: 'output']
-// 	depends []string [skip]
-// }
 
-// [heap]
-// struct DAG {
-// pub mut:
-// 	name                string
-// 	description         string
-// 	steps []Step	
-// 	schedule            string //in cron format
-// 	group               string
-// 	tags                string
-// 	env                 map[string]string
-// 	log_dir             string [json: 'logDir']
-// 	restart_wait_sec    int    [json: 'restartWaitSec']
-// 	hist_retention_days int    [json: 'histRetentionDays']
-// 	delay_sec           int    [json: 'delaySec']
-// 	max_active_runs     int    [json: 'maxActiveRuns']
-// 	params              []string
-// 	preconditions       []Precondition
-// 	mail_on             MailOn [json: 'mailOn']
-// 	max_clean_up_time_sec int  [json: 'MaxCleanUpTimeSec']
-// 	handler_on          HandlerOn [json: 'handlerOn']
-// }
-
-// struct Precondition {
-// pub mut:	
-// 	condition string
-// 	expected  string
-// }
-
-// struct MailOn {
-// pub mut:	
-// 	failure bool
-// 	success bool
-// }
-
-// struct Handler {
-// pub mut:	
-// 	command string
-// }
-
-// struct HandlerOn {
-// pub mut:	
-// 	success Handler
-// 	failure Handler
-// 	cancel  Handler
-// 	exit    Handler
-// }
-
-// handlerOn:
-//   failure:
-//     command: notify_error.sh
-//   exit:
-//     command: cleanup.sh
-// steps:
-//   - name: A task
-//     command: main.sh

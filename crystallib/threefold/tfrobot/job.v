@@ -6,6 +6,16 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import json
 
+// VirtualMachine represents the VM info outputted by tfrobot
+pub struct VirtualMachine {
+	name   string
+	ip4    string
+	ip6    string
+	yggip  string
+	ip     string
+	// mounts []string
+}
+
 pub struct Job {
 pub:
 	name      string
