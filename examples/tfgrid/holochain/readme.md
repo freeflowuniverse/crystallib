@@ -48,6 +48,23 @@ tfrobot.DeployConfig{
 }
 ```
 
+## DAG Example
+
+The `dag_example.vsh` script demonstrates how the dagu client can be used to send and run a DAG on the machine to scaffold and serve a holochain web app.
+
+To run:
+
+`./dag_example.vsh <MACHINE_IP>`
+
+This sends and runs the DAG, which can be monitored from `<MACHINE_IP>:8081`
+
+Once the DAG reaches its final step and the web app starts running, the UI can be accessed by forwarding the following ports:
+- `8282`: Holochain web app
+- `8888`: Conductors send hello interface (optional)
+- Two conductor ports which are outputted by the final step of the DAG
+
+Once these ports are forwarded, the Holochain web app can be accessed at `localhost:8282`, and will display the holo network with two conductors.
+
 # Phase 2
 
 - each vm will start sshserver and a call backhome

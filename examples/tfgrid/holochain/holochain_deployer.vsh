@@ -2,6 +2,7 @@
 
 import freeflowuniverse.crystallib.threefold.tfrobot
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.clients.dagu
 
 console.print_header("Deploy test of vmachines on TFGrid using TFRobot.")
 
@@ -60,4 +61,16 @@ for vm in tfrobot.vms_get('holotest')!{
 	println(r)
 }
 
+console.print_header("Get VM's and send DAGs.")
+
+for vm in tfrobot.vms_get('holotest')!{
+	client := dagu.new(
+		url:vm.public_ip4
+		username: 'admin'
+		password: 'planetfirst'
+	)
+
+	// TODO: paste dag_example.vsh script to send and run Holo web app scaffolding DAG after testing
+	// client.run('holochain_scaffold')!
+}
 
