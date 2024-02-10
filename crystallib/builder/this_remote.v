@@ -11,7 +11,7 @@ pub mut:
 	name   string = 'remote'
 	nodes  string
 	script string
-	update bool
+	sync_from_local bool
 }
 
 // to use do something like: export NODES="195.192.213.3" .
@@ -27,10 +27,10 @@ pub fn this_remote_exec(args_ ThisRemoteArgs) !bool {
 		counter += 1
 		name := '${args.name}_${counter}'
 		mut b := new()!
-		if args.update {
+		if args.sync_from_local {
 			mut n := b.node_new(ipaddr: a, name: name)!
 			// println(n.ipaddr_pub_get()!)
-			n.vscript(path: args.script, crystal_update: args.update)!
+			n.vscript(path: args.script, sync_from_local: args.sync_from_local)!
 		} else {
 			// is a shortcut goes faster if no update
 			if !os.exists(args.script) {

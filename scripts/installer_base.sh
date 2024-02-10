@@ -428,6 +428,7 @@ function os_update {
         # apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release screen"
+        /etc/init.d/redis-server start
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
@@ -446,7 +447,8 @@ function os_update {
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm mc fish  git tmux curl htop
+        pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
+        systemctl start redis
     fi
 }
 

@@ -26,4 +26,3 @@ n.upload(source: "${mypath}/installer.sh", dest: '/tmp/installer.sh')!
 println("execute installer")
 n.exec(cmd:"bash /tmp/installer.sh",stdout:true)!
 
-

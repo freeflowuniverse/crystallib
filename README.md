@@ -14,6 +14,26 @@ requirements
 
 - ssh key loaded for access to github
 
+
+## Example how to install remotely
+
+the next script will install hero, v, crystal on remote system over ssh
+
+see [scripts/remote_install_v_hero.vsh](scripts/remote_install_v_hero.vsh)
+
+```bash
+export SERVER=65.21.132.119
+#next till do the install, you need v & crystal installed locally
+~/code/github/freeflowuniverse/crystallib/scripts/remote_install_v_hero.vsh
+
+#if you want to sync your local crystallib to the remote one and compile hero
+~/code/github/freeflowuniverse/crystallib/scripts/remote_update_compile_hero.vsh
+
+```
+
+
+
+
 ### alternative with manual git checkout & v install
 
 requirements

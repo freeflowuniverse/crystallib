@@ -143,20 +143,56 @@ pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 @[params]
 pub struct CrystalUpdateArgs {
 pub mut:
-	all        bool
-	fast_rsync bool = true
+	sync_from_local bool //will sync local crystal lib to the remote, then cannot use git
+	sync_full bool //sync the full crystallib repo
+	sync_fast bool = true //don't hash the files, there is small chance on error
+	git_reset bool //will get the code from github at remote and reset changes
+	git_pull bool //will pull the code but not reset, will give error if it can't reset	
 }
 
-// sync local crystal code to rmote and then compile hero
-pub fn (mut node Node) crystal_update(args CrystalUpdateArgs) ! {
-	if args.all {
-		node.sync_code('crystal', builder.crystalpath_ + '/..', '~/code/github/freeflowuniverse/crystallib',
-			args.fast_rsync)!
-	} else {
-		node.sync_code('crystal_lib', builder.crystalpath_, '~/code/github/freeflowuniverse/crystallib/crystallib',
-			args.fast_rsync)!
+
+//execute vscript on remote node
+
+pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
+	mut args := args_
+
+	if args.sync_from_local && (args.git_reset || args.git_pull){
+		return error("if sync is asked for crystal update, then cannot use git to get crystal")
 	}
+
+	if args.sync_from_local {
+		if args.sync_full {
+			node.sync_code('crystal', builder.crystalpath_ + '/..', '~/code/github/freeflowuniverse/crystallib',
+				args.sync_fast)!
+		} else {
+			node.sync_code('crystal_lib', builder.crystalpath_, '~/code/github/freeflowuniverse/crystallib/crystallib',
+				args.sync_fast)!
+		}
+		return
+	}
+	if args.git_reset {
+		args.git_pull=false
+		node.exec_cmd(
+			cmd: '
+			cd ~/code/github/freeflowuniverse/crystallib
+			rm -f .git/index
+			#git fetch --all
+			git reset HEAD --hard
+			git clean -xfd		
+			git checkout . -f				
+			'
+		)!		
+	}
+	if args.git_pull {
+		node.exec_cmd(
+			cmd: '
+			cd ~/code/github/freeflowuniverse/crystallib
+			git pull			
+			'
+		)!	
+	}	
 }
+
 
 pub fn (mut node Node) sync_code(name string, src_ string, dest string, fast_rsync bool) ! {
 	mut src := pathlib.get_dir(path: os.abs_path(src_), create: false)!
@@ -175,7 +211,20 @@ pub fn (mut node Node) sync_code(name string, src_ string, dest string, fast_rsy
 }
 
 // sync local crystal code to rmote and then compile hero
-pub fn (mut node Node) hero_compile_debug() ! {
+pub fn (mut node Node) hero_compile_sync() ! {
+	if !node.file_exists('~/code/github/freeflowuniverse/crystallib/cli/readme.md') {
+		node.crystal_install()!
+	}
+	node.crystal_update()!
+	node.exec_cmd(
+		cmd: '
+		~/code/github/freeflowuniverse/crystallib/install.sh
+		~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh		
+		'
+	)!
+}
+
+pub fn (mut node Node) hero_compile() ! {
 	if !node.file_exists('~/code/github/freeflowuniverse/crystallib/cli/readme.md') {
 		node.crystal_install()!
 	}
@@ -192,14 +241,16 @@ pub fn (mut node Node) hero_compile_debug() ! {
 pub struct VScriptArgs {
 pub mut:
 	path           string
-	crystal_update bool
+	sync_from_local bool //will sync local crystal lib to the remote
+	git_reset bool //will get the code from github at remote and reset changes
+	git_pull bool //will pull the code but not reset, will give error if it can't reset
 }
+
 
 pub fn (mut node Node) vscript(args_ VScriptArgs) ! {
 	mut args := args_
-	if args.crystal_update {
-		node.crystal_update()!
-	}
+	node.crystal_update(sync_from_local:args.sync_from_local,
+		git_reset:args.git_reset,git_pull:args.git_pull)!
 	mut p := pathlib.get_file(path: args.path, create: false)!
 
 	node.upload(source: p.path, dest: '/tmp/remote_${p.name()}')!

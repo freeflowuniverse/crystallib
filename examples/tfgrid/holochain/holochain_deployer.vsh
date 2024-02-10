@@ -15,19 +15,19 @@ mut deploy_config := tfrobot.DeployConfig{
 	node_groups: [
 		tfrobot.NodeGroup{
 			name: 'hologroup2'
-			nodes_count: 4
-			free_cpu: 4
+			nodes_count: 20
+			free_cpu: 8
 			free_mru: 8
 			free_ssd: 100
-			region:"europe"
+			// region:"europe"
 		},
 	]
 	vms: [
 		tfrobot.VMConfig{
 			name: 'myvm'
-			vms_count: 1
-			cpu: 4
-			mem: 4
+			vms_count: 5
+			cpu: 1
+			mem: 1
 			entry_point: '/sbin/zinit init'
 			// flist: 'https://hub.grid.tf/mariobassem1.3bot/threefolddev-holochain-latest.flist'
 			flist: 'https://hub.grid.tf/ashraf.3bot/threefolddev-holochain-latest.flist'
