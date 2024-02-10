@@ -148,6 +148,7 @@ pub mut:
 	sync_fast bool = true //don't hash the files, there is small chance on error
 	git_reset bool //will get the code from github at remote and reset changes
 	git_pull bool //will pull the code but not reset, will give error if it can't reset	
+	branch string
 }
 
 
@@ -170,16 +171,21 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 		}
 		return
 	}
+	mut branchstr:=""
+	if args.branch.len>0{
+		branchstr="git checkout ${args.branch} -f"
+	}
 	if args.git_reset {
 		args.git_pull=false
 		node.exec_cmd(
 			cmd: '
 			cd ~/code/github/freeflowuniverse/crystallib
 			rm -f .git/index
-			#git fetch --all
+			git fetch --all
 			git reset HEAD --hard
 			git clean -xfd		
 			git checkout . -f				
+			${branchstr}
 			'
 		)!		
 	}
@@ -187,7 +193,8 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 		node.exec_cmd(
 			cmd: '
 			cd ~/code/github/freeflowuniverse/crystallib
-			git pull			
+			git pull
+			${branchstr}		
 			'
 		)!	
 	}	
@@ -228,10 +235,8 @@ pub fn (mut node Node) hero_compile() ! {
 	if !node.file_exists('~/code/github/freeflowuniverse/crystallib/cli/readme.md') {
 		node.crystal_install()!
 	}
-	node.crystal_update()!
 	node.exec_cmd(
 		cmd: '
-		~/code/github/freeflowuniverse/crystallib/install.sh
 		~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh		
 		'
 	)!
@@ -244,13 +249,14 @@ pub mut:
 	sync_from_local bool //will sync local crystal lib to the remote
 	git_reset bool //will get the code from github at remote and reset changes
 	git_pull bool //will pull the code but not reset, will give error if it can't reset
+	branch string //can only be used when git used
 }
 
 
 pub fn (mut node Node) vscript(args_ VScriptArgs) ! {
 	mut args := args_
 	node.crystal_update(sync_from_local:args.sync_from_local,
-		git_reset:args.git_reset,git_pull:args.git_pull)!
+		git_reset:args.git_reset,git_pull:args.git_pull,branch:args.branch)!
 	mut p := pathlib.get_file(path: args.path, create: false)!
 
 	node.upload(source: p.path, dest: '/tmp/remote_${p.name()}')!

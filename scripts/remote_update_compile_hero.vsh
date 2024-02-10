@@ -24,6 +24,6 @@ mut n := b.node_new(ipaddr: server)!
 // 	git_reset bool //will get the code from github at remote and reset changes
 // 	git_pull bool //will pull the code but not reset, will give error if it can't reset	
 
-n.crystal_update(sync_from_local:true)!
-// n.crystal_update(git_reset:true)!
+// n.crystal_update(sync_from_local:true)!
+n.crystal_update(git_reset:true,branch:"development_hero")!
 n.hero_compile()! 
