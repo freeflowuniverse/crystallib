@@ -173,7 +173,7 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 	}
 	mut branchstr:=""
 	if args.branch.len>0{
-		branchstr="git checkout ${args.branch} -f"
+		branchstr="git checkout ${args.branch} -f && git pull" //not sure latest git pull needed
 	}
 	if args.git_reset {
 		args.git_pull=false
