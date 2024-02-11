@@ -9,12 +9,14 @@ A context is sort of sandbox in which we execute our scripts it groups the follo
 - filesystem key value stor
 - logs
 - multiple sessions
+- gittools: gitstructure
+- redis client
 
 > more info see [context](context.md)
 
 ## Session
 
-- each time we execute a playbook we do it in a session
+- each time we execute a playbook using heroscript we do it in a session
 - a session can have a name as given by the developer or will be autocreated based on time
 
 > more info see [session](session.md)

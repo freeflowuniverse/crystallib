@@ -8,7 +8,7 @@ mut cl:=b2.get(instance:"test")!
 mut cfg:=cl.config()!
 if cfg.appkey==""{
 	// will ask questions if not filled in yet
-	cl.config_interactive()!
+	// cl.config_interactive()!
 }
 println(cfg)
 

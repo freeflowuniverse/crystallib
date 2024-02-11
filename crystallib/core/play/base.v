@@ -49,7 +49,6 @@ pub fn (mut self Base[T]) context() !&Context {
 // management class of the configs of this obj
 pub fn (mut self Base[T]) configurator() !&Configurator[T] {
 	mut configurator := self.configurator_ or {
-		// t:=T{}
 		mut c := configurator_new[T](
 			context: self.context()!
 			instance: self.instance

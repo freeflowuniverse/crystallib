@@ -14,11 +14,12 @@ pub mut:
 @[params]
 pub struct Config {
 	play.ConfigBase
-	configtype string = 'b2client' // needs to be defined	
 pub mut:
-	keyid   string
+	configtype string = 'b2client' // needs to be defined	
 	keyname string
+	keyid   string
 	appkey  string
+	bucketname string //can be empty is the default
 }
 
 // get instance of our client params: .
@@ -37,7 +38,7 @@ pub fn get(args play.InstanceNewArgs) !B2Client[Config] {
 
 // run heroscript starting from path, text or giturl
 //```
-// !!b2.define
+// !!b2client.define
 //     name:'tf_write_1'
 //     description:'ThreeFold Read Write Repo 1
 //     keyid:'003e2a7be6357fb0000000001'
@@ -53,7 +54,7 @@ pub fn heroplay(args play.PLayBookAddArgs) ! {
 	// make session for configuring from heroscript
 	mut session := play.session_new(session_name: 'config')!
 	session.playbook_add(path: args.path, text: args.text, git_url: args.git_url)!
-	for mut action in session.plbook.find(filter: 'b2.define')! {
+	for mut action in session.plbook.find(filter: 'b2client.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
 		mut cl := get(instance: instance)!
@@ -95,5 +96,14 @@ pub fn (mut self B2Client[Config]) config_interactive() ! {
 		minlen: 5
 		default: cfg.appkey
 	)!
+
+	buckets:=self.list_buckets()!
+	bucket_names:=buckets.map(it.name)
+
+	cfg.bucketname = myui.ask_dropdown(
+		question: 'choose default bucket name'
+		items: bucket_names
+	)!
+
 	self.config_save()!
 }
