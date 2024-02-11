@@ -1,4 +1,4 @@
-#!/usr/bin/env v -w -cg -enable-globals run
+#!/usr/bin/env -S v -w -cg -enable-globals run
 
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.data.markdownparser

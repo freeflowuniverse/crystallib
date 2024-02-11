@@ -173,7 +173,6 @@ pub fn (mut agent SSHAgent) str() string {
 	return out.join_lines() + '\n'
 }
 
-
 pub fn (mut agent SSHAgent) keys_loaded() ![]SSHKey {
 	return agent.keys.filter(it.loaded)
 }

@@ -4,23 +4,21 @@ import time
 import freeflowuniverse.crystallib.osal.dagu as dagu_osal
 import freeflowuniverse.crystallib.clients.httpconnection
 
-const (
-	username = 'test_username'
-	password = 'test_password'
-)
+const username = 'test_username'
+const password = 'test_password'
 
-__global(
+__global (
 	client DaguClient
 )
 
 fn testsuite_begin() {
 	client = new(
-		username: username
-		password: password
+		username: dagu.username
+		password: dagu.password
 	)!
 
 	mut d := dagu_osal.new()!
-	d.basic_auth(username, password) or {panic(err)}
+	d.basic_auth(dagu.username, dagu.password) or { panic(err) }
 }
 
 fn testsuite_end() {
@@ -30,7 +28,9 @@ fn testsuite_end() {
 
 fn test_create_dag() ! {
 	response := client.create_dag('test_dag')!
-	assert response == CreateDagResponse{dag_id:'test_dag'}
+	assert response == CreateDagResponse{
+		dag_id: 'test_dag'
+	}
 }
 
 fn test_list_dags() ! {
@@ -39,9 +39,9 @@ fn test_list_dags() ! {
 
 fn test_delete_dag() ! {
 	mut error := false
-	client.delete_dag(@FN) or {error = true}
+	client.delete_dag(@FN) or { error = true }
 	assert error
-	
+
 	client.create_dag(@FN)!
 	client.delete_dag(@FN)!
 }

@@ -13,7 +13,7 @@ import freeflowuniverse.crystallib.ui.console
 pub struct Session {
 mut:
 	nrtimes_processed           int
-	heroscript_preprocess          string
+	heroscript_preprocess       string
 	processed                   bool
 	playbook_priorities_defined []string
 pub mut:
@@ -77,7 +77,7 @@ pub mut:
 	prio      int = 10
 }
 
-// add playbook 3scri[ts (starting from path, text or git url)
+// add playbook heroscript (starting from path, text or git url)
 //```
 // path    string
 // text    string

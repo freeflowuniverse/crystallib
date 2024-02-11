@@ -143,22 +143,21 @@ pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 @[params]
 pub struct CrystalUpdateArgs {
 pub mut:
-	sync_from_local bool //will sync local crystal lib to the remote, then cannot use git
-	sync_full bool //sync the full crystallib repo
-	sync_fast bool = true //don't hash the files, there is small chance on error
-	git_reset bool //will get the code from github at remote and reset changes
-	git_pull bool //will pull the code but not reset, will give error if it can't reset	
-	branch string
+	sync_from_local bool // will sync local crystal lib to the remote, then cannot use git
+	sync_full       bool // sync the full crystallib repo
+	sync_fast       bool = true // don't hash the files, there is small chance on error
+	git_reset       bool // will get the code from github at remote and reset changes
+	git_pull        bool // will pull the code but not reset, will give error if it can't reset	
+	branch          string
 }
 
-
-//execute vscript on remote node
+// execute vscript on remote node
 
 pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 	mut args := args_
 
-	if args.sync_from_local && (args.git_reset || args.git_pull){
-		return error("if sync is asked for crystal update, then cannot use git to get crystal")
+	if args.sync_from_local && (args.git_reset || args.git_pull) {
+		return error('if sync is asked for crystal update, then cannot use git to get crystal')
 	}
 
 	if args.sync_from_local {
@@ -171,12 +170,12 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 		}
 		return
 	}
-	mut branchstr:=""
-	if args.branch.len>0{
-		branchstr="git checkout ${args.branch} -f && git pull" //not sure latest git pull needed
+	mut branchstr := ''
+	if args.branch.len > 0 {
+		branchstr = 'git checkout ${args.branch} -f && git pull' // not sure latest git pull needed
 	}
 	if args.git_reset {
-		args.git_pull=false
+		args.git_pull = false
 		node.exec_cmd(
 			cmd: '
 			cd ~/code/github/freeflowuniverse/crystallib
@@ -187,7 +186,7 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 			git checkout . -f				
 			${branchstr}
 			'
-		)!		
+		)!
 	}
 	if args.git_pull {
 		node.exec_cmd(
@@ -196,10 +195,9 @@ pub fn (mut node Node) crystal_update(args_ CrystalUpdateArgs) ! {
 			git pull
 			${branchstr}		
 			'
-		)!	
-	}	
+		)!
+	}
 }
-
 
 pub fn (mut node Node) sync_code(name string, src_ string, dest string, fast_rsync bool) ! {
 	mut src := pathlib.get_dir(path: os.abs_path(src_), create: false)!
@@ -245,18 +243,21 @@ pub fn (mut node Node) hero_compile() ! {
 @[params]
 pub struct VScriptArgs {
 pub mut:
-	path           string
-	sync_from_local bool //will sync local crystal lib to the remote
-	git_reset bool //will get the code from github at remote and reset changes
-	git_pull bool //will pull the code but not reset, will give error if it can't reset
-	branch string //can only be used when git used
+	path            string
+	sync_from_local bool   // will sync local crystal lib to the remote
+	git_reset       bool   // will get the code from github at remote and reset changes
+	git_pull        bool   // will pull the code but not reset, will give error if it can't reset
+	branch          string // can only be used when git used
 }
-
 
 pub fn (mut node Node) vscript(args_ VScriptArgs) ! {
 	mut args := args_
-	node.crystal_update(sync_from_local:args.sync_from_local,
-		git_reset:args.git_reset,git_pull:args.git_pull,branch:args.branch)!
+	node.crystal_update(
+		sync_from_local: args.sync_from_local
+		git_reset: args.git_reset
+		git_pull: args.git_pull
+		branch: args.branch
+	)!
 	mut p := pathlib.get_file(path: args.path, create: false)!
 
 	node.upload(source: p.path, dest: '/tmp/remote_${p.name()}')!

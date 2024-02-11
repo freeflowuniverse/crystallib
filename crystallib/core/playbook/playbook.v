@@ -76,12 +76,13 @@ pub fn (mut plbook PlayBook) actions_sorted(args SortArgs) ![]&Action {
 }
 
 @[params]
-pub struct heroscriptArgs {
+pub struct HeroScriptArgs {
+pub mut:
 	show_done bool = true
 }
 
 // serialize to heroscript
-pub fn (mut plbook PlayBook) heroscript(args heroscriptArgs) !string {
+pub fn (mut plbook PlayBook) heroscript(args HeroScriptArgs) !string {
 	mut out := ''
 	for action in plbook.actions_sorted()! {
 		if args.show_done == false && action.done {

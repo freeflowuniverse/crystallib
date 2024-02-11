@@ -2,22 +2,25 @@ module play
 
 import json
 
-ConfigBase
+@[heap]
+pub struct ConfigBase {
+pub mut:
+	context     &Context @[skip; str: skip]
+	instance    string
+	description string
+	configured  bool
+}
 
 @[heap]
 pub struct Configurator[T] {
-pub mut:
-	context  &Context
-	configtype     string // e.g. sshclient
-	instance string
-	description string
+	ConfigBase
+	configtype string // e.g. sshclient
 }
 
 @[params]
 pub struct ConfiguratorArgs {
 pub mut:
 	context  &Context
-	configtype     string
 	instance string   @[required]
 }
 
@@ -25,12 +28,9 @@ pub mut:
 // instance is the instance of the config e.g. kds
 // the context defines the context in which we operate, is optional will get the default one if not set
 pub fn configurator_new[T](args ConfiguratorArgs) !Configurator[T] {
-	mut context:= args.context or {}
-
-
 	return Configurator[T]{
 		context: args.context
-		configtype: args.configtype
+		configtype: T{}.configtype
 		instance: args.instance
 	}
 }
@@ -55,13 +55,17 @@ pub fn (mut self Configurator[T]) exists() !bool {
 pub fn (mut self Configurator[T]) get() !T {
 	mut contextdb := self.context.db_config_get()!
 	if !contextdb.exists(self.config_key()) {
-		return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
+		return T{
+			instance: self.instance
+			description: self.description
+		}
+		// return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
 	}
 	data := contextdb.get(self.config_key())!
 	return json.decode(T, data)!
 }
 
-pub fn (mut self Configurator[T]) reset() ! {
+pub fn (mut self Configurator[T]) delete() ! {
 	mut contextdb := self.context.db_config_get()!
 	contextdb.delete(self.config_key())!
 }
@@ -104,3 +108,10 @@ pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
 		// }
 	}
 }
+
+// init our class with the base playargs
+// pub fn (mut self Configurator[T]) init(playargs_ PlayArgs) ! {
+// 	self.session_=playargs.session or {
+// 		session_new(playargs)!
+// 	 }
+// }

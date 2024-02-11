@@ -1,19 +1,20 @@
 module play
 
-pub struct Base {
+pub struct Base[T] {
+mut:
+	configurator_ ?Configurator[T] @[skip; str: skip]
+	session_      ?&Session        @[skip; str: skip]
+	config_       ?&T
 pub mut:
-	session_ ?&Session @[skip; str: skip]
-	instance    string
+	instance string
 }
-
 
 @[params]
 pub struct InstanceNewArgs {
 pub mut:
-	instance string  = "default"
+	instance string = 'default'
 	playargs ?PlayArgs
 }
-
 
 // return a session which has link to the actions and params on context and session level
 // the session also has link to fskvs (filesystem key val stor and gitstructure if relevant)
@@ -28,22 +29,74 @@ pub mut:
 // playbook_path                string //path of heroscript to get and execute
 // playbook_text                string //heroscript to execute
 //```
-pub fn (mut self Base) session_set(args PlayArgs) !&Session {
+pub fn (mut self Base[T]) session_set(args PlayArgs) !&Session {
 	mut s := session_new(args)!
-	self.session_=s
+	self.session_ = s
 	return s
 }
 
-pub fn (mut self Base) session() !&Session {
-	mut session := self.session_ or {
-		mut s := session_new()!
-		self.session_ = s
-		s
-	}
+pub fn (mut self Base[T]) session() !&Session {
+	mut session := self.session_ or { panic('bug init needs to be called before') }
+
 	return session
 }
 
-pub fn (mut self Base) context() !&Context {
+pub fn (mut self Base[T]) context() !&Context {
 	mut session := self.session()!
 	return &session.context
+}
+
+// management class of the configs of this obj
+pub fn (mut self Base[T]) configurator() !&Configurator[T] {
+	mut configurator := self.configurator_ or {
+		// t:=T{}
+		mut c := configurator_new[T](
+			context: self.context()!
+			instance: self.instance
+		)!
+		self.configurator_ = c
+		c
+	}
+
+	return &configurator
+}
+
+pub fn (mut self Base[T]) config() !&T {
+	mut config := self.config_ or {
+		mut configurator := self.configurator()!
+		e := configurator.exists()!
+		println('exists: ${configurator.config_key()} exists:${e}')
+		mut c := configurator.get()!
+		self.config_ = &c
+		&c
+	}
+
+	return config
+}
+
+pub fn (mut self Base[T]) config_save() ! {
+	mut config := self.config()!
+	mut configurator := self.configurator()!
+	configurator.set(config)!
+}
+
+pub fn (mut self Base[T]) config_delete() ! {
+	mut configurator := self.configurator()!
+	configurator.delete()!
+	self.config_ = none
+}
+
+// init our class with the base playargs
+pub fn (mut self Base[T]) init(playargs ?PlayArgs) ! {
+	mut plargs := playargs or {
+		mut plargs0 := PlayArgs{}
+		plargs0
+	}
+
+	mut session := plargs.session or {
+		mut s := session_new(plargs)!
+		s
+	}
+
+	self.session_ = session
 }

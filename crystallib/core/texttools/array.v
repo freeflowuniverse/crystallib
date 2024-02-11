@@ -19,7 +19,7 @@ pub fn to_array(r string) []string {
 }
 
 pub fn to_array_int(r string) []int {
-	mut r2:=to_array(r).map(it.int())
+	mut r2 := to_array(r).map(it.int())
 	return r2
 }
 

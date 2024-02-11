@@ -7,14 +7,14 @@ import freeflowuniverse.crystallib.ui.console
 @[params]
 pub struct Config {
 pub mut:
-	instance string = 'default'
-	user     string = 'root'
-	port     int    = 5432
-	host     string = 'localhost'
-	password string
-	dbname   string = 'postgres'
-	heroscript  string
-	reset    bool
+	instance   string = 'default'
+	user       string = 'root'
+	port       int    = 5432
+	host       string = 'localhost'
+	password   string
+	dbname     string = 'postgres'
+	heroscript string
+	reset      bool
 }
 
 // return a config object even if from partial info

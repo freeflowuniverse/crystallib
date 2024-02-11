@@ -4,37 +4,35 @@ import json
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.osal.dagu as dagu_osal
 
-const (
-	username = 'test_username'
-	password = 'test_password'
-	dag_name = 'methods_test_dag'
-	test_dag = dagu_osal.DAG{
-		name: 'methods_test_dag'
-		steps: [
-			dagu_osal.Step {
-				name: 'step 1'
-				command: 'echo step 1'
-			},
-			dagu_osal.Step {
-				name: 'step 2'
-				command: 'echo step 2'
-			}
-		]
-	}
-)
+const username = 'test_username'
+const password = 'test_password'
+const dag_name = 'methods_test_dag'
+const test_dag = dagu_osal.DAG{
+	name: 'methods_test_dag'
+	steps: [
+		dagu_osal.Step{
+			name: 'step 1'
+			command: 'echo step 1'
+		},
+		dagu_osal.Step{
+			name: 'step 2'
+			command: 'echo step 2'
+		},
+	]
+}
 
-__global(
+__global (
 	client DaguClient
 )
 
 fn testsuite_begin() {
 	client = new(
-		username: username
-		password: password
+		username: dagu.username
+		password: dagu.password
 	)!
 
 	mut d := dagu_osal.new()!
-	d.basic_auth(username, password) or {panic(err)}
+	d.basic_auth(dagu.username, dagu.password) or { panic(err) }
 }
 
 fn testsuite_end() {
@@ -45,18 +43,18 @@ fn testsuite_end() {
 }
 
 fn test_new_dag() ! {
-	client.new_dag(dag_name, test_dag)!
+	client.new_dag(dagu.dag_name, dagu.test_dag)!
 }
 
 fn test_start_dag() ! {
-	if result := client.start_dag('${dag_name}_start') {
+	if result := client.start_dag('${dagu.dag_name}_start') {
 		assert false
 	} else {
 		assert true
 	}
 
-	client.new_dag('${dag_name}_start', test_dag)!
-	result := client.start_dag('${dag_name}_start')!
+	client.new_dag('${dagu.dag_name}_start', dagu.test_dag)!
+	result := client.start_dag('${dagu.dag_name}_start')!
 	assert result == PostDagActionResponse{}
 }
 
@@ -67,7 +65,7 @@ fn test_stop_dag() ! {
 		assert true
 	}
 
-	client.new_dag(@FN, dagu_osal.DAG{...test_dag, name:@FN})!
+	client.new_dag(@FN, dagu_osal.DAG{ ...dagu.test_dag, name: @FN })!
 	result := client.stop_dag(@FN)!
 	assert result == PostDagActionResponse{}
 }
@@ -79,7 +77,7 @@ fn test_suspend_dag() ! {
 		assert true
 	}
 
-	client.new_dag(@FN, test_dag)!
+	client.new_dag(@FN, dagu.test_dag)!
 	result := client.suspend_dag(@FN)!
 	assert result == PostDagActionResponse{}
 }

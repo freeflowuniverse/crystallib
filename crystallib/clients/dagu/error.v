@@ -1,9 +1,9 @@
 module dagu
 
 pub struct ApiError {
-	code int @[skip]
-	message string @[required]
-	detailed_message string @[required; json: 'detailedMessage']
+	code             int    @[skip]
+	message          string @[required]
+	detailed_message string @[json: 'detailedMessage'; required]
 }
 
 fn (err ApiError) msg() string {

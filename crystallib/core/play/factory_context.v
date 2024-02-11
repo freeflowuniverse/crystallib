@@ -23,7 +23,7 @@ pub mut:
 pub struct ContextConfigureArgs {
 pub mut:
 	cid            string = '000' // rid.cid or cid allone
-	name           string  // a unique name in cid
+	name           string // a unique name in cid
 	params         string
 	coderoot       string
 	interactive    bool
@@ -103,7 +103,7 @@ pub fn context_get(args_ ContextGetArgs) !Context {
 	return c
 }
 
-//return the gistructure as is being used in context
+// return the gistructure as is being used in context
 pub fn (mut self Context) gitstructure() !&gittools.GitStructure {
 	mut gs2 := self.gitstructure_ or {
 		cr := self.coderoot()!
@@ -121,7 +121,7 @@ pub fn (mut self Context) gitstructure_reload() ! {
 	self.gitstructure_ = &gs
 }
 
-//return the coderoot as is used in context
+// return the coderoot as is used in context
 pub fn (mut self Context) coderoot() !string {
 	mut db := self.contextdb.db_get(dbname: 'context')!
 	coderoot := db.get('coderoot')!

@@ -138,7 +138,6 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 }
 
 fn (mut node Node) platform_load() ! {
-
 	console.print_header('platform load ${node.name}')
 	cmd := '
     if [[ "\$OSTYPE" == "darwin"* ]]; then
@@ -164,13 +163,13 @@ fn (mut node Node) platform_load() ! {
 	out := node.exec_cmd(cmd: cmd, name: 'platform_load', stdout: false)!
 
 	out2 := out.split_into_lines().map(if it.starts_with('***') { it.trim_left('*') } else { '' }).first()
-	if out2.count(":")!=2{
-		panic("platform loader bug")
+	if out2.count(':') != 2 {
+		panic('platform loader bug')
 	}
-	splitted:=out2.split(":").map(it.trim_space())
-	osname:=splitted[0] 
-	cputype:=splitted[1]
-	node.hostname=splitted[2]
+	splitted := out2.split(':').map(it.trim_space())
+	osname := splitted[0]
+	cputype := splitted[1]
+	node.hostname = splitted[2]
 
 	if cputype == 'x86_64' {
 		node.cputype = CPUType.intel

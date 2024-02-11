@@ -64,10 +64,9 @@ pub fn (mut bldr BuilderFactory) node_new(args_ NodeArguments) !&Node {
 	}
 
 	if node.name == '' {
-		mut iadd:=ipaddress.new(args.ipaddr)!
+		mut iadd := ipaddress.new(args.ipaddr)!
 		node.name = iadd.toname()!
-	}	
-
+	}
 
 	wasincache := node.load()!
 

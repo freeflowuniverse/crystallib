@@ -102,6 +102,7 @@ fn (mut session Session) check_for_further_process() bool {
 // apply snippets to the text given
 fn (mut session Session) snippets_apply() ! {
 	for key, snippet in session.context.snippets {
-		session.heroscript_preprocess = session.heroscript_preprocess.replace('{${key}}', snippet)
+		session.heroscript_preprocess = session.heroscript_preprocess.replace('{${key}}',
+			snippet)
 	}
 }

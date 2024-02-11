@@ -68,18 +68,15 @@ pub fn install(args_ InstallArgs) ! {
 		osal.execute_interactive(cmd)!
 		console.print_header(' - pkg installed.')
 	} else if osal.platform() in [.alpine, .arch, .ubuntu] {
+		osal.package_install('docker,podman-docker,buildah,netavark')!
+		osal.exec(cmd: 'systemctl start podman.socket')!
 
-	
-		osal.package_install("docker,podman-docker,buildah,netavark")!
-		osal.exec(cmd:"systemctl start podman.socket")!
-
-		//TODO:
-		//add: unqualified-search-registries = ["docker.io"]
-		//to: /etc/containers/registries.conf
-		//totest: podman run --name basic_httpd -dt -p 8080:80/tcp docker.io/nginx
-		//curl http://localhost:8080
-		//https://github.com/containers/podman/blob/main/docs/tutorials/podman_tutorial.md
-
+		// TODO:
+		// add: unqualified-search-registries = ["docker.io"]
+		// to: /etc/containers/registries.conf
+		// totest: podman run --name basic_httpd -dt -p 8080:80/tcp docker.io/nginx
+		// curl http://localhost:8080
+		// https://github.com/containers/podman/blob/main/docs/tutorials/podman_tutorial.md
 
 		// mut t:="arm"
 		// if osal.cputype() == .arm {
@@ -102,7 +99,6 @@ pub fn install(args_ InstallArgs) ! {
 		// 	cmdname: 'podman'
 		// 	source: "/tmp/podman/bin/podman-remote-static-linux_${t}64"
 		// )!
-
 	}
 
 	if exists()! {

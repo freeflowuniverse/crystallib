@@ -8,9 +8,9 @@ import freeflowuniverse.crystallib.osal
 @[params]
 pub struct ThisRemoteArgs {
 pub mut:
-	name   string = 'remote'
-	nodes  string
-	script string
+	name            string = 'remote'
+	nodes           string
+	script          string
 	sync_from_local bool
 }
 

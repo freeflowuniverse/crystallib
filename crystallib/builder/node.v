@@ -24,26 +24,26 @@ pub enum CPUType {
 @[heap]
 pub struct Node {
 mut:
-	factory  &BuilderFactory @[skip; str: skip]
+	factory &BuilderFactory @[skip; str: skip]
 pub mut:
-	name string = 'unknown'
-	executor Executor        @[skip; str: skip]
+	name        string = 'unknown'
+	executor    Executor          @[skip; str: skip]
 	platform    PlatformType
 	cputype     CPUType
 	done        map[string]string
 	environment map[string]string
 	params      Params
-	hostname		   string	
+	hostname    string
 }
 
 // get unique key for the node, as used in caching environment
 pub fn (mut node Node) key() string {
-	mut myhash:="local"
- 	if mut node.executor is ExecutorSSH {
-		myaddr:=node.executor.ipaddr.address() or { panic(err) }
+	mut myhash := 'local'
+	if mut node.executor is ExecutorSSH {
+		myaddr := node.executor.ipaddr.address() or { panic(err) }
 		myhash = md5.hexhash(myaddr)
 	}
-	return node.name+"_"+myhash
+	return node.name + '_' + myhash
 }
 
 // get remote environment arguments in memory

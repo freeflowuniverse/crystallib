@@ -49,7 +49,7 @@ pub fn play_git(mut session Session) ! {
 
 ```golang
 
-// add playbook 3scri[ts (starting from path, text or git url)
+// add playbook heroscript (starting from path, text or git url)
 //```
 // path    string
 // text    string

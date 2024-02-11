@@ -9,9 +9,9 @@ mut:
 	connection &httpconnection.HTTPConnection
 }
 
-[params]
+@[params]
 pub struct ClientConfig {
-	url string = 'http://localhost:8080'
+	url      string = 'http://localhost:8080'
 	username string
 	password string
 }

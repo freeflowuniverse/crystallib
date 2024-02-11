@@ -23,20 +23,25 @@ pub mut:
 
 pub fn new(args_ PythonEnvArgs) !PythonEnv {
 	mut args := args_
-
-	python.install()!
 	name := texttools.name_fix(args.name)
+
+	pp := '${os.home_dir()}/hero/python/${name}'
+	mut isnew := false
+	if !os.exists(pp) {
+		python.install()!
+		isnew = true
+	}
 	mut cdb := fskvs.contextdb_get()!
 	mut db := cdb.db_get(dbname: 'python_${name}')!
-
 	py := PythonEnv{
 		name: name
-		path: pathlib.get_dir(path: '${os.home_dir()}/hero/python/${name}', create: true)!
+		path: pathlib.get_dir(path: pp, create: true)!
 		db: db
 	}
 
-	py.init_env()!
-
+	if isnew {
+		py.init_env()!
+	}
 	return py
 }
 
