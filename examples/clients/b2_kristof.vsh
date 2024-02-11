@@ -19,8 +19,11 @@ if cfg.appkey==""{
 println(cfg)
 
 
-items:=cl.list_buckets()!
-println(items)
+println(cl.list_buckets()!)
 
 
-cl.upload(src:"//Users/despiegk1/hero/bin/hero")!
+cl.download(file_name: "hero", dest: '/tmp/hero')!
+cl.create_bucket(bucketname: "testashraf", buckettype: b2.BucketType.allprivate)!
+println(cl.list_buckets()!)
+cl.delete_bucket(bucketname: "testashraf")!
+println(cl.list_buckets()!)

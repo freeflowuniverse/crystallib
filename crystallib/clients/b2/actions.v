@@ -87,8 +87,104 @@ pub fn (mut self B2Client[Config]) upload(args_ UploadArgs) ! {
 	console.print_debug('upload b2:${self.instance}\n${args}')
 	self.py.exec(cmd: code, stdout: true)!
 }
+// download
+[params]
+pub struct DownloadArgs{
+pub mut:
+	file_name string
+	dest string
+	bucketname string
+}
 
-// TODO: download
-// TODO: download/upload of full dir (sync)
-// TODO: see how we can show progress when stdout chosen
-// TODO: create/delete bucket
+pub fn (mut self B2Client[Config]) download(args_ DownloadArgs) !{
+	mut args:=args_
+	mut cfg:=self.config()!
+	
+	if !os.exists(os.dir(args.dest)){
+		return error("cannot download ${args.file_name} to local file system: ${os.dir(args.dest)} doesn't exist")
+	}
+	if args.bucketname==""{
+		args.bucketname=cfg.bucketname
+	}
+	self.check_installed()!
+	code0:=self.pycode_init()!
+	mut code:='
+	bucket = b2_api.get_bucket_by_name("${args.bucketname}")
+	downloaded_file = bucket.download_file_by_name("${args.file_name}")
+	downloaded_file.save_to("${args.dest}")
+	'
+	code=code0+"\n"+texttools.dedent(code)
+
+	console.print_debug("download b2:${self.instance}\n$args")
+	self.py.exec(cmd:code,stdout:true)!
+
+}
+// bucket type enum
+pub enum BucketType {
+    allpublic
+    allprivate
+    
+}
+
+// Implement the to_string method for the Fruit enum
+pub fn (bt BucketType) to_string() string {
+    match bt {
+		.allpublic { return('allPublic')}
+		.allprivate { return ('allPrivate')}
+    }
+}
+
+
+// create Bucket
+[params]
+pub struct CreateBucketArgs{
+pub mut:
+	bucketname string
+	buckettype BucketType
+}
+
+pub fn (mut self B2Client[Config]) create_bucket(args_ CreateBucketArgs) !{
+	mut args:=args_
+	mut cfg:=self.config()!
+if args.bucketname==""{
+		args.bucketname=cfg.bucketname
+	}
+	self.check_installed()!
+	code0:=self.pycode_init()!
+	mut code:='
+	b2_api.create_bucket("${args.bucketname}", "${args.buckettype.to_string()}")
+	'
+	code=code0+"\n"+texttools.dedent(code)
+
+	console.print_debug("create Bucket b2:${self.instance}\n$args")
+	self.py.exec(cmd:code,stdout:true)!
+
+}
+// Delete Bucket
+[params]
+pub struct DeleteBucketArgs{
+pub mut:
+	bucketname string
+}
+
+pub fn (mut self B2Client[Config]) delete_bucket(args_ DeleteBucketArgs) !{
+	mut args:=args_
+	mut cfg:=self.config()!
+if args.bucketname==""{
+		args.bucketname=cfg.bucketname
+	}
+	self.check_installed()!
+	code0:=self.pycode_init()!
+	mut code:='
+	bucket = b2_api.get_bucket_by_name("${args.bucketname}")
+	b2_api.delete_bucket(bucket)
+	'
+	code=code0+"\n"+texttools.dedent(code)
+
+	console.print_debug("delete Bucket b2:${self.instance}\n$args")
+	self.py.exec(cmd:code,stdout:true)!
+
+}
+//TODO: download/upload of full dir (sync)
+//TODO: see how we can show progress when stdout chosen
+
