@@ -1,7 +1,7 @@
 
 ## knowledgetree
 
-3script actions which work with knowledgetree
+heroscript actions which work with knowledgetree
 
 - note the first argument tree is not needed and can be skipped
 

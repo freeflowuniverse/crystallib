@@ -1,4 +1,4 @@
-# 3script
+# heroscript
 
 Our core language of how we act within baobab.
 
@@ -23,7 +23,7 @@ Each action/macro starts with !, !!,!!!  or !!!!
   - format: $domain.$macroname
   - there are html and wiki macro's
   - they produce wiki or html
-  - if wiki once parsing 3script it will replace the macro with the wiki output, this happens recursive
+  - if wiki once parsing heroscript it will replace the macro with the wiki output, this happens recursive
   - if html, only relevant for when creating html pages
   - domain is optional, if not mentioned then is core.  which is our default
 
@@ -32,7 +32,7 @@ Each action/macro starts with !, !!,!!!  or !!!!
 > see [dsl](dsl.md) to understand which DSL's we have.
 
 
-when executing 3script the following order will always be maintained
+when executing heroscript the following order will always be maintained
 
 -  DAL
 -  WAL

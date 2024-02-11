@@ -13,6 +13,7 @@ pub mut:
 	parent    &ContextDB   @[skip; str: skip]
 }
 
+//get the value
 pub fn (mut db DB) get(name_ string) !string {
 	name := texttools.name_fix(name_)
 	mut datafile := db.path.file_get_new(name)!
@@ -26,6 +27,7 @@ pub fn (mut db DB) get(name_ string) !string {
 	return data
 }
 
+//set the key/value will go to filesystem, is organzed per context and each db has a name
 pub fn (mut db DB) set(name_ string, data_ string) ! {
 	mut data := data_
 	if data.len == 0 {
@@ -39,17 +41,20 @@ pub fn (mut db DB) set(name_ string, data_ string) ! {
 	datafile.write(data)!
 }
 
+//check if entry exists based on keyname
 pub fn (mut db DB) exists(name_ string) bool {
 	name := texttools.name_fix(name_)
 	return db.path.file_exists(name)
 }
 
+//delete an entry
 pub fn (mut db DB) delete(name_ string) ! {
 	name := texttools.name_fix(name_)
 	mut datafile := db.path.file_get(name) or { return }
 	datafile.delete()!
 }
 
+//get all keys of the db (e.g. per session)
 pub fn (mut db DB) keys() ![]string {
 	mut r := db.path.list(recursive: false)!
 	mut res := []string{}
@@ -59,6 +64,7 @@ pub fn (mut db DB) keys() ![]string {
 	return res
 }
 
+//get all keys with certain prefix
 pub fn (mut db DB) prefix(prefix string) ![]string {
 	mut res := []string{}
 	for item in db.keys()! {

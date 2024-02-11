@@ -1,7 +1,7 @@
 # Example initialization of my twinsafe
 
 
-This is used to configure my initial twin, othertwins can also come from the network but for now we get it from 3script actions.
+This is used to configure my initial twin, othertwins can also come from the network but for now we get it from heroscript actions.
 
 ```js
 

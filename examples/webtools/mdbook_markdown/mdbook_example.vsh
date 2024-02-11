@@ -9,16 +9,16 @@ import freeflowuniverse.crystallib.installers.web.mdbook as mdbookinstaller
 import os
 
 
-console.print_header('Lets use a 3script to generate an mdbook')
+console.print_header('Lets use a heroscript to generate an mdbook')
 mdbookinstaller.install()!
 
 
-//will create session and run a playbook from a 3script
+//will create session and run a playbook from a heroscript
 
 mut session := play.session_new(
 	context_name: "test"
 	interactive: true
-	url:"https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/script3"
+	url:"https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/heroscript"
 	run:true
 )!
 

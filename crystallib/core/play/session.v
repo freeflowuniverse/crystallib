@@ -13,7 +13,7 @@ import freeflowuniverse.crystallib.ui.console
 pub struct Session {
 mut:
 	nrtimes_processed           int
-	script3_preprocess          string
+	heroscript_preprocess          string
 	processed                   bool
 	playbook_priorities_defined []string
 pub mut:
@@ -77,7 +77,7 @@ pub mut:
 	prio      int = 10
 }
 
-// add playbook context to session
+// add playbook 3scri[ts (starting from path, text or git url)
 //```
 // path    string
 // text    string
@@ -118,16 +118,16 @@ pub fn (mut session Session) playbook_add(args_ PLayBookAddArgs) ! {
 	console.print_stdout(args.text)
 
 	// for internal processing
-	session.script3_preprocess += '\n' + texttools.dedent(args.text)
+	session.heroscript_preprocess += '\n' + texttools.dedent(args.text)
 }
 
-pub fn (mut session Session) process() ! {
+fn (mut session Session) process() ! {
 	if session.processed {
 		return
 	}
 	println('session ${session.name} process')
 	session.pre_process()!
-	session.plbook.add(text: session.script3_preprocess)!
+	session.plbook.add(text: session.heroscript_preprocess)!
 
 	priorities := {
 		1:  'core:*'
@@ -173,12 +173,12 @@ fn (mut self Session) key() string {
 }
 
 // get db of the session, is unique per session
-fn (mut self Session) db_get() !fskvs.DB {
+pub fn (mut self Session) db_get() !fskvs.DB {
 	return self.context.db_get('session_${self.name}')!
 }
 
 // get the db of the config, is unique per context
-fn (mut self Session) db_config_get() !fskvs.DB {
+pub fn (mut self Session) db_config_get() !fskvs.DB {
 	return self.context.db_get('config')!
 }
 
@@ -209,14 +209,14 @@ pub fn (mut self Session) check() ! {
 }
 
 pub fn (mut c Session) str() string {
-	return c.script3() or { "BUG: can't represent the object properly." }
+	return c.heroscript() or { "BUG: can't represent the object properly." }
 }
 
-pub fn (mut c Session) script3() !string {
+pub fn (mut c Session) heroscript() !string {
 	mut out := '!!core.session_define ${c.str2()}\n'
 	if !c.params.empty() {
 		out += '\n!!core.params_session_set\n'
-		out += texttools.indent(c.params.script3(), '    ') + '\n'
+		out += texttools.indent(c.params.heroscript(), '    ') + '\n'
 	}
 	if c.plbook.actions.len > 0 {
 		out += '${c.plbook}' + '\n'

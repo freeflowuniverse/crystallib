@@ -19,7 +19,7 @@ pub fn (mut self Codeblock) process() !int {
 			mut a := self.action_new('')
 			a.action = *action
 			a.processed = true
-			a.content = action.script3()
+			a.content = action.heroscript()
 		}
 		// now see if there is something left in codeblock, if yes add that one to the parent_elements
 		if pb.othertext.len > 0 {

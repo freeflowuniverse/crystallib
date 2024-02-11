@@ -23,7 +23,7 @@ pub mut:
 pub struct ContextConfigureArgs {
 pub mut:
 	cid            string = '000' // rid.cid or cid allone
-	name           string // a unique name in cid
+	name           string  // a unique name in cid
 	params         string
 	coderoot       string
 	interactive    bool
@@ -31,15 +31,14 @@ pub mut:
 	secret         string
 }
 
-// create context object, gets coderoot from before .
+// configure a context object
 // params: .
 // ```
 // cid          string = "000" // rid.cid or cid allone
-// name         string // a unique name in cid
+// name         string = "default" // a unique name in cid
 // params       string
 // coderoot	 string
 // interactive  bool
-// fsdb_encrypted bool	
 // secret string
 // ```
 //
@@ -80,10 +79,10 @@ fn context_configure(args_ ContextConfigureArgs) ! {
 pub struct ContextGetArgs {
 pub mut:
 	name        string // a unique name in cid
-	interactive bool
+	interactive bool = true
 }
 
-fn context_get(args_ ContextGetArgs) !Context {
+pub fn context_get(args_ ContextGetArgs) !Context {
 	mut args := args_
 
 	mut contextdb := fskvs.contextdb_get(
@@ -104,6 +103,7 @@ fn context_get(args_ ContextGetArgs) !Context {
 	return c
 }
 
+//return the gistructure as is being used in context
 pub fn (mut self Context) gitstructure() !&gittools.GitStructure {
 	mut gs2 := self.gitstructure_ or {
 		cr := self.coderoot()!
@@ -121,6 +121,7 @@ pub fn (mut self Context) gitstructure_reload() ! {
 	self.gitstructure_ = &gs
 }
 
+//return the coderoot as is used in context
 pub fn (mut self Context) coderoot() !string {
 	mut db := self.contextdb.db_get(dbname: 'context')!
 	coderoot := db.get('coderoot')!
@@ -161,23 +162,23 @@ pub fn (mut self Context) check() ! {
 }
 
 // pub fn (mut self Context) str() string {
-// 	return self.script3() or { "BUG: can't represent the object properly, I try raw" }
+// 	return self.heroscript() or { "BUG: can't represent the object properly, I try raw" }
 // }
 
 fn (mut self Context) str2() string {
 	return 'cid:${self.cid} name:${self.name}'
 }
 
-pub fn (mut self Context) script3() !string {
+pub fn (mut self Context) heroscript() !string {
 	mut out := '!!core.context_define ${self.str2()}\n'
 	if !self.params.empty() {
 		out += '\n!!core.params_context_set'
-		out += texttools.indent(self.params.script3(), '    ') + '\n'
+		out += texttools.indent(self.params.heroscript(), '    ') + '\n'
 	}
 	// if self.snippets.len > 0 {
 	// 	for key, snippet in self.snippets {
 	// 		out += '\n!!core.snippet guid:${self.guid()} name:${key}'
-	// 		out += texttools.indent(snippet.script3(),"    ") + '\n'
+	// 		out += texttools.indent(snippet.heroscript(),"    ") + '\n'
 	// 	}
 	// }
 	return out

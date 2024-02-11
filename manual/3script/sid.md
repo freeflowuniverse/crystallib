@@ -10,7 +10,7 @@
 
 ## gid = Global ID
 
-Identifies an object in unique way on global level, normally not needed in 3script, because 3script most often executes in context of a circle
+Identifies an object in unique way on global level, normally not needed in heroscript, because heroscript most often executes in context of a circle
 
 - gid = rid.cid.oid
   - rid = region id (regional internet on which circle is defined)

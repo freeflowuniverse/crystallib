@@ -3,7 +3,7 @@
 - a tool which takes dir as input
     - is just some v files which define models
 - outputs a generated code dir with
-    - 3script to memory for the model
+    - heroscript to memory for the model
     - supporting v script for manipulated model
     - name of actor e.g. ProjectManager, module would be project_manager
 
@@ -22,12 +22,12 @@
 
 - on factory
    - actions_process
-         - process 3script through path or text (params)
+         - process heroscript through path or text (params)
    - action_process
          - take 1 action as input
    - ${rootobjectname}_export
-         - export all known objects as 3script in chosen dir
-         - name of 3script would be ${rootobjectname}_define.md
+         - export all known objects as heroscript in chosen dir
+         - name of heroscript would be ${rootobjectname}_define.md
    - ${rootobjectname}_get(oid)
        - returns rootobject as copy
    - ${rootobjectname}_list()!

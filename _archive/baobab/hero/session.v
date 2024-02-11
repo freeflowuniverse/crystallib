@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.develop.gittools
 
 // a session is where in execute on actions inside a runner, a runner can have multiple sessions
-// as session result in a recipe which is a 3script which is fully included and has all actions readable what will be done
+// as session result in a recipe which is a heroscript which is fully included and has all actions readable what will be done
 pub struct Session {
 pub mut:
 	name     string

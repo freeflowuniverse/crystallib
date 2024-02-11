@@ -17,7 +17,7 @@ import sync
 
 // TODO: fix and uncomment
 // pub fn background(mut s spawner.Spawner, args BizModelArgs) !BizModelBackground {
-// 	///spawn the process and wait for 3scripts to be fed
+// 	///spawn the process and wait for heroscripts to be fed
 
 // 	// QUESTION: what is bizmodel_do supposed to be
 // 	mut t := s.thread_add('bizmodel', bizmodel_do)!

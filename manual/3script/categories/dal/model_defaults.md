@@ -24,7 +24,7 @@
   - properties:
     - print all properties by default
     - but if specified then only print specified properties
-  - format: 3script, wiki, json (3script default)
+  - format: heroscript, wiki, json (heroscript default)
 - !$rootobject.comment (will link to rootobject)
   - comment
   - author

@@ -11,30 +11,30 @@ pub fn cmd_run(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'run'
 		description: '
-## Powerfull command to run 3script
+## Powerfull command to run heroscript
 
-3script has numerous ways to execute actions using your hero tool.
+heroscript has numerous ways to execute actions using your hero tool.
 
 example:
 
-hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3
+hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/heroscript
 
 Can also do -e or -st to see sourcetree
 
-If you do -gp it will pull newest 3scripts from git and give error if there are local changes.
-If you do -gr it will pull newest 3scripts from git and overwrite local changes (careful).
+If you do -gp it will pull newest heroscripts from git and give error if there are local changes.
+If you do -gr it will pull newest heroscripts from git and overwrite local changes (careful).
 
 
 		'
 		required_args: 0
 		usage: ''
-		execute: cmd_3script_execute
+		execute: cmd_heroscript_execute
 	}
 	cmd_run_add_flags(mut cmd_run)
 
 	cmdroot.add_command(cmd_run)
 }
 
-fn cmd_3script_execute(cmd Command) ! {
+fn cmd_heroscript_execute(cmd Command) ! {
 	session_run_edit_sourcecode(cmd)!
 }

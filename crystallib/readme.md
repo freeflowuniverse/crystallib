@@ -38,7 +38,7 @@ bash install.sh
 
 ## Install Hero
 
-hero is our "hero" tool to execute 3script, deal with git, ...
+hero is our "hero" tool to execute heroscript, deal with git, ...
 
 hero will be installed in
 

@@ -6,14 +6,14 @@ import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct Config {
+	play.ConfigBase
 pub mut:
-	name    string
+	instance    string
+	description string
 	keyid   string
 	keyname string
 	appkey string
 }
-
-
 
 
 // return a config object even if from partial info
@@ -24,7 +24,7 @@ pub fn config(args Config) Config {
 // get the configurator, responsible for setting/getting config
 fn configurator(instance string, mut context play.Context) !play.Configurator[Config] {
 	mut c := play.configurator_new[Config](
-		name: 'b2client'
+		configtype: 'b2client'
 		instance: instance
 		context: context
 	)!
@@ -42,7 +42,6 @@ pub fn play_session(mut session play.Session) ! {
 	for mut action in session.plbook.find(filter: 'b2.define')! {
 		mut p := action.params
 		mut args := config()
-		args.instance = p.get_default('name', '')!
 		if args.instance == '' {
 			args.instance = p.get_default('instance', 'default')!
 		}

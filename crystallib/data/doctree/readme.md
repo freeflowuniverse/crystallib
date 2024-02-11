@@ -9,7 +9,7 @@ this tool can be seen like a pre-processor for collections of markdown docs whic
 - when a image is in other collection then it get's copied in the local collection (no re-use of images from other collections)
 - exports collections to a new dir all prepared to be used in another tool (e.g. mdbook)
 - make it easy for other tools to find an image, page, from out of memory
-- macro's get processed eg. html macro's (3script to nice html)
+- macro's get processed eg. html macro's (heroscript to nice html)
 - includes are execute, include pages in other pages
 
 the result is structure in memory or exported files in a new dir, representing the collection but processed
@@ -20,11 +20,11 @@ A tree is our main object which holds all the collections.
 
 ## Collections
 
-Are X nr of 3scripts, pages and images grouped, each collection has a name and location on normally a version controlled directory e.g. a github repo directory.
+Are X nr of heroscripts, pages and images grouped, each collection has a name and location on normally a version controlled directory e.g. a github repo directory.
 
 Content is
 
-- 3scripts = action statements, which can also represent data objects
+- heroscripts = action statements, which can also represent data objects
 - md pages (the source as can be used for websites, books, ...)
 - images (in multiple formats) or video's
 - files

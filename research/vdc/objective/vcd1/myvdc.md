@@ -1,6 +1,6 @@
 # example definition of our datacenter
 
-is a mix of markdown and 3script, is super easy to define.
+is a mix of markdown and heroscript, is super easy to define.
 
 
 ```javascript

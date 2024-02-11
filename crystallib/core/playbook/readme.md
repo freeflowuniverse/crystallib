@@ -1,4 +1,4 @@
-# 3script
+# heroscript
 
 is our small language which allows us to execute parser
 
@@ -35,7 +35,7 @@ Depending specified cid or circle or actor, we make a default selection
 
 ## way how to use for a module
 
-The idea is we can use 3script (our parser script) to do things with a module
+The idea is we can use heroscript (our parser script) to do things with a module
 
 The generic parser()... is used to make all happen.
 

@@ -40,22 +40,22 @@ mut db:=postgres.get(name:'default')!
 
 ```
 
-## configure through 3script
+## configure through heroscript
 
 ```v
 import freeflowuniverse.crystallib.clients.postgres
 
-script3:='
+heroscript:='
 !!postgresclient.define name:'default'
 	//TO IMPLEMENT
 '
 
 
-postgres.configure(script3:script3)!
+postgres.configure(heroscript:heroscript)!
 
 
 //can also be done through get directly
-mut cl:=postgres.get(reset:true,name:'default',script3:script3)
+mut cl:=postgres.get(reset:true,name:'default',heroscript:heroscript)
 
 ```
 

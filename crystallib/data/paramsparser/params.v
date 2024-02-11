@@ -131,7 +131,7 @@ pub fn (p Params) empty() bool {
 	return false
 }
 
-pub fn (p Params) script3() string {
+pub fn (p Params) heroscript() string {
 	mut out := ''
 	out = p.export(
 		presort: ['id', 'cid', 'oid', 'name']

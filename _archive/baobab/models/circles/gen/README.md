@@ -1,6 +1,6 @@
 # Circles Code Generation
 
-This module is responsible for generating definers and 3script action parser for circle models. Read [circles](circles/README.md) first.
+This module is responsible for generating definers and heroscript action parser for circle models. Read [circles](circles/README.md) first.
 
 ## Generating Definers
 

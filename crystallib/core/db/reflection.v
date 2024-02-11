@@ -135,7 +135,7 @@ pub fn (db DB) serialize[T](obj T) ![]u8 {
 	return enc.data
 }
 
-// serialize to 3script
+// serialize to heroscript
 pub fn (db DB) serialize_kwargs[T](obj T) !map[string]string {
 	mut kwargs := obj.Base.serialize_kwargs()!
 
@@ -184,15 +184,15 @@ pub fn (db DB) unserialize[T](data []u8) !T {
 	return obj
 }
 
-// serialize to 3script
-pub fn (db DB) serialize_3script[T](obj T) !string {
+// serialize to heroscript
+pub fn (db DB) serialize_heroscript[T](obj T) !string {
 	p := paramsparser.new_from_dict(db.serialize_kwargs[T](obj)!)!
 	return p.export(pre: '!!${db.objtype}.define ')
 }
 
-pub fn (db DB) unserialize_3script[T](txt string) ![]T {
+pub fn (db DB) unserialize_heroscript[T](txt string) ![]T {
 	mut res := []T{}
-	for r in db.base_decoder_3script(txt)! {
+	for r in db.base_decoder_heroscript(txt)! {
 		mut o := T{
 			Base: r.base
 		}

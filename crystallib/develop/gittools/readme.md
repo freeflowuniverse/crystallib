@@ -12,7 +12,7 @@ Git repo's get checked out under
 
 >TODO: need to check this multibranch could be its broken
 
-## 3script
+## heroscript
 
 - cmd      string // clone,commit,pull,push,delete
 - filter   string // if used will only show the repo's which have the filter string inside

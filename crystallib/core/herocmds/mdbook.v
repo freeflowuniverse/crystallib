@@ -16,7 +16,7 @@ pub fn cmd_mdbook(mut cmdroot Command) {
 
 example:
 
-hero mdbook -u https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/script3
+hero mdbook -u https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/heroscript
 
 If you do -gp it will pull newest book content from git and give error if there are local changes.
 If you do -gr it will pull newest book content from git and overwrite local changes (careful).
@@ -73,7 +73,7 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	}
 
 	if name == '' {
-		println('did not find name of book to generate, check in 3script or specify with --name')
+		println('did not find name of book to generate, check in heroscript or specify with --name')
 		return error(cmd.help_message())
 	}
 

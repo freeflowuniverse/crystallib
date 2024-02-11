@@ -1,4 +1,4 @@
-module B2
+module b2
 
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.lang.python
@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.lang.python
 pub struct B2Client {
 	play.Base
 pub mut:
-	py 
+	py  python.PythonEnv
 }
 
 @[params]
@@ -16,7 +16,18 @@ pub mut:
 	playargs ?play.PlayArgs
 }
 
-pub fn get(clientargs ClientArgs) !B2Client {
+@[params]
+pub struct InstanceNewArgs {
+pub mut:
+	instance string         @[required]
+	playargs ?PlayArgs
+}
+
+// get instance of our client params: .
+// instance string = "default".
+// playargs ?PlayArgs (defines how to get session and/or context)
+//
+pub fn get(clientargs play.InstanceNewArgs) !B2Client {
 	mut plargs := clientargs.playargs or { play.PlayArgs{} }
 	mut cfg := 
 	args := cfg.get()!

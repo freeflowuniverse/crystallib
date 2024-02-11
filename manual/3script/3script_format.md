@@ -1,6 +1,6 @@
-## 3Script Format
+## heroscript Format
 
-Below you can find an example of an action in 3script. 
+Below you can find an example of an action in heroscript. 
 
 
 ```js

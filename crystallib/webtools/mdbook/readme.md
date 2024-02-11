@@ -1,6 +1,6 @@
 
 
-## 3script
+## heroscript
 
 ### config
 

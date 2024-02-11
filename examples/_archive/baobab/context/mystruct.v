@@ -25,7 +25,7 @@ pub mut:
 pub struct DBArgs {
 pub mut:
 	circlename string
-	version    u8 = 1 // 1 is bin, 2 is json, 3 is 3script
+	version    u8 = 1 // 1 is bin, 2 is json, 3 is heroscript
 }
 
 pub fn db_new(args DBArgs) !MyDB {
@@ -137,7 +137,7 @@ pub fn (mydb MyDB) serialize(o MyStruct) ![]u8 {
 	// 	// e.add_string(data)
 	// }else if mydb.version==3{
 	// 	// e.add_u8(3)//this is version 1, for binary
-	// 	//3script
+	// 	//heroscript
 	// 	panic("not implemented")
 	// }else{
 	// 	panic("not implemented")
@@ -164,7 +164,7 @@ pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 	// 	// data2:=d.get_string()
 	// 	// o=json.decode(MyStruct,data2) or {MyStruct{}}
 	// }else if v==3{
-	// 	//3script
+	// 	//heroscript
 	// 	panic("not implemented")
 	// }else{
 	// 	panic("not implemented")

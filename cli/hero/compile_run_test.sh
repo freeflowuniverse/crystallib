@@ -22,7 +22,7 @@ rm -f hero
 
 hero init -redis
 
-# hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3 -e
-hero mdbook -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3 -e
+# hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/heroscript -e
+hero mdbook -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/heroscript -e
 
 echo "**OK**"

@@ -29,16 +29,16 @@ pub enum ActionType {
 }
 
 pub fn (action Action) str() string {
-	mut out := action.script3()
+	mut out := action.heroscript()
 	if !action.result.empty() {
 		out += '\n\nResult:\n'
-		out += texttools.indent(action.result.script3(), '    ')
+		out += texttools.indent(action.result.heroscript(), '    ')
 	}
 	return out
 }
 
-// serialize to 3script
-pub fn (action Action) script3() string {
+// serialize to heroscript
+pub fn (action Action) heroscript() string {
 	mut out := ''
 	if action.comments.len > 0 {
 		out += texttools.indent(action.comments, '// ')
@@ -52,10 +52,10 @@ pub fn (action Action) script3() string {
 		out += 'id:${action.id} '
 	}
 	if !action.params.empty() {
-		script3 := action.params.script3()
-		script3_lines := script3.split_into_lines()
-		out += script3_lines[0] + '\n'
-		for line in script3_lines[1..] {
+		heroscript := action.params.heroscript()
+		heroscript_lines := heroscript.split_into_lines()
+		out += heroscript_lines[0] + '\n'
+		for line in heroscript_lines[1..] {
 			out += '    ' + line + '\n'
 		}
 	}
@@ -82,7 +82,7 @@ pub enum ActionState {
 
 // get hash from the action, should always be the same for the same action
 pub fn (action Action) hashkey() string {
-	txt := action.script3()
+	txt := action.heroscript()
 	bs := blake2b.sum160(txt.bytes())
 	return bs.hex()
 }

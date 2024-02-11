@@ -4,25 +4,21 @@
 
 **The PlayArgs:**
 
-- script3           string
-- plbook            playbook.PlayBook
-- context           ?&Context
-- session           ?&Session
-- context_name      string = 'default'
-- session_name      string
-- coderoot          string
-- interactive       bool
-- fsdb_encrypted    bool
-- playbook_priorities  map[int]string //filter and give priority
-- playbook_core_execute bool = true //executes ssh & git actions
+- context             ?&Context      @[skip; str: skip]
+- session             ?&Session      @[skip; str: skip]
+- context_name        string = 'default'
+- session_name        string //default will be based on a date when run
+- interactive         bool = true //can ask questions, default on true
+- coderoot            string //this will define where all code is checked out
+- playbook_url                 string //url of heroscript to get and execute in current context
+- playbook_path                string //path of heroscript to get and execute
+- playbook_text                string //heroscript to execute
 
 ```v
 import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.develop.gittools
 
 mut session:=play.session_new(
-    context_name:'default'
-    session_name:''
     coderoot:'/tmp/code'
     interactive:true
 )!
@@ -69,7 +65,7 @@ pub fn play(args play.PlayArgs) ! {
 
 chech in params how to get values from params
 
-## 3script
+## heroscript
 
 ### for context, coderoot and snippet
 
@@ -95,18 +91,10 @@ chech in params how to get values from params
 
 # Context
 
-is a context which is passed when executing wal actions
+is a context which is passed when executing wal actions, is created automatically when creating session above
 
 ```v
 
-
-// cid          string = "000" // rid.cid or cid allone
-// name         string // a unique name in cid
-// params       string
-// coderoot	 string
-// interactive  bool
-// fsdb_encrypted bool	
-// script3      string //if context is created from a 3script
 
 mut context:=context.new(name:'mycontext',coderoot:'/tmp/code',interactive:true)!
 
@@ -118,7 +106,7 @@ context.session_new(name:'mysession')!
 
 ```
 
-## 3script
+## heroscript
 
 ```js
 !!core.context_set name:'mybooks' cid:'000' interactive:false fsdb_encrypted:true
@@ -128,4 +116,6 @@ context.session_new(name:'mysession')!
 !!core.snippet codeargs coderoot'~/hero/code' pull:true reset:false
 
 ```
+
+> TODO: is this still correct?
 

@@ -2,7 +2,7 @@
 
 ## Configuration
 
-All configuration is stored in ~/hero/config as 3scripts.
+All configuration is stored in ~/hero/config as heroscripts.
 
 See examples below what is understood, when loading (configuring) e.g. 3clone it will load these S3 configuration actions.
 

@@ -11,11 +11,11 @@ fn (mut session Session) pre_process() ! {
 	session.nrtimes_processed += 1
 
 	if session.nrtimes_processed > 20 {
-		println(session.script3_preprocess)
+		println(session.heroscript_preprocess)
 		panic('recursive behavior pre-process out of bound')
 	}
 
-	for line_ in session.script3_preprocess.split_into_lines() {
+	for line_ in session.heroscript_preprocess.split_into_lines() {
 		line := line_.replace('\t', '    ')
 		line_strip := line.trim_space()
 
@@ -71,13 +71,13 @@ fn (mut session Session) pre_process() ! {
 
 			name = texttools.name_fix(name)
 
-			session.context.snippets[name] = p2.script3().trim_space()
+			session.context.snippets[name] = p2.heroscript().trim_space()
 
 			continue
 		}
 		out << line
 	}
-	session.script3_preprocess = out.join_lines()
+	session.heroscript_preprocess = out.join_lines()
 	session.snippets_apply()!
 
 	if session.check_for_further_process() {
@@ -86,10 +86,10 @@ fn (mut session Session) pre_process() ! {
 }
 
 fn (mut session Session) check_for_further_process() bool {
-	if session.script3_preprocess.contains('!!include') {
+	if session.heroscript_preprocess.contains('!!include') {
 		return true
 	}
-	for line in session.script3_preprocess.split_into_lines() {
+	for line in session.heroscript_preprocess.split_into_lines() {
 		line_strip := line.trim_space()
 		if line_strip.starts_with("'''") || line_strip.starts_with('"""')
 			|| line_strip.starts_with('```') {
@@ -102,6 +102,6 @@ fn (mut session Session) check_for_further_process() bool {
 // apply snippets to the text given
 fn (mut session Session) snippets_apply() ! {
 	for key, snippet in session.context.snippets {
-		session.script3_preprocess = session.script3_preprocess.replace('{${key}}', snippet)
+		session.heroscript_preprocess = session.heroscript_preprocess.replace('{${key}}', snippet)
 	}
 }

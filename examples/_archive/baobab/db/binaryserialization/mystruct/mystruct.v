@@ -189,7 +189,7 @@ pub fn (mydb MyDB) serialize(o MyStruct) ![]u8 {
 	return e.data
 }
 
-// serialize to 3script
+// serialize to heroscript
 pub fn (mydb MyDB) serialize_kwargs(o MyStruct) !map[string]string {
 	mut kwargs := o.Base.serialize_kwargs()!
 	kwargs['nr'] = '${o.nr}'
@@ -218,22 +218,22 @@ pub fn (mydb MyDB) unserialize(data []u8) !MyStruct {
 	return o
 }
 
-// serialize to 3script
-pub fn (mydb MyDB) serialize_3script(o MyStruct) !string {
+// serialize to heroscript
+pub fn (mydb MyDB) serialize_heroscript(o MyStruct) !string {
 	p := paramsparser.new_from_dict(mydb.serialize_kwargs(o)!)!
 	ex := p.export(
 		pre: '!!${mydb.objtype}.define '
 		presort: ['gid', 'name', 'listu32']
 		postsort: ['mtime', 'ctime']
 	)
-	p2 := o.Base.remarks.serialize_3script(o.Base.gid.str())!
+	p2 := o.Base.remarks.serialize_heroscript(o.Base.gid.str())!
 
 	return '${ex}\n${p2}'
 }
 
-pub fn (mydb MyDB) unserialize_3script(txt string) ![]MyStruct {
+pub fn (mydb MyDB) unserialize_heroscript(txt string) ![]MyStruct {
 	mut res := []MyStruct{}
-	for r in mydb.base_decoder_3script(txt)! {
+	for r in mydb.base_decoder_heroscript(txt)! {
 		mut o := MyStruct{
 			Base: r.base
 		}

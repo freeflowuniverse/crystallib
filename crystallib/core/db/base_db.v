@@ -198,7 +198,7 @@ pub:
 	params paramsparser.Params
 }
 
-pub fn (db DB) base_decoder_3script(txt string) ![]DecoderActionItem {
+pub fn (db DB) base_decoder_heroscript(txt string) ![]DecoderActionItem {
 	mut res := []DecoderActionItem{}
 	mut remarks := map[string][]paramsparser.Params{} // key is the gid of the base obj
 

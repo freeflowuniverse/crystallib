@@ -35,7 +35,7 @@ pub fn (mut s Spawner) thread_add(name string, op fn (&sync.Channel, &sync.Chann
 	return s.channels_add(name, mut ch_send, mut ch_return)!
 }
 
-///spawn the process and wait for 3scripts to be fed
+///spawn the process and wait for heroscripts to be fed
 pub fn (mut s Spawner) channels_add(name string, mut ch_send sync.Channel, mut ch_return sync.Channel) !&OurThread {
 	mut ot := OurThread{
 		// ourthread:t

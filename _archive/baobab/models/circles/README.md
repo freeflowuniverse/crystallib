@@ -13,9 +13,9 @@ The twin's data structure unit.
 
 ## Code generation
 
-This module only requires the models of root objects that belong to circles to be defined. The circle methods for defining these objects (definers), and 3script parsers for each actions defining objects are generated.
+This module only requires the models of root objects that belong to circles to be defined. The circle methods for defining these objects (definers), and heroscript parsers for each actions defining objects are generated.
 
-To generate definer methods and 3Script action parsers for a model, run:
+To generate definer methods and heroscript action parsers for a model, run:
 
 `v run <path/to/crystallib>/circles/gen <model_name>`
 

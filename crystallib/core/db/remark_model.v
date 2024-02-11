@@ -183,16 +183,16 @@ pub fn (remarks Remarks) find_remark(args FindRemarkArgs) ![]Remark {
 	return res
 }
 
-pub fn (remarks Remarks) serialize_3script(gid string) !string {
+pub fn (remarks Remarks) serialize_heroscript(gid string) !string {
 	mut out := ''
 	for remark in remarks.remarks {
-		out += remark.serialize_3script(gid)! + '\n'
+		out += remark.serialize_heroscript(gid)! + '\n'
 	}
 	return out
 }
 
-// specifiy the gid for which we generate the 3script output
-pub fn (r Remark) serialize_3script(gid string) !string {
+// specifiy the gid for which we generate the heroscript output
+pub fn (r Remark) serialize_heroscript(gid string) !string {
 	author := r.author or { smartid.GID{} }
 	p := paramsparser.new_from_dict({
 		'content': r.content

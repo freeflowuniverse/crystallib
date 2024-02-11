@@ -34,12 +34,12 @@ mail.configure(name:'default',
         	smtp_passwd:'ssss')!
 ```
 
-## configure through 3script
+## configure through heroscript
 
 ```v
 import freeflowuniverse.crystallib.clients.mail
 
-script3:='
+heroscript:='
 !!mailclient.define name:'default'
 	mail_from:'something@something'
 	smtp_addr:'smtp-relay.brevo.com'
@@ -49,11 +49,11 @@ script3:='
 '
 
 
-mail.configure(script3:script3)!
+mail.configure(heroscript:heroscript)!
 
 
 //can also be done through get directly
-mut cl:=mail.get(reset:true,name:'default',script3:script3)
+mut cl:=mail.get(reset:true,name:'default',heroscript:heroscript)
 
 ```
 

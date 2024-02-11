@@ -52,10 +52,10 @@ fn do() ! {
 	o3data := mydb.serialize(o3)!
 	assert o1data == o3data
 
-	script3 := mydb.serialize_3script(o1)!
-	deserialized_3script := mydb.unserialize_3script(script3)!
+	heroscript := mydb.serialize_heroscript(o1)!
+	deserialized_heroscript := mydb.unserialize_heroscript(heroscript)!
 
-	are_equal(o1, deserialized_3script[0])
+	are_equal(o1, deserialized_heroscript[0])
 
 	mut objs := mydb.find(
 		name: 'my name'

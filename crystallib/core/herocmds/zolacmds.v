@@ -17,7 +17,7 @@ pub fn cmd_zola(mut cmdroot Command) {
 
 example:
 
-hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/script3 -r
+hero run -u https://git.ourworld.tf/threefold_coop/info_asimov/src/branch/main/heroscript -r
 
 The -r will run it, can also do -e or -st to see sourcetree
 

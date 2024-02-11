@@ -2,35 +2,41 @@ module play
 
 import json
 
+ConfigBase
+
 @[heap]
 pub struct Configurator[T] {
 pub mut:
 	context  &Context
-	name     string // e.g. sshclient
+	configtype     string // e.g. sshclient
 	instance string
+	description string
 }
 
 @[params]
 pub struct ConfiguratorArgs {
 pub mut:
 	context  &Context
-	name     string
+	configtype     string
 	instance string   @[required]
 }
 
 // name is e.g. mailclient (the type of configuration setting)
 // instance is the instance of the config e.g. kds
-// the context defines the context in which we operate
+// the context defines the context in which we operate, is optional will get the default one if not set
 pub fn configurator_new[T](args ConfiguratorArgs) !Configurator[T] {
+	mut context:= args.context or {}
+
+
 	return Configurator[T]{
 		context: args.context
-		name: args.name
+		configtype: args.configtype
 		instance: args.instance
 	}
 }
 
 fn (mut self Configurator[T]) config_key() string {
-	return '${self.name}_config_${self.instance}'
+	return '${self.configtype}_config_${self.instance}'
 }
 
 pub fn (mut self Configurator[T]) set(args_ T) ! {

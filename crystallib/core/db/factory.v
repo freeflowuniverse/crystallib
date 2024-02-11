@@ -14,7 +14,7 @@ __global (
 pub struct DB {
 pub mut:
 	cid        smartid.CID
-	version    u8 // 1 is binary, 2 is json, 3 is 3script
+	version    u8 // 1 is binary, 2 is json, 3 is heroscript
 	circlename string
 	objtype    string
 	sqlitedb   sqlite.DB

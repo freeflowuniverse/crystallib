@@ -14,7 +14,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		required: false
 		name: 'path'
 		abbrev: 'p'
-		description: 'path where 3scripts can be found.'
+		description: 'path where heroscripts can be found.'
 	})
 
 	cmd_run.add_flag(Flag{
@@ -36,7 +36,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		required: false
 		name: 'url'
 		abbrev: 'u'
-		description: 'url where 3script can be found.'
+		description: 'url where heroscript can be found.'
 	})
 
 	cmd_run.add_flag(Flag{

@@ -30,8 +30,8 @@ fn (self Action) markdown() string {
 	// if self.content.len>0{
 	// 	return self.content
 	// }
-	// println(self.action.script3())
-	return self.action.script3()
+	// println(self.action.heroscript())
+	return self.action.heroscript()
 }
 
 fn (self Action) html() string {

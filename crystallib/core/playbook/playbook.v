@@ -40,7 +40,7 @@ fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
 }
 
 pub fn (mut plbook PlayBook) str() string {
-	return plbook.script3() or { 'Cannot visualize playbook properly.\n${plbook.actions}' }
+	return plbook.heroscript() or { 'Cannot visualize playbook properly.\n${plbook.actions}' }
 }
 
 @[params]
@@ -76,18 +76,18 @@ pub fn (mut plbook PlayBook) actions_sorted(args SortArgs) ![]&Action {
 }
 
 @[params]
-pub struct Script3Args {
+pub struct heroscriptArgs {
 	show_done bool = true
 }
 
-// serialize to 3script
-pub fn (mut plbook PlayBook) script3(args Script3Args) !string {
+// serialize to heroscript
+pub fn (mut plbook PlayBook) heroscript(args heroscriptArgs) !string {
 	mut out := ''
 	for action in plbook.actions_sorted()! {
 		if args.show_done == false && action.done {
 			continue
 		}
-		out += '${action.script3()}\n'
+		out += '${action.heroscript()}\n'
 	}
 	if plbook.othertext.len > 0 {
 		out += '${plbook.othertext}'
@@ -183,7 +183,7 @@ pub fn (mut plbook PlayBook) empty_check() ! {
 		}
 	}
 	if actions.len > 0 {
-		msg := plbook.script3(show_done: false)!
+		msg := plbook.heroscript(show_done: false)!
 		return error('There are actions left to execute, see below:\n\n${msg}\n\n')
 	}
 }

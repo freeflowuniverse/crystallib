@@ -12,9 +12,9 @@ pub mut:
 	session_name        string //default will be based on a date when run
 	interactive         bool = true //can ask questions, default on true
 	coderoot            string //this will define where all code is checked out
-	playbook_url                 string //url of 3script to get and execute in current context
-	playbook_path                string //path of 3script to get and execute
-	playbook_text                string //3script to execute
+	playbook_url                 string //url of heroscript to get and execute in current context
+	playbook_path                string //path of heroscript to get and execute
+	playbook_text                string //heroscript to execute
 	// playbook_priorities map[int]string
 }
 

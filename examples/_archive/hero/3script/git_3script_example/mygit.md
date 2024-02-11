@@ -1,7 +1,7 @@
 
 ## gittools
 
-the arguments for git_do can be used for 3script
+the arguments for git_do can be used for heroscript
 
 ```js
 gittools.git_do 
@@ -27,7 +27,7 @@ gittools.git_get
     pullreset      bool // means we will force a pull and reset old content	
 ```
 
-3script example
+heroscript example
 
 ```js
 !!gittools.git_get coderoot:'/tmp/code4' pullreset:1 url:'https://github.com/threefoldfoundation/home'

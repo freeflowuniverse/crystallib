@@ -13,7 +13,7 @@ const (
 	example_file_name = 'echarts.min.js'
 	example_file_dest = ''
 
-	script_path       = '${os.dir(@FILE)}/3script.md'
+	script_path       = '${os.dir(@FILE)}/heroscript.md'
 )
 
 fn main() {

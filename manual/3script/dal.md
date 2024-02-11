@@ -10,12 +10,12 @@
     - id
   - $domain.$rootobjectname.get (returns the data)
     - id
-    - format: 3script or json
+    - format: heroscript or json
   - $domain.$rootobjectname.list (returns id's and name's of found rootobjects)
     - namefilter: part of name in filter format see [filtering](filtering.md)
     - includefilter: see [tags](tags.md)
     - excludefilter: see [tags](tags.md)
-    - format: 3script or json
+    - format: heroscript or json
   - example rootobjectnames: project, user, contact, story, ...
   - domain is optional, if not mentioned then is core.  which is our default
   - id:'***' automatically fill in id

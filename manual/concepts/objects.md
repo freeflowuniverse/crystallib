@@ -7,7 +7,7 @@ example of 3 methods each of such rootobjects need to have
 ```golang
 
 pub fn (mut c Context) str() string {
-	return c.script3() or {"BUG: can't represent the object properly, I try raw.\n$c"}
+	return c.heroscript() or {"BUG: can't represent the object properly, I try raw.\n$c"}
 }
 
 fn (mut c Context) str2() string {
@@ -15,12 +15,12 @@ fn (mut c Context) str2() string {
 }
 
 //if executed needs to redefine this object
-pub fn (mut c Context) script3() !string {
+pub fn (mut c Context) heroscript() !string {
 	mut out:="!!core.context_define ${c.str2()}\n"
 	mut params:=c.params()!
 	if ! params.empty(){
 		out+="\n!!core.context_params guid:${c.guid()}\n"
-		out+=params.script3()+"\n"
+		out+=params.heroscript()+"\n"
 	}
 	return out
 }

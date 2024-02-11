@@ -27,7 +27,7 @@ fn test_parse_1() {
 	assert myaction.id == 1
 
 	assert a.hashkey() == '89444b5d8ea4f7ded66cced6067b7c822cecf1c3'
-	c := a.script3()!
+	c := a.heroscript()!
 	b := new(text: c) or { panic(err) }
 
 	assert b.hashkey() == '89444b5d8ea4f7ded66cced6067b7c822cecf1c3'

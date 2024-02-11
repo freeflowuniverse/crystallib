@@ -52,7 +52,7 @@ struct Base {
 pub enum SerializationType{
 	bin
 	json
-	script3
+	heroscript
 }
 
 //remarks:

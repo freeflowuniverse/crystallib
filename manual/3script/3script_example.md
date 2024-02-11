@@ -1,6 +1,6 @@
 # Action files
 
-3script is normally put in a markdown file.
+heroscript is normally put in a markdown file.
 
 ### Example 
 

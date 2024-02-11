@@ -13,7 +13,7 @@ pub mut:
 	host     string = 'localhost'
 	password string
 	dbname   string = 'postgres'
-	script3  string
+	heroscript  string
 	reset    bool
 }
 

@@ -6,7 +6,7 @@ module doctree
 // import freeflowuniverse.crystallib.core.pathlib
 
 // need to become part of baobab.actionexecutor...
-// and not everything file,page, ... all doesn't need to be added, that will never happen from a 3script
+// and not everything file,page, ... all doesn't need to be added, that will never happen from a heroscript
 
 // pub fn (mut tree Tree) execute(parser collection.Actions) ! {
 // 	for action in parser.actions {

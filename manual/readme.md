@@ -4,7 +4,7 @@
 hero run -u https://github.com/freeflowuniverse/crystallib/blob/development/manual/readme.md -r
 ```
 
-### 3script
+### heroscript
 
 this is example rscript which will build the manual, above cmd can run it.    
 

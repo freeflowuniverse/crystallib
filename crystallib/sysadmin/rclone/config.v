@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 const configfile = '${HOME}/.config/rclone/rclone.conf'
 
 // will look for personal configuration file in ~/hero/config .
-// this file is in 3script format and will have all required info to configure rclone
+// this file is in heroscript format and will have all required info to configure rclone
 //```
 // !!config.s3server_define
 //     name:'tf_write_1'

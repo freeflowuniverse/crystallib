@@ -9,7 +9,7 @@ All define but these actions are declarative and define the state we are working
 
 once executing this it means the myvdc is removed and will be automatically recreated because is still defined declarative
 
-to remove from the declarative behavior, we just need to remove the relevant 3script actions
+to remove from the declarative behavior, we just need to remove the relevant heroscript actions
 
 ```javascript
 

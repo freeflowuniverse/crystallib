@@ -23,7 +23,7 @@ pub mut:
 pub enum SerializationType {
 	bin
 	json
-	script3
+	heroscript
 }
 
 pub fn (mut o Base) json() string {
@@ -34,7 +34,7 @@ pub fn serializationtype_u8(t SerializationType) u8 {
 	match t {
 		.bin { return 0 }
 		.json { return 1 }
-		.script3 { return 2 }
+		.heroscript { return 2 }
 	}
 	return 255
 }

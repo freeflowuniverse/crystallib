@@ -22,17 +22,17 @@ the docker building/deploying happens by means of sal in V Crystallib
     
 ```
 
-## build from a 3script
+## build from a heroscript
 
 ```javascript
 
 !!vdc.image_define vdc:'myvdc' name:'mybuild' 
     vm:'containerhost'
-    build_3script:'https://raw.githubusercontent.com/threefoldtech/3bot/development/my3script.v'
+    build_heroscript:'https://raw.githubusercontent.com/threefoldtech/3bot/development/myheroscript.v'
     image_name:'myimage'
 ```
 
-above will execute the 3script from the defined location, this needs to result in a local image with name 'myimage'
+above will execute the heroscript from the defined location, this needs to result in a local image with name 'myimage'
 
 ## build from a V Build script
 
@@ -41,7 +41,7 @@ above will execute the 3script from the defined location, this needs to result i
 !!vdc.docker_define vdc:'myvdc' name:'mybuild' 
     vm:'containerhost'
     tcp_ports:'888:80,889:443'  //map outside 888 to inside 80, 889 to 443
-    build_3script:'https://raw.githubusercontent.com/threefoldtech/3bot/development/mybuild.v'
+    build_heroscript:'https://raw.githubusercontent.com/threefoldtech/3bot/development/mybuild.v'
     image_name:'myimage2'
 ```
 
