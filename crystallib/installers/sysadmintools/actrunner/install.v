@@ -15,14 +15,14 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '0.2.6'
 
-	res := os.execute('${osal.profile_path_source_and()} actrunner version')
+	res := os.execute('${osal.profile_path_source_and()} actrunner -v')
 	if res.exit_code == 0 {
-		r := res.output.split_into_lines().filter(it.contains('actrunner v'))
+		r := res.output.split_into_lines().filter(it.contains('act_runner version'))
 		if r.len != 1 {
 			return error("couldn't parse actrunner version, expected 'actrunner 0' on 1 row.\n${res.output}")
 		}
 
-		v := texttools.version(r[0].all_after('actrunner'))
+		v := texttools.version(r[0].all_after('act_runner version'))
 		if v < texttools.version(version) {
 			args.reset = true
 		}

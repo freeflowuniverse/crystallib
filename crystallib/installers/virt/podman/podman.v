@@ -15,7 +15,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '4.8.3'
+	version := '4.9.2'
 
 	// if  args.uninstall {
 	// 		console.print_header('uninstall podman')
@@ -68,22 +68,41 @@ pub fn install(args_ InstallArgs) ! {
 		osal.execute_interactive(cmd)!
 		console.print_header(' - pkg installed.')
 	} else if osal.platform() in [.alpine, .arch, .ubuntu] {
-		if osal.cputype() == .arm {
-			url = 'https://github.com/containers/podman/releases/download/v${version}/podman-remote-static-linux_arm64.tar.gz'
-		} else {
-			url = 'https://github.com/containers/podman/releases/download/v${version}/podman-remote-static-linux_amd64.tar.gz'
-		}
-		dest = '/tmp/podman.tar.gz'
 
-		console.print_header('download ${url}')
-		osal.download(
-			url: url
-			minsize_kb: 75000
-			reset: args.reset
-			expand_dir: '/tmp/podman'
-		)!
+	
+		osal.package_install("docker,podman-docker,buildah,netavark")!
+		osal.exec(cmd:"systemctl start podman.socket")!
 
-		panic('implement')
+		//TODO:
+		//add: unqualified-search-registries = ["docker.io"]
+		//to: /etc/containers/registries.conf
+		//totest: podman run --name basic_httpd -dt -p 8080:80/tcp docker.io/nginx
+		//curl http://localhost:8080
+		//https://github.com/containers/podman/blob/main/docs/tutorials/podman_tutorial.md
+
+
+		// mut t:="arm"
+		// if osal.cputype() == .arm {
+		// 	url = 'https://github.com/containers/podman/releases/download/v${version}/podman-remote-static-linux_arm64.tar.gz'
+		// } else {
+		// 	t="amd"
+		// 	url = 'https://github.com/containers/podman/releases/download/v${version}/podman-remote-static-linux_amd64.tar.gz'
+		// }
+		// dest = '/tmp/podman.tar.gz'
+
+		// console.print_header('download ${url}')
+		// osal.download(
+		// 	url: url
+		// 	minsize_kb: 18000
+		// 	reset: args.reset
+		// 	expand_dir: '/tmp/podman'
+		// )!
+
+		// osal.cmd_add(
+		// 	cmdname: 'podman'
+		// 	source: "/tmp/podman/bin/podman-remote-static-linux_${t}64"
+		// )!
+
 	}
 
 	if exists()! {

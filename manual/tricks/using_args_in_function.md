@@ -1,4 +1,4 @@
-# git url usage
+# example how to use args in a function
 
 Below you can see a snippet which demonstrates how you have a params struct with path and git_url.
 

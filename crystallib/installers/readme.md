@@ -23,7 +23,7 @@ pub fn  install() ! {
 	console.print_header('$node.name: install $installername')
 	if !osal.done_exists('install_${installername}') {
 		if osal.platform() == .ubuntu{
-			package_install(name:"imagemagick")!
+			osal.package_install(name:"imagemagick")!
 		} else {
 			panic('only ubuntu and osx supported for now')
 		}
