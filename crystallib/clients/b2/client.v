@@ -18,27 +18,17 @@ pub mut:
 
 pub fn get(clientargs ClientArgs) !B2Client {
 	mut plargs := clientargs.playargs or { play.PlayArgs{} }
-	mut cfg := configurator(clientargs.instance, plargs)!
+	mut cfg := 
 	args := cfg.get()!
 
 	mut py := python.new(name: 'default')! // a python env with name test
 	py.update()!
 
-	// println(args)
-	mut smtp_client := smtp.new_client(
-		server: args.smtp_addr
-		port: args.smpt_port
-		username: args.smtp_login
-		password: args.smtp_passwd
-		from: args.B2_from
-		ssl: args.ssl
-		starttls: args.starttls
-	)!
 	// println(smtp_client)
 	mut client := B2Client{
 		instance: args.instance
-		smtp_client: smtp_client
 		session: plargs.session
+		config: configurator(clientargs.instance, plargs)!
 	}
 	return client
 }

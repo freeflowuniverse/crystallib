@@ -21,8 +21,8 @@ pub fn config(args Config) Config {
 	return args
 }
 
-// get the configurator
-pub fn configurator(instance string, mut context play.Context) !play.Configurator[Config] {
+// get the configurator, responsible for setting/getting config
+fn configurator(instance string, mut context play.Context) !play.Configurator[Config] {
 	mut c := play.configurator_new[Config](
 		name: 'b2client'
 		instance: instance
