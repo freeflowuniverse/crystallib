@@ -25,6 +25,23 @@ if [ -z "$url" ]; then
     exit 1
 fi
 
+zprofile="${HOME}/.zprofile"
+hero_bin_path="${HOME}/hero/bin"
+
+if [ -f "$zprofile" ]; then
+    # Check if the PATH statement for ~/hero/bin exists, and remove it
+    if grep -q "$hero_bin_path" "$zprofile"; then
+        # Remove any existing PATH statement that adds ~/hero/bin
+        sed -i "/$hero_bin_path/d" "$zprofile"
+    fi
+else
+    # If ~/.zprofile does not exist, create the file
+    touch "$zprofile"
+fi
+# Add ~/hero/bin to the PATH statement in ~/.zprofile
+echo "export PATH=\$PATH:$hero_bin_path" >> "$zprofile"
+
+
 # Output the selected URL
 echo "Download URL for your platform: $url"
 
