@@ -12,7 +12,7 @@ pub struct CustomCode {
 
 pub struct Comment {
 	text     string
-	is_multi bool
+	is_multi bool 
 }
 
 pub struct Struct {
@@ -21,6 +21,8 @@ pub mut:
 	description string
 	mod         string
 	is_pub      bool
+	embeds		[]Struct
+	generics	map[string]string
 	attrs       []Attribute
 	fields      []StructField
 }
@@ -41,6 +43,7 @@ pub:
 	default     string
 	is_pub      bool
 	is_mut      bool
+	is_ref      bool
 	anon_struct Struct // sometimes fields may hold anonymous structs
 	typ         Type
 pub mut:
@@ -58,6 +61,7 @@ pub struct Function {
 pub:
 	name     string
 	receiver Param
+	is_pub bool
 	mod      string
 pub mut:
 	description string
@@ -72,6 +76,7 @@ pub:
 	required    bool
 	mutable     bool
 	is_shared   bool
+	is_optional bool
 	description string
 	name        string
 	typ         Type
@@ -106,4 +111,11 @@ pub struct Import {
 pub mut:
 	mod   string
 	types []string
+}
+
+pub struct Module {
+	name    string
+	files   []CodeFile
+	model   CodeFile
+	methods CodeFile
 }
