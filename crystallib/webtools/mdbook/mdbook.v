@@ -227,10 +227,11 @@ pub fn (mut book MDBook) generate() ! {
 
 fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
-	l := loader()!
+	mut l := loader()!
+	l.load()!
 	for item in l.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		// console.print_debug(' embed: ${dpath}')
+		console.print_debug(' embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}
