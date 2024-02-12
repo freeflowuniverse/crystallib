@@ -11,27 +11,26 @@ pub mut:
 	smtp_client smtp.Client
 }
 
-
-pub fn get(args play.PlayArgs) !MailClient {
-	args := cfg.get()!
-	// println(args)
-	mut smtp_client := smtp.new_client(
-		server: args.smtp_addr
-		port: args.smpt_port
-		username: args.smtp_login
-		password: args.smtp_passwd
-		from: args.mail_from
-		ssl: args.ssl
-		starttls: args.starttls
-	)!
-	// println(smtp_client)
-	mut client := MailClient{
-		instance: args.instance
-		smtp_client: smtp_client
-		session: plargs.session
-	}
-	return client
+// pub fn get(args play.PlayArgs) !MailClient {
+// 	panic("implement using new way how to do the config mgmt")
+println(args)
+mut smtp_client := smtp.new_client(
+	server: args.smtp_addr
+	port: args.smpt_port
+	username: args.smtp_login
+	password: args.smtp_passwd
+	from: args.mail_from
+	ssl: args.ssl
+	starttls: args.starttls
+)!
+println(smtp_client)
+mut client := MailClient{
+	instance: args.instance
+	smtp_client: smtp_client
+	session: plargs.session
 }
+// 	return client
+// }
 
 @[params]
 pub struct SendArgs {

@@ -9,8 +9,6 @@ pub mut:
 	instance string
 }
 
-
-
 // return a session which has link to the actions and params on context and session level
 // the session also has link to fskvs (filesystem key val stor and gitstructure if relevant)
 //```
@@ -82,12 +80,12 @@ pub fn (mut self Base[T]) config_delete() ! {
 
 // init our class with the base playargs
 pub fn (mut self Base[T]) init(playargs ?PlayArgs) ! {
-
 	mut plargs := playargs or {
 		mut plargs0 := PlayArgs{}
 		plargs0
 	}
-	if self.instance==""{
+
+	if self.instance == '' {
 		self.instance = plargs.instance
 	}
 	mut session := plargs.session or {

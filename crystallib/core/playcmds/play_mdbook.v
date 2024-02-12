@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.data.doctree
 
 pub fn play_mdbook(mut session play.Session) ! {
-	mut buildroot := ''	
+	mut buildroot := ''
 	mut publishroot := ''
 	mut coderoot := ''
 	// mut install := false
@@ -64,14 +64,11 @@ pub fn play_mdbook(mut session play.Session) ! {
 		buildroot_book := '${buildroot}/${name}'
 		tree.export(dest: buildroot_book, reset: true)!
 
-		
+		mut mdbooks := mdbook.get(instance: name, session: &session)!
 
-		mut mdbooks := mdbook.get(instance:name,session:&session)!
-
-		mut cfg:=mdbooks.config()!
-		cfg.path_build= buildroot
-		cfg.path_publish= publishroot
-
+		mut cfg := mdbooks.config()!
+		cfg.path_build = buildroot
+		cfg.path_publish = publishroot
 
 		mdbooks.generate(
 			doctree_path: buildroot_book

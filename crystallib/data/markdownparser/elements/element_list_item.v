@@ -8,7 +8,6 @@ pub mut:
 	indent int
 }
 
-
 pub fn (mut self ListItem) process() !int {
 	if self.processed {
 		return 0
@@ -34,5 +33,3 @@ pub fn (self ListItem) html() string {
 	panic('implement')
 	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
 }
-
-

@@ -25,18 +25,16 @@ pub mut:
 }
 
 pub fn (mut collection Collection) error(args CollectionError) {
- 
- 	ce:=CollectionError{
+	ce := CollectionError{
 		path: args.path
 		msg: args.msg
 		cat: args.cat
 	}
 
-	if !(ce in collection.errors){
+	if ce !in collection.errors {
 		collection.errors << ce
 	}
 
-	 
 	console.print_stderr(args.msg)
 }
 

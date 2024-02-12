@@ -68,7 +68,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		// 	continue
 		// }
 
-
 		if mut llast is elements.Paragraph || mut llast is elements.List {
 			// if line_is_list(line) {
 			// 	mut e := doc.list_new(line)
@@ -176,5 +175,3 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 	}
 	doc.process()!
 }
-
-

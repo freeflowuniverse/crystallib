@@ -3,7 +3,6 @@ module zola
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
-
 import freeflowuniverse.crystallib.ui.console
 import vweb
 import os
@@ -20,7 +19,7 @@ pub mut:
 	collections  []ZSiteCollection
 	gitrepokey   string
 	// tailwind     tailwind.Tailwind
-	tailwindcss  bool // whether sie uses tailwindcss
+	tailwindcss bool // whether sie uses tailwindcss
 }
 
 pub struct SiteConfig {
@@ -52,7 +51,6 @@ pub fn (mut sites Zola) site_new(args SiteConfig) !&ZolaSite {
 		path_publish: pathlib.get_dir(
 			path: args.path_publish
 		)!
-
 	}
 	sites.sites << &site
 	return &site
@@ -125,8 +123,6 @@ pub fn (mut site ZolaSite) serve(params ServeParams) ! {
 	}
 	for {}
 }
-
-
 
 fn (mut site ZolaSite) template_install() ! {
 	config := $tmpl('./templates/config.toml')

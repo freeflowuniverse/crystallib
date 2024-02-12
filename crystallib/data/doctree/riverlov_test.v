@@ -7,10 +7,9 @@ const mydata_path = os.dir(@FILE) + '/testdata/collections'
 fn test_scan_internal() ! {
 	mut tree := tree_create()!
 
-	tree.scan(path:doctree.mydata_path)!
+	tree.scan(path: doctree.mydata_path)!
 
-	mut p:=tree.page_get("riverlov:aboutus.md")!
-
+	mut p := tree.page_get('riverlov:aboutus.md')!
 
 	// mut p:=tree.page_get("riverlov:introduction.md")!
 
@@ -19,7 +18,7 @@ fn test_scan_internal() ! {
 	// dest        string // if we want to relocate images for links
 	// c1:=p.doc(mut heal_export:true)!
 
-	tree.export(dest:"/tmp/remove")!
+	tree.export(dest: '/tmp/remove')!
 
 	// println(c1)
 	// println(c1.markdown())
@@ -28,8 +27,7 @@ fn test_scan_internal() ! {
 	// 	panic("s")
 	// }
 
-	//TODO: need to do some tests, in how it need to looks like, check files & images are there in /tmp/remove
+	// TODO: need to do some tests, in how it need to looks like, check files & images are there in /tmp/remove
 
-	//TODO: remove test dir
-
+	// TODO: remove test dir
 }

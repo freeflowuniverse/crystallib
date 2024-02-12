@@ -3,7 +3,7 @@ module play
 @[params]
 pub struct PlayArgs {
 pub mut:
-	instance 	  string
+	instance      string
 	context       ?&Context @[skip; str: skip]
 	session       ?&Session @[skip; str: skip]
 	context_name  string = 'default'
@@ -16,8 +16,6 @@ pub mut:
 	// playbook_priorities map[int]string
 }
 
-
 pub fn get_play_args(args PlayArgs) PlayArgs {
 	return args
 }
-

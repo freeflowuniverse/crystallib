@@ -6,15 +6,12 @@ import freeflowuniverse.crystallib.core.pathlib
 
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 
-//IMPORTANT: we should never change the files on original location, copy out first
-
+// IMPORTANT: we should never change the files on original location, copy out first
 
 fn copy_to_testloc() ! {
 	// put back the original data
-	mut p := pathlib.get_dir(path: doctree.collections_path) or {
-		panic("cant find collections")
-	}
-	p.copy(dest: "/tmp/tmp_doctree", delete: true)! 
+	mut p := pathlib.get_dir(path: doctree.collections_path) or { panic('cant find collections') }
+	p.copy(dest: '/tmp/tmp_doctree', delete: true)!
 }
 
 fn test_link_update() ! {}
@@ -24,7 +21,7 @@ fn test_fix_external_link() ! {}
 fn test_fix() ! {
 	copy_to_testloc()!
 	mut tree := tree_create(cid: 'abc', name: 'test')!
-	tree.scan(path: "/tmp/tmp_doctree")!
+	tree.scan(path: '/tmp/tmp_doctree')!
 
 	mut test_collection := tree.collection_get('broken')!
 	mut page_path := pathlib.get('/tmp/tmp_doctree/wrong_links/page_with_wrong_links.md')
@@ -58,7 +55,7 @@ fn test_fix() ! {
 }
 
 // tests collection errors are properly created
-//TODO: get from copied locations
+// TODO: get from copied locations
 fn test_errors_created() {
 	/*
 		errors could happen because of:
@@ -74,7 +71,7 @@ fn test_errors_created() {
 	assert collection.errors.len == 2
 	assert collection.errors.filter(it.cat == .file_double).len == 1
 	assert collection.errors.filter(it.cat == .page_double).len == 1
-	collection.errors_report(doctree.testdata_path + '/errors/errors.md')!
+	collection.errors_report(testdata_path + '/errors/errors.md')!
 }
 
 /* TOCHECK:

@@ -10,7 +10,7 @@ pub enum PageStatus {
 
 @[heap]
 pub struct Page {
-	tree            &Tree    @[str: skip]
+	tree &Tree @[str: skip]
 pub mut:
 	name    string // received a name fix
 	path    pathlib.Path
@@ -47,7 +47,7 @@ fn (mut page Page) fix() ! {
 @[params]
 pub struct PageExportArgs {
 pub mut:
-	dest string [required]
+	dest string @[required]
 }
 
 // save the page on the requested dest
@@ -57,11 +57,11 @@ pub fn (mut page Page) export(args_ PageExportArgs) ! {
 	// if args.dest == '' {
 	// 	args.dest = page.path.path
 	// }
-	println(" ++++ export: ${page.name} -> ${args.dest}")
+	println(' ++++ export: ${page.name} -> ${args.dest}')
 
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	dirpath := p.parent()!
-	mut mydoc := page.doc(mut dest: dirpath.path,heal_export:true)!
+	mut mydoc := page.doc(mut dest: dirpath.path, heal_export: true)!
 	p.write(mydoc.markdown())!
 }
 

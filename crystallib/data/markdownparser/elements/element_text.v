@@ -17,7 +17,7 @@ pub fn (mut self Text) process() !int {
 
 pub fn (self Text) markdown() string {
 	mut out := self.content
-	out += self.DocBase.markdown() //for children
+	out += self.DocBase.markdown() // for children
 	return out
 }
 

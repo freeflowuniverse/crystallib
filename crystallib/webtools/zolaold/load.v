@@ -12,14 +12,11 @@ pub mut:
 
 // fn (mut loader FileLoader) load() ! {
 
-
 // fn loader() !FileLoader{
 // 	zola_installer.install()!
 // 	mut loader:=FileLoader{}
 // 	return loader
 // }
-
-
 
 // if true {
 // 	panic('generate')

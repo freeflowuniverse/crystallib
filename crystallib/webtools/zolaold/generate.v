@@ -12,12 +12,9 @@ module zola
 // 	}
 // }
 
-
-
-
-		// tailwind: tailwind.new(
-		// 	name: args.name
-		// 	path_build: args.path_build
-		// 	content_paths: ['${args.path_build}/templates/**/*.html',
-		// 		'${args.path_build}/content/**/*.md']
-		// )!
+// tailwind: tailwind.new(
+// 	name: args.name
+// 	path_build: args.path_build
+// 	content_paths: ['${args.path_build}/templates/**/*.html',
+// 		'${args.path_build}/content/**/*.md']
+// )!

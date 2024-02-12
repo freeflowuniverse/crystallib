@@ -30,9 +30,6 @@ import os
 
 //////////
 
-
-
-
 // // pub fn (mut sites Zola) site_new(args ZSiteArgs) !&ZolaSite {
 // 	path_build := '${sites.path_build}/${args.name}'
 // 	path_publish := '${sites.path_publish}/${args.name}'

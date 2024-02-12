@@ -15,10 +15,10 @@ pub struct Config {
 	play.ConfigBase
 pub mut:
 	configtype string = 'b2client' // needs to be defined	
-	keyname string
-	keyid   string
-	appkey  string
-	bucketname string //can be empty is the default
+	keyname    string
+	keyid      string
+	appkey     string
+	bucketname string // can be empty is the default
 }
 
 // get instance of our client params: .
@@ -27,7 +27,9 @@ pub mut:
 //
 pub fn get(args play.PlayArgs) !B2Client[Config] {
 	mut py := python.new(name: 'default')! // a python env with name test
-	mut client := B2Client[Config]{py: py}
+	mut client := B2Client[Config]{
+		py: py
+	}
 	client.init(args)!
 	return client
 }
@@ -93,8 +95,8 @@ pub fn (mut self B2Client[Config]) config_interactive() ! {
 		default: cfg.appkey
 	)!
 
-	buckets:=self.list_buckets()!
-	bucket_names:=buckets.map(it.name)
+	buckets := self.list_buckets()!
+	bucket_names := buckets.map(it.name)
 
 	cfg.bucketname = myui.ask_dropdown(
 		question: 'choose default bucket name'

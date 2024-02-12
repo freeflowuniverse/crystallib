@@ -10,8 +10,8 @@ import freeflowuniverse.crystallib.clients.redisclient
 @[heap]
 pub struct MDBook {
 pub mut:
-	name 		string
-	books      	&MDBooks[Config]           @[skip; str: skip]
+	name         string
+	books        &MDBooks[Config]          @[skip; str: skip]
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	args         MDBookArgs
@@ -34,7 +34,7 @@ pub mut:
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	console.print_header(' mdbook: ${args_.name}')
 
-	mut cfg:=books.config()!
+	mut cfg := books.config()!
 
 	mut args := args_
 	if args.title == '' {
@@ -213,9 +213,7 @@ pub fn (mut book MDBook) open() ! {
 }
 
 pub fn (mut book MDBook) generate() ! {
-
 	console.print_header(' book generate: ${book.name} on ${book.path_build.path}')
-
 
 	book.summary_image_set()!
 	osal.exec(

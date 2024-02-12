@@ -3,7 +3,6 @@ module play
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.ourtime
 
-
 // return a session which has link to the actions and params on context and session level
 // the session also has link to fskvs (filesystem key val stor and gitstructure if relevant)
 pub fn session_new(args_ PlayArgs) !&Session {

@@ -10,21 +10,19 @@ import os
 
 @[heap]
 pub struct Zola[T] {
-	play.Base[T]
-// pub mut:	
+	play.Base[T] // pub mut:	
 	// sites           []&ZolaSite                 @[skip; str: skip]
 }
 
 pub struct Config {
 	play.ConfigBase
 pub mut:
-	configtype string = 'mdbooks' // needs to be defined	
-	path_build     string = '${os.home_dir()}/hero/var/wsbuild'
-	path_publish   string = '${os.home_dir()}/hero/www'
-	nodeaddr string
-	sshkey string
+	configtype   string = 'mdbooks' // needs to be defined	
+	path_build   string = '${os.home_dir()}/hero/var/wsbuild'
+	path_publish string = '${os.home_dir()}/hero/www'
+	nodeaddr     string
+	sshkey       string
 }
-
 
 pub fn get(args play.PlayArgs) !Zola[Config] {
 	mut zola := Zola[Config]{
@@ -33,4 +31,3 @@ pub fn get(args play.PlayArgs) !Zola[Config] {
 	zola.init(args)!
 	return zola
 }
-

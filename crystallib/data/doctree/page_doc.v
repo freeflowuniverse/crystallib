@@ -11,7 +11,7 @@ pub struct DocArgs {
 pub mut:
 	heal_export bool = true
 	// heal_source bool
-	dest        string // if we want to relocate images or files or pages for links, is the directory of the collection at destination !!!
+	dest string // if we want to relocate images or files or pages for links, is the directory of the collection at destination !!!
 	done []string
 }
 
@@ -38,7 +38,7 @@ pub fn (page Page) doc(mut args DocArgs) !Doc {
 					if page.tree.image_exists(pointername) {
 						mut linkimage := page.tree.image_get(pointername)!
 						// println(" ------- image exists: ${pointername}")
-						if args.dest.len>0{
+						if args.dest.len > 0 {
 							mut dest_image_copy := '${args.dest}/img/${linkimage.file_name()}'
 							linkimage.copy(dest_image_copy)!
 						}
@@ -65,18 +65,17 @@ pub fn (page Page) doc(mut args DocArgs) !Doc {
 						mut collection_linkpage := linkpage.collection()!
 						// println("${collection_linkpage.name}   ----   ${collection.name}  ")
 						// if collection_linkpage.name != collection.name {
-							if args.dest.len>0{
-								// linkpage.export(dest: dest_page_copy)!  //is always the full path
-								if !(linkpage.name in args.done){
-									mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
-									mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
-									linkdoc:=linkpage.doc(mut args)!
-									p_linked.write(linkdoc.markdown())!
-								}
-								args.done << linkpage.name
-
+						if args.dest.len > 0 {
+							// linkpage.export(dest: dest_page_copy)!  //is always the full path
+							if linkpage.name !in args.done {
+								mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
+								mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
+								linkdoc := linkpage.doc(mut args)!
+								p_linked.write(linkdoc.markdown())!
 							}
-							// println(dest_page_copy)
+							args.done << linkpage.name
+						}
+						// println(dest_page_copy)
 						// }
 						mut out := '[${element.description}](${linkpage.name}.md)'
 						mydoc.content_set(element.id, out)

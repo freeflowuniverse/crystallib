@@ -18,13 +18,11 @@ fn (mut loader FileLoader) load() ! {
 	loader.embedded_files << $embed_file('template/mermaid.min.js')
 }
 
-fn loader() !FileLoader{
+fn loader() !FileLoader {
 	mdbook_installer.install()!
-	mut loader:=FileLoader{}
+	mut loader := FileLoader{}
 	return loader
 }
-
-
 
 // if true {
 // 	panic('generate')

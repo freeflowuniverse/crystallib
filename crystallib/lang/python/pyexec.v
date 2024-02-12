@@ -1,10 +1,12 @@
 module python
+
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.core.texttools
 import os
+
 @[params]
 pub struct PythonExecArgs {
 pub mut:
@@ -12,15 +14,15 @@ pub mut:
 	result_delimiter   string = '==RESULT=='
 	ok_delimiter       string = '==OK=='
 	python_script_name string // if used will put it in root of the sandbox under that name
-	stdout bool
+	stdout             bool
 }
 
 pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 	mut cmd := texttools.dedent(args.cmd)
-	mut debug:=false
-	if cmd.contains("DEBUG()"){
-		cmd=cmd.replace("DEBUG()","from IPython import embed; embed()")
-		debug=true
+	mut debug := false
+	if cmd.contains('DEBUG()') {
+		cmd = cmd.replace('DEBUG()', 'from IPython import embed; embed()')
+		debug = true
 	}
 
 	cmd += "\n\nprint(\"${args.ok_delimiter}\")\n"
@@ -43,16 +45,15 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 	source bin/activate
 	python3 ${scriptpath}
 	'
-	if args.stdout || debug{
+	if args.stdout || debug {
 		println(cmd2)
 	}
-	mut job:=osal.Job{}
-	if debug{
+	mut job := osal.Job{}
+	if debug {
 		osal.execute_interactive(cmd2)!
-	}else{
+	} else {
 		job = osal.exec(cmd: cmd2, stdout: args.stdout, raise_error: false)!
 	}
-	
 
 	if job.exit_code > 0 {
 		// means error
