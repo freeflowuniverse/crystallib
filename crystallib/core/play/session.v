@@ -121,7 +121,7 @@ pub fn (mut session Session) playbook_add(args_ PLayBookAddArgs) ! {
 	session.heroscript_preprocess += '\n' + texttools.dedent(args.text)
 }
 
-fn (mut session Session) process() ! {
+pub fn (mut session Session) process() ! {
 	if session.processed {
 		return
 	}

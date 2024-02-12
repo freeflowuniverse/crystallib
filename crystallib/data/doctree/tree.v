@@ -110,7 +110,7 @@ pub fn (tree Tree) image_get(pointerstr string) !&File {
 
 // get the file from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (mut tree Tree) file_get(pointerstr string) !&File {
+pub fn (tree Tree) file_get(pointerstr string) !&File {
 	p := pointer_new(pointerstr)!
 	mut res := []&File{}
 	for _, collection in tree.collections {
@@ -132,7 +132,7 @@ pub fn (mut tree Tree) file_get(pointerstr string) !&File {
 }
 
 // exists or too many
-pub fn (mut tree Tree) page_exists(name string) bool {
+pub fn (tree Tree) page_exists(name string) bool {
 	_ := tree.page_get(name) or {
 		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
 			return false
@@ -144,7 +144,7 @@ pub fn (mut tree Tree) page_exists(name string) bool {
 }
 
 // exists or too many
-pub fn (mut tree Tree) image_exists(name string) bool {
+pub fn (tree Tree) image_exists(name string) bool {
 	_ := tree.image_get(name) or {
 		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
 			return false
@@ -156,7 +156,7 @@ pub fn (mut tree Tree) image_exists(name string) bool {
 }
 
 // exists or too many
-pub fn (mut tree Tree) file_exists(name string) bool {
+pub fn (tree Tree) file_exists(name string) bool {
 	_ := tree.file_get(name) or {
 		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
 			return false

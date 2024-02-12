@@ -1,10 +1,9 @@
 module zola
 
-import freeflowuniverse.crystallib.installers.web.zola as zola_installer
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
-import freeflowuniverse.crystallib.webtools.tailwind
+
 import freeflowuniverse.crystallib.ui.console
 import vweb
 import os
@@ -20,7 +19,7 @@ pub mut:
 	path_publish pathlib.Path
 	collections  []ZSiteCollection
 	gitrepokey   string
-	tailwind     tailwind.Tailwind
+	// tailwind     tailwind.Tailwind
 	tailwindcss  bool // whether sie uses tailwindcss
 }
 
@@ -53,12 +52,7 @@ pub fn (mut sites Zola) site_new(args SiteConfig) !&ZolaSite {
 		path_publish: pathlib.get_dir(
 			path: args.path_publish
 		)!
-		tailwind: tailwind.new(
-			name: args.name
-			path_build: args.path_build
-			content_paths: ['${args.path_build}/templates/**/*.html',
-				'${args.path_build}/content/**/*.md']
-		)!
+
 	}
 	sites.sites << &site
 	return &site
@@ -132,33 +126,7 @@ pub fn (mut site ZolaSite) serve(params ServeParams) ! {
 	for {}
 }
 
-// all the gitrepo keys
-fn (mut site ZolaSite) gitrepo_keys() []string {
-	mut res := []string{}
-	res << site.gitrepokey
-	for collection in site.collections {
-		if collection.gitrepokey !in res {
-			res << collection.gitrepokey
-		}
-	}
-	return res
-}
 
-// is there change in repo since last build?
-fn (mut site ZolaSite) changed(gitrepos_status map[string]RepoStatus) bool {
-	mut change := false
-	gitrepokeys := site.gitrepo_keys()
-
-	for key, status in gitrepos_status {
-		if key in gitrepokeys {
-			// means this site is using that gitrepo, so if it changed the site changed
-			if status.revlast != status.revlast {
-				change = true
-			}
-		}
-	}
-	return true
-}
 
 fn (mut site ZolaSite) template_install() ! {
 	config := $tmpl('./templates/config.toml')

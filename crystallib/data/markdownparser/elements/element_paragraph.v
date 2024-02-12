@@ -10,7 +10,6 @@ fn (mut self Paragraph) process() !int {
 	if self.processed {
 		return 0
 	}
-
 	self.paragraph_parse()!
 	self.process_base()!
 	self.process_children()!

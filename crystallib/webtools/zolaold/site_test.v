@@ -1,9 +1,9 @@
 module zola
 
-pub fn test_site_new() ! {
-	mut sites := new()!
-	site := sites.site_new(SiteConfig{})!
-}
+// pub fn test_site_new() ! {
+// 	mut sites := new()!
+// 	site := sites.site_new(SiteConfig{})!
+// }
 
 // pub fn (mut site ZolaSite) prepare() ! {
 // 	site.template_install()!

@@ -4,18 +4,17 @@ import os
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib
 
-const testdata_path = os.dir(@FILE) + '/testdata'
 const collections_path = os.dir(@FILE) + '/testdata/collections'
-const collections_path_original = os.dir(@FILE) + '/testdata/original'
 
-// TODO:  do good tests around fixing links, also images need to point to right location
+//IMPORTANT: we should never change the files on original location, copy out first
 
-fn restore() ! {
+
+fn copy_to_testloc() ! {
 	// put back the original data
-	mut p := pathlib.get_dir(path: doctree.collections_path_original) or {
-		panic("can't restore original, do manual")
+	mut p := pathlib.get_dir(path: doctree.collections_path) or {
+		panic("cant find collections")
 	}
-	p.copy(dest: doctree.collections_path, delete: true)! // make sure all original is being restored for next test
+	p.copy(dest: "/tmp/tmp_doctree", delete: true)! 
 }
 
 fn test_link_update() ! {}
@@ -23,17 +22,12 @@ fn test_link_update() ! {}
 fn test_fix_external_link() ! {}
 
 fn test_fix() ! {
-	// defer {
-	// 	// copy back the original
-	// 	restore() or { console.print_debug('failed to restore tree') }
-	// }
-
+	copy_to_testloc()!
 	mut tree := tree_create(cid: 'abc', name: 'test')!
-	tree.scan(path: doctree.collections_path)!
+	tree.scan(path: "/tmp/tmp_doctree")!
 
 	mut test_collection := tree.collection_get('broken')!
-	// console.print_debug('testcoll: ${test_collection}')
-	mut page_path := pathlib.get('${doctree.collections_path}/wrong_links/page_with_wrong_links.md')
+	mut page_path := pathlib.get('/tmp/tmp_doctree/wrong_links/page_with_wrong_links.md')
 	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 	mut test_page := test_collection.page_get('page_with_wrong_links')!
 
@@ -64,6 +58,7 @@ fn test_fix() ! {
 }
 
 // tests collection errors are properly created
+//TODO: get from copied locations
 fn test_errors_created() {
 	/*
 		errors could happen because of:
@@ -74,7 +69,7 @@ fn test_errors_created() {
 			- "markdown file should not be linked"" - with cur implementation should never happen
 	*/
 	mut tree := tree_create(cid: 'abc', name: 'test')!
-	tree.scan(path: doctree.testdata_path + '/errors', heal: true)!
+	tree.scan(path: '/tmp/tmp_doctree/errors', heal: true)!
 	collection := tree.collection_get('errors')!
 	assert collection.errors.len == 2
 	assert collection.errors.filter(it.cat == .file_double).len == 1
@@ -82,7 +77,7 @@ fn test_errors_created() {
 	collection.errors_report(doctree.testdata_path + '/errors/errors.md')!
 }
 
-/*
+/* TOCHECK:
 	- errors.md file is created and has the errors
 	- the links are properly repaired
 	- the images are properly repaired (you will have to put 1 png in original dir, then check it becomes jpeg and link changed)

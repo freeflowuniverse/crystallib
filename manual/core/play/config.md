@@ -38,13 +38,13 @@ pub mut:
 // get instance of our client params: .
 // instance string = "default".
 // playargs ?PlayArgs (defines how to get session and/or context)
-pub fn get(args play.InstanceNewArgs) !B2Client[Config] {
+pub fn get(args play.PlayArgs) !B2Client[Config] {
 	mut py := python.new(name: 'default')! // a python env with name test
 	mut client := B2Client[Config] {		
 		instance: args.instance			
 		py:py
 	}
-	client.init(args.playargs)!
+	client.init(args)!
 	return client
 }
 

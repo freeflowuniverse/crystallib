@@ -11,16 +11,8 @@ pub mut:
 	smtp_client smtp.Client
 }
 
-@[params]
-pub struct ClientArgs {
-pub mut:
-	instance string         @[required]
-	playargs ?play.PlayArgs
-}
 
-pub fn get(clientargs ClientArgs) !MailClient {
-	mut plargs := clientargs.playargs or { play.PlayArgs{} }
-	mut cfg := configurator(clientargs.instance, plargs)!
+pub fn get(args play.PlayArgs) !MailClient {
 	args := cfg.get()!
 	// println(args)
 	mut smtp_client := smtp.new_client(

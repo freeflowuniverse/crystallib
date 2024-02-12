@@ -11,7 +11,6 @@ pub mut:
 	py python.PythonEnv
 }
 
-@[params]
 pub struct Config {
 	play.ConfigBase
 pub mut:
@@ -26,13 +25,10 @@ pub mut:
 // instance string = "default".
 // playargs ?PlayArgs (defines how to get session and/or context)
 //
-pub fn get(args play.InstanceNewArgs) !B2Client[Config] {
+pub fn get(args play.PlayArgs) !B2Client[Config] {
 	mut py := python.new(name: 'default')! // a python env with name test
-	mut client := B2Client[Config]{
-		instance: args.instance
-		py: py
-	}
-	client.init(args.playargs)!
+	mut client := B2Client[Config]{py: py}
+	client.init(args)!
 	return client
 }
 

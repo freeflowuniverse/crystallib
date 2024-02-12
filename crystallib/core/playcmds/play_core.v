@@ -1,7 +1,7 @@
 module playcmds
 
 // import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.develop.gittools
+// import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.play
 
 pub fn play_core(mut session play.Session) ! {

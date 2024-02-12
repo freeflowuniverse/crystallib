@@ -5,14 +5,13 @@ import os
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.clients.redisclient
 
 @[heap]
 pub struct MDBook {
-	play.Base
 pub mut:
-	factory      &MDBooksFactory           @[skip; str: skip]
+	name 		string
+	books      	&MDBooks[Config]           @[skip; str: skip]
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	args         MDBookArgs
@@ -32,18 +31,20 @@ pub mut:
 	build_path   string
 }
 
-pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
+pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	console.print_header(' mdbook: ${args_.name}')
+
+	mut cfg:=books.config()!
 
 	mut args := args_
 	if args.title == '' {
 		args.title = args.name
 	}
 	if args.build_path.len == 0 {
-		args.build_path = '${factory.path_build}/${args.name}'
+		args.build_path = '${cfg.path_build}/${args.name}'
 	}
 	if args.publish_path.len == 0 {
-		args.publish_path = '${factory.path_publish}/${args.name}'
+		args.publish_path = '${cfg.path_publish}/${args.name}'
 	}
 
 	mut r := redisclient.core_get()!
@@ -52,7 +53,7 @@ pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
 	r.expire('mdbook:${args.name}:build', 3600 * 12)! // expire after 12h
 	r.expire('mdbook:${args.name}:publish', 3600 * 12)!
 
-	mut context := factory.context()!
+	mut context := books.context()!
 	mut gs := context.gitstructure()!
 
 	if args.summary_url.len > 0 {
@@ -90,8 +91,7 @@ pub fn (mut factory MDBooksFactory) generate(args_ MDBookArgs) !&MDBook {
 		args: args
 		path_build: pathlib.get_dir(path: args.build_path, create: true)!
 		path_publish: pathlib.get_dir(path: args.publish_path, create: true)!
-		factory: &factory
-		session: factory.session
+		books: &books
 	}
 
 	mut summary := book.summary()!
@@ -213,37 +213,42 @@ pub fn (mut book MDBook) open() ! {
 }
 
 pub fn (mut book MDBook) generate() ! {
+
 	console.print_header(' book generate: ${book.name} on ${book.path_build.path}')
 
-	// write the css files
-	for item in book.factory.embedded_files {
-		if item.path.ends_with('.css') {
-			css_name := item.path.all_after_last('/')
-			// osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
 
-			dpath := '${book.path_publish.path}/css/${css_name}'
-			// console.print_stdout(' templ ${dpath}')
-			mut dpatho := pathlib.get_file(path: dpath, create: true)!
-			dpatho.write(item.to_string())!
-		}
-	}
 	book.summary_image_set()!
 	osal.exec(
 		cmd: '	
-				cd ${book.path_build.path}
-				mdbook build --dest-dir ${book.path_publish.path}'
+			cd ${book.path_build.path}
+			mdbook build --dest-dir ${book.path_publish.path}
+			'
 		retry: 0
 	)!
 }
 
 fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
-	for item in book.factory.embedded_files {
+	l := loader()!
+	for item in l.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
 		// console.print_debug(' embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}
+
+	// // write the css files
+	// for item in l.embedded_files {
+	// 	if item.path.ends_with('.css') {
+	// 		css_name := item.path.all_after_last('/')
+	// 		// osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
+
+	// 		dpath := '${book.path_publish.path}/css/${css_name}'
+	// 		// console.print_stdout(' templ ${dpath}')
+	// 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
+	// 		dpatho.write(item.to_string())!
+	// 	}
+	// }	
 
 	c := $tmpl('template/book.toml')
 	mut tomlfile := book.path_build.file_get_new('book.toml')!

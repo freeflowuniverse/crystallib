@@ -27,3 +27,5 @@ The lib folder contains all the client code for the web3 proxy. It is used by th
 ## Examples
 
 Examples are available for all implemented clients. See the subfolder for all examples available for implemented clients.
+
+> [other link](fruits:apple.md)

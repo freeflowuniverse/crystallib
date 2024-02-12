@@ -7,28 +7,33 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-@[heap]
-pub struct ZSite {
-pub mut:
-	zola         &Zola             @[skip; str: skip]
-	url          string // url of site repo
-	name         string
-	path_build   pathlib.Path
-	path_publish pathlib.Path
-	collections  []ZSiteCollection
-	gitrepokey   string
-	tailwindcss  bool // whether site uses tailwindcss
-}
+// @[heap]
+// pub struct ZSite {
+// pub mut:
+// 	zola         &Zola             @[skip; str: skip]
+// 	url          string // url of site repo
+// 	name         string
+// 	path_build   pathlib.Path
+// 	path_publish pathlib.Path
+// 	collections  []ZSiteCollection
+// 	gitrepokey   string
+// 	tailwindcss  bool // whether site uses tailwindcss
+// }
 
-@[params]
-pub struct ZSiteArgs {
-pub mut:
-	name string @[required]
-	// url  string @[required] // url of the summary.md file
-	pull bool
-}
+// @[params]
+// pub struct ZSiteArgs {
+// pub mut:
+// 	name string @[required]
+// 	// url  string @[required] // url of the summary.md file
+// 	pull bool
+// }
 
-// pub fn (mut sites Zola) site_new(args ZSiteArgs) !&ZolaSite {
+//////////
+
+
+
+
+// // pub fn (mut sites Zola) site_new(args ZSiteArgs) !&ZolaSite {
 // 	path_build := '${sites.path_build}/${args.name}'
 // 	path_publish := '${sites.path_publish}/${args.name}'
 

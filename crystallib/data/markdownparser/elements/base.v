@@ -24,7 +24,7 @@ fn (mut self DocBase) process_base() ! {
 }
 
 fn (mut self DocBase) remove_empty_children() {
-	self.children = self.children.filter(!(it.content.trim_space() == '' && it.children.len == 0))
+	self.children = self.children.filter(!(it.content == '' && it.children.len == 0))
 }
 
 pub fn (mut self DocBase) process() !int {
@@ -104,7 +104,6 @@ pub fn (self DocBase) children() []Element {
 pub fn (mut self DocBase) process_children() !int {
 	mut changes := 0
 	for mut element in self.children {
-		element.content = element.content.trim('\n')
 		changes += element.process()!
 	}
 	return changes
@@ -112,11 +111,11 @@ pub fn (mut self DocBase) process_children() !int {
 
 fn (self DocBase) treeview_(prefix string, mut out []string) {
 	mut c := self.content
-	c = c.replace('\n', '\\n').replace('  ', ' ')
+	c = c.replace('\n', '\\n')
 	if c.len > 80 {
 		c = c[0..80]
 	}
-	out << '${prefix}- ${self.id} : ${self.type_name:-30}  ${c.len}  ${c}'
+	out << '${prefix}- ${self.id} : ${self.type_name:-30}  ${c.len}  \'${c}\''
 	for mut element in self.children() {
 		element.treeview_(prefix + ' ', mut out)
 	}

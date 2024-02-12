@@ -63,29 +63,34 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			continue
 		}
 
-		if mut llast is elements.Paragraph || mut llast is elements.List {
-			if line.len > 0 && (line.trim_space().starts_with('- ')
-				|| line.trim_space().starts_with('* ')) {
-				mut e := doc.list_new(line)
-				e.parent = &doc
-				if mut llast is elements.List {
-					llast.trailing_lf = false
-					if e.depth > llast.depth {
-						e.indent = llast.indent + 1
-					} else if e.depth < llast.depth && e.depth != 0 {
-						e.indent = llast.indent - 1
-					} else {
-						e.indent = llast.indent
-					}
-				}
-				parser.next()
-				continue
-			}
+		// if mut llast is elements.List {
 
-			if mut llast is elements.List {
-				parser.ensure_last_is_paragraph()!
-				continue
-			}
+		// 	continue
+		// }
+
+
+		if mut llast is elements.Paragraph || mut llast is elements.List {
+			// if line_is_list(line) {
+			// 	mut e := doc.list_new(line)
+			// 	e.parent = &doc
+			// 	if mut llast is elements.List {
+			// 		llast.trailing_lf = false
+			// 		if e.depth > llast.depth {
+			// 			e.indent = llast.indent + 1
+			// 		} else if e.depth < llast.depth && e.depth != 0 {
+			// 			e.indent = llast.indent - 1
+			// 		} else {
+			// 			e.indent = llast.indent
+			// 		}
+			// 	}
+			// 	parser.next()
+			// 	continue
+			// }
+
+			// if mut llast is elements.List {
+			// 	parser.ensure_last_is_paragraph()!
+			// 	continue
+			// }
 
 			if line.starts_with('!!include ') {
 				content := line.all_after_first('!!include ').trim_space()
@@ -171,3 +176,5 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 	}
 	doc.process()!
 }
+
+
