@@ -2,6 +2,8 @@ module gen
 
 import net.http
 import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Struct, Type }
+import freeflowuniverse.crystallib.core.texttools
+
 
 pub struct ClientGenerator {
 	api_name      string // name of the api the client is being generated for
@@ -19,6 +21,161 @@ fn (mut gen ClientGenerator) generate_client() CodeFile {
 		items: [gen.client_struct]
 	}
 }
+
+fn  (mut gen ClientGenerator) generate_client_struct() codemodel.Struct {
+	return codemodel.Struct {
+		name: '${texttools.name_fix_snake_to_pascal(gen.api_name)}Client'
+		is_pub: true
+		generics: {'T':''}
+		embeds: [codemodel.Struct {
+			name: 'Base'
+			mod: 'freeflowuniverse.crystallib.core.play'
+			generics: {'T':''}
+		}]
+		fields: [codemodel.StructField{
+			name: 'connection'
+			is_mut: true
+			structure: Struct {
+				name: 'HTTPConnection'
+				mod: 'freeflowuniverse.crystallib.clients.httpconnection'
+			}
+			is_ref: true
+		}]
+	}
+}
+
+fn generate_client_config() codemodel.Struct {
+	return codemodel.Struct {
+		name: 'Config'
+		embeds: [codemodel.Struct {
+			name: 'ConfigBase'
+			mod: 'freeflowuniverse.crystallib.core.play'
+			generics: {'T':''}
+		}]
+		fields: [codemodel.StructField{
+			name: 'url'
+			typ: codemodel.Type{symbol:'string'}
+		}]
+	}
+}
+
+fn (mut gen ClientGenerator) generate_factory() CodeFile {
+	client_name := texttools.name_fix(gen.api_name)
+	client_struct := gen.generate_client_struct()
+	config_struct := generate_client_config()
+	get_function := gen.generate_get_function(client_struct)
+	heroplay_function := gen.heroplay_function(client_struct)
+	config_interactive_function := gen.config_interactive_function(client_struct)
+
+	return CodeFile{
+		name: 'factory'
+		mod: '${gen.api_name}_client'
+		imports: []
+		items: [gen.client_struct]
+		content: $tmpl('./templates/factory.v')
+	}
+}
+
+fn (mut gen ClientGenerator) generate_get_function(client codemodel.Struct) codemodel.Function {
+	return codemodel.Function {
+		name: 'get'
+		params: [codemodel.Param{
+			name: 'args'
+			struct_: codemodel.Struct{
+				name: 'PlayArgs'
+				mod: 'freeflowuniverse.crystallib.core.play'
+				generics: {'': 'Config'}
+			}
+		}]
+		result: codemodel.Result {
+			structure: codemodel.Struct{...client, generics: {'': 'Config'}}
+		}
+		is_pub: true
+		body: 'mut client := ${client.name}[Config]{}
+	client.init(args)!
+	return client'
+	}
+}
+
+fn (mut gen ClientGenerator) heroplay_function(config codemodel.Struct) codemodel.Function {
+	return codemodel.Function {
+		name: 'heroplay'
+		params: [codemodel.Param{
+			name: 'args'
+			struct_: codemodel.Struct{
+				name: 'PlayBookAddArgs'
+				mod: 'freeflowuniverse.crystallib.core.play'
+			}
+		}]
+		result: codemodel.Result {
+			result: true
+		}
+		is_pub: true
+		body: "	// make session for configuring from heroscript
+	mut session := play.session_new(session_name: 'config')!
+	session.playbook_add(path: args.path, text: args.text, git_url: args.git_url)!
+	for mut action in session.plbook.find(filter: '${gen.api_name}_client.define')! {
+		mut p := action.params
+		instance := p.get_default('instance', 'default')!
+		mut cl := get(instance: instance)!
+		mut cfg := cl.config()!
+		mut config := p.decode[T]()!
+		cl.config_save()!
+	}"
+	}
+}
+
+fn (mut gen ClientGenerator) config_interactive_function(client codemodel.Struct) codemodel.Function {
+	return codemodel.Function {
+		name: 'config_interactive'
+		receiver: codemodel.Param {
+			name: 'self'
+			mutable: true
+			struct_: client
+		}
+		result: codemodel.Result { result: true }
+		is_pub: true
+		body: "mut myui := ui.new()!
+	console.clear()
+	println('\n## Configure B2 Client')
+	println('========================\n\n')
+
+	mut cfg := self.config()!
+
+	self.instance = myui.ask_question(
+		question: 'name for B2 (backblaze) client'
+		default: self.instance
+	)!
+
+	cfg.description = myui.ask_question(
+		question: 'description'
+		minlen: 0
+		default: cfg.description
+	)!
+	cfg.keyid = myui.ask_question(
+		question: 'keyid e.g. 003e2a7be6357fb0000000001'
+		minlen: 5
+		default: cfg.keyid
+	)!
+
+	cfg.appkey = myui.ask_question(
+		question: 'appkey e.g. K008UsdrYOAou2ulBHA8p4KBe/dL2n4'
+		minlen: 5
+		default: cfg.appkey
+	)!
+
+	buckets := self.list_buckets()!
+	bucket_names := buckets.map(it.name)
+
+	cfg.bucketname = myui.ask_dropdown(
+		question: 'choose default bucket name'
+		items: bucket_names
+	)!
+
+	self.config_save()!"
+	}
+}
+
 
 fn (mut gen ClientGenerator) generate_model(structs []Struct) !CodeFile {
 	return CodeFile{
