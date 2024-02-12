@@ -242,7 +242,7 @@ pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) !{
         allow_empty_source=True,
 		  keep_days_or_delete=KeepOrDeleteMode.DELETE,
     )
-	with SyncReport(sys.stdout, True) as reporter:
+	with SyncReport(sys.stdout, False) as reporter:
         synchronizer.sync_folders(
             source_folder=source,
             dest_folder=dest,
@@ -253,6 +253,6 @@ pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) !{
 	'
 	code=code0+"\n"+texttools.dedent(code)
 
-	res:=self.py.exec(cmd:code)!
+	res:=self.py.exec(cmd:code, stdout: true)!
 	println(res)
 }
