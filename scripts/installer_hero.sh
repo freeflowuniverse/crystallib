@@ -17,6 +17,8 @@ else
     exit 1
 fi
 
+[ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
+
 if [ -z "$url" ]; then
     echo "Could not find url to download."
     echo $urls
