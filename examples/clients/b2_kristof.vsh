@@ -8,7 +8,7 @@ mut cfg := cl.config()!
 // cl.config_delete()!
 
 cfg.keyid='cd8f15212206'
-cfg.appkey='005ce2a07db78e278c3fd62079fc6293e7fd0ec41e'
+cfg.appkey=''
 cfg.bucketname='despiegktest'
 cl.config_save()!
 
@@ -23,4 +23,4 @@ items:=cl.list_buckets()!
 println(items)
 
 
-cl.upload(src:"/Users/despiegk1/Downloads/OurWorld Venture Creator Investor Intro - Jan 2024 v7.2.pdf")!
+cl.upload(src:"//Users/despiegk1/hero/bin/hero")!

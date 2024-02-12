@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 # Identify current platform
 os_name="$(uname -s)"
@@ -10,8 +10,8 @@ if [[ "$os_name" == "Linux" && "$arch_name" == "x86_64" ]]; then
     url="https://f003.backblazeb2.com/file/threefold/linux-i64/hero"
 elif [[ "$os_name" == "Darwin" && "$arch_name" == "arm64" ]]; then
     url="https://f003.backblazeb2.com/file/threefold/macos-arm64/hero"
-elif [[ "$os_name" == "Darwin" && "$arch_name" == "x86_64" ]]; then
-    url="https://f003.backblazeb2.com/file/threefold/macos-i64/hero"
+# elif [[ "$os_name" == "Darwin" && "$arch_name" == "x86_64" ]]; then
+#     url="https://f003.backblazeb2.com/file/threefold/macos-i64/hero"
 else
     echo "Unsupported platform."
     exit 1
@@ -44,6 +44,7 @@ if [ "$file_size" -ge 1 ]; then
     fi
 
     echo "Hero installed properly"
+    hero -version
 else
     echo "Downloaded file is less than 1 MB. Process aborted."
     exit 1
