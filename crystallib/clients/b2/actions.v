@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import json
 import os
+import time
 // res:=py.exec(cmd:cmd)!
 
 fn (mut self B2Client[Config]) pycode_init() !string {
@@ -27,14 +28,15 @@ fn (mut self B2Client[Config]) check_installed() ! {
 	}
 }
 
-pub struct BucketItem {
+
+pub struct BucketData{
 pub:
 	id    string
 	type_ string
 	name  string
 }
 
-pub fn (mut self B2Client[Config]) list_buckets() ![]BucketItem {
+pub fn (mut self B2Client[Config]) list_buckets() ![]BucketData {
 	self.check_installed()!
 	code0 := self.pycode_init()!
 	mut code := '
@@ -47,8 +49,8 @@ pub fn (mut self B2Client[Config]) list_buckets() ![]BucketItem {
 	'
 	code = code0 + '\n' + texttools.dedent(code)
 
-	res := self.py.exec(cmd: code)!
-	r := json.decode([]BucketItem, res)!
+	res:=self.py.exec(cmd:code)!
+	r:= json.decode([]BucketData,res)!
 	return r
 }
 
@@ -185,6 +187,72 @@ if args.bucketname==""{
 	self.py.exec(cmd:code,stdout:true)!
 
 }
-//TODO: download/upload of full dir (sync)
-//TODO: see how we can show progress when stdout chosen
+pub struct ListBucketArgs{
+	bucketname string
+}
 
+pub struct BucketFile{
+	file_name string
+	upload_timestamp time.Time
+
+}
+pub fn (mut self B2Client[Config]) list_files(args_ ListBucketArgs) ![]BucketFile{
+	mut args:=args_
+	mut cfg:=self.config()!
+	self.check_installed()!
+	code0:=self.pycode_init()!
+	mut code:='
+	bucket = b2_api.get_bucket_by_name("${args.bucketname}")
+	res = []
+	for file_version, folder_name in bucket.ls(latest_only=True, recursive=True):
+		res.append({"file_name": file_version.file_name, "upload_timestamp": file_version.upload_timestamp})
+	print("==RESULT==")
+	print(json.dumps(list(res), indent=4))	
+	'
+	code=code0+"\n"+texttools.dedent(code)
+
+	res:=self.py.exec(cmd:code)!
+	println(res)
+	r:= json.decode([]BucketFile,res)!
+	println(r)
+	return r
+}
+
+//TODO: download/upload of full dir (sync)
+pub struct SyncArgs{
+	source string // local dir /home/afouda/Documents/testdir
+	dest string // bucket url b2://testdir
+}
+pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) !{
+	mut args:=args_
+	mut cfg:=self.config()!
+
+	self.check_installed()!
+	code0:=self.pycode_init()!
+	mut code:='
+	source = parse_folder("${args.source}", b2_api)
+	dest = parse_folder("${args.dest}", b2_api)
+	policies_manager = ScanPoliciesManager(exclude_all_symlinks=True)
+	import sys
+	import time
+	synchronizer = Synchronizer(
+        max_workers=10,
+		policies_manager=policies_manager,
+        dry_run=False,
+        allow_empty_source=True,
+		  keep_days_or_delete=KeepOrDeleteMode.DELETE,
+    )
+	with SyncReport(sys.stdout, True) as reporter:
+        synchronizer.sync_folders(
+            source_folder=source,
+            dest_folder=dest,
+            now_millis=int(round(time.time() * 1000)),
+            reporter=reporter,
+        )
+	
+	'
+	code=code0+"\n"+texttools.dedent(code)
+
+	res:=self.py.exec(cmd:code)!
+	println(res)
+}
