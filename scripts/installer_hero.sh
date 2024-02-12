@@ -24,23 +24,27 @@ if [ -z "$url" ]; then
     echo $urls
     exit 1
 fi
-
 zprofile="${HOME}/.zprofile"
 hero_bin_path="${HOME}/hero/bin"
+temp_file="$(mktemp)"
 
+# Check if ~/.zprofile exists
 if [ -f "$zprofile" ]; then
-    # Check if the PATH statement for ~/hero/bin exists, and remove it
-    if grep -q "$hero_bin_path" "$zprofile"; then
-        # Remove any existing PATH statement that adds ~/hero/bin
-        sed -i "/$hero_bin_path/d" "$zprofile"
-    fi
+    # Read each line and exclude any that modify the PATH with ~/hero/bin
+    while IFS= read -r line; do
+        if [[ ! "$line" =~ $hero_bin_path ]]; then
+            echo "$line" >> "$temp_file"
+        fi
+    done < "$zprofile"
 else
-    # If ~/.zprofile does not exist, create the file
     touch "$zprofile"
 fi
-# Add ~/hero/bin to the PATH statement in ~/.zprofile
-echo "export PATH=\$PATH:$hero_bin_path" >> "$zprofile"
-
+# Add ~/hero/bin to the PATH statement
+echo "export PATH=\$PATH:$hero_bin_path" >> "$temp_file"
+# Replace the original .zprofile with the modified version
+mv "$temp_file" "$zprofile"
+# Ensure the temporary file is removed (in case of script interruption before mv)
+trap 'rm -f "$temp_file"' EXIT
 
 # Output the selected URL
 echo "Download URL for your platform: $url"

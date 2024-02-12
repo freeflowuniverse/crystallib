@@ -13,7 +13,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.1'
+		version: '1.0.2'
 		disable_man: true
 	}
 
@@ -52,7 +52,7 @@ fn do() ! {
 	herocmds.cmd_imagedownsize(mut cmd)
 	// herocmds.cmd_biztools(mut cmd)
 	// herocmds.cmd_gen(mut cmd)
-	// herocmds.cmd_sshagent(mut cmd)
+	herocmds.cmd_sshagent(mut cmd)
 	herocmds.cmd_installers(mut cmd)
 	// herocmds.cmd_zola(mut cmd)
 	// herocmds.cmd_configure(mut cmd)
