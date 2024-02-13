@@ -32,7 +32,6 @@ pub fn configurator(args ConfiguratorGetArgs) !play.Configurator[MyConfig] {
 	)!
 
 	mut c := play.configurator_new[MyConfig](
-		name: 'dagu'
 		instance: args.instance
 		context: &session.context
 	)!
