@@ -6,11 +6,13 @@ import freeflowuniverse.crystallib.core.play
 
 @[params]
 pub struct MyConfig {
+	play.ConfigBase
 pub mut:
-	instance string
-	addr     string
-	port     int
-	secret   string
+	configtype string = 'osaldagu'
+	instance   string
+	addr       string
+	port       int
+	secret     string
 }
 
 // return a config object even if from partial info
