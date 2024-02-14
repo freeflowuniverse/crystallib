@@ -7,27 +7,28 @@ import net.smtp
 
 pub struct MailClient[T] {
 	play.Base[T]
-
+pub mut:
+	smtp_client &smtp.Client
 }
 
 pub struct Config {
 	play.ConfigBase
 pub mut:
-	configtype string = 'mailclient' // needs to be defined	
+	configtype  string = 'mailclient' // needs to be defined	
 	instance    string
 	mail_from   string
 	smtp_addr   string
 	smtp_login  string
-	smpt_port   int = 587
+	smtp_port   int = 587
 	smtp_passwd string
 	ssl         bool
 	starttls    bool = true
 }
 
-
 pub fn get(args play.PlayArgs) !MailClient[Config] {
-
+	smtp_client := &smtp.Client{}
 	mut client := MailClient[Config]{
+		smtp_client: smtp_client
 	}
 	client.init(args)!
 	return client
@@ -42,11 +43,11 @@ pub fn heroplay(args play.PLayBookAddArgs) ! {
 		instance := p.get_default('instance', 'default')!
 		mut cl := get(instance: instance)!
 		mut cfg := cl.config()!
-		cfg.description = p.get_default('description', "mailclient")!
+		cfg.description = p.get_default('description', 'mailclient')!
 		cfg.mail_from = p.get('mail_from')!
 		cfg.smtp_addr = p.get('smtp_addr')!
 		cfg.smtp_login = p.get('smtp_login')!
-		cfg.smpt_port = p.get_int('smpt_port')!
+		cfg.smtp_port = p.get_int('smtp_port')!
 		cfg.smtp_passwd = p.get('smtp_passwd')!
 		cfg.ssl = p.get_default_false('ssl')
 		cfg.starttls = p.get_default_true('startssl')
@@ -82,10 +83,10 @@ pub fn (mut self MailClient[Config]) config_interactive() ! {
 		question: 'smtp passwd'
 		minlen: 3
 	)!
-	mut smpt_port := myui.ask_question(
+	mut smtp_port := myui.ask_question(
 		question: 'smtp port'
 	)!
-	cfg.smpt_port = smpt_port.int()
+	cfg.smtp_port = smtp_port.int()
 
 	cfg.ssl = myui.ask_yesno(
 		question: 'ssl, prob no'

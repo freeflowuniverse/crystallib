@@ -5,20 +5,24 @@ import freeflowuniverse.crystallib.core.texttools
 import net.smtp
 import time
 
-
-pub fn (mut self MailClient[Config]) get_smpt_client() ! &smtp.Client{
+pub fn (mut self MailClient[Config]) set_smtp_client() !{
 	cfg := self.config()!
-	mut smtp_client := smtp.new_client(
-	server: cfg.smtp_addr
-	port: cfg.smpt_port
-	username: cfg.smtp_login
-	password: cfg.smtp_passwd
-	from: cfg.mail_from
-	ssl: cfg.ssl
-	starttls: cfg.starttls
-	)!
-	return smtp_client
+	if self.smtp_client.server != cfg.smtp_addr || self.smtp_client.port != cfg.smtp_port
+		|| self.smtp_client.username != cfg.smtp_login
+		|| self.smtp_client.password != cfg.smtp_passwd {
+		mut smtp_client := smtp.new_client(
+			server: cfg.smtp_addr
+			port: cfg.smtp_port
+			username: cfg.smtp_login
+			password: cfg.smtp_passwd
+			from: cfg.mail_from
+			ssl: cfg.ssl
+			starttls: cfg.starttls
+		)!
+		self.smtp_client = smtp_client
+	}
 }
+
 @[params]
 pub struct SendArgs {
 pub mut:
@@ -71,6 +75,6 @@ pub fn (mut cl MailClient[Config]) send(args_ SendArgs) ! {
 		body: args.body
 		body_type: body_type
 	}
-	mut smtp_client := cl.get_smpt_client()!
-	return smtp_client.send(m)
+	cl.set_smtp_client()!
+	return cl.smtp_client.send(m)
 }
