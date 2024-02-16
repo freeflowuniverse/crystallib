@@ -7,7 +7,6 @@ pub fn (mut client GiteaClient[T]) get_issues(owner string, repo string) ![]Issu
 	r := client.connection.get_json_list(prefix: 'repos/${owner}/${repo}/issues')!
 	mut res := []Issue{}
 	for i in r {
-		println(i)
 		if i.trim_space() != '' {
 			res << json.decode(Issue, i)!
 		}

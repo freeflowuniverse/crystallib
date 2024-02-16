@@ -39,7 +39,6 @@ pub fn (mut client GiteaClient[T]) organization_repos(name string, options OrgRe
 
     mut res := []Repo{}
 	for i in r {
-		println(i)
 		if i.trim_space() != '' {
 			res << json.decode(Repo, i)!
 		}

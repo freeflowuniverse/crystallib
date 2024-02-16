@@ -41,7 +41,6 @@ pub fn (mut client GiteaClient[T]) user_repos(username string, options UserRepos
 
     mut res := []Repo{}
 	for i in r {
-		println(i)
 		if i.trim_space() != '' {
 			res << json.decode(Repo, i)!
 		}
