@@ -23,4 +23,4 @@ items:=cl.list_buckets()!
 println(items)
 
 
-cl.upload(src:"//Users/despiegk1/hero/bin/hero")!
+cl.upload(src:"/Users/despiegk1/hero/bin/hero")!
