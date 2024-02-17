@@ -5,7 +5,7 @@ import db.pg
 import freeflowuniverse.crystallib.core.texttools
 
 pub struct PostgresClient {
-	play.Base
+	play.BaseConfig
 pub mut:
 	config Config
 	db     pg.DB

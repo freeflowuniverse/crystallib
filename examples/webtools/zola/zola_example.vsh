@@ -8,17 +8,16 @@ import os
 
 console.print_header("Some test with zola.")
 
-mut session := play.session_new(
-	context_name: "test"
-	interactive: true
+//get path local to the current script
+path_my_actions := '${os.dir(@FILE)}/zola_heroscript'
+
+mut session:=play.session_new(
+    // coderoot:'/tmp/code'
+    interactive:true
+	playbook_url:"https://github.com/freeflowuniverse/crystallib/tree/development/examples/webtools/zola/zola_heroscript"
+    run: true //means we execute immediatelly the core hero actions
 )!
 
-//get path local to the current script
-path_my_actions := '${os.dir(@FILE)}/zola_actions'
-
-// //add all actions inside to the playbook
-session.playbook_add(path:path_my_actions)!
-session.process()!
 playcmds.run(mut session)!
 
 

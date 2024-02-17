@@ -236,19 +236,6 @@ fn (mut book MDBook) template_install() ! {
 		dpatho.write(item.to_string())!
 	}
 
-	// // write the css files
-	// for item in l.embedded_files {
-	// 	if item.path.ends_with('.css') {
-	// 		css_name := item.path.all_after_last('/')
-	// 		// osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
-
-	// 		dpath := '${book.path_publish.path}/css/${css_name}'
-	// 		// console.print_stdout(' templ ${dpath}')
-	// 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
-	// 		dpatho.write(item.to_string())!
-	// 	}
-	// }	
-
 	c := $tmpl('template/book.toml')
 	mut tomlfile := book.path_build.file_get_new('book.toml')!
 	tomlfile.write(c)!

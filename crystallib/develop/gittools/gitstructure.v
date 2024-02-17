@@ -17,12 +17,12 @@ fn (gs GitStructure) cache_key() string {
 	return gitstructure_cache_key(gs.name())
 }
 
-fn (gs GitStructure) name() string {
+pub fn (gs GitStructure) name() string {
 	return gs.config.name
 }
 
 // remove cache
-fn (gs GitStructure) cache_reset() ! {
+pub fn (gs GitStructure) cache_reset() ! {
 	mut redis := redisclient.core_get()!
 	key_check := gs.cache_key()
 	keys := redis.keys(key_check)!
@@ -39,49 +39,62 @@ pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) ! {
 	println('')
 }
 
-pub fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
+fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
+	//find parent with .git
+	mypath:= pathlib.get_dir(path: path,create:false)!
+	mut parentpath := mypath.parent_find('.git') or { return error("cannot find .git in parent starting from: ${path}") }
+	if parentpath.path == '' {
+		return error("cannot find .git in parent starting from: ${path}") 
+	}
 	mut r := GitRepo{
 		gs: &gitstructure
 		addr: GitAddr{
 			gsconfig: gitstructure.config
 		}
-		path: pathlib.get_dir(path: path)!
+		path:parentpath
 	}
-	// r.load_from_path()!
+	// println(" - load from path: $parentpath.path")
+	r.load_from_path()!
+	// println("ok")
 	return r
 }
 
-pub struct RepoAddArgs {
-pub mut:
-	url    string
-	branch string
-	sshkey string
-	pull   bool = true
-}
 
 // add repository to gitstructure
-pub fn (mut gs GitStructure) repo_add(args RepoAddArgs) ! {
+pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
+	if args.path.len>0{
+		mut repo:=gs.repo_from_path(args.path)!
+		gs.repos << &repo
+		return &repo
+	}
 	mut locator := gs.locator_new(args.url)!
 	if args.branch.len > 0 {
 		// repo.branch_switch(args.branch)!
 		locator.addr.branch = args.branch
 	}
-	if gs.repo_exists(locator)! {
-		return
-	}
 	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
 	if args.sshkey.len > 0 {
 		repo.ssh_key_set(args.sshkey)!
+	}
+	if args.reload {
+		repo.load()!
+	}
+	if args.reset {
+		repo.remove_changes()!
 	}
 	if args.pull {
 		repo.pull()!
 	}
 	gs.repos << &repo
-}
+	return &repo
+}	
 
 pub struct GSCodeGetFromUrlArgs {
 pub mut:
+	path   string
 	url    string
+	branch string
+	sshkey string
 	pull   bool // will pull if this is set
 	reset  bool // this means will pull and reset all changes
 	reload bool // reload the cache
@@ -99,25 +112,19 @@ pub mut:
 // https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
 //
 // args:
-// url               string
-// pull   bool 		 // will pull if this is set
+// path   string
+// url    string
+// branch string
+// sshkey string
+// pull   bool // will pull if this is set
 // reset  bool // this means will pull and reset all changes
 // reload bool // reload the cache
 // ```
-pub fn (mut gs GitStructure) code_get(args GSCodeGetFromUrlArgs) !string {
-	console.print_header('code get ${args.url}')
+pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
+	mut args:=args_
+	console.print_header('code get url:${args.url} or path:${args.path}')
+	mut g:=gs.repo_add(args)!
 	mut locator := gs.locator_new(args.url)!
-	// println(locator)
-	mut g := gs.repo_get(locator: locator)!
-	if args.reload {
-		g.load()!
-	}
-	if args.reset {
-		g.remove_changes()!
-	}
-	if args.pull {
-		g.pull()!
-	}
 	s := locator.path_on_fs()!
 	return s.path
 }

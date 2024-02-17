@@ -6,7 +6,7 @@ import os
 
 @[heap]
 pub struct MDBooks[T] {
-	play.Base[T]
+	play.BaseConfig[T]
 }
 
 pub struct Config {
@@ -15,8 +15,6 @@ pub mut:
 	configtype   string = 'mdbooks' // needs to be defined	
 	path_build   string = '${os.home_dir()}/hero/var/mdbuild'
 	path_publish string = '${os.home_dir()}/hero/www/info'
-	nodeaddr     string
-	sshkey       string
 }
 
 pub fn get(args play.PlayArgs) !MDBooks[Config] {

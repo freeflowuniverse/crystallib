@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.lang.python
 
 pub struct B2Client[T] {
-	play.Base[T]
+	play.BaseConfig[T]
 pub mut:
 	py python.PythonEnv
 }

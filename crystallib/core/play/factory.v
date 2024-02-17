@@ -13,7 +13,10 @@ pub mut:
 	playbook_url  string // url of heroscript to get and execute in current context
 	playbook_path string // path of heroscript to get and execute
 	playbook_text string // heroscript to execute
-	// playbook_priorities map[int]string
+	playbook_priorities map[int]string
+	git_pull bool //if playbook_url used
+	git_reset bool //if playbook_url used
+	run bool
 }
 
 pub fn get_play_args(args PlayArgs) PlayArgs {

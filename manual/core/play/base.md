@@ -1,11 +1,11 @@
-# Base
+# BaseConfig
 
 Clients, DALs, SAL's can inherit base
 
 
 ```golang
 
-pub struct Base {
+pub struct BaseConfig {
 pub mut:
 	session_ ?&Session 
 	instance    string
@@ -16,7 +16,7 @@ pub mut:
 import freeflowuniverse.crystallib.core.play
 
 pub struct B2Client {
-	play.Base
+	play.BaseConfig
 pub mut:
 	someprop string
 }
@@ -25,7 +25,7 @@ pub mut:
 
 ```
 
-## Base Methods
+## BaseConfig Methods
 
 This will give some super powers to each base inheritted class
 
@@ -45,11 +45,11 @@ This will give some super powers to each base inheritted class
 // playbook_path                string //path of heroscript to get and execute
 // playbook_text                string //heroscript to execute
 //```
-pub fn (mut self Base) session_set(args_ PlayArgs) !&Session 
+pub fn (mut self BaseConfig) session_set(args_ PlayArgs) !&Session 
 
-pub fn (mut self Base) session() !&Session
+pub fn (mut self BaseConfig) session() !&Session
 
-pub fn (mut self Base) context() !&Context
+pub fn (mut self BaseConfig) context() !&Context
 
 
 ```

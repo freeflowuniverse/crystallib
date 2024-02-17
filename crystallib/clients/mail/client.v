@@ -6,7 +6,7 @@ import net.smtp
 import time
 
 pub struct MailClient {
-	play.Base
+	play.BaseConfig
 pub mut:
 	smtp_client smtp.Client
 }

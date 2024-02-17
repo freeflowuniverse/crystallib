@@ -31,7 +31,7 @@ pub fn (mut db DB) get(name_ string) !string {
 pub fn (mut db DB) set(name_ string, data_ string) ! {
 	mut data := data_
 	if data.len == 0 {
-		return error('data cannot be empty')
+		return error('data cannot be empty for set:${name_}')
 	}
 	name := texttools.name_fix(name_)
 	mut datafile := db.path.file_get_new(name)!

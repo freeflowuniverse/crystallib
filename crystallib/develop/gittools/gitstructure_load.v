@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
-fn (mut gitstructure GitStructure) load() ! {
+pub fn (mut gitstructure GitStructure) load() ! {
 	// print_backtrace()
 	// if true{panic("s")}
 	gitstructure.repos.clear()

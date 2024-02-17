@@ -70,6 +70,15 @@ fn (mut self Context) db_config_get() !fskvs.DB
 
 ```
 
+## configure context through heroscript
+
+```js
+!!context.configure
+    name:'test'
+    coderoot:''
+    interactive:true
+```
+
 
 ## Configure a context
 
