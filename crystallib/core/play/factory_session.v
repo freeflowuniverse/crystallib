@@ -42,8 +42,6 @@ pub fn session_new(args_ PlayArgs) !&Session {
 		)!
 	}
 
-
-
 	mut context := args.context or {
 		mut c := context_get(name: args.context_name, interactive: args.interactive)!
 		&c
@@ -62,10 +60,14 @@ pub fn session_new(args_ PlayArgs) !&Session {
 
 	session.playbook_priorities = args.playbook_priorities.clone()
 
-	session.playbook_add(path:args.playbook_path,text:args.playbook_text,
-			git_url:args.playbook_url
-			git_pull:args.git_pull,git_reset:args.git_reset,run:args.run
-		)!
+	session.playbook_add(
+		path: args.playbook_path
+		text: args.playbook_text
+		git_url: args.playbook_url
+		git_pull: args.git_pull
+		git_reset: args.git_reset
+		run: args.run
+	)!
 
 	return session
 }

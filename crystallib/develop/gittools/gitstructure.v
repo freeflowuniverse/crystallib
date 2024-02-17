@@ -40,18 +40,20 @@ pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) ! {
 }
 
 fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
-	//find parent with .git
-	mypath:= pathlib.get_dir(path: path,create:false)!
-	mut parentpath := mypath.parent_find('.git') or { return error("cannot find .git in parent starting from: ${path}") }
+	// find parent with .git
+	mypath := pathlib.get_dir(path: path, create: false)!
+	mut parentpath := mypath.parent_find('.git') or {
+		return error('cannot find .git in parent starting from: ${path}')
+	}
 	if parentpath.path == '' {
-		return error("cannot find .git in parent starting from: ${path}") 
+		return error('cannot find .git in parent starting from: ${path}')
 	}
 	mut r := GitRepo{
 		gs: &gitstructure
 		addr: GitAddr{
 			gsconfig: gitstructure.config
 		}
-		path:parentpath
+		path: parentpath
 	}
 	// println(" - load from path: $parentpath.path")
 	r.load_from_path()!
@@ -59,11 +61,10 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 	return r
 }
 
-
 // add repository to gitstructure
 pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
-	if args.path.len>0{
-		mut repo:=gs.repo_from_path(args.path)!
+	if args.path.len > 0 {
+		mut repo := gs.repo_from_path(args.path)!
 		gs.repos << &repo
 		return &repo
 	}
@@ -87,7 +88,7 @@ pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
 	}
 	gs.repos << &repo
 	return &repo
-}	
+}
 
 pub struct GSCodeGetFromUrlArgs {
 pub mut:
@@ -121,9 +122,9 @@ pub mut:
 // reload bool // reload the cache
 // ```
 pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
-	mut args:=args_
+	mut args := args_
 	console.print_header('code get url:${args.url} or path:${args.path}')
-	mut g:=gs.repo_add(args)!
+	mut g := gs.repo_add(args)!
 	mut locator := gs.locator_new(args.url)!
 	s := locator.path_on_fs()!
 	return s.path

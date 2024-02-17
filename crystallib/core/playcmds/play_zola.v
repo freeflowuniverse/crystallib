@@ -1,14 +1,14 @@
 module playcmds
 
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.webtools.zola
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.play
 
-struct WebsiteItem{
+struct WebsiteItem {
 mut:
 	name string
 	site ?&zola.ZolaSite
-
 }
 
 pub fn play_zola(mut session play.Session) ! {
@@ -36,49 +36,56 @@ pub fn play_zola(mut session play.Session) ! {
 		reset: reset
 	)!
 
-	
-	for mut action in session.plbook.find(filter: 'website')! {
-		mut ws:=WebsiteItem{}
+	mut ws := WebsiteItem{}
 
-		if action.name=="define"{
+	for mut action in session.plbook.find(filter: 'website.')! {
+		if action.name == 'define' {
+			console.print_debug('website.define')
 			mut p := action.params
 			ws.name = p.get('name')!
-			title := p.get_default('title',"")!
-			description := p.get_default('description',"")!
-			ws.site=websites.new(name:ws.name,title:title,description:description)!	
-
-		}else if  action.name=="template_add"{
+			title := p.get_default('title', '')!
+			description := p.get_default('description', '')!
+			ws.site = websites.new(name: ws.name, title: title, description: description)!
+		} else if action.name == 'template_add' {
+			console.print_debug('website.template_add')
 			mut p := action.params
-			url := p.get_default('url',"")!
-			path := p.get_default('path',"")!
-			mut site_:=ws.site or { return error("can't find website for template_add, should have been defined before with !!website.define")}
-			site_.template_add(url:url,path:path)!
-
-		}else if  action.name=="content_add"{
+			url := p.get_default('url', '')!
+			path := p.get_default('path', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for template_add, should have been defined before with !!website.define")
+			}
+			site_.template_add(url: url, path: path)!
+		} else if action.name == 'content_add' {
+			console.print_debug('website.content_add')
 			mut p := action.params
-			url := p.get_default('url',"")!
-			path := p.get_default('path',"")!
-			mut site_:=ws.site or { return error("can't find website for content_add, should have been defined before with !!website.define")}
-			site_.content_add(url:url,path:path)!
-
-		}else if  action.name=="doctree_add"{
+			url := p.get_default('url', '')!
+			path := p.get_default('path', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for content_add, should have been defined before with !!website.define")
+			}
+			site_.content_add(url: url, path: path)!
+		} else if action.name == 'doctree_add' {
+			console.print_debug('website.doctree_add')
 			mut p := action.params
-			url := p.get_default('url',"")!
-			path := p.get_default('path',"")!
-			mut site_:=ws.site or { return error("can't find website for doctree_add, should have been defined before with !!website.define")}
-			site_.doctree_add(url:url,path:path)!
+			url := p.get_default('url', '')!
+			path := p.get_default('path', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+			site_.doctree_add(url: url, path: path)!
 
-		}else if  action.name=="pull"{
-			mut site_:=ws.site or { return error("can't find website for pull, should have been defined before with !!website.define")}
-			site_.pull()!
-
-		}else if action.name=="generate"{
-			mut site_:=ws.site or { return error("can't find website for generate, should have been defined before with !!website.define")}
+			// }else if  action.name=="pull"{
+			// 	mut site_:=ws.site or { return error("can't find website for pull, should have been defined before with !!website.define")}
+			// 	site_.pull()!
+		} else if action.name == 'generate' {
+			mut site_ := ws.site or {
+				return error("can't find website for generate, should have been defined before with !!website.define")
+			}
 			site_.generate()!
-		}else{
+			site_.serve()!
+		} else {
 			return error("Cannot find right action for website. Found '${action.name}' which is a non understood action for !!website.")
 		}
 		action.done = true
 	}
-
 }

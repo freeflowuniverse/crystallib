@@ -1,4 +1,5 @@
 module zola
+
 import vweb
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
@@ -24,8 +25,9 @@ pub fn (mut app App) index(path string) vweb.Result {
 	return app.not_found()
 }
 
+@[params]
 pub struct ServeParams {
-	port int = 9998
+	port int  = 9998
 	open bool = true
 }
 
@@ -38,6 +40,6 @@ pub fn (mut site ZolaSite) serve(params ServeParams) ! {
 	if params.open {
 		osal.exec(cmd: 'open http://localhost:${params.port}')!
 	}
-	println("webserver for zola running.")
+	println('webserver for zola running.')
 	for {}
 }

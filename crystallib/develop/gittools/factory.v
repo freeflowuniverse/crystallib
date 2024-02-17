@@ -101,18 +101,19 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	}
 	// println("GET GS:\n$args")
 	rlock gsinstances {
-		if args.name in gsinstances{
-			mut gs:= gsinstances[args.name] or { 
-				panic("bug")
-			}
+		if args.name in gsinstances {
+			mut gs := gsinstances[args.name] or { panic('bug') }
 			if args.reload {
 				gs.load()!
 			}
-			return gs	
+			return gs
 		}
 	}
 
-	mut gsc:=GitStructureConfig{name:args.name,root:args.coderoot}
+	mut gsc := GitStructureConfig{
+		name: args.name
+		root: args.coderoot
+	}
 
 	mut redis := redisclient.core_get()!
 	mut datajson := redis.get(gitstructure_config_key(args.name))!
@@ -140,10 +141,10 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 		} else {
 			return error('Configure your gitstructure, ${args.name}, has not been configured yet.')
 		}
-	}else{
+	} else {
 		gsc = json.decode(GitStructureConfig, datajson)!
 	}
-	mut gs0:= new(gsc)!
+	mut gs0 := new(gsc)!
 	return gs0
 }
 
@@ -219,7 +220,7 @@ fn new(config_ GitStructureConfig) !GitStructure {
 		if config.name == 'default' || config.name == '' {
 			config.name = md5.hexhash(config.root)
 		}
-	}	
+	}
 	mut gs := GitStructure{
 		config: config
 		rootpath: pathlib.get_dir(path: config.root, create: true) or {

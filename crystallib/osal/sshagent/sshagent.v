@@ -126,18 +126,18 @@ pub fn (mut agent SSHAgent) add(name string, privkey_ string) !SSHKey {
 	if os.exists(path) {
 		os.rm(path)!
 	}
-	if os.exists("${path}.pub") {
-		os.rm("${path}.pub")!
+	if os.exists('${path}.pub') {
+		os.rm('${path}.pub')!
 	}
 	if !privkey.ends_with('\n') {
 		privkey += '\n'
 	}
 	os.write_file(path, privkey)!
 	os.chmod(path, 0o600)!
-	res4:=os.execute("ssh-keygen -y -f ${path} > ${path}.pub")
+	res4 := os.execute('ssh-keygen -y -f ${path} > ${path}.pub')
 	if res4.exit_code > 0 {
 		return error('cannot generate pubkey ${path}.\n${res4.output}')
-	}	
+	}
 	return agent.load(path)!
 }
 

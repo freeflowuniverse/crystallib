@@ -75,7 +75,7 @@ pub mut:
 	git_pull  bool // will pull if this is set
 	git_reset bool // this means will pull and reset all changes	
 	prio      int = 10
-	run bool	
+	run       bool
 }
 
 // add playbook heroscript (starting from path, text or git url)
@@ -124,9 +124,9 @@ pub fn (mut session Session) playbook_add(args_ PLayBookAddArgs) ! {
 
 	// for internal processing
 	session.heroscript_preprocess += '\n' + texttools.dedent(args.text)
-	if args.run{
+	if args.run {
 		session.process()!
-	}	
+	}
 }
 
 pub fn (mut session Session) process() ! {
@@ -154,24 +154,22 @@ pub fn (mut session Session) process() ! {
 
 	for action in config_actions {
 		mut p := action.params
-		mut name:=""
-		if p.exists("name"){
-			name=p.get_default('name', 'default')!
-		}		
-		mut coderoot:=""
-		if p.exists("coderoot"){
-			coderoot=p.get_default('coderoot', '')!
+		mut name := ''
+		if p.exists('name') {
+			name = p.get_default('name', 'default')!
 		}
-		mut interactive:=true
-		if p.exists("interactive"){
-			interactive=p.get_default_true('interactive')
+		mut coderoot := ''
+		if p.exists('coderoot') {
+			coderoot = p.get_default('coderoot', '')!
 		}
-		session.context=context_get(name:name,interactive:interactive)!
-
+		mut interactive := true
+		if p.exists('interactive') {
+			interactive = p.get_default_true('interactive')
+		}
+		session.context = context_get(name: name, interactive: interactive)!
 	}
 
 	session.processed = true
-
 }
 
 // add priorities for the playbook
