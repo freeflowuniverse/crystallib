@@ -13,7 +13,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '3.3.6'
+	version := '3.4.1'
 
 	res := os.execute('${osal.profile_path_source_and()} tailwind -h')
 	if res.exit_code == 0 {

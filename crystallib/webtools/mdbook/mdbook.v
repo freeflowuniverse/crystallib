@@ -227,26 +227,14 @@ pub fn (mut book MDBook) generate() ! {
 
 fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
-	l := loader()!
+	mut l := loader()!
+	l.load()!
 	for item in l.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		// console.print_debug(' embed: ${dpath}')
+		console.print_debug(' embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}
-
-	// // write the css files
-	// for item in l.embedded_files {
-	// 	if item.path.ends_with('.css') {
-	// 		css_name := item.path.all_after_last('/')
-	// 		// osal.file_write('${html_path.trim_right('/')}/css/${css_name}', item.to_string())!
-
-	// 		dpath := '${book.path_publish.path}/css/${css_name}'
-	// 		// console.print_stdout(' templ ${dpath}')
-	// 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
-	// 		dpatho.write(item.to_string())!
-	// 	}
-	// }	
 
 	c := $tmpl('template/book.toml')
 	mut tomlfile := book.path_build.file_get_new('book.toml')!

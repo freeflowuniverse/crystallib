@@ -56,15 +56,18 @@ pub fn session_new(args_ PlayArgs) !&Session {
 		&session
 	}
 
-	// session.playbook_priorities = args.playbook_priorities.clone()
+	session.interactive = args.interactive
 
-	mut plbook := playbook.new(
-		text: args.playbook_text
-		url: args.playbook_url
+	session.playbook_priorities = args.playbook_priorities.clone()
+
+	session.playbook_add(
 		path: args.playbook_path
-	) or { panic(err) }
-
-	session.plbook = plbook
+		text: args.playbook_text
+		git_url: args.playbook_url
+		git_pull: args.git_pull
+		git_reset: args.git_reset
+		run: args.run
+	)!
 
 	return session
 }

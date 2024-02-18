@@ -12,6 +12,7 @@ pub fn run(mut session play.Session) ! {
 	play_ssh(mut session)!
 	play_git(mut session)!
 	play_mdbook(mut session)!
+	play_zola(mut session)!
 
 	session.plbook.empty_check()!
 

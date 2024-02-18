@@ -2,8 +2,8 @@
 base_url = "http://localhost:8089/"
 # Change this to your own URL! Please note this variable **must** be uncommented.
 
-title = "A Template Website"
-description="Accessible and affordable for all"
+title = "${site.title}"
+description="${site.description}"
 
 # When set to "true", a feed is automatically generated.
 # generate_feed = true
@@ -103,26 +103,26 @@ footer_class = "customize"
 	[extra.taxonomies."roles".Create]
 	icon_path = "images/icons/paint-brush-art-svgrepo-com.svg"
     banner_path = "images/marius-masalar-unsplash.jpg"
-    title = "Create OurWorld"
+    title = "Create"
     description = "Become a part of a team of creators looking to shape our digital world"
 
     [extra.taxonomies."roles".Develop]
 	icon_path = "images/icons/code-svgrepo-com.svg"
     banner_path = "images/marius-masalar-unsplash.jpg"
-    title = "Develop OurWorld"
+    title = "Develop"
     description = "Become a part of a team of developers building our digital world"
 
     [extra.taxonomies."roles".Inspire]
 	icon_path = "images/icons/bar-svgrepo-com.svg"
     banner_path = "images/marius-masalar-unsplash.jpg"
-    title = "Share OurWorld"
-    description = "Create communities and involve people in ourworld"
+    title = "Share"
+    description = "Create communities"
 
     [extra.taxonomies."roles".Organize]
 	icon_path = "images/icons/form-svgrepo-com.svg"
     banner_path = "images/marius-masalar-unsplash.jpg"
-    title = "Run OurWorld"
-    description = "Become a part of the organizational team at ourworld"
+    title = "Run"
+    description = "Become a part of our organizational team"
 
 
 

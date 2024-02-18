@@ -3,8 +3,6 @@ module imagemagick
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import os
-import freeflowuniverse.crystallib.installers.base
-import process
 
 // this gets the name of the directory
 const installername = os.base(os.dir(@FILE))
@@ -13,7 +11,7 @@ const installername = os.base(os.dir(@FILE))
 pub fn install() ! {
 	console.print_header('install ${imagemagick.installername}')
 	if !osal.done_exists('install_${imagemagick.installername}') {
-		osal.package_install(name: 'imagemagick')!
+		osal.package_install('imagemagick')!
 		osal.done_set('install_${imagemagick.installername}', 'OK')!
 	}
 	console.print_header('${imagemagick.installername} already done')

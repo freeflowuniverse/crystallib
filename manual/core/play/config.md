@@ -15,7 +15,7 @@ import freeflowuniverse.crystallib.lang.python
 
 //a generic which inherits from base
 pub struct B2Client[T] {
-	play.Base[T]
+	play.BaseConfig[T]
 pub mut:
     //this is the custom part of the client
 	py  python.PythonEnv

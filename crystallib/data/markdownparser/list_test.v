@@ -29,14 +29,14 @@ Welcome to the farmerbot.
 
 '
 
-// fn test_wiki_headers_paragraphs() {
+fn test_wiki_headers_paragraphs() {
 
-// 	mut docs := new(content: text)!
-// 	println(docs.treeview())
-//   println(docs.markdown())
+	mut docs := new(content: text)!
+	println(docs.treeview())
+  println(docs.markdown())
 
-// 	if true{
-// 		panic("s")
-// 	}
+	// if true{
+	// 	panic("s")
+	// }
 
-// }
+}

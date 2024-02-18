@@ -19,18 +19,8 @@ if cfg.appkey==""{
 println(cfg)
 
 
-println(cl.list_buckets()!)
+items:=cl.list_buckets()!
+println(items)
 
 
-cl.upload(src:"//Users/despiegk1/hero/bin/hero")!
-cl.download(file_name: "hero", dest: '/tmp/hero')!
-cl.create_bucket(bucketname: "testashraf", buckettype: b2.BucketType.allprivate)!
-println(cl.list_buckets()!)
-cl.sync(source: "/tmp/testbucket", dest: "b2://testashraf/test")!
-cl.list_files(bucketname: "testashraf")!
-// backup to local dir
-cl.sync(source: "b2://testashraf", dest:"/tmp/backup")!
-//sync with empty dir to delete all files
-cl.sync(source: "/tmp/empty", dest: "b2://testashraf")!
-cl.delete_bucket(bucketname: "testashraf")!
-println(cl.list_buckets()!)
+cl.upload(src:"/Users/despiegk1/hero/bin/hero")!

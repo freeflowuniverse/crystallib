@@ -23,7 +23,7 @@ A context is sort of sandbox in which we execute our scripts it groups the follo
 
 ## Config Mgmt
 
-is done per instance of an object which inherits from Base.
+is done per instance of an object which inherits from BaseConfig.
 
 - see [base](base.md)
 - see [config](config.md)

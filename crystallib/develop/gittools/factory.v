@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import crypto.md5
 
 __global (
-	instances shared map[string]GitStructure
+	gsinstances shared map[string]GitStructure
 )
 
 @[params]
@@ -100,17 +100,21 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 		}
 	}
 	// println("GET GS:\n$args")
-	for key, i in instances {
-		if i.name() == args.name {
-			rlock instances {
-				mut gs := instances[key] or { panic('bug') }
-				if args.reload {
-					gs.load()!
-				}
-				return gs
+	rlock gsinstances {
+		if args.name in gsinstances {
+			mut gs := gsinstances[args.name] or { panic('bug') }
+			if args.reload {
+				gs.load()!
 			}
+			return gs
 		}
 	}
+
+	mut gsc := GitStructureConfig{
+		name: args.name
+		root: args.coderoot
+	}
+
 	mut redis := redisclient.core_get()!
 	mut datajson := redis.get(gitstructure_config_key(args.name))!
 	if datajson == '' {
@@ -137,11 +141,14 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 		} else {
 			return error('Configure your gitstructure, ${args.name}, has not been configured yet.')
 		}
+	} else {
+		gsc = json.decode(GitStructureConfig, datajson)!
 	}
-	config := json.decode(GitStructureConfig, datajson)!
-	return new(config)!
+	mut gs0 := new(gsc)!
+	return gs0
 }
 
+@[params]
 pub struct CodeGetFromUrlArgs {
 pub mut:
 	coderoot          string
@@ -179,7 +186,7 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {
 	mut gs := get(name: args.gitstructure_name, coderoot: args.coderoot)!
 	mut locator := gs.locator_new(args.url)!
-	println(locator)
+	// println(locator)
 	mut g := gs.repo_get(locator: locator)!
 	if args.reload {
 		g.load()!
@@ -196,6 +203,7 @@ pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {
 // - DIR_CODE , default: ${os.home_dir()}/code/ .
 fn new(config_ GitStructureConfig) !GitStructure {
 	mut config := config_
+
 	if config.root == '' {
 		root := if 'DIR_CODE' in os.environ() {
 			os.environ()['DIR_CODE'] + '/'
@@ -208,7 +216,11 @@ fn new(config_ GitStructureConfig) !GitStructure {
 	}
 	config.multibranch = if 'MULTIBRANCH' in os.environ() { true } else { config.multibranch }
 	config.root = config.root.replace('~', os.home_dir()).trim_right('/')
-
+	if config.root.len > 0 {
+		if config.name == 'default' || config.name == '' {
+			config.name = md5.hexhash(config.root)
+		}
+	}
 	mut gs := GitStructure{
 		config: config
 		rootpath: pathlib.get_dir(path: config.root, create: true) or {
@@ -222,8 +234,8 @@ fn new(config_ GitStructureConfig) !GitStructure {
 		os.mkdir_all(gs.config.root)!
 	}
 
-	lock instances {
-		instances[gs.config.name] = gs
+	lock gsinstances {
+		gsinstances[gs.config.name] = gs
 	}
 
 	return gs
