@@ -67,6 +67,7 @@ if [ "$file_size" -ge 1 ]; then
     fi
 
     echo "Hero installed properly"
+    export PATH=\$PATH:$hero_bin_path
     hero -version
 else
     echo "Downloaded file is less than 1 MB. Process aborted."
