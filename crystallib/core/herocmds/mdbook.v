@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
 import cli { Command, Flag }
+import freeflowuniverse.crystallib.ui.console
 
 // path string //if location on filessytem, if exists, this has prio on git_url
 // git_url   string // location of where the hero scripts are
@@ -11,7 +12,7 @@ import cli { Command, Flag }
 pub fn cmd_mdbook(mut cmdroot Command) {
 	mut cmd_mdbook := Command{
 		name: 'mdbook'
-		description: '
+		usage: '
 ## Manage your MDBooks
 
 example:
@@ -22,8 +23,8 @@ If you do -gp it will pull newest book content from git and give error if there 
 If you do -gr it will pull newest book content from git and overwrite local changes (careful).
 
 		'
+		description: 'create, edit, show mdbooks'
 		required_args: 0
-		usage: ''
 		execute: cmd_mdbook_execute
 	}
 
@@ -69,12 +70,13 @@ fn cmd_mdbook_execute(cmd Command) ! {
 			name = a.params.get('name') or { '' }
 		}
 	} else {
-		return error(cmd.help_message())
+		mdbook_help(cmd)
 	}
 
 	if name == '' {
 		println('did not find name of book to generate, check in heroscript or specify with --name')
-		return error(cmd.help_message())
+		mdbook_help(cmd)
+		exit(1)
 	}
 
 	edit := cmd.flags.get_bool('edit') or { false }
@@ -86,4 +88,15 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	if edit {
 		mdbook.book_edit(name)!
 	}
+
+
+}
+
+
+fn mdbook_help(cmd Command){
+	console.clear()
+	console.print_header("Instructions for mdbook:")
+	console.print_lf(1)
+	console.print_stdout(cmd.help_message())
+	console.print_lf(5)	
 }

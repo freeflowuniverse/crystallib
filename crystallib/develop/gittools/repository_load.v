@@ -7,7 +7,7 @@ import json
 
 fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 	$if debug {
-		console.print_debug(' git repo get: ${path}')
+		console.print_debug(' git info load from git config on fs: ${path}')
 	}
 
 	mut redis := redisclient.core_get()!

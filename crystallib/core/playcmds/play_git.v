@@ -24,7 +24,7 @@ pub fn play_git(mut session play.Session) ! {
 		}
 
 		mut gs := gittools.get(coderoot: coderoot) or {
-			return error("Could not find gittools on '${coderoot}'\n${err}")
+			return error("Could not load gittools on '${coderoot}'\n${err}")
 		}
 
 		gs.do(

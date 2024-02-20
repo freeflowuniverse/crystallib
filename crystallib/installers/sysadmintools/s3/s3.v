@@ -10,6 +10,7 @@ pub fn install() ! {
 	base.install()!
 	zinitinstaller.install()!
 	rclone.install()!
+
 	if osal.done_exists('install_s3') {
 		return
 	}
