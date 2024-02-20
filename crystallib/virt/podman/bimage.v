@@ -3,6 +3,10 @@ module podman
 import freeflowuniverse.crystallib.osal { exec }
 import time
 
+//TODO: needs to be implemented for buildah, is still code from docker
+
+
+
 @[heap]
 pub struct BAHImage {
 pub mut:
@@ -12,7 +16,7 @@ pub mut:
 	digest  string
 	size    int // size in MB
 	created time.Time
-	engine  &CEngine @[str: skip]
+	engine &CEngine @[skip; str: skip]
 }
 
 // delete podman image
