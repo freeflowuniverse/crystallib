@@ -1,7 +1,8 @@
 module docker
 
-import freeflowuniverse.crystallib.osal { exec }
 import time
+import freeflowuniverse.crystallib.osal { exec }
+import freeflowuniverse.crystallib.virt.utils
 
 @[heap]
 pub struct DockerImage {
@@ -46,7 +47,7 @@ pub fn (mut e DockerEngine) images_load() ! {
 	e.images = []DockerImage{}
 	mut lines := osal.execute_silent("docker images --format '{{.ID}}|{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.Size}}|{{.CreatedAt}}'")!
 	for line in lines.split_into_lines() {
-		fields := line.split('|').map(clear_str)
+		fields := line.split('|').map(utils.clear_str)
 		if fields.len < 6 {
 			panic('docker image needs to output 6 parts.\n${fields}')
 		}
@@ -54,9 +55,9 @@ pub fn (mut e DockerEngine) images_load() ! {
 			engine: &e
 		}
 		obj.id = fields[0]
-		obj.digest = parse_digest(fields[3]) or { '' }
-		obj.size = parse_size_mb(fields[4]) or { 0 }
-		obj.created = parse_time(fields[5]) or { time.now() }
+		obj.digest = utils.parse_digest(fields[3]) or { '' }
+		obj.size = utils.parse_size_mb(fields[4]) or { 0 }
+		obj.created = utils.parse_time(fields[5]) or { time.now() }
 		e.images << obj
 	}
 }
