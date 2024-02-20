@@ -1,4 +1,4 @@
-module main
+#!/usr/bin/env -S v -w -cg -enable-globals run
 
 import freeflowuniverse.crystallib.clients.redisclient
 import time
@@ -59,7 +59,5 @@ fn redistest_nothreads() ? {
 	println('TEST NO THREADS OK')
 }
 
-fn main() {
-	redistest() or { panic(err) }
-	// redistest_nothreads() or { panic(err) }
-}
+redistest() or { panic(err) }
+// redistest_nothreads() or { panic(err) }
