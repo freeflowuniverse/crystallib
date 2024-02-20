@@ -6,16 +6,6 @@ import freeflowuniverse.crystallib.virt.podman
 
 // println(osal.tcp_port_test(address:"65.21.132.119",port:22,timeout:1000))
 
-// pub fn exec(cmd string){
-// 	r:=os.exec(cmd)
-// 	if res.exit_code > 0 {
-// 		return error('cannot define result for link of ${path} \n${error}')
-// 	}
-// 	return res.output.trim_space()	
-
-// }
-
-name:="test"
 
 mut engine:=podman.new(reset:false)!
 
@@ -24,14 +14,24 @@ println(engine.bcontainers()!)
 mut c:=engine.bcontainer_new(name:"test")!
 
 c.package_install("mc,curl")!
-c.hero_install(reset:true) //build in separate container, if not done yet, then copy to this current container
+c.hero_install(reset:true)! //build in separate container, if not done yet, then copy to this current container
 c.hero_execute(heroscript:"
 		!!...
 
 		!!...
 
-		
-		")
+
+		")!
+
+c.go_install()!  //check go exists, if not then add, check platform
+c.rust_install()!
+c.v_install()!
+c.node_install()!
+
+c.code_get(reset:true, url:...)! //see gitstructure path = gs.code_get(reset: reset, pull: pull, url: url)!  use herscript underneith to do it
+
+c.add(...) //add content
+
 
 println(c)
 
