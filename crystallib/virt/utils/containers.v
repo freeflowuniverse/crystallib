@@ -1,9 +1,23 @@
-module docker
+module utils
 
 import time
 
+pub enum ContainerStatus {
+	up
+	down
+	restarting
+	paused
+	dead
+	created
+}
+
+pub struct ContainerVolume {
+	src  string
+	dest string
+}
+
 // convert strings as used by format from docker to MB in int
-fn parse_size_mb(size_ string) !int {
+pub fn parse_size_mb(size_ string) !int {
 	mut size := size_.to_lower()
 	if size.contains('(') {
 		size = size.split('(')[0].trim(' ')
@@ -23,7 +37,7 @@ fn parse_size_mb(size_ string) !int {
 	return s
 }
 
-fn parse_digest(s string) !string {
+pub fn parse_digest(s string) !string {
 	mut s2 := s
 	if s.starts_with('sha256:') {
 		s2 = s2[7..]
@@ -31,18 +45,18 @@ fn parse_digest(s string) !string {
 	return s2
 }
 
-fn parse_time(s string) !time.Time {
+pub fn parse_time(s string) !time.Time {
 	mut s2 := s
 	s3 := s2.split('+')[0].trim(' ')
-	return time.parse(s3)
+	return time.parse_iso8601(s3)
 }
 
-fn parse_ports(s string) ![]string {
+pub fn parse_ports(s string) ![]string {
 	s3 := s.split(',').map(clear_str)
 	return s3
 }
 
-fn parse_labels(s string) !map[string]string {
+pub fn parse_labels(s string) !map[string]string {
 	mut res := map[string]string{}
 	if s.trim_space().len > 0 {
 		// println(s)
@@ -52,7 +66,7 @@ fn parse_labels(s string) !map[string]string {
 	return res
 }
 
-fn parse_networks(s string) ![]string {
+pub fn parse_networks(s string) ![]string {
 	mut res := []string{}
 	if s.trim_space().len > 0 {
 		// println(s)
@@ -62,8 +76,8 @@ fn parse_networks(s string) ![]string {
 	return res
 }
 
-fn parse_mounts(s string) ![]DockerContainerVolume {
-	mut res := []DockerContainerVolume{}
+pub fn parse_mounts(s string) ![]ContainerVolume {
+	mut res := []ContainerVolume{}
 	// TODO: need to do
 	if s.trim_space().len > 0 {
 		// println(s)
@@ -73,33 +87,33 @@ fn parse_mounts(s string) ![]DockerContainerVolume {
 	return res
 }
 
-fn parse_container_state(state string) !DockerContainerStatus {
+pub fn parse_container_state(state string) !ContainerStatus {
 	if state.contains('Dead:true') || state.contains('dead') {
-		return DockerContainerStatus.dead
+		return ContainerStatus.dead
 	}
 	if state.contains('Paused:true') || state.contains('paused') {
-		return DockerContainerStatus.paused
+		return ContainerStatus.paused
 	}
 	if state.contains('Restarting:true') || state.contains('restarting') {
-		return DockerContainerStatus.restarting
+		return ContainerStatus.restarting
 	}
 	if state.contains('Running:true') || state.contains('running') {
-		return DockerContainerStatus.up
+		return ContainerStatus.up
 	}
 	if state.contains('Status:created') || state.contains('created') {
-		return DockerContainerStatus.created
+		return ContainerStatus.created
 	}
 	if state.contains('exited') {
-		return DockerContainerStatus.down
+		return ContainerStatus.down
 	}
 	return error('Could not find docker status: ${state}')
 }
 
-fn clear_str(s string) string {
+pub fn clear_str(s string) string {
 	return s.trim(' \n\t')
 }
 
-fn contains_ssh_port(forwarded_ports []string) bool {
+pub fn contains_ssh_port(forwarded_ports []string) bool {
 	for port in forwarded_ports {
 		splitted := port.split(':')
 		if splitted.last() == '22' || splitted.last() == '22/tcp' {

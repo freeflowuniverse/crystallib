@@ -1,8 +1,7 @@
 module podman
 
-import freeflowuniverse.crystallib.osal { cputype, exec, platform }
+import freeflowuniverse.crystallib.osal { exec }
 import freeflowuniverse.crystallib.core.texttools
-
 
 @[heap]
 pub struct CEngine {
@@ -10,14 +9,14 @@ pub mut:
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
 	images          []BAHImage
 	containers      []Container
-	bcontainers      []BContainer
+	bcontainers     []BContainer
 	buildpath       string
 	localonly       bool
 	cache           bool = true
 	push            bool
 	// platform        []BuildPlatformType // used to build
 	// registries      []BAHRegistry    // one or more supported BAHRegistries
-	prefix          string
+	prefix string
 }
 
 pub enum BuildPlatformType {
@@ -46,10 +45,9 @@ fn (mut e CEngine) init() ! {
 // reload the state from system
 pub fn (mut e CEngine) load() ! {
 	e.bcontainers_load()!
-	// e.images_load()!
-	// e.containers_load()!
+	e.images_load()!
+	e.containers_load()!
 }
-
 
 // reset all images & containers, CAREFUL!
 pub fn (mut e CEngine) reset_all() ! {

@@ -2,10 +2,8 @@ module podman
 
 import freeflowuniverse.crystallib.osal { exec }
 import time
-
-//TODO: needs to be implemented for buildah, is still code from docker
-
-
+import freeflowuniverse.crystallib.virt.utils
+// TODO: needs to be implemented for buildah, is still code from docker
 
 @[heap]
 pub struct BAHImage {
@@ -16,7 +14,7 @@ pub mut:
 	digest  string
 	size    int // size in MB
 	created time.Time
-	engine &CEngine @[skip; str: skip]
+	engine  &CEngine  @[skip; str: skip]
 }
 
 // delete podman image
@@ -48,21 +46,21 @@ pub fn (mut image BAHImage) load(path string) ! {
 
 pub fn (mut e CEngine) images_load() ! {
 	e.images = []BAHImage{}
-	// mut lines := osal.execute_silent("podman images --format '{{.ID}}|{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.Size}}|{{.CreatedAt}}'")!
-	// for line in lines.split_into_lines() {
-	// 	fields := line.split('|').map(clear_str)
-	// 	if fields.len < 6 {
-	// 		panic('podman image needs to output 6 parts.\n${fields}')
-	// 	}
-	// 	mut obj := BAHImage{
-	// 		engine: &e
-	// 	}
-	// 	obj.id = fields[0]
-	// 	obj.digest = parse_digest(fields[3]) or { '' }
-	// 	obj.size = parse_size_mb(fields[4]) or { 0 }
-	// 	obj.created = parse_time(fields[5]) or { time.now() }
-	// 	e.images << obj
-	// }
+	mut lines := osal.execute_silent("podman images --format '{{.ID}}|{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.Size}}|{{.CreatedAt}}'")!
+	for line in lines.split_into_lines() {
+		fields := line.split('|').map(utils.clear_str)
+		if fields.len < 6 {
+			panic('podman image needs to output 6 parts.\n${fields}')
+		}
+		mut obj := BAHImage{
+			engine: &e
+		}
+		obj.id = fields[0]
+		obj.digest = utils.parse_digest(fields[3]) or { '' }
+		obj.size = utils.parse_size_mb(fields[4]) or { 0 }
+		obj.created = utils.parse_time(fields[5]) or { time.now() }
+		e.images << obj
+	}
 }
 
 @[params]
@@ -111,6 +109,7 @@ pub fn (err ImageGetError) code() int {
 pub fn (mut e CEngine) image_get(args ImageGetArgs) !&BAHImage {
 	mut counter := 0
 	mut result_digest := ''
+
 	for i in e.images {
 		if args.digest == args.digest {
 			return &i
@@ -136,6 +135,7 @@ pub fn (mut e CEngine) image_get(args ImageGetArgs) !&BAHImage {
 			toomany: true
 		}
 	}
+	println('test2 ${counter}')
 	if counter == 0 {
 		return ImageGetError{
 			args: args
