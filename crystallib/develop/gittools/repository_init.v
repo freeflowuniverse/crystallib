@@ -46,9 +46,9 @@ fn (mut repo GitRepo) load_from_url() ! {
 
 // path needs to exit, load all from disk
 fn (mut repo GitRepo) load_from_path() ! {
-	$if debug {
-		console.print_debug('load from path: ${repo.path.path}')
-	}
+	// $if debug {
+	// 	console.print_debug('load from path: ${repo.path.path}')
+	// }
 	repo.status()!
 }
 
