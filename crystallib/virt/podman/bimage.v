@@ -10,7 +10,6 @@ pub struct BAHImage {
 pub mut:
 	repo    string
 	id      string
-	id_full string
 	tag     string
 	digest  string
 	size    int // size in MB
@@ -20,56 +19,57 @@ pub mut:
 
 // delete podman image
 pub fn (mut image BAHImage) delete(force bool) ! {
-	mut forcestr := ''
-	if force {
-		forcestr = '-f'
-	}
-	exec(cmd: 'podman rmi ${image.id} ${forcestr}', stdout: false)!
+	// mut forcestr := ''
+	// if force {
+	// 	forcestr = '-f'
+	// }
+	// exec(cmd: 'podman rmi ${image.id} ${forcestr}', stdout: false)!
+	// mut x := 0
+	// for image2 in image.engine.images {
+	// 	if image2.id == image.id {
+	// 		image.engine.images.delete(x)
+	// 	}
+	// 	x += 1
+	// }
 }
 
 // export podman image to tar.gz
 pub fn (mut image BAHImage) export(path string) !string {
-	exec(cmd: 'podman save ${image.id} > ${path}', stdout: false)!
+	// exec(cmd: 'podman save ${image.id} > ${path}', stdout: false)!
 	return ''
 }
 
 // import podman image back into the local env
-pub fn (mut engine CEngine) load_image(path string) ! {
+pub fn (mut image BAHImage) load(path string) ! {
 	exec(cmd: 'podman load < ${path}', stdout: false)!
-	engine.images_load()!
-	println(engine.images)
 }
 
 pub fn (mut e CEngine) images_load() ! {
 	e.images = []BAHImage{}
-	mut lines := osal.execute_silent("podman images --format '{{.ID}}||{{.Id}}||{{.Repository}}||{{.Tag}}||{{.Digest}}||{{.Size}}||{{.CreatedAt}}'")!
+	mut lines := osal.execute_silent("podman images --format '{{.ID}}|{{.Repository}}|{{.Tag}}|{{.Digest}}|{{.Size}}|{{.CreatedAt}}'")!
 	for line in lines.split_into_lines() {
-		fields := line.split('||').map(utils.clear_str)
+		fields := line.split('|').map(utils.clear_str)
 		if fields.len < 6 {
 			panic('podman image needs to output 6 parts.\n${fields}')
 		}
-		mut image := BAHImage{
+		mut obj := BAHImage{
 			engine: &e
 		}
-		image.id = fields[0]
-		image.id_full = fields[1]
-		image.repo = fields[2]
-		image.tag = fields[3]
-		image.digest = utils.parse_digest(fields[4]) or { '' }
-		image.size = utils.parse_size_mb(fields[5]) or { 0 }
-		image.created = utils.parse_time(fields[6]) or { time.now() }
-		e.images << image
+		obj.id = fields[0]
+		obj.digest = utils.parse_digest(fields[3]) or { '' }
+		obj.size = utils.parse_size_mb(fields[4]) or { 0 }
+		obj.created = utils.parse_time(fields[5]) or { time.now() }
+		e.images << obj
 	}
 }
 
 @[params]
 pub struct ImageGetArgs {
 pub:
-	repo    string
-	tag     string
-	digest  string
-	id      string
-	id_full string
+	repo   string
+	tag    string
+	digest string
+	id     string
 }
 
 pub struct ImageGetError {
@@ -106,16 +106,17 @@ pub fn (err ImageGetError) code() int {
 // 	tag string
 // 	digest string
 // 	id string
-// id_full
-pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
+pub fn (mut e CEngine) image_get(args ImageGetArgs) !&BAHImage {
 	mut counter := 0
 	mut result_digest := ''
 
 	for i in e.images {
-		if i.digest == args.digest {
-			return i
+		if args.digest == args.digest {
+			return &i
 		}
-
+		if args.digest != '' {
+			continue
+		}
 		if args.repo != '' && i.repo != args.repo {
 			continue
 		}
@@ -125,19 +126,16 @@ pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
 		if args.id != '' && i.id != args.id {
 			continue
 		}
-		if args.id_full != '' && i.id_full != args.id_full {
-			continue
-		}
 		result_digest = i.digest
 		counter += 1
-		if counter > 1 {
-			return ImageGetError{
-				args: args
-				toomany: true
-			}
+	}
+	if counter > 0 {
+		return ImageGetError{
+			args: args
+			toomany: true
 		}
 	}
-
+	println('test2 ${counter}')
 	if counter == 0 {
 		return ImageGetError{
 			args: args

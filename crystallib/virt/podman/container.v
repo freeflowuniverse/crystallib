@@ -6,6 +6,10 @@ import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.virt.utils
 
+// is podman containers
+// TODO: needs to be implemented for podman, is still code from docker
+
+// need to fill in what is relevant
 @[heap]
 pub struct Container {
 pub mut:
@@ -20,7 +24,7 @@ pub mut:
 	ports           []string
 	networks        []string
 	labels          map[string]string       @[str: skip]
-	image           &BAHImage //@[str: skip]
+	image           &BAHImage               @[str: skip]
 	engine          &CEngine                @[skip; str: skip]
 	status          utils.ContainerStatus
 	memsize         int // in MB
@@ -48,7 +52,7 @@ pub fn (mut e CEngine) containers_load() ! {
 	e.containers = []Container{}
 	mut ljob := exec(
 		// we used || because sometimes the command has | in it and this will ruin all subsequent columns
-		cmd: "podman container list -a --no-trunc --size --format '{{.ID}}||{{.Names}}||{{.ImageID}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
+		cmd: "podman container list -a --no-trunc --size --format '{{.ID}}||{{.Names}}||{{.Image}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
 		ignore_error_codes: [6]
 		stdout: false
 	)!
@@ -62,11 +66,11 @@ pub fn (mut e CEngine) containers_load() ! {
 			panic('podman ps needs to output 11 parts.\n${fields}')
 		}
 		id := fields[0]
-		image := e.image_get(id_full: fields[2])!
 		mut container := Container{
 			engine: &e
-			image: &image
+			image: e.image_get(id: fields[2])!
 		}
+
 		container.id = id
 		container.name = texttools.name_fix(fields[1])
 		container.command = fields[3]
@@ -79,6 +83,7 @@ pub fn (mut e CEngine) containers_load() ! {
 		container.networks = utils.parse_networks(fields[9])!
 		container.labels = utils.parse_labels(fields[10])!
 		container.ssh_enabled = utils.contains_ssh_port(container.ports)
+		// println(container)
 		e.containers << container
 	}
 }
