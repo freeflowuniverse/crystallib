@@ -1,6 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
+import freeflowuniverse.crystallib.installers.web.mdbook as mdbook_installer
 import cli { Command, Flag }
 import freeflowuniverse.crystallib.ui.console
 
@@ -56,6 +57,7 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
+
 	mut name := cmd.flags.get_string('name') or { '' }
 
 	mut url := cmd.flags.get_string('url') or { '' }
