@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.core.pathlib
 
+const testdata_path = os.dir(@FILE) + '/testdata'
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 // IMPORTANT: we should never change the files on original location, copy out first
@@ -28,7 +29,7 @@ fn test_fix() ! {
 	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 	mut test_page := test_collection.page_get('page_with_wrong_links')!
 
-	doc_before := test_page.doc(dest: test_page.path.parent()!.path)! // or { panic('doesnt exist') }
+	doc_before := test_page.doc(mut dest: test_page.path.parent()!.path)! // or { panic('doesnt exist') }
 
 	assert !test_page.changed // should be set to false after fix
 
