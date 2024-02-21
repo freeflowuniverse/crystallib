@@ -70,7 +70,6 @@ pub fn new(args TailWindArgs) !Tailwind {
 pub fn (tw Tailwind) compile(source string, dest string) ! {
 	// source the go path
 	config_path := '${tw.path.path}/tailwind.config.js'
-	println('debugzy: tailwind -c ${config_path} -i ${source} -o ${dest}')
 	if os.exists(dest) {
 		os.rm(dest)!
 	}
