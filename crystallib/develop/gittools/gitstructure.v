@@ -65,7 +65,10 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
 	if args.path.len > 0 {
 		mut repo := gs.repo_from_path(args.path)!
-		gs.repos << &repo
+		// add repo only if there arent duplicates
+		if gs.repos.all(it.path.path != repo.path.path) {
+			gs.repos << &repo
+		}
 		return &repo
 	}
 	mut locator := gs.locator_new(args.url)!
@@ -86,7 +89,10 @@ pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
 	if args.pull {
 		repo.pull()!
 	}
-	gs.repos << &repo
+	// add repo only if there arent duplicates
+	if gs.repos.all(it.path.path != repo.path.path) {
+		gs.repos << &repo
+	}
 	return &repo
 }
 
