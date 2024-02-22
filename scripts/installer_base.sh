@@ -448,7 +448,7 @@ function os_update {
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
         pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
-        systemctl start redis
+        redis-server --daemonize yes
     fi
 }
 
