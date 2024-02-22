@@ -72,7 +72,7 @@ pub enum Network {
 	test
 }
 
-pub fn (mut r TFRobot) job_new(job Job) !Job {
+pub fn (mut r TFRobot[Config]) job_new(job Job) !Job {
 	r.jobs[job.name] = job
 	return job
 }
