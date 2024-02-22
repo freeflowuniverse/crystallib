@@ -30,13 +30,11 @@ Welcome to the farmerbot.
 '
 
 fn test_wiki_headers_paragraphs() {
-
-	mut docs := new(content: text)!
+	mut docs := new(content: markdownparser.text)!
 	println(docs.treeview())
-  println(docs.markdown())
+	println(docs.markdown())
 
 	// if true{
 	// 	panic("s")
 	// }
-
 }

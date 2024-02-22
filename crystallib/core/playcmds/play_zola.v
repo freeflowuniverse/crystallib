@@ -54,6 +54,7 @@ pub fn play_zola(mut session play.Session) ! {
 			mut site_ := ws.site or {
 				return error("can't find website for template_add, should have been defined before with !!website.define")
 			}
+
 			site_.template_add(url: url, path: path)!
 		} else if action.name == 'content_add' {
 			console.print_debug('website.content_add')
@@ -63,6 +64,7 @@ pub fn play_zola(mut session play.Session) ! {
 			mut site_ := ws.site or {
 				return error("can't find website for content_add, should have been defined before with !!website.define")
 			}
+
 			site_.content_add(url: url, path: path)!
 		} else if action.name == 'doctree_add' {
 			console.print_debug('website.doctree_add')
@@ -72,6 +74,7 @@ pub fn play_zola(mut session play.Session) ! {
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
+
 			site_.doctree_add(url: url, path: path)!
 
 			// }else if  action.name=="pull"{
@@ -81,6 +84,7 @@ pub fn play_zola(mut session play.Session) ! {
 			mut site_ := ws.site or {
 				return error("can't find website for generate, should have been defined before with !!website.define")
 			}
+
 			site_.generate()!
 			site_.serve()!
 		} else {
