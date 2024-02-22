@@ -1,3 +1,5 @@
+#!/usr/bin/env -S v -w -cg -enable-globals run
+
 import coroutines
 import time
 
@@ -28,20 +30,18 @@ pub mut:
 	a int
 }
 
-fn main() {
-	// coroutines.initialize()
+// coroutines.initialize()
 
-	mut t := Test{
-		a: 100
-	}
-
-	go foo(mut &t)
-	go foo2(mut &t)
-	go foo3(mut &t)
-	for {
-		println('hello from MAIN')
-		coroutines.sleep(1 * time.second)
-		// t.a+=10 //this works
-	}
-	println('done')
+mut t := Test{
+	a: 100
 }
+
+go foo(mut &t)
+go foo2(mut &t)
+go foo3(mut &t)
+for {
+	println('hello from MAIN')
+	coroutines.sleep(1 * time.second)
+	// t.a+=10 //this works
+}
+println('done')
