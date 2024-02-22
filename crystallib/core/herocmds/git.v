@@ -193,7 +193,7 @@ fn cmd_git_execute(cmd Command) ! {
 		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
 		mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
 		if parentpath.path != '' {
-			r0 := gs.repo_add(path:parentpath.path)!
+			r0 := gs.repo_add(path: parentpath.path)!
 			repo = r0.addr.name
 			account = r0.addr.account
 			provider = r0.addr.provider

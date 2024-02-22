@@ -72,7 +72,7 @@ fn test_errors_created() {
 	assert collection.errors.len == 2
 	assert collection.errors.filter(it.cat == .file_double).len == 1
 	assert collection.errors.filter(it.cat == .page_double).len == 1
-	collection.errors_report(testdata_path + '/errors/errors.md')!
+	collection.errors_report(doctree.testdata_path + '/errors/errors.md')!
 }
 
 /* TOCHECK:
