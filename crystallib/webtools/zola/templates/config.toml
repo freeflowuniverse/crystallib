@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "http://localhost:8089/"
+base_url = "@{site.url}"
 # Change this to your own URL! Please note this variable **must** be uncommented.
 
 title = "${site.title}"
@@ -58,6 +58,12 @@ name = "categories"
 feed = true
 paginate_by = 2
 paginate_path = "blog-posts"
+
+[[taxonomies]]
+name = "partners-category"
+feed = true
+paginate_by = 6
+paginate_path = "partner-card"
 
 [[taxonomies]]
 name = "items"

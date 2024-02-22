@@ -11,6 +11,7 @@ import freeflowuniverse.crystallib.core.texttools
 pub struct ZolaSite {
 pub mut:
 	name         string
+	url string @[required]// base url of site
 	title        string
 	description  string
 	path_build   pathlib.Path
@@ -25,6 +26,7 @@ pub mut:
 	title        string
 	description  string
 	path_publish string // optional
+	url string = 'http://localhost:9998/'// base url of site
 }
 
 pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
@@ -34,6 +36,7 @@ pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
 		name: args.name
 		title: args.title
 		description: args.description
+		url: args.url
 		zola: &self
 	}
 
