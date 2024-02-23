@@ -121,7 +121,7 @@ fn (mut self Summary) add_error_page(collectionname string, pagename string) {
 
 fn (mut self Summary) add_page_additional(collectionname string, pagename string) {
 	shortname := pagename.all_before_last('.').to_lower()
-	description := '_${shortname}'
+	description := '${shortname}'
 	self.addpages << SummaryItem{
 		level: 2
 		description: description
@@ -144,7 +144,7 @@ pub fn (mut self Summary) str() string {
 		out << '- [_](additional/additional.md)'
 	}
 	if self.errors.len > 0 {
-		out << '  - [Errors](additional/errors.md)'
+		out << '  - [errors](additional/errors.md)'
 		for item in self.errors {
 			mut pre := ''
 			for _ in 0 .. item.level {
@@ -154,8 +154,8 @@ pub fn (mut self Summary) str() string {
 		}
 	}
 	if self.addpages.len > 0 {
-		out << '    - [unlisted_pages](additional/pages.md)'
-		for item in self.errors {
+		out << '  - [unlisted_pages](additional/pages.md)'
+		for item in self.addpages {
 			mut pre := ''
 			for _ in 0 .. item.level {
 				pre += '  '

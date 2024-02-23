@@ -28,9 +28,9 @@ pub mut:
 // 	or mypage.md
 //
 //```
-pub fn pointer_new(txt_ string) !Pointer {
+pub fn pointer_new(txt_ string) !Pointer {	
 	mut p := Pointer{}
-	mut txt := txt_.trim_space().replace('\\', '/').replace('//', '/').all_after_last('/')
+	mut txt := txt_.trim_space().replace('\\', '/').replace('//', '/')
 
 	// take colon parts out
 	nrcolon := txt.count(':')
@@ -38,12 +38,12 @@ pub fn pointer_new(txt_ string) !Pointer {
 	if nrcolon > 2 {
 		return error("pointer can only have 2 ':' inside. ${txt}")
 	} else if nrcolon == 1 {
-		p.collection = texttools.name_fix_keepext(splitted_colons[0])
-		p.name = texttools.name_fix_keepext(splitted_colons[1])
+		p.collection = texttools.name_fix_keepext(splitted_colons[0].all_after_last('/'))
+		p.name = texttools.name_fix_keepext(splitted_colons[1].all_after_last('/'))
 	} else {
-		p.name = texttools.name_fix_keepext(splitted_colons[0])
+		p.name = texttools.name_fix_keepext(splitted_colons[0].all_after_last('/'))
 	}
-
+	// println("pointer new: ${txt} ${nrcolon}\n$p")
 	splitted := p.name.split('.')
 	if splitted.len == 0 {
 		// no extension so needs to be markdown
@@ -71,19 +71,19 @@ pub fn pointer_new(txt_ string) !Pointer {
 }
 
 // represents the pointer in minimal string format
-pub fn (p Pointer) str() string {
-	mut out := ''
-	if p.collection.len > 0 {
-		out = '${p.collection}:${p.name}'
-	} else {
-		out = p.name
-	}
+// pub fn (p Pointer) str() string {
+// 	mut out := ''
+// 	if p.collection.len > 0 {
+// 		out = '${p.collection}:${p.name}'
+// 	} else {
+// 		out = p.name
+// 	}
 
-	if p.extension.len > 0 {
-		out += '.${p.extension}'
-	}
-	return out
-}
+// 	if p.extension.len > 0 {
+// 		out += '.${p.extension}'
+// 	}
+// 	return out
+// }
 
 pub fn (p Pointer) is_image() bool {
 	return p.cat == .image

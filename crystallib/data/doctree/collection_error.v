@@ -48,3 +48,16 @@ pub:
 pub fn (err ObjNotFound) msg() string {
 	return '"Could not find object with name ${err.name} in collection:${err.collection}'
 }
+
+
+// write errors.md in the collection, this allows us to see what the errors are
+fn (collection Collection) errors_report(dest_ string) ! {
+	println("====== errors report: ${dest_} : ${collection.errors.len}\n${collection.errors}")
+	mut dest := pathlib.get_file(path: dest_, create: true)!
+	if collection.errors.len == 0 {
+		dest.delete()!
+		return
+	}
+	c := $tmpl('template/errors.md')
+	dest.write(c)!
+}

@@ -34,14 +34,14 @@ pub fn (tree Tree) key() string {
 // }
 
 // fix all loaded tree
-pub fn (mut tree Tree) fix() ! {
-	if tree.state == .ok {
-		return
-	}
-	for _, mut collection in tree.collections {
-		collection.fix()!
-	}
-}
+// pub fn (mut tree Tree) fix() ! {
+// 	if tree.state == .ok {
+// 		return
+// 	}
+// 	for _, mut collection in tree.collections {
+// 		collection.fix()!
+// 	}
+// }
 
 // the next is our custom error for objects not found
 pub struct NoOrTooManyObjFound {
@@ -62,10 +62,12 @@ pub fn (err NoOrTooManyObjFound) msg() string {
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
 pub fn (tree Tree) page_get(pointerstr string) !&Page {
+	// println("page get:${pointerstr}")
 	p := pointer_new(pointerstr)!
+	// println(p)
 	mut res := []&Page{}
 	for _, collection in tree.collections {
-		if p.collection == '' || p.collection == collection.name {
+		if p.collection == collection.name {
 			if collection.page_exists(pointerstr) {
 				res << collection.page_get(pointerstr) or { panic('BUG') }
 			}
@@ -90,7 +92,7 @@ pub fn (tree Tree) image_get(pointerstr string) !&File {
 	mut res := []&File{}
 	for _, collection in tree.collections {
 		// console.print_debug(collection.name)
-		if p.collection == '' || p.collection == collection.name {
+		if  p.collection == collection.name {
 			// console.print_debug("in collection")
 			if collection.image_exists(pointerstr) {
 				res << collection.image_get(pointerstr) or { panic('BUG') }
@@ -114,7 +116,7 @@ pub fn (tree Tree) file_get(pointerstr string) !&File {
 	p := pointer_new(pointerstr)!
 	mut res := []&File{}
 	for _, collection in tree.collections {
-		if p.collection == '' || p.collection == collection.name {
+		if p.collection == collection.name {
 			if collection.file_exists(pointerstr) {
 				res << collection.file_get(pointerstr) or { panic('BUG') }
 			}

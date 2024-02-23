@@ -11,10 +11,10 @@ fn name_parse(name string) !(string, string) {
 			return error("format is collection:name or just 'name'")
 		}
 		collection := texttools.name_fix(splitted[0])
-		name_ := texttools.name_fix_no_ext(splitted[1])
+		name_ := texttools.name_fix_no_ext(splitted[1].all_after_last('/'))
 		return collection, name_
 	} else {
-		name_ := texttools.name_fix_no_ext(name)
+		name_ := texttools.name_fix_no_ext(name.all_after_last('/'))
 		return '', name_
 	}
 	return '', ''
