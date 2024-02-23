@@ -24,6 +24,9 @@
 //add collections to the website
 !!website.doctree_add url:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/collections'
 
+//add collections to the website
+!!website.doctree_add url:'https://github.com/threefoldfoundation/threefold_data/tree/development/content'
+
 
 !!website.generate
 
