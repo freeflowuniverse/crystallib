@@ -4,8 +4,9 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.installers.zinit
+import freeflowuniverse.crystallib.installers.infra.zinit
 import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
+import freeflowuniverse.crystallib.ui.console
 import os
 
 @[params]
@@ -27,11 +28,11 @@ pub fn install(args InstallArgs) ! {
 	// install caddy if it was already done will return true
 	console.print_header('package_install install caddy')
 
-	if osal.platform() != .ubuntu {
-		return error('only support ubuntu for now')
+	if ! osal.is_linux() {
+		return error('only support linux for now')
 	}
 	mut dest := osal.download(
-		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.5/caddy_2.7.5_linux_amd64.tar.gz'
+		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.6/caddy_2.7.6_linux_amd64.tar.gz'
 		minsize_kb: 10000
 		reset: true
 		expand_dir: '/tmp/caddyserver'
@@ -52,6 +53,7 @@ pub struct WebConfig {
 pub mut:
 	path   string = '/var/www'
 	domain string = ''
+	fileserver bool  = true
 }
 
 // configure caddy as default webserver & start
@@ -60,7 +62,7 @@ pub mut:
 // domain e.g. www.myserver.com
 pub fn configure_examples(config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
-	if config.domain == '' {
+	if config.fileserver {
 		config_file = $tmpl('templates/caddyfile_all')
 	}
 	install()!

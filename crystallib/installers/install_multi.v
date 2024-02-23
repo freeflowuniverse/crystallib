@@ -11,6 +11,7 @@ import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.installers.lang.golang
 import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.lang.crystallib
+import freeflowuniverse.crystallib.installers.web.caddy
 
 @[params]
 pub struct InstallArgs {
@@ -55,7 +56,11 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}		
 			'hero' {
 				crystallib.hero_install(reset:true)!
-			}													
+			}		
+			'caddy' {
+				caddy.install(reset:true)!
+				caddy.configure_examples()!
+			}															
 			'chrome' {
 				chrome.install(reset: args.reset, uninstall: args.uninstall)!
 			}

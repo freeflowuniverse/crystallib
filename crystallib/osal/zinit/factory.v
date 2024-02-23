@@ -4,6 +4,7 @@ module zinit
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
 import os
+import freeflowuniverse.crystallib.ui.console
 
 // will initialize a zinit session and start it when needed
 pub fn new() !Zinit {

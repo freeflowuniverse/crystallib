@@ -3,7 +3,7 @@ module initd
 // import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
-
+import freeflowuniverse.crystallib.ui.console
 pub struct IProcess {
 pub mut:
 	name        string
