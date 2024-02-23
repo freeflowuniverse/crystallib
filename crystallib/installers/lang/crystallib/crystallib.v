@@ -1,8 +1,8 @@
-module crystaltools
+module crystallib
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
-// install crystaltools will return true if it was already installed
+// install crystallib will return true if it was already installed
 
 @[params]
 pub struct InstallArgs {
@@ -11,8 +11,8 @@ pub mut:
 }
 
 pub fn install(args InstallArgs) ! {
-	// install crystaltools if it was already done will return true
-	console.print_header('install crystaltools')
+	// install crystallib if it was already done will return true
+	console.print_header('install crystallib')
 	if  args.reset==false && osal.done_exists('install_crystaltools') {
 		println('    package_install was already done')
 		return
@@ -24,7 +24,7 @@ pub fn install(args InstallArgs) ! {
 		bash /tmp/install.sh
 		"
 	osal.execute_silent(cmd) or {
-		return error('Cannot install crystaltools.\n${err}')
+		return error('Cannot install crystallib.\n${err}')
 	}
 	osal.done_set('install_crystaltools', 'OK')!
 	return
@@ -51,7 +51,7 @@ pub fn hero_install(args InstallArgs) ! {
 }
 
 // pub fn update() ! {
-// 	console.print_header('package_install update crystaltools')
+// 	console.print_header('package_install update crystallib')
 // 	if !(i.state == .reset) && osal.done_exists('install_crystaltools') {
 // 		println('    package_install was already done')
 // 		return
