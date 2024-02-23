@@ -7,6 +7,9 @@ import freeflowuniverse.crystallib.installers.virt.podman
 import freeflowuniverse.crystallib.installers.virt.lima
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.installers.lang.rust
+import freeflowuniverse.crystallib.installers.lang.golang
+import freeflowuniverse.crystallib.installers.lang.vlang
 
 @[params]
 pub struct InstallArgs {
@@ -37,6 +40,15 @@ pub fn install_multi(args_ InstallArgs) ! {
 	}
 	for item in items {
 		match item {
+			'rust' {
+				rust.install(reset: args.reset)!
+			}
+			'golang' {
+				golang.install(reset: args.reset)!
+			}	
+			'vlang' {
+				vlang.install()!
+			}						
 			'chrome' {
 				chrome.install(reset: args.reset, uninstall: args.uninstall)!
 			}

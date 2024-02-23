@@ -68,7 +68,7 @@ pub fn install(args_ InstallArgs) ! {
 		osal.execute_interactive(cmd)!
 		console.print_header(' - pkg installed.')
 	} else if osal.platform() in [.alpine, .arch, .ubuntu] {
-		osal.package_install('docker,podman-docker,buildah,netavark')!
+		osal.package_install('docker,podman-docker,buildah')!
 		osal.exec(cmd: 'systemctl start podman.socket')!
 
 		// TODO:
