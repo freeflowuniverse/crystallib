@@ -10,6 +10,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.installers.lang.golang
 import freeflowuniverse.crystallib.installers.lang.vlang
+import freeflowuniverse.crystallib.installers.lang.crystaltools
 
 @[params]
 pub struct InstallArgs {
@@ -48,7 +49,13 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}	
 			'vlang' {
 				vlang.install()!
-			}						
+			}	
+			'crystaltools' {
+				crystaltools.install(reset:true)!
+			}		
+			'hero' {
+				crystaltools.hero_install(reset:true)!
+			}													
 			'chrome' {
 				chrome.install(reset: args.reset, uninstall: args.uninstall)!
 			}
