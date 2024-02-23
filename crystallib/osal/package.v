@@ -17,14 +17,17 @@ pub fn package_refresh() ! {
 		exec(cmd: 'apt-get update') or {
 			return error('Could not update packages list\nerror:\n${err}')
 		}
+		return
 	} else if platform_ == .osx {
 		exec(cmd: 'brew update') or {
 			return error('Could not update packages list\nerror:\n${err}')
 		}
+		return
 	} else if platform_ == .alpine {
 		exec(cmd: 'apk update') or {
 			return error('Could not update packages list\nerror:\n${err}')
 		}
+		return
 	}
 	return error('Only ubuntu, alpine and osx is supported for now')
 }
