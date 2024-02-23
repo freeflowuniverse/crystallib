@@ -51,7 +51,7 @@ pub fn build() ! {
 	cargo install mdbook
 	cargo install mdbook-mermaid
 	cargo install mdbook-echarts
-	cargo install mdbook-embed
+	#cargo install mdbook-embed
 	#cargo install mdbook-plantuml
 	cargo install mdbook-kroki-preprocessor
 	cargo install mdbook-pdf --features fetch
