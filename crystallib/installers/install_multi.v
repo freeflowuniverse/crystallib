@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.installers.develapps.chrome
 import freeflowuniverse.crystallib.installers.virt.podman
 import freeflowuniverse.crystallib.installers.virt.lima
 import freeflowuniverse.crystallib.installers.net.mycelium
+import freeflowuniverse.crystallib.core.texttools
 
 @[params]
 pub struct InstallArgs {
@@ -13,6 +14,17 @@ pub mut:
 	names     string
 	reset     bool
 	uninstall bool
+}
+
+pub fn names(args_ InstallArgs) []string {
+	names:="
+		chrome
+		mycelium
+		lima
+		podman
+		vscode
+		"
+	return texttools.to_array(names)
 }
 
 pub fn install_multi(args_ InstallArgs) ! {

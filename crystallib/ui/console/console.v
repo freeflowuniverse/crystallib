@@ -62,6 +62,13 @@ pub fn print_stdout(txt string) {
 	c.reset()
 }
 
+pub fn print_lf(nr int) {
+	for i in 0..nr{
+		cprintln(text:"")
+	}		
+}
+
+
 pub fn print_stderr(txt string) {
 	mut c := get()
 	if c.prev_title || c.prev_item {

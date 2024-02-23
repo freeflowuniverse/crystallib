@@ -151,11 +151,11 @@ pub fn (vm VMOutput) tasks_run(dag &dagu.DAG) ! {
 	// println(dag)
 	r := vm.dagu_addr_get()!
 	console.print_debug('connect to dagu on ${vm.name} -> ${r.addr}')
-	mut client := dagu_client.new(
-		url: 'http://${r.addr}:${r.port}'
-		username: r.username
-		password: r.password
-	)!
+	mut client := dagu_client.get(instance: 'robot_dagu')!
+	mut cfg := client.config()!
+	cfg.url = 'http://${r.addr}:${r.port}'
+	cfg.username = r.username
+	cfg.password = r.password
 
 	if dag.name in client.list_dags()!.dags.map(it.dag.name) {
 		console.print_debug('delete dag: ${dag.name}')

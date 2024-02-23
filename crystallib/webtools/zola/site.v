@@ -2,7 +2,7 @@ module zola
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.develop.gittools
 import os
 import freeflowuniverse.crystallib.core.texttools

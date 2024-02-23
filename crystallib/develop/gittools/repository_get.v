@@ -93,12 +93,32 @@ pub mut:
 	provider string
 }
 
+pub fn (a ReposGetArgs) str() string {
+	mut out:=""
+	if a.filter.len>0{
+		out+="filter:${a.filter} "
+	}
+	if a.name.len>0{
+		out+="name:${a.name} "
+	}
+	if a.account.len>0{
+		out+="account:${a.account} "
+	}
+	if a.provider.len>0{
+		out+="provider:${a.provider} "
+	}
+	return out.trim_space()
+}
+
 pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 	mut args := ReposGetArgs{
 		...args_
 	}
-	mut res := []GitRepo{}
 	// println(args)
+	gitstructure.check() or {panic(err)}
+	mut res := []GitRepo{}
+	// repos.sort()
+	// println(repos.join("\n"))
 	for r in gitstructure.repos {
 		relpath := r.path_relative()
 		if args.filter != '' {
@@ -120,5 +140,10 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 		res << r
 	}
 
+	// println(res)
+	// if true{panic("s")}
+
 	return res
 }
+
+

@@ -1,12 +1,16 @@
 module codemodel
 
 import os
+import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.pathlib
 
 pub struct CodeFile {
 pub:
+	name string
 	mod     string
 	imports []Import
 	items   []CodeItem
+	content string
 }
 
 pub fn new_file(config CodeFile) CodeFile {
@@ -20,13 +24,7 @@ pub struct WriteCode {
 	destination string
 }
 
-pub fn (code CodeFile) write(params WriteCode) ! {
-	code_str := vgen(code.items)
-	file_str := $tmpl('./templates/code/code.v.template')
-	os.mkdir_all(os.dir(params.destination))!
-	os.write_file(params.destination, file_str)!
-	os.execute('v fmt -w ${params.destination}')
-}
+
 
 interface ICodeItem {
 	vgen() string
@@ -76,9 +74,52 @@ pub fn (type_ Type) vgen() string {
 	return '${type_str} ${type_.symbol}'
 }
 
+pub fn (field StructField) vgen() string {
+	symbol := field.get_type_symbol()
+	mut vstr := '${field.name} ${symbol}'
+	if field.description != '' {
+		vstr += '// ${field.description}'
+	}
+	return vstr
+}
+
+pub fn (field StructField) get_type_symbol() string {
+	mut field_str := if field.structure.name != '' {
+		field.structure.get_type_symbol()
+	} else {
+		field.typ.symbol
+	}
+
+	if field.is_ref {
+		field_str = '&${field_str}'
+	}
+
+	return field_str
+}
+
+pub fn (structure Struct) get_type_symbol() string {
+	mut symbol := if structure.mod != '' {
+		'${structure.mod.all_after_last('.')}.${structure.name}'}
+	else {structure.name}
+	if structure.generics.len > 0 {
+		symbol = '${symbol}${vgen_generics(structure.generics)}'
+	} 
+
+	return symbol
+}
+
+pub fn vgen_generics(generics map[string]string) string {
+	if generics.keys().len == 0 {return ''}
+	mut vstr := '['
+	for key, val in generics {
+		vstr += if val != '' {val} else {key}
+	}
+	return '${vstr}]'
+}
+
 // vgen_function generates a function statement for a function
 pub fn (function Function) vgen() string {
-	params_ := function.params.map(Param{
+	mut params_ := function.params.map(Param{
 		...it
 		typ: Type{
 			symbol: if it.struct_.name != '' {
@@ -88,37 +129,98 @@ pub fn (function Function) vgen() string {
 			}
 		}
 	})
-	params := params_.map('${it.name} ${it.typ.symbol}').join(', ')
+	
 
-	// TODO: fix and tidy
-	receiver_ := Param{
-		...function.receiver
-		typ: Type{
-			symbol: if function.receiver.struct_.name != '' {
-				function.receiver.struct_.name
-			} else {
-				function.receiver.typ.symbol
-			}
+	options := params_.filter(it.is_optional)
+	options_struct := Struct {
+		name: '${texttools.name_fix_snake_to_pascal(function.name)}Options'
+		attrs: [Attribute{name:'params'}]
+		fields: options.map(StructField{
+			name: it.name
+			description: it.description
+			typ: Type{symbol:it.typ.symbol}
+		})
+	}
+
+
+	if options.len > 0 {
+		params_ << Param{
+			name: 'options'
+			typ: Type{symbol: options_struct.name}
 		}
 	}
 
-	receiver := if function.receiver.name != '' {
-		if function.receiver.is_shared {
-			'(shared ${function.receiver.name} ${function.receiver.typ.vgen()})'
-		} else {
-			'(${function.receiver.name} ${function.receiver.typ.vgen()})'
-		}
+	params := params_.filter(!it.is_optional).map('${it.name} ${it.typ.symbol}').join(', ')
+
+	receiver := function.receiver.vgen()
+
+	mut function_str := $tmpl('templates/function/function.v.template')
+	result := os.execute_opt('echo "${function_str.replace('$', '\\$')}" | v fmt') or {panic('${function_str}\n${err}')}
+	function_str = result.output.split_into_lines().filter(!it.starts_with('import ')).join('\n')
+
+	return if options_struct.fields.len != 0 {
+		'${options_struct.vgen()}\n${function_str}'
+	} else {function_str}
+}
+
+pub fn (param Param) vgen() string {
+	if param.name == '' {
+		return ''
+	}
+	vstr := if param.struct_.name != '' {
+		param.struct_.get_type_symbol()
 	} else {
-		''
+		param.typ.symbol
 	}
-
-	return $tmpl('templates/function/function.v.template')
+	return '(${param.name} ${vstr})'
 }
 
 // vgen_function generates a function statement for a function
 pub fn (struct_ Struct) vgen() string {
-	return $tmpl('templates/struct/struct.v.template')
+
+	gen := VGenerator{true}
+	return gen.generate_struct(struct_) or {panic(err)}
+	// mut struct_str := $tmpl('templates/struct/struct.v.template')
+	// return struct_str
+	// result := os.execute_opt('echo "${struct_str.replace('$', '\$')}" | v fmt') or {panic(err)}
+	// return result.output
 }
+
+pub struct VGenerator {
+	format bool
+}
+
+pub fn (gen VGenerator) generate_struct(struct_ Struct) !string {
+	name := if struct_.generics.len > 0 {
+		println('struct  ${struct_}')
+		'${struct_.name}${vgen_generics(struct_.generics)}'
+	} else {struct_.name}
+	priv_fields := struct_.fields.filter(!it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))
+	pub_fields := struct_.fields.filter(!it.is_mut && it.is_pub).map(gen.generate_struct_field(it))
+	mut_fields := struct_.fields.filter(it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))
+	pub_mut_fields := struct_.fields.filter(it.is_mut && it.is_pub).map(gen.generate_struct_field(it))
+	
+	mut struct_str := $tmpl('templates/struct/struct.v.template')
+	if gen.format {
+		result := os.execute_opt('echo "${struct_str.replace('$', '\$')}" | v fmt') or {
+			println(struct_str)
+			panic(err)
+		}
+		return result.output
+	}
+	return struct_str
+}
+
+pub fn (gen VGenerator) generate_struct_field(field StructField) string {
+	symbol := field.get_type_symbol()
+	mut vstr := '${field.name} ${symbol}'
+	if field.description != '' {
+		vstr += '// ${field.description}'
+	}
+	return vstr
+}
+
+
 
 pub fn (custom CustomCode) vgen() string {
 	return custom.text
@@ -127,10 +229,55 @@ pub fn (custom CustomCode) vgen() string {
 // vgen_function generates a function statement for a function
 pub fn (result Result) vgen() string {
 	result_type := if result.structure.name != '' {
-		result.structure.name
+		result.structure.get_type_symbol()
 	} else {
 		result.typ.symbol
 	}
 	str := if result.result { '!' } else { '' }
 	return '${str}${result_type}'
 }
+
+[params]
+pub struct WriteOptions {
+	format bool
+	overwrite bool
+}
+
+
+pub fn (mod Module) write_v(path string, options WriteOptions) ! {
+	dir := pathlib.get_dir(path: path, create:true, empty:options.overwrite)!
+	for name, codefile in mod.files {
+		codefile.write_v(dir.path, options)!
+	}
+}
+
+pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
+
+	filename := '${texttools.name_fix(code.name)}.v'
+	mut filepath := pathlib.get('${path}/${filename}')
+	
+	if !options.overwrite && filepath.exists() {
+		return
+	}
+	
+	file_str := if code.content != '' {
+		code.content
+	} else {
+		code_str := vgen(code.items)
+		$tmpl('./templates/code/code.v.template')
+	}
+
+	mut file := pathlib.get_file(
+		path: filepath.path
+		create: true
+	)!
+	file.write(file_str)!
+	if options.format {
+		os.execute('v fmt -w ${file.path}')
+	}
+}
+
+		
+
+
+		

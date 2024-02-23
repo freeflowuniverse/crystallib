@@ -2,6 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.osal { cputype, exec, platform }
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.virt.utils
 // import freeflowuniverse.crystallib.installers.swarm
 
 // https://docs.docker.com/reference/
@@ -66,7 +67,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		if line.trim_space() == '' {
 			continue
 		}
-		fields := line.split('||').map(clear_str)
+		fields := line.split('||').map(utils.clear_str)
 		if fields.len < 11 {
 			panic('docker ps needs to output 11 parts.\n${fields}')
 		}
@@ -79,14 +80,14 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		container.id = id
 		container.name = texttools.name_fix(fields[1])
 		container.command = fields[3]
-		container.created = parse_time(fields[4])!
-		container.ports = parse_ports(fields[5])!
-		container.status = parse_container_state(fields[6])!
-		container.memsize = parse_size_mb(fields[7])!
-		container.mounts = parse_mounts(fields[8])!
-		container.networks = parse_networks(fields[9])!
-		container.labels = parse_labels(fields[10])!
-		container.ssh_enabled = contains_ssh_port(container.ports)
+		container.created = utils.parse_time(fields[4])!
+		container.ports = utils.parse_ports(fields[5])!
+		container.status = utils.parse_container_state(fields[6])!
+		container.memsize = utils.parse_size_mb(fields[7])!
+		container.mounts = utils.parse_mounts(fields[8])!
+		container.networks = utils.parse_networks(fields[9])!
+		container.labels = utils.parse_labels(fields[10])!
+		container.ssh_enabled = utils.contains_ssh_port(container.ports)
 		// println(container)
 		e.containers << container
 	}

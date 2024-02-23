@@ -1,3 +1,4 @@
+// @{function.description}
 pub fn @receiver @{function.name}(@{params}) @function.result.vgen() {
 	@{function.body.trim_space().replace('\t', '')}
 }

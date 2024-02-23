@@ -65,7 +65,11 @@ pub fn (mut self Table) parse() ! {
 
 	re_header_row := regex.regex_opt('^:?-+:?$') or { return error("regex doesn't work") }
 
-	header := rows[0].trim('|').split('|').map(it.trim(' \t'))
+
+	mut header := rows[0].trim_space().split('|').map(it.trim(' \t'))
+	header.delete_last()
+	header.delete(0)
+		
 	second_row := rows[1].trim('|').split('|').map(it.trim(' \t')).filter(re_header_row.matches_string(it))
 
 	mut alignments := []Alignment{}
@@ -85,8 +89,14 @@ pub fn (mut self Table) parse() ! {
 	self.header = header
 	self.alignments = alignments
 
-	for line in rows[2..] {
-		columns := line.trim('| ').split('|')
+	for mut line in rows[2..] {
+		mut columns := line.trim_space().split('|')
+		columns.delete_last()
+		columns.delete(0)
+		
+		// println(columns)
+		// panic('panic.\n${self}\n${line}')
+
 		mut row := Row{}
 		if columns.len != self.num_columns {
 			return error('wrongly formatted row.\n${self}\n${line}')

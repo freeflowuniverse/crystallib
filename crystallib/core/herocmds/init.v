@@ -9,15 +9,15 @@ import cli { Command, Flag }
 pub fn cmd_init(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'init'
-		description: '
+		usage: '
 Initialization Helpers for Hero
 
 -r will reset everything e.g. done states (when installing something)
 -d will put the platform in development mode, get V, crystallib, ...
 -c will compile hero on local platform (requires local crystallib)
--n install nix on the base system
 
 '
+		description: 'initialize hero environment (reset, development mode, )'
 		required_args: 0
 		execute: cmd_init_execute
 	}
@@ -49,14 +49,6 @@ Initialization Helpers for Hero
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
-		name: 'nix'
-		abbrev: 'n'
-		description: 'will install nix.'
-	})
-
-	cmd_run.add_flag(Flag{
-		flag: .bool
-		required: false
 		name: 'redis'
 		description: 'will make sure redis is in system and is running.'
 	})
@@ -68,15 +60,9 @@ fn cmd_init_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut hero := cmd.flags.get_bool('hero') or { false }
-	mut nix := cmd.flags.get_bool('nix') or { false }
 	mut redis := cmd.flags.get_bool('redis') or { false }
 
-	if !(develop || hero || nix || redis) {
-		// cmd.help_message()
-		return error(cmd.help_message())
-	}
-
-	if develop || hero || nix || redis {
+	if develop || hero || redis {
 		base.install()!
 	}
 
@@ -92,7 +78,6 @@ fn cmd_init_execute(cmd Command) ! {
 		r := osal.profile_path_add_hero()!
 		console.print_header(' add path ${r} to profile.')
 	}
-	if nix {
-		base.nix_install(reset: reset)!
-	}
+
+	return error(cmd.help_message())
 }

@@ -288,7 +288,7 @@ pub fn git_repo_get(args_ GitRepoGetArgs) !GitRepo {
 	mut args := args_
 	path := git_dir_get(path: args.path)!
 	mut gs := get(coderoot: args.coderoot) or {
-		return error("Could not find gittools on '${args.coderoot}'\n${err}")
+		return error("Could not load gittools on '${args.coderoot}'\n${err}")
 	}
 	return gs.repo_from_path(path)
 }
