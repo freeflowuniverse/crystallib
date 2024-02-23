@@ -45,7 +45,7 @@ fn (mut session Session) pre_process() ! {
 				}
 				// console.print_debug("gittools in $coderoot: can take a while to load if first time.")
 				mut gs := gittools.get(coderoot: coderoot) or {
-					return error("Could not find gittools on '${coderoot}'\n${err}")
+					return error("Could not load gittools on '${coderoot}'\n${err}")
 				}
 
 				path = gs.code_get(reset: reset, pull: pull, url: url)!

@@ -1,7 +1,6 @@
 module tfrobot
 
 import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.osal.dagu
 import json
 import os
 import freeflowuniverse.crystallib.ui.console
@@ -92,15 +91,13 @@ pub fn sshagent_keys_add(mut config DeployConfig) ! {
 	}
 }
 
-pub fn (mut robot TFRobot) deploy(config_ DeployConfig) !DeployResult {
+pub fn (mut robot TFRobot[Config]) deploy(config_ DeployConfig) !DeployResult {
 	mut config := config_
-
+	cfg := robot.config()!
 	if config.mnemonic == '' {
-		if 'TFGRID_MNEMONIC' !in os.environ() {
-			return error("Cannot continue, didn't find mnemonic, do 'export TFGRID_MNEMONIC=...' ")
-		}
-		config.mnemonic = os.environ()['TFGRID_MNEMONIC'].trim_space()
+		config.mnemonic = cfg.mnemonics
 	}
+	config.network = Network.from(cfg.network)!
 
 	if config.ssh_keys.len == 0 {
 		return error('no ssh-keys found in config')

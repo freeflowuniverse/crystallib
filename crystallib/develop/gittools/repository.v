@@ -45,10 +45,16 @@ fn (repo GitRepo) cache_key_path() string {
 pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	repo.path.check() // could be that path changed
 	if !repo.path.exists() {
-		return error("cannot load from path, doesn't exist for '${repo.path}'")
+		return error("cannot load from path, doesn't exist for '${repo.path.path}'")
 	}
+
 	mut st := repo_load(repo.addr, repo.path.path)!
-	repo.status_set(st)!
+	repo.status_set(st)!	
+
+	p2:=repo.addr.path()!
+	if p2.path!=repo.path.path{
+		return error("path conflict, doesn't exist for '${p2.path}' and '${repo.path.path}'")
+	}	
 	// console.print_header(' status:\n${st}')
 	return st
 }

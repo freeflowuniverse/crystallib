@@ -62,6 +62,13 @@ pub fn print_stdout(txt string) {
 	c.reset()
 }
 
+pub fn print_lf(nr int) {
+	for i in 0..nr{
+		cprintln(text:"")
+	}		
+}
+
+
 pub fn print_stderr(txt string) {
 	mut c := get()
 	if c.prev_title || c.prev_item {
@@ -71,6 +78,17 @@ pub fn print_stderr(txt string) {
 	cprintln(foreground: .red, text: txt2)
 	c.reset()
 }
+
+pub fn print_green(txt string) {
+	mut c := get()
+	if c.prev_title || c.prev_item {
+		lf()
+	}
+	txt2 := trim(texttools.indent(txt, '    '))
+	cprintln(foreground: .green, text: txt2)
+	c.reset()
+}
+
 
 // import freeflowuniverse.crystallib.ui.console
 // console.print_header()

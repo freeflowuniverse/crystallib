@@ -44,7 +44,7 @@ fn (mut self Screen) kill_() ! {
 	if self.pid == 0 || self.pid < 50 {
 		return error("pid was <50 for ${self}, can't kill")
 	}
-	osal.process_kill_recursive(self.pid)!
+	osal.process_kill_recursive(pid:self.pid)!
 	res := os.execute('export TERM=xterm-color && screen -X -S ${self.name} kill')
 	if res.exit_code > 1 {
 		return error('could not kill a screen.\n${res.output}')

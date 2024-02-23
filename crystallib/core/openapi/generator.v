@@ -2,6 +2,7 @@ module openapi
 
 import json
 import os
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 
 pub fn generate() ! {

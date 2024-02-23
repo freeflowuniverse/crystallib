@@ -92,13 +92,13 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 		}
 	}
 
-	if args.heal {
-		tree.heal()!
-	}
+	// if args.heal {
+	// 	tree.heal()!
+	// }
 }
 
-pub fn (mut tree Tree) heal() ! {
-	for _, mut collection in tree.collections {
-		collection.fix()!
-	}
-}
+// pub fn (mut tree Tree) heal() ! {
+// 	for _, mut collection in tree.collections {
+// 		collection.fix()!
+// 	}
+// }

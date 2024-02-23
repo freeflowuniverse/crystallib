@@ -29,6 +29,8 @@ pub fn install(args_ InstallArgs) ! {
 		if texttools.version(version) > texttools.version(vstring) {
 			args.reset = true
 		}
+	}else{
+		args.reset = true
 	}
 
 	if args.reset == false {
@@ -36,6 +38,11 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	base.install()!
+
+	pl := osal.platform()
+	if pl == .ubuntu {
+		osal.package_install('build-essential,openssl,pkg-config,libssl-dev')!	
+	}	
 
 	// install rust if it was already done will return true
 	console.print_header('start install rust')

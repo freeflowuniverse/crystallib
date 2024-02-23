@@ -4,8 +4,11 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.installers.zinit
+import freeflowuniverse.crystallib.installers.infra.zinit
 import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
+import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.osal.screen
+
 import os
 
 @[params]
@@ -18,8 +21,7 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
-	zinit.install(reset: args.reset)!
-
+	
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
 	}
@@ -27,11 +29,11 @@ pub fn install(args InstallArgs) ! {
 	// install caddy if it was already done will return true
 	console.print_header('package_install install caddy')
 
-	if osal.platform() != .ubuntu {
-		return error('only support ubuntu for now')
+	if ! osal.is_linux() {
+		return error('only support linux for now')
 	}
 	mut dest := osal.download(
-		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.5/caddy_2.7.5_linux_amd64.tar.gz'
+		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.6/caddy_2.7.6_linux_amd64.tar.gz'
 		minsize_kb: 10000
 		reset: true
 		expand_dir: '/tmp/caddyserver'
@@ -60,8 +62,8 @@ pub mut:
 // domain e.g. www.myserver.com
 pub fn configure_examples(config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
-	if config.domain == '' {
-		config_file = $tmpl('templates/caddyfile_all')
+	if config.domain.len>0 {
+		config_file = $tmpl('templates/caddyfile_domain')
 	}
 	install()!
 	os.mkdir_all(config.path)!
@@ -73,7 +75,7 @@ pub fn configure_examples(config WebConfig) ! {
 			<title>Caddy has now been installed.</title>
 		</head>
 		<body>
-			Page loaded at: {{now | date "Mon Jan 2 15:04:05 MST 2006"}}
+			Caddy has been installed and is working in /var/www.
 		</body>
 	</html>
 	'
@@ -96,6 +98,7 @@ pub mut:
 }
 
 pub fn configuration_set(args_ ConfigurationArgs) ! {
+	console.print_header('Caddy config set')
 	mut args := args_
 	if args.content == '' && args.path == '' {
 		return error('need to specify content or path.')
@@ -120,40 +123,46 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 	}
 }
 
+
+@[params]
+pub struct StartArgs {
+pub mut:
+	zinit bool = true
+}
+
+
 // start caddy
-pub fn start() !zinitmgmt.ZProcess {
+pub fn start(args StartArgs) ! {
+	console.print_header('Caddy Start')
 	if !os.exists('/etc/caddy/Caddyfile') {
 		return error("didn't find caddyfile")
 	}
-	mut z := zinitmgmt.new()!
-	p := z.process_new(
-		name: 'caddy'
-		cmd: '
-			caddy run --config /etc/caddy/Caddyfile
-			echo CADDY STOPPED
-			/bin/bash'
-	)!
+	if args.zinit{
+		zinit.install()!
+		mut z := zinitmgmt.new()!
+		p := z.process_new(
+			name: 'caddy'
+			cmd: '
+				caddy run --config /etc/caddy/Caddyfile
+				echo CADDY STOPPED
+				/bin/bash'
+		)!
 
-	p.start()!
-
-	// mut t := tmux.new()!
-	// mut w := t.window_new(
-	// 	name: 'caddy'
-	// 	cmd: '
-	// 		caddy run --config /etc/caddy/Caddyfile
-	// 		echo CADDY STOPPED
-	// 		/bin/bash'
-	// )!
-	return p
+		p.start()!
+	}else{
+		mut scr:=screen.new(reset:false)!
+		mut s2:=scr.add(name:"caddy",cmd: 'caddy run --config /etc/caddy/Caddyfile')!
+	}
 }
 
 pub fn stop() ! {
-	// mut z := zinitmgmt.new()!
-	// t.window_delete(name: 'caddy')!
-	// osal.execute_silent('caddy stop') or {}
+	console.print_header('Caddy Stop')
+	// mut scr:=screen.new(reset:false)!
+	// scr.kill("caddy")!
+	// osal.process_kill_recursive(name:"caddy")! //kills myself
 }
 
-pub fn restart() !zinitmgmt.ZProcess {
+pub fn restart() ! {
 	stop()!
-	return start()!
+	start()!
 }

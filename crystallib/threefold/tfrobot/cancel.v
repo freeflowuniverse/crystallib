@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 
 pub struct CancelConfig {
+mut:
 	name        string        @[required]
 	mnemonic    string        @[required]
 	network     Network       @[required]
@@ -16,7 +17,12 @@ pub struct CancelGroup {
 	name string @[required]
 }
 
-pub fn (mut robot TFRobot) cancel(config CancelConfig) ! {
+pub fn (mut robot TFRobot[Config]) cancel(mut config CancelConfig) ! {
+	cfg := robot.config()!
+	if config.mnemonic == '' {
+		config.mnemonic = cfg.mnemonics
+	}
+	config.network = Network.from(cfg.network)!
 	check_cancel_config(config)!
 
 	mut cancel_file := pathlib.get_file(

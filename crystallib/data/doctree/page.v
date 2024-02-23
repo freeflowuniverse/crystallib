@@ -1,6 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link }
 
 pub enum PageStatus {
 	unknown
@@ -32,7 +33,7 @@ fn (page Page) collection() !&Collection {
 	return collection
 }
 
-fn (mut page Page) fix() ! {
+// fn (mut page Page) fix() ! {
 	// page.fix_links()!
 	// // TODO: do includes
 	// if page.changed {
@@ -42,7 +43,7 @@ fn (mut page Page) fix() ! {
 	// 	page.save()!
 	// 	page.changed = false
 	// }
-}
+// }
 
 @[params]
 pub struct PageExportArgs {
@@ -52,17 +53,17 @@ pub mut:
 
 // save the page on the requested dest
 // make sure the macro's are being executed
-pub fn (mut page Page) export(args_ PageExportArgs) ! {
+pub fn (mut page Page) export(args_ PageExportArgs) !Doc {
 	mut args := args_
 	// if args.dest == '' {
 	// 	args.dest = page.path.path
 	// }
 	println(' ++++ export: ${page.name} -> ${args.dest}')
-
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	dirpath := p.parent()!
 	mut mydoc := page.doc(mut dest: dirpath.path, heal_export: true)!
 	p.write(mydoc.markdown())!
+	return mydoc
 }
 
 // save the page on the requested dest

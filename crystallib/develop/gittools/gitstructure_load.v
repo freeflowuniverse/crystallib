@@ -2,12 +2,16 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code
 pub fn (mut gitstructure GitStructure) load() ! {
 	// print_backtrace()
 	// if true{panic("s")}
+	if gitstructure.loaded{
+		return
+	}
 	gitstructure.repos.clear()
 	mut done := []string{}
 	// path which git repos will be recursively loaded
@@ -15,27 +19,21 @@ pub fn (mut gitstructure GitStructure) load() ! {
 	if !(os.exists(gitstructure.rootpath.path)) {
 		os.mkdir_all(gitstructure.rootpath.path)!
 	}
+
+	// println(gitstructure.config)
 	gitstructure.load_recursive(git_path.path, mut done)!
 	for mut repo in gitstructure.repos {
 		repo.status()!
 		// println(repo)
 	}
+	gitstructure.loaded=true
+	console.print_debug(" load gitstructure from disk done")	
 }
 
 fn (mut gitstructure GitStructure) reload() ! {
-	// print_backtrace()
-	// if true{panic("s")}
-	gitstructure.repos.clear()
-	mut done := []string{}
-	// path which git repos will be recursively loaded
-	git_path := gitstructure.rootpath
-	if !(os.exists(gitstructure.rootpath.path)) {
-		os.mkdir_all(gitstructure.rootpath.path)!
-	}
-	gitstructure.load_recursive(git_path.path, mut done)!
-	for mut repo in gitstructure.repos {
-		repo.load()!
-	}
+	gitstructure.loaded = false
+	gitstructure.cache_reset()!
+	gitstructure.load()!
 }
 
 // fn (mut gitstructure GitStructure) reload() ! {
@@ -97,6 +95,12 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 		if os.is_dir(pathnew) {
 			if os.exists(os.join_path(pathnew, '.git')) {
 				mut repo := gitstructure.repo_from_path(pathnew)!
+				p:=repo.addr.path()!
+				if repo.key() in done || p.path in done {
+					return error("loading of repo goes wrong found double.\npath:${p.path}\nkey:${repo.key()}")
+				}
+				done<<p.path
+				done<<repo.key()
 				gitstructure.repos << &repo
 				continue
 			}

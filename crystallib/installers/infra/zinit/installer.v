@@ -3,6 +3,7 @@ module zinit
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.zinit
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
 // import os

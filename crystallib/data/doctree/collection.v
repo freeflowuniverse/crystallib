@@ -243,15 +243,15 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 }
 
 // go over all pages, fix the links, check the images are there
-pub fn (mut collection Collection) fix() ! {
-	$if debug {
-		console.print_debug('collection fix: ${collection.name}')
-	}
-	for _, mut page in collection.pages {
-		page.fix()!
-	}
-	collection.errors_report('${collection.path.path}/errors.md')!
-}
+// pub fn (mut collection Collection) fix() ! {
+// 	$if debug {
+// 		console.print_debug('collection fix: ${collection.name}')
+// 	}
+// 	for _, mut page in collection.pages {
+// 		page.fix()!
+// 	}
+// 	collection.errors_report('${collection.path.path}/errors.md')!
+// }
 
 // return all pagenames for a collection
 pub fn (collection Collection) pagenames() []string {
@@ -263,13 +263,3 @@ pub fn (collection Collection) pagenames() []string {
 	return res
 }
 
-// write errors.md in the collection, this allows us to see what the errors are
-fn (collection Collection) errors_report(dest_ string) ! {
-	mut dest := pathlib.get_file(path: dest_, create: true)!
-	if collection.errors.len == 0 {
-		dest.delete()!
-		return
-	}
-	c := $tmpl('template/errors.md')
-	dest.write(c)!
-}

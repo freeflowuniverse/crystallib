@@ -10,7 +10,7 @@ import cli { Command }
 pub fn cmd_run(mut cmdroot Command) {
 	mut cmd_run := Command{
 		name: 'run'
-		description: '
+		usage: '
 ## Powerfull command to run heroscript
 
 heroscript has numerous ways to execute actions using your hero tool.
@@ -27,7 +27,7 @@ If you do -gr it will pull newest heroscripts from git and overwrite local chang
 
 		'
 		required_args: 0
-		usage: ''
+		description: 'run heroscript commands'
 		execute: cmd_heroscript_execute
 	}
 	cmd_run_add_flags(mut cmd_run)

@@ -12,8 +12,23 @@ struct CreateDagResponse {
 	dag_id string = 'new' @[json: 'DagID'; required]
 }
 
+fn (mut cl DaguClient[Config]) set_http_connection() !{
+	cfg := cl.config()!
+	if cl.connection.base_url != '${cfg.url}/api/v1'{
+		mut con := httpconnection.new(
+			name: 'dagu'
+			url: '${cfg.url}/api/v1'
+		)!
+		con.basic_auth(cfg.username, cfg.password)
+		cl.connection = con
+	}
+	
+}
+
 // Creates a new DAG.
-pub fn (mut client DaguClient) create_dag(name string) !CreateDagResponse {
+pub fn (mut client DaguClient[Config]) create_dag(name string) !CreateDagResponse {
+	client.set_http_connection()!
+
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags'
@@ -79,7 +94,8 @@ pub struct DagStatus {
 }
 
 // Creates a new DAG.
-pub fn (mut client DaguClient) list_dags() !ListDagsResponse {
+pub fn (mut client DaguClient[Config]) list_dags() !ListDagsResponse {
+	client.set_http_connection()!
 	request := httpconnection.new_request(
 		method: .get
 		prefix: 'dags'
@@ -122,7 +138,8 @@ pub struct PostDagActionResponse {
 	new_dag_id string @[json: 'NewDagID']
 }
 
-pub fn (mut client DaguClient) post_dag_action(dag_id string, params PostDagAction) !PostDagActionResponse {
+pub fn (mut client DaguClient[Config]) post_dag_action(dag_id string, params PostDagAction) !PostDagActionResponse {
+	client.set_http_connection()!
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags/${dag_id}'
@@ -142,7 +159,8 @@ pub fn (mut client DaguClient) post_dag_action(dag_id string, params PostDagActi
 	return response
 }
 
-pub fn (mut client DaguClient) delete_dag(dag_id string) ! {
+pub fn (mut client DaguClient[Config]) delete_dag(dag_id string) ! {
+	client.set_http_connection()!
 	request := httpconnection.new_request(
 		method: .delete
 		prefix: 'dags/${dag_id}'

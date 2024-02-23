@@ -26,9 +26,15 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 		r << [' - ${pr}', '[${g.addr.branch}]', s]
 	}
 	console.clear()
-	console.print_header('repositories on coderoot: ${gitstructure.config.root}')
+	console.print_lf(1)
+	if args.str().len>0{
+		console.print_header('repositories on coderoot: ${gitstructure.config.root} [${args.str()}]')
+	}else{
+		console.print_header('repositories on coderoot: ${gitstructure.config.root}')
+	}
+	console.print_lf(1)
 	console.print_array(r, '  ', true)
-	console.lf()
+	console.print_lf(5)
 }
 
 @[params]
@@ -102,6 +108,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		account: args.account
 		provider: args.provider
 	)
+
 
 	if args.url.len > 0 {
 		mut locator := gs.locator_new(args.url)!

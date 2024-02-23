@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.installers
 import cli { Command, Flag }
+import freeflowuniverse.crystallib.ui.console
 
 pub fn cmd_installers(mut cmdroot Command) {
 	mut cmd_run := Command{
@@ -10,13 +11,6 @@ pub fn cmd_installers(mut cmdroot Command) {
 		required_args: 0
 		execute: cmd_installers_execute
 	}
-
-	// mut caddy_cmd := Command{
-	// 	sort_flags: true
-	// 	name: 'caddy'
-	// 	execute: cmd_installers_execute
-	// 	description: ''
-	// }
 
 	cmd_run.add_flag(Flag{
 		flag: .string
@@ -50,11 +44,18 @@ fn cmd_installers_execute(cmd Command) ! {
 	mut uninstall := cmd.flags.get_bool('uninstall') or { false }
 	mut names := cmd.flags.get_string('names') or { '' }
 
-	// if cmd.name == 'caddy' {
-	// 	caddy.install(reset: reset)!
-	// 	return
-	// } else {
-	// 	return error(cmd.help_message())
-	// }
+	if names==""{
+		console.clear()
+		console.print_header("the following installers are known:")
+		console.print_lf(2)
+		for x in installers.names(){
+			console.print_item(x)
+		}
+		console.print_lf(1)
+		console.print_stdout(cmd.help_message())
+		console.print_lf(5)
+		exit(1)
+	}
+
 	installers.install_multi(reset: reset, names: names, uninstall: uninstall)!
 }

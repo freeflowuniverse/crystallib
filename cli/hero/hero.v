@@ -13,7 +13,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.7'
+		version: '1.0.10'
 		disable_man: true
 	}
 

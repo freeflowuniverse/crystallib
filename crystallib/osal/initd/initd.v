@@ -3,6 +3,7 @@ module initd
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 import os
 // function initdinstall {
 //     set -x
@@ -84,6 +85,8 @@ fn (mut initdobj Initd) load() ! {
 			pobj.status = .exited
 		} else if status == 'running' {
 			pobj.status = .running
+		} else if status == 'failed' {
+			pobj.status = .failed			
 		} else {
 			return error("Can't find right status: ${status}")
 		}
@@ -132,7 +135,7 @@ pub fn (mut initd Initd) new(args_ IProcessNewArgs) !IProcess {
 pub fn (mut initd Initd) get(name_ string) !IProcess {
 	name := texttools.name_fix(name_)
 	if name in initd.processes {
-		return initd.processes[name]
+		return initd.processes[name] or {panic("bug")}
 	}
 	return error("Can't find process with name ${name}")
 }
