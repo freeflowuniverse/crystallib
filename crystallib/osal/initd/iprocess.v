@@ -20,6 +20,7 @@ pub enum IProcessStatus {
 	running
 	exited
 	deleted
+	failed
 }
 
 // pub fn (zp IProcess) cmd() string {

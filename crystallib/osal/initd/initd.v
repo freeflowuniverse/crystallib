@@ -85,6 +85,8 @@ fn (mut initdobj Initd) load() ! {
 			pobj.status = .exited
 		} else if status == 'running' {
 			pobj.status = .running
+		} else if status == 'failed' {
+			pobj.status = .failed			
 		} else {
 			return error("Can't find right status: ${status}")
 		}
