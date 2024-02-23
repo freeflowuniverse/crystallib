@@ -29,6 +29,8 @@ pub fn install(args_ InstallArgs) ! {
 		if texttools.version(version) > texttools.version(vstring) {
 			args.reset = true
 		}
+	}else{
+		args.reset = true
 	}
 
 	if args.reset == false {
