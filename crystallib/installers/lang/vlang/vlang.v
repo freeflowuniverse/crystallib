@@ -1,12 +1,12 @@
 module vlang
 
 import freeflowuniverse.crystallib.osal
-
+import freeflowuniverse.crystallib.ui.console
 // install vlang will return true if it was already installed
 pub fn install() ! {
 	// install vlang if it was already done will return true
 	console.print_header('package_install install vlang')
-	if !(i.state == .reset) && osal.done_exists('install_vlang') {
+	if osal.done_exists('install_vlang') {
 		println('    package_install was already done')
 		return
 	}
@@ -24,7 +24,7 @@ pub fn install() ! {
 	./v symlink
 	'
 
-	osal.execute_silent('Cannot install vlang.\n${err}')!
+	osal.execute_silent(cmd)!
 
 	osal.done_set('install_vlang', 'OK')!
 	return
