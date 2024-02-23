@@ -1,10 +1,10 @@
 [Unit]
-Description=${zp.name}
+Description=${self.name}
 After=network.target 
 
 [Service]
 Type=simple
-ExecStart=${zp.cmd}
+ExecStart=${self.cmd}
 WorkingDirectory=/tmp
 Restart=always
 
