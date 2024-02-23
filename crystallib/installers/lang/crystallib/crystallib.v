@@ -23,7 +23,7 @@ pub fn install(args InstallArgs) ! {
 		curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer.sh > /tmp/install.sh
 		bash /tmp/install.sh
 		"
-	osal.execute_silent(cmd) or {
+	osal.execute_stdout(cmd) or {
 		return error('Cannot install crystallib.\n${err}')
 	}
 	osal.done_set('install_crystaltools', 'OK')!
@@ -43,7 +43,7 @@ pub fn hero_install(args InstallArgs) ! {
 		curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh > /tmp/hero_install.sh
 		bash /tmp/hero_install.sh
 		"
-	osal.execute_silent(cmd) or {
+	osal.execute_stdout(cmd) or {
 		return error('Cannot install hero.\n${err}')
 	}
 	osal.done_set('install_hero', 'OK')!

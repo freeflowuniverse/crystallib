@@ -23,13 +23,21 @@ pub mut:
 
 pub fn names(args_ InstallArgs) []string {
 	names:="
+		rust
+		golang
+		vlang
+		hero
+		crystal
+		caddy
 		chrome
 		mycelium
 		lima
 		podman
 		vscode
 		"
-	return texttools.to_array(names)
+	mut ns:=texttools.to_array(names)
+	ns.sort()
+	return ns
 }
 
 pub fn install_multi(args_ InstallArgs) ! {
@@ -51,7 +59,7 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'vlang' {
 				vlang.install()!
 			}	
-			'crystallib' {
+			'crystal' {
 				crystallib.install(reset:true)!
 			}		
 			'hero' {
