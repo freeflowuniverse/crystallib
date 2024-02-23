@@ -64,11 +64,11 @@ pub fn install(args InstallArgs) ! {
 		)!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
-		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs')!
+		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server')!
 	} else if pl == .alpine {
-		osal.package_install('git,curl,mc,tmux,screen,git-lfs')!
+		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis-server')!
 	} else if pl == .arch {
-		osal.package_install('git,curl,mc,tmux,screen,git-lfs')!
+		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis-server')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
