@@ -1,17 +1,18 @@
 module docker
 
-import freeflowuniverse.crystallib.osal { exec }
 import time
+import freeflowuniverse.crystallib.osal { exec }
 import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
+import freeflowuniverse.crystallib.virt.utils
 
-pub enum DockerContainerStatus {
-	up
-	down
-	restarting
-	paused
-	dead
-	created
-}
+// pub enum DockerContainerStatus {
+// 	up
+// 	down
+// 	restarting
+// 	paused
+// 	dead
+// 	created
+// }
 
 // need to fill in what is relevant
 @[heap]
@@ -23,21 +24,16 @@ pub mut:
 	ssh_enabled     bool // if yes make sure ssh is enabled to the container
 	ipaddr          IPAddress
 	forwarded_ports []string
-	mounts          []DockerContainerVolume
+	mounts          []utils.ContainerVolume
 	ssh_port        int // ssh port on node that is used to get ssh
 	ports           []string
 	networks        []string
 	labels          map[string]string       @[str: skip]
 	image           &DockerImage            @[str: skip]
 	engine          &DockerEngine           @[str: skip]
-	status          DockerContainerStatus
+	status          utils.ContainerStatus
 	memsize         int // in MB
 	command         string
-}
-
-pub struct DockerContainerVolume {
-	src  string // TODO: is this in container? suggest to change src -> containerpath na dest->hostpath
-	dest string
 }
 
 @[params]
@@ -58,13 +54,13 @@ pub mut:
 // create/start container (first need to get a dockercontainer before we can start)
 pub fn (mut container DockerContainer) start() ! {
 	exec(cmd: 'docker start ${container.id}')!
-	container.status = DockerContainerStatus.up
+	container.status = utils.ContainerStatus.up
 }
 
 // delete docker container
 pub fn (mut container DockerContainer) halt() ! {
 	osal.execute_stdout('docker stop ${container.id}') or { '' }
-	container.status = DockerContainerStatus.down
+	container.status = utils.ContainerStatus.down
 }
 
 // delete docker container

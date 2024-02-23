@@ -1,20 +1,13 @@
 module podman
 
-import freeflowuniverse.crystallib.osal { exec }
 import time
+import freeflowuniverse.crystallib.osal { exec }
 import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
+import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.virt.utils
 
-//is podman containers
-//TODO: needs to be implemented for podman, is still code from docker
-
-pub enum ContainerStatus {
-	up
-	down
-	restarting
-	paused
-	dead
-	created
-}
+// is podman containers
+// TODO: needs to be implemented for podman, is still code from docker
 
 // need to fill in what is relevant
 @[heap]
@@ -26,21 +19,16 @@ pub mut:
 	ssh_enabled     bool // if yes make sure ssh is enabled to the container
 	ipaddr          IPAddress
 	forwarded_ports []string
-	mounts          []ContainerVolume
+	mounts          []utils.ContainerVolume
 	ssh_port        int // ssh port on node that is used to get ssh
 	ports           []string
 	networks        []string
 	labels          map[string]string       @[str: skip]
-	image           &BAHImage            @[str: skip]
-	engine 			&CEngine @[skip; str: skip]
-	status          ContainerStatus
+	image           &BAHImage //@[str: skip]
+	engine          &CEngine                @[skip; str: skip]
+	status          utils.ContainerStatus
 	memsize         int // in MB
 	command         string
-}
-
-pub struct ContainerVolume {
-	src  string // TODO: is this in container? suggest to change src -> containerpath na dest->hostpath
-	dest string
 }
 
 @[params]
@@ -58,46 +46,45 @@ pub mut:
 	command    string = '/bin/bash'
 }
 
-
 // load all containers, they can be consulted in e.containers
 // see obj: Container as result in e.containers
 pub fn (mut e CEngine) containers_load() ! {
 	e.containers = []Container{}
-	// mut ljob := exec(
-	// 	// we used || because sometimes the command has | in it and this will ruin all subsequent columns
-	// 	cmd: "podman ps -a --no-trunc --format '{{.ID}}||{{.Names}}||{{.Image}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
-	// 	ignore_error_codes: [6]
-	// 	stdout: false
-	// )!
-	// lines := ljob.output
-	// for line in lines {
-	// 	if line.trim_space() == '' {
-	// 		continue
-	// 	}
-	// 	fields := line.split('||').map(clear_str)
-	// 	if fields.len < 11 {
-	// 		panic('podman ps needs to output 11 parts.\n${fields}')
-	// 	}
-	// 	id := fields[0]
-	// 	mut container := Container{
-	// 		engine: &e
-	// 		image: e.image_get(id: fields[2])!
-	// 	}
-
-	// 	container.id = id
-	// 	container.name = texttools.name_fix(fields[1])
-	// 	container.command = fields[3]
-	// 	container.created = parse_time(fields[4])!
-	// 	container.ports = parse_ports(fields[5])!
-	// 	container.status = parse_container_state(fields[6])!
-	// 	container.memsize = parse_size_mb(fields[7])!
-	// 	container.mounts = parse_mounts(fields[8])!
-	// 	container.networks = parse_networks(fields[9])!
-	// 	container.labels = parse_labels(fields[10])!
-	// 	container.ssh_enabled = contains_ssh_port(container.ports)
-	// 	// println(container)
-	// 	e.containers << container
-	// }
+	mut ljob := exec(
+		// we used || because sometimes the command has | in it and this will ruin all subsequent columns
+		cmd: "podman container list -a --no-trunc --size --format '{{.ID}}||{{.Names}}||{{.ImageID}}||{{.Command}}||{{.CreatedAt}}||{{.Ports}}||{{.State}}||{{.Size}}||{{.Mounts}}||{{.Networks}}||{{.Labels}}'"
+		ignore_error_codes: [6]
+		stdout: false
+	)!
+	lines := ljob.output
+	for line in lines {
+		if line.trim_space() == '' {
+			continue
+		}
+		fields := line.split('||').map(utils.clear_str)
+		if fields.len < 11 {
+			panic('podman ps needs to output 11 parts.\n${fields}')
+		}
+		id := fields[0]
+		image := e.image_get(id_full: fields[2])!
+		mut container := Container{
+			engine: &e
+			image: &image
+		}
+		container.id = id
+		container.name = texttools.name_fix(fields[1])
+		container.command = fields[3]
+		container.created = utils.parse_time(fields[4])!
+		container.ports = utils.parse_ports(fields[5])!
+		container.status = utils.parse_container_state(fields[6])!
+		container.memsize = utils.parse_size_mb(fields[7])!
+		container.mounts = utils.parse_mounts(fields[8])!
+		container.mounts = []
+		container.networks = utils.parse_networks(fields[9])!
+		container.labels = utils.parse_labels(fields[10])!
+		container.ssh_enabled = utils.contains_ssh_port(container.ports)
+		e.containers << container
+	}
 }
 
 // EXISTS, GET
@@ -213,7 +200,7 @@ pub fn (mut e CEngine) containers_delete(args ContainerGetArgs) ! {
 	e.load()!
 }
 
-//TODO: implement
+// TODO: implement
 
 // import a container into an image, run podman container with it
 // image_repo examples ['myimage', 'myimage:latest']
@@ -229,39 +216,32 @@ pub fn (mut e CEngine) containers_delete(args ContainerGetArgs) ! {
 // 	return e.container_create(args)
 // }
 
-
 ////////////
 
 // create/start container (first need to get a podmancontainer before we can start)
 pub fn (mut container Container) start() ! {
 	exec(cmd: 'podman start ${container.id}')!
-	container.status = ContainerStatus.up
+	container.status = utils.ContainerStatus.up
 }
 
 // delete podman container
 pub fn (mut container Container) halt() ! {
 	osal.execute_stdout('podman stop ${container.id}') or { '' }
-	container.status = ContainerStatus.down
+	container.status = utils.ContainerStatus.down
 }
 
 // delete podman container
 pub fn (mut container Container) delete() ! {
 	println(' CONTAINER DELETE: ${container.name}')
-
-	exec(cmd: 'podman rm ${container.id} -f', stdout: false)!
-	mut x := 0
-	for container2 in container.engine.containers {
-		if container2.name == container.name {
-			container.engine.containers.delete(x)
-		}
-		x += 1
-	}
+	cmd := 'podman rm ${container.id} -f'
+	println(cmd)
+	exec(cmd: cmd, stdout: false)!
 }
 
 // save the podman container to image
 pub fn (mut container Container) save2image(image_repo string, image_tag string) !string {
 	id := osal.execute_stdout('podman commit ${container.id} ${image_repo}:${image_tag}')!
-	container.image.id = id.trim(' ')
+
 	return id
 }
 
