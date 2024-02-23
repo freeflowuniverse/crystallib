@@ -106,9 +106,26 @@ pub fn processinfo_children(pid int) !ProcessMap {
 	}
 }
 
+
+@[params]
+pub struct ProcessKillArgs {
+pub mut:
+	name	string
+	pid int
+}
+
 // kill process and all the ones underneith
-pub fn process_kill_recursive(pid int) ! {
-	pm := processinfo_with_children(pid)!
+pub fn process_kill_recursive(args ProcessKillArgs) ! {
+	if args.name.len>0{
+		for pi in procesinfo_get_byname(args.name)!{
+			process_kill_recursive(pid:pi.pid)!
+		}
+		return
+	}
+	if args.pid==0{
+		return error("need to specify pid or name")
+	}
+	pm := processinfo_with_children(args.pid)!
 	for p in pm.processes {
 		os.execute('kill -9 ${p.pid}')
 	}
