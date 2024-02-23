@@ -19,7 +19,6 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
-	zinit.install(reset: args.reset)!
 
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
