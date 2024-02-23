@@ -41,7 +41,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	pl := osal.platform()
 	if pl == .ubuntu {
-		osal.package_install('build-essential')!	
+		osal.package_install('build-essential,openssl,pkg-config,libssl-dev')!	
 	}	
 
 	// install rust if it was already done will return true
