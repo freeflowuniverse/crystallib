@@ -23,7 +23,6 @@ pub fn (page Page) doc(mut args DocArgs) !Doc {
 
 	if args.heal_export {
 		// find the links, and for each link check if collection is same, is not need to copy
-
 		for mut element in mydoc.children_recursive() {
 			if mut element is Link {
 				// println(element)
@@ -61,6 +60,10 @@ pub fn (page Page) doc(mut args DocArgs) !Doc {
 				if element.cat == .page {
 					if page.tree.page_exists(pointername) {
 						mut linkpage := page.tree.page_get(pointername)!
+						//this is to remember the pages which are linked
+						if !(pointername in mydoc.linked_pages){
+							mydoc.linked_pages << pointername
+						}
 						// println(" ------- page exists: ${pointername}")
 						mut collection_linkpage := linkpage.collection()!
 						// println("${collection_linkpage.name}   ----   ${collection.name}  ")

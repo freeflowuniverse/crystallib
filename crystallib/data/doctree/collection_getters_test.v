@@ -36,3 +36,15 @@ fn test_collection_exists() {
 
 	assert tree.collection_exists('non_existent_collection') == false
 }
+
+
+fn test_page_get() {
+	mut tree := tree_create(cid: 'abc', name: 'test')!
+	tree.scan(
+		path: doctree.testpath
+		heal: false
+	)!
+
+	
+	assert tree.collection_exists('non_existent_collection') == false
+}
