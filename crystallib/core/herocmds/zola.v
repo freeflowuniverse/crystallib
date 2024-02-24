@@ -12,7 +12,7 @@ pub fn cmd_zola(mut cmdroot Command) {
 	mut cmd_zola := Command{
 		name: 'zola'
 		description:'cool web publishing tool.'
-		summary: '
+		usage: '
 ## Manage your zolas
 
 example:
