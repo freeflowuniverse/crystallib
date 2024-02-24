@@ -11,6 +11,7 @@ pub mut:
 	regex         []string
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
+	include_links bool // wether to include links in list
 	dirs_only     bool
 }
 
@@ -56,6 +57,7 @@ pub fn (mut path Path) list(args_ ListArgs) !PathList {
 		recursive: args_.recursive
 		ignoredefault: args_.ignoredefault
 		dirs_only: args_.dirs_only
+		include_links: args_.include_links
 	}
 	paths := path.list_internal(args)!
 	mut pl := PathList{
@@ -72,12 +74,14 @@ mut:
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
 	dirs_only     bool
+	include_links bool
 }
 
 fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 	debug := false
 	path.check()
-	if path.cat != Category.dir {
+
+	if !path.is_dir() && (!path.is_dir_link() || !args.include_links) {
 		// return error('Path must be directory or link to directory')
 		return []Path{}
 	}
@@ -98,7 +102,7 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 			// to deal with broken link
 			continue
 		}
-		if new_path.is_link() {
+		if new_path.is_link() && !args.include_links {
 			continue
 		}
 		if args.ignoredefault {
@@ -106,7 +110,7 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 				continue
 			}
 		}
-		if new_path.is_dir() {
+		if new_path.is_dir() || (new_path.is_dir_link() && args.include_links){
 			// If recusrive
 			if args.recursive {
 				mut rec_list := new_path.list_internal(args)!
