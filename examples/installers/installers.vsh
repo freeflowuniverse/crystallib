@@ -1,6 +1,7 @@
 #!/usr/bin/env -S v -w -enable-globals run
 
 import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.db.redis as redis_installer
 import freeflowuniverse.crystallib.installers.infra.coredns as coredns_installer
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu as dagu_installer
@@ -24,4 +25,6 @@ import freeflowuniverse.crystallib.osal.screen
 // dagu_installer.check(secret:"1234")!
 
 
-b2_installer.install()!
+vlang.install(reset:true)!
+
+// b2_installer.install()!
