@@ -38,7 +38,7 @@ function myinit0 {
 
         package_install curl
 
-        github_keyscan
+        sshknownkeysadd
 
         touch "$HOME/.vmodules/done_init"
 

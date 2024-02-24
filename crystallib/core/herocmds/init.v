@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.installers.lang.crystallib
 import freeflowuniverse.crystallib.installers.db.redis as redisinstaller
 import freeflowuniverse.crystallib.ui.console
 import cli { Command, Flag }
@@ -13,7 +14,7 @@ pub fn cmd_init(mut cmdroot Command) {
 Initialization Helpers for Hero
 
 -r will reset everything e.g. done states (when installing something)
--d will put the platform in development mode, get V, crystallib, ...
+-d will put the platform in development mode, get V, crystallib, hero...
 -c will compile hero on local platform (requires local crystallib)
 
 '
@@ -59,24 +60,27 @@ Initialization Helpers for Hero
 fn cmd_init_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
-	mut hero := cmd.flags.get_bool('hero') or { false }
+	mut hero := cmd.flags.get_bool('compile') or { false }
 	mut redis := cmd.flags.get_bool('redis') or { false }
 
-	if develop || hero || redis {
-		base.install()!
-	}
+	println(hero)
 
 	if redis {
+		base.install()!
 		redisinstaller.install()!
+		return
 	}
 
-	if develop || hero {
-		base.develop(reset: reset)!
+	if develop {
+		base.install(reset: reset,develop:true)!
+		return
 	}
 	if hero {
-		base.hero_compile()!
+		base.install(reset: reset,develop:true)!
+		crystallib.hero_compile()!
 		r := osal.profile_path_add_hero()!
 		console.print_header(' add path ${r} to profile.')
+		return
 	}
 
 	return error(cmd.help_message())

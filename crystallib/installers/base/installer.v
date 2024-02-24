@@ -12,6 +12,7 @@ import os
 pub struct InstallArgs {
 pub mut:
 	reset bool
+	develop bool
 }
 
 // install base will return true if it was already installed
@@ -78,23 +79,47 @@ pub fn install(args InstallArgs) ! {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
 	osal.exec(cmd: 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts', stdout:false)!
+
+	if args.develop{
+		develop()!
+	}
+	sshkeysinstall()!
 	console.print_header('platform prepare DONE')
 	osal.done_set('platform_prepare', 'OK')!
 }
+
+pub fn sshkeysinstall(args InstallArgs) ! {
+
+	cmd:='
+    mkdir -p ~/.ssh
+    if ! grep github.com ~/.ssh/known_hosts > /dev/null
+    then
+        ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+    fi
+    if ! grep git.ourworld.tf ~/.ssh/known_hosts > /dev/null
+    then
+        ssh-keyscan -t rsa  git.ourworld.tf >> ~/.ssh/known_hosts
+    fi    
+    git config --global pull.rebase false
+	'
+
+	osal.exec(cmd: cmd, stdout:false)!
+
+}
+
 
 pub fn develop(args InstallArgs) ! {
 	console.print_header('platform prepare')
 	pl := osal.platform()
 
 	if args.reset == false && osal.done_exists('crystal_development') {
-		console.print_header(' - V & Crystallib Already installed for development.')
 		return
 	}
 
 	install()!
 	if pl == .osx {
 		console.print_header(' - OSX prepare for development.')
-		osal.package_install('bdw-gc')!
+		osal.package_install('bdw-gc,libpq')!
 		if !osal.cmd_exists('clang') {
 			osal.execute_silent('xcode-select --install') or {
 				return error('cannot install xcode-select --install, something went wrong.\n${err}')
@@ -102,56 +127,15 @@ pub fn develop(args InstallArgs) ! {
 		}
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
-		osal.package_install('libgc-dev,gcc,make,libpq-dev')!
+		osal.package_install('libgc-dev,make,libpq-dev,build-essential')!
 	} else if pl == .alpine {
-		osal.package_install('libpq-dev')!
+		osal.package_install('libpq-dev,make')!
 	} else if pl == .arch {
-		osal.package_install('cc,make')!
+		osal.package_install('cc,make,libpq')!
 	} else {
-		panic('only ubuntu and osx supported for now')
+		panic('only arch, alpine, ubuntu and osx supported for now')
 	}
-
-	mut b := builder.new()!
-	mut n := b.node_new()!
-	n.crystal_install()!
-
-	// coderoot := '${os.home_dir()}/code_'
-	// iam := osal.whoami()!
-	// cmd := texttools.template_replace($tmpl('templates/vinstaller.sh'))
-	// osal.exec(cmd: cmd)!
-
-	// mut path := gittools.code_get(
-	// 	pull: false
-	// 	reset: false
-	// 	url: 'https://github.com/freeflowuniverse/crystallib/tree/development'
-	// )!
-
-	// mut path2 := gittools.code_get(
-	// 	pull: true
-	// 	reset: false
-	// 	url: 'https://github.com/freeflowuniverse/webcomponents.git'
-	// )!
-
-	// c := '
-	// echo - link modules
-	// mkdir -p ~/.vmodules/freeflowuniverse
-	// rm -f ~/.vmodules/freeflowuniverse/crystallib
-	// rm -f ~/.vmodules/freeflowuniverse/webcomponents
-	// ln -s ${path}/crystallib ~/.vmodules/freeflowuniverse/crystallib
-	// ln -s ${path2}/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
-
-	// '
-	// osal.exec(cmd: c)!
-
-	// hero(args)!
 
 	osal.done_set('crystal_development', 'OK')!
 }
 
-// compile the hero command line
-pub fn hero_compile(args InstallArgs) ! {
-	pl := osal.platform()
-
-	cmd_hero := texttools.template_replace($tmpl('templates/hero.sh'))
-	osal.exec(cmd: cmd_hero, stdout: false)!
-}

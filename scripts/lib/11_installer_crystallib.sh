@@ -1,6 +1,6 @@
 
 function crystal_lib_get {
-    
+    set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/
     mkdir -p ~/.vmodules/freeflowuniverse/
@@ -26,7 +26,7 @@ function crystal_lib_get {
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-        if [[ -z "$keys" ]]; then
+        if [[ -z "$sshkeys" ]]; then
             git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/crystallib.git
         else
             git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
@@ -62,7 +62,7 @@ function crystal_web_get {
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-        if [[ -z "$keys" ]]; then
+        if [[ -z "$sshkeys" ]]; then
             git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/webcomponents
         else
             git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/webcomponents.git

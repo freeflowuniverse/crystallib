@@ -48,7 +48,7 @@ pub fn (context Context) session_new(args_ SessionNewArgs) !Session {
 	mut s := Session{
 		name: args.name
 		start: t
-		context: &context
+		context: context
 	}
 
 	// if args.load {
