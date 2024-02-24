@@ -3,7 +3,8 @@ module vlang
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import os
-
+import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.develop.gittools
 
 
 pub fn install(args InstallArgs) ! {
@@ -13,24 +14,30 @@ pub fn install(args InstallArgs) ! {
 		return
 	}
 	console.print_header('install vlang')
+	base.develop()!
+	
+	mut gs := gittools.get(coderoot:"${os.home_dir()}/_code")!
+	gs.config.light=true //means we clone depth 1
+	mut path1 := gittools.code_get(
+		pull: true
+		reset: true
+		url: 'https://github.com/vlang/v/tree/master'
+	)!
 
-	pl := osal.platform()
-
-	if pl==.ubuntu {
-		osal.package_install('make,build-essential')!
+	mut extra:=""
+	if osal.is_linux(){
+		extra="./v symlink"
+	}else{
+		extra="cp v ${os.home_dir()}/bin/"
 	}
-
 	cmd := '
-	export VDIR=\'${os.home_dir()}/_code\'
-	mkdir -p \$VDIR
-	cd \$VDIR
-	git clone https://github.com/vlang/v
+	cd ${path1}
 	cd v
-	make
-	./v symlink
+	make	
+	${extra}
 	'
 
-	osal.execute_silent(cmd)!
+	osal.execute_stdout(cmd)!
 
 	osal.done_set('install_vlang', 'OK')!
 	return
