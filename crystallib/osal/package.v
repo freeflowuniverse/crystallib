@@ -46,39 +46,37 @@ pub fn package_install(name_ string) ! {
 	// 	return
 	// }
 
-	for name in names {
-		console.print_header('package install: ${name}')
-
-		platform_ := platform()
-		cpu := cputype()
-		if platform_ == .osx {
-			if cpu == .arm {
-				exec(cmd: 'arch --arm64 brew install ${name}') or {
-					return error('could not install package: ${name}\nerror:\n${err}')
-				}
-			} else {
-				exec(cmd: 'brew install ${name}') or {
-					return error('could not install package:${name}\nerror:\n${err}')
-				}
-			}
-		} else if platform_ == .ubuntu {
-			exec(
-				cmd: '
-				export TERM=xterm
-				export DEBIAN_FRONTEND=noninteractive
-				apt install -y ${name}  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-downgrades --allow-remove-essential --allow-change-held-packages
-				'
-			) or { return error('could not install package:${name}\nerror:\n${err}') }
-		} else if platform_ == .alpine {
-			exec(cmd: 'apk add ${name}') or {
-				return error('could not install package:${name}\nerror:\n${err}')
-			}
-		} else if platform_ == .arch {
-			exec(cmd: 'pacman --noconfirm -Su ${name}') or {
-				return error('could not install package:${name}\nerror:\n${err}')
+	name:= names.join(" ")
+	console.print_header('package install: ${name}')
+	platform_ := platform()
+	cpu := cputype()
+	if platform_ == .osx {
+		if cpu == .arm {
+			exec(cmd: 'arch --arm64 brew install ${name}') or {
+				return error('could not install package: ${name}\nerror:\n${err}')
 			}
 		} else {
-			return error('Only ubuntu, alpine and osx supported for now')
+			exec(cmd: 'brew install ${name}') or {
+				return error('could not install package:${name}\nerror:\n${err}')
+			}
 		}
+	} else if platform_ == .ubuntu {
+		exec(
+			cmd: '
+			export TERM=xterm
+			export DEBIAN_FRONTEND=noninteractive
+			apt install -y \'${name}\'  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --allow-downgrades --allow-remove-essential --allow-change-held-packages
+			'
+		) or { return error('could not install package:${name}\nerror:\n${err}') }
+	} else if platform_ == .alpine {
+		exec(cmd: 'apk add ${name}') or {
+			return error('could not install package:${name}\nerror:\n${err}')
+		}
+	} else if platform_ == .arch {
+		exec(cmd: 'pacman --noconfirm -Su ${name}') or {
+			return error('could not install package:${name}\nerror:\n${err}')
+		}
+	} else {
+		return error('Only ubuntu, alpine and osx supported for now')
 	}
 }

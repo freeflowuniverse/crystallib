@@ -56,6 +56,8 @@ pub fn build() ! {
 	cargo install mdbook-kroki-preprocessor
 	cargo install mdbook-pdf --features fetch
 	#cargo install mdbook-linkcheck
+
+	cp ~/.cargo/bin/mdb* /usr/local/bin/
 	
 	'
 	osal.execute_stdout(cmd)!
