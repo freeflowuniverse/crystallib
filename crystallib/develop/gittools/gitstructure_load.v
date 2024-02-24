@@ -19,8 +19,6 @@ pub fn (mut gitstructure GitStructure) load() ! {
 	if !(os.exists(gitstructure.rootpath.path)) {
 		os.mkdir_all(gitstructure.rootpath.path)!
 	}
-
-	// println(gitstructure.config)
 	gitstructure.load_recursive(git_path.path, mut done)!
 	for mut repo in gitstructure.repos {
 		repo.status()!
@@ -79,7 +77,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // }
 
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
-	// console.print_debug("gs load: $path1")
+	// $if debug{console.print_debug("gitstructure recursive load: $path1")}
 	path1o := pathlib.get(path1)
 	relpath := path1o.path_relative(gitstructure.rootpath.path)!
 	if relpath.count('/') > 4 {

@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.clients.redisclient
 import json
 
-fn repo_load(addr GitAddr, path string) !GitRepoStatus {
+fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	$if debug {
 		console.print_debug(' load git config on fs: ${path}')
 	}
@@ -65,18 +65,17 @@ fn repo_load(addr GitAddr, path string) !GitRepoStatus {
 		}
 	}
 
-	locator := locator_new(addr.gsconfig, st.remote_url)!
-	mut addr2 := *locator.addr
-	addr2.branch = st.branch
+	locator := locator_new(mut addr.gsconfig, st.remote_url)!
+	addr.branch = st.branch
 
 	// $if debug {
 	// 	console.print_header(' loaded repo ${path}     --------     addr: ${addr2}')
 	// }
 
 	jsondata := json.encode(st)
-	redis.set(addr2.cache_key_status(), jsondata)!
-	redis.set(addr2.cache_key_path(path), addr2.cache_key_status())! // remember the key in redis starting from path
-	redis.expire(addr2.cache_key_status(), 3600 * 24 * 7)!
-	redis.expire(addr2.cache_key_path(path), 3600 * 24 * 7)!
+	redis.set(addr.cache_key_status(), jsondata)!
+	redis.set(addr.cache_key_path(path), addr.cache_key_status())! // remember the key in redis starting from path
+	redis.expire(addr.cache_key_status(), 3600 * 24 * 7)!
+	redis.expire(addr.cache_key_path(path), 3600 * 24 * 7)!
 	return st
 }

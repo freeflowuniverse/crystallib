@@ -16,9 +16,12 @@ pub fn install(args InstallArgs) ! {
 	console.print_header('install vlang')
 	base.develop()!
 	
-	mut gs := gittools.get(coderoot:"${os.home_dir()}/_code")!
-	gs.config.light=true //means we clone depth 1
-	mut path1 := gittools.code_get(
+	mut gs := gittools.new(
+			root:"${os.home_dir()}/_code"
+			light: true
+			singlelayer: true
+			)!
+	mut path1 := gs.code_get(
 		pull: true
 		reset: true
 		url: 'https://github.com/vlang/v/tree/master'
@@ -32,12 +35,12 @@ pub fn install(args InstallArgs) ! {
 	}
 	cmd := '
 	cd ${path1}
-	cd v
 	make	
 	${extra}
 	'
-
-	osal.execute_stdout(cmd)!
+	console.print_header('compile')
+	osal.exec(cmd:cmd,stdout:true)!
+	console.print_header('compile done')
 
 	osal.done_set('install_vlang', 'OK')!
 	return

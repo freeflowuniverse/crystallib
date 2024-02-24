@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -enable-globals run
+#!/usr/bin/env -S v -w -cg -enable-globals run
 
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.installers.lang.vlang
