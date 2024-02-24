@@ -1,7 +1,7 @@
 export PATH=${home_dir}/hero/bin:??PATH
 export TERM=xterm
 
-cd /code/github/freeflowuniverse/crystallib/cli/hero
+cd ${home_dir}/code/github/freeflowuniverse/crystallib/cli/hero
 
 PRF="${home_dir}/.profile"
 [ -f "??PRF" ] && source "??PRF"

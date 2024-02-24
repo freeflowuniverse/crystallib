@@ -54,6 +54,23 @@ Initialization Helpers for Hero
 		description: 'will make sure redis is in system and is running.'
 	})
 
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'gitpull'
+		abbrev: 'gp'
+		description: 'will try to pull git repos for crystallib.'
+	})
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'gitreset'
+		abbrev: 'gr'
+		description: 'will reset the git repo if there are changes inside, will also pull, CAREFUL.'
+	})
+
+
 	cmdroot.add_command(cmd_run)
 }
 
@@ -62,6 +79,8 @@ fn cmd_init_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut hero := cmd.flags.get_bool('compile') or { false }
 	mut redis := cmd.flags.get_bool('redis') or { false }
+	mut git_reset := cmd.flags.get_bool('gitreset') or { false }
+	mut git_pull := cmd.flags.get_bool('gitpull') or { false }
 
 	println(hero)
 
@@ -77,7 +96,8 @@ fn cmd_init_execute(cmd Command) ! {
 	}
 	if hero {
 		base.install(reset: reset,develop:true)!
-		crystallib.hero_compile()!
+		crystallib.install(reset: reset, git_pull:git_pull,git_reset:git_reset)!
+		crystallib.hero_compile(reset: reset)!
 		r := osal.profile_path_add_hero()!
 		console.print_header(' add path ${r} to profile.')
 		return

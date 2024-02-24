@@ -8,16 +8,11 @@ import os
 
 pub fn install(args InstallArgs) ! {
 	// install vlang if it was already done will return true
-	console.print_header('install vlang')
 	if  args.reset==false && osal.done_exists('install_vlang') {
-		println('   v already installed')
+		// println('   v already installed')
 		return
 	}
-
-	if osal.cmd_exists('v') {
-		println('Vlang was already installed.')
-		return
-	}
+	console.print_header('install vlang')
 
 	pl := osal.platform()
 
