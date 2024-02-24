@@ -16,6 +16,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 	mut args := args_
 	args.pull = args_.reset || args_.pull
 
+
 	p := args.locator.addr.path()!
 
 	mut r := if gitstructure.repo_exists(args.locator)! {
@@ -44,6 +45,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 		r2.path.check() // make sure we check state of path
 		r2
 	}
+
 	if args.reset {
 		console.print_header(' remove git changes: ${r.path.path}')
 		r.remove_changes(reload: false)!

@@ -6,9 +6,10 @@ import freeflowuniverse.crystallib.core.pathlib
 // unique identification of a git repository
 // can be translated to location on filesystem
 // can be translated to url of the git repository online
+@[heap]
 pub struct GitAddr {
-	gsconfig GitStructureConfig
 pub mut:
+	gsconfig   &GitStructureConfig
 	provider   string
 	account    string
 	name       string // is the name of the repository
@@ -30,6 +31,9 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	// name := texttools.name_fix(addr.name)
 	// account := texttools.name_fix(addr.account)
 	mut path_string := '${addr.gsconfig.root}/${addr.provider}/${addr.account}/${addr.name}'
+	if addr.gsconfig.singlelayer{
+		path_string = '${addr.gsconfig.root}/${addr.name}'
+	}
 	if addr.gsconfig.root == '' {
 		panic('rootpath cannot be empty\n${addr}')
 	}
@@ -52,8 +56,12 @@ fn (addr GitAddr) path_account() pathlib.Path {
 	if addr.gsconfig.root == '' {
 		panic('cannot be empty')
 	}
+	mut path_string := '${addr.gsconfig.root}/${addr.provider}/${addr.account}'
+	if addr.gsconfig.singlelayer{
+		path_string = '${addr.gsconfig.root}'
+	}	
 	path := pathlib.get_dir(
-		path: '${addr.gsconfig.root}/${addr.provider}/${addr.account}'
+		path: path_string
 		create: true
 	) or { panic('couldnt get directory') }
 	return path

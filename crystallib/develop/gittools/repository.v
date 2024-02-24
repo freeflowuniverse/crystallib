@@ -12,10 +12,9 @@ import json
 @[heap]
 pub struct GitRepo {
 	id int
-mut:
-	gs &GitStructure @[skip; str: skip]
 pub mut:
-	addr GitAddr
+	gs &GitStructure @[skip; str: skip]
+	addr &GitAddr
 	path pathlib.Path
 }
 
@@ -48,7 +47,7 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 		return error("cannot load from path, doesn't exist for '${repo.path.path}'")
 	}
 
-	mut st := repo_load(repo.addr, repo.path.path)!
+	mut st := repo_load(mut repo.addr, repo.path.path)!
 	repo.status_set(st)!	
 
 	p2:=repo.addr.path()!
@@ -125,11 +124,6 @@ pub fn (mut repo GitRepo) pull_reset(args_ ActionArgs) ! {
 		args.reload = false
 	}
 	repo.remove_changes(args)!
-	if true {
-		println(repo)
-		print_backtrace()
-		// panic("ss")
-	}
 	repo.pull(args)!
 }
 
@@ -251,7 +245,7 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 		'
 		res := osal.exec(cmd: cmd, raise_error: false)!
 		println(cmd)
-		println(res)
+		// println(res)
 		if res.exit_code > 0 {
 			console.print_header(' could not remove changes, will re-clone ${repo.path.path}')
 			repo.path.delete()! // remove path, this will re-clone the full thing
