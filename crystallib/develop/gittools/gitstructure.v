@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct GitStructure {
-	config GitStructureConfig // configuration settings
 pub mut:
+	config GitStructureConfig // configuration settings
 	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
 	repos    []&GitRepo // repositories in gitstructure
 	loaded bool
