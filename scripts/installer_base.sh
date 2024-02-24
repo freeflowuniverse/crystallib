@@ -638,8 +638,8 @@ function freeflow_dev_env_install {
         exit 1
     fi    
 
-    echo " - compile hero"
-    ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
+    # echo " - compile hero"
+    # ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
     # source ~/.profile
 
     # hero init

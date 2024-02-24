@@ -11,7 +11,8 @@ import cli { Command, Flag }
 pub fn cmd_zola(mut cmdroot Command) {
 	mut cmd_zola := Command{
 		name: 'zola'
-		description: '
+		description:'cool web publishing tool.'
+		summary: '
 ## Manage your zolas
 
 example:
