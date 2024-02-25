@@ -37,7 +37,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 
 	mdbookinstaller.install()!
 
-	mut tree := doctree.tree_create(
+	mut tree := doctree.new(
 		name: 'main'
 	)!
 

@@ -13,6 +13,7 @@ pub enum CollectionErrorCat {
 	page_not_found
 	sidebar
 	circular_import
+	def
 	summary
 }
 

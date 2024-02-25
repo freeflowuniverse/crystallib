@@ -283,7 +283,7 @@
 // 	logger.info('Linking pages, files, and images in MDBook: ${book.name}')
 // 	for _, page in book.pages {
 // 		logger.info('Linking pages, files, and images in MDBook: ${book.name} page: ${page.name}')
-// 		doc := page.doc or { return }
+// 		doc := page.doc_ or { return }
 // 		for paragraph in doc.children.filter(it is elements.Paragraph) {
 // 			if paragraph is elements.Paragraph {
 // 				for item in paragraph.children {

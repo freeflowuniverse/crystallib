@@ -3,6 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import os
+import freeflowuniverse.crystallib.core.texttools
 
 @[params]
 pub struct TreeExportArgs {
@@ -25,6 +26,8 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		path_src.empty()!
 		path_edit.empty()!
 	}
+
+	tree.defs(args_)! //process definitions
 
 	for name, mut collection in tree.collections {
 		mut collection_linked_pages:=[]string{}
@@ -63,4 +66,66 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		mut linked_pages_file := pathlib.get_file(path: dir_src.path + '/.linkedpages', create: true)! 
 		linked_pages_file.write(collection_linked_pages.join_lines())!
 	}
+}
+
+
+pub fn (mut tree Tree) defs(args_ TreeExportArgs) ! {
+
+	for name, mut collection in tree.collections {
+		// console.print_green("get defs for collection:${name}")		
+		for pagekey in collection.pages.keys() {
+			mut page := collection.pages[pagekey] or {panic('bug')}
+			console.print_debug("get defs for page:${page.key()}")
+			mut mydoc := page.doc()!
+			mut res:=mydoc.actionpointers(actor:"wiki",name:"def")
+			if res.len>0{
+				//means there is a wiki def defined
+				for action_element in res{
+					my_action:=action_element.action
+					for alias in my_action.params.get_list("alias")!{
+						alias2 := texttools.name_fix(alias).replace("_","")
+						if alias2 in tree.defs{
+							collection.error(path:page.path,msg:"def double defined: ${alias}",cat:.def)
+						}else{
+							tree.defs[alias2]=page
+						}
+					}
+				}
+			}
+		}
+	}
+	mut mydef_page2:= tree.defs["threefolddev"] or {panic("bug")}
+
+	for collection_name in tree.collections.keys() {
+		mut collection := tree.collections[collection_name] or {panic("bug")}
+		console.print_green("process defs for collection:${collection_name}")		
+		for name in collection.pages.keys() {
+			mut mypage := collection.pages[name] or {panic("bug")}
+			mut mydoc := mypage.doc()!
+			for mut defitem in mydoc.defpointers(){
+				defname:=defitem.name() 
+				println(defname)
+				if defname in tree.defs{
+					mut mydef_page:= tree.defs[defname] or {panic("bug")}
+					mydoc2:=mydef_page.doc()!
+					// println(mydef_page.key())
+					// panic("found def")
+					defitem.pagekey=mydef_page.key()
+					// println(defitem.markdown())
+				}else{
+					collection.error(path:mypage.path,msg:"def not found: '${defname}'",cat:.def)
+				}
+				
+			}
+		}
+	}	
+	panic("macro")					
+
+	// for macro in tree.get_macros(name:"def",actor:"wiki")!{
+	// 	println(macro)
+	// 	if true{
+	// 		panic("macro")
+	// 	}
+	// }
+
 }

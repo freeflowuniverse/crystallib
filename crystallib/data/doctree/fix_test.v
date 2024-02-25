@@ -21,7 +21,7 @@ fn test_fix_external_link() ! {}
 
 fn test_fix() ! {
 	copy_to_testloc()!
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(cid: 'abc', name: 'test')!
 	tree.scan(path: '/tmp/tmp_doctree')!
 
 	mut test_collection := tree.collection_get('broken')!
@@ -66,7 +66,7 @@ fn test_errors_created() {
 			- broken links - with cur implementation should never happen
 			- "markdown file should not be linked"" - with cur implementation should never happen
 	*/
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(cid: 'abc', name: 'test')!
 	tree.scan(path: '/tmp/tmp_doctree/errors', heal: true)!
 	collection := tree.collection_get('errors')!
 	assert collection.errors.len == 2

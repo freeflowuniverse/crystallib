@@ -6,6 +6,7 @@ pub:
 	name string
 pub mut:
 	collections map[string]&Collection
+	defs map[string]&Page
 	state       TreeState
 	// context context.Context
 	cid string = '000'

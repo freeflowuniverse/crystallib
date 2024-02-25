@@ -9,7 +9,6 @@ interface Element {
 	html() string
 	actions(args ActionsGetArgs) []playbook.Action
 	treeview_(prefix string, mut out []string)
-	action_pointers(args ActionsGetArgs) []ActionPointer
 	children_recursive() []Element
 	children_recursive_(mut []Element)
 mut:
@@ -24,11 +23,13 @@ mut:
 	process() !int
 	content_set(int, string)
 	id_set(int) int
+	actionpointers(args ActionsGetArgs) []&Action
+	defpointers() []&Def
 }
 
-@[heap]
-pub struct ActionPointer {
-pub mut:
-	action     playbook.Action
-	element_id int
-}
+// @[heap]
+// pub struct ActionPointer {
+// pub mut:
+// 	action     playbook.Action
+// 	element_id int
+// }

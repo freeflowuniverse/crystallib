@@ -174,16 +174,16 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		)
 		return
 	}
-	mut page := &Page{
+	mut page := Page{
 		pathrel: p.path_relative(collection.path.path)!.trim('/')
 		name: ptr.pointer.name
 		path: p
 		readonly: false
-		// pages_linked: []&Page{}
 		tree: collection.tree
 		collection_name: collection.name
 	}
-	collection.pages[ptr.pointer.name] = page
+	println(page.key())
+	collection.pages[ptr.pointer.name] = &page
 }
 
 // add a file to the collection, specify existing path
