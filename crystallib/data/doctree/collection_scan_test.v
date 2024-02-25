@@ -7,7 +7,7 @@ const fruits_path = os.dir(@FILE) + '/testdata/collections/fruits'
 const tree_name = 'collection_scan_test_tree'
 
 fn test_scan_internal() ! {
-	mut tree := new(cid: 'abc', name: 'test')!
+	mut tree := new(name: 'test')!
 
 	mut collection := tree.collection_new(
 		name: 'fruits'
