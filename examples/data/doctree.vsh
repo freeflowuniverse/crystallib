@@ -16,7 +16,7 @@ mut p := tree.page_get('riverlov:introduction.md')!
 // println(p)
 mut mydoc := p.doc()!
 println(mydoc)
-// println(mydoc.markdown())
+println(mydoc.markdown())
 
 // mut p2:=tree.page_get("riverlov:aboutus.md")!
 // mut mydoc2 := p2.doc()!
