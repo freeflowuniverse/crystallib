@@ -19,8 +19,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 	console.print_green("export tree: name:${tree.name} to ${args_.dest}")
 	mut args := args_
 
-	tree.process_includes()! //process definitions
-	tree.process_defs()! //process definitions
+	tree.process_includes()! //process definitions (will also do defs)
 
 	mut path_src := pathlib.get_dir(path: '${args.dest}/src', create: true)!
 	mut path_edit := pathlib.get_dir(path: '${args.dest}/edit', create: true)!

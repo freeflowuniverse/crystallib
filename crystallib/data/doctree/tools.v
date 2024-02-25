@@ -17,5 +17,5 @@ fn name_parse(name string) !(string, string) {
 		name_ := texttools.name_fix_no_ext(name.all_after_last('/'))
 		return '', name_
 	}
-	return '', ''
+	return error("can't find name in '${name}'")
 }

@@ -33,11 +33,15 @@ pub mut:
 // look if we can find page in the local collection is collection name not specified
 // if collectionname specified will look for page in that specific collection
 pub fn (collection Collection) page_get(name_ string) !&Page {
-	_, name := name_parse(name_)!
+	collection_name, name := name_parse(name_)!
+	// console.print_debug(" page get: '${collection_name}' '${name}'")
+	if collection_name.len>0{
+		return collection.tree.page_get(name)!
+	}
 	return collection.pages[name] or {
 		return ObjNotFound{
 			collection: collection.name
-			name: name
+			name: name_
 		}
 	}
 }
@@ -63,6 +67,10 @@ pub fn (collection Collection) file_get(name_ string) !&File {
 }
 
 pub fn (collection Collection) page_exists(name string) bool {
+	collection_name, _ := name_parse(name) or {panic("bug")}
+	if collection_name.len>0{
+		return collection.tree.page_exists(name)
+	}	
 	_ := collection.page_get(name) or {
 		if err is ObjNotFound {
 			return false

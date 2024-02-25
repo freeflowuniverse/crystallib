@@ -4,9 +4,10 @@
 
 > [other](server:some/someb/server.md)
 
-!!wiki.include page:server/some/someb/server.md
 
 # test
+
+Here we should see includes:
 
 !!wiki.include page:'server:server.md'
 
