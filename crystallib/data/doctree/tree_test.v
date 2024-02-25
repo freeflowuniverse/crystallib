@@ -64,9 +64,9 @@ fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 	for name, mut page1 in pages1 {
 		mut page2 := pages2[name] or { return error("${name} doesn't exist in both collections") }
 
-		page1_doc := page1.doc(mut dest: page1.path.parent()!.path)!
+		page1_doc := page1.doc()!
 
-		page2_doc := page2.doc(mut dest: page2.path.parent()!.path)!
+		page2_doc := page2.doc()!
 		mypath:= page1_doc.path or {pathlib.Path{}}
 		println(mypath.path)
 		assert page1_doc.markdown().trim_space() == page2_doc.markdown().trim_space()
