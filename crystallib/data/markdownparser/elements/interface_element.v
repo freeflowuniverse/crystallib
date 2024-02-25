@@ -25,6 +25,7 @@ mut:
 	id_set(int) int
 	actionpointers(args ActionsGetArgs) []&Action
 	defpointers() []&Def
+	header_name() !string
 }
 
 // @[heap]

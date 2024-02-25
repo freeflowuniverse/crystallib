@@ -22,6 +22,8 @@ pub fn new(args_ TreeArgsGet) !&Tree {
 	mut t := Tree{
 		name: args.name
 	}
+
+
 	return &t
 }
 

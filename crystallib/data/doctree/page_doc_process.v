@@ -21,7 +21,7 @@ pub fn (mut page Page) doc() !&Doc {
 struct DocArgs {
 mut:
 	// heal_source bool
-	dest string // if we want to relocate images or files or pages for links, is the directory of the collection at destination !!!
+	dest string [required]// if we want to relocate images or files or pages for links, is the directory of the collection at destination !!!
 	done []string
 }
 
@@ -76,9 +76,7 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 					// println(" ------- page exists: ${pointername}")
 					mut collection_linkpage := linkpage.collection()!
 					// println("${collection_linkpage.name}   ----   ${collection.name}  ")
-					// if collection_linkpage.name != collection.name {
 					if args.dest.len > 0 {
-						// linkpage.export(dest: dest_page_copy)!  //is always the full path
 						if linkpage.name !in args.done {
 							mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
 							mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
@@ -87,8 +85,6 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 						}
 						args.done << linkpage.name
 					}
-					// println(dest_page_copy)
-					// }
 					mut out := '[${element.description}](${linkpage.name}.md)'
 					mydoc.content_set(element.id, out)
 				} else {

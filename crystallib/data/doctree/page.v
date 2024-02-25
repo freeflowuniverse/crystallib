@@ -15,6 +15,7 @@ pub struct Page {
 	tree &Tree @[str: skip]
 pub mut:
 	name    string // received a name fix
+	alias string //a proper name for e.g. def
 	path    pathlib.Path
 	pathrel string // relative path in the collection
 	state   PageStatus
@@ -74,6 +75,7 @@ pub fn (mut page Page) export(args_ PageExportArgs) !&Doc {
 	println(' ++++ export: ${page.name} -> ${args.dest}')
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	dirpath := p.parent()!
+	// mut mydoc := page.doc()!
 	mut mydoc := page.doc_process_link(mut dest: dirpath.path)!
 	p.write(mydoc.markdown())!
 	return mydoc
