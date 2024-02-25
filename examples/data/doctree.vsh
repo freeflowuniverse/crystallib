@@ -3,13 +3,13 @@
 import freeflowuniverse.crystallib.data.doctree
 import os
 
-testpath:="${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/data/doctree/testdata/collections/riverlov"
+testpath := '${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/data/doctree/testdata/collections/riverlov'
 
 mut tree := doctree.new()!
 
 tree.scan(path: testpath)!
 
-tree.process_defs()! //process includes
+tree.process_defs()! // process includes
 // tree.process_includes()! //process includes
 
 mut p := tree.page_get('riverlov:introduction.md')!

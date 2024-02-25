@@ -6,7 +6,7 @@ pub:
 	name string
 pub mut:
 	collections map[string]&Collection
-	defs map[string]&Page
+	defs        map[string]&Page
 	state       TreeState
 	// context context.Context
 	cid string = '000'
@@ -93,7 +93,7 @@ pub fn (tree Tree) image_get(pointerstr string) !&File {
 	mut res := []&File{}
 	for _, collection in tree.collections {
 		// console.print_debug(collection.name)
-		if  p.collection == collection.name {
+		if p.collection == collection.name {
 			// console.print_debug("in collection")
 			if collection.image_exists(pointerstr) {
 				res << collection.image_get(pointerstr) or { panic('BUG') }
