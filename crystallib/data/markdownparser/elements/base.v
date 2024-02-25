@@ -15,8 +15,8 @@ pub mut:
 	// params    paramsparser.Params
 	type_name   string
 	changed     bool
-	children    []Element
-	parent      ?&Element @[skip; str: skip]
+	children    []&Element
+	parent      ?&Element @[skip; str:skip]
 	trailing_lf bool = true // do we need to do a line feed (enter) at end of this element, default yes
 }
 
@@ -68,10 +68,10 @@ pub fn (self DocBase) actions(args ActionsGetArgs) []playbook.Action {
 	return out
 }
 
-pub fn (self DocBase) action_pointers(args ActionsGetArgs) []ActionPointer {
-	mut out := []ActionPointer{}
-	for element in self.children {
-		if element is Action {
+pub fn (mut self DocBase) actionpointers(args ActionsGetArgs) []&Action {
+	mut out := []&Action{}
+	for mut element in self.children {
+		if mut element is Action {
 			mut found := true
 			if args.actor.len > 0 && args.actor != element.action.actor {
 				found = false
@@ -80,16 +80,25 @@ pub fn (self DocBase) action_pointers(args ActionsGetArgs) []ActionPointer {
 				found = false
 			}
 			if found {
-				out << ActionPointer{
-					action: element.action
-					element_id: element.id
-				}
+				out << element
 			}
 		}
-		out << element.action_pointers(args)
+		out << element.actionpointers(args)
 	}
 	return out
 }
+
+pub fn (mut self DocBase) defpointers() []&Def {
+	mut out := []&Def{}
+	for mut element in self.children {
+		if mut element is Def {
+			out << element
+		}
+		out << element.defpointers()
+	}
+	return out
+}
+
 
 pub fn (self DocBase) treeview() string {
 	mut out := []string{}

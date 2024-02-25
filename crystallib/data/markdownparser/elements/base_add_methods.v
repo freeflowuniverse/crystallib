@@ -118,3 +118,13 @@ pub fn (mut base DocBase) html_new(content string) &Html {
 	base.children << a
 	return &a
 }
+
+
+pub fn (mut base DocBase) def_new(content string) &Def {
+	mut a := Def{
+		content: content
+		type_name: 'def'
+	}
+	base.children << a
+	return &a
+}

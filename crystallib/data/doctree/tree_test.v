@@ -11,7 +11,7 @@ pub struct TestMacroProcessor {
 }
 
 fn test_page_get() {
-	mut tree := tree_create(name: doctree.tree_name)!
+	mut tree := new(name: doctree.tree_name)!
 	tree.scan(
 		path: doctree.collections_path
 	)!
@@ -82,7 +82,7 @@ fn match_collections(mut col1 Collection, mut col2 Collection) ! {
 
 fn test_write_tree() {
 	// read tree1
-	mut tree1 := tree_create(name: doctree.tree_name)!
+	mut tree1 := new(name: doctree.tree_name)!
 	tree1.scan(
 		path: doctree.collections_path
 	)!
@@ -91,11 +91,11 @@ fn test_write_tree() {
 	// write tree1 to another dir
 	tree1.export(dest: '/tmp/tree_write')!
 	// create tree2 from the written tree
-	mut tree2 := tree_create(name: doctree.tree_name)!
+	mut tree2 := new(name: doctree.tree_name)!
 	tree2.scan(path: '/tmp/tree_write')!
 	tree2.export(dest: '/tmp/tree_write2')!
 	// write tree2 another time to compare the output of the two
-	mut tree3 := tree_create(name: doctree.tree_name)!
+	mut tree3 := new(name: doctree.tree_name)!
 	tree3.scan(path: '/tmp/tree_write2')!
 
 	//TODO: can work with hash to check the full dir

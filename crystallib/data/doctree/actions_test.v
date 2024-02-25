@@ -5,7 +5,7 @@ import os
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 fn test_actionscan() ! {
-	mut tree := tree_create()!
+	mut tree := new()!
 	tree.scan(
 		path: doctree.collections_path
 		heal: false
