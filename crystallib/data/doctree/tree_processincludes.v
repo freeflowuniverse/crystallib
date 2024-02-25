@@ -21,6 +21,7 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 				)
 			}
 			// handle includes from other collections
+
 			if collection.page_exists(name) {
 				mut mypage2 := collection.page_get(name)!
 				if mypage2.key() == page.key() {
@@ -31,6 +32,7 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 					)
 					continue
 				}
+				// _, collection_name := name_parse(name)!
 				tree.process_page_includes(mut mypage2, col_name)!
 				mut mydoc2 := mypage2.doc()!
 				action_element.content = mydoc2.markdown()

@@ -65,12 +65,15 @@ pub fn (err NoOrTooManyObjFound) msg() string {
 pub fn (tree Tree) page_get(pointerstr string) !&Page {
 	// println("page get:${pointerstr}")
 	p := pointer_new(pointerstr)!
+	if p.name == '' || p.collection == '' {
+		panic('bad pointer')
+	}
 	// println(p)
 	mut res := []&Page{}
 	for _, collection in tree.collections {
 		if p.collection == collection.name {
-			if collection.page_exists(pointerstr) {
-				res << collection.page_get(pointerstr) or { panic('BUG') }
+			if collection.page_exists(p.name) {
+				res << collection.page_get(p.name) or { panic('BUG') }
 			}
 		}
 	}

@@ -36,7 +36,8 @@ pub fn (collection Collection) page_get(name_ string) !&Page {
 	collection_name, name := name_parse(name_)!
 	// console.print_debug(" page get: '${collection_name}' '${name}'")
 	if collection_name.len > 0 && collection_name != collection.name {
-		return collection.tree.page_get(name)!
+		// get the page from tree with $collection:$page
+		return collection.tree.page_get(name_)!
 	}
 	return collection.pages[name] or {
 		return ObjNotFound{
@@ -67,11 +68,11 @@ pub fn (collection Collection) file_get(name_ string) !&File {
 }
 
 pub fn (collection Collection) page_exists(name string) bool {
-	collection_name, _ := name_parse(name) or { panic('bug') }
+	collection_name, pname := name_parse(name) or { panic('bug') }
 	if collection_name.len > 0 && collection_name != collection.name {
 		return collection.tree.page_exists(name)
 	}
-	_ := collection.page_get(name) or {
+	_ := collection.page_get(pname) or {
 		if err is ObjNotFound {
 			return false
 		} else {

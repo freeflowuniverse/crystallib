@@ -3,7 +3,7 @@
 import freeflowuniverse.crystallib.data.doctree
 import os
 
-testpath := '${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/data/doctree/testdata/collections/riverlov'
+testpath := '${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/data/doctree/testdata/collections/'
 
 mut tree := doctree.new()!
 
