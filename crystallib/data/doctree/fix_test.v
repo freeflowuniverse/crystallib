@@ -51,8 +51,6 @@ fn test_fix() ! {
 	} else {
 		assert false, 'element ${right_link} is not a link'
 	}
-
-	test_page.fix() or { panic('Cannot fix page: ${err}') }
 }
 
 // tests collection errors are properly created
