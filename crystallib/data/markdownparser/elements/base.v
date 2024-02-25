@@ -15,7 +15,7 @@ pub mut:
 	// params    paramsparser.Params
 	type_name   string
 	changed     bool
-	children    []&Element
+	children    []Element
 	parent      ?&Element @[skip; str:skip]
 	trailing_lf bool = true // do we need to do a line feed (enter) at end of this element, default yes
 }
@@ -67,6 +67,19 @@ pub fn (self DocBase) actions(args ActionsGetArgs) []playbook.Action {
 	}
 	return out
 }
+
+
+pub fn (self DocBase) header_name() !string{
+	for element in self.children {
+		if element is Header {
+			return element.content
+		}
+	}
+	return error("couldn't find header")
+}
+
+
+
 
 pub fn (mut self DocBase) actionpointers(args ActionsGetArgs) []&Action {
 	mut out := []&Action{}

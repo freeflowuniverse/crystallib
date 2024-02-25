@@ -59,23 +59,8 @@ pub fn (mut self Doc) process() !int {
 	self.remove_empty_children()
 	self.process_base()!
 	self.process_children()!
+	self.id_set(0)
 	self.content = '' // because now the content is in children	
-	if self.children.len > 0 {
-		mut last := self.children[0] or { panic('bug') }
-		last = Paragraph{} // to make sure we start from right base
-		mut type_name := ''
-		mut type_name_last := ''
-		for mut element in self.children {
-			type_name = element.type_name().all_after_last('.').to_lower()
-			if type_name == 'list' && type_name == type_name_last {
-				last.trailing_lf = false
-			}
-			// last = element
-			type_name_last = type_name
-		}
-		self.id_set(0)
-		self.processed = true
-	}
 	return 1
 }
 

@@ -7,6 +7,7 @@ pub struct Action {
 	DocBase
 pub mut:
 	action playbook.Action
+	action_processed bool
 }
 
 fn (mut self Action) process() !int {
@@ -31,6 +32,9 @@ fn (self Action) markdown() string {
 	// 	return self.content
 	// }
 	// println(self.action.heroscript())
+	if self.action_processed{
+		return ""
+	}
 	return self.action.heroscript()
 }
 

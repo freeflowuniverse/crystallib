@@ -79,16 +79,6 @@ pub fn (mut base DocBase) comment_new(content string) &Comment {
 	return &a
 }
 
-pub fn (mut base DocBase) include_new(content string) &Include {
-	mut a := Include{
-		content: content
-		type_name: 'include'
-	}
-
-	base.children << a
-	return &a
-}
-
 pub fn (mut base DocBase) codeblock_new(content string) &Codeblock {
 	mut a := Codeblock{
 		content: content
@@ -103,6 +93,7 @@ pub fn (mut base DocBase) link_new(content string) &Link {
 	mut a := Link{
 		content: content
 		type_name: 'link'
+		trailing_lf:false
 	}
 	a.trailing_lf = false
 	base.children << a
@@ -124,6 +115,7 @@ pub fn (mut base DocBase) def_new(content string) &Def {
 	mut a := Def{
 		content: content
 		type_name: 'def'
+		trailing_lf:false
 	}
 	base.children << a
 	return &a
