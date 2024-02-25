@@ -90,13 +90,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			// 	parser.ensure_last_is_paragraph()!
 			// 	continue
 			// }
-
-			if line.starts_with('!!include ') {
-				content := line.all_after_first('!!include ').trim_space()
-				doc.include_new(content).parent = &doc
-				parser.next_start()!
-				continue
-			}
 			// parse action
 			if line.starts_with('!!') {
 				doc.action_new('${line}\n').parent = &doc

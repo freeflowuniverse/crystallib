@@ -15,8 +15,8 @@ pub mut:
 	// params    paramsparser.Params
 	type_name   string
 	changed     bool
-	children    []Element
-	parent      ?&Element @[skip; str:skip]
+	children    []Element  
+	// parent      ?&Element @[skip; str:skip]
 	trailing_lf bool = true // do we need to do a line feed (enter) at end of this element, default yes
 }
 
