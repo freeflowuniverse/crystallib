@@ -3,6 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link }
 
+
 pub enum PageStatus {
 	unknown
 	ok
@@ -14,6 +15,7 @@ pub struct Page {
 	tree &Tree @[str: skip]
 pub mut:
 	name    string // received a name fix
+	alias string //a proper name for e.g. def
 	path    pathlib.Path
 	pathrel string // relative path in the collection
 	state   PageStatus
@@ -24,6 +26,7 @@ pub mut:
 	readonly        bool
 	changed         bool
 	collection_name string
+	doc_  ?&Doc @[str: skip]
 }
 
 fn (page Page) collection() !&Collection {
@@ -32,6 +35,17 @@ fn (page Page) collection() !&Collection {
 	}
 	return collection
 }
+
+pub fn (page Page) key() string {
+	if page.collection_name.len==0{
+		panic("name cannot be empty for page: ${page.path.path}")
+	}
+	if page.name.len==0{
+		panic("name cannot be empty for page: ${page.path.path}")
+	}
+	return "${page.collection_name}:${page.name}"
+}
+
 
 // fn (mut page Page) fix() ! {
 	// page.fix_links()!
@@ -53,7 +67,7 @@ pub mut:
 
 // save the page on the requested dest
 // make sure the macro's are being executed
-pub fn (mut page Page) export(args_ PageExportArgs) !Doc {
+pub fn (mut page Page) export(args_ PageExportArgs) !&Doc {
 	mut args := args_
 	// if args.dest == '' {
 	// 	args.dest = page.path.path
@@ -61,7 +75,8 @@ pub fn (mut page Page) export(args_ PageExportArgs) !Doc {
 	println(' ++++ export: ${page.name} -> ${args.dest}')
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	dirpath := p.parent()!
-	mut mydoc := page.doc(mut dest: dirpath.path, heal_export: true)!
+	// mut mydoc := page.doc()!
+	mut mydoc := page.doc_process_link(mut dest: dirpath.path)!
 	p.write(mydoc.markdown())!
 	return mydoc
 }

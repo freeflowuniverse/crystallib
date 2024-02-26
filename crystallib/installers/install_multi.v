@@ -57,16 +57,16 @@ pub fn install_multi(args_ InstallArgs) ! {
 				golang.install(reset: args.reset)!
 			}	
 			'vlang' {
-				vlang.install()!
+				vlang.install(reset: args.reset)!
 			}	
 			'crystal' {
-				crystallib.install(reset:true)!
+				crystallib.install(reset:args.reset)!
 			}		
 			'hero' {
-				crystallib.hero_install(reset:true)!
+				crystallib.hero_install(reset:args.reset)!
 			}		
 			'caddy' {
-				caddy.install(reset:true)!
+				caddy.install(reset:args.reset)!
 				caddy.configure_examples()!
 			}															
 			'chrome' {

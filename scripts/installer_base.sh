@@ -116,12 +116,16 @@ function gitcheck {
 }
 
 
-function github_keyscan {
+function sshknownkeysadd {
     mkdir -p ~/.ssh
     if ! grep github.com ~/.ssh/known_hosts > /dev/null
     then
         ssh-keyscan github.com >> ~/.ssh/known_hosts
     fi
+    if ! grep git.ourworld.tf ~/.ssh/known_hosts > /dev/null
+    then
+        ssh-keyscan git.ourworld.tf >> ~/.ssh/known_hosts
+    fi    
     git config --global pull.rebase false
 
 }
@@ -524,7 +528,7 @@ function v_install {
 
 
 function crystal_lib_get {
-    
+    set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/
     mkdir -p ~/.vmodules/freeflowuniverse/
@@ -550,7 +554,7 @@ function crystal_lib_get {
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-        if [[ -z "$keys" ]]; then
+        if [[ -z "$sshkeys" ]]; then
             git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/crystallib.git
         else
             git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
@@ -586,7 +590,7 @@ function crystal_web_get {
         popd 2>&1 >> /dev/null
     else
         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-        if [[ -z "$keys" ]]; then
+        if [[ -z "$sshkeys" ]]; then
             git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/webcomponents
         else
             git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/webcomponents.git
@@ -612,40 +616,6 @@ function crystal_pull {
     popd 2>&1 >> /dev/null
 }
 
-function hero_install {
-
-    echo ' - install hero'
-    RELEASES="https://github.com/freeflowuniverse/freeflow_binary/raw/main"
-    ASSET=""
-
-    if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
-        ASSET="linux"
-    elif [[ "${OSTYPE}" == "darwin"* ]]; then
-        ASSET="osx"
-    fi
-    if [[ "$(uname -m)" == "x86_64"* ]]; then
-        ASSET="${ASSET}_x64"
-    elif [[ "$(uname -m)" == "arm64"* ]]; then
-        ASSET="${ASSET}_arm"
-    fi
-
-    if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
-        export HEROPATH='/usr/local/bin/hero'
-    elif [[ "${OSTYPE}" == "darwin"* ]]; then
-        export HEROPATH=$HOME/hero/bin/hero
-    fi
-
-    ASSET="${ASSET}/hero"
-    echo "${RELEASES}/${ASSET}"
-    curl -sLO "${RELEASES}/${ASSET}"
-    chmod +x hero
-    mv hero $HEROPATH
-
-    # $HEROPATH init
-
-    echo " - Successfully installed hero on $HEROPATH!"
-
-}
 function freeflow_dev_env_install {
 
     crystal_lib_get
@@ -668,8 +638,8 @@ function freeflow_dev_env_install {
         exit 1
     fi    
 
-    echo " - compile hero"
-    ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
+    # echo " - compile hero"
+    # ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
     # source ~/.profile
 
     # hero init
@@ -678,5 +648,5 @@ function freeflow_dev_env_install {
 
 myplatform
 os_update
-github_keyscan
+sshknownkeysadd
 

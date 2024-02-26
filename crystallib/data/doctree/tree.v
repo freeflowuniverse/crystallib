@@ -6,6 +6,7 @@ pub:
 	name string
 pub mut:
 	collections map[string]&Collection
+	defs        map[string]&Page
 	state       TreeState
 	// context context.Context
 	cid string = '000'
@@ -64,12 +65,15 @@ pub fn (err NoOrTooManyObjFound) msg() string {
 pub fn (tree Tree) page_get(pointerstr string) !&Page {
 	// println("page get:${pointerstr}")
 	p := pointer_new(pointerstr)!
+	if p.name == '' || p.collection == '' {
+		panic('bad pointer')
+	}
 	// println(p)
 	mut res := []&Page{}
 	for _, collection in tree.collections {
 		if p.collection == collection.name {
-			if collection.page_exists(pointerstr) {
-				res << collection.page_get(pointerstr) or { panic('BUG') }
+			if collection.page_exists(p.name) {
+				res << collection.page_get(p.name) or { panic('BUG') }
 			}
 		}
 	}
@@ -92,7 +96,7 @@ pub fn (tree Tree) image_get(pointerstr string) !&File {
 	mut res := []&File{}
 	for _, collection in tree.collections {
 		// console.print_debug(collection.name)
-		if  p.collection == collection.name {
+		if p.collection == collection.name {
 			// console.print_debug("in collection")
 			if collection.image_exists(pointerstr) {
 				res << collection.image_get(pointerstr) or { panic('BUG') }

@@ -18,6 +18,33 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 
 		mut llast := paragraph.children.last()
 		mut char_ := parser.char_current()
+		// println(" .. ${char_}")
+
+		if mut llast is Def {
+			if char_==" " || char_=="\n"{
+				//means we did find a def, we can stop
+				// println(" -- end def")
+				paragraph.text_new(char_)
+				parser.next()
+				char_ = ''
+				continue		
+			}else if !(char_.to_upper()==char_ || char_=="_"){				
+				//this means it wasn't a def, we need to add text
+				// println(" -- no def: ${char_}")
+				paragraph.children.pop()
+				mut llast2 := paragraph.children.last()
+				if mut llast2 is Text{
+					llast2.content+=llast.content+char_
+				} else {
+					paragraph.text_new(llast.content+char_)
+				}				
+				// llast.content=""
+				parser.next()
+				char_ = ''
+				continue			
+			}
+			// println(" -- def: ${char_}")
+		}
 
 		// check for comments end
 		if mut llast is Comment {
@@ -74,6 +101,12 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 
 		if mut llast is Text {
 			if char_ != '' {
+				if char_ == "*"{
+					paragraph.def_new("*")
+					parser.next()
+					char_ = ''
+					continue
+				}				
 				// check for comments start
 				for totry in ['<!--', '//'] {
 					if parser.text_next_is(totry, 0) {
@@ -90,8 +123,6 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 						break
 					}
 				}
-			}
-			if char_ != '' {
 				// try to find link
 				for totry in ['![', '['] {
 					if parser.text_next_is(totry, 0) {
@@ -101,6 +132,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 						break
 					}
 				}
+
 			}
 		}
 		llast.content += char_

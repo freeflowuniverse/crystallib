@@ -8,7 +8,7 @@ const book1_path = os.dir(@FILE) + '/testdata/book1'
 // const book1_dest = os.dir(@FILE) + '/testdata/_book1'
 
 fn test_scan() ! {
-	mut tree := tree_create()!
+	mut tree := new()!
 	tree.scan(
 		path: doctree.collections_path
 		heal: false

@@ -21,7 +21,7 @@ fn test_fix_external_link() ! {}
 
 fn test_fix() ! {
 	copy_to_testloc()!
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(name: 'test')!
 	tree.scan(path: '/tmp/tmp_doctree')!
 
 	mut test_collection := tree.collection_get('broken')!
@@ -29,7 +29,7 @@ fn test_fix() ! {
 	test_collection.page_new(mut page_path) or { panic('Cannot create page: ${err}') }
 	mut test_page := test_collection.page_get('page_with_wrong_links')!
 
-	doc_before := test_page.doc(mut dest: test_page.path.parent()!.path)! // or { panic('doesnt exist') }
+	doc_before := test_page.doc()! // or { panic('doesnt exist') }
 
 	assert !test_page.changed // should be set to false after fix
 
@@ -51,8 +51,6 @@ fn test_fix() ! {
 	} else {
 		assert false, 'element ${right_link} is not a link'
 	}
-
-	test_page.fix() or { panic('Cannot fix page: ${err}') }
 }
 
 // tests collection errors are properly created
@@ -66,7 +64,7 @@ fn test_errors_created() {
 			- broken links - with cur implementation should never happen
 			- "markdown file should not be linked"" - with cur implementation should never happen
 	*/
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(name: 'test')!
 	tree.scan(path: '/tmp/tmp_doctree/errors', heal: true)!
 	collection := tree.collection_get('errors')!
 	assert collection.errors.len == 2

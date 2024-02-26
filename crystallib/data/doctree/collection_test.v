@@ -6,7 +6,7 @@ const testpath = os.dir(@FILE) + '/example/chapter1'
 const collections_path = os.dir(@FILE) + '/testdata/collections'
 
 fn test_page_get() {
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(name: 'test')!
 	tree.scan(
 		path: doctree.collections_path
 	)!
@@ -45,7 +45,7 @@ fn test_page_get() {
 }
 
 fn test_file_get() {
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(name: 'test')!
 	tree.scan(
 		path: doctree.collections_path
 	)!
@@ -77,7 +77,7 @@ fn test_file_get() {
 }
 
 fn test_page_exists() {
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(name: 'test')!
 	tree.scan(
 		path: doctree.collections_path
 	)!
@@ -103,7 +103,7 @@ fn test_page_exists() {
 }
 
 fn test_file_exists() {
-	mut tree := tree_create(cid: 'abc', name: 'test')!
+	mut tree := new(name: 'test')!
 	tree.scan(
 		path: doctree.collections_path
 	)!

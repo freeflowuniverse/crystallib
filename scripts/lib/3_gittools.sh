@@ -16,12 +16,16 @@ function gitcheck {
 }
 
 
-function github_keyscan {
+function sshknownkeysadd {
     mkdir -p ~/.ssh
     if ! grep github.com ~/.ssh/known_hosts > /dev/null
     then
         ssh-keyscan github.com >> ~/.ssh/known_hosts
     fi
+    if ! grep git.ourworld.tf ~/.ssh/known_hosts > /dev/null
+    then
+        ssh-keyscan git.ourworld.tf >> ~/.ssh/known_hosts
+    fi    
     git config --global pull.rebase false
 
 }

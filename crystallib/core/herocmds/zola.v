@@ -11,7 +11,8 @@ import cli { Command, Flag }
 pub fn cmd_zola(mut cmdroot Command) {
 	mut cmd_zola := Command{
 		name: 'zola'
-		description: '
+		description:'cool web publishing tool.'
+		usage: '
 ## Manage your zolas
 
 example:
@@ -23,7 +24,6 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 
 		'
 		required_args: 0
-		usage: ''
 		execute: cmd_zola_execute
 	}
 

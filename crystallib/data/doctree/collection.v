@@ -33,11 +33,16 @@ pub mut:
 // look if we can find page in the local collection is collection name not specified
 // if collectionname specified will look for page in that specific collection
 pub fn (collection Collection) page_get(name_ string) !&Page {
-	_, name := name_parse(name_)!
+	collection_name, name := name_parse(name_)!
+	// console.print_debug(" page get: '${collection_name}' '${name}'")
+	if collection_name.len > 0 && collection_name != collection.name {
+		// get the page from tree with $collection:$page
+		return collection.tree.page_get(name_)!
+	}
 	return collection.pages[name] or {
 		return ObjNotFound{
 			collection: collection.name
-			name: name
+			name: name_
 		}
 	}
 }
@@ -63,7 +68,11 @@ pub fn (collection Collection) file_get(name_ string) !&File {
 }
 
 pub fn (collection Collection) page_exists(name string) bool {
-	_ := collection.page_get(name) or {
+	collection_name, pname := name_parse(name) or { panic('bug') }
+	if collection_name.len > 0 && collection_name != collection.name {
+		return collection.tree.page_exists(name)
+	}
+	_ := collection.page_get(pname) or {
 		if err is ObjNotFound {
 			return false
 		} else {
@@ -174,16 +183,16 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		)
 		return
 	}
-	mut page := &Page{
+	mut page := Page{
 		pathrel: p.path_relative(collection.path.path)!.trim('/')
 		name: ptr.pointer.name
 		path: p
 		readonly: false
-		// pages_linked: []&Page{}
 		tree: collection.tree
 		collection_name: collection.name
 	}
-	collection.pages[ptr.pointer.name] = page
+	println(page.key())
+	collection.pages[ptr.pointer.name] = &page
 }
 
 // add a file to the collection, specify existing path
@@ -262,4 +271,3 @@ pub fn (collection Collection) pagenames() []string {
 	res.sort()
 	return res
 }
-

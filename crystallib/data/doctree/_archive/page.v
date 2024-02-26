@@ -190,7 +190,7 @@ fn (mut page Page) fix() ! {
 
 // walk over all links and fix them with location
 fn (mut page Page) fix_links() ! {
-	mut doc := page.doc or { return error('no doc yet on page') }
+	mut doc := page.doc_ or { return error('no doc yet on page') }
 	for x in 0 .. doc.children.len {
 		mut paragraph := doc.children[x]
 		if mut paragraph is Paragraph {
@@ -220,7 +220,7 @@ fn (mut page Page) fix_links() ! {
 // the position of the include statement the page is supposed to replace
 fn (mut page Page) include(pages_to_include map[int]Page) ! {
 	// now we need to remove the links and replace them with the items from the doc of the page to insert
-	mut doc := page.doc or { return error('no doc on including page') }
+	mut doc := page.doc_ or { return error('no doc on including page') }
 	mut offset := 0
 	for x, page_to_include in pages_to_include {
 		docinclude := page_to_include.doc or { panic('no doc on include page') }
@@ -228,7 +228,7 @@ fn (mut page Page) include(pages_to_include map[int]Page) ! {
 		doc.children.insert(x + offset, docinclude.children)
 		offset += doc.children.len - 1
 	}
-	page.doc = doc
+	page.doc_ = doc
 }
 
 // process_includes recursively processes the include actiona in a page
@@ -237,7 +237,7 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 	mut collection := page.tree.collection_get(page.collection_name) or {
 		return error("could not find collection:'${page.collection_name}' in tree: ${page.tree_name}")
 	}
-	mut doc := page.doc or { return error('no doc yet on page') }
+	mut doc := page.doc_ or { return error('no doc yet on page') }
 	// check for circular imports
 	if page.name in include_tree {
 		history := include_tree.join(' -> ')
@@ -293,7 +293,7 @@ fn (mut page Page) process_includes(mut include_tree []string) ! {
 // will process the macro's and return string
 fn (mut page Page) process_macros() ! {
 	page.tree.logger.info('Processing macros in page ${page.name}')
-	mut doc := page.doc or { return error('no doc yet on page') }
+	mut doc := page.doc_ or { return error('no doc yet on page') }
 	for x in 0 .. doc.children.len {
 		mut macro := doc.children[x]
 		if mut macro is Action {
@@ -340,13 +340,13 @@ pub fn (mut page Page) export(args_ PageSaveArgs) ! {
 		args.dest = page.path.path
 	}
 	// QUESTION: okay convention?
-	out := page.doc or { panic('this should never happen') }.markdown()
+	out := page.doc_ or { panic('this should never happen') }.markdown()
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	p.write(out)!
 
 	// mutate page to save updated doc
 	updated_doc := markdownparser.new(path: p.path) or { panic('cannot parse,${err}') }
-	page.doc = updated_doc
+	page.doc_ = updated_doc
 }
 
 // save the page on the requested dest
@@ -365,5 +365,5 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 
 	// mutate page to save updated doc
 	updated_doc := markdownparser.new(path: p.path) or { panic('cannot parse,${err}') }
-	page.doc = updated_doc
+	page.doc_ = updated_doc
 }
