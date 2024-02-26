@@ -136,9 +136,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
-				doc.table_new('${line}\n').parent = &doc
-				parser.next()
-				continue
+				trimmed_next := parser.line_next().trim_space()
+				// single row doesn't make a table
+				if trimmed_next.starts_with('|') && trimmed_next.ends_with('|') {
+					doc.table_new('${line}\n').parent = &doc
+					parser.next()
+					continue
+				}
 			}
 
 			if trimmed_line.to_lower().starts_with('<html>') {
