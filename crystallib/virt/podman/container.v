@@ -6,10 +6,6 @@ import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.virt.utils
 
-// is podman containers
-// TODO: needs to be implemented for podman, is still code from docker
-
-// need to fill in what is relevant
 @[heap]
 pub struct Container {
 pub mut:

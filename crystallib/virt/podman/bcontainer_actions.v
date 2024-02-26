@@ -11,10 +11,6 @@ pub mut:
 	// TODO:/..
 }
 
-pub fn (mut self BContainer) run(args RunArgs) ! {
-	// TODO
-}
-
 @[params]
 pub struct PackageInstallArgs {
 pub mut:
@@ -30,6 +26,11 @@ pub mut:
 // 	//now check which OS, need to make platform function on container level so we know which platform it is
 // 	panic("implement")
 // }
+
+pub fn (mut self BContainer) run(cmd_ string, silent bool) ! {
+	cmd := 'buildah run ${self.id} ${cmd_}'
+	osal.exec(cmd: cmd, stdout: !silent)!
+}
 
 @[params]
 pub struct HeroInstall {
