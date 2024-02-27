@@ -28,17 +28,17 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				parser.next()
 				char_ = ''
 				continue
-			} else if !(char_.to_upper() == char_ || char_ == '_') {
+			} else if !(char_.to_upper() == char_ || char_ == '_' ) || char_ == '*' {
 				// this means it wasn't a def, we need to add text
-				// println(" -- no def: ${char_}")
+				println(" -- no def: ${char_}")
 				paragraph.children.pop()
+				println(" -- no def: ${paragraph.children.last()}")
 				mut llast2 := paragraph.children.last()
 				if mut llast2 is Text {
 					llast2.content += llast.content + char_
 				} else {
 					paragraph.text_new(llast.content + char_)
 				}
-				// llast.content=""
 				parser.next()
 				char_ = ''
 				continue
