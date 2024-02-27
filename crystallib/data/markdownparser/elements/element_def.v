@@ -4,7 +4,7 @@ module elements
 pub struct Def {
 	DocBase
 pub mut:
-	pagekey string
+	pagekey  string
 	pagename string
 }
 
@@ -17,15 +17,13 @@ pub fn (mut self Def) process() !int {
 }
 
 pub fn (mut self Def) process_link() ! {
-	self.trailing_lf=false
-	self.link_new("[${self.pagename}](${self.pagekey})")
+	self.trailing_lf = false
+	self.link_new('[${self.pagename}](${self.pagekey})')
 	self.process_base()!
 	self.process_children()!
 	self.processed = true
 	self.content = ''
 }
-
-
 
 pub fn (self Def) markdown() string {
 	// if self.pagekey.len>0{
@@ -43,5 +41,5 @@ pub fn (self Def) html() string {
 }
 
 pub fn (mut self Def) name() string {
-	return self.content.to_lower().replace("_","").trim_left("*")
+	return self.content.to_lower().replace('_', '').trim_left('*')
 }

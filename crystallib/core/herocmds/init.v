@@ -70,7 +70,6 @@ Initialization Helpers for Hero
 		description: 'will reset the git repo if there are changes inside, will also pull, CAREFUL.'
 	})
 
-
 	cmdroot.add_command(cmd_run)
 }
 
@@ -91,12 +90,12 @@ fn cmd_init_execute(cmd Command) ! {
 	}
 
 	if develop {
-		base.install(reset: reset,develop:true)!
+		base.install(reset: reset, develop: true)!
 		return
 	}
 	if hero {
-		base.install(reset: reset,develop:true)!
-		crystallib.install(reset: reset, git_pull:git_pull,git_reset:git_reset)!
+		base.install(reset: reset, develop: true)!
+		crystallib.install(reset: reset, git_pull: git_pull, git_reset: git_reset)!
 		crystallib.hero_compile(reset: reset)!
 		r := osal.profile_path_add_hero()!
 		console.print_header(' add path ${r} to profile.')

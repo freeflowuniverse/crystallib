@@ -4,7 +4,6 @@ import net.http
 import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Struct, Type }
 import freeflowuniverse.crystallib.core.texttools
 
-
 pub struct ClientGenerator {
 	api_name      string // name of the api the client is being generated for
 	client_struct Struct // the structure representing the API Client, receiver of API Call methods.
@@ -22,40 +21,56 @@ fn (mut gen ClientGenerator) generate_client() CodeFile {
 	}
 }
 
-fn  (mut gen ClientGenerator) generate_client_struct() codemodel.Struct {
-	return codemodel.Struct {
+fn (mut gen ClientGenerator) generate_client_struct() Struct {
+	return Struct{
 		name: '${texttools.name_fix_snake_to_pascal(gen.api_name)}Client'
 		is_pub: true
-		generics: {'T':''}
-		embeds: [codemodel.Struct {
-			name: 'Base'
-			mod: 'freeflowuniverse.crystallib.core.play'
-			generics: {'T':''}
-		}]
-		fields: [codemodel.StructField{
-			name: 'connection'
-			is_mut: true
-			structure: Struct {
-				name: 'HTTPConnection'
-				mod: 'freeflowuniverse.crystallib.clients.httpconnection'
-			}
-			is_ref: true
-		}]
+		generics: {
+			'T': ''
+		}
+		embeds: [
+			Struct{
+				name: 'Base'
+				mod: 'freeflowuniverse.crystallib.core.play'
+				generics: {
+					'T': ''
+				}
+			},
+		]
+		fields: [
+			codemodel.StructField{
+				name: 'connection'
+				is_mut: true
+				structure: Struct{
+					name: 'HTTPConnection'
+					mod: 'freeflowuniverse.crystallib.clients.httpconnection'
+				}
+				is_ref: true
+			},
+		]
 	}
 }
 
-fn generate_client_config() codemodel.Struct {
-	return codemodel.Struct {
+fn generate_client_config() Struct {
+	return Struct{
 		name: 'Config'
-		embeds: [codemodel.Struct {
-			name: 'ConfigBase'
-			mod: 'freeflowuniverse.crystallib.core.play'
-			generics: {'T':''}
-		}]
-		fields: [codemodel.StructField{
-			name: 'url'
-			typ: codemodel.Type{symbol:'string'}
-		}]
+		embeds: [
+			Struct{
+				name: 'ConfigBase'
+				mod: 'freeflowuniverse.crystallib.core.play'
+				generics: {
+					'T': ''
+				}
+			},
+		]
+		fields: [
+			codemodel.StructField{
+				name: 'url'
+				typ: Type{
+					symbol: 'string'
+				}
+			},
+		]
 	}
 }
 
@@ -76,19 +91,28 @@ fn (mut gen ClientGenerator) generate_factory() CodeFile {
 	}
 }
 
-fn (mut gen ClientGenerator) generate_get_function(client codemodel.Struct) codemodel.Function {
-	return codemodel.Function {
+fn (mut gen ClientGenerator) generate_get_function(client Struct) codemodel.Function {
+	return codemodel.Function{
 		name: 'get'
-		params: [codemodel.Param{
-			name: 'args'
-			struct_: codemodel.Struct{
-				name: 'PlayArgs'
-				mod: 'freeflowuniverse.crystallib.core.play'
-				generics: {'': 'Config'}
+		params: [
+			codemodel.Param{
+				name: 'args'
+				struct_: Struct{
+					name: 'PlayArgs'
+					mod: 'freeflowuniverse.crystallib.core.play'
+					generics: {
+						'': 'Config'
+					}
+				}
+			},
+		]
+		result: codemodel.Result{
+			structure: Struct{
+				...client
+				generics: {
+					'': 'Config'
+				}
 			}
-		}]
-		result: codemodel.Result {
-			structure: codemodel.Struct{...client, generics: {'': 'Config'}}
 		}
 		is_pub: true
 		body: 'mut client := ${client.name}[Config]{}
@@ -97,17 +121,19 @@ fn (mut gen ClientGenerator) generate_get_function(client codemodel.Struct) code
 	}
 }
 
-fn (mut gen ClientGenerator) heroplay_function(config codemodel.Struct) codemodel.Function {
-	return codemodel.Function {
+fn (mut gen ClientGenerator) heroplay_function(config Struct) codemodel.Function {
+	return codemodel.Function{
 		name: 'heroplay'
-		params: [codemodel.Param{
-			name: 'args'
-			struct_: codemodel.Struct{
-				name: 'PlayBookAddArgs'
-				mod: 'freeflowuniverse.crystallib.core.play'
-			}
-		}]
-		result: codemodel.Result {
+		params: [
+			codemodel.Param{
+				name: 'args'
+				struct_: Struct{
+					name: 'PlayBookAddArgs'
+					mod: 'freeflowuniverse.crystallib.core.play'
+				}
+			},
+		]
+		result: codemodel.Result{
 			result: true
 		}
 		is_pub: true
@@ -125,15 +151,17 @@ fn (mut gen ClientGenerator) heroplay_function(config codemodel.Struct) codemode
 	}
 }
 
-fn (mut gen ClientGenerator) config_interactive_function(client codemodel.Struct) codemodel.Function {
-	return codemodel.Function {
+fn (mut gen ClientGenerator) config_interactive_function(client Struct) codemodel.Function {
+	return codemodel.Function{
 		name: 'config_interactive'
-		receiver: codemodel.Param {
+		receiver: codemodel.Param{
 			name: 'self'
 			mutable: true
 			struct_: client
 		}
-		result: codemodel.Result { result: true }
+		result: codemodel.Result{
+			result: true
+		}
 		is_pub: true
 		body: "mut myui := ui.new()!
 	console.clear()
@@ -175,7 +203,6 @@ fn (mut gen ClientGenerator) config_interactive_function(client codemodel.Struct
 	self.config_save()!"
 	}
 }
-
 
 fn (mut gen ClientGenerator) generate_model(structs []Struct) !CodeFile {
 	return CodeFile{

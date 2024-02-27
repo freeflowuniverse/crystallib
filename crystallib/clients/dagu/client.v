@@ -12,9 +12,9 @@ struct CreateDagResponse {
 	dag_id string = 'new' @[json: 'DagID'; required]
 }
 
-fn (mut cl DaguClient[Config]) set_http_connection() !{
+fn (mut cl DaguClient[Config]) set_http_connection() ! {
 	cfg := cl.config()!
-	if cl.connection.base_url != '${cfg.url}/api/v1'{
+	if cl.connection.base_url != '${cfg.url}/api/v1' {
 		mut con := httpconnection.new(
 			name: 'dagu'
 			url: '${cfg.url}/api/v1'
@@ -22,7 +22,6 @@ fn (mut cl DaguClient[Config]) set_http_connection() !{
 		con.basic_auth(cfg.username, cfg.password)
 		cl.connection = con
 	}
-	
 }
 
 // Creates a new DAG.

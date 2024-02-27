@@ -12,7 +12,7 @@ pub struct CustomCode {
 
 pub struct Comment {
 	text     string
-	is_multi bool 
+	is_multi bool
 }
 
 pub struct Struct {
@@ -21,8 +21,8 @@ pub mut:
 	description string
 	mod         string
 	is_pub      bool
-	embeds		[]Struct
-	generics	map[string]string
+	embeds      []Struct
+	generics    map[string]string
 	attrs       []Attribute
 	fields      []StructField
 }
@@ -61,7 +61,7 @@ pub struct Function {
 pub:
 	name     string
 	receiver Param
-	is_pub bool
+	is_pub   bool
 	mod      string
 pub mut:
 	description string

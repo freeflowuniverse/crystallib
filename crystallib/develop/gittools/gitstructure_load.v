@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.ui.console
 pub fn (mut gitstructure GitStructure) load() ! {
 	// print_backtrace()
 	// if true{panic("s")}
-	if gitstructure.loaded{
+	if gitstructure.loaded {
 		return
 	}
 	gitstructure.repos.clear()
@@ -24,8 +24,8 @@ pub fn (mut gitstructure GitStructure) load() ! {
 		repo.status()!
 		// println(repo)
 	}
-	gitstructure.loaded=true
-	console.print_debug(" load gitstructure from disk done")	
+	gitstructure.loaded = true
+	console.print_debug(' load gitstructure from disk done')
 }
 
 fn (mut gitstructure GitStructure) reload() ! {
@@ -93,12 +93,12 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []strin
 		if os.is_dir(pathnew) {
 			if os.exists(os.join_path(pathnew, '.git')) {
 				mut repo := gitstructure.repo_from_path(pathnew)!
-				p:=repo.addr.path()!
+				p := repo.addr.path()!
 				if repo.key() in done || p.path in done {
-					return error("loading of repo goes wrong found double.\npath:${p.path}\nkey:${repo.key()}")
+					return error('loading of repo goes wrong found double.\npath:${p.path}\nkey:${repo.key()}')
 				}
-				done<<p.path
-				done<<repo.key()
+				done << p.path
+				done << repo.key()
 				gitstructure.repos << &repo
 				continue
 			}

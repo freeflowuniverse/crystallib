@@ -8,7 +8,6 @@ import freeflowuniverse.crystallib.installers.infra.zinit
 import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal.screen
-
 import os
 
 @[params]
@@ -21,7 +20,6 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
-	
 
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
@@ -30,7 +28,7 @@ pub fn install(args InstallArgs) ! {
 	// install caddy if it was already done will return true
 	console.print_header('package_install install caddy')
 
-	if ! osal.is_linux() {
+	if !osal.is_linux() {
 		return error('only support linux for now')
 	}
 	mut dest := osal.download(
@@ -63,7 +61,7 @@ pub mut:
 // domain e.g. www.myserver.com
 pub fn configure_examples(config WebConfig) ! {
 	mut config_file := $tmpl('templates/caddyfile_default')
-	if config.domain.len>0 {
+	if config.domain.len > 0 {
 		config_file = $tmpl('templates/caddyfile_domain')
 	}
 	install()!
@@ -124,13 +122,11 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 	}
 }
 
-
 @[params]
 pub struct StartArgs {
 pub mut:
 	zinit bool = true
 }
-
 
 // start caddy
 pub fn start(args StartArgs) ! {
@@ -138,7 +134,7 @@ pub fn start(args StartArgs) ! {
 	if !os.exists('/etc/caddy/Caddyfile') {
 		return error("didn't find caddyfile")
 	}
-	if args.zinit{
+	if args.zinit {
 		zinit.install()!
 		mut z := zinitmgmt.new()!
 		p := z.process_new(
@@ -150,9 +146,9 @@ pub fn start(args StartArgs) ! {
 		)!
 
 		p.start()!
-	}else{
-		mut scr:=screen.new(reset:false)!
-		mut s2:=scr.add(name:"caddy",cmd: 'caddy run --config /etc/caddy/Caddyfile')!
+	} else {
+		mut scr := screen.new(reset: false)!
+		mut s2 := scr.add(name: 'caddy', cmd: 'caddy run --config /etc/caddy/Caddyfile')!
 	}
 }
 

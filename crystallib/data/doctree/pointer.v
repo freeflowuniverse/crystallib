@@ -28,7 +28,7 @@ pub mut:
 // 	or mypage.md
 //
 //```
-pub fn pointer_new(txt_ string) !Pointer {	
+pub fn pointer_new(txt_ string) !Pointer {
 	mut p := Pointer{}
 	mut txt := txt_.trim_space().replace('\\', '/').replace('//', '/')
 

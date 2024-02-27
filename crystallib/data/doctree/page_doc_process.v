@@ -6,22 +6,21 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-
 pub fn (mut page Page) doc() !&Doc {
 	mut mydoc := page.doc_ or {
-		mut mydoc2:=markdownparser.new(path: page.path.path)!
+		mut mydoc2 := markdownparser.new(path: page.path.path)!
 		&mydoc2
 	}
-	page.doc_=mydoc
+
+	page.doc_ = mydoc
 	return mydoc
 }
-
 
 @[params]
 struct DocArgs {
 mut:
 	// heal_source bool
-	dest string [required]// if we want to relocate images or files or pages for links, is the directory of the collection at destination !!!
+	dest string   @[required] // if we want to relocate images or files or pages for links, is the directory of the collection at destination !!!
 	done []string
 }
 
@@ -69,8 +68,8 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 			if element.cat == .page {
 				if page.tree.page_exists(pointername) {
 					mut linkpage := page.tree.page_get(pointername)!
-					//this is to remember the pages which are linked
-					if !(pointername in mydoc.linked_pages){
+					// this is to remember the pages which are linked
+					if pointername !in mydoc.linked_pages {
 						mydoc.linked_pages << pointername
 					}
 					// println(" ------- page exists: ${pointername}")
@@ -96,7 +95,6 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 				}
 			}
 		}
-
 	}
 	return mydoc
 }

@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.playbook
 pub struct Action {
 	DocBase
 pub mut:
-	action playbook.Action
+	action           playbook.Action
 	action_processed bool
 }
 
@@ -28,7 +28,7 @@ fn (mut self Action) process() !int {
 }
 
 fn (self Action) markdown() string {
-	if self.action_processed{
+	if self.action_processed {
 		return self.content
 	}
 	return self.action.heroscript()

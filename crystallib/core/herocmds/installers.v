@@ -44,11 +44,11 @@ fn cmd_installers_execute(cmd Command) ! {
 	mut uninstall := cmd.flags.get_bool('uninstall') or { false }
 	mut names := cmd.flags.get_string('names') or { '' }
 
-	if names==""{
+	if names == '' {
 		console.clear()
-		console.print_header("the following installers are known:")
+		console.print_header('the following installers are known:')
 		console.print_lf(2)
-		for x in installers.names(){
+		for x in installers.names() {
 			console.print_item(x)
 		}
 		console.print_lf(1)

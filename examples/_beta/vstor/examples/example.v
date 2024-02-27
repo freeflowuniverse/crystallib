@@ -3,13 +3,13 @@ module main
 import freeflowuniverse.crystallib.data.vstor
 
 fn do() ! {
-	mut vstor := vstor.new()!
+	mut vs := vstor.new()!
 
 	// populate 20 locations
 	mut i := 0
 	for i <= 20 {
-		location := vstor.location_new(farmid: 'farm_${i}')!
-		vstor.zdb_new(
+		location := vs.location_new(farmid: 'farm_${i}')!
+		vs.zdb_new(
 			address: '212.3.247.${i}'
 			port: 8888
 			namespace: 'something'
@@ -17,7 +17,7 @@ fn do() ! {
 			location: location
 		)!
 	}
-	println(vstor)
+	println(vs)
 }
 
 fn main() {

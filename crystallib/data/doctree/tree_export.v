@@ -18,10 +18,10 @@ pub mut:
 // all names will be in name_fixed mode .
 // all images in img/
 pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
-	console.print_green("export tree: name:${tree.name} to ${args_.dest}")
+	console.print_green('export tree: name:${tree.name} to ${args_.dest}')
 	mut args := args_
 
-	tree.process_includes()! //process definitions (will also do defs)
+	tree.process_includes()! // process definitions (will also do defs)
 
 	mut path_src := pathlib.get_dir(path: '${args.dest}/src', create: true)!
 	mut path_edit := pathlib.get_dir(path: '${args.dest}/edit', create: true)!
@@ -32,8 +32,8 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 	}
 
 	for name, mut collection in tree.collections {
-		mut collection_linked_pages:=[]string{}
-		console.print_green("export collection: name:${name}")		
+		mut collection_linked_pages := []string{}
+		console.print_green('export collection: name:${name}')
 		dir_src := pathlib.get_dir(path: path_src.path + '/' + name, create: true)!
 
 		collection.path.link('${path_edit.path}/${name}', true)!
@@ -72,7 +72,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 			collection.errors_report('${dir_src.path}/errors.md')!
 		}
 
-		mut linked_pages_file := pathlib.get_file(path: dir_src.path + '/.linkedpages', create: true)! 
+		mut linked_pages_file := pathlib.get_file(path: dir_src.path + '/.linkedpages', create: true)!
 		linked_pages_file.write(collection_linked_pages.join_lines())!
 	}
 }

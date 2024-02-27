@@ -1,6 +1,6 @@
 module main
 
-import freeflowuniverse.crystallib.docker
+import freeflowuniverse.crystallib.virt.docker
 import freeflowuniverse.crystallib.osal { exec }
 import os
 
@@ -76,7 +76,7 @@ pub fn get_ipaddress(container_name string) !string {
 		stdout: false
 	)!
 	lines := ljob.output
-	for line in lines.split_into_lines() {
+	for line in lines {
 		if line.trim_space() == '' {
 			continue
 		}

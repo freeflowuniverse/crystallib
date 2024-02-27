@@ -93,7 +93,7 @@ pub fn (mut base DocBase) link_new(content string) &Link {
 	mut a := Link{
 		content: content
 		type_name: 'link'
-		trailing_lf:false
+		trailing_lf: false
 	}
 	a.trailing_lf = false
 	base.children << a
@@ -110,12 +110,11 @@ pub fn (mut base DocBase) html_new(content string) &Html {
 	return &a
 }
 
-
 pub fn (mut base DocBase) def_new(content string) &Def {
 	mut a := Def{
 		content: content
 		type_name: 'def'
-		trailing_lf:false
+		trailing_lf: false
 	}
 	base.children << a
 	return &a

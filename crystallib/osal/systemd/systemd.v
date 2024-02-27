@@ -10,9 +10,9 @@ import freeflowuniverse.crystallib.clients.redisclient
 
 // function systemdinstall {
 //     set -x
-//     if [[ "$OSTYPE" == "linux-gnu"* ]]; then     
+//     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 //         local script_name="$1"
-//         local cmd="$2"            
+//         local cmd="$2"
 //         servicefile="
 
 //         spath="/etc/systemd/system/${script_name}.service"
@@ -43,28 +43,26 @@ pub fn new() !Systemd {
 
 fn (mut systemdobj Systemd) load() ! {
 	console.print_header('Systemd load')
-	systemdobj.processes=[]&SystemdProcess{}
+	systemdobj.processes = []&SystemdProcess{}
 	mut redis := redisclient.core_get()!
 
-	for item in process_list()!{
-		mut sdprocess:=SystemdProcess{
-			description:item.description
-			systemdobj:&systemdobj
-			unit:item.unit
-			info:item
+	for item in process_list()! {
+		mut sdprocess := SystemdProcess{
+			description: item.description
+			systemdobj: &systemdobj
+			unit: item.unit
+			info: item
 		}
-		name:=sdprocess.unit
-		key:="systemd:${name}"		
-		if redis.exists(key)!{
-			mut sdprocess_redis:=systemdobj.get(name)!
+		name := sdprocess.unit
+		key := 'systemd:${name}'
+		if redis.exists(key)! {
+			mut sdprocess_redis := systemdobj.get(name)!
 			sdprocess_redis.info = sdprocess.info
 			sdprocess_redis.description = sdprocess.description
 			systemdobj.set(mut sdprocess_redis)!
-		}else{
+		} else {
 			systemdobj.set(mut sdprocess)!
 		}
-
-		
 	}
 }
 
@@ -84,8 +82,8 @@ pub mut:
 //```
 pub fn (mut systemdobj Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 	mut args := args_
-	if !(args.name.ends_with(".service")){
-		args.name="${args.name}.service"
+	if !(args.name.ends_with('.service')) {
+		args.name = '${args.name}.service'
 	}
 
 	mut sdprocess := SystemdProcess{
@@ -111,48 +109,44 @@ pub fn (mut systemdobj Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess
 }
 
 pub fn (mut systemdobj Systemd) names() []string {
-	r:=systemdobj.processes.map(it.name)
+	r := systemdobj.processes.map(it.name)
 	return r
 }
 
-
 pub fn (mut systemdobj Systemd) set(mut sdprocess SystemdProcess) ! {
-
 	unit_ := texttools.name_fix(sdprocess.info.unit)
 
-	if sdprocess.name==""{
+	if sdprocess.name == '' {
 		sdprocess.name = unit_
-	}else{
+	} else {
 		sdprocess.name = texttools.name_fix(sdprocess.name)
 	}
 	systemdobj.set_internal(mut sdprocess)!
 	systemdobj.set_redis(mut sdprocess)!
 }
 
-
 fn (mut systemdobj Systemd) set_internal(mut sdprocess SystemdProcess) ! {
-	systemdobj.processes=systemdobj.processes.filter(it.name!=sdprocess.name)
+	systemdobj.processes = systemdobj.processes.filter(it.name != sdprocess.name)
 	systemdobj.processes << &sdprocess
 }
 
 fn (mut systemdobj Systemd) set_redis(mut sdprocess SystemdProcess) ! {
 	mut redis := redisclient.core_get()!
-	key:="systemd:${sdprocess.name}"
+	key := 'systemd:${sdprocess.name}'
 	data := json.encode(sdprocess)
-	redis.set(key,data)!
+	redis.set(key, data)!
 }
-
 
 pub fn (mut systemdobj Systemd) get(name string) !&SystemdProcess {
 	// name := texttools.name_fix(name_)
 	mut redis := redisclient.core_get()!
-	key:="systemd:${name}"
-	mut sdprocess:=SystemdProcess{
-		systemdobj: &systemdobj		
+	key := 'systemd:${name}'
+	mut sdprocess := SystemdProcess{
+		systemdobj: &systemdobj
 	}
-	if redis.exists(key)!{
-		data:=redis.get(key)!
-		sdprocess=json.decode(SystemdProcess,data)!
+	if redis.exists(key)! {
+		data := redis.get(key)!
+		sdprocess = json.decode(SystemdProcess, data)!
 		sdprocess.systemdobj = &systemdobj
 		return &sdprocess
 	}
@@ -160,8 +154,8 @@ pub fn (mut systemdobj Systemd) get(name string) !&SystemdProcess {
 }
 
 pub fn (mut systemdobj Systemd) exists(name string) bool {
-	for item in systemdobj.processes{
-		if item.name == name{
+	for item in systemdobj.processes {
+		if item.name == name {
 			return true
 		}
 	}

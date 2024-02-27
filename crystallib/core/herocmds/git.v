@@ -173,12 +173,11 @@ fn cmd_git_execute(cmd Command) ! {
 	}
 
 	mut gs := gittools.get(coderoot: coderoot) or {
-		if coderoot.len>0{
-			return error("Could not load gittools: coderoot:${coderoot}\n${err}")
-		}else{
-			return error("Could not load gittools:\n${err}")
+		if coderoot.len > 0 {
+			return error('Could not load gittools: coderoot:${coderoot}\n${err}')
+		} else {
+			return error('Could not load gittools:\n${err}')
 		}
-		
 	}
 
 	// create the filter for doing group actions, or action on 1 repo

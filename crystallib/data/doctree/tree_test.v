@@ -1,4 +1,5 @@
 module doctree
+
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
@@ -48,18 +49,18 @@ fn match_files(mut files1 map[string]&File, mut files2 map[string]&File) ! {
 }
 
 fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
-	//errors are added so not same as original
-	if "errors" in pages1.keys(){
-		pages1.delete("errors")
+	// errors are added so not same as original
+	if 'errors' in pages1.keys() {
+		pages1.delete('errors')
 	}
-	if "errors" in pages2.keys(){
-		pages2.delete("errors")
+	if 'errors' in pages2.keys() {
+		pages2.delete('errors')
 	}
-	if pages1.len != pages2.len{
-		println(pages1.keys().map(" - ${it}").join_lines())
-		println("compared with:")
-		println(pages2.keys().map(" - ${it}").join_lines())
-		return error("nr of pages does not correspond in both collection")
+	if pages1.len != pages2.len {
+		println(pages1.keys().map(' - ${it}').join_lines())
+		println('compared with:')
+		println(pages2.keys().map(' - ${it}').join_lines())
+		return error('nr of pages does not correspond in both collection')
 	}
 	for name, mut page1 in pages1 {
 		mut page2 := pages2[name] or { return error("${name} doesn't exist in both collections") }
@@ -67,10 +68,10 @@ fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 		page1_doc := page1.doc()!
 
 		page2_doc := page2.doc()!
-		mypath:= page1_doc.path or {pathlib.Path{}}
+		mypath := page1_doc.path or { pathlib.Path{} }
 		println(mypath.path)
 		assert page1_doc.markdown().trim_space() == page2_doc.markdown().trim_space()
-		//TODO: there is error, space at end of doc not the same, weird why trim_space doesn't resolve that, should also work without trim_space anyhow
+		// TODO: there is error, space at end of doc not the same, weird why trim_space doesn't resolve that, should also work without trim_space anyhow
 	}
 }
 
@@ -98,7 +99,7 @@ fn test_write_tree() {
 	mut tree3 := new(name: doctree.tree_name)!
 	tree3.scan(path: '/tmp/tree_write2')!
 
-	//TODO: can work with hash to check the full dir
+	// TODO: can work with hash to check the full dir
 
 	// assert the 1e tree matches the third one
 	assert tree1.collections.len == tree3.collections.len
@@ -106,7 +107,6 @@ fn test_write_tree() {
 		mut col3 := tree3.collections[k] or { panic('collection ${k} is not in tree copy') }
 		match_collections(mut *col1, mut *col3)!
 	}
-
 
 	// assert the 2nd tree matches the third one
 	assert tree2.collections.len == tree3.collections.len

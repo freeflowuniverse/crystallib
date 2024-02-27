@@ -16,7 +16,6 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 	mut args := args_
 	args.pull = args_.reset || args_.pull
 
-
 	p := args.locator.addr.path()!
 
 	mut r := if gitstructure.repo_exists(args.locator)! {
@@ -96,18 +95,18 @@ pub mut:
 }
 
 pub fn (a ReposGetArgs) str() string {
-	mut out:=""
-	if a.filter.len>0{
-		out+="filter:${a.filter} "
+	mut out := ''
+	if a.filter.len > 0 {
+		out += 'filter:${a.filter} '
 	}
-	if a.name.len>0{
-		out+="name:${a.name} "
+	if a.name.len > 0 {
+		out += 'name:${a.name} '
 	}
-	if a.account.len>0{
-		out+="account:${a.account} "
+	if a.account.len > 0 {
+		out += 'account:${a.account} '
 	}
-	if a.provider.len>0{
-		out+="provider:${a.provider} "
+	if a.provider.len > 0 {
+		out += 'provider:${a.provider} '
 	}
 	return out.trim_space()
 }
@@ -117,7 +116,7 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 		...args_
 	}
 	// println(args)
-	gitstructure.check() or {panic(err)}
+	gitstructure.check() or { panic(err) }
 	mut res := []GitRepo{}
 	// repos.sort()
 	// println(repos.join("\n"))
@@ -147,5 +146,3 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 
 	return res
 }
-
-

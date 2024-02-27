@@ -11,7 +11,7 @@ import os
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset bool
+	reset   bool
 	develop bool
 }
 
@@ -78,9 +78,9 @@ pub fn install(args InstallArgs) ! {
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
-	osal.exec(cmd: 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts', stdout:false)!
+	osal.exec(cmd: 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts', stdout: false)!
 
-	if args.develop{
+	if args.develop {
 		develop()!
 	}
 	sshkeysinstall()!
@@ -89,8 +89,7 @@ pub fn install(args InstallArgs) ! {
 }
 
 pub fn sshkeysinstall(args InstallArgs) ! {
-
-	cmd:='
+	cmd := '
     mkdir -p ~/.ssh
     if ! grep github.com ~/.ssh/known_hosts > /dev/null
     then
@@ -103,10 +102,8 @@ pub fn sshkeysinstall(args InstallArgs) ! {
     git config --global pull.rebase false
 	'
 
-	osal.exec(cmd: cmd, stdout:false)!
-
+	osal.exec(cmd: cmd, stdout: false)!
 }
-
 
 pub fn develop(args InstallArgs) ! {
 	console.print_header('platform prepare')
@@ -138,4 +135,3 @@ pub fn develop(args InstallArgs) ! {
 
 	osal.done_set('crystal_development', 'OK')!
 }
-
