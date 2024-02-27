@@ -65,7 +65,7 @@ pub fn (mut tree Tree) process_includes() ! {
 		// console.print_green("get includes for collection:${collectionname}")		
 		for pagekey in collection.pages.keys() {
 			mut page := collection.pages[pagekey] or { panic('bug') }
-			console.print_green('Get includes for page ${page.key()}')
+			// console.print_green('Get includes for page ${page.key()}')
 			// process include recursivly
 			tree.process_page_includes(mut page, collectionname)!
 		}

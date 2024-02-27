@@ -1,4 +1,5 @@
 module elements
+import freeflowuniverse.crystallib.core.texttools
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
@@ -18,7 +19,6 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 
 		mut llast := paragraph.children.last()
 		mut char_ := parser.char_current()
-		// println(" .. ${char_}")
 
 		if mut llast is Def {
 			if char_ == ' ' || char_ == '\n' {
@@ -28,7 +28,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				parser.next()
 				char_ = ''
 				continue
-			} else if !(char_.to_upper() == char_ || char_ == '_' ) || char_ == '*' {
+			} else if !( texttools.is_upper_text(char_) || char_ == '_' ) {
 				// this means it wasn't a def, we need to add text
 				println(" -- no def: ${char_}")
 				paragraph.children.pop()

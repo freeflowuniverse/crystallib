@@ -7,10 +7,8 @@ import json
 
 fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	$if debug {
-		console.print_debug(' load git config on fs: ${path}')
+		console.print_debug('load git config on fs: ${path}')
 	}
-
-	mut redis := redisclient.core_get()!
 
 	mut st := GitRepoStatus{}
 
@@ -65,14 +63,21 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 		}
 	}
 
+	
+
 	locator := locator_new(mut addr.gsconfig, st.remote_url)!
+	addr = locator.addr
 	addr.branch = st.branch
 
-	// $if debug {
-	// 	console.print_header(' loaded repo ${path}     --------     addr: ${addr2}')
-	// }
+	// println(st)
+	// println(addr)
+
+	$if debug {
+		console.print_header(' loaded repo ${path}     --------')
+	}
 
 	jsondata := json.encode(st)
+	mut redis := redisclient.core_get()!
 	redis.set(addr.cache_key_status(), jsondata)!
 	redis.set(addr.cache_key_path(path), addr.cache_key_status())! // remember the key in redis starting from path
 	redis.expire(addr.cache_key_status(), 3600 * 24 * 7)!
