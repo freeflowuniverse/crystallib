@@ -5,10 +5,8 @@ import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.core.texttools
 
-
 pub fn (mut tree Tree) process_defs() ! {
-
-	if tree.defs.len>0{
+	if tree.defs.len > 0 {
 		return
 	}
 
