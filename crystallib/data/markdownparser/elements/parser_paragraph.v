@@ -98,7 +98,6 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				continue
 			}
 		}
-
 		if mut llast is Text {
 			if char_ != '' {
 				if char_ == "*"{
@@ -109,7 +108,9 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				}				
 				// check for comments start
 				for totry in ['<!--', '//'] {
-					if parser.text_next_is(totry, 0) {
+					// TODO: this is a quick fix for now (https:// is being parsed as comment)
+					is_url := llast.content.ends_with(':') && totry == '//'
+					if parser.text_next_is(totry, 0) && !is_url {
 						// we are now in comment
 						paragraph.comment_new('')
 						mut llast2 := paragraph.children.last()
