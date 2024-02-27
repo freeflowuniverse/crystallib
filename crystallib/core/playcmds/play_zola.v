@@ -76,6 +76,63 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.doctree_add(url: url, path: path)!
+		} else if action.name == 'blog_add' {
+			console.print_debug('website.blog_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			collection := p.get_default('collection', '')!
+			file := p.get_default('file', '')!
+			image := p.get_default('image', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+
+			site_.blog_add(name: name, collection: collection, file: file, image: image)!
+		}else if action.name == 'person_add' {
+			console.print_debug('website.person_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			collection := p.get_default('collection', '')!
+			file := p.get_default('file', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+
+			site_.person_add(name: name, collection: collection, file: file)!
+		}
+		 else if action.name == 'header_add' {
+			console.print_debug('website.header_add')
+			mut p := action.params
+			collection := p.get_default('collection', '')!
+			file := p.get_default('file', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+
+			site_.header_add(collection: collection, file: file)!
+
+		} else if action.name == 'footer_add' {
+			console.print_debug('website.footer_add')
+			mut p := action.params
+			collection := p.get_default('collection', '')!
+			file := p.get_default('file', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+
+			site_.footer_add(collection: collection, file: file)!
+		} else if action.name == 'page_add' {
+			console.print_debug('website.page_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			collection := p.get_default('collection', '')!
+			file := p.get_default('file', '')!
+			homepage := p.get_default_false('homepage')
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+
+			site_.page_add(name: name, collection: collection, file: file, homepage: homepage)!
 
 			// }else if  action.name=="pull"{
 			// 	mut site_:=ws.site or { return error("can't find website for pull, should have been defined before with !!website.define")}
