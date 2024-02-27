@@ -31,7 +31,7 @@ pub fn (addr GitAddr) path() !pathlib.Path {
 	// name := texttools.name_fix(addr.name)
 	// account := texttools.name_fix(addr.account)
 	mut path_string := '${addr.gsconfig.root}/${addr.provider}/${addr.account}/${addr.name}'
-	if addr.gsconfig.singlelayer{
+	if addr.gsconfig.singlelayer {
 		path_string = '${addr.gsconfig.root}/${addr.name}'
 	}
 	if addr.gsconfig.root == '' {
@@ -57,9 +57,9 @@ fn (addr GitAddr) path_account() pathlib.Path {
 		panic('cannot be empty')
 	}
 	mut path_string := '${addr.gsconfig.root}/${addr.provider}/${addr.account}'
-	if addr.gsconfig.singlelayer{
+	if addr.gsconfig.singlelayer {
 		path_string = '${addr.gsconfig.root}'
-	}	
+	}
 	path := pathlib.get_dir(
 		path: path_string
 		create: true

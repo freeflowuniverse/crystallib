@@ -23,7 +23,5 @@ pub fn new(args_ TreeArgsGet) !&Tree {
 		name: args.name
 	}
 
-
 	return &t
 }
-

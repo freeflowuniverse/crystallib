@@ -110,7 +110,7 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 				continue
 			}
 		}
-		if new_path.is_dir() || (new_path.is_dir_link() && args.include_links){
+		if new_path.is_dir() || (new_path.is_dir_link() && args.include_links) {
 			// If recusrive
 			if args.recursive {
 				mut rec_list := new_path.list_internal(args)!

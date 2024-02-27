@@ -46,7 +46,7 @@ pub fn package_install(name_ string) ! {
 	// 	return
 	// }
 
-	name:= names.join(" ")
+	name := names.join(' ')
 	console.print_header('package install: ${name}')
 	platform_ := platform()
 	cpu := cputype()

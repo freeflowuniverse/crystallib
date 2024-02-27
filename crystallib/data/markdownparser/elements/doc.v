@@ -7,8 +7,8 @@ pub struct Doc {
 	DocBase
 pub mut:
 	// gid smartid.GID
-	pre []HtmlSource
-	linked_pages []string //to know which collection:pages are needed to make this doc complete
+	pre          []HtmlSource
+	linked_pages []string // to know which collection:pages are needed to make this doc complete
 }
 
 // add a css or script link to a document

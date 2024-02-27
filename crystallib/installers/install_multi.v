@@ -22,7 +22,7 @@ pub mut:
 }
 
 pub fn names(args_ InstallArgs) []string {
-	names:="
+	names := '
 		rust
 		golang
 		vlang
@@ -34,8 +34,8 @@ pub fn names(args_ InstallArgs) []string {
 		lima
 		podman
 		vscode
-		"
-	mut ns:=texttools.to_array(names)
+		'
+	mut ns := texttools.to_array(names)
 	ns.sort()
 	return ns
 }
@@ -55,20 +55,20 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'golang' {
 				golang.install(reset: args.reset)!
-			}	
+			}
 			'vlang' {
 				vlang.install(reset: args.reset)!
-			}	
+			}
 			'crystal' {
-				crystallib.install(reset:args.reset)!
-			}		
+				crystallib.install(reset: args.reset)!
+			}
 			'hero' {
-				crystallib.hero_install(reset:args.reset)!
-			}		
+				crystallib.hero_install(reset: args.reset)!
+			}
 			'caddy' {
-				caddy.install(reset:args.reset)!
+				caddy.install(reset: args.reset)!
 				caddy.configure_examples()!
-			}															
+			}
 			'chrome' {
 				chrome.install(reset: args.reset, uninstall: args.uninstall)!
 			}

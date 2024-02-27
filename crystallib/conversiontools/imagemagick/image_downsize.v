@@ -35,7 +35,6 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	}
 
 	if image.is_png() {
-
 		if image.size_kbyte > 500 && image.size_x > 2400 {
 			image.size_kbyte = 0
 			println('   - resize 50%: ${image.path.path}')
@@ -53,10 +52,8 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 				return error('could not convert to png --resize 75%.\n${cmd} \n${error}')
 			}
 			image.init_()!
-		}		
-
+		}
 	}
-
 
 	if image.is_png() && args.convertpng {
 		if image.size_kbyte > 500 {

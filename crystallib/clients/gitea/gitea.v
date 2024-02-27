@@ -14,9 +14,9 @@ pub mut:
 pub struct Config {
 	play.ConfigBase
 pub:
-	configtype string = 'gitea_client' //needs to be defined
+	configtype string = 'gitea_client' // needs to be defined
 pub mut:
-	url string
+	url      string
 	username string
 	password string
 }
@@ -36,6 +36,7 @@ pub fn get(args play.PlayArgs) !GiteaClient[Config] {
 	config := client.config()!
 	return client
 }
+
 //
 pub fn heroplay(args play.PLayBookAddArgs) ! {
 	// make session for configuring from heroscript

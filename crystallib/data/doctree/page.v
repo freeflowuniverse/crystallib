@@ -1,8 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link }
-
+import freeflowuniverse.crystallib.data.markdownparser.elements { Doc }
 
 pub enum PageStatus {
 	unknown
@@ -15,7 +14,7 @@ pub struct Page {
 	tree &Tree @[str: skip]
 pub mut:
 	name    string // received a name fix
-	alias string //a proper name for e.g. def
+	alias   string // a proper name for e.g. def
 	path    pathlib.Path
 	pathrel string // relative path in the collection
 	state   PageStatus
@@ -26,7 +25,7 @@ pub mut:
 	readonly        bool
 	changed         bool
 	collection_name string
-	doc_  ?&Doc @[str: skip]
+	doc_            ?&Doc    @[str: skip]
 }
 
 fn (page Page) collection() !&Collection {
@@ -37,26 +36,25 @@ fn (page Page) collection() !&Collection {
 }
 
 pub fn (page Page) key() string {
-	if page.collection_name.len==0{
-		panic("name cannot be empty for page: ${page.path.path}")
+	if page.collection_name.len == 0 {
+		panic('name cannot be empty for page: ${page.path.path}')
 	}
-	if page.name.len==0{
-		panic("name cannot be empty for page: ${page.path.path}")
+	if page.name.len == 0 {
+		panic('name cannot be empty for page: ${page.path.path}')
 	}
-	return "${page.collection_name}:${page.name}"
+	return '${page.collection_name}:${page.name}'
 }
 
-
 // fn (mut page Page) fix() ! {
-	// page.fix_links()!
-	// // TODO: do includes
-	// if page.changed {
-	// 	$if debug {
-	// 		console.print_debug('CHANGED: ${page.path}')
-	// 	}
-	// 	page.save()!
-	// 	page.changed = false
-	// }
+// page.fix_links()!
+// // TODO: do includes
+// if page.changed {
+// 	$if debug {
+// 		console.print_debug('CHANGED: ${page.path}')
+// 	}
+// 	page.save()!
+// 	page.changed = false
+// }
 // }
 
 @[params]

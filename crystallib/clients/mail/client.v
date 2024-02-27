@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 import net.smtp
 import time
 
-pub fn (mut self MailClient[Config]) set_smtp_client() !{
+pub fn (mut self MailClient[Config]) set_smtp_client() ! {
 	cfg := self.config()!
 	if self.smtp_client.server != cfg.smtp_addr || self.smtp_client.port != cfg.smtp_port
 		|| self.smtp_client.username != cfg.smtp_login

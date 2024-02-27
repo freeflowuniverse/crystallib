@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import os
 
-
 pub struct DaguClient[T] {
 	play.Base[T]
 pub mut:
@@ -17,9 +16,9 @@ pub struct Config {
 	play.ConfigBase
 pub mut:
 	configtype string = 'daguclient' // needs to be defined	
-	url    string 
-	username      string
-	password     string
+	url        string
+	username   string
+	password   string
 }
 
 pub fn get(args play.PlayArgs) !DaguClient[Config] {
@@ -60,7 +59,6 @@ pub fn (mut self DaguClient[Config]) config_interactive() ! {
 		default: self.instance
 	)!
 
-
 	cfg.url = myui.ask_question(
 		question: 'dagu server url e.g. http://localhost:8080'
 		minlen: 5
@@ -73,7 +71,6 @@ pub fn (mut self DaguClient[Config]) config_interactive() ! {
 		default: cfg.username
 	)!
 
-	
 	cfg.password = myui.ask_question(
 		question: 'dagu server password'
 		default: cfg.password
@@ -82,5 +79,3 @@ pub fn (mut self DaguClient[Config]) config_interactive() ! {
 
 	self.config_save()!
 }
-
-

@@ -57,7 +57,6 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 }
 
 fn cmd_mdbook_execute(cmd Command) ! {
-
 	mut name := cmd.flags.get_string('name') or { '' }
 
 	mut url := cmd.flags.get_string('url') or { '' }
@@ -90,15 +89,12 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	if edit {
 		mdbook.book_edit(name)!
 	}
-
-
 }
 
-
-fn mdbook_help(cmd Command){
+fn mdbook_help(cmd Command) {
 	console.clear()
-	console.print_header("Instructions for mdbook:")
+	console.print_header('Instructions for mdbook:')
 	console.print_lf(1)
 	console.print_stdout(cmd.help_message())
-	console.print_lf(5)	
+	console.print_lf(5)
 }

@@ -10,8 +10,7 @@ __global (
 	gsinstances shared map[string]GitStructure
 )
 
-@[params]
-@[heap]
+@[heap; params]
 pub struct GitStructureConfig {
 pub mut:
 	name        string = 'default'
@@ -19,7 +18,7 @@ pub mut:
 	root        string // where will the code be checked out, root of code
 	light       bool = true // if set then will clone only last history for all branches		
 	log         bool   // means we log the git statements
-	singlelayer      bool //all repo's will be on 1 level
+	singlelayer bool   // all repo's will be on 1 level
 }
 
 pub fn cachereset() ! {

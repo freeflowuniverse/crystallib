@@ -1,6 +1,6 @@
 module gen
 
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, Module, Struct }
+import freeflowuniverse.crystallib.core.codemodel { Module, Struct }
 import freeflowuniverse.crystallib.core.texttools
 import net.http
 

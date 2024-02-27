@@ -145,18 +145,17 @@ A normal user can ignore these pages, they are just to get links to work.
 		if !pathlib.path_equal(collection_dirbuild_str, collection_dir_path.path) {
 			collection_dir_path.link(collection_dirbuild_str, true)!
 		}
-		if collection_dir_path.file_exists('.linkedpages'){
-			mut lpages:=collection_dir_path.file_get('.linkedpages')!
-			lpagescontent:=lpages.read()!
-			for lpagestr in lpagescontent.split_into_lines().filter(it.trim_space()!=""){
-				console.print_green("find linked page: ${lpagestr}")
-				//format $collection:$pagename.md
-				splitted:=lpagestr.split(":")
-				assert splitted.len==2
-				summary.add_page_additional(collectionname,splitted[1])
+		if collection_dir_path.file_exists('.linkedpages') {
+			mut lpages := collection_dir_path.file_get('.linkedpages')!
+			lpagescontent := lpages.read()!
+			for lpagestr in lpagescontent.split_into_lines().filter(it.trim_space() != '') {
+				console.print_green('find linked page: ${lpagestr}')
+				// format $collection:$pagename.md
+				splitted := lpagestr.split(':')
+				assert splitted.len == 2
+				summary.add_page_additional(collectionname, splitted[1])
 			}
 		}
-
 	}
 
 	if book.errors.len > 0 {

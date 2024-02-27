@@ -19,7 +19,7 @@ pub fn (mut gs GitStructure) locator_new(url string) !GitLocator {
 }
 
 // will use url to get git locator (is a pointer to a file, dir or part of file)
-pub fn locator_new(mut gsconfig &GitStructureConfig, url string) !GitLocator {
+pub fn locator_new(mut gsconfig GitStructureConfig, url string) !GitLocator {
 	// println(" ** URL: $url **")
 	mut urllower := url.to_lower()
 	if url.trim_space() == '' {
@@ -85,7 +85,7 @@ pub fn locator_new(mut gsconfig &GitStructureConfig, url string) !GitLocator {
 	account := parts[1]
 	name := parts[2]
 	mut ga := GitAddr{
-		gsconfig: gsconfig //is reference
+		gsconfig: gsconfig // is reference
 		provider: provider
 		account: account
 		name: name

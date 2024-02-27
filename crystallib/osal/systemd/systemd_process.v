@@ -9,19 +9,18 @@ import freeflowuniverse.crystallib.ui.console
 pub struct SystemdProcess {
 pub mut:
 	name        string
-	unit 		string //as generated or used by systemd
+	unit        string // as generated or used by systemd
 	cmd         string
 	pid         int
 	env         map[string]string
-	systemdobj     &Systemd            @[skip; str: skip]
+	systemdobj  &Systemd           @[skip; str: skip]
 	description string
-	info		SystemdProcessInfo
+	info        SystemdProcessInfo
 }
 
-
 pub fn (mut self SystemdProcess) start() ! {
-	if ! (self.name.ends_with(".service")){
-		return error("service name needs to end with .server.\n${self}")
+	if !(self.name.ends_with('.service')) {
+		return error('service name needs to end with .server.\n${self}')
 	}
 	mut p := pathlib.get_file(path: '${self.systemdobj.path.path}/${self.name}', create: true)!
 	console.print_header(' systemd write service: ${p.path}')
@@ -49,7 +48,10 @@ pub fn (mut self SystemdProcess) refresh() ! {
 }
 
 pub fn (mut self SystemdProcess) remove() ! {
-	mut p := pathlib.get_file(path: '${self.systemdobj.path.path}/${self.name}.service', create: true)!
+	mut p := pathlib.get_file(
+		path: '${self.systemdobj.path.path}/${self.name}.service'
+		create: true
+	)!
 	cmd := '
 	systemctl daemon-reload
 	systemctl disable ${self.name}
@@ -58,10 +60,6 @@ pub fn (mut self SystemdProcess) remove() ! {
 	r := osal.execute_silent(cmd)!
 	self.systemdobj.load()!
 }
-
-
-
-
 
 // pub fn (self SystemdProcess) cmd() string {
 // 	p := '/etc/systemd/cmd/${self.name}.sh'
@@ -92,5 +90,3 @@ pub fn (mut self SystemdProcess) remove() ! {
 // 	}
 // 	return out
 // }
-
-

@@ -37,7 +37,6 @@ fn test_collection_exists() {
 	assert tree.collection_exists('non_existent_collection') == false
 }
 
-
 fn test_page_get() {
 	mut tree := new(name: 'test')!
 	tree.scan(
@@ -45,6 +44,5 @@ fn test_page_get() {
 		heal: false
 	)!
 
-	
 	assert tree.collection_exists('non_existent_collection') == false
 }

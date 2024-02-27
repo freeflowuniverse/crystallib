@@ -46,7 +46,7 @@ pub fn (mut self Link) process() !int {
 	if self.processed {
 		return 0
 	}
-	self.trailing_lf=false
+	self.trailing_lf = false
 	self.parse()
 	self.processed = true
 	self.content = self.markdown()

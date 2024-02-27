@@ -14,6 +14,4 @@ fn test_scan_internal() ! {
 	tree.export(dest: '/tmp/remove')!
 
 	// if true{panic("ooo")}
-
-
 }

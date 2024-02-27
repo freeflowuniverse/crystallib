@@ -15,12 +15,10 @@ fn test_def1() {
 	assert paragraph.children[2] is elements.Text
 
 	// mydef := paragraph.children[1]
-	assert paragraph.children[0].content=="- "
-	assert paragraph.children[1].content=="*TESTDEF"
-	assert paragraph.children[2].content==" sometext"
-
+	assert paragraph.children[0].content == '- '
+	assert paragraph.children[1].content == '*TESTDEF'
+	assert paragraph.children[2].content == ' sometext'
 }
-
 
 fn test_def2() {
 	mut mydoc := new(content: ' - *TeSTDEF sometext')!
@@ -34,14 +32,11 @@ fn test_def2() {
 
 	assert paragraph.children[0] is elements.Text
 
-	assert paragraph.children[0].content=="- *TeSTDEF sometext"
-
+	assert paragraph.children[0].content == '- *TeSTDEF sometext'
 }
-
 
 fn test_def3() {
 	mut mydoc := new(content: ' - *TEST_DEF sometext')!
-
 
 	assert mydoc.children.len == 1
 
@@ -53,10 +48,9 @@ fn test_def3() {
 	assert paragraph.children[2] is elements.Text
 
 	// mydef := paragraph.children[1]
-	assert paragraph.children[0].content=="- "
-	assert paragraph.children[1].content=="*TEST_DEF"
-	assert paragraph.children[2].content==" sometext"
-
+	assert paragraph.children[0].content == '- '
+	assert paragraph.children[1].content == '*TEST_DEF'
+	assert paragraph.children[2].content == ' sometext'
 }
 
 fn test_def4() {
@@ -76,11 +70,9 @@ fn test_def4() {
 	assert paragraph.children[1] is elements.Def
 
 	// mydef := paragraph.children[1]
-	assert paragraph.children[0].content=="- "
-	assert paragraph.children[1].content=="*TEST_DEF"
-
+	assert paragraph.children[0].content == '- '
+	assert paragraph.children[1].content == '*TEST_DEF'
 }
-
 
 fn test_def5() {
 	mut mydoc := new(content: '*TEST_DEF')!
@@ -93,12 +85,12 @@ fn test_def5() {
 	assert paragraph.children[0] is elements.Def
 
 	// mydef := paragraph.children[1]
-	assert paragraph.children[0].content=="*TEST_DEF"
-
+	assert paragraph.children[0].content == '*TEST_DEF'
 }
 
 fn test_def6() {
-	mut mydoc := new(content: '
+	mut mydoc := new(
+		content: '
 
 ## title does not support defs
 
@@ -109,7 +101,8 @@ fn test_def6() {
 - *TFDEF
 
 
-')!
+'
+	)!
 
 	assert mydoc.children.len == 3
 
@@ -120,12 +113,7 @@ fn test_def6() {
 	assert paragraph.children[6] is elements.Def
 
 	// mydef := paragraph.children[1]
-	assert paragraph.children[6].content=="*TFDEF"
+	assert paragraph.children[6].content == '*TFDEF'
 
-	assert mydoc.defpointers().len==4
-
+	assert mydoc.defpointers().len == 4
 }
-
-
-
-

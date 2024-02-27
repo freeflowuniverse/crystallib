@@ -8,10 +8,10 @@ import freeflowuniverse.crystallib.ui.console
 @[heap]
 pub struct GitStructure {
 pub mut:
-	config GitStructureConfig // configuration settings
+	config   GitStructureConfig // configuration settings
 	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
 	repos    []&GitRepo // repositories in gitstructure
-	loaded bool
+	loaded   bool
 }
 
 fn (gs GitStructure) cache_key() string {
@@ -26,7 +26,7 @@ pub fn (gs GitStructure) name() string {
 pub fn (gs GitStructure) cache_reset() ! {
 	mut redis := redisclient.core_get()!
 	key_check := gs.cache_key()
-	keys := redis.keys(key_check+":*")!
+	keys := redis.keys(key_check + ':*')!
 	for key in keys {
 		redis.del(key)!
 	}
@@ -50,9 +50,9 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 	if parentpath.path == '' {
 		return error('cannot find .git in parent starting from: ${path}')
 	}
-	mut ga:=GitAddr{
-			gsconfig: &gitstructure.config
-		}
+	mut ga := GitAddr{
+		gsconfig: &gitstructure.config
+	}
 	mut r := GitRepo{
 		gs: &gitstructure
 		addr: &ga
@@ -67,7 +67,7 @@ pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
 	// println("repo_add:$args")
 	if args.path.len > 0 {
 		mut repo := gs.repo_from_path(args.path)!
-		gs.repo_add_	(&repo)!
+		gs.repo_add_(&repo)!
 		return &repo
 	}
 	mut locator := gs.locator_new(args.url)!
@@ -125,7 +125,7 @@ pub mut:
 // ```
 pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
 	mut args := args_
-	console.print_header('code get url:${args.url} or path:${args.path}')	
+	console.print_header('code get url:${args.url} or path:${args.path}')
 	mut g := gs.repo_add(args)!
 	mut locator := gs.locator_new(args.url)!
 	s := locator.path_on_fs()!
@@ -133,22 +133,22 @@ pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
 }
 
 pub fn (mut gitstructure GitStructure) check() ! {
-	mut done:=[]string{}
-	for r in gitstructure.keys(){
-		if r in done{
-			return error("found double repo with key:${r}")
+	mut done := []string{}
+	for r in gitstructure.keys() {
+		if r in done {
+			return error('found double repo with key:${r}')
 		}
-		done<<r
+		done << r
 	}
-
 }
+
 fn (mut gs GitStructure) keys() []string {
-	mut repokeys:=gs.repos.map(it.addr.key())
+	mut repokeys := gs.repos.map(it.addr.key())
 	return repokeys
 }
 
 fn (mut gs GitStructure) repo_add_(repo &GitRepo) ! {
-	if repo.key() in gs.keys(){
+	if repo.key() in gs.keys() {
 		return
 	}
 	gs.repos << repo

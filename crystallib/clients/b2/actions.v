@@ -28,8 +28,7 @@ fn (mut self B2Client[Config]) check_installed() ! {
 	}
 }
 
-
-pub struct BucketData{
+pub struct BucketData {
 pub:
 	id    string
 	type_ string
@@ -49,8 +48,8 @@ pub fn (mut self B2Client[Config]) list_buckets() ![]BucketData {
 	'
 	code = code0 + '\n' + texttools.dedent(code)
 
-	res:=self.py.exec(cmd:code)!
-	r:= json.decode([]BucketData,res)!
+	res := self.py.exec(cmd: code)!
+	r := json.decode([]BucketData, res)!
 	return r
 }
 
@@ -89,119 +88,118 @@ pub fn (mut self B2Client[Config]) upload(args_ UploadArgs) ! {
 	console.print_debug('upload b2:${self.instance}\n${args}')
 	self.py.exec(cmd: code, stdout: true)!
 }
+
 // download
-[params]
-pub struct DownloadArgs{
+@[params]
+pub struct DownloadArgs {
 pub mut:
-	file_name string
-	dest string
+	file_name  string
+	dest       string
 	bucketname string
 }
 
-pub fn (mut self B2Client[Config]) download(args_ DownloadArgs) !{
-	mut args:=args_
-	mut cfg:=self.config()!
-	
-	if !os.exists(os.dir(args.dest)){
+pub fn (mut self B2Client[Config]) download(args_ DownloadArgs) ! {
+	mut args := args_
+	mut cfg := self.config()!
+
+	if !os.exists(os.dir(args.dest)) {
 		return error("cannot download ${args.file_name} to local file system: ${os.dir(args.dest)} doesn't exist")
 	}
-	if args.bucketname==""{
-		args.bucketname=cfg.bucketname
+	if args.bucketname == '' {
+		args.bucketname = cfg.bucketname
 	}
 	self.check_installed()!
-	code0:=self.pycode_init()!
-	mut code:='
+	code0 := self.pycode_init()!
+	mut code := '
 	bucket = b2_api.get_bucket_by_name("${args.bucketname}")
 	downloaded_file = bucket.download_file_by_name("${args.file_name}")
 	downloaded_file.save_to("${args.dest}")
 	'
-	code=code0+"\n"+texttools.dedent(code)
+	code = code0 + '\n' + texttools.dedent(code)
 
-	console.print_debug("download b2:${self.instance}\n$args")
-	self.py.exec(cmd:code,stdout:true)!
-
+	console.print_debug('download b2:${self.instance}\n${args}')
+	self.py.exec(cmd: code, stdout: true)!
 }
+
 // bucket type enum
 pub enum BucketType {
-    allpublic
-    allprivate
-    
+	allpublic
+	allprivate
 }
 
 // Implement the to_string method for the Fruit enum
 pub fn (bt BucketType) to_string() string {
-    match bt {
-		.allpublic { return('allPublic')}
-		.allprivate { return ('allPrivate')}
-    }
+	match bt {
+		.allpublic { return 'allPublic' }
+		.allprivate { return 'allPrivate' }
+	}
 }
 
-
 // create Bucket
-[params]
-pub struct CreateBucketArgs{
+@[params]
+pub struct CreateBucketArgs {
 pub mut:
 	bucketname string
 	buckettype BucketType
 }
 
-pub fn (mut self B2Client[Config]) create_bucket(args_ CreateBucketArgs) !{
-	mut args:=args_
-	mut cfg:=self.config()!
-if args.bucketname==""{
-		args.bucketname=cfg.bucketname
+pub fn (mut self B2Client[Config]) create_bucket(args_ CreateBucketArgs) ! {
+	mut args := args_
+	mut cfg := self.config()!
+	if args.bucketname == '' {
+		args.bucketname = cfg.bucketname
 	}
 	self.check_installed()!
-	code0:=self.pycode_init()!
-	mut code:='
+	code0 := self.pycode_init()!
+	mut code := '
 	b2_api.create_bucket("${args.bucketname}", "${args.buckettype.to_string()}")
 	'
-	code=code0+"\n"+texttools.dedent(code)
+	code = code0 + '\n' + texttools.dedent(code)
 
-	console.print_debug("create Bucket b2:${self.instance}\n$args")
-	self.py.exec(cmd:code,stdout:true)!
-
+	console.print_debug('create Bucket b2:${self.instance}\n${args}')
+	self.py.exec(cmd: code, stdout: true)!
 }
+
 // Delete Bucket
-[params]
-pub struct DeleteBucketArgs{
+@[params]
+pub struct DeleteBucketArgs {
 pub mut:
 	bucketname string
 }
 
-pub fn (mut self B2Client[Config]) delete_bucket(args_ DeleteBucketArgs) !{
-	mut args:=args_
-	mut cfg:=self.config()!
-if args.bucketname==""{
-		args.bucketname=cfg.bucketname
+pub fn (mut self B2Client[Config]) delete_bucket(args_ DeleteBucketArgs) ! {
+	mut args := args_
+	mut cfg := self.config()!
+	if args.bucketname == '' {
+		args.bucketname = cfg.bucketname
 	}
 	self.check_installed()!
-	code0:=self.pycode_init()!
-	mut code:='
+	code0 := self.pycode_init()!
+	mut code := '
 	bucket = b2_api.get_bucket_by_name("${args.bucketname}")
 	b2_api.delete_bucket(bucket)
 	'
-	code=code0+"\n"+texttools.dedent(code)
+	code = code0 + '\n' + texttools.dedent(code)
 
-	console.print_debug("delete Bucket b2:${self.instance}\n$args")
-	self.py.exec(cmd:code,stdout:true)!
-
+	console.print_debug('delete Bucket b2:${self.instance}\n${args}')
+	self.py.exec(cmd: code, stdout: true)!
 }
-pub struct ListBucketArgs{
+
+pub struct ListBucketArgs {
 	bucketname string
 }
 
-pub struct BucketFile{
-	file_name string
+pub struct BucketFile {
+	file_name        string
 	upload_timestamp time.Time
-
 }
-pub fn (mut self B2Client[Config]) list_files(args_ ListBucketArgs) ![]BucketFile{
-	mut args:=args_
-	mut cfg:=self.config()!
+
+pub fn (mut self B2Client[Config]) list_files(args_ ListBucketArgs) ![]BucketFile {
+	mut args := args_
+	mut cfg := self.config()!
 	self.check_installed()!
-	code0:=self.pycode_init()!
-	mut code:='
+	code0 := self.pycode_init()!
+	mut code := '
 	bucket = b2_api.get_bucket_by_name("${args.bucketname}")
 	res = []
 	for file_version, folder_name in bucket.ls(latest_only=True, recursive=True):
@@ -209,27 +207,28 @@ pub fn (mut self B2Client[Config]) list_files(args_ ListBucketArgs) ![]BucketFil
 	print("==RESULT==")
 	print(json.dumps(list(res), indent=4))	
 	'
-	code=code0+"\n"+texttools.dedent(code)
+	code = code0 + '\n' + texttools.dedent(code)
 
-	res:=self.py.exec(cmd:code)!
+	res := self.py.exec(cmd: code)!
 	println(res)
-	r:= json.decode([]BucketFile,res)!
+	r := json.decode([]BucketFile, res)!
 	println(r)
 	return r
 }
 
-//TODO: download/upload of full dir (sync)
-pub struct SyncArgs{
+// TODO: download/upload of full dir (sync)
+pub struct SyncArgs {
 	source string // local dir /home/afouda/Documents/testdir
-	dest string // bucket url b2://testdir
+	dest   string // bucket url b2://testdir
 }
-pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) !{
-	mut args:=args_
-	mut cfg:=self.config()!
+
+pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) ! {
+	mut args := args_
+	mut cfg := self.config()!
 
 	self.check_installed()!
-	code0:=self.pycode_init()!
-	mut code:='
+	code0 := self.pycode_init()!
+	mut code := '
 	source = parse_folder("${args.source}", b2_api)
 	dest = parse_folder("${args.dest}", b2_api)
 	policies_manager = ScanPoliciesManager(exclude_all_symlinks=True)
@@ -251,8 +250,8 @@ pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) !{
         )
 	
 	'
-	code=code0+"\n"+texttools.dedent(code)
+	code = code0 + '\n' + texttools.dedent(code)
 
-	res:=self.py.exec(cmd:code, stdout: true)!
+	res := self.py.exec(cmd: code, stdout: true)!
 	println(res)
 }

@@ -121,7 +121,7 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 // reload bool // reload the cache
 //```
 pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
-	mut tree := doctree.tree_get(name: 'ws_${site.name}')!
+	mut tree := doctree.new(name: 'ws_${site.name}')!
 
 	tree.scan(git_url: args.url, git_reset: args.reset, git_pull: args.pull, load: args.reload)!
 	tree.export(dest: '${site.path_build.path}/doctree', reset: true)!
