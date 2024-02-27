@@ -21,11 +21,8 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
-<<<<<<< HEAD
-
-=======
 	
->>>>>>> 793680f (...)
+
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
 	}
