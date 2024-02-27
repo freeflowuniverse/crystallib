@@ -21,7 +21,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 		mut char_ := parser.char_current()
 
 		if mut llast is Def {
-			if char_ == ' ' || char_ == '\n' {
+			if (char_ == ' ' || char_ == '\n') && parser.char_prev() != "*"{
 				// means we did find a def, we can stop
 				// println(" -- end def")
 				paragraph.text_new(char_)
