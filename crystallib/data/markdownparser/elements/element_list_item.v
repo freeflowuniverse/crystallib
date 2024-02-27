@@ -4,8 +4,10 @@ module elements
 pub struct ListItem {
 	DocBase
 pub mut:
-	depth  int
-	indent int
+	depth      int
+	indent     int
+	order      int
+	is_ordered bool
 }
 
 pub fn (mut self ListItem) process() !int {
@@ -13,20 +15,50 @@ pub fn (mut self ListItem) process() !int {
 		return 0
 	}
 
-	pre := self.content.all_before('-')
-	self.depth = pre.len
-	self.content = self.content.all_after_first('- ')
-
+	self.parse()!
 	self.processed = true
 	return 1
 }
 
-pub fn (self ListItem) markdown() !string {
-	mut h := ''
-	for _ in 0 .. self.indent {
-		h += '  '
+fn (mut self ListItem) parse() ! {
+	mut content := self.content
+	mut depth := 0
+	for i := 0; i < content.len; i++ {
+		if content[i] != ` ` {
+			break
+		}
+		depth++
 	}
-	return '${h}- ${self.content}\n'
+	self.depth = depth
+	content = content[depth..]
+
+	mut prefix := ''
+	if content.starts_with('- ') {
+		prefix = '- '
+	} else if content.starts_with('* ') {
+		prefix = '* '
+	} else {
+		self.is_ordered = true
+		prefix = '.'
+	}
+	
+	mut p := self.paragraph_new(mut self.parent_doc_, content.all_after_first(prefix).trim_string_right('\n'))
+	p.process()!
+}
+
+pub fn (self ListItem) markdown()! string {
+	mut h := ''
+	for _ in 0 .. self.indent*4 {
+		h += ' '
+	}
+
+	mut prefix := '-'
+	if self.is_ordered {
+		prefix = '${self.order}.'
+	}
+
+	content := self.DocBase.markdown()!
+	return '${h}${prefix} ${content}'
 }
 
 pub fn (self ListItem) pug() !string {

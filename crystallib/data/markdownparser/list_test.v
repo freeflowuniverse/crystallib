@@ -1,7 +1,5 @@
 module markdownparser
 
-import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.data.markdownparser.elements
 
 const text = '
 # Farmerbot
@@ -24,7 +22,12 @@ Welcome to the farmerbot.
   - [Current Hydro Dam Mitigation Challenges](mitigation.md)
   - test
   - [Climate Vulnerability](climatevulnerability.md)
+   - 1,2,3 and 4 whitespaces have the same indentation, so this line should have the same indentation as the previous line
+    - this has the same indentation as the previous one 
+     - this is at an indentation level deeper than the previous one
 
+1. first ordered list item
+2. second orderd list items
 
 
 '

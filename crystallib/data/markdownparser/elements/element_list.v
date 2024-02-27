@@ -1,6 +1,7 @@
 module elements
 
 // has ListItems as children
+import math
 
 @[heap]
 pub struct List {
@@ -20,18 +21,55 @@ pub fn (mut self List) process() !int {
 	if self.processed {
 		return 0
 	}
-	panic('implement')
+
+	self.parse()
 	// pre := self.content.all_before('-')
 	// self.depth = pre.len
 	// self.content = self.content.all_after_first('- ')
 
-	// self.processed = true
+	self.processed = true
 	return 1
 }
 
-pub fn (self List) markdown() !string {
-	panic('implement')
-	return ''
+fn (mut self List) parse() {
+	mut last_indent, mut last_order :=  0, 0
+	for i, mut el in self.children {
+		if mut el is ListItem {
+			// all list children are list items
+			el.indent = int(math.ceil(f64(el.depth)/4.0))
+
+			if el.indent > last_indent {
+				el.order = 1
+			}
+
+			if el.indent < last_indent {
+				for j := i - 1; j >= 0; j-- {
+					prev_element := self.children[j]
+					if prev_element is ListItem && prev_element.indent == el.indent {
+						last_order = prev_element.order
+						break
+					}
+				}
+
+				el.order = last_order + 1
+			}
+
+			if el.indent == last_indent {
+				el.order = last_order + 1
+			}
+
+			last_indent = el.indent
+			last_order = el.order
+		}
+	}
+}
+
+fn (mut self List) add_list_item(line string) {
+	self.list_item_new(mut self.parent_doc_, line)
+}
+
+pub fn (self List) markdown()! string {
+	return self.DocBase.markdown()!
 }
 
 pub fn (self List) pug() !string {
@@ -49,23 +87,23 @@ pub fn line_is_list(line string) bool {
 	if ltrim == '' {
 		return false
 	}
-	if ltrim.starts_with('- ') {
-		return true
-	}
-	if ltrim.starts_with('* ') {
-		return true
-	}
-	return line_is_list_nr(line)
+
+	return is_list_item_start(ltrim)
 }
 
-pub fn line_is_list_nr(line string) bool {
-	ltrim := line.trim_space()
-	if ltrim == '' {
-		return false
+pub fn is_list_item_start(line string) bool {
+	if line.starts_with('- ') {
+		return true
 	}
-	if ltrim.contains('.') {
-		return txt_is_nr(ltrim.all_before('.'))
+
+	if line.starts_with('* ') {
+		return true
 	}
+
+	if line.contains('.') {
+		return txt_is_nr(line.all_before('.'))
+	}
+
 	return false
 }
 
