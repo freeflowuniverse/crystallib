@@ -48,18 +48,17 @@ pub mut:
 	}
 }
 
-
 @[params]
 pub struct LogArgs {
 pub mut:
-	content 	string
-	clear       bool //means screen is reset for content above
-	lf_before int 	 //line feed before content
-	lf_after int 
-	cat LogCat
+	content   string
+	clear     bool // means screen is reset for content above
+	lf_before int  // line feed before content
+	lf_after  int
+	cat       LogCat
 }
 
-//defines colors as used in the representation layer
+// defines colors as used in the representation layer
 pub enum LogCat {
 	info
 	log
@@ -69,19 +68,18 @@ pub enum LogCat {
 	error
 }
 
-
 @[params]
 pub struct InfoArgs {
 pub mut:
-	content 	string //in specified format
-	clear       bool //means screen is reset for content above
-	lf_before int 	 //line feed before content
-	lf_after int 
-	cat InfoCat
+	content    string // in specified format
+	clear      bool   // means screen is reset for content above
+	lf_before  int    // line feed before content
+	lf_after   int
+	cat        InfoCat
 	components []ComponentCat
 }
 
-//defines colors as used in the representation layer
+// defines colors as used in the representation layer
 pub enum InfoCat {
 	txt
 	html
@@ -95,27 +93,24 @@ pub enum ComponentCat {
 	bulma
 }
 
-
 @[params]
 pub struct EditArgs {
 pub mut:
-	content 	string //in specified format
-	cat EditorCat
+	content string // in specified format
+	cat     EditorCat
 }
 
-//defines colors as used in the representation layer
+// defines colors as used in the representation layer
 pub enum EditorCat {
 	txt
 	markdown
 	heroscript
 }
 
-
 @[params]
 pub struct PayArgs {
 pub mut:
-	amount f64
-	currency string = "USD" //use currency module to do conversions where needed, 
-	//TODO: what else do we need
+	amount   f64
+	currency string = 'USD' // use currency module to do conversions where needed,
+	// TODO: what else do we need
 }
-

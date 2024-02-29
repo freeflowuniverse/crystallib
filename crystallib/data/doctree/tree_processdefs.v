@@ -27,10 +27,10 @@ pub fn (mut tree Tree) process_defs() ! {
 					}
 					action_element.action_processed = true
 					for mut alias in my_action.params.get_list('alias')! {
-						if alias.to_lower().ends_with(".md"){
-							//remove the .md at end
-							alias = alias[0..name.len-3]
-						}						
+						if alias.to_lower().ends_with('.md') {
+							// remove the .md at end
+							alias = alias[0..name.len - 3]
+						}
 						alias2 := texttools.name_fix(alias).replace('_', '')
 						if alias2 in tree.defs {
 							collection.error(
@@ -55,14 +55,13 @@ pub fn (mut tree Tree) process_defs() ! {
 			mut mydoc := mypage.doc()!
 			for mut defitem in mydoc.defpointers() {
 				defname := defitem.name()
-				console.print_green("defpointer:${defitem}")	
+				console.print_green('defpointer:${defitem}')
 				if defname in tree.defs {
 					mut mydef_page := tree.defs[defname] or { panic('bug') }
 					mydoc2 := mydef_page.doc()!
 					defitem.pagekey = mydef_page.key()
 					defitem.pagename = mydef_page.alias
 					defitem.process_link()!
-					
 				} else {
 					collection.error(
 						path: mypage.path

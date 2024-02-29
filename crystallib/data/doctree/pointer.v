@@ -51,7 +51,7 @@ pub fn pointer_new(txt_ string) !Pointer {
 	} else {
 		// now need to check if we find imagename		
 		p.extension = splitted.last().to_lower()
-		if p.extension == 'md' || p.extension == ''{
+		if p.extension == 'md' || p.extension == '' {
 			p.cat = .page
 		} else if p.extension in ['jpg', 'jpeg', 'svg', 'gif', 'png'] {
 			p.cat = .image

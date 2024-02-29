@@ -88,7 +88,7 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.blog_add(name: name, collection: collection, file: file, image: image)!
-		}else if action.name == 'person_add' {
+		} else if action.name == 'person_add' {
 			console.print_debug('website.person_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
@@ -120,7 +120,6 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.header_add(collection: collection, file: file)!
-
 		} else if action.name == 'footer_add' {
 			console.print_debug('website.footer_add')
 			mut p := action.params

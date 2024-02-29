@@ -16,7 +16,7 @@ pub struct Config {
 	play.ConfigBase
 pub mut:
 	configtype string = 'stripeclient' // needs to be defined	
-	api_key   string
+	api_key    string
 }
 
 pub fn get(args play.PlayArgs) !StripeClient[Config] {

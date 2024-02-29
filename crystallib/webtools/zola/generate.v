@@ -16,15 +16,14 @@ pub fn (mut site ZolaSite) process() ! {
 	// site.tree.process_defs()! // process includes
 	site.tree.process_includes()! // process includes
 	// site.tree.export(
-	// 	dest: '${site.path_build.path}', 
+	// 	dest: '${site.path_build.path}',
 	// 	reset: true
 	// 	keep_structure: true
 	// )!
-	
+
 	// export processed content to content dir of build dir
-	
+
 	// os.cp_all('${site.path_build.path}/src/content', '${site.path_build.path}/content', true)!
-	
 
 	mut content_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/content'
@@ -32,7 +31,7 @@ pub fn (mut site ZolaSite) process() ! {
 
 	list := content_dir.list(
 		recursive: true
-		regex:[r'.*\.md$']
+		regex: [r'.*\.md$']
 	)!
 
 	for file in list.paths {
@@ -43,7 +42,7 @@ pub fn (mut site ZolaSite) process() ! {
 		// 		page := site.tree.page_get(element.content)!
 		// 		element.doc = page.doc(mut doctree.DocArgs{})!
 		// 	}
-			
+
 		// }
 		// if file.path.ends_with('wealth.md') {
 		// 	panic(doc)
@@ -53,7 +52,7 @@ pub fn (mut site ZolaSite) process() ! {
 
 pub fn (mut site ZolaSite) generate() ! {
 	site.process()!
-	
+
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')
 
 	mut tw := tailwind.new(

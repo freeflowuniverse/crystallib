@@ -1,6 +1,6 @@
 module generic
 
-import freeflowuniverse.crystallib.ui.console { UIConsole }
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.ui.telegram { UITelegram }
 import freeflowuniverse.crystallib.ui.uimodel
 
@@ -10,9 +10,9 @@ import freeflowuniverse.crystallib.ui.uimodel
 // 	content 	string
 // 	clear       bool //means screen is reset for content above
 // 	lf_before int 	 //line feed before content
-// 	lf_after int 
+// 	lf_after int
 //  cat LogCat
-//defines colors as used in the representation layer
+// defines colors as used in the representation layer
 // enum LogCat {
 // 	info
 // 	log

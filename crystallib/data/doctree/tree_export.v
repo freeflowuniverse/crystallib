@@ -8,8 +8,8 @@ import freeflowuniverse.crystallib.core.texttools
 @[params]
 pub struct TreeExportArgs {
 pub mut:
-	dest  string @[required]
-	reset bool = true
+	dest           string @[required]
+	reset          bool = true
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
 }
@@ -45,11 +45,13 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 			dest := if args.keep_structure {
 				relpath := page.path.path.trim_string_left(collection.path.path)
 				'${dir_src.path}/${relpath}'
-			} else {'${dir_src.path}/${page.name}.md'}
-			mut mydoc:=page.export(dest: dest)!
-			for linked_page in mydoc.linked_pages{
-				if !(linked_page in collection_linked_pages){
-					collection_linked_pages<<linked_page
+			} else {
+				'${dir_src.path}/${page.name}.md'
+			}
+			mut mydoc := page.export(dest: dest)!
+			for linked_page in mydoc.linked_pages {
+				if linked_page !in collection_linked_pages {
+					collection_linked_pages << linked_page
 				}
 			}
 		}

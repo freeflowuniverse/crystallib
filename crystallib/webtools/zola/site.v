@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements
-
 import os
 import freeflowuniverse.crystallib.core.texttools
 
@@ -20,8 +19,8 @@ pub mut:
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	zola         &Zola        @[skip; str: skip]
-	tree         doctree.Tree        @[skip; str: skip]
-	blog Blog
+	tree         doctree.Tree @[skip; str: skip]
+	blog         Blog
 }
 
 pub struct Blog {
@@ -122,10 +121,10 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	content_dest := '${site.path_build.path}/content'
 	mut content_dir := pathlib.get_dir(path: content_dest)!
 	os.cp_all('${mypath}', content_dest, true)!
-	
+
 	md_list := content_dir.list(
-		recursive:true
-		regex:[r'.*\.md$']
+		recursive: true
+		regex: [r'.*\.md$']
 	)!
 	println('debuzgo: ${site.tree.collections.keys()}')
 	for mdfile in md_list.paths {
@@ -138,10 +137,10 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 }
 
 pub struct BlogAddArgs {
-	name string 
+	name       string
 	collection string @[required]
-	file string @[required]
-	image string
+	file       string @[required]
+	image      string
 }
 
 pub fn (mut site ZolaSite) blog_add(args BlogAddArgs) ! {
@@ -185,12 +184,12 @@ extra:
 	}
 
 	blog_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content/blog'
+		path: '${site.path_build.path}/content/blog'
 		create: true
 	)!
 	fixed_name := '${texttools.name_fix(args.name)}'
 	post_dir := pathlib.get_dir(
-		path:'${blog_dir.path}/${fixed_name}'
+		path: '${blog_dir.path}/${fixed_name}'
 		create: true
 	)!
 	page.export(dest: '${post_dir.path}/index.md')!
@@ -210,7 +209,6 @@ pub fn (mut site ZolaSite) person_add(args BlogAddArgs) ! {
 		return err
 	}
 
-
 	mut people_index := pathlib.get_file(
 		path: '${site.path_build.path}/content/people/_index.md'
 	)!
@@ -227,12 +225,12 @@ description: "Our team brings together +30 years of experience in cloud automati
 	}
 
 	people_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content/people'
+		path: '${site.path_build.path}/content/people'
 		create: true
 	)!
 	fixed_name := '${texttools.name_fix(args.name)}'
 	person_dir := pathlib.get_dir(
-		path:'${people_dir.path}/${fixed_name}'
+		path: '${people_dir.path}/${fixed_name}'
 		create: true
 	)!
 	page.export(dest: '${person_dir.path}/${fixed_name}.md')!
@@ -250,7 +248,6 @@ pub fn (mut site ZolaSite) news_add(args BlogAddArgs) ! {
 		return err
 	}
 
-
 	mut news_index := pathlib.get_file(
 		path: '${site.path_build.path}/content/newsroom/_index.md'
 	)!
@@ -267,12 +264,12 @@ description: "Our team brings together +30 years of experience in cloud automati
 	}
 
 	news_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content/newsroom'
+		path: '${site.path_build.path}/content/newsroom'
 		create: true
 	)!
 	fixed_name := '${texttools.name_fix(args.name)}'
 	article_dir := pathlib.get_dir(
-		path:'${news_dir.path}/${fixed_name}'
+		path: '${news_dir.path}/${fixed_name}'
 		create: true
 	)!
 	page.export(dest: '${article_dir.path}/${fixed_name}.md')!
@@ -281,7 +278,7 @@ description: "Our team brings together +30 years of experience in cloud automati
 
 pub struct HeaderAddArgs {
 	collection string @[required]
-	file string @[required]
+	file       string @[required]
 }
 
 pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
@@ -296,10 +293,10 @@ pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
 	}
 
 	header_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content/header'
+		path: '${site.path_build.path}/content/header'
 		create: true
 	)!
-	
+
 	page.export(dest: '${header_dir.path}/index.md')!
 }
 
@@ -315,18 +312,18 @@ pub fn (mut site ZolaSite) footer_add(args HeaderAddArgs) ! {
 	}
 
 	footer_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content/footer'
+		path: '${site.path_build.path}/content/footer'
 		create: true
 	)!
-	
+
 	page.export(dest: '${footer_dir.path}/_index.md')!
 }
 
 pub struct PageAddArgs {
-	name string 
+	name       string
 	collection string @[required]
-	file string @[required]
-	homepage bool
+	file       string @[required]
+	homepage   bool
 }
 
 pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
@@ -341,7 +338,7 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 	}
 
 	content_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content'
+		path: '${site.path_build.path}/content'
 		create: true
 	)!
 	fixed_name := '${texttools.name_fix(args.name)}'
@@ -372,7 +369,7 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	mut doctree_dir := pathlib.get_dir(path: doctree_dest)!
 	md_list := doctree_dir.list(
 		recursive: true
-		regex:[r'.*\.md$']
+		regex: [r'.*\.md$']
 		include_links: true
 	)!
 	// println('debuzgo: ${md_list}')
@@ -382,6 +379,6 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	// 		println('incl: ${include}')
 	// 	}
 	// 	// pointers := doc.action_pointers()
-	// 	// for 
+	// 	// for
 	// }
 }

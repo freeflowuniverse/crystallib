@@ -132,7 +132,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				trimmed_next := parser.line_next().trim_space()
 				// single row doesn't make a table
 				if trimmed_next.starts_with('|') && trimmed_next.ends_with('|') {
-					doc.table_new('${line}\n')//.parent = &doc
+					doc.table_new('${line}\n') //.parent = &doc
 					parser.next()
 					continue
 				}

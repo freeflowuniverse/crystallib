@@ -11,7 +11,6 @@ pub fn is_int(text string) bool {
 	return true
 }
 
-
 pub fn is_upper_text(text string) bool {
 	for cha in text {
 		if cha < 65 || cha > 90 {
@@ -20,9 +19,6 @@ pub fn is_upper_text(text string) bool {
 	}
 	return true
 }
-
-
-
 
 // fn sid_check(sid string) bool {
 // 	if sid.len > 6 || sid.len < 2 {

@@ -63,8 +63,6 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 		}
 	}
 
-	
-
 	locator := locator_new(mut addr.gsconfig, st.remote_url)!
 	addr = locator.addr
 	addr.branch = st.branch

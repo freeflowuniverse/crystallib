@@ -20,16 +20,16 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 					cat: .include
 				)
 			}
-			if ! (name.ends_with(".md")){
-				if name.to_lower().contains(".md"){
+			if !(name.ends_with('.md')) {
+				if name.to_lower().contains('.md') {
 					collection.error(
 						path: page.path
 						msg: 'found name for include page but has .MD: ${name}'
 						cat: .include
 					)
-					continue					
+					continue
 				}
-				name+=".md"
+				name += '.md'
 			}
 			// handle includes from other collections
 
