@@ -74,9 +74,9 @@ jobs:
           pushd cli/hero
           uname -m
           if [[ "$OSTYPE" == "darwin"* ]]; then
-          v -enable-globals -w -gc hero.v
+          v -enable-globals -w -cg hero.v
           else
-          v -enable-globals -w -gc -cflags -static -cc gcc hero.v
+          v -enable-globals -w -cg -cflags -static -cc gcc hero.v
           fi
           chmod +x hero
           mkdir -p ~/upload
