@@ -8,6 +8,10 @@ the following script will install vlang and crystallib
 ```bash
 curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer.sh > /tmp/install.sh
 bash /tmp/install.sh
+
+#with hero (will compile hero as well)
+curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/build_hero.sh > /tmp/build_hero.sh
+bash /tmp/build_hero.sh
 ```
 
 requirements
