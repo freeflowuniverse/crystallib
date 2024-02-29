@@ -49,7 +49,7 @@ pub fn (mut self Link) process() !int {
 	self.trailing_lf = false
 	self.parse()
 	self.processed = true
-	self.content = self.markdown()
+	self.content = ""
 	return 1
 }
 
@@ -88,8 +88,16 @@ pub fn (self Link) markdown() string {
 		if self.site != '' {
 			link_filename = '${self.site}:${link_filename}'
 		}
-		if  self.parent.collection_name!='' {
-			link_filename = '${self.paren.collection_name}:${link_filename}'
+		if self.parent_doc!=none{
+			mut pd:=self.parent_doc or {
+				panic("bug")
+			}
+			println(pd)
+			if  pd.collection_name!='' {
+				link_filename = '${pd.collection_name}:${link_filename}'
+			}
+		}else{
+			println("0000")
 		}
 		// if self.include {
 		// 	link_filename = '@${link_filename}'

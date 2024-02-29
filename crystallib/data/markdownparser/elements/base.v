@@ -16,7 +16,7 @@ pub mut:
 	type_name string
 	changed   bool
 	children  []Element
-	parent_doc &Doc @[skip; str:skip]
+	parent_doc ?&Doc @[skip; str:skip]
 	trailing_lf bool = true // do we need to do a line feed (enter) at end of this element, default yes
 }
 

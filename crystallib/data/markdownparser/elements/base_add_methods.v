@@ -1,120 +1,132 @@
 module elements
 
-pub fn (mut base DocBase) paragraph_new(content string) &Paragraph {
+pub fn (mut base DocBase) paragraph_new(mut docparent ?&Doc, content string) &Paragraph {
 	mut a := Paragraph{
 		content: content
 		type_name: 'paragraph'
+		parent_doc: docparent
 	}
 
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) action_new(content string) &Action {
+pub fn (mut base DocBase) action_new(mut docparent ?&Doc, content string) &Action {
 	mut a := Action{
 		content: content
 		type_name: 'action'
+		parent_doc: docparent
 	}
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) table_new(content string) &Table {
+pub fn (mut base DocBase) table_new(mut docparent ?&Doc, content string) &Table {
 	mut a := Table{
 		content: content
 		type_name: 'table'
+		parent_doc: docparent
 	}
 
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) header_new(content string) &Header {
+pub fn (mut base DocBase) header_new(mut docparent ?&Doc, content string) &Header {
 	mut a := Header{
 		content: content
 		type_name: 'header'
+		parent_doc: docparent
 	}
 
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) list_new(content string) &List {
+pub fn (mut base DocBase) list_new(mut docparent ?&Doc, content string) &List {
 	mut a := List{
 		content: content
 		type_name: 'list'
+		parent_doc: docparent
 	}
 	a.process() or { panic(err) }
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) list_item_new(content string) &ListItem {
+pub fn (mut base DocBase) list_item_new(mut docparent ?&Doc, content string) &ListItem {
 	mut a := ListItem{
 		content: content
 		type_name: 'listitem'
+		parent_doc: docparent
 	}
 	a.process() or { panic(err) }
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) text_new(content string) &Text {
+pub fn (mut base DocBase) text_new(mut docparent ?&Doc, content string) &Text {
 	mut a := Text{
 		content: content
 		type_name: 'text'
+		parent_doc: docparent
 	}
 	a.trailing_lf = false
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) comment_new(content string) &Comment {
+pub fn (mut base DocBase) comment_new(mut docparent ?&Doc, content string) &Comment {
 	mut a := Comment{
 		content: content
 		type_name: 'comment'
+		parent_doc: docparent
 	}
 
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) codeblock_new(content string) &Codeblock {
+pub fn (mut base DocBase) codeblock_new(mut docparent ?&Doc, content string) &Codeblock {
 	mut a := Codeblock{
 		content: content
 		type_name: 'codeblock'
+		parent_doc: docparent
 	}
 
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) link_new(content string) &Link {
+pub fn (mut base DocBase) link_new(mut docparent ?&Doc, content string) &Link {
 	mut a := Link{
 		content: content
 		type_name: 'link'
 		trailing_lf: false
+		parent_doc: docparent
 	}
 	a.trailing_lf = false
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) html_new(content string) &Html {
+pub fn (mut base DocBase) html_new(mut docparent ?&Doc, content string) &Html {
 	mut a := Html{
 		content: content
 		type_name: 'html'
+		parent_doc: docparent
 	}
 
 	base.children << a
 	return &a
 }
 
-pub fn (mut base DocBase) def_new(content string) &Def {
+pub fn (mut base DocBase) def_new(mut docparent ?&Doc, content string) &Def {
 	mut a := Def{
 		content: content
 		type_name: 'def'
 		trailing_lf: false
+		parent_doc: docparent
 	}
 	base.children << a
 	return &a

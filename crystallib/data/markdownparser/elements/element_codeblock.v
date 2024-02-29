@@ -16,15 +16,14 @@ pub fn (mut self Codeblock) process() !int {
 	mut pb := playbook.new(text: self.content)!
 	if pb.actions.len > 0 {
 		for mut action in pb.actions {
-			mut a := self.action_new('')
-			a.parent = self.parent
+			mut a := self.action_new(mut self.parent_doc,'')
 			a.action = *action
 			a.processed = true
 			a.content = action.heroscript()
 		}
 		// now see if there is something left in codeblock, if yes add that one to the parent_elements
 		if pb.othertext.len > 0 {
-			self.text_new(pb.othertext).parent = self.parent
+			self.text_new(mut self.parent_doc,pb.othertext)
 		}
 		self.content = '' // because is now in the children
 	}

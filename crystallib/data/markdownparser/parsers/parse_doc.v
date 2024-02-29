@@ -92,15 +92,14 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			// }
 			// parse action
 			if line.starts_with('!!') {
-				doc.action_new('${line}\n').parent = &doc
+				doc.action_new(mut &doc,'${line}\n')
 				parser.next()
 				continue
 			}
 
 			// find codeblock
 			if line.starts_with('```') || line.starts_with("'''") {
-				mut e := doc.codeblock_new('')
-				e.parent = &doc
+				mut e := doc.codeblock_new(mut &doc,'')
 				e.category = line.substr(3, line.len).to_lower().trim_space()
 				parser.next()
 				continue
@@ -118,8 +117,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 						parser.next_start()!
 						continue
 					}
-					mut e := doc.header_new(line.all_after_first(line[..d]).trim_space())
-					e.parent = &doc
+					mut e := doc.header_new(mut &doc,line.all_after_first(line[..d]).trim_space())
 					e.depth = d
 					parser.next_start()!
 					continue
@@ -132,14 +130,14 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				trimmed_next := parser.line_next().trim_space()
 				// single row doesn't make a table
 				if trimmed_next.starts_with('|') && trimmed_next.ends_with('|') {
-					doc.table_new('${line}\n').parent = &doc
+					doc.table_new(mut &doc,'${line}\n')
 					parser.next()
 					continue
 				}
 			}
 
 			if trimmed_line.to_lower().starts_with('<html>') {
-				doc.html_new(trimmed_line.after('<html>')).parent = &doc
+				doc.html_new(mut &doc,trimmed_line.after('<html>'))
 				parser.next()
 				continue
 			}
@@ -147,7 +145,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if trimmed_line.starts_with('<!--') && trimmed_line.ends_with('-->') {
 				mut comment := trimmed_line.all_after_first('<!--')
 				comment = comment.all_before('-->')
-				doc.comment_new(comment).parent = &doc
+				doc.comment_new(mut &doc,comment)
 				parser.next_start()!
 				continue
 			}
