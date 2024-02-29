@@ -21,12 +21,16 @@ pub fn (mut tree Tree) process_defs() ! {
 				// means there is a wiki def defined
 				for mut action_element in res {
 					my_action := action_element.action
+					page.alias = my_action.params.get_default('name', '')!
+					if page.alias == '' {
+						page.alias = mydoc.header_name()!
+					}
 					action_element.action_processed = true
-					for alias in my_action.params.get_list('alias')! {
-						page.alias = my_action.params.get_default('name', '')!
-						if page.alias == '' {
-							page.alias = mydoc.header_name()!
-						}
+					for mut alias in my_action.params.get_list('alias')! {
+						if alias.to_lower().ends_with(".md"){
+							//remove the .md at end
+							alias = alias[0..name.len-3]
+						}						
 						alias2 := texttools.name_fix(alias).replace('_', '')
 						if alias2 in tree.defs {
 							collection.error(
@@ -51,13 +55,14 @@ pub fn (mut tree Tree) process_defs() ! {
 			mut mydoc := mypage.doc()!
 			for mut defitem in mydoc.defpointers() {
 				defname := defitem.name()
+				console.print_green("defpointer:${defitem}")	
 				if defname in tree.defs {
 					mut mydef_page := tree.defs[defname] or { panic('bug') }
 					mydoc2 := mydef_page.doc()!
 					defitem.pagekey = mydef_page.key()
 					defitem.pagename = mydef_page.alias
 					defitem.process_link()!
-					// console.print_debug("defpointer:${defitem}")	
+					
 				} else {
 					collection.error(
 						path: mypage.path

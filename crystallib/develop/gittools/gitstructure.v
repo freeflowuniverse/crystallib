@@ -42,7 +42,7 @@ pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) ! {
 
 fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 	// find parent with .git
-	// println(" - load from path: $path")
+	// console.print_debug(" - load from path: $path")
 	mypath := pathlib.get_dir(path: path, create: false)!
 	mut parentpath := mypath.parent_find('.git') or {
 		return error('cannot find .git in parent starting from: ${path}')

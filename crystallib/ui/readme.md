@@ -43,53 +43,13 @@ console.cprint(foreground=.yellow,style=.bold,text:"this is my happy text")
 
 ## parameters
 
+see uimodel
 
-```v
-pub struct DropDownArgs {
-	description string
-	question    string // WARNING, this was changed to be question
-	items       []string
-	default     []string
-	warning     string
-	clear       bool
-	all         bool
-	validation  fn (string) bool = fn (s string) bool {
-		return true
-	}
-}
+## base capabilities
 
-pub struct QuestionArgs {
-	description string
-	question    string
-	warning     string
-	clear       bool
-	regex       string
-	minlen      int
-	reset       bool
-	default     string
-	validation  fn (string) bool = fn (s string) bool {
-		return true
-	}
-}
+can be seen in section ```generic```
 
-
-pub struct YesNoArgs {
-	description string
-	question    string
-	warning     string
-	clear       bool
-	reset       bool
-	default 	bool
-	validation  fn (string) bool = fn (s string) bool {
-		return true
-	}
-}
-
-// validation responds with either true or an error message
-
-
-```
-
+not all features are possible for all UI implementations, sometimes a redirect to a webserver might be needed e.g. edit a document when using telegram, probably means we need to send a link to a server where the editor is a javascript editor and then the result get saved at the backend.
 
 
 ## console colors
