@@ -21,4 +21,5 @@ pub fn (mut c UserInterface) edit(args uimodel.EditArgs) !string{
 	// 	UIConsole { return c.channel.editor(args)! }
 	// 	else { panic("can't find channel") }
 	// }
+	return ""
 }
