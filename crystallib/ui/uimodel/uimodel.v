@@ -47,3 +47,75 @@ pub mut:
 		return true
 	}
 }
+
+
+@[params]
+pub struct LogArgs {
+pub mut:
+	content 	string
+	clear       bool //means screen is reset for content above
+	lf_before int 	 //line feed before content
+	lf_after int 
+	cat LogCat
+}
+
+//defines colors as used in the representation layer
+pub enum LogCat {
+	info
+	log
+	warning
+	header
+	debug
+	error
+}
+
+
+@[params]
+pub struct InfoArgs {
+pub mut:
+	content 	string //in specified format
+	clear       bool //means screen is reset for content above
+	lf_before int 	 //line feed before content
+	lf_after int 
+	cat InfoCat
+	components []ComponentCat
+}
+
+//defines colors as used in the representation layer
+pub enum InfoCat {
+	txt
+	html
+	markdown
+}
+
+// MORE THAN ONE COMPONENT CAN BE ADDED TO INFO
+pub enum ComponentCat {
+	bootstrap
+	htmx
+	bulma
+}
+
+
+@[params]
+pub struct EditArgs {
+pub mut:
+	content 	string //in specified format
+	cat EditorCat
+}
+
+//defines colors as used in the representation layer
+pub enum EditorCat {
+	txt
+	markdown
+	heroscript
+}
+
+
+@[params]
+pub struct PayArgs {
+pub mut:
+	amount f64
+	currency string = "USD" //use currency module to do conversions where needed, 
+	//TODO: what else do we need
+}
+

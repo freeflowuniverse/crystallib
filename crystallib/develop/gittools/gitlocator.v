@@ -92,6 +92,7 @@ pub fn locator_new(mut gsconfig GitStructureConfig, url string) !GitLocator {
 		branch: branch
 		remote_url: url
 	}
+	// println(ga)
 	if ga.provider == 'github.com' {
 		ga.provider = 'github'
 	}

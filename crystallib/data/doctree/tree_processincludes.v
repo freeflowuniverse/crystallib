@@ -12,13 +12,24 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 		for mut action_element in res {
 			my_action := action_element.action
 			action_element.action_processed = true
-			name := my_action.params.get_default('page', '')!
+			mut name := my_action.params.get_default('page', '')!
 			if name == '' {
 				collection.error(
 					path: page.path
 					msg: "can't find 'page' param for include action: ${my_action}"
 					cat: .include
 				)
+			}
+			if ! (name.ends_with(".md")){
+				if name.to_lower().contains(".md"){
+					collection.error(
+						path: page.path
+						msg: 'found name for include page but has .MD: ${name}'
+						cat: .include
+					)
+					continue					
+				}
+				name+=".md"
 			}
 			// handle includes from other collections
 
@@ -54,7 +65,7 @@ pub fn (mut tree Tree) process_includes() ! {
 		// console.print_green("get includes for collection:${collectionname}")		
 		for pagekey in collection.pages.keys() {
 			mut page := collection.pages[pagekey] or { panic('bug') }
-			console.print_green('Get includes for page ${page.key()}')
+			// console.print_green('Get includes for page ${page.key()}')
 			// process include recursivly
 			tree.process_page_includes(mut page, collectionname)!
 		}
