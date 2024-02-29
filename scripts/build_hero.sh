@@ -658,3 +658,9 @@ myplatform
 os_update
 sshknownkeysadd
 
+
+hero_build
+
+
+echo HERO, V, CRYSTAL ALL OK
+echo WE ARE READY TO HERO...

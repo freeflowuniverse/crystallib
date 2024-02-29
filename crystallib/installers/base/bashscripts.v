@@ -34,12 +34,19 @@ pub fn bash_installers_package() !string {
 	p.write(out)!
 	os.chmod(p.path, 0o777)!
 
-	out += '\nfreeflow_dev_env_install\n\n\necho HERO, V, CRYSTAL ALL INSTALL OK\necho WE ARE READY TO HERO...'
+	out2 := '${out}\nfreeflow_dev_env_install\n\n\n V & CRYSTAL INSTALL OK\n'
 
 	mut p2 := pathlib.get_file(path: '${base.scriptspath}/installer.sh', create: true)!
-	p2.write(out)!
+	p2.write(out2)!
 	os.chmod(p2.path, 0o777)!
 
-	mut p3 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
-	return p3.path
+	out3 := '${out}\nhero_build\n\n\necho HERO, V, CRYSTAL ALL OK\necho WE ARE READY TO HERO...'
+
+	mut p3 := pathlib.get_file(path: '${base.scriptspath}/build_hero.sh', create: true)!
+	p3.write(out3)!
+	os.chmod(p3.path, 0o777)!
+
+
+	mut p4 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
+	return p4.path
 }

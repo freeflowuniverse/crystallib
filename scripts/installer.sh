@@ -636,15 +636,23 @@ function freeflow_dev_env_install {
     else
         echo "REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING" 
         exit 1
-    fi    
-
-    # echo " - compile hero"
-    # ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
-    # source ~/.profile
-
-    # hero init
+    fi
 
 }
+
+
+function hero_build {
+
+    freeflow_dev_env_install
+
+    echo " - compile hero"
+    ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
+    source ~/.profile
+
+    hero init
+
+}
+
 
 myplatform
 os_update
@@ -654,5 +662,4 @@ sshknownkeysadd
 freeflow_dev_env_install
 
 
-echo HERO, V, CRYSTAL ALL INSTALL OK
-echo WE ARE READY TO HERO...
+ V & CRYSTAL INSTALL OK
