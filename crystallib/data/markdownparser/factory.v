@@ -10,12 +10,14 @@ pub struct NewDocArgs {
 pub:
 	path    string
 	content string
+	collection_name string
 }
 
 // get a parsed document, path is the path to the file, if not given content is needed
 pub fn new(args_ NewDocArgs) !elements.Doc {
 	mut args := args_
 	mut doc := elements.doc_new()!
+	doc.collection_name = args.collection_name
 	if args.path == '' {
 		if args.content.trim_space() == '' {
 			return error('cannot process doc where content is empty if path not given. \n${args}')

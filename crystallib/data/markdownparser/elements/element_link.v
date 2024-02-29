@@ -58,6 +58,7 @@ pub fn (self Link) markdown() string {
 		return self.content
 	}
 	mut link_filename := self.filename
+
 	mut out := ''
 	// if self.path != '' {
 	// 	link_filename = '${self.path}/${link_filename}'
@@ -86,6 +87,9 @@ pub fn (self Link) markdown() string {
 		}
 		if self.site != '' {
 			link_filename = '${self.site}:${link_filename}'
+		}
+		if  self.parent.collection_name!='' {
+			link_filename = '${self.paren.collection_name}:${link_filename}'
 		}
 		// if self.include {
 		// 	link_filename = '@${link_filename}'

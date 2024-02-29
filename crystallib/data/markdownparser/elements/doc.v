@@ -9,6 +9,7 @@ pub mut:
 	// gid smartid.GID
 	pre          []HtmlSource
 	linked_pages []string // to know which collection:pages are needed to make this doc complete
+	collection_name string
 }
 
 // add a css or script link to a document

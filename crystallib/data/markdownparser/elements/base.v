@@ -16,12 +16,13 @@ pub mut:
 	type_name string
 	changed   bool
 	children  []Element
-	// parent      ?&Element @[skip; str:skip]
+	parent_doc &Doc @[skip; str:skip]
 	trailing_lf bool = true // do we need to do a line feed (enter) at end of this element, default yes
 }
 
 fn (mut self DocBase) process_base() ! {
 }
+
 
 fn (mut self DocBase) remove_empty_children() {
 	self.children = self.children.filter(!(it.content == '' && it.children.len == 0))

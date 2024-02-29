@@ -66,7 +66,7 @@ pub fn (tree Tree) page_get(pointerstr string) !&Page {
 	// println("page get:${pointerstr}")
 	p := pointer_new(pointerstr)!
 	if p.name == '' || p.collection == '' {
-		panic('bad pointer')
+		return ObjNotFound{info:'bad pointer, name or collection should not be empty:\n${pointerstr}',collection:p.collection,name:p.name}
 	}
 	// println(p)
 	mut res := []&Page{}

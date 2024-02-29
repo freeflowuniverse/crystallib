@@ -45,10 +45,11 @@ pub struct ObjNotFound {
 pub:
 	name       string
 	collection string
+	info string
 }
 
 pub fn (err ObjNotFound) msg() string {
-	return '"Could not find object with name ${err.name} in collection:${err.collection}'
+	return '"Could not find object with name ${err.name} in collection:${err.collection}.\n${err.info}'
 }
 
 // write errors.md in the collection, this allows us to see what the errors are

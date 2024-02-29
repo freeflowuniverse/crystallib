@@ -70,9 +70,9 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	// println(st)
 	// println(addr)
 
-	$if debug {
-		console.print_header(' loaded repo ${path}     --------')
-	}
+	// $if debug {
+	// 	console.print_header(' loaded repo ${path}     --------')
+	// }
 
 	jsondata := json.encode(st)
 	mut redis := redisclient.core_get()!

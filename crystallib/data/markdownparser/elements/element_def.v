@@ -18,7 +18,7 @@ pub fn (mut self Def) process() !int {
 
 pub fn (mut self Def) process_link() ! {
 	self.trailing_lf = false
-	self.link_new('[${self.pagename}](${self.pagekey})')
+	self.link_new('[${self.pagename}](${self.pagekey})').parent = self.parent
 	self.process_base()!
 	self.process_children()!
 	self.processed = true

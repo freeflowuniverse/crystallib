@@ -22,10 +22,10 @@
 //!!website.static_add url:'https://git.ourworld.tf/drc/www_flowers4peace/src/branch/master/content/static' TODO:implement
 
 //add collections to the website
-!!website.doctree_add url:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/collections'
+// !!website.doctree_add url:'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/collections'
 
 //add collections to the website
-!!website.doctree_add url:'https://github.com/threefoldfoundation/threefold_data/tree/development/content'
+// !!website.doctree_add url:'https://github.com/threefoldfoundation/threefold_data/tree/development/content'
 
 
 !!website.generate

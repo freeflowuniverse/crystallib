@@ -33,8 +33,8 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 	// find the links, and for each link check if collection is same, is not need to copy
 	for mut element in mydoc.children_recursive() {
 		if mut element is Link {
-			// println(element)
-			name := texttools.name_fix(element.filename)
+			println(element)
+			mut name := texttools.name_fix_keepext(element.filename)
 			mut site := texttools.name_fix(element.site)
 			if site == '' {
 				site = collection.name
@@ -74,7 +74,7 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 					}
 					// println(" ------- page exists: ${pointername}")
 					mut collection_linkpage := linkpage.collection()!
-					// println("${collection_linkpage.name}   ----   ${collection.name}  ")
+					println("${collection_linkpage.name}   ----   ${collection.name}  ")
 					if args.dest.len > 0 {
 						if linkpage.name !in args.done {
 							mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
