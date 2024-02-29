@@ -10,7 +10,7 @@ import freeflowuniverse.crystallib.ui.uimodel
 // TODO
 // }
 // ```
-pub fn (mut c UserInterface) pay(args uimodel.PayArgs) !string{
+pub fn (mut c UserInterface) pay(args uimodel.PayArgs) !{
 	// match mut c.channel {
 	// 	UIConsole { return c.channel.editor(args)! }
 	// 	else { panic("can't find channel") }
