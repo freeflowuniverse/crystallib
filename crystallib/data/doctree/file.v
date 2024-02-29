@@ -27,7 +27,7 @@ pub mut:
 	ftype        FileType
 }
 
-fn (file File) file_name() string {
+pub fn (file File) file_name() string {
 	return '${file.name}.${file.ext}'
 }
 
@@ -64,7 +64,7 @@ fn (mut file File) exists() !bool {
 	return file.path.exists()
 }
 
-fn (mut file File) copy(dest string) ! {
+pub fn (mut file File) copy(dest string) ! {
 	mut dest2 := pathlib.get(dest)
 	file.path.copy(dest: dest2.path, rsync: false) or {
 		return error('Could not copy file: ${file.path.path} to ${dest} .\n${err}\n${file}')
