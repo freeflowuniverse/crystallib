@@ -8,7 +8,7 @@ to run, simply run `example.vsh`.
 
 ## Running heroscript with hero cli
 
-`hero zola -u https://github.com/freeflowuniverse/crystallib/tree/development/examples/webtools/zola/threefold_heroscript`
+`hero zola -u https://github.com/freeflowuniverse/crystallib/tree/development_zola/examples/webtools/zola/threefold_heroscript`
 
 ## Hero scripts
 
