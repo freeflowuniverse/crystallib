@@ -31,9 +31,9 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				continue
 			} else if !(texttools.is_upper_text(char_) || char_ == '_') {
 				// this means it wasn't a def, we need to add text
-				println(' -- no def: ${char_}')
+				// println(' -- no def: ${char_}')
 				paragraph.children.pop()
-				println(' -- no def: ${paragraph.children.last()}')
+				// println(' -- no def: ${paragraph.children.last()}')
 				mut llast2 := paragraph.children.last()
 				if mut llast2 is Text {
 					llast2.content += llast.content + char_

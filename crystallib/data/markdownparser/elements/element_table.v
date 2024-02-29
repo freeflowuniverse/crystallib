@@ -90,6 +90,9 @@ pub fn (mut self Table) parse() ! {
 
 	for mut line in rows[2..] {
 		mut columns := line.trim_space().split('|')
+		if columns.len<2{
+			return error('wrongly formatted row.\n${self}\n${line}')
+		}
 		columns.delete_last()
 		columns.delete(0)
 
