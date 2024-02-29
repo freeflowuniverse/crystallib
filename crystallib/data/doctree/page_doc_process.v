@@ -8,7 +8,7 @@ import os
 
 pub fn (mut page Page) doc() !&Doc {
 	mut mydoc := page.doc_ or {
-		mut mydoc2 := markdownparser.new(path: page.path.path)!
+		mut mydoc2 := markdownparser.new(path: page.path.path,collection_name:page.collection_name)!
 		&mydoc2
 	}
 
@@ -33,7 +33,7 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 	// find the links, and for each link check if collection is same, is not need to copy
 	for mut element in mydoc.children_recursive() {
 		if mut element is Link {
-			println(element)
+			// println(element)
 			mut name := texttools.name_fix_keepext(element.filename)
 			mut site := texttools.name_fix(element.site)
 			if site == '' {
@@ -80,7 +80,7 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 							mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
 							mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
 							linkdoc := linkpage.doc_process_link(mut args)!
-							p_linked.write(linkdoc.markdown())!
+							p_linked.write(linkdoc.markdown()!)!
 						}
 						args.done << linkpage.name
 					}

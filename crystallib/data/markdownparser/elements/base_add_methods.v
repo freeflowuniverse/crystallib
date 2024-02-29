@@ -4,7 +4,7 @@ pub fn (mut base DocBase) paragraph_new(mut docparent ?&Doc, content string) &Pa
 	mut a := Paragraph{
 		content: content
 		type_name: 'paragraph'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 
 	base.children << a
@@ -15,7 +15,7 @@ pub fn (mut base DocBase) action_new(mut docparent ?&Doc, content string) &Actio
 	mut a := Action{
 		content: content
 		type_name: 'action'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 	base.children << a
 	return &a
@@ -25,7 +25,7 @@ pub fn (mut base DocBase) table_new(mut docparent ?&Doc, content string) &Table 
 	mut a := Table{
 		content: content
 		type_name: 'table'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 
 	base.children << a
@@ -36,7 +36,7 @@ pub fn (mut base DocBase) header_new(mut docparent ?&Doc, content string) &Heade
 	mut a := Header{
 		content: content
 		type_name: 'header'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 
 	base.children << a
@@ -47,7 +47,7 @@ pub fn (mut base DocBase) list_new(mut docparent ?&Doc, content string) &List {
 	mut a := List{
 		content: content
 		type_name: 'list'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 	a.process() or { panic(err) }
 	base.children << a
@@ -58,7 +58,7 @@ pub fn (mut base DocBase) list_item_new(mut docparent ?&Doc, content string) &Li
 	mut a := ListItem{
 		content: content
 		type_name: 'listitem'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 	a.process() or { panic(err) }
 	base.children << a
@@ -69,7 +69,7 @@ pub fn (mut base DocBase) text_new(mut docparent ?&Doc, content string) &Text {
 	mut a := Text{
 		content: content
 		type_name: 'text'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 	a.trailing_lf = false
 	base.children << a
@@ -80,7 +80,7 @@ pub fn (mut base DocBase) comment_new(mut docparent ?&Doc, content string) &Comm
 	mut a := Comment{
 		content: content
 		type_name: 'comment'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 
 	base.children << a
@@ -91,7 +91,7 @@ pub fn (mut base DocBase) codeblock_new(mut docparent ?&Doc, content string) &Co
 	mut a := Codeblock{
 		content: content
 		type_name: 'codeblock'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 
 	base.children << a
@@ -103,7 +103,7 @@ pub fn (mut base DocBase) link_new(mut docparent ?&Doc, content string) &Link {
 		content: content
 		type_name: 'link'
 		trailing_lf: false
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 	a.trailing_lf = false
 	base.children << a
@@ -114,7 +114,7 @@ pub fn (mut base DocBase) html_new(mut docparent ?&Doc, content string) &Html {
 	mut a := Html{
 		content: content
 		type_name: 'html'
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 
 	base.children << a
@@ -126,7 +126,7 @@ pub fn (mut base DocBase) def_new(mut docparent ?&Doc, content string) &Def {
 		content: content
 		type_name: 'def'
 		trailing_lf: false
-		parent_doc: docparent
+		parent_doc_: docparent
 	}
 	base.children << a
 	return &a

@@ -31,7 +31,7 @@ fn test_table_one_row() {
 				cells: ['Row1Col1', 'Row1Col2', 'Row1Col3']
 			},
 		]
-		assert table.markdown() == '| Column1 | Column2 | Column3 |
+		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | :-- | :-- | :-- |
 | Row1Col1 | Row1Col2 | Row1Col3 |
 
@@ -62,7 +62,7 @@ fn test_table_two_rows() {
 				cells: ['Row2Col1', 'Row2Col2', 'Row2Col3']
 			},
 		]
-		assert table.markdown() == '| Column1 | Column2 | Column3 |
+		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | :-- | :-- | :-- |
 | Row1Col1 | Row1Col2 | Row1Col3 |
 | Row2Col1 | Row2Col2 | Row2Col3 |
@@ -120,7 +120,7 @@ Row2Col1  | Row2Col2     | Row2Col3
 				cells: ['Row2Col1', 'Row2Col2', 'Row2Col3']
 			},
 		]
-		assert table.markdown() == '| Column1 | Column2 | Column3 |
+		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | :-- | :-- | :-- |
 | Row1Col1 | Row1Col2 | Row1Col3 |
 | Row2Col1 | Row2Col2 | Row2Col3 |
@@ -142,7 +142,7 @@ fn test_table_one_row_alignment_left() {
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.alignments == [.left, .left, .left]
-		assert table.markdown() == '| Column1 | Column2 | Column3 |
+		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | :-- | :-- | :-- |
 | Row1Col1 | Row1Col2 | Row1Col3 |
 
@@ -163,7 +163,7 @@ fn test_table_one_row_alignment_right() {
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.alignments == [.right, .right, .right]
-		assert table.markdown() == '| Column1 | Column2 | Column3 |
+		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | --: | --: | --: |
 | Row1Col1 | Row1Col2 | Row1Col3 |
 
@@ -184,7 +184,7 @@ fn test_table_one_row_alignment_center() {
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.alignments == [.center, .center, .center]
-		assert table.markdown() == '| Column1 | Column2 | Column3 |
+		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | :-: | :-: | :-: |
 | Row1Col1 | Row1Col2 | Row1Col3 |
 
@@ -205,7 +205,7 @@ fn test_table_one_row_alignment_mixed() {
 	if table is Table {
 		assert table.num_columns == 4
 		assert table.alignments == [.left, .center, .right, .left]
-		assert table.markdown() == '| Column1 | Column2 | Column3 | Column4 |
+		assert table.markdown()! == '| Column1 | Column2 | Column3 | Column4 |
 | :-- | :-: | --: | :-- |
 | Row1Col1 | Row1Col2 | Row1Col3 | Row1Col4 |
 

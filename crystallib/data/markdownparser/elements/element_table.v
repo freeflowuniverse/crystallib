@@ -34,7 +34,7 @@ pub fn (mut self Table) process() !int {
 	return 1
 }
 
-pub fn (self Table) markdown() string {
+pub fn (self Table) markdown() !string {
 	mut out := '| ${self.header.join(' | ')} |\n'
 	// TODO: default alignment row, currently if emtpy table doesnt render
 	// TODO: should render and format nicely (so all columns have same width once rendering)
@@ -50,7 +50,12 @@ pub fn (self Table) markdown() string {
 	return '${out}\n'
 }
 
-pub fn (self Table) html() string {
+pub fn (self Table) pug() !string {
+	return error("cannot return pug, not implemented")
+}
+
+
+pub fn (self Table) html() !string {
 	// TODO: implement html
 	panic('implement')
 }

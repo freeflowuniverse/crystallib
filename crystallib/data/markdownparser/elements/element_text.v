@@ -15,14 +15,19 @@ pub fn (mut self Text) process() !int {
 	return 1
 }
 
-pub fn (self Text) markdown() string {
+pub fn (self Text) markdown() !string {
 	mut out := self.content
-	out += self.DocBase.markdown() // for children
+	out += self.DocBase.markdown()! // for children
 	return out
 }
 
-pub fn (self Text) html() string {
+pub fn (self Text) pug() !string {
+	return error("cannot return pug, not implemented")
+}
+
+
+pub fn (self Text) html() !string {
 	mut out := self.content
-	out += self.DocBase.html()
+	out += self.DocBase.html()!
 	return out
 }

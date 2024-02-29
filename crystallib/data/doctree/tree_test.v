@@ -70,7 +70,9 @@ fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 		page2_doc := page2.doc()!
 		mypath := page1_doc.path or { pathlib.Path{} }
 		println(mypath.path)
-		assert page1_doc.markdown().trim_space() == page2_doc.markdown().trim_space()
+		md:=page1_doc.markdown()!
+		md2:=page2_doc.markdown()!
+		assert md.trim_space() == md2.trim_space()
 		// TODO: there is error, space at end of doc not the same, weird why trim_space doesn't resolve that, should also work without trim_space anyhow
 	}
 }

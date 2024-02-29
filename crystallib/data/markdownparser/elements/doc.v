@@ -44,11 +44,13 @@ pub struct DocNewArgs {
 pub mut:
 	pre     []HtmlSource
 	content string
+	collection_name string
 }
 
 pub fn doc_new(args DocNewArgs) !Doc {
 	mut d := Doc{
 		pre: args.pre
+		collection_name: args.collection_name
 	}
 	return d
 }
@@ -65,7 +67,7 @@ pub fn (mut self Doc) process() !int {
 	return 1
 }
 
-// pub fn (self Doc) markdown() string {
+// pub fn (self Doc) markdown()! string {
 // 	return ""
 // }
 

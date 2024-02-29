@@ -21,7 +21,7 @@ pub fn (mut self ListItem) process() !int {
 	return 1
 }
 
-pub fn (self ListItem) markdown() string {
+pub fn (self ListItem) markdown() !string {
 	mut h := ''
 	for _ in 0 .. self.indent {
 		h += '  '
@@ -29,7 +29,12 @@ pub fn (self ListItem) markdown() string {
 	return '${h}- ${self.content}\n'
 }
 
-pub fn (self ListItem) html() string {
+pub fn (self ListItem) pug() !string {
+	return error("cannot return pug, not implemented")
+}
+
+
+pub fn (self ListItem) html() !string {
 	panic('implement')
 	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
 }

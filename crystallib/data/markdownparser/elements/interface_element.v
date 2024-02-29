@@ -5,8 +5,9 @@ import freeflowuniverse.crystallib.core.playbook
 
 @[heap]
 interface Element {
-	markdown() string
-	html() string
+	markdown() !string
+	html() !string
+	pug() !string
 	actions(args ActionsGetArgs) []playbook.Action
 	treeview_(prefix string, mut out []string)
 	children_recursive() []Element

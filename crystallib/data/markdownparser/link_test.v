@@ -62,7 +62,7 @@ fn test_link2() {
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
-	assert '[Architecture](@*!architecture/architecture.md)' == link.markdown()
+	assert '[Architecture](@*!architecture/architecture.md)' == link.markdown()!
 }
 
 fn test_link3() {
@@ -94,7 +94,7 @@ fn test_link3() {
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
-	assert "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')" == link.markdown()
+	assert "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')" == link.markdown()!
 }
 
 fn test_link4() {
@@ -128,7 +128,7 @@ fn test_link4() {
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
-	assert '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)' == link.markdown()
+	assert '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)' == link.markdown()!
 }
 
 // // TODO add more tests

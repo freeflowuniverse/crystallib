@@ -9,7 +9,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 	mut parser := parser_char_new_text(paragraph.content.trim_space())
 
 	// mut d := para.doc or { panic('no doc') }
-	paragraph.text_new(mut paragraph.parent_doc,'') // the initial one
+	paragraph.text_new(mut paragraph.parent_doc(),'') // the initial one
 
 	mut potential_link := false
 
@@ -25,7 +25,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 			if (char_ == ' ' || char_ == '\n') && parser.char_prev() != '*' {
 				// means we did find a def, we can stop
 				// println(" -- end def")
-				paragraph.text_new(mut paragraph.parent_doc,char_)
+				paragraph.text_new(mut paragraph.parent_doc(),char_)
 				parser.next()
 				char_ = ''
 				continue
@@ -38,7 +38,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				if mut llast2 is Text {
 					llast2.content += llast.content + char_
 				} else {
-					paragraph.text_new(mut paragraph.parent_doc,llast.content + char_)
+					paragraph.text_new(mut paragraph.parent_doc(),llast.content + char_)
 				}
 				parser.next()
 				char_ = ''
@@ -52,7 +52,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 			if char_ == '\n' {
 				if llast.singleline {
 					// means we are at end of line of a single line comment
-					paragraph.text_new(mut paragraph.parent_doc,'\n')
+					paragraph.text_new(mut paragraph.parent_doc(),'\n')
 					parser.next()
 					char_ = ''
 					continue
@@ -66,7 +66,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				llast.content += char_ // need to add current content
 				// need to move forward not to have the 3 next
 				parser.forward(3)
-				paragraph.text_new(mut paragraph.parent_doc,'')
+				paragraph.text_new(mut paragraph.parent_doc(),'')
 				parser.next()
 				char_ = ''
 				continue
@@ -79,7 +79,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 					// means is not link, need to convert link to normal text
 					mut c := llast.content
 					paragraph.children.delete_last() // remove the link
-					paragraph.text_new(mut paragraph.parent_doc,'')
+					paragraph.text_new(mut paragraph.parent_doc(),'')
 					llast = paragraph.children.last() // fetch last again
 					llast.content += c + char_ // need to add current content
 					parser.next()
@@ -92,7 +92,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 			if char_ == ')' && potential_link {
 				// end of link
 				llast.content += char_ // need to add current content
-				paragraph.text_new(mut paragraph.parent_doc,'')
+				paragraph.text_new(mut paragraph.parent_doc(),'')
 				parser.next()
 				char_ = ''
 				potential_link = false
@@ -102,7 +102,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 		if mut llast is Text {
 			if char_ != '' {
 				if char_ == '*' {
-					paragraph.def_new(mut paragraph.parent_doc,'*')
+					paragraph.def_new(mut paragraph.parent_doc(),'*')
 					parser.next()
 					char_ = ''
 					continue
@@ -113,7 +113,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 					is_url := llast.content.ends_with(':') && totry == '//'
 					if parser.text_next_is(totry, 0) && !is_url {
 						// we are now in comment
-						paragraph.comment_new(mut paragraph.parent_doc,'')
+						paragraph.comment_new(mut paragraph.parent_doc(),'')
 						mut llast2 := paragraph.children.last()
 						if totry == '//' {
 							if mut llast2 is Comment {
@@ -128,7 +128,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				// try to find link
 				for totry in ['![', '['] {
 					if parser.text_next_is(totry, 0) {
-						paragraph.link_new(mut paragraph.parent_doc,totry)
+						paragraph.link_new(mut paragraph.parent_doc(),totry)
 						parser.forward(totry.len - 1)
 						char_ = ''
 						break

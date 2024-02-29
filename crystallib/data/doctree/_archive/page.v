@@ -64,7 +64,7 @@ fn (mut page Page) link_to_page_update(mut link Link) ! {
 	link.description = link.description
 	link.path = os.dir(imagelink_rel)
 	link.filename = os.base(imagelink_rel)
-	link.content = link.markdown()
+	link.content = link.markdown()!
 	linkcompare2 := link.description + link.url + link.filename + link.content
 	if linkcompare1 != linkcompare2 {
 		page.changed = true
@@ -152,7 +152,7 @@ fn (mut page Page) link_update(mut link Link) ! {
 	link.description = link.description
 	link.path = os.dir(imagelink_rel)
 	link.filename = os.base(imagelink_rel)
-	link.content = link.markdown()
+	link.content = link.markdown()!
 	linkcompare2 := link.description + link.url + link.filename + link.content
 	if linkcompare1 != linkcompare2 {
 		page.changed = true
@@ -340,12 +340,12 @@ pub fn (mut page Page) export(args_ PageSaveArgs) ! {
 		args.dest = page.path.path
 	}
 	// QUESTION: okay convention?
-	out := page.doc_ or { panic('this should never happen') }.markdown()
+	out := page.doc_ or { panic('this should never happen') }.markdown()!
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	p.write(out)!
 
 	// mutate page to save updated doc
-	updated_doc := markdownparser.new(path: p.path) or { panic('cannot parse,${err}') }
+	updated_doc := markdownparser.new(path: p.path,collection_name:page.collection_name) or { panic('cannot parse,${err}') }
 	page.doc_ = updated_doc
 }
 
@@ -359,11 +359,11 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	page.process_macros()!
 	// page.fix_links()! // always need to make sure that the links are now clean
 	// QUESTION: okay convention?
-	out := page.doc or { panic('this should never happen') }.markdown()
+	out := page.doc or { panic('this should never happen') }.markdown()!
 	mut p := pathlib.get_file(path: args.dest, check: false)!
 	p.write(out)!
 
 	// mutate page to save updated doc
-	updated_doc := markdownparser.new(path: p.path) or { panic('cannot parse,${err}') }
+	updated_doc := markdownparser.new(path: p.path,collection_name:page.collection_name) or { panic('cannot parse,${err}') }
 	page.doc_ = updated_doc
 }

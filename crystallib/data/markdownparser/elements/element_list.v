@@ -29,12 +29,17 @@ pub fn (mut self List) process() !int {
 	return 1
 }
 
-pub fn (self List) markdown() string {
+pub fn (self List) markdown() !string {
 	panic('implement')
 	return ''
 }
 
-pub fn (self List) html() string {
+pub fn (self List) pug() !string {
+	return error("cannot return pug, not implemented")
+}
+
+
+pub fn (self List) html() !string {
 	panic('implement')
 	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
 }

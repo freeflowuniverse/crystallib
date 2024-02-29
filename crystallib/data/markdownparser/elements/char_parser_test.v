@@ -197,5 +197,5 @@ sometext'
 	assert p2.children[3] is Text
 	assert p2.children[3].content == 'sometext'
 
-	assert txt == p2.markdown()
+	assert txt == p2.markdown()!
 }

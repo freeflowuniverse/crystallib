@@ -37,7 +37,8 @@ pub enum LinkType {
 }
 
 pub enum LinkState {
-	ok
+	init //the original state (prob means already processed)
+	linkprocessed //means we have found the original information
 	missing
 	error
 }
@@ -53,73 +54,92 @@ pub fn (mut self Link) process() !int {
 	return 1
 }
 
-pub fn (self Link) markdown() string {
-	if self.content.len > 0 {
-		return self.content
-	}
+fn (self Link) markdown_include() string {
+
+	println(" ----- LINK MARKDOWN INCLUDE ${self.url} ${self.cat}")
+
+	pd:=self.parent_doc_ or {panic("bug there should always be parent_doc")}
+
 	mut link_filename := self.filename
 
+	if self.site != '' {
+		link_filename = '${self.site}:${link_filename}'
+	}	
+	if  pd.collection_name!='' {
+		link_filename = '${pd.collection_name}:${link_filename}'
+	}
+
 	mut out := ''
-	// if self.path != '' {
-	// 	link_filename = '${self.path}/${link_filename}'
-	// }
-	if self.cat == LinkType.image {
+	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image {
 		if self.extra.trim_space() == '' {
 			out = '![${self.description}](${link_filename})'
 		} else {
 			out = '![${self.description}](${link_filename} ${self.extra})'
 		}
-	}
-	if self.cat == LinkType.file {
-		if self.extra.trim_space() == '' {
-			out = '[${self.description}](${link_filename})'
-		} else {
-			out = '[${self.description}](${link_filename} ${self.extra})'
-		}
-	}
-	if self.cat == LinkType.html {
+	}else if self.cat == LinkType.html {
 		out = '[${self.description}](${self.url})'
+	}else{
+		panic("bug")
 	}
-
-	if self.cat == LinkType.page {
-		if self.filename.contains(':') {
-			return "should not have ':' in link for page or file.\n${self}"
-		}
-		if self.site != '' {
-			link_filename = '${self.site}:${link_filename}'
-		}
-		if self.parent_doc!=none{
-			mut pd:=self.parent_doc or {
-				panic("bug")
-			}
-			println(pd)
-			if  pd.collection_name!='' {
-				link_filename = '${pd.collection_name}:${link_filename}'
-			}
-		}else{
-			println("0000")
-		}
-		// if self.include {
-		// 	link_filename = '@${link_filename}'
-		// }
-		// if self.newtab {
-		// 	link_filename = '!${link_filename}'
-		// }
-		// if self.moresites {
-		// 	link_filename = '*${link_filename}'
-		// }
-
-		out = '[${self.description}](${link_filename})'
-	}
-	// out+=self.DocBase.markdown()
 	return out
 }
 
-pub fn (self Link) html() string {
+pub fn (self Link) markdown() !string {
+
+	if self.state == .init{
+		//means we need to give link before it was processed to resolve the link e.g. in doctree
+		return self.markdown_include()
+	}
+	
+	mut link_filename := self.filename
+
+	mut out := ''
+	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image {
+		if self.filename.contains(':') {
+			return "should not have ':' in link for image, page or file.\n${self}"
+		}
+		if self.path != '' {
+			link_filename = '${self.path}/${link_filename}'
+		}
+		if self.extra.trim_space() == '' {
+			out = '![${self.description}](${link_filename})'
+		} else {
+			out = '![${self.description}](${link_filename} ${self.extra})'
+		}
+	}else if self.cat == LinkType.html {
+		out = '[${self.description}](${self.url})'
+	}else{
+		panic("bug")
+	}
+
+	// if self.cat == LinkType.page {
+
+	// 	// if self.include {
+	// 	// 	link_filename = '@${link_filename}'
+	// 	// }
+	// 	// if self.newtab {
+	// 	// 	link_filename = '!${link_filename}'
+	// 	// }
+	// 	// if self.moresites {
+	// 	// 	link_filename = '*${link_filename}'
+	// 	// }
+
+	// 	out = '[${self.description}](${link_filename})'
+	// }
+
+	return out
+}
+
+pub fn (self Link) html() !string {
 	panic('implement')
 	// TODO: implement	
 	return ''
 }
+
+pub fn (self Link) pug() !string {
+	return error("cannot return pug, not implemented")
+}
+
 
 // return path of the filename in the site
 pub fn (mut link Link) pathfull() string {

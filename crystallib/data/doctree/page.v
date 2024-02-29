@@ -75,7 +75,7 @@ pub fn (mut page Page) export(args_ PageExportArgs) !&Doc {
 	dirpath := p.parent()!
 	// mut mydoc := page.doc()!
 	mut mydoc := page.doc_process_link(mut dest: dirpath.path)!
-	p.write(mydoc.markdown())!
+	p.write(mydoc.markdown()!)!
 	return mydoc
 }
 

@@ -16,17 +16,19 @@ pub fn (mut self Comment) process() !int {
 	return 1
 }
 
-pub fn (self Comment) markdown() string {
+pub fn (self Comment) markdown() !string {
 	mut out := '<!--'
 	out += self.content
 	out += '-->'
-
-	// out += self.DocBase.markdown()
 	return out
 }
 
-pub fn (self Comment) html() string {
+pub fn (self Comment) html() !string {
 	mut out := self.content
-	out += self.DocBase.html()
+	out += self.DocBase.html()!
 	return out
+}
+
+pub fn (self Comment) pug() !string {
+	return error("cannot return pug, not implemented")
 }

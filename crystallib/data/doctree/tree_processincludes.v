@@ -47,11 +47,12 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 				tree.process_page_includes(mut mypage2, col_name)!
 				mut mydoc2 := mypage2.doc()!
 				//links who are local to the remote collection will not resolve correctly after include, need to add collectionname
-				if mydoc2.markdown().contains("vindo0.png"){
-					println(mydoc2.markdown())
+				md2:=mydoc2.markdown()!
+				if md2.contains("vindo0.png"){
+					println(mydoc2.markdown()!)
 					panic("vidostop")
 				}
-				action_element.content = mydoc2.markdown()
+				action_element.content = mydoc2.markdown()!
 			} else {
 				collection.error(
 					path: page.path

@@ -13,7 +13,7 @@ pub fn (mut m BizModel) process_macros() ! {
 		mut doc := markdownparser.new(path: path.path)!
 
 		if true {
-			c := doc.markdown()
+			c := doc.markdown()!
 			println('\n\n\n')
 			println(c)
 

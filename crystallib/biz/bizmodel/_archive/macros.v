@@ -47,7 +47,7 @@ pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroRes
 					},
 				]
 				alignments: [.left, .left]
-			}.markdown()
+			}.markdown()!
 			r.result = $tmpl('./templates/employee.md')
 			return r
 		}

@@ -4,9 +4,12 @@ import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.smartid
 // import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.core.play
 
 @[heap]
 pub struct DocBase {
+mut:
+	parent_doc_ ?&Doc @[skip; str:skip]
 pub mut:
 	id        int
 	content   string
@@ -16,11 +19,15 @@ pub mut:
 	type_name string
 	changed   bool
 	children  []Element
-	parent_doc ?&Doc @[skip; str:skip]
 	trailing_lf bool = true // do we need to do a line feed (enter) at end of this element, default yes
 }
 
 fn (mut self DocBase) process_base() ! {
+}
+
+fn (mut self DocBase) parent_doc() &Doc {
+	mut pd:=self.parent_doc_ or {panic("bug there should always be parent_doc")}
+	return pd
 }
 
 
@@ -139,18 +146,30 @@ fn (self DocBase) treeview_(prefix string, mut out []string) {
 	}
 }
 
-pub fn (self DocBase) html() string {
+pub fn (self DocBase) html() !string {
 	mut out := ''
 	for mut element in self.children() {
-		out += element.html()
+		out += element.html()!
 	}
 	return out
 }
 
-pub fn (self DocBase) markdown() string {
+//example see https://github.com/RelaxedJS/ReLaXed-examples/blob/master/examples/letter/letter.pug
+// is to generate pdf's
+pub fn (self DocBase) pug() !string {
 	mut out := ''
 	for mut element in self.children() {
-		out += element.markdown()
+		out += element.pug()!
+	}
+	return out
+}
+
+
+//the markdown which represents how it created the element
+pub fn (self DocBase) markdown()! string {
+	mut out := ''
+	for mut element in self.children() {
+		out += element.markdown()!
 		if element.trailing_lf {
 			out += '\n'
 		}

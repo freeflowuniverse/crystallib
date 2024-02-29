@@ -6,40 +6,42 @@ pub struct Def {
 pub mut:
 	pagekey  string
 	pagename string
+	nameshort string
 }
 
 pub fn (mut self Def) process() !int {
 	if self.processed {
 		return 0
 	}
-	self.processed = true
+	if self.nameshort==""{
+		if self.content == ""{
+			return error("cannot get name content should not be empty.")
+		}
+		self.nameshort = self.content.to_lower().replace('_', '').trim('*')
+	}
+	self.processed = false
 	return 1
 }
 
 pub fn (mut self Def) process_link() ! {
 	self.trailing_lf = false
-	self.link_new(mut self.parent_doc,'[${self.pagename}](${self.pagekey})')
-	self.process_base()!
+	self.link_new(mut self.parent_doc(),'[${self.pagename}](${self.pagekey})')
 	self.process_children()!
-	self.processed = true
 	self.content = ''
+	self.processed = true	
 }
 
-pub fn (self Def) markdown() string {
-	// if self.pagekey.len>0{
-	// 	return "[${self.pagekey}]"
-	// }
-	mut out := self.content
-	out += self.DocBase.markdown() // for children
-	return out
+pub fn (self Def) markdown() !string {
+	if self.processed {return error("cannot do markdown for ${self} as long as not processed")}
+	return self.DocBase.markdown() // for children
 }
 
-pub fn (self Def) html() string {
-	mut out := self.content
-	// out += self.DocBase.html()
-	return out
+pub fn (self Def) html() !string {
+	if self.processed {return error("cannot do markdown for ${self} as long as not processed")}
+	return self.DocBase.html() // for children
 }
 
-pub fn (mut self Def) name() string {
-	return self.content.to_lower().replace('_', '').trim_left('*')
+pub fn (self Def) pug() !string {
+	if self.processed {return error("cannot do markdown for ${self} as long as not processed")}
+	return self.DocBase.pug() // for children
 }
