@@ -1,13 +1,14 @@
 module elements
 
+import math
+
 @[heap]
 pub struct ListItem {
 	DocBase
 pub mut:
-	depth      int
-	indent     int
-	order      int
-	is_ordered bool
+	depth int
+	// indent     int
+	order ?int
 }
 
 pub fn (mut self ListItem) process() !int {
@@ -30,6 +31,7 @@ fn (mut self ListItem) parse() ! {
 		depth++
 	}
 	self.depth = depth
+	// self.indent = int(math.ceil(f64(depth)/4.0))
 	content = content[depth..]
 
 	mut prefix := ''
@@ -38,27 +40,21 @@ fn (mut self ListItem) parse() ! {
 	} else if content.starts_with('* ') {
 		prefix = '* '
 	} else {
-		self.is_ordered = true
 		prefix = '.'
+		self.order = content.all_before('.').int()
 	}
-	
-	mut p := self.paragraph_new(mut self.parent_doc_, content.all_after_first(prefix).trim_string_right('\n'))
+
+	mut p := self.paragraph_new(mut self.parent_doc_,content.all_after_first(prefix))
 	p.process()!
+	// p.trailing_lf = false
+}
+
+fn (self ListItem) calculate_indentation() int {
+	return int(math.ceil(f64(self.depth) / 4.0))
 }
 
 pub fn (self ListItem) markdown()! string {
-	mut h := ''
-	for _ in 0 .. self.indent*4 {
-		h += ' '
-	}
-
-	mut prefix := '-'
-	if self.is_ordered {
-		prefix = '${self.order}.'
-	}
-
-	content := self.DocBase.markdown()!
-	return '${h}${prefix} ${content}'
+	return self.DocBase.markdown()!
 }
 
 pub fn (self ListItem) pug() !string {

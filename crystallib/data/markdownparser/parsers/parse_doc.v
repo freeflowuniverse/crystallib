@@ -24,7 +24,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		if mut llast is elements.List{
 			if elements.line_is_list(line){
-				llast.list_item_new(line)
+				llast.content += '\n${line}'
 				parser.next()
 				continue
 			}

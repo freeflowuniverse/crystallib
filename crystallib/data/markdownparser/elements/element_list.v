@@ -1,8 +1,5 @@
 module elements
 
-// has ListItems as children
-import math
-
 @[heap]
 pub struct List {
 	DocBase
@@ -22,7 +19,7 @@ pub fn (mut self List) process() !int {
 		return 0
 	}
 
-	self.parse()
+	self.parse()!
 	// pre := self.content.all_before('-')
 	// self.depth = pre.len
 	// self.content = self.content.all_after_first('- ')
@@ -31,41 +28,78 @@ pub fn (mut self List) process() !int {
 	return 1
 }
 
-fn (mut self List) parse() {
-	mut last_indent, mut last_order :=  0, 0
-	for i, mut el in self.children {
-		if mut el is ListItem {
-			// all list children are list items
-			el.indent = int(math.ceil(f64(el.depth)/4.0))
+fn (mut self List) parse() ! {
+	/*
+		iterate over lines:
+			each line is parsed as a list item
+			if list item conforms to last list settings:
+				append to last list
+			else create new list with list item settings and append to new list
 
-			if el.indent > last_indent {
-				el.order = 1
-			}
-
-			if el.indent < last_indent {
-				for j := i - 1; j >= 0; j-- {
-					prev_element := self.children[j]
-					if prev_element is ListItem && prev_element.indent == el.indent {
-						last_order = prev_element.order
-						break
-					}
-				}
-
-				el.order = last_order + 1
-			}
-
-			if el.indent == last_indent {
-				el.order = last_order + 1
-			}
-
-			last_indent = el.indent
-			last_order = el.order
-		}
+		how does a list item conform to list settings:
+			1- indentation: do they have the same indentation?
+			2- ordering: are they both ordered?
+	*/
+	lines := self.content.split('\n')
+	mut line_index := 0
+	for line_index < lines.len {
+		group, next_index := parse_list_group(line_index, lines)!
+		line_index = next_index
+		self.children << group
 	}
 }
 
-fn (mut self List) add_list_item(line string) {
-	self.list_item_new(mut self.parent_doc_, line)
+fn parse_list_group(line_index int, lines []string) !(ListGroup, int) {
+	mut group := ListGroup{
+		// trailing_lf: false
+	}
+	mut line := lines[line_index]
+
+	mut list_item := ListItem{
+		content: line
+		type_name: 'listitem'
+		// trailing_lf: false
+	}
+	list_item.process()!
+
+	group.indentation = list_item.calculate_indentation()
+	group.order_start = list_item.order
+	group.children << list_item
+
+	mut is_group_ordered := group.order_start != none
+
+	mut i := line_index + 1
+	for i < lines.len {
+		line = lines[i]
+		mut li := ListItem{
+			content: line
+			type_name: 'listitem'
+			// trailing_lf: false
+		}
+		li.process()!
+
+		is_li_ordered := li.order != none
+
+		if li.calculate_indentation() > group.indentation {
+			// create a child group
+			child_group, next_index := parse_list_group(i, lines)!
+			i = next_index
+			group.children << child_group
+			continue
+		}
+
+		if li.calculate_indentation() < group.indentation
+			|| (li.calculate_indentation() == group.indentation && is_group_ordered != is_li_ordered) {
+			// current group has ended
+			return group, i
+		}
+
+		// this list item belongs to the current group
+		group.children << li
+		i++
+	}
+
+	return group, lines.len
 }
 
 pub fn (self List) markdown()! string {
