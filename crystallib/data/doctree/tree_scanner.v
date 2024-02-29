@@ -44,7 +44,6 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 		return error('Path needs to be not empty.')
 	}
 	mut path := pathlib.get_dir(path: args.path)!
-
 	if path.is_dir() {
 		mut name := path.name()
 		if path.file_exists('.site') {
@@ -70,7 +69,7 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 				path: path.path
 				name: name
 				heal: args.heal
-				load: args.load
+				load: true
 			)!
 		}
 
@@ -91,7 +90,6 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 			}
 		}
 	}
-
 	// if args.heal {
 	// 	tree.heal()!
 	// }
