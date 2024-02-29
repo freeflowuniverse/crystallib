@@ -66,11 +66,13 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	}
 
 	locator := locator_new(mut addr.gsconfig, st.remote_url)!
+	addr = locator.addr
 	addr.branch = st.branch
 
 	// $if debug {
 	// 	console.print_header(' loaded repo ${path}     --------     addr: ${addr2}')
 	// }
+	println('addr: ${addr}')
 
 	jsondata := json.encode(st)
 	redis.set(addr.cache_key_status(), jsondata)!
