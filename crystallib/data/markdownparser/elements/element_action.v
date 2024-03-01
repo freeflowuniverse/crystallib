@@ -21,7 +21,7 @@ pub fn (mut self Action) process() !int {
 	}
 	self.action = p.actions[0]
 	self.processed = true
-	self.content = ""
+	// self.content = ""
 	return 1
 }
 

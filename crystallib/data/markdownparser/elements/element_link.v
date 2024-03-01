@@ -64,19 +64,24 @@ fn (self Link) markdown_include() string {
 
 	if self.site != '' {
 		link_filename = '${self.site}:${link_filename}'
-	}	
-	if  pd.collection_name!='' {
+	}else if pd.collection_name!='' {
 		link_filename = '${pd.collection_name}:${link_filename}'
-	}
-
+			}
+	
 	mut out := ''
-	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image {
-		if self.extra.trim_space() == '' {
-			out = '![${self.description}](${link_filename})'
-		} else {
-			out = '![${self.description}](${link_filename} ${self.extra})'
+
+	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image || self.cat == LinkType.code{
+		mut pre := ''
+		if self.cat == LinkType.file || self.cat == LinkType.image{
+			pre = '!'
 		}
-	}else if self.cat == LinkType.html {
+
+		if self.extra.trim_space() == '' {
+			out = '${pre}[${self.description}](${link_filename})'
+		} else {
+			out = '${pre}[${self.description}](${link_filename} ${self.extra})'
+		}
+	}else if self.cat == LinkType.html || self.cat == LinkType.anchor || self.cat == LinkType.data{
 		out = '[${self.description}](${self.url})'
 	}else{
 		panic("bug")
@@ -96,7 +101,7 @@ pub fn (self Link) markdown() !string {
 	mut out := ''
 	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image {
 		if self.filename.contains(':') {
-			return "should not have ':' in link for image, page or file.\n${self}"
+			return error("should not have ':' in link for image, page or file.\n${self}")
 		}
 		if self.path != '' {
 			link_filename = '${self.path}/${link_filename}'

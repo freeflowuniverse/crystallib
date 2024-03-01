@@ -26,6 +26,7 @@ pub fn (mut tree Tree) process_defs() ! {
 						page.alias = mydoc.header_name()!
 					}
 					action_element.action_processed = true
+					action_element.content = ''
 					for mut alias in my_action.params.get_list('alias')! {
 						if alias.to_lower().ends_with('.md') {
 							// remove the .md at end
