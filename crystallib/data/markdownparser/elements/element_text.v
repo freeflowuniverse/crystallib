@@ -3,22 +3,17 @@ module elements
 @[heap]
 pub struct Text {
 	DocBase
-pub mut:
-	replaceme string
+// pub mut:
+// 	replaceme string
 }
 
 pub fn (mut self Text) process() !int {
-	if self.processed {
-		return 0
-	}
 	self.processed = true
-	return 1
+	return 0
 }
 
 pub fn (self Text) markdown() !string {
-	mut out := self.content
-	out += self.DocBase.markdown()! // for children
-	return out
+	return self.content
 }
 
 pub fn (self Text) pug() !string {

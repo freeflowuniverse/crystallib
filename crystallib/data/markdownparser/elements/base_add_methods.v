@@ -71,10 +71,18 @@ pub fn (mut base DocBase) text_new(mut docparent ?&Doc, content string) &Text {
 		type_name: 'text'
 		parent_doc_: docparent
 	}
-	a.trailing_lf = false
+	// a.trailing_lf = false
 	base.children << a
 	return &a
 }
+
+pub fn (mut base DocBase) empty_new() &Empty {
+	mut a := Empty{}
+	// a.trailing_lf = false
+	base.children << a
+	return &a
+}
+
 
 pub fn (mut base DocBase) comment_new(mut docparent ?&Doc, content string) &Comment {
 	mut a := Comment{
@@ -102,10 +110,10 @@ pub fn (mut base DocBase) link_new(mut docparent ?&Doc, content string) &Link {
 	mut a := Link{
 		content: content
 		type_name: 'link'
-		trailing_lf: false
+		// trailing_lf: false
 		parent_doc_: docparent
 	}
-	a.trailing_lf = false
+	// a.trailing_lf = false
 	base.children << a
 	return &a
 }
@@ -125,7 +133,7 @@ pub fn (mut base DocBase) def_new(mut docparent ?&Doc, content string) &Def {
 	mut a := Def{
 		content: content
 		type_name: 'def'
-		trailing_lf: false
+		// trailing_lf: false
 		parent_doc_: docparent
 	}
 	base.children << a

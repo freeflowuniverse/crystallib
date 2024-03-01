@@ -8,8 +8,8 @@ interface Element {
 	markdown() !string
 	html() !string
 	pug() !string
-	actions(args ActionsGetArgs) []playbook.Action
-	treeview_(prefix string, mut out []string)
+	actions(ActionsGetArgs) []playbook.Action
+	treeview_(string, mut []string)
 	children_recursive() []Element
 	children_recursive_(mut []Element)
 mut:
@@ -19,12 +19,12 @@ mut:
 	// params    paramsparser.Params
 	type_name   string
 	changed     bool
-	trailing_lf bool
+	// trailing_lf bool
 	children    []Element
 	process() !int
 	content_set(int, string)
 	id_set(int) int
-	actionpointers(args ActionsGetArgs) []&Action
+	actionpointers(ActionsGetArgs) []&Action
 	defpointers() []&Def
 	header_name() !string
 }

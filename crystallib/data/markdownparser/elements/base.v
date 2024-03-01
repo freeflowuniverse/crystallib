@@ -19,20 +19,23 @@ pub mut:
 	type_name string
 	changed   bool
 	children  []Element
-	trailing_lf bool = true // do we need to do a line feed (enter) at end of this element, default yes
+	// trailing_lf bool = true // NO LONGER NEEDED !!!!
 }
 
 fn (mut self DocBase) process_base() ! {
 }
 
 fn (mut self DocBase) parent_doc() &Doc {
-	mut pd:=self.parent_doc_ or {panic("bug there should always be parent_doc")}
+	mut pd:=self.parent_doc_ or {
+		e:=doc_new() or {panic("bug")}
+		&e
+	}
 	return pd
 }
 
 
 fn (mut self DocBase) remove_empty_children() {
-	self.children = self.children.filter(!(it.content == '' && it.children.len == 0))
+	self.children = self.children.filter(!(it.content == '' && it.children.len == 0 && it.type_name in ['text','empty']))
 }
 
 pub fn (mut self DocBase) process() !int {
@@ -170,9 +173,10 @@ pub fn (self DocBase) markdown()! string {
 	mut out := ''
 	for mut element in self.children() {
 		out += element.markdown()!
-		if element.trailing_lf {
-			out += '\n'
-		}
+		// println("+++++++++++${element.markdown()!}+++++++++++")
+		// if element.trailing_lf {
+		// 	out += '\n'
+		// }
 	}
 	return out
 }

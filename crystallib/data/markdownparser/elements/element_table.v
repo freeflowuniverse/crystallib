@@ -29,7 +29,7 @@ pub fn (mut self Table) process() !int {
 	}
 
 	self.parse()!
-
+	self.content = ""
 	self.processed = true
 	return 1
 }
@@ -47,7 +47,7 @@ pub fn (self Table) markdown() !string {
 	for row in self.rows {
 		out += '| ${row.cells.join(' | ')} |\n'
 	}
-	return '${out}\n'
+	return '${out}'
 }
 
 pub fn (self Table) pug() !string {

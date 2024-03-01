@@ -2,24 +2,23 @@ module elements
 
 @[heap]
 pub struct Paragraph {
-	DocBase // pub mut:
-	// elements   []ParagraphElement
+	DocBase
 }
 
 fn (mut self Paragraph) process() !int {
 	if self.processed {
 		return 0
 	}
+	// println("#####PARAGRAPH:\n${self.content}|END\n\n")
 	self.paragraph_parse()!
 	self.process_base()!
 	self.process_children()!
 	self.processed = true
 	self.content = ''
-	if self.children.len > 0 {
-		mut l := self.children.last()
-		l.trailing_lf = true
-	}
-
+	// if self.children.len > 0 {
+	// 	mut l := self.children.last()
+	// 	l.trailing_lf = true
+	// }
 	return 1
 }
 

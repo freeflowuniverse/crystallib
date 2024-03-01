@@ -102,6 +102,14 @@ fn (mut parser Parser) next_start() ! {
 	parser.next()
 }
 
+fn (mut parser Parser) next_start_lf() ! {
+	if parser.doc.last()! !is elements.Paragraph {
+		parser.doc.paragraph_new(mut parser.doc,'\n')
+	}
+	parser.next()
+}
+
+
 fn (mut parser Parser) ensure_last_is_paragraph() ! {
 	if parser.doc.last()! !is elements.Paragraph {
 		parser.doc.paragraph_new(mut parser.doc,'')

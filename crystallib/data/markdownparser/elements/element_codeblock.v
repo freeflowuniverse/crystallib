@@ -41,11 +41,10 @@ pub fn (self Codeblock) markdown() !string {
 	}
 	if self.content.len > 0 {
 		out += self.content.trim_space()
-		out += '\n```\n'
+		out += '\n```'
 	} else {
-		out += '```\n'
+		out += '```'
 	}
-
 	return out
 }
 

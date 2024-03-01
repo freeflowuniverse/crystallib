@@ -10,7 +10,7 @@ fn test_action_empty_params() {
 !!farmerbot_powermanager.poweroff
 '
 	)!
-
+	println(docs.children)
 	assert docs.children.len == 1
 	action := docs.children[0]
 	if action is Action {
@@ -37,7 +37,8 @@ fn test_action_some_params_multiline() {
 	)!
 
 	assert docs.children.len == 1
-	action := docs.children[0]
+	action := docs.children[1]
+	assert action.children.len == 3
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'

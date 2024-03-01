@@ -39,6 +39,7 @@ pub enum LinkType {
 pub enum LinkState {
 	init //the original state (prob means already processed)
 	linkprocessed //means we have found the original information
+	ok
 	missing
 	error
 }
@@ -47,7 +48,7 @@ pub fn (mut self Link) process() !int {
 	if self.processed {
 		return 0
 	}
-	self.trailing_lf = false
+	// self.trailing_lf = false
 	self.parse()
 	self.processed = true
 	self.content = ""
@@ -56,7 +57,7 @@ pub fn (mut self Link) process() !int {
 
 fn (self Link) markdown_include() string {
 
-	println(" ----- LINK MARKDOWN INCLUDE ${self.url} ${self.cat}")
+	// println(" ----- LINK MARKDOWN INCLUDE ${self.url} ${self.cat}")
 
 	pd:=self.parent_doc_ or {panic("bug there should always be parent_doc")}
 
@@ -66,16 +67,19 @@ fn (self Link) markdown_include() string {
 		link_filename = '${self.site}:${link_filename}'
 	}else if pd.collection_name!='' {
 		link_filename = '${pd.collection_name}:${link_filename}'
-			}
-	
-	mut out := ''
+	}else{
+		//only add pathname if there is no site (collection) known
+		if self.path != '' {
+			link_filename = '${self.path}/${link_filename}'
+		}			
+	}
 
+	mut out := ''
 	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image || self.cat == LinkType.code{
 		mut pre := ''
-		if self.cat == LinkType.file || self.cat == LinkType.image{
+		if self.cat == LinkType.image{
 			pre = '!'
-		}
-
+		}	
 		if self.extra.trim_space() == '' {
 			out = '${pre}[${self.description}](${link_filename})'
 		} else {
@@ -106,10 +110,14 @@ pub fn (self Link) markdown() !string {
 		if self.path != '' {
 			link_filename = '${self.path}/${link_filename}'
 		}
+		mut pre:=""
+		if self.cat == LinkType.image{
+			pre="!"
+		}
 		if self.extra.trim_space() == '' {
-			out = '![${self.description}](${link_filename})'
+			out = '${pre}[${self.description}](${link_filename})'
 		} else {
-			out = '![${self.description}](${link_filename} ${self.extra})'
+			out = '${pre}[${self.description}](${link_filename} ${self.extra})'
 		}
 	}else if self.cat == LinkType.html {
 		out = '[${self.description}](${self.url})'
@@ -167,7 +175,7 @@ pub fn (mut link Link) name_fix_no_underscore_no_ext() string {
 fn (mut link Link) parse() {
 	link.content = link.content.trim_space()
 	if link.content.starts_with('!') {
-		link.cat = LinkType.image
+		link.cat = .image
 	}
 
 	link.description = link.content.all_after('[').all_before(']').trim_space()
@@ -274,30 +282,63 @@ fn (mut link Link) parse() {
 		ext := os.file_ext(link.filename).trim('.').to_lower()
 
 		if ext == '' {
+			if link.cat == .image{
+				link.error('any link starting with ! needs to be image now ${link.content}')
+				return				
+			}
 			link.cat = LinkType.page
 			link.filename += '.md'
 		} else if ext in ['jpg', 'png', 'svg', 'jpeg', 'gif'] {
+			if link.cat != .image{
+				link.error('any image needs to start with ! now ${link.content}')
+				return				
+			}			
 			link.cat = LinkType.image
 		} else if ext == 'md' {
+			if link.cat == .image{
+				link.error('any link starting with ! needs to be image now md, content is ${link.content}')
+				return				
+			}			
 			link.cat = LinkType.page
 		} else if ext in ['html', 'htm'] {
+			if link.cat == .image{
+				link.error('any link starting with ! needs to be image now html, content is ${link.content}')
+				return				
+			}			
 			link.cat = LinkType.html
 			return
 		} else if ext in ['v', 'py', 'js', 'c', 'sh'] {
+			if link.cat == .image{
+				link.error('any link starting with ! needs to be image now code, content is ${link.content}')
+				return				
+			}				
 			link.cat = LinkType.code
 			return
 		} else if ext in ['doc', 'docx', 'zip', 'xls', 'pdf', 'xlsx', 'ppt', 'pptx'] {
+			if link.cat == .image{
+				link.error('any link starting with ! needs to be image now doc, content is ${link.content}')
+				return				
+			}					
 			link.cat = LinkType.file
 			return
 		} else if ext in ['json', 'yaml', 'yml', 'toml'] {
+			if link.cat == .image{
+				link.error('any link starting with ! needs to be image now data, content is ${link.content}')
+				return				
+			}					
 			link.cat = LinkType.data
 			return
 		} else if link.url.starts_with('mailto:') {
+			if link.cat == .image{
+				link.error('any link starting with ! needs to be image now mailto, content is ${link.content}')
+				return				
+			}				
 			link.cat = LinkType.email
 			return
 		} else if !link.url.contains_any('./!&;') {
 			// link.cat = LinkType.page
-			panic('need to figure out what to do with ${link.url} ')
+			link.error('need to figure out what to do with ${link.url}, its wrong format ')
+			return
 		} else {
 			link.error("${link.url} (no match), ext was:'${ext}'")
 			return

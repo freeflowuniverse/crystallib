@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
 // adds the found links, text, comments to the paragraph
 fn (mut paragraph Paragraph) paragraph_parse() ! {
-	mut parser := parser_char_new_text(paragraph.content.trim_space())
+	mut parser := parser_char_new_text(paragraph.content)
 
 	// mut d := para.doc or { panic('no doc') }
 	paragraph.text_new(mut paragraph.parent_doc(),'') // the initial one
@@ -14,21 +14,34 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 	mut potential_link := false
 
 	for {
-		if parser.eof() {
-			break
-		}
 
 		mut llast := paragraph.children.last()
 		mut char_ := parser.char_current()
 
+		// println("[[[${char_}]]]")
+
+		//char == '' means end of file
 		if mut llast is Def {
-			if (char_ == ' ' || char_ == '\n') && parser.char_prev() != '*' {
-				// means we did find a def, we can stop
-				// println(" -- end def")
-				paragraph.text_new(mut paragraph.parent_doc(),char_)
-				parser.next()
-				char_ = ''
-				continue
+			if (char_ == '' || char_ == ' ' || char_ == '\n') && parser.char_prev() != '*' {
+				if llast.content.len<3 {
+					paragraph.children.pop()
+					mut llast2 := paragraph.children.last()
+					if mut llast2 is Text {
+						llast2.content += llast.content + char_
+					} else {
+						paragraph.text_new(mut paragraph.parent_doc(),llast.content + char_)
+					}
+					parser.next()
+					char_ = ''
+					continue					
+				}else{
+					// means we did find a def, we can stop
+					// println(" -- end def")
+					paragraph.text_new(mut paragraph.parent_doc(),char_)
+					parser.next()
+					char_ = ''
+					continue
+				}
 			} else if !(texttools.is_upper_text(char_) || char_ == '_') {
 				// this means it wasn't a def, we need to add text
 				// println(' -- no def: ${char_}')
@@ -46,6 +59,11 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 			}
 			// println(" -- def: ${char_}")
 		}
+
+		if parser.eof() {
+			assert char_ == ""
+			break
+		}	
 
 		// check for comments end
 		if mut llast is Comment {
@@ -99,6 +117,9 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				continue
 			}
 		}
+
+
+
 		if mut llast is Text {
 			if char_ != '' {
 				if char_ == '*' {
@@ -140,4 +161,5 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 		parser.next()
 	}
 	paragraph.remove_empty_children()
+	// println("[[[[[DONE]]]]]")
 }

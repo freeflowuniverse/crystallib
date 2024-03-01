@@ -48,7 +48,7 @@ fn test_charparser2() {
 	assert p.text_next_is('c', 2) == true
 }
 
-fn test_charparser3() {
+fn test_charparser3_error() {
 	mut txt := '!['
 	mut p2 := Paragraph{
 		content: txt
@@ -66,13 +66,14 @@ fn test_charparser3() {
 		assert ln.id == 0
 		assert ln.processed == true
 		assert ln.type_name == 'link'
-		assert ln.cat == .page
-		assert ln.filename == '![.md'
+		assert ln.cat == .image
+		assert ln.state == .error
+		assert ln.error_msg.contains("any link starting with ! needs to be image")		
 	}
 }
 
 fn test_charparser_link() {
-	mut txt := '![a](b)'
+	mut txt := '![a](b.png)'
 	mut p2 := Paragraph{
 		content: txt
 	}
@@ -84,45 +85,77 @@ fn test_charparser_link() {
 	assert p2.children.len == 1
 
 	ln := p2.children[0]
+	println(ln)
 	assert ln is Link
 	if ln is Link {
 		assert ln.id == 0
 		assert ln.type_name == 'link'
-		assert ln.content == '![a](b)'
-		assert ln.cat == .page
+		assert ln.markdown()! == '![a](b.png)'
+		assert ln.content == ''
+		assert ln.cat == .image
 		assert ln.description == 'a'
-		assert ln.url == 'b'
-		assert ln.filename == 'b.md'
-		assert ln.state == .ok
+		assert ln.url == 'b.png'
+		assert ln.filename == 'b.png'
+		assert ln.state == .init
 	}
 }
 
-fn test_charparser_link_ignore_trailing_spaces() {
-	mut txt := '![a](b) '
+
+fn test_charparser_link_error() {
+	mut txt := '![a](b)'
 	mut p2 := Paragraph{
 		content: txt
 	}
-	mut doc := Doc{}
-	p2.paragraph_parse()!
-	p2.process_base()!
-	p2.process_children()!
-
+	p2.process()!
 	assert p2.children.len == 1
-	assert p2.children.last().content == '![a](b)'
+
+	ln := p2.children[0]
+	assert ln.children.len == 0
+
+	println(ln)
+	assert ln is Link
+	if ln is Link {
+		assert ln.id == 0
+		assert ln.type_name == 'link'
+		assert ln.content == ''
+		assert ln.cat == .image
+		assert ln.description == 'a'
+		assert ln.url == 'b'
+		assert ln.filename == 'b'
+		assert ln.state == .error
+		assert ln.error_msg.contains("any link starting with ! needs to be image")
+	}
+}
+
+
+fn test_charparser_link_trailing_spaces() {
+	mut txt := '[a](b) '
+	mut p2 := Paragraph{
+		content: txt
+	}
+	p2.process()!
+	println(p2)
+
+	assert p2.children.len == 2
+	assert p2.children[0].markdown()! == '[a](b.md)'
+	assert p2.children.last().markdown()! == ' '
+	assert p2.children.last().type_name == 'text'
 }
 
 fn test_charparser_link_ignore_trailing_newlines() {
-	mut txt := '![a](b)\n \n'
+	mut txt := '[a](b)\n \n'
 	mut p2 := Paragraph{
 		content: txt
 	}
-	mut doc := Doc{}
-	p2.paragraph_parse()!
-	p2.process_base()!
-	p2.process_children()!
+	p2.process()!
+	println(p2)
 
-	assert p2.children.len == 1
-	assert p2.children.last().content == '![a](b)'
+	assert p2.children.len == 2
+
+	assert p2.children.len == 2
+	assert p2.children[0].markdown()! == '[a](b.md)'
+	assert p2.children.last().markdown()! == '\n \n'
+	assert p2.children.last().type_name == 'text'	
 }
 
 fn test_charparser_link_comment_text() {
@@ -134,28 +167,27 @@ sometext
 		content: txt
 	}
 
-	p2.paragraph_parse()!
-	p2.process_base()!
-	p2.process_children()!
+	p2.process()!
+	println(p2)
 
-	assert p2.children.len == 3
+	assert p2.children.len == 5
 
-	assert p2.children[0] is Link
-	item_1 := p2.children[0]
+	assert p2.children[1] is Link
+	item_1 := p2.children[1]
 	if item_1 is Link {
 		assert item_1.cat == .image
 		assert item_1.filename == 'b.jpg'
 		assert item_1.description == 'a'
 	}
 
-	assert p2.children[1] is Comment
-	item_2 := p2.children[1]
+	assert p2.children[3] is Comment
+	item_2 := p2.children[3]
 	if item_2 is Comment {
 		assert item_2.content == 'comment'
 	}
 
-	assert p2.children[2] is Text
-	assert p2.children[2].content == 'sometext'
+	assert p2.children[4] is Text
+	assert p2.children[4].content == '\nsometext\n'
 }
 
 fn test_charparser_link_multilinecomment_text() {
@@ -165,12 +197,11 @@ sometext'
 	mut p2 := Paragraph{
 		content: txt
 	}
-	mut doc := Doc{}
-	p2.paragraph_parse()!
-	p2.process_base()!
-	p2.process_children()!
 
-	assert p2.children.len == 4
+	p2.process()!
+	println(p2)
+
+	assert p2.children.len == 5
 
 	assert p2.children[0] is Link
 	item_1 := p2.children[0]
@@ -178,6 +209,7 @@ sometext'
 		assert item_1.cat == .image
 		assert item_1.filename == 'b.jpg'
 		assert item_1.description == 'a'
+		assert item_1.markdown()! == '![a](b.jpg)'
 	}
 
 	assert p2.children[1] is Comment
@@ -187,15 +219,15 @@ sometext'
 		assert item_2.singleline == false
 	}
 
-	assert p2.children[2] is Comment
-	item_4 := p2.children[2]
+	assert p2.children[3] is Comment
+	item_4 := p2.children[3]
 	if item_4 is Comment {
 		assert item_4.content == 'comment2'
 		assert item_4.singleline == false
 	}
 
-	assert p2.children[3] is Text
-	assert p2.children[3].content == 'sometext'
+	assert p2.children[4] is Text
+	assert p2.children[4].content == '\nsometext'
 
 	assert txt == p2.markdown()!
 }

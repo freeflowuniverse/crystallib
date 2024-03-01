@@ -20,7 +20,7 @@ pub fn (self Header) markdown() !string {
 	for _ in 0 .. self.depth {
 		h += '#'
 	}
-	return '${h} ${self.content}\n'
+	return '${h} ${self.content}'
 }
 
 

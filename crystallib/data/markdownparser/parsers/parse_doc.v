@@ -1,6 +1,7 @@
 module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
+import freeflowuniverse.crystallib.ui.console
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
@@ -19,7 +20,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		mut llast := parser.lastitem()!
 
-		// console.print_header('- line: ${llast.type_name} ${line}')
+		// console.print_header('- line: ${llast.type_name} \'${line}\'')
 
 		if mut llast is elements.Table {
 			if trimmed_line != '' {
@@ -27,7 +28,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				parser.next()
 				continue
 			}
-			parser.next_start()!
+			parser.next_start_lf()!
 			continue
 		}
 
@@ -45,7 +46,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		if mut llast is elements.Html {
 			if line.trim_space().to_lower().starts_with('</html>') {
-				parser.next_start()!
+				parser.next_start_lf()!
 				continue
 			}
 			llast.content += '${line}\n'
@@ -55,7 +56,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		if mut llast is elements.Codeblock {
 			if trimmed_line == '```' || trimmed_line == "'''" {
-				parser.next_start()!
+				parser.next_start_lf()!
 				continue
 			}
 			llast.content += '${line}\n'
@@ -114,12 +115,12 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				if d < line.len && line[d] == 32 {
 					if d >= 6 {
 						parser.error_add('header should be max 5 deep')
-						parser.next_start()!
+						parser.next_start_lf()!
 						continue
 					}
 					mut e := doc.header_new(mut &doc,line.all_after_first(line[..d]).trim_space())
 					e.depth = d
-					parser.next_start()!
+					parser.next_start_lf()!
 					continue
 				}
 				parser.next()
@@ -146,20 +147,22 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				mut comment := trimmed_line.all_after_first('<!--')
 				comment = comment.all_before('-->')
 				doc.comment_new(mut &doc,comment)
-				parser.next_start()!
+				parser.next_start_lf()!
 				continue
 			}
+
+			llast.content += line
+
 		}
 
 		match mut llast {
 			elements.List {}
 			elements.Paragraph {
-				if parser.endlf == false && parser.next_is_eof() {
-					llast.content += line
-				} else {
-					llast.content += line + '\n'
-				}
-			}
+				if !parser.next_is_eof() {
+					// println("LFLFLFLFLF")
+					llast.content +=  '\n'
+				}								
+			}			
 			else {
 				println(llast)
 				panic('parser error, means we got element which is not supported')
@@ -168,5 +171,23 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		parser.next()
 	}
+	mut llast2 := parser.lastitem()!
+	// println("parser lf end:${parser.endlf}")
+	if parser.endlf {
+		llast2.content +=  '\n'
+	}	
+	// match mut llast2 {
+	// 	elements.List {}
+	// 	elements.Paragraph {
+	// 		if parser.endlf {
+	// 			llast2.content +=  '\n'
+	// 		}
+	// 	}
+	// 	else {
+	// 		println(llast2)
+	// 		panic('parser error for last of last, means we got element which is not supported')
+	// 	}
+	// }
+
 	doc.process()!
 }

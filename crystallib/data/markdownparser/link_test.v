@@ -14,7 +14,7 @@ fn test_link1() {
 		assert link.id == 3
 		assert link.processed == true
 		assert link.type_name == 'link'
-		assert link.content == '[Architecture](architecture/architecture.md)'
+		assert link.markdown()! == '[Architecture](architecture/architecture.md)'
 		assert link.cat == .page
 		assert link.isexternal == false
 		assert link.include == false
@@ -26,7 +26,7 @@ fn test_link1() {
 		assert link.path == 'architecture'
 		assert link.site == ''
 		assert link.extra == ''
-		assert link.state == .ok
+		assert link.state == .init
 		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
@@ -34,7 +34,7 @@ fn test_link1() {
 }
 
 fn test_link2() {
-	mut docs := new(content: '[Architecture](@*!architecture/architecture.md)')!
+	mut docs := new(content: '[Architecture](@*!architecture/architecture)')!
 
 	assert docs.children.len == 1
 	assert docs.children[0] is elements.Paragraph
@@ -46,18 +46,17 @@ fn test_link2() {
 		assert link.id == 3
 		assert link.processed == true
 		assert link.type_name == 'link'
-		assert link.content == '[Architecture](@*!architecture/architecture.md)'
+		assert link.markdown()! == '[Architecture](@*!architecture/architecture.md)'
 		assert link.cat == .page
 		assert link.isexternal == false
 		// assert link.newtab == true
 		// assert link.moresites == true
 		assert link.description == 'Architecture'
-		assert link.url == '@*!architecture/architecture.md'
+		assert link.url == '@*!architecture/architecture'
 		assert link.filename == 'architecture.md'
 		assert link.path == '@*!architecture'
 		assert link.site == ''
 		assert link.extra == ''
-		assert link.state == .ok
 		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
@@ -66,18 +65,19 @@ fn test_link2() {
 }
 
 fn test_link3() {
-	mut docs := new(content: "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')")!
+	mut docs := new(content: "![AArchitecture](./img/license_threefoldfzc.png ':size=800x900')")!
 
 	assert docs.children.len == 1
 	assert docs.children[0] is elements.Paragraph
 	paragraph := docs.children[0]
 	assert paragraph.children.len == 1
 	link := paragraph.children[0]
+	println(link)
 	if link is elements.Link {
 		assert link.id == 3
 		assert link.processed == true
 		assert link.type_name == 'link'
-		assert link.content == "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')"
+		assert link.markdown()! == "![AArchitecture](img/license_threefoldfzc.png ':size=800x900')"
 		assert link.cat == .image
 		assert link.isexternal == false
 		assert link.include == false
@@ -89,12 +89,11 @@ fn test_link3() {
 		assert link.path == 'img'
 		assert link.site == ''
 		assert link.extra == "':size=800x900'"
-		assert link.state == .ok
 		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
-	assert "[AArchitecture](./img/license_threefoldfzc.png ':size=800x900')" == link.markdown()!
+	assert "![AArchitecture](img/license_threefoldfzc.png ':size=800x900')" == link.markdown()!
 }
 
 fn test_link4() {
@@ -111,7 +110,7 @@ fn test_link4() {
 		assert link.id == 3
 		assert link.processed == true
 		assert link.type_name == 'link'
-		assert link.content == '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
+		assert link.markdown()! == '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
 		assert link.cat == .html
 		assert link.isexternal == true
 		assert link.include == false
@@ -123,7 +122,6 @@ fn test_link4() {
 		assert link.path == ''
 		assert link.site == ''
 		assert link.extra == ''
-		assert link.state == .ok
 		assert link.error_msg == ''
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
@@ -131,4 +129,4 @@ fn test_link4() {
 	assert '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)' == link.markdown()!
 }
 
-// // TODO add more tests
+// TODO add more tests
