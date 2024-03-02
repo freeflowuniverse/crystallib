@@ -21,6 +21,6 @@ mut p2 := tree.page_get('riverlov:aboutus.md')!
 mut mydoc2 := p2.doc()!
 // // println(mydoc2.defpointers())	
 // println(mydoc2)
-println(mydoc2.markdown())
+println(mydoc2.markdown()!)
 
 // tree.export(dest: '/tmp/remove')!

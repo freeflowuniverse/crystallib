@@ -7,10 +7,11 @@
 ### Content:
 
 - [Introduction](introduction.md)
-- [About us](aboutus.md)
   - [Our Goals & Strategy](mission.md)
+- [external](server:server)
 
 !!wiki.def alias:'intro'
+
 !!wiki.include page:'inner.md'
 
 ## defs
@@ -18,7 +19,8 @@
 *TF_DEV
 *TFDEV
 
-- \*TF_DEV
-- \*TFDEV
+- *TF_DEV
+- *TFDEV
 
-> \*INTRO
+> *INTRO
+

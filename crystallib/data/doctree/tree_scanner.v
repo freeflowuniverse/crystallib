@@ -9,7 +9,7 @@ import os
 pub struct TreeScannerArgs {
 pub mut:
 	path      string
-	heal      bool = true // healing means we fix images, if selected will automatically load, remove stale links
+	heal      bool = true // healing means we fix images
 	git_url   string
 	git_reset bool
 	git_root  string

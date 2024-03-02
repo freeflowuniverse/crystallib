@@ -43,8 +43,10 @@ pub fn play_mdbook(mut session play.Session) ! {
 
 	for mut action in session.plbook.find(filter: 'doctree:add')! {
 		mut p := action.params
-		url := p.get('url')!
+		url := p.get_default('url','')!
+		path := p.get_default('path','')!
 		tree.scan(
+			path:path
 			git_url: url
 			git_reset: reset
 			git_root: coderoot

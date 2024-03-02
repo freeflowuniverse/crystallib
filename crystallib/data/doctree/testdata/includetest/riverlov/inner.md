@@ -1,2 +1,3 @@
-this is an innter page
+this is an inner page
+
 !!wiki.include page:'inner2.md'
