@@ -1,5 +1,6 @@
 module markdownparser
 
+import freeflowuniverse.crystallib.data.markdownparser.elements
 
 const text = '
 # Farmerbot
@@ -25,6 +26,7 @@ Welcome to the farmerbot.
    - 1,2,3 and 4 whitespaces have the same indentation, so this line should have the same indentation as the previous line
     - this has the same indentation as the previous one 
      - this is at an indentation level deeper than the previous one
+7. should be ordered
 this text is not part of the list
   2. first ordered list item
   3. second...hamada. orderd list items
@@ -34,10 +36,81 @@ hamada'
 
 fn test_wiki_headers_paragraphs() {
 	mut docs := new(content: markdownparser.text)!
-	println(docs.treeview())
-	println(docs.markdown()!)
+	
+	assert docs.children.len == 9
+	assert docs.children[0] is elements.Paragraph
+	assert docs.children[1] is elements.Header
+	assert docs.children[2] is elements.Paragraph
+	assert docs.children[3] is elements.Header
+	assert docs.children[4] is elements.Paragraph
+	assert docs.children[5] is elements.List
+	assert docs.children[6] is elements.Paragraph
+	assert docs.children[7] is elements.List
+	assert docs.children[8] is elements.Paragraph
+}
 
-	// if true{
-	// 	panic("s")
-	// }
+fn test_deterministic_output(){
+  mut doc1 := new(content: text)!
+  md1 := doc1.markdown()!
+
+  mut doc2 := new(content: md1)!
+  md2 := doc2.markdown()!
+
+  assert md1 == md2
+}
+
+fn test_simple_list(){
+  content := '
+- li1
+- li2'
+  mut doc1 := new(content: content)!
+
+  assert doc1.children.len == 2
+  
+  assert doc1.children[0] is elements.Paragraph
+  assert doc1.children[1] is elements.List
+
+  list := doc1.children[1]
+  assert list.children.len == 1
+
+  nested_list := list.children[0]
+  assert nested_list.children.len == 2
+
+  list_item1 := nested_list.children[0]
+  assert list_item1 is elements.ListItem
+  assert list_item1.content == '- li1'
+
+  list_item2 := nested_list.children[1]
+  assert list_item2 is elements.ListItem
+  assert list_item2.content == '- li2'
+}
+
+fn test_nested_list(){
+  content := '
+- li1
+  1. li2
+  2. li3'
+
+  mut doc := new(content: content)!
+
+  assert doc.children.len == 2
+  assert doc.children[0] is elements.Paragraph
+  assert doc.children[1] is elements.List
+
+  list := doc.children[1]
+  assert list.children.len == 1
+  assert list.children[0] is elements.List
+
+  nl := list.children[0]
+  assert nl.children.len == 2
+  assert nl.children[0] is elements.ListItem
+  assert nl.children[0].content == '- li1'
+  assert nl.children[1] is elements.List
+
+  nl2 := nl.children[1]
+  assert nl2.children.len == 2
+  assert nl2.children[0] is elements.ListItem
+  assert nl2.children[0].content == '  1. li2'
+  assert nl2.children[1] is elements.ListItem
+  assert nl2.children[1].content == '  2. li3'
 }
