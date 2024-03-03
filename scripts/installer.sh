@@ -662,4 +662,4 @@ sshknownkeysadd
 freeflow_dev_env_install
 
 
- V & CRYSTAL INSTALL OK
+echo "V & CRYSTAL INSTALL OK"
