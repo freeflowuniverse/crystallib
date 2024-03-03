@@ -77,7 +77,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		if mut llast is elements.Paragraph {
 			if elements.line_is_list(line){
-				doc.list_new(line)
+				doc.list_new(mut doc, line)
 				parser.next()
 				continue
 			}

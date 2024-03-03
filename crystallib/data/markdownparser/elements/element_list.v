@@ -6,6 +6,9 @@ pub struct List {
 pub mut:
 	cat            ListCat
 	interlinespace int // nr of lines in between
+
+	indentation int
+	order_start ?int // the first list item order, if any
 }
 
 pub enum ListCat {
@@ -20,10 +23,7 @@ pub fn (mut self List) process() !int {
 	}
 
 	self.parse()!
-	// pre := self.content.all_before('-')
-	// self.depth = pre.len
-	// self.content = self.content.all_after_first('- ')
-
+	self.content = ''
 	self.processed = true
 	return 1
 }
@@ -43,30 +43,30 @@ fn (mut self List) parse() ! {
 	lines := self.content.split('\n')
 	mut line_index := 0
 	for line_index < lines.len {
-		group, next_index := parse_list_group(line_index, lines)!
+		list, next_index := parse_list_level(self.parent_doc_, line_index, lines)!
 		line_index = next_index
-		self.children << group
+		self.children << list
 	}
 }
 
-fn parse_list_group(line_index int, lines []string) !(ListGroup, int) {
-	mut group := ListGroup{
-		// trailing_lf: false
+fn parse_list_level(docparent ?&Doc, line_index int, lines []string) !(List, int) {
+	mut list := List{
+		type_name: 'list'
+		parent_doc_: docparent
 	}
 	mut line := lines[line_index]
 
 	mut list_item := ListItem{
 		content: line
 		type_name: 'listitem'
-		// trailing_lf: false
 	}
 	list_item.process()!
 
-	group.indentation = list_item.calculate_indentation()
-	group.order_start = list_item.order
-	group.children << list_item
+	list.indentation = list_item.calculate_indentation()
+	list.order_start = list_item.order
+	list.children << list_item
 
-	mut is_group_ordered := group.order_start != none
+	mut is_group_ordered := list.order_start != none
 
 	mut i := line_index + 1
 	for i < lines.len {
@@ -74,36 +74,70 @@ fn parse_list_group(line_index int, lines []string) !(ListGroup, int) {
 		mut li := ListItem{
 			content: line
 			type_name: 'listitem'
-			// trailing_lf: false
+			parent_doc_: docparent
 		}
 		li.process()!
 
 		is_li_ordered := li.order != none
 
-		if li.calculate_indentation() > group.indentation {
+		if li.calculate_indentation() > list.indentation {
 			// create a child group
-			child_group, next_index := parse_list_group(i, lines)!
+			child_group, next_index := parse_list_level(docparent, i, lines)!
 			i = next_index
-			group.children << child_group
+			list.children << child_group
 			continue
 		}
 
-		if li.calculate_indentation() < group.indentation
-			|| (li.calculate_indentation() == group.indentation && is_group_ordered != is_li_ordered) {
+		if li.calculate_indentation() < list.indentation
+			|| (li.calculate_indentation() == list.indentation && is_group_ordered != is_li_ordered) {
 			// current group has ended
-			return group, i
+			return list, i
 		}
 
 		// this list item belongs to the current group
-		group.children << li
+		list.children << li
 		i++
 	}
 
-	return group, lines.len
+	return list, lines.len
 }
 
 pub fn (self List) markdown()! string {
-	return self.DocBase.markdown()!
+	mut h := ''
+	for _ in 0 .. self.indentation*4 {
+		h += ' '
+	}
+
+	if order_start := self.order_start{
+		return self.ordered_list_markdown(h, order_start)!
+	}
+
+	mut out := ''
+	for child in self.children{
+		if child is ListItem{
+			out += '${h}- ${child.markdown()!}\n'
+			continue
+		}
+
+		out += child.markdown()!
+	}
+	
+	return out
+}
+
+fn (self List) ordered_list_markdown(indentation string, order_start int)! string{
+	mut out , mut order := '', order_start
+	for child in self.children{
+		if child is ListItem{
+			out += '${indentation}${order}. ${child.markdown()!}\n'
+			order++
+			continue
+		}
+
+		out += child.markdown()!
+	}
+	
+	return out
 }
 
 pub fn (self List) pug() !string {

@@ -31,7 +31,6 @@ fn (mut self ListItem) parse() ! {
 		depth++
 	}
 	self.depth = depth
-	// self.indent = int(math.ceil(f64(depth)/4.0))
 	content = content[depth..]
 
 	mut prefix := ''
@@ -44,9 +43,8 @@ fn (mut self ListItem) parse() ! {
 		self.order = content.all_before('.').int()
 	}
 
-	mut p := self.paragraph_new(mut self.parent_doc_,content.all_after_first(prefix))
+	mut p := self.paragraph_new(mut self.parent_doc_,content.all_after_first(prefix).trim_space())
 	p.process()!
-	// p.trailing_lf = false
 }
 
 fn (self ListItem) calculate_indentation() int {
