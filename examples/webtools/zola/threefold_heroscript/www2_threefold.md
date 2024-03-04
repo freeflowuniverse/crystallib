@@ -21,10 +21,42 @@ add collections to the website
 Next, we add a header and a footer for our website
 
 ```js
-!!website.header_add 
-    collection: 'content'
-    file: 'header.md'
+!!website.header_add
 
+!!website.header_link_add
+    label: 'About'
+    page: 'about'
+
+!!website.header_link_add
+    label: 'How it works'
+    page: 'how'
+
+!!website.header_link_add
+    label: 'Farm'
+    page: 'farm'
+
+!!website.header_link_add
+    label: 'Deploy'
+    page: 'deploy'
+
+!!website.header_link_add
+    label: 'Newsroom'
+    page: 'newsroom'
+
+!!website.header_link_add
+    label: 'Blog'
+    page: 'blog'
+
+!!website.header_link_add
+    label: 'Community'
+    page: 'community'
+
+!!website.header_link_add
+    label: 'People'
+    page: 'people'
+```
+
+```js
 !!website.footer_add 
     collection: 'content'
     file: 'footer.md'

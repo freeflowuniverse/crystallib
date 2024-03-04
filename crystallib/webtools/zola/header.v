@@ -32,7 +32,10 @@ pub struct Link {
 
 pub fn (mut site ZolaSite) header_link_add(args Link) ! {
 	println('debugzort')
-	site.header!.items << args
+	mut header := site.header or {return error('header needs to be defined')}
+	header.items << args
+	site.header = header
+	println('site.header: ${site.header}')
 }
 
 pub struct Dropdown {
@@ -53,10 +56,12 @@ pub fn (mut header Header) export(content_dir string) ! {
 !!flowrift.header
 "
 	for item in header.items {
-		content += "!!flowrift.header_item	
-type:'link'
-label:Test
-url: 'test.md'"
+		if item is Link {
+			content += "\n\n!!flowrift.header_item	
+	type:'link'
+	label:${item.label}
+	url: '${item.page}'"
+		}
 	}
 
 	mut header_file := pathlib.get_file(path: '${content_dir}/header.md')!
