@@ -22,6 +22,17 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		// console.print_header('- line: ${llast.type_name} \'${line}\'')
 
+		if mut llast is elements.List{
+			if elements.line_is_list(line){
+				llast.content += '\n${line}'
+				parser.next()
+				continue
+			}
+
+			parser.ensure_last_is_paragraph()!
+			continue
+		}
+
 		if mut llast is elements.Table {
 			if trimmed_line != '' {
 				llast.content += '${line}\n'
@@ -64,33 +75,13 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			continue
 		}
 
-		// if mut llast is elements.List {
+		if mut llast is elements.Paragraph {
+			if elements.line_is_list(line){
+				doc.list_new(mut doc, line)
+				parser.next()
+				continue
+			}
 
-		// 	continue
-		// }
-
-		if mut llast is elements.Paragraph || mut llast is elements.List {
-			// if line_is_list(line) {
-			// 	mut e := doc.list_new(line)
-			// 	e.parent = &doc
-			// 	if mut llast is elements.List {
-			// 		llast.trailing_lf = false
-			// 		if e.depth > llast.depth {
-			// 			e.indent = llast.indent + 1
-			// 		} else if e.depth < llast.depth && e.depth != 0 {
-			// 			e.indent = llast.indent - 1
-			// 		} else {
-			// 			e.indent = llast.indent
-			// 		}
-			// 	}
-			// 	parser.next()
-			// 	continue
-			// }
-
-			// if mut llast is elements.List {
-			// 	parser.ensure_last_is_paragraph()!
-			// 	continue
-			// }
 			// parse action
 			if line.starts_with('!!') {
 				doc.action_new(mut &doc,'${line}\n')
@@ -156,7 +147,6 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		match mut llast {
-			elements.List {}
 			elements.Paragraph {
 				if !parser.next_is_eof() {
 					// println("LFLFLFLFLF")

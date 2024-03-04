@@ -49,7 +49,9 @@ pub fn (mut base DocBase) list_new(mut docparent ?&Doc, content string) &List {
 		type_name: 'list'
 		parent_doc_: docparent
 	}
-	a.process() or { panic(err) }
+
+	// a.list_item_new(docparent, content)
+
 	base.children << a
 	return &a
 }
