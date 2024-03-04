@@ -1,6 +1,6 @@
 module elements
 
-// import freeflowuniverse.crystallib.core.smartid
+import freeflowuniverse.crystallib.core.texttools
 
 @[heap]
 pub struct Doc {
@@ -74,3 +74,7 @@ pub fn (mut self Doc) process() !int {
 // pub fn (self Doc) html() string {
 // 	return ""
 // }
+
+pub fn (self Doc) pug()! string{
+	return ":markdown-it(linkify langPrefix='highlight-')\n${texttools.indent(self.markdown()!, '  ')}"
+}
