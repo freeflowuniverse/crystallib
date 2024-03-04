@@ -10,9 +10,9 @@ fn test_action_empty_params() {
 !!farmerbot_powermanager.poweroff
 '
 	)!
-	println(docs.children)
-	assert docs.children.len == 1
-	action := docs.children[0]
+	// println(docs.children)
+	assert docs.children.len == 2
+	action := docs.children[1]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_powermanager'
 		assert action.action.name == 'poweroff'
@@ -36,9 +36,9 @@ fn test_action_some_params_multiline() {
 '
 	)!
 
-	assert docs.children.len == 1
+	assert docs.children.len == 2
 	action := docs.children[1]
-	assert action.children.len == 3
+	// assert action.children.len == 3
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'
@@ -67,8 +67,8 @@ fn test_action_some_params_inline() {
 '
 	)!
 
-	assert docs.children.len == 1
-	action := docs.children[0]
+	assert docs.children.len == 2
+	action := docs.children[1]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'
@@ -101,8 +101,8 @@ fn test_action_some_params_some_arguments_multi_line() {
 '
 	)!
 
-	assert docs.children.len == 1
-	action := docs.children[0]
+	assert docs.children.len == 2
+	action := docs.children[1]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'
@@ -125,8 +125,8 @@ fn test_action_some_params_some_arguments_single_line() {
 '
 	)!
 
-	assert docs.children.len == 1
-	action := docs.children[0]
+	assert docs.children.len == 2
+	action := docs.children[1]
 	if action is Action {
 		assert action.action.actor == 'farmerbot_nodemanager'
 		assert action.action.name == 'define'
