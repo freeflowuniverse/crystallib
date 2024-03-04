@@ -172,8 +172,7 @@ fn test_def8() {
 	assert paragraph.children.len == 1
 
 	assert paragraph.children[0] is elements.Text
-	println("TEXT:'${paragraph.children[0].content}'")
-	assert paragraph.children[0].content == '**TEST_DEF* '
+	println("TEXT:'${paragraph.children[0].markdown()!}'")
 	assert paragraph.children[0].markdown()! == '**TEST_DEF* '
 }
 
