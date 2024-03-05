@@ -26,5 +26,5 @@ pub fn portforward_to_local(args_ ForwardArgsToLocal) ! {
 	}
 	println(cmd)
 	mut scr := screen.new(reset: false)!
-	mut s2 := scr.add(name: args.name, cmd: cmd)!
+	_ = scr.add(name: args.name, cmd: cmd)!
 }

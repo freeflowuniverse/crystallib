@@ -57,7 +57,7 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 fn cmd_bootstrap_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
-	mut hero := cmd.flags.get_bool('hero') or { false }
+	// mut hero := cmd.flags.get_bool('hero') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
 	if address == '' {
 		address = 'localhost'

@@ -61,7 +61,7 @@ pub fn (mut tree Tree) process_defs() ! {
 				console.print_green('defpointer:${defitem}')
 				if defname in tree.defs {
 					mut mydef_page := tree.defs[defname] or { panic('bug') }
-					mydoc2 := mydef_page.doc()!
+					mydef_page.doc()!
 					defitem.pagekey = mydef_page.key()
 					defitem.pagename = mydef_page.alias
 					defitem.process_link()!

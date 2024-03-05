@@ -1,16 +1,11 @@
 module base
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-import os
 
 pub fn nix_install(args InstallArgs) ! {
 	console.print_header('nix prepare')
-	pl := osal.platform()
+	_ = osal.platform()
 
 	if args.reset == false && osal.done_exists('nix_install') {
 		console.print_header('Nix already installed')

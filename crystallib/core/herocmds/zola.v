@@ -78,7 +78,7 @@ fn cmd_zola_execute(cmd Command) ! {
 	}
 
 	// edit := cmd.flags.get_bool('edit') or { false }
-	open := cmd.flags.get_bool('open') or { false }
+	// open := cmd.flags.get_bool('open') or { false }
 	// if open {
 	// 	zola.site_open(name)!
 	// }

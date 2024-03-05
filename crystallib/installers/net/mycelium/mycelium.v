@@ -21,7 +21,6 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
 	version := '0.3.1'
-	mut installed_version := ''
 
 	res := os.execute('${osal.profile_path_source_and()} mycelium -V')
 	if res.exit_code == 0 {
@@ -120,7 +119,7 @@ pub fn start() ! {
 		
 		")
 
-		ok2delete := myui.ask_yesno(question: 'Please confirm you understand?')!
+		_ = myui.ask_yesno(question: 'Please confirm you understand?')!
 
 		s.attach()! // to allow filling in passwd
 	}

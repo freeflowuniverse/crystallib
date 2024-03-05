@@ -35,7 +35,7 @@ pub fn (mut site ZolaSite) process() ! {
 	)!
 
 	for file in list.paths {
-		mut doc := markdownparser.new(path: file.path)!
+		_ = markdownparser.new(path: file.path)!
 		// mut doc := elements.Doc{...doc}
 		// for mut element in doc.children {
 		// 	if mut element is elements.Include {

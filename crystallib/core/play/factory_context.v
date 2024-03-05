@@ -51,7 +51,6 @@ fn context_configure(args_ ContextConfigureArgs) ! {
 
 	mut r := redisclient.core_get()!
 	if args.params.len > 0 {
-		mut p := paramsparser.new(args.params)!
 		rkey := 'hero:context:params:${args.name}'
 		r.set(rkey, args.params)!
 	}

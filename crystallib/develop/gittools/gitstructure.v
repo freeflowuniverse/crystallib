@@ -126,7 +126,7 @@ pub mut:
 pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
 	mut args := args_
 	console.print_header('code get url:${args.url} or path:${args.path}')
-	mut g := gs.repo_add(args)!
+	_ =  gs.repo_add(args)!
 	mut locator := gs.locator_new(args.url)!
 	s := locator.path_on_fs()!
 	return s.path
