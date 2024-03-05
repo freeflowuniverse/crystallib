@@ -63,7 +63,7 @@ pub fn print_stdout(txt string) {
 }
 
 pub fn print_lf(nr int) {
-	for i in 0 .. nr {
+	for _ in 0 .. nr {
 		cprintln(text: '')
 	}
 }

@@ -92,7 +92,7 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 		}
 		mut gs := args.gitstructure or { return error('cannot find gitstructure') }
 		mut locator := gs.locator_new(args.url)!
-		mut gr := gs.repo_get(locator: locator, pull: args.reset, reset: args.reset)!
+		_ = gs.repo_get(locator: locator, pull: args.reset, reset: args.reset)!
 		fs_path := locator.path_on_fs()!
 		downloadpath = fs_path
 		downloadtype = .git

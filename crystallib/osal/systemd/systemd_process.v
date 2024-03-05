@@ -32,7 +32,7 @@ pub fn (mut self SystemdProcess) start() ! {
 	systemctl start ${self.name}
 	'
 	println(cmd)
-	r := osal.execute_silent(cmd)!
+	_ = osal.execute_silent(cmd)!
 	self.refresh()!
 }
 
@@ -48,7 +48,7 @@ pub fn (mut self SystemdProcess) refresh() ! {
 }
 
 pub fn (mut self SystemdProcess) remove() ! {
-	mut p := pathlib.get_file(
+	_ = pathlib.get_file(
 		path: '${self.systemdobj.path.path}/${self.name}.service'
 		create: true
 	)!
@@ -57,7 +57,7 @@ pub fn (mut self SystemdProcess) remove() ! {
 	systemctl disable ${self.name}
 	systemctl stop ${self.name}
 	'
-	r := osal.execute_silent(cmd)!
+	_ = osal.execute_silent(cmd)!
 	self.systemdobj.load()!
 }
 

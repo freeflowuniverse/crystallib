@@ -19,7 +19,7 @@ pub fn (mut tree Tree) get_macros(args_ MacroGetArgs) ![]&Action {
 	console.print_green('get actions for tree: name:${tree.name}')
 	mut args := args_
 	mut res := []&Action{}
-	for name, mut collection in tree.collections {
+	for _, mut collection in tree.collections {
 		// console.print_green("export collection: name:${name}")		
 		for _, mut page in collection.pages {
 			mut mydoc := page.doc()!

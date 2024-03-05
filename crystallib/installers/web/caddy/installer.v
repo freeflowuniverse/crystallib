@@ -52,7 +52,7 @@ pub fn install(args InstallArgs) ! {
 pub struct WebConfig {
 pub mut:
 	path   string = '/var/www'
-	domain string = ''
+	domain string
 }
 
 // configure caddy as default webserver & start
@@ -148,7 +148,7 @@ pub fn start(args StartArgs) ! {
 		p.start()!
 	} else {
 		mut scr := screen.new(reset: false)!
-		mut s2 := scr.add(name: 'caddy', cmd: 'caddy run --config /etc/caddy/Caddyfile')!
+		_ = scr.add(name: 'caddy', cmd: 'caddy run --config /etc/caddy/Caddyfile')!
 	}
 }
 

@@ -44,7 +44,7 @@ pub fn new(args TailWindArgs) !Tailwind {
 	// mut p := pathlib.get_dir(path: '/tmp/flowrift/${args.name}', create: true)!
 	mut p := pathlib.get_dir(path: args.path_build, create: true)!
 
-	path_build := pathlib.get_dir(
+	_ = pathlib.get_dir(
 		path: args.path_build
 		create: true
 	)!

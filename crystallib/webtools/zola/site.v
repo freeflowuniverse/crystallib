@@ -2,7 +2,6 @@ module zola
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements
@@ -128,7 +127,7 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	)!
 	println('debuzgo: ${site.tree.collections.keys()}')
 	for mdfile in md_list.paths {
-		doc := markdownparser.new(path: mdfile.path)!
+		_ = markdownparser.new(path: mdfile.path)!
 		// for include in doc.children.filter(it is elements.Include) {
 		// 	println('incl: ${include}')
 		// }
@@ -145,7 +144,7 @@ pub struct BlogAddArgs {
 
 pub fn (mut site ZolaSite) blog_add(args BlogAddArgs) ! {
 	site.tree.process_includes()!
-	col := site.tree.collection_get(args.collection) or {
+	_ = site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
@@ -200,7 +199,7 @@ extra:
 
 pub fn (mut site ZolaSite) person_add(args BlogAddArgs) ! {
 	site.tree.process_includes()!
-	col := site.tree.collection_get(args.collection) or {
+	_ = site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
@@ -239,7 +238,7 @@ description: "Our team brings together +30 years of experience in cloud automati
 
 pub fn (mut site ZolaSite) news_add(args BlogAddArgs) ! {
 	site.tree.process_includes()!
-	col := site.tree.collection_get(args.collection) or {
+	_ = site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
@@ -283,7 +282,7 @@ pub struct HeaderAddArgs {
 
 pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
 	site.tree.process_includes()!
-	col := site.tree.collection_get(args.collection) or {
+	_ = site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
@@ -302,7 +301,7 @@ pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
 
 pub fn (mut site ZolaSite) footer_add(args HeaderAddArgs) ! {
 	site.tree.process_includes()!
-	col := site.tree.collection_get(args.collection) or {
+	_ = site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
@@ -328,7 +327,7 @@ pub struct PageAddArgs {
 
 pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 	site.tree.process_includes()!
-	col := site.tree.collection_get(args.collection) or {
+	_ = site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
@@ -367,7 +366,7 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	site.tree.scan(git_url: args.url, git_reset: args.reset, git_pull: args.pull, load: args.reload)!
 	doctree_dest := '${site.path_build.path}/doctree'
 	mut doctree_dir := pathlib.get_dir(path: doctree_dest)!
-	md_list := doctree_dir.list(
+	_ = doctree_dir.list(
 		recursive: true
 		regex: [r'.*\.md$']
 		include_links: true

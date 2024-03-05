@@ -12,7 +12,7 @@ mut:
 }
 
 pub fn play_zola(mut session play.Session) ! {
-	mut coderoot := ''
+	// mut coderoot := ''
 	mut buildroot := ''
 	mut publishroot := ''
 	mut install := true
@@ -24,7 +24,7 @@ pub fn play_zola(mut session play.Session) ! {
 		mut p := config_actions[0].params
 		buildroot = p.get_default('buildroot', '')!
 		publishroot = p.get_default('publishroot', '')!
-		coderoot = p.get_default('coderoot', '')!
+		// coderoot = p.get_default('coderoot', '')!
 		install = p.get_default_true('install')
 		reset = p.get_default_false('reset')
 		config_actions[0].done = true
