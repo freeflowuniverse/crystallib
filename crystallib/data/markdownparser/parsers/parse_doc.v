@@ -1,7 +1,6 @@
 module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
-import freeflowuniverse.crystallib.ui.console
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
@@ -35,7 +34,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		if mut llast is elements.Table {
 			if trimmed_line != '' {
-				llast.content += '${line}\n'
+				llast.content += '\n${line}'
 				parser.next()
 				continue
 			}
@@ -122,7 +121,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				trimmed_next := parser.line_next().trim_space()
 				// single row doesn't make a table
 				if trimmed_next.starts_with('|') && trimmed_next.ends_with('|') {
-					doc.table_new(mut &doc,'${line}\n')
+					doc.table_new(mut &doc,'${line}')
 					parser.next()
 					continue
 				}
