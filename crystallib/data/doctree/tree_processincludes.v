@@ -1,7 +1,5 @@
 module doctree
 
-import freeflowuniverse.crystallib.ui.console
-
 fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 	mut collection := tree.collection_get(col_name)!
 
@@ -35,7 +33,7 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 
 			if collection.page_exists(name) {
 				mut mypage2 := collection.page_get(name)!
-				//is not good enough this check, because there can be a includes b who includes c who includes a, still recursive
+				// is not good enough this check, because there can be a includes b who includes c who includes a, still recursive
 				if mypage2.key() == page.key() {
 					collection.error(
 						path: page.path
@@ -44,13 +42,14 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 					)
 					continue
 				}
+
 				tree.process_page_includes(mut mypage2, col_name)!
 				mut mydoc2 := mypage2.doc()!
-				//links who are local to the remote collection will not resolve correctly after include, need to add collectionname
-				md2:=mydoc2.markdown()!
-				if md2.contains("vindo0.png"){
+				// links who are local to the remote collection will not resolve correctly after include, need to add collectionname
+				md2 := mydoc2.markdown()!
+				if md2.contains('vindo0.png') {
 					println(mydoc2.markdown()!)
-					panic("vidostop")
+					panic('vidostop')
 				}
 				action_element.content = mydoc2.markdown()!
 			} else {

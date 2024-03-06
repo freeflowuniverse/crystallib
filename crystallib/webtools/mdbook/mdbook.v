@@ -33,7 +33,6 @@ pub mut:
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	console.print_header(' mdbook: ${args_.name}')
-
 	mut cfg := books.config()!
 
 	mut args := args_
@@ -86,7 +85,6 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 			return error('doctree from git needs to be dir. ${path_doctree.path}')
 		}
 	}
-
 	mut book := MDBook{
 		args: args
 		path_build: pathlib.get_dir(path: args.build_path, create: true)!

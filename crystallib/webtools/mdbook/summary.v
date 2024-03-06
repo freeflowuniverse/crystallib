@@ -23,6 +23,9 @@ pub mut:
 }
 
 pub fn (mut book MDBook) summary() !Summary {
+	if !os.exists(book.args.summary_path) {
+		panic("summary file doesn't exist")
+	}
 	mut summary := Summary{}
 	mut summary_path := pathlib.get_file(path: book.args.summary_path, create: false)!
 	c := summary_path.read()!
