@@ -76,24 +76,20 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 ### something else
 '
 	mut docs := new(content: content)!
-	assert docs.children.len == 7
+	assert docs.children.len == 9
 	assert docs.children[0] is Paragraph
 	md1:=docs.children[0].markdown()!
 	// println("**${md1}**")
 	assert md1=="\n    \n"	
+	assert docs.children[0] is Paragraph
 	assert docs.children[1] is Header
 	assert docs.children[2] is Paragraph
 	assert docs.children[3] is Header
 	assert docs.children[4] is Paragraph
-	// assert docs.children[5] is List
-	// assert docs.children[6] is List
-	// assert docs.children[7] is List
-	// assert docs.children[8] is List
-	assert docs.children[5] is Header
+	assert docs.children[5] is List
 	assert docs.children[6] is Paragraph
-	md:=docs.children[6].markdown()!
-	// println("'${md}'")
-	// assert md=="\n"
+	assert docs.children[7] is Header
+	assert docs.children[8] is Paragraph
 }
 
 fn test_wiki_headers_and_table() {
@@ -135,7 +131,7 @@ some extra text
 			assert row.cells.len == 3
 		}
 	}
-	println(table1)
+	// println(table1)
 
 	assert docs.children[6] is Paragraph
 	paragraph2 := docs.children[6]
@@ -197,7 +193,7 @@ fn test_wiki_code() {
 
 ```v
 for x in list {
-	println(x)
+	// println(x)
 }
 ```
 
@@ -214,7 +210,7 @@ for x in list {
 # This is some header
 '
 	mut docs := new(content: content)!
-	println(docs.children)
+	// println(docs.children)
 	assert docs.children.len == 11
 	assert docs.children[0] is Paragraph
 	assert docs.children[1] is Header
@@ -244,7 +240,7 @@ for x in list {
 
 ```v
 for x in list {
-    println(x)
+    // println(x)
 }
 ```
 
@@ -265,88 +261,85 @@ for x in list {
 
 
 
-// fn test_wiki_lists_links() {
-// 	//TODO: not working, fix, lets get links back in
-// 	content := '
-// # this is a test
+fn test_wiki_lists_links() {
+	//TODO: not working, fix, lets get links back in
+	content := '
+# this is a test
 
-// - [this is link](something.md)
-// - ![this is link2](something.jpg)
+- [this is link](something.md)
+- ![this is link2](something.jpg)
 
-// ## ts
+## ts
 
-// ![this is link2](something.jpg)
-// '
-// 	mut docs := new(content: content)!
+![this is link2](something.jpg)
+'
+	mut docs := new(content: content)!
 
-// 	assert docs.children.len == 5
-// 	assert docs.children[0] is Paragraph
-// 	assert docs.children[0] is Header
-// 	assert docs.children[0] is Paragraph
-// 	assert docs.children[1] is List
-// 	assert docs.children[2] is List
-// 	assert docs.children[3] is Header
-// 	assert docs.children[4] is Paragraph
+	assert docs.children.len == 7
+	assert docs.children[0] is Paragraph
+	assert docs.children[1] is Header
+	assert docs.children[2] is Paragraph
+	assert docs.children[3] is List
+	assert docs.children[4] is Paragraph
+	assert docs.children[5] is Header
+	assert docs.children[6] is Paragraph
 
-// 	paragraph1 := docs.children[4]
-// 	if paragraph1 is Paragraph {
-// 		assert paragraph1.children.len == 1
-// 		assert paragraph1.children[0] is Link
-// 	}
-// }
+	paragraph1 := docs.children[6]
+	if paragraph1 is Paragraph {
+		assert paragraph1.children.len == 3
+		assert paragraph1.children[1] is Link
+	}
+}
 
-// fn test_wiki_header_too_long() {
-// 	//TODO: not working, fix
-// 	content := '
-// ##### Is ok
+fn test_wiki_header_too_long() {
+	//TODO: not working, fix
+	content := '
+##### Is ok
 
-// ###### Should not be ok
-// '
-// 	mut docs := new(content: content)!
+###### Should not be ok
+'
+	mut docs := new(content: content)!
 
-// 	expected_wiki := '
-// ##### Is ok
-// '
+	expected_wiki := '
+##### Is ok
+'
 
-// 	assert docs.children.len == 1
-// 	assert docs.children[0] is Header
-// 	// assert expected_wiki.trim_space() == docs.markdown().trim_space()
-// }
+	assert docs.children.len == 3
+	assert docs.children[1] is Header
+	// assert expected_wiki.trim_space() == docs.markdown().trim_space()
+}
 
-// fn test_wiki_all_together() {
-// 	//TODO: not working, fix
-// 	content := markdownparser.text
-// 	mut docs := new(content: content)!
+fn test_wiki_all_together() {
+	//TODO: not working, fix
+	content := markdownparser.text
+	mut docs := new(content: content)!
 
-// 	assert docs.children.len == 18
-// 	assert docs.children[0] is Header
-// 	assert docs.children[1] is Paragraph
-// 	assert docs.children[2] is Header
-// 	assert docs.children[3] is Paragraph
-// 	assert docs.children[4] is Header
-// 	assert docs.children[5] is Paragraph
-// 	assert docs.children[6] is Table
-// 	assert docs.children[7] is Header
-// 	assert docs.children[8] is Paragraph
-// 	assert docs.children[9] is List
-// 	assert docs.children[10] is List
-// 	assert docs.children[11] is Paragraph
-// 	assert docs.children[12] is List
-// 	assert docs.children[13] is List
-// 	assert docs.children[14] is List
-// 	assert docs.children[15] is List
-// 	assert docs.children[16] is Paragraph
-// 	assert docs.children[17] is Action
-// 	// assert content.trim_space() == docs.markdown().trim_space()
-// }
+	assert docs.children.len == 16
+	assert docs.children[0] is Paragraph
+	assert docs.children[1] is Header
+	assert docs.children[2] is Paragraph
+	assert docs.children[3] is Header
+	assert docs.children[4] is Paragraph
+	assert docs.children[5] is Header
+	assert docs.children[6] is Paragraph
+	assert docs.children[7] is Table
+	assert docs.children[8] is Paragraph
+	assert docs.children[9] is Header
+	assert docs.children[10] is Paragraph
+	assert docs.children[11] is List
+	assert docs.children[12] is Paragraph
+	assert docs.children[13] is List
+	assert docs.children[14] is Paragraph
+	assert docs.children[15] is Action
+}
 
-// fn test_deterministic_output() {
-// 	mut doc1 := new(
-// 		content: markdownparser.text
-// 	)!
-// 	content1 := doc1.markdown()!
-// 	mut doc2 := new(content: content1)!
-// 	content2 := doc2.markdown()!
+fn test_deterministic_output() {
+	mut doc1 := new(
+		content: markdownparser.text
+	)!
+	content1 := doc1.markdown()!
+	mut doc2 := new(content: content1)!
+	content2 := doc2.markdown()!
 
-// 	assert content1 == content2
-// }
+	assert content1 == content2
+}

@@ -76,7 +76,7 @@ pub fn tcp_port_test(args TcpPortTestArgs) bool {
 		if run_time > start_time + args.timeout {
 			return false
 		}
-		socket := net.dial_tcp('${args.address}:${args.port}') or {
+		_ = net.dial_tcp('${args.address}:${args.port}') or {
 			time.sleep(100 * time.millisecond)
 			continue
 		}

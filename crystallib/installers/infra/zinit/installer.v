@@ -49,10 +49,10 @@ pub fn install(args_ InstallArgs) ! {
 	console.print_header('install zinit')
 	// make sure we install base on the node
 	base.install()!
-	url := 'https://github.com/threefoldtech/zinit/releases/download/v0.2.14/zinit'
+	release_url := 'https://github.com/threefoldtech/zinit/releases/download/v0.2.14/zinit'
 
 	mut dest := osal.download(
-		url: url
+		url: release_url
 		minsize_kb: 2000
 		reset: true
 	)!

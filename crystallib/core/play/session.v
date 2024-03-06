@@ -158,10 +158,6 @@ pub fn (mut session Session) process() ! {
 		if p.exists('name') {
 			name = p.get_default('name', 'default')!
 		}
-		mut coderoot := ''
-		if p.exists('coderoot') {
-			coderoot = p.get_default('coderoot', '')!
-		}
 		mut interactive := true
 		if p.exists('interactive') {
 			interactive = p.get_default_true('interactive')

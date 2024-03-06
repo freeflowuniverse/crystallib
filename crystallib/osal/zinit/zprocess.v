@@ -195,12 +195,12 @@ pub fn (mut zp ZProcess) destroy() ! {
 // how long to wait till the specified output shows up, timeout in sec
 pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 	zp.start()!
-	mut client := new_rpc_client()
+	_ = new_rpc_client()
 	zp.check()!
 	mut t := ourtime.now()
 	start := t.unix_time()
 	c := c_.replace('\n', '')
-	for i in 0 .. 2000 {
+	for _ in 0 .. 2000 {
 		o := zp.log()!
 		println(o)
 		$if debug {

@@ -89,7 +89,7 @@ pub fn (mut node Node) hero_install() ! {
 pub fn (mut node Node) dagu_install() ! {
 	println('install dagu')
 	if !osal.cmd_exists('dagu') {
-		mut bs := bootstrapper()
+		_ = bootstrapper()
 		node.exec_silent('curl -L https://raw.githubusercontent.com/yohamta/dagu/main/scripts/downloader.sh | bash')!
 	}
 }

@@ -36,7 +36,7 @@ pub fn install(args_ InstallArgs) ! {
 		url = 'https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg'
 	}
 	println(' download ${url}')
-	mut dest := osal.download(
+	_ = osal.download(
 		url: url
 		minsize_kb: 5000
 		reset: args.reset
