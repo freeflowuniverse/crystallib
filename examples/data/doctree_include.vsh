@@ -19,19 +19,18 @@ assert tree.collections.keys() == ['riverlov', 'server', 'sub2']
 
 dest := '/tmp/mdbooktest'
 tree.export(dest: '${dest}/tree', reset: true)!
+mut mdb := mdbook.get(instance: 'mdbooktest')!
 
-// mut mdb := mdbook.get(instance: 'mdbooktest')!
+// mut cfg := mdbooks.config()!
+// cfg.path_build = buildroot
+// cfg.path_publish = publishroot
 
-// // mut cfg := mdbooks.config()!
-// // cfg.path_build = buildroot
-// // cfg.path_publish = publishroot
-
-// mdb.generate(
-// 	doctree_path: '${dest}/src'
-// 	name: 'includetest'
-// 	title: 'Incude Test'
-// 	// summary_path: doctree.collections_path
-// 	summary_url: '' // because path given
-// 	publish_path: '${dest}/publish'
-// 	build_path: '${dest}/build'
-// )!
+mdb.generate(
+	doctree_path: '${dest}/tree'
+	name: 'includetest'
+	title: 'Incude Test'
+	summary_path: '${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/data/doctree/testdata/includetest/summary.md'
+	summary_url: '' // because path given
+	publish_path: '${dest}/publish'
+	build_path: '${dest}/build'
+)!
