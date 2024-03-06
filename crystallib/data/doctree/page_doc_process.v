@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link }
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
-import os
 
 pub fn (mut page Page) doc() !&Doc {
 	mut mydoc := page.doc_ or {
@@ -57,6 +56,8 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 						out = '![${element.description}](img/${linkimage.file_name()} ${element.extra})'
 					}
 					mydoc.content_set(element.id, out)
+					element.processed = false
+					element.process()!
 				} else {
 					collection.error(
 						path: page.path
