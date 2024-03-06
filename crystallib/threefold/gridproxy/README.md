@@ -2,83 +2,15 @@
 
 Easily access Threefold grid APIs from vlang. gridproxy is v module include the API client along with API-specific information such as the root URL for the different networks available in the threefold grid. They also include classes that represent entities in the context of the API in sub-module `model`, and that are useful for making conversions between JSON objects and V objects. and some types with helper methods to convert the machine-friendly units returned by the API to more human-friendly units.
 
-
-> TODO: update docs, outdated
-
-## Getting Started
-
-The project might have multiple branches which can be explained here
-
-* `main` this branch not available yet, it should contains aggregate code of all branches. 
-* `development` contains code under development. currently it is the default branch.
-
-### Tools Required
-
-> todo: needs to go to manual generic for crystallib
-
-You would require the following tools to develop and run the project:
-
-* V language
-* freeflowuniverse.crystallib v module
-  ```sh
-  v install https://github.com/freeflowuniverse/crystallib
-  ```
-* Redis-server unless you are set the caching option to false
-  * see [here](https://redis.io/docs/getting-started/installation/) for redis-server installation instructions
-  * start the redis-server on default tcp port, you can use `redis-server` command.
-  ```sh
-  redis-server --daemonize yes
-  ```
-or your os specific instructions for running redis-server as a service. on linux/ubuntu you can use 
-  ```sh
-  sudo systemctl start redis-server.service
-  ```
-
-### Installation
-
-* either clone the repository inside the `$HOME/.vmodules/threefoldtech` directory
-  ```sh
-  mkdir -p $HOME/.vmodules/threefoldtech
-  cd $HOME/.vmodules/threefoldtech
-  git clone https://github.com/threefoldtech/vgrid.git
-  ```
-  
-* or use the `v install` command to install the module.
-  ```sh
-  v install --once -v --git https://github.com/threefoldtech/vgrid
-  ```
-
-## Development
-
-We assume that you runs the commands in the project root directory.
-
-* You don't need to worry about formatting your code or setting style guidelines. v fmt takes care of that
-  ```sh
-  v fmt -w ./gridproxy/
-  ```
-* run the tests
-  ```sh
-  v -stats test ./gridproxy/ 
-  ```
-* generate the documentation of gridproxy modules
-  ```sh
-  v doc -m ./gridproxy -f md -o ./gridproxy/docs
-  ```
-
-## client usage
-
-If you want to use the client, you need to import it in your code.
-
 * import the client:
+
   ```v
   import freeflowuniverse.crystallib.threefold.gridproxy
-  ```
 
-* create a client:
-  ```v
   // create a client for the testnet, with API cache disabled
   // you can pass true as second arg to enable cache
   mut gp_client := gridproxy.get(.test, false)!
+
   ```
 
 * use the client to interact with the gridproxy API:

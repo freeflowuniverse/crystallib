@@ -1,3 +1,5 @@
+#!/usr/bin/env -S v -w -enable-globals run
+
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
 
@@ -39,8 +41,7 @@ fn get_gateway_iterator_example() ! {
 	println(iterator_available_gw)
 }
 
-fn main() {
-	get_gateway_nodes_example()!
-	get_gateway_by_id_example(u64(11))!
-	get_gateway_iterator_example()!
-}
+
+get_gateway_nodes_example()!
+get_gateway_by_id_example(u64(11))!
+get_gateway_iterator_example()!

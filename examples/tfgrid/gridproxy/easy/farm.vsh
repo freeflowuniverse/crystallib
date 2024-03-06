@@ -1,3 +1,5 @@
+#!/usr/bin/env -S v -w -enable-globals run
+
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
 
@@ -36,8 +38,6 @@ fn get_farms_iterator_example() ! {
 	println(iterator_available_farms)
 }
 
-fn main() {
-	get_farms_example()!
-	// get_farm_by_name_example("freefarm")!
-	// get_farms_iterator_example()!
-}
+// get_farms_example()!
+get_farm_by_name_example("freefarm")!
+// get_farms_iterator_example()!

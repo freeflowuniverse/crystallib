@@ -1,3 +1,5 @@
+#!/usr/bin/env -S v -w -enable-globals run
+
 import freeflowuniverse.crystallib.threefold.gridproxy
 
 fn get_online_grid_stats_example() ! {
@@ -14,7 +16,5 @@ fn get_all_grid_stats_example() ! {
 	println(grid_all_stats)
 }
 
-fn main() {
-	get_online_grid_stats_example()!
-	get_all_grid_stats_example()!
-}
+get_online_grid_stats_example()!
+get_all_grid_stats_example()!
