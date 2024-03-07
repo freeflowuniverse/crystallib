@@ -22,25 +22,22 @@ Next, we add a header and a footer for our website
 
 ```js
 !!website.header_add
+    logo: 'images/black_threefold.png'
 
 !!website.header_link_add
     label: 'About'
     page: 'about'
 
 !!website.header_link_add
-    label: 'How it works'
-    page: 'how'
+    label: 'Host'
+    page: 'host'
 
 !!website.header_link_add
     label: 'Farm'
     page: 'farm'
 
 !!website.header_link_add
-    label: 'Deploy'
-    page: 'deploy'
-
-!!website.header_link_add
-    label: 'Newsroom'
+    label: 'News'
     page: 'newsroom'
 
 !!website.header_link_add
@@ -48,12 +45,13 @@ Next, we add a header and a footer for our website
     page: 'blog'
 
 !!website.header_link_add
-    label: 'Community'
-    page: 'community'
-
-!!website.header_link_add
     label: 'People'
     page: 'people'
+
+!!website.header_link_add
+    label: 'Documentation'
+    page: 'community'
+    new_tab: true
 ```
 
 ```js
@@ -87,9 +85,20 @@ Let's then add our pages
     file: 'farm.md'
 
 !!website.page_add
-    name: 'Support'
+    name: 'Host'
     collection: 'content'
-    file: 'support.md'
+    file: 'host.md'
+
+!!website.page_add
+    name: 'Utilization'
+    collection: 'content'
+    file: 'utilization.md'
+
+!!website.page_add
+    name: 'Footer'
+    collection: 'content'
+    file: 'footer.md'
+
 ```
 
 Finally we can select and add some blog posts, news and people sections.
