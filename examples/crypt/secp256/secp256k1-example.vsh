@@ -1,5 +1,6 @@
 #!/usr/bin/env -S v -w -cg -enable-globals run
 
+import freeflowuniverse.crystallib.ui.console
 import encoding.hex
 import crypto.sha256
 import freeflowuniverse.crystallib.crypt.secp256k1
@@ -25,7 +26,7 @@ alice := secp256k1.new(
 // create 'bobpub' from bob only public key, reduced features available (only sign check, shared keys, etc.)
 bobpub := secp256k1.new(
 	pubhex: bob.public_key()
-z)!
+)!
 
 // create 'alicepub' from alice only public key, reduced features available
 alicepub := secp256k1.new(
