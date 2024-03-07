@@ -215,7 +215,7 @@ pub fn (mut book MDBook) error(args ErrorArgs) {
 
 pub fn (mut book MDBook) open() ! {
 	console.print_header('open book: ${book.name}')
-	cmd := 'open \'${book.path_build.path}/book/index.html\''
+	cmd := 'open \'${book.path_publish.path}/index.html\''
 	console.print_debug(cmd)
 	// cmd:='bash ${book.path_build.path}/develop.sh'
 	osal.exec(cmd: cmd)!
