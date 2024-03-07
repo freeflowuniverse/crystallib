@@ -9,12 +9,23 @@ mut node_filter := model.NodeFilter{}
 
 node_filter.status = 'up'
 
+pub struct CloudBox{
+pub mut:
+	uptime_days u32
+	mem_mb u32
+	cpu_vcores f32
+	ssd_mb u32
+}
+
 nodes := gp_client.get_nodes(node_filter)!
 for node in nodes{
 
 	println(node)
 
 	println(node.capacity.total_resources.hru.to_gigabytes())
+
+
+
 
 	// node_available_resources := node.calc_available_resources()
 	// println(node_available_resources)
