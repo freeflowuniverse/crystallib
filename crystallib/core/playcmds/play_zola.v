@@ -114,11 +114,12 @@ pub fn play_zola(mut session play.Session) ! {
 			console.print_debug('website.header_add')
 			mut p := action.params
 			template := p.get_default('template', '')!
+			logo := p.get_default('logo', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.header_add(template: template)!
+			site_.header_add(template: template, logo: logo)!
 
 		} else if action.name == 'header_link_add' {
 			console.print_debug('website.header_link_add')
