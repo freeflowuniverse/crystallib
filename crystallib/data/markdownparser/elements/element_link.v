@@ -14,6 +14,7 @@ pub mut:
 	moresites   bool // this means we can look for the content on multiple source sites, site does not have to be specified
 	description string
 	url         string
+	anchor 		string
 	// identification of link:
 	filename string // is the name of the page/file where the link points too
 	path     string // is path in the site
@@ -93,6 +94,10 @@ fn (self Link) markdown_include() string {
 }
 
 pub fn (self Link) markdown() !string {
+	println('debugzoo ${self}')
+	if self.url.contains('header_new'){
+		print_backtrace()
+	}
 	if self.state == .init {
 		// means we need to give link before it was processed to resolve the link e.g. in doctree
 		return self.markdown_include()
@@ -112,10 +117,11 @@ pub fn (self Link) markdown() !string {
 		if self.cat == LinkType.image {
 			pre = '!'
 		}
+		anchor := if self.anchor != '' {'#${self.anchor}'} else {''}
 		if self.extra.trim_space() == '' {
-			out = '${pre}[${self.description}](${link_filename})'
+			out = '${pre}[${self.description}](${link_filename}${anchor})'
 		} else {
-			out = '${pre}[${self.description}](${link_filename} ${self.extra})'
+			out = '${pre}[${self.description}](${link_filename}${anchor} ${self.extra})'
 		}
 	} else if self.cat == LinkType.html {
 		out = '[${self.description}](${self.url})'
@@ -177,6 +183,7 @@ fn (mut link Link) parse() {
 
 	link.description = link.content.all_after('[').all_before(']').trim_space()
 	link.url = link.content.all_after('(').all_before(')').trim_space()
+	link.anchor = if link.url.contains('#') {link.url.all_after('#')} else {''}
 	if link.url.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
