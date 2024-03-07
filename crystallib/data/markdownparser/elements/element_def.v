@@ -33,8 +33,9 @@ pub fn (mut self Def) process_link() ! {
 
 pub fn (self Def) markdown() !string {
 	if !self.processed {
-		return error('cannot do markdown for ${self} as long as not processed')
+		return self.content
 	}
+	
 	return self.DocBase.markdown() // for children
 }
 
