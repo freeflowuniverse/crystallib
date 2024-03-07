@@ -25,7 +25,7 @@ mut mdb := mdbook.get(instance: 'mdbooktest')!
 // cfg.path_build = buildroot
 // cfg.path_publish = publishroot
 
-mdb.generate(
+mut b:=mdb.generate(
 	doctree_path: '${dest}/tree'
 	name: 'includetest'
 	title: 'Incude Test'
@@ -34,3 +34,5 @@ mdb.generate(
 	publish_path: '${dest}/publish'
 	build_path: '${dest}/build'
 )!
+
+b.open()!
