@@ -233,7 +233,7 @@ description: "Our team brings together +30 years of experience in cloud automati
 		path: '${people_dir.path}/${fixed_name}'
 		create: true
 	)!
-	page.export(dest: '${person_dir.path}/${fixed_name}.md')!
+	page.export(dest: '${person_dir.path}/index.md')!
 	site.blog.posts[args.name] = page.doc()!
 }
 

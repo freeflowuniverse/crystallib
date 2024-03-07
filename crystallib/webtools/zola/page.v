@@ -83,8 +83,8 @@ fn (mut site ZolaSite) page_add_check_args(args PageAddArgs) ! {
 
 pub fn (mut page ZolaPage) export(content_dir string) ! {
 	if page.homepage {
-		page.Page.export(dest: '${content_dir}/home.md')!
+		page.Page.export(dest: '${content_dir}/home/index.md')!
 	} else {
-		page.Page.export(dest: '${content_dir}/${page.name}.md')!
+		page.Page.export(dest: '${content_dir}/${page.name}/index.md')!
 	}
 }
