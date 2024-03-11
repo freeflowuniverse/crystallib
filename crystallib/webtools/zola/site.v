@@ -18,8 +18,10 @@ pub mut:
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	zola         &Zola        @[skip; str: skip]
-	tree         doctree.Tree @[skip; str: skip]
-	blog         Blog
+	tree         doctree.Tree        @[skip; str: skip]
+	pages []ZolaPage
+	header ?Header
+	blog Blog
 }
 
 pub struct Blog {
@@ -125,7 +127,6 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 		recursive: true
 		regex: [r'.*\.md$']
 	)!
-	println('debuzgo: ${site.tree.collections.keys()}')
 	for mdfile in md_list.paths {
 		_ = markdownparser.new(path: mdfile.path)!
 		// for include in doc.children.filter(it is elements.Include) {
@@ -232,7 +233,7 @@ description: "Our team brings together +30 years of experience in cloud automati
 		path: '${people_dir.path}/${fixed_name}'
 		create: true
 	)!
-	page.export(dest: '${person_dir.path}/${fixed_name}.md')!
+	page.export(dest: '${person_dir.path}/index.md')!
 	site.blog.posts[args.name] = page.doc()!
 }
 
@@ -275,81 +276,23 @@ description: "Our team brings together +30 years of experience in cloud automati
 	site.blog.posts[args.name] = page.doc()!
 }
 
-pub struct HeaderAddArgs {
-	collection string @[required]
-	file       string @[required]
-}
-
-pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-
-	header_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/header'
-		create: true
-	)!
-
-	page.export(dest: '${header_dir.path}/index.md')!
-}
-
 pub fn (mut site ZolaSite) footer_add(args HeaderAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
+	// site.tree.process_includes()!
+	// col := site.tree.collection_get(args.collection) or {
+	// 	println(err)
+	// 	return err
+	// }
+	// mut page := site.tree.page_get('${args.collection}:${args.file}') or {
+	// 	println(err)
+	// 	return err
+	// }
 
-	footer_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/footer'
-		create: true
-	)!
-
-	page.export(dest: '${footer_dir.path}/_index.md')!
-}
-
-pub struct PageAddArgs {
-	name       string
-	collection string @[required]
-	file       string @[required]
-	homepage   bool
-}
-
-pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-
-	content_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content'
-		create: true
-	)!
-	fixed_name := '${texttools.name_fix(args.name)}'
-	// page_dir := pathlib.get_dir(
-	// 	path:'${content_dir.path}/${fixed_name}'
+	// footer_dir := pathlib.get_dir(
+	// 	path:'${site.path_build.path}/content/footer'
 	// 	create: true
 	// )!
-
-	if args.homepage {
-		page.export(dest: '${content_dir.path}/_index.md')!
-	}
-	page.export(dest: '${content_dir.path}/${fixed_name}.md')!
+	
+	// page.export(dest: '${footer_dir.path}/_index.md')!
 }
 
 // add collections from doctree

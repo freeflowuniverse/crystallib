@@ -3,7 +3,7 @@
 We first define our website and add a zola template for it
 
 ```js
-!!website.define name:'www2_threefold' title:'Threefold Development' 
+!!website.define name:'website' title:'Threefold Development' 
 
 !!website.template_add url:'https://github.com/threefoldfoundation/www_threefold_io/tree/development_zola'
 ```
@@ -12,7 +12,7 @@ Then we add the doctree's we will use for the website.
 We use `threefoldfoundation/threefold_data` for blogs, people and news. We use `threefoldfoundation/www_threefold_io` for site content for pages.
 
 ```js
-!!website.doctree_add url:'https://github.com/threefoldfoundation/www_threefold_io/tree/development_zola/content'
+!!website.doctree_add url:'https://github.com/freeflowuniverse/crystallib/tree/development_zola/examples/webtools/zola/website/content'
 
 add collections to the website
 !!website.doctree_add url:'https://github.com/threefoldfoundation/threefold_data/tree/development_zola/content'
@@ -22,22 +22,25 @@ Next, we add a header and a footer for our website
 
 ```js
 !!website.header_add
-    logo: 'images/black_threefold.png'
 
 !!website.header_link_add
     label: 'About'
     page: 'about'
 
 !!website.header_link_add
-    label: 'Host'
-    page: 'host'
+    label: 'How it works'
+    page: 'how'
 
 !!website.header_link_add
-    label: 'Utilization'
-    page: 'utilization'
+    label: 'Farm'
+    page: 'farm'
 
 !!website.header_link_add
-    label: 'News'
+    label: 'Deploy'
+    page: 'deploy'
+
+!!website.header_link_add
+    label: 'Newsroom'
     page: 'newsroom'
 
 !!website.header_link_add
@@ -45,13 +48,12 @@ Next, we add a header and a footer for our website
     page: 'blog'
 
 !!website.header_link_add
-    label: 'People'
-    page: 'people'
+    label: 'Community'
+    page: 'community'
 
 !!website.header_link_add
-    label: 'Documentation'
-    page: 'community'
-    new_tab: true
+    label: 'People'
+    page: 'people'
 ```
 
 ```js
@@ -73,32 +75,6 @@ Let's then add our pages
     name: 'About'
     collection: 'content'
     file: 'about.md'
-
-!!website.page_add
-    name: 'Careers'
-    collection: 'content'
-    file: 'careers.md'
-
-!!website.page_add
-    name: 'Farm'
-    collection: 'content'
-    file: 'farm.md'
-
-!!website.page_add
-    name: 'Host'
-    collection: 'content'
-    file: 'host.md'
-
-!!website.page_add
-    name: 'Utilization'
-    collection: 'content'
-    file: 'utilization.md'
-
-!!website.page_add
-    name: 'Footer'
-    collection: 'content'
-    file: 'footer.md'
-
 ```
 
 Finally we can select and add some blog posts, news and people sections.
@@ -113,12 +89,6 @@ Below we select blogs relavant to threefold.io from our data repository
     collection: 'blog'
     file: 'a_better_understanding_of_wealth.md'
     image: 'a_better_understanding_of_wealth.jpg'
-
-!!website.blog_add 
-    name: 'A different approach to blockchain'
-    collection: 'blog'
-    file: 'a_different_approach_to_blockchain.md'
-    image: 'a_different_approach_to_blockchain.jpg'
 ```
 
 ## People

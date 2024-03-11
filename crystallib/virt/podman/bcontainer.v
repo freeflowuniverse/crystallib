@@ -1,3 +1,4 @@
+
 module podman
 
 import json
@@ -139,7 +140,7 @@ pub fn (mut self BContainer) commit(image_name string) ! {
 	osal.exec(cmd: cmd)!
 }
 
-pub fn (self BContainer) set_entrypoint(entrypoint string) ! {
+pub fn (self BContainer) set_entrypoint(entrypoint string) !{
 	cmd := 'buildah config --entrypoint ${entrypoint} ${self.containername}'
 	osal.exec(cmd: cmd)!
 }

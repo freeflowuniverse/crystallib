@@ -109,7 +109,7 @@ pub fn (mut base DocBase) codeblock_new(mut docparent ?&Doc, content string) &Co
 }
 
 pub fn (mut base DocBase) link_new(mut docparent ?&Doc, content string) &Link {
-	mut a := Link{
+	mut a := Link {
 		content: content
 		type_name: 'link'
 		// trailing_lf: false
