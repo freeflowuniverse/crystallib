@@ -34,7 +34,7 @@ pub fn (mut self Table) process() !int {
 	return 1
 }
 
-fn (self Table) header_markdown() !string {
+pub fn (self Table) header_markdown() !string {
 	mut out := []string{}
 	for h in self.header {
 		out << h.markdown()!
