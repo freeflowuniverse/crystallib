@@ -12,6 +12,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 	paragraph.text_new(mut paragraph.parent_doc(),'') // the initial one
 
 	mut potential_link := false
+	mut link_in_link := false
 
 	for {
 
@@ -92,9 +93,18 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 		}
 
 		if mut llast is Link {
+			// means there is image in link description, is allowed
+			if parser.text_next_is('![', 0) && llast.content == '[' { 
+				link_in_link = true
+			}
 			if char_ == ']' {
 				if !parser.text_next_is('(', 1) {
 					// means is not link, need to convert link to normal text
+					if link_in_link {
+						link_in_link = false
+						continue
+					}
+					
 					mut c := llast.content
 					paragraph.children.delete_last() // remove the link
 					paragraph.text_new(mut paragraph.parent_doc(),'')
@@ -109,11 +119,19 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 			}
 			if char_ == ')' && potential_link {
 				// end of link
-				llast.content += char_ // need to add current content
-				paragraph.text_new(mut paragraph.parent_doc(),'')
-				parser.next()
-				char_ = ''
-				potential_link = false
+				if link_in_link {
+					// the parsed content was actually the child links in the description
+					llast.link_new(mut paragraph.parent_doc(), '${llast.content.trim_string_left('[')})')
+					link_in_link = false
+					potential_link = false
+					continue
+				} else {
+					llast.content += char_ // need to add current content
+					paragraph.text_new(mut paragraph.parent_doc(),'')
+					parser.next()
+					char_ = ''
+					potential_link = false
+				}
 				continue
 			}
 		}
