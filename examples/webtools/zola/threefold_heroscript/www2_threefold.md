@@ -33,8 +33,8 @@ Next, we add a header and a footer for our website
     page: 'host'
 
 !!website.header_link_add
-    label: 'Farm'
-    page: 'farm'
+    label: 'Utilization'
+    page: 'utilization'
 
 !!website.header_link_add
     label: 'News'
