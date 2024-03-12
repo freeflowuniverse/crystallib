@@ -3,6 +3,7 @@ module rfs
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.osal.screen
 import os
 
 @[params]
@@ -98,7 +99,13 @@ pub fn mount(args MountArgs)!{
 
 	install()!
 
-	mut cmd := 'rfs mount --meta ${args.meta_path} --daemon'
+	name := 'rfs'
+
+	mut scr := screen.new()!
+
+	mut s := scr.add(name: name, reset: true)!
+
+	mut cmd := 'rfs mount --meta ${args.meta_path}'
 	if cache_path := args.cache_path{
 		cmd += ' --cache ${cache_path}'
 	}
@@ -108,6 +115,6 @@ pub fn mount(args MountArgs)!{
 	}
 	
 	cmd += ' ${args.target}'
-	
-	osal.exec(cmd: cmd)!
+
+	s.cmd_send(cmd)!
 }
