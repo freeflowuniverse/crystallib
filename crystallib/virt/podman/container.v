@@ -62,6 +62,10 @@ pub fn (mut e CEngine) containers_load() ! {
 			panic('podman ps needs to output 11 parts.\n${fields}')
 		}
 		id := fields[0]
+		// if image doesn't have id skip this container, maybe ran from filesystme
+		if fields[2] == '' {
+			continue
+		}
 		image := e.image_get(id_full: fields[2])!
 		mut container := Container{
 			engine: &e
@@ -108,7 +112,7 @@ pub fn (err ContainerGetError) msg() string {
 		return 'Could not find image with args:\n${err.args}'
 	}
 	if err.toomany {
-		return 'Found more than 1 image with args:\n${err.args}'
+		return 'can not get container, Found more than 1 image with args:\n${err.args}'
 	}
 	panic('unknown error for ContainerGetError')
 }
@@ -211,8 +215,6 @@ pub fn (mut e CEngine) containers_delete(args ContainerGetArgs) ! {
 // 	// make sure we start from loaded image
 // 	return e.container_create(args)
 // }
-
-////////////
 
 // create/start container (first need to get a podmancontainer before we can start)
 pub fn (mut container Container) start() ! {
