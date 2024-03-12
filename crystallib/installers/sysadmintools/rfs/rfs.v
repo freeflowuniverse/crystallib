@@ -81,6 +81,7 @@ pub fn pack(args PackArgs)!{
 		cmd += ' --no-strip-password'
 	}
 
+	cmd += ' ${args.target}'
 	osal.exec(cmd: cmd)!
 }
 
@@ -89,6 +90,7 @@ pub struct MountArgs{
 	meta_path string
 	cache_path ?string
 	log_path ?string
+	target string
 }
 
 pub fn mount(args MountArgs)!{
@@ -104,6 +106,8 @@ pub fn mount(args MountArgs)!{
 	if log_path := args.log_path{
 		cmd += ' --log ${log_path}'
 	}
+	
+	cmd += ' ${args.target}'
 	
 	osal.exec(cmd: cmd)!
 }
