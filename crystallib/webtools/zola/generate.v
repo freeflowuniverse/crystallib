@@ -67,6 +67,10 @@ pub fn (mut site ZolaSite) generate() ! {
 		page.export(content_dir.path)!
 	}
 
+	if mut people := site.people {
+		people.export(content_dir.path)!
+	}
+
 	mut header := site.header or {
 		Header{}
 	}

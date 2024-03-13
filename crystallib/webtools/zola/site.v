@@ -22,6 +22,7 @@ pub mut:
 	pages []ZolaPage
 	header ?Header
 	blog Blog
+	people ?People
 }
 
 pub struct Blog {
@@ -195,45 +196,6 @@ extra:
 	page.export(dest: '${post_dir.path}/index.md')!
 	image.copy('${post_dir.path}/${image.file_name()}')!
 
-	site.blog.posts[args.name] = page.doc()!
-}
-
-pub fn (mut site ZolaSite) person_add(args BlogAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-
-	mut people_index := pathlib.get_file(
-		path: '${site.path_build.path}/content/people/_index.md'
-	)!
-	if !people_index.exists() {
-		people_index.write('---
-title: "Our People"
-paginate_by: 4
-sort_by: "weight"
-template: "layouts/people.html"
-page_template: "partials/personCard.html"
-insert_anchor_links: "left"
-description: "Our team brings together +30 years of experience in cloud automation, Internet storage, and infrastructure services. We are a passionate group on a collective mission to improve the planet’s situation and benefit the people around us."
----')!
-	}
-
-	people_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/people'
-		create: true
-	)!
-	fixed_name := '${texttools.name_fix(args.name)}'
-	person_dir := pathlib.get_dir(
-		path: '${people_dir.path}/${fixed_name}'
-		create: true
-	)!
-	page.export(dest: '${person_dir.path}/index.md')!
 	site.blog.posts[args.name] = page.doc()!
 }
 
