@@ -231,7 +231,7 @@ pub fn (p Params) export(args ExportArgs) string {
 			if item.firstline {
 				out << item.oneline()
 			} else {
-				out_post << item.afterline()
+				out_post << '${args.indent}${item.afterline()}'
 			}
 		}
 	}
