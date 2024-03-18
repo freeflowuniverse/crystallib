@@ -9,6 +9,7 @@ enum ParamStatus {
 	value // value started, so was no quote
 	quote // quote found means value in between ''
 	comment
+	array // means inside square brackets
 }
 
 // convert text with e.g. color:red or color:'red' to arguments
@@ -49,7 +50,7 @@ pub fn parse(text string) !Params {
 
 	for i in 0 .. text2.len {
 		ch = text2[i..i + 1]
-		// println(" - '${ch_prev}${ch}' ${state}")
+		println(" - '${ch_prev}${ch}' ${state}")
 		// check for comments end
 		if state == .start {
 			if ch == ' ' {
@@ -98,6 +99,12 @@ pub fn parse(text string) !Params {
 				ch_prev = ch
 				continue
 			}
+			if ch == '[' {
+				state = .array
+				ch_prev = ch
+				value = '['
+				continue
+			}
 			// means the value started, we can go to next state
 			if ch != ' ' {
 				state = .value
@@ -119,6 +126,20 @@ pub fn parse(text string) !Params {
 		if state == .quote {
 			if ch == "'" {
 				state = .start
+				result.set_with_comment(key, value, comment)
+				key = ''
+				value = ''
+				comment = ''
+			} else {
+				value += ch
+			}
+			ch_prev = ch
+			continue
+		}
+		if state == .array {
+			if ch == ']' {
+				state = .start
+				value += ch
 				result.set_with_comment(key, value, comment)
 				key = ''
 				value = ''
