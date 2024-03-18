@@ -65,11 +65,10 @@ pub fn (mut self Screen) attach() ! {
 }
 
 pub fn (mut self Screen) cmd_send(cmd string) ! {
-	mut cmd2 := "screen -S ${self.name} -p 0 -X \"${cmd}\"'\n' "
+	mut cmd2 := "screen -S ${self.name} -p 0 -X stuff \"${cmd} \n\" "
 	if osal.is_osx() {
 		cmd2 = "screen -S ${self.name} -p 0 -X \"${cmd}\"\$'\n' "
 	}
-	// println(cmd2)
 	res := os.execute(cmd2)
 	if res.exit_code > 1 {
 		return error('could not send screen command.\n${cmd2}\n${res.output}')

@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.virt.podman
 import freeflowuniverse.crystallib.installers.sysadmintools.rfs
+import time
 
 // in this scenario we
 // 1- build an image from scratch
@@ -39,8 +40,14 @@ rfs.install()!
 // remove the folder if it exists
 osal.exec(cmd: 'rm -fr /tmp/store1')!
 osal.exec(cmd: 'mkdir -p /tmp/mount_fl /tmp/store1')!
-rfs.pack(meta_path: 'output.fl', stores: ['dir:///tmp/store1'], target: mount_path)!
+rfs.pack(meta_path: '/tmp/output.fl', stores: ['dir:///tmp/store1'], target: mount_path)!
 println('mounting to `/tmp/mount_fl` you can check the flist mounted there now, consider doing umount after u finish')
 rfs.mount(meta_path: '/tmp/output.fl', target: '/tmp/mount_fl')!
 println('flist is mounted..., switching to the container')
-osal.exec(cmd: 'podman run -it --rm --read-only  --rootfs /tmp/mount_fl bash')!
+time.sleep(time.second * 10)
+println("exec bash into container")
+osal.exec(
+	cmd: 'podman run -it --rm --read-only  --rootfs /tmp/mount_fl bash'
+	shell: true
+	debug: true
+)!

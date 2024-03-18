@@ -9,7 +9,7 @@ import os
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset   bool
+	reset bool
 }
 
 pub fn install(args_ InstallArgs) ! {
@@ -57,14 +57,14 @@ pub fn install(args_ InstallArgs) ! {
 }
 
 @[params]
-pub struct PackArgs{
-	meta_path string
-	stores []string
-	target string
+pub struct PackArgs {
+	meta_path      string
+	stores         []string
+	target         string
 	strip_password bool = true
 }
 
-pub fn pack(args PackArgs)!{
+pub fn pack(args PackArgs) ! {
 	console.print_header('rfs pack')
 
 	install()!
@@ -72,13 +72,13 @@ pub fn pack(args PackArgs)!{
 	mut cmd := 'rfs pack --meta ${args.meta_path}'
 
 	mut stores := ''
-	for t in args.stores{
+	for t in args.stores {
 		stores += ' --store ${t}'
 	}
 
 	cmd += stores
 
-	if !args.strip_password{
+	if !args.strip_password {
 		cmd += ' --no-strip-password'
 	}
 
@@ -87,14 +87,14 @@ pub fn pack(args PackArgs)!{
 }
 
 @[params]
-pub struct MountArgs{
-	meta_path string
+pub struct MountArgs {
+	meta_path  string
 	cache_path ?string
-	log_path ?string
-	target string
+	log_path   ?string
+	target     string
 }
 
-pub fn mount(args MountArgs)!{
+pub fn mount(args MountArgs) ! {
 	console.print_header('rfs mount')
 
 	install()!
@@ -105,16 +105,15 @@ pub fn mount(args MountArgs)!{
 
 	mut s := scr.add(name: name, reset: true)!
 
-	mut cmd := 'rfs mount --meta ${args.meta_path}'
-	if cache_path := args.cache_path{
+	mut cmd := 'rfs mount --meta ${args.meta_path} '
+	if cache_path := args.cache_path {
 		cmd += ' --cache ${cache_path}'
 	}
 
-	if log_path := args.log_path{
+	if log_path := args.log_path {
 		cmd += ' --log ${log_path}'
 	}
-	
-	cmd += ' ${args.target}'
 
+	cmd += ' ${args.target}'
 	s.cmd_send(cmd)!
 }
