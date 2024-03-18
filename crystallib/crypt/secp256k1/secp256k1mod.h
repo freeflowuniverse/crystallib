@@ -54,5 +54,8 @@
     char *secp256k1_public_key(secp256k1_t *secp);
     void secp256k1_dumps(secp256k1_t *secp);
     int secp256k1_load_key(secp256k1_t *secp, char *key);
+
+    int secp256k1_load_private_key(secp256k1_t *secp, char *key);
+    int secp256k1_load_public_key(secp256k1_t *secp, char *key);
 #endif
 

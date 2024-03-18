@@ -7,10 +7,11 @@ import os
 @[heap]
 pub struct Summary {
 pub mut:
-	items       []SummaryItem
-	errors      []SummaryItem // means we found errors, so we need to add to summary
-	addpages    []SummaryItem // means we found pages as links, so we need to add them to the summary
-	collections []string
+	items         []SummaryItem
+	errors        []SummaryItem // means we found errors, so we need to add to summary
+	addpages      []SummaryItem // means we found pages as links, so we need to add them to the summary
+	collections   []string
+	used_collections map[string]bool
 }
 
 pub struct SummaryItem {
@@ -107,6 +108,8 @@ pub fn (mut book MDBook) summary() !Summary {
 			pagename: pagename
 			collection: collection
 		}
+
+		summary.used_collections[collection] = true
 	}
 
 	return summary
@@ -159,6 +162,10 @@ pub fn (mut self Summary) str() string {
 	if self.addpages.len > 0 {
 		out << '  - [unlisted_pages](additional/pages.md)'
 		for item in self.addpages {
+			if _ := self.used_collections[item.collection] {
+				continue
+			}
+
 			mut pre := ''
 			for _ in 0 .. item.level {
 				pre += '  '

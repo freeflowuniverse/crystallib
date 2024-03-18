@@ -119,20 +119,12 @@ Be the mother for our errors.
 A normal user can ignore these pages, they are just to get links to work.
 
 	')!
+	mut src_path := pathlib.get_dir(path: '${book.path_build.path}/src')!
+	mut dir_list := src_path.list(dirs_only: true, recursive: false)!
+	for mut collection_dir_path in dir_list.paths {
+		collectionname := collection_dir_path.path.all_after_last('/')
 
-	for collectionname in summary.collections {
-		collection_dir_str := '${args.doctree_path}/src/${collectionname}'.replace('~',
-			os.home_dir())
-		if !os.exists(collection_dir_str) {
-			book.error(
-				msg: "Could not find collection: '${collection_dir_str}' "
-			)
-			continue
-		}
-
-		mut collection_dir_path := pathlib.get_dir(path: collection_dir_str, create: false) or {
-			panic('bug')
-		} // should always work because done in summary
+		// should always work because done in summary
 		// check if there are errors, if yes add to summary
 		if collection_dir_path.file_exists('errors.md') {
 			summary.add_error_page(collectionname, 'errors.md')
@@ -215,7 +207,7 @@ pub fn (mut book MDBook) error(args ErrorArgs) {
 
 pub fn (mut book MDBook) open() ! {
 	console.print_header('open book: ${book.name}')
-	cmd := 'open \'${book.path_build.path}/book/index.html\''
+	cmd := 'open \'${book.path_publish.path}/index.html\''
 	console.print_debug(cmd)
 	// cmd:='bash ${book.path_build.path}/develop.sh'
 	osal.exec(cmd: cmd)!
