@@ -70,6 +70,9 @@ pub fn (mut site ZolaSite) generate() ! {
 	if mut people := site.people {
 		people.export(content_dir.path)!
 	}
+	if mut news := site.news {
+		news.export(content_dir.path)!
+	}
 
 	mut header := site.header or {
 		Header{}

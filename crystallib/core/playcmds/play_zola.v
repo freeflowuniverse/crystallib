@@ -109,7 +109,7 @@ pub fn play_zola(mut session play.Session) ! {
 				return error("can't find website for news_add, should have been defined before with !!website.define")
 			}
 
-			site_.person_add(name: name, collection: collection, file: file)!
+			site_.article_add(name: name, collection: collection, file: file)!
 		} else if action.name == 'header_add' {
 			console.print_debug('website.header_add')
 			mut p := action.params

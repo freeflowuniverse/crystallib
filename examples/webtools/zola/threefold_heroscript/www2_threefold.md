@@ -108,7 +108,7 @@ Finally we can select and add some blog posts, news and people sections.
 Below we select blogs relavant to threefold.io from our data repository
 
 ```js
-!!website.blog_add 
+!!website.blog_add
     name: 'A better understanding of wealth'
     collection: 'blog'
     file: 'a_better_understanding_of_wealth.md'
@@ -124,14 +124,9 @@ Below we select blogs relavant to threefold.io from our data repository
 ## People
 
 ```js
-!!website.person_add 
-    name: 'Adnan Fatayerji'
-    collection: 'person'
-    file: 'adnan_fatayerji.md'
-
-!!website.person_add 
+!!website.person_add
     name: 'Alexandre Hannelas'
-    collection: 'person'
+    collection: 'people'
     file: 'alexandre_hannelas.md'
 ```
 
@@ -141,8 +136,7 @@ Below we select blogs relavant to threefold.io from our data repository
 !!website.news_add 
     name: '3Bot Connect & TFConnect'
     collection: 'news'
-    file: '3bot_connect_tf_connect.md'
-
+    file: '3bot_connect_renamed_definition.md'
 ```
 
 ```js
