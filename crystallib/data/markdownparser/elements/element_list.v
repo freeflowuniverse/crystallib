@@ -40,7 +40,7 @@ fn (mut self List) parse() ! {
 			1- indentation: do they have the same indentation?
 			2- ordering: are they both ordered?
 	*/
-	lines := self.content.split('\n')
+	lines := self.content.trim(' \n').split('\n')
 	mut line_index := 0
 	for line_index < lines.len {
 		list, next_index := parse_list_level(self.parent_doc_, line_index, lines)!
