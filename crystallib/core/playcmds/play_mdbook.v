@@ -1,6 +1,5 @@
 module playcmds
 
-import freeflowuniverse.crystallib.installers.web.mdbook as mdbookinstaller
 import freeflowuniverse.crystallib.webtools.mdbook
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.play
@@ -13,6 +12,12 @@ pub fn play_mdbook(mut session play.Session) ! {
 	// mut install := false
 	mut reset := false
 	mut pull := false
+
+	//check if any actions for doctree, if not then nothing to do here
+	dtactions:=session.plbook.find(filter: 'doctree.')!	
+	if dtactions.len==0{
+		return
+	}
 
 	mut config_actions := session.plbook.find(filter: 'books:configure')!
 
@@ -34,8 +39,6 @@ pub fn play_mdbook(mut session play.Session) ! {
 		}
 		config_actions[0].done = true
 	}
-
-	mdbookinstaller.install()!
 
 	mut tree := doctree.new(
 		name: 'main'

@@ -31,7 +31,7 @@ command = "mdbook-mermaid"
 #use as mdbook preprocessor
 [preprocessor.echarts]
 
-[preprocessor.embed]
+# [preprocessor.embed]
 
 [preprocessor.kroki-preprocessor]
 
