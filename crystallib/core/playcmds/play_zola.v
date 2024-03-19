@@ -17,6 +17,12 @@ pub fn play_zola(mut session play.Session) ! {
 	mut publishroot := ''
 	mut install := true
 	mut reset := false
+
+	wsactions:=session.plbook.find(filter: 'website.')!	
+	if wsactions.len==0{
+		return
+	}
+
 	mut config_actions := session.plbook.find(filter: 'websites:configure')!
 	if config_actions.len > 1 {
 		return error('can only have 1 config action for websites')

@@ -44,7 +44,7 @@ pub fn install(args_ InstallArgs) ! {
 
 // install mdbook will return true if it was already installed
 pub fn build() ! {
-	console.print_header('build mdbook')
+	console.print_header('compile mdbook')
 	rust.install()!
 	cmd := '
 	source ~/.cargo/env
