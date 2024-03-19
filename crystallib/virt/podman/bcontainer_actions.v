@@ -38,6 +38,11 @@ pub mut:
 	reset bool
 }
 
+pub fn (mut self BContainer) copy(src string, dest string) ! {
+	cmd := 'buildah copy ${self.id} ${src} ${dest}'
+	osal.exec(cmd: cmd)!
+}
+
 pub fn (mut self BContainer) hero_install(args HeroInstall) ! {
 	// TODO: check hero is already there, only redo if reset=true
 	panic('implement')
