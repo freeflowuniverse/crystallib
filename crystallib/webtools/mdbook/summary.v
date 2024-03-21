@@ -11,7 +11,7 @@ pub mut:
 	errors        []SummaryItem // means we found errors, so we need to add to summary
 	addpages      []SummaryItem // means we found pages as links, so we need to add them to the summary
 	collections   []string
-	used_collections map[string]bool
+	summary_pages map[string]bool
 }
 
 pub struct SummaryItem {
@@ -109,7 +109,7 @@ pub fn (mut book MDBook) summary() !Summary {
 			collection: collection
 		}
 
-		summary.used_collections[collection] = true
+		summary.summary_pages['${collection}:${pagename}'] = true
 	}
 
 	return summary
@@ -125,7 +125,15 @@ fn (mut self Summary) add_error_page(collectionname string, pagename string) {
 	}
 }
 
+fn (mut self Summary) is_in_summary(collection_name string, page_name string) bool{
+	return self.summary_pages['${collection_name}:${page_name}']
+}
+
 fn (mut self Summary) add_page_additional(collectionname string, pagename string) {
+	if self.is_in_summary(collectionname, pagename) {
+		return
+	}
+
 	shortname := pagename.all_before_last('.').to_lower()
 	description := '${shortname}'
 	self.addpages << SummaryItem{
@@ -162,10 +170,6 @@ pub fn (mut self Summary) str() string {
 	if self.addpages.len > 0 {
 		out << '  - [unlisted_pages](additional/pages.md)'
 		for item in self.addpages {
-			if _ := self.used_collections[item.collection] {
-				continue
-			}
-
 			mut pre := ''
 			for _ in 0 .. item.level {
 				pre += '  '
