@@ -43,7 +43,7 @@ fn test_new_processor() ! {
 // this rpc_handler listens to the echo method's redis queue
 // and handles echo rpc
 fn run_rpc_handler() ! {
-    mut redis_client := redisclient.core_get(
+    mut redis_client := redisclient.new(
         address: redis_addr
         port: redis_port
     ) or {
