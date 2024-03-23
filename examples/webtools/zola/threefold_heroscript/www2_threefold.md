@@ -136,7 +136,7 @@ Below we select blogs relavant to threefold.io from our data repository
 !!website.news_add 
     name: '3Bot Connect & TFConnect'
     collection: 'news'
-    file: '3bot_connect_renamed_definition.md'
+    file: '3bot_connect_tf_connect.md'
 ```
 
 ```js
