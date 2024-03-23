@@ -43,9 +43,9 @@ pub fn (self Table) header_markdown() !string {
 	return '| ${out.join(' | ')} |\n'
 }
 
-fn (self Row) markdown() !string{
+fn (self Row) markdown() !string {
 	mut out := []string{}
-	for c in self.cells{
+	for c in self.cells {
 		out << c.markdown()!
 	}
 

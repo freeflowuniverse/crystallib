@@ -3,13 +3,12 @@ module podman
 import freeflowuniverse.crystallib.installers.virt.podman as podmaninstaller
 // import freeflowuniverse.crystallib.core.play
 
-[params]
+@[params]
 pub struct NewArgs {
 pub mut:
-	install      bool = true
-	reset        bool
+	install bool = true
+	reset   bool
 }
-
 
 pub fn new(args_ NewArgs) !CEngine {
 	mut args := args_
@@ -18,9 +17,9 @@ pub fn new(args_ NewArgs) !CEngine {
 		podmaninstaller.install()!
 	}
 
-	mut bah:=CEngine{}
+	mut bah := CEngine{}
 	bah.init()!
-	if args.reset{
+	if args.reset {
 		bah.reset_all()!
 	}
 

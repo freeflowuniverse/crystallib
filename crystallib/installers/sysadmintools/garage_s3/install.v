@@ -14,7 +14,7 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '0.9.3'
-	
+
 	res := os.execute('garage --version')
 	if res.exit_code == 0 {
 		r := res.output.split(' ')

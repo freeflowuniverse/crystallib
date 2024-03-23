@@ -16,14 +16,14 @@ pub fn (mut self Codeblock) process() !int {
 	mut pb := playbook.new(text: self.content)!
 	if pb.actions.len > 0 {
 		for mut action in pb.actions {
-			mut a := self.action_new(mut self.parent_doc(),'')
+			mut a := self.action_new(mut self.parent_doc(), '')
 			a.action = *action
 			a.processed = true
 			a.content = action.heroscript()
 		}
 		// now see if there is something left in codeblock, if yes add that one to the parent_elements
 		if pb.othertext.len > 0 {
-			self.content =  pb.othertext
+			self.content = pb.othertext
 		}
 		self.content = '' // because is now in the children
 	}
@@ -48,7 +48,6 @@ pub fn (self Codeblock) markdown() !string {
 	return out
 }
 
-
 pub fn (self Codeblock) html() !string {
 	panic('implement')
 	// TODO: implement html
@@ -56,5 +55,5 @@ pub fn (self Codeblock) html() !string {
 }
 
 pub fn (self Codeblock) pug() !string {
-	return error("cannot return pug, not implemented")
+	return error('cannot return pug, not implemented')
 }

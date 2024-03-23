@@ -19,11 +19,11 @@ pub struct PeopleAddArgs {}
 
 pub struct Person {
 pub:
-	id string [required]
-	name string
-	image ?&doctree.File
-	page ?&doctree.Page
-	biography string
+	id          string         @[required]
+	name        string
+	image       ?&doctree.File
+	page        ?&doctree.Page
+	biography   string
 	description string
 }
 
@@ -32,7 +32,7 @@ fn (mut site ZolaSite) people_add(args PeopleAddArgs) ! {
 	if people := site.people {
 		return error('People section already exists in zola site')
 	} else {
-		site.people = People {}
+		site.people = People{}
 	}
 }
 
@@ -51,7 +51,7 @@ fn (mut people People) export(content_dir string) ! {
 	for id, mut person in people.persons {
 		person.export(people_dir.path)!
 	}
-} 
+}
 
 pub struct PersonAddArgs {
 	name       string
@@ -63,7 +63,7 @@ pub struct PersonAddArgs {
 pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 	mut people := site.people or {
 		site.people_add()!
-		site.people or {panic('this should never happen')}
+		site.people or { panic('this should never happen') }
 	}
 
 	site.tree.process_includes()!
@@ -98,7 +98,7 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 	// add image and page to person if they exist
 	if page_ != '' {
 		person = Person{
-			...person,
+			...person
 			page: site.tree.page_get('${args.collection}:${page_}') or {
 				println(err)
 				return err
@@ -107,7 +107,7 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 	}
 	if image_ != '' {
 		person = Person{
-			...person,
+			...person
 			image: site.tree.image_get('${args.collection}:${image_}') or {
 				println(err)
 				return err
@@ -128,14 +128,18 @@ pub fn (person Person) export(people_dir string) ! {
 	image_path := if mut img := person.image {
 		img.copy('${person_dir.path}/${img.file_name()}')!
 		img.file_name()
-	} else {''}
+	} else {
+		''
+	}
 	mut person_page := pathlib.get_file(
 		path: '${person_dir.path}/index.md'
 		create: true
 	)!
-	
+
 	content := if mut page := person.page {
 		page.doc()!.markdown()!
-	} else {''}
+	} else {
+		''
+	}
 	person_page.write($tmpl('./templates/person.md'))!
 }

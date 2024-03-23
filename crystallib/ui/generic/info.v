@@ -1,18 +1,18 @@
 module generic
 
-import freeflowuniverse.crystallib.ui.console { UIConsole }
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.ui.telegram { UITelegram }
 import freeflowuniverse.crystallib.ui.uimodel
 
 // send info to the main pannel .
 // (not every UI has all capability e.g. html)
-// 
+//
 // ```
 // args:
 // 	content 	string //in specified format
 // 	clear       bool //means screen is reset for content above
 // 	lf_before int 	 //line feed before content
-// 	lf_after int 
+// 	lf_after int
 // 	cat InfoCat
 //  components []ComponentCat
 // enum InfoCat {
@@ -27,7 +27,7 @@ import freeflowuniverse.crystallib.ui.uimodel
 // 	bulma
 // }
 // ```
-// supports images, and other html elements 
+// supports images, and other html elements
 // suggest to support htmx and limited js (how can we limit this)
 pub fn (mut c UserInterface) info(args uimodel.InfoArgs) ! {
 	// match mut c.channel {

@@ -18,12 +18,12 @@ pub mut:
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	zola         &Zola        @[skip; str: skip]
-	tree         doctree.Tree        @[skip; str: skip]
-	pages []ZolaPage
-	header ?Header
-	blog Blog
-	people ?People
-	news ?News
+	tree         doctree.Tree @[skip; str: skip]
+	pages        []ZolaPage
+	header       ?Header
+	blog         Blog
+	people       ?People
+	news         ?News
 }
 
 pub struct Blog {
@@ -215,7 +215,7 @@ pub fn (mut site ZolaSite) footer_add(args HeaderAddArgs) ! {
 	// 	path:'${site.path_build.path}/content/footer'
 	// 	create: true
 	// )!
-	
+
 	// page.export(dest: '${footer_dir.path}/_index.md')!
 }
 

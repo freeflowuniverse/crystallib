@@ -78,7 +78,7 @@ pub fn stop() ! {
 	scr.kill(name)!
 }
 
-fn check(args S3Config) !bool{
+fn check(args S3Config) !bool {
 	// TODO: implement health check
 	return true
 }

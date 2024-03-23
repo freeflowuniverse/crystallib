@@ -21,8 +21,8 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		// console.print_header('- line: ${llast.type_name} \'${line}\'')
 
-		if mut llast is elements.List{
-			if elements.line_is_list(line){
+		if mut llast is elements.List {
+			if elements.line_is_list(line) {
 				llast.content += '\n${line}'
 				parser.next()
 				continue
@@ -75,7 +75,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		}
 
 		if mut llast is elements.Paragraph {
-			if elements.line_is_list(line){
+			if elements.line_is_list(line) {
 				doc.list_new(mut doc, line)
 				parser.next()
 				continue
@@ -83,14 +83,14 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 			// parse action
 			if line.starts_with('!!') {
-				doc.action_new(mut &doc,'${line}\n')
+				doc.action_new(mut &doc, '${line}\n')
 				parser.next()
 				continue
 			}
 
 			// find codeblock
 			if line.starts_with('```') || line.starts_with("'''") {
-				mut e := doc.codeblock_new(mut &doc,'')
+				mut e := doc.codeblock_new(mut &doc, '')
 				e.category = line.substr(3, line.len).to_lower().trim_space()
 				parser.next()
 				continue
@@ -108,7 +108,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 						parser.next_start_lf()!
 						continue
 					}
-					mut e := doc.header_new(mut &doc,line.all_after_first(line[..d]).trim_space())
+					mut e := doc.header_new(mut &doc, line.all_after_first(line[..d]).trim_space())
 					e.depth = d
 					parser.next_start_lf()!
 					continue
@@ -121,14 +121,14 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				trimmed_next := parser.line_next().trim_space()
 				// single row doesn't make a table
 				if trimmed_next.starts_with('|') && trimmed_next.ends_with('|') {
-					doc.table_new(mut &doc,'${line}')
+					doc.table_new(mut &doc, '${line}')
 					parser.next()
 					continue
 				}
 			}
 
 			if trimmed_line.to_lower().starts_with('<html>') {
-				doc.html_new(mut &doc,trimmed_line.after('<html>'))
+				doc.html_new(mut &doc, trimmed_line.after('<html>'))
 				parser.next()
 				continue
 			}
@@ -136,22 +136,21 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			if trimmed_line.starts_with('<!--') && trimmed_line.ends_with('-->') {
 				mut comment := trimmed_line.all_after_first('<!--')
 				comment = comment.all_before('-->')
-				doc.comment_new(mut &doc,comment)
+				doc.comment_new(mut &doc, comment)
 				parser.next_start_lf()!
 				continue
 			}
 
 			llast.content += line
-
 		}
 
 		match mut llast {
 			elements.Paragraph {
 				if !parser.next_is_eof() {
 					// println("LFLFLFLFLF")
-					llast.content +=  '\n'
-				}								
-			}			
+					llast.content += '\n'
+				}
+			}
 			else {
 				println(llast)
 				panic('parser error, means we got element which is not supported')
@@ -163,8 +162,8 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 	mut llast2 := parser.lastitem()!
 	// println("parser lf end:${parser.endlf}")
 	if parser.endlf {
-		llast2.content +=  '\n'
-	}	
+		llast2.content += '\n'
+	}
 	// match mut llast2 {
 	// 	elements.List {}
 	// 	elements.Paragraph {

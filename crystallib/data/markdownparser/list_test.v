@@ -36,7 +36,7 @@ hamada'
 
 fn test_wiki_headers_paragraphs() {
 	mut docs := new(content: markdownparser.text)!
-	
+
 	assert docs.children.len == 9
 	assert docs.children[0] is elements.Paragraph
 	assert docs.children[1] is elements.Header
@@ -49,68 +49,68 @@ fn test_wiki_headers_paragraphs() {
 	assert docs.children[8] is elements.Paragraph
 }
 
-fn test_deterministic_output(){
-  mut doc1 := new(content: text)!
-  md1 := doc1.markdown()!
+fn test_deterministic_output() {
+	mut doc1 := new(content: markdownparser.text)!
+	md1 := doc1.markdown()!
 
-  mut doc2 := new(content: md1)!
-  md2 := doc2.markdown()!
+	mut doc2 := new(content: md1)!
+	md2 := doc2.markdown()!
 
-  assert md1 == md2
+	assert md1 == md2
 }
 
-fn test_simple_list(){
-  content := '
+fn test_simple_list() {
+	content := '
 - li1
 - li2'
-  mut doc1 := new(content: content)!
+	mut doc1 := new(content: content)!
 
-  assert doc1.children.len == 2
-  
-  assert doc1.children[0] is elements.Paragraph
-  assert doc1.children[1] is elements.List
+	assert doc1.children.len == 2
 
-  list := doc1.children[1]
-  assert list.children.len == 1
+	assert doc1.children[0] is elements.Paragraph
+	assert doc1.children[1] is elements.List
 
-  nested_list := list.children[0]
-  assert nested_list.children.len == 2
+	list := doc1.children[1]
+	assert list.children.len == 1
 
-  list_item1 := nested_list.children[0]
-  assert list_item1 is elements.ListItem
-  assert list_item1.content == '- li1'
+	nested_list := list.children[0]
+	assert nested_list.children.len == 2
 
-  list_item2 := nested_list.children[1]
-  assert list_item2 is elements.ListItem
-  assert list_item2.content == '- li2'
+	list_item1 := nested_list.children[0]
+	assert list_item1 is elements.ListItem
+	assert list_item1.content == '- li1'
+
+	list_item2 := nested_list.children[1]
+	assert list_item2 is elements.ListItem
+	assert list_item2.content == '- li2'
 }
 
-fn test_nested_list(){
-  content := '
+fn test_nested_list() {
+	content := '
 - li1
   1. li2
   2. li3'
 
-  mut doc := new(content: content)!
+	mut doc := new(content: content)!
 
-  assert doc.children.len == 2
-  assert doc.children[0] is elements.Paragraph
-  assert doc.children[1] is elements.List
+	assert doc.children.len == 2
+	assert doc.children[0] is elements.Paragraph
+	assert doc.children[1] is elements.List
 
-  list := doc.children[1]
-  assert list.children.len == 1
-  assert list.children[0] is elements.List
+	list := doc.children[1]
+	assert list.children.len == 1
+	assert list.children[0] is elements.List
 
-  nl := list.children[0]
-  assert nl.children.len == 2
-  assert nl.children[0] is elements.ListItem
-  assert nl.children[0].content == '- li1'
-  assert nl.children[1] is elements.List
+	nl := list.children[0]
+	assert nl.children.len == 2
+	assert nl.children[0] is elements.ListItem
+	assert nl.children[0].content == '- li1'
+	assert nl.children[1] is elements.List
 
-  nl2 := nl.children[1]
-  assert nl2.children.len == 2
-  assert nl2.children[0] is elements.ListItem
-  assert nl2.children[0].content == '  1. li2'
-  assert nl2.children[1] is elements.ListItem
-  assert nl2.children[1].content == '  2. li3'
+	nl2 := nl.children[1]
+	assert nl2.children.len == 2
+	assert nl2.children[0] is elements.ListItem
+	assert nl2.children[0].content == '  1. li2'
+	assert nl2.children[1] is elements.ListItem
+	assert nl2.children[1].content == '  2. li3'
 }

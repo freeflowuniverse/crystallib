@@ -10,7 +10,7 @@ pub mut:
 	action_processed bool
 }
 
-//we don't allow an action to make child processes
+// we don't allow an action to make child processes
 pub fn (mut self Action) process() !int {
 	if self.processed {
 		return 0
@@ -21,24 +21,24 @@ pub fn (mut self Action) process() !int {
 	}
 	self.action = p.actions[0]
 	self.processed = true
-	self.content = ""
+	self.content = ''
 	return 1
 }
 
 pub fn (self Action) markdown() !string {
-	assert self.processed //needs to be processed before getting the markdown
-	//if content set then we know the action was processed
-	if self.action_processed || self.content!="" {
+	assert self.processed // needs to be processed before getting the markdown
+	// if content set then we know the action was processed
+	if self.action_processed || self.content != '' {
 		return self.content
 	}
-	//not processed so return the original heroscript
+	// not processed so return the original heroscript
 	return self.action.heroscript()
 }
 
 pub fn (self Action) html() !string {
-	return error("cannot return html, because there should be no actions left once we get to html")
+	return error('cannot return html, because there should be no actions left once we get to html')
 }
 
 pub fn (self Action) pug() !string {
-	return error("cannot return html, because there should be no actions left once we get to html")
+	return error('cannot return html, because there should be no actions left once we get to html')
 }

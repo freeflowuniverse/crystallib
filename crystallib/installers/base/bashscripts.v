@@ -46,7 +46,6 @@ pub fn bash_installers_package() !string {
 	p3.write(out3)!
 	os.chmod(p3.path, 0o777)!
 
-
 	mut p4 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
 	return p4.path
 }

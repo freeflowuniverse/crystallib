@@ -13,17 +13,15 @@ pub mut:
 }
 
 pub struct PageAddArgs {
-	name string 
+	name       string
 	collection string @[required]
-	file string @[required]
-	homepage bool
-	template string
+	file       string @[required]
+	homepage   bool
+	template   string
 }
 
 pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
-	site.page_add_check_args(args) or {
-		return error('Can\'t add page `${args.name}`: ${err}')
-	}
+	site.page_add_check_args(args) or { return error('Can\'t add page `${args.name}`: ${err}') }
 
 	page := site.tree.page_get('${args.collection}:${args.file}') or {
 		println(err)
@@ -40,14 +38,14 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 }
 
 struct ZolaPageArgs {
-	page doctree.Page
-	name string
+	page     doctree.Page
+	name     string
 	homepage bool
 	template string
 }
 
 fn new_zola_page(args ZolaPageArgs) ZolaPage {
-	doctree_page := doctree.Page {
+	doctree_page := doctree.Page{
 		...args.page
 		name: texttools.name_fix(args.name)
 	}

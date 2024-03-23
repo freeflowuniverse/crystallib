@@ -26,16 +26,16 @@ pub struct NewsAddArgs {}
 
 pub struct Article {
 pub:
-	id string [required]
-	title string
-	name string
-	image ?&doctree.File
-	tags []string
-	authors []Person
-	categories []string
-	date ourtime.OurTime
-	page ?&doctree.Page
-	biography string
+	id          string          @[required]
+	title       string
+	name        string
+	image       ?&doctree.File
+	tags        []string
+	authors     []Person
+	categories  []string
+	date        ourtime.OurTime
+	page        ?&doctree.Page
+	biography   string
 	description string
 }
 
@@ -44,7 +44,7 @@ fn (mut site ZolaSite) news_add(args NewsAddArgs) ! {
 	if news := site.news {
 		return error('News section already exists in zola site')
 	} else {
-		site.news = News {}
+		site.news = News{}
 	}
 }
 
@@ -63,7 +63,7 @@ fn (mut news News) export(content_dir string) ! {
 	for id, mut article in news.articles {
 		article.export(news_dir.path)!
 	}
-} 
+}
 
 pub struct ArticleAddArgs {
 	name       string
@@ -75,7 +75,7 @@ pub struct ArticleAddArgs {
 pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	mut news := site.news or {
 		site.news_add()!
-		site.news or {panic('this should never happen')}
+		site.news or { panic('this should never happen') }
 	}
 
 	site.tree.process_includes()!
@@ -103,16 +103,14 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	page_ := definition.params.get_default('page', '')!
 	image_ := definition.params.get_default('image', '')!
 	authors_ := definition.params.get_list_default('authors', [])!
-	
+
 	mut authors := []Person{}
 	for author in authors_ {
 		id := texttools.name_fix(author)
-		person := site.people?.persons[id] or {
-			continue
-		}
+		person := site.people?.persons[id] or { continue }
 		authors << person
 	}
-	
+
 	mut article := Article{
 		id: texttools.name_fix(name)
 		name: name
@@ -125,7 +123,7 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	// add image and page to article if they exist
 	if page_ != '' {
 		article = Article{
-			...article,
+			...article
 			page: site.tree.page_get('${args.collection}:${page_}') or {
 				println(err)
 				return err
@@ -134,7 +132,7 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	}
 	if image_ != '' {
 		article = Article{
-			...article,
+			...article
 			image: site.tree.image_get('${args.collection}:${image_}') or {
 				println(err)
 				return err
@@ -155,19 +153,22 @@ pub fn (article Article) export(news_dir string) ! {
 	image_path := if mut img := article.image {
 		img.copy('${article_dir.path}/${img.file_name()}')!
 		img.file_name()
-	} else {''}
+	} else {
+		''
+	}
 	mut article_page := pathlib.get_file(
 		path: '${article_dir.path}/index.md'
 		create: true
 	)!
-	
+
 	content := if mut page := article.page {
 		page.doc()!.markdown()!
-	} else {''}
+	} else {
+		''
+	}
 	println('debugzo ${content}')
 	article_page.write($tmpl('./templates/article.md'))!
 }
-
 
 // pub fn (mut site ZolaSite) news_add(args BlogAddArgs) ! {
 // 	site.tree.process_includes()!

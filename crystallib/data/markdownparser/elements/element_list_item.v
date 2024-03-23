@@ -43,7 +43,7 @@ fn (mut self ListItem) parse() ! {
 		self.order = content.all_before('.').int()
 	}
 
-	mut p := self.paragraph_new(mut self.parent_doc_,content.all_after_first(prefix).trim_space())
+	mut p := self.paragraph_new(mut self.parent_doc_, content.all_after_first(prefix).trim_space())
 	p.process()!
 }
 
@@ -51,14 +51,13 @@ fn (self ListItem) calculate_indentation() int {
 	return int(math.ceil(f64(self.depth) / 4.0))
 }
 
-pub fn (self ListItem) markdown()! string {
+pub fn (self ListItem) markdown() !string {
 	return self.DocBase.markdown()!
 }
 
 pub fn (self ListItem) pug() !string {
-	return error("cannot return pug, not implemented")
+	return error('cannot return pug, not implemented')
 }
-
 
 pub fn (self ListItem) html() !string {
 	panic('implement')

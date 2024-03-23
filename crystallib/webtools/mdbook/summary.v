@@ -125,7 +125,7 @@ fn (mut self Summary) add_error_page(collectionname string, pagename string) {
 	}
 }
 
-fn (mut self Summary) is_in_summary(collection_name string, page_name string) bool{
+fn (mut self Summary) is_in_summary(collection_name string, page_name string) bool {
 	return self.summary_pages['${collection_name}:${page_name}']
 }
 

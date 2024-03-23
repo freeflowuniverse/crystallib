@@ -52,14 +52,14 @@ pub fn (mut site ZolaSite) process() ! {
 
 pub fn (mut site ZolaSite) generate() ! {
 	site.process()!
-	
+
 	// set default home page as the first page added
 	if !site.pages.any(it.homepage) {
 		site.pages[0].homepage = true
 	}
 
 	content_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content'
+		path: '${site.path_build.path}/content'
 		create: true
 	)!
 
@@ -74,9 +74,8 @@ pub fn (mut site ZolaSite) generate() ! {
 		news.export(content_dir.path)!
 	}
 
-	mut header := site.header or {
-		Header{}
-	}
+	mut header := site.header or { Header{} }
+
 	header.export(content_dir.path)!
 
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')

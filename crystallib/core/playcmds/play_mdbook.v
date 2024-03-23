@@ -13,9 +13,9 @@ pub fn play_mdbook(mut session play.Session) ! {
 	mut reset := false
 	mut pull := false
 
-	//check if any actions for doctree, if not then nothing to do here
-	dtactions:=session.plbook.find(filter: 'doctree.')!	
-	if dtactions.len==0{
+	// check if any actions for doctree, if not then nothing to do here
+	dtactions := session.plbook.find(filter: 'doctree.')!
+	if dtactions.len == 0 {
 		return
 	}
 
@@ -46,10 +46,10 @@ pub fn play_mdbook(mut session play.Session) ! {
 
 	for mut action in session.plbook.find(filter: 'doctree:add')! {
 		mut p := action.params
-		url := p.get_default('url','')!
-		path := p.get_default('path','')!
+		url := p.get_default('url', '')!
+		path := p.get_default('path', '')!
 		tree.scan(
-			path:path
+			path: path
 			git_url: url
 			git_reset: reset
 			git_root: coderoot

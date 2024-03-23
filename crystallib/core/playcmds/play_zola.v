@@ -18,8 +18,8 @@ pub fn play_zola(mut session play.Session) ! {
 	mut install := true
 	mut reset := false
 
-	wsactions:=session.plbook.find(filter: 'website.')!	
-	if wsactions.len==0{
+	wsactions := session.plbook.find(filter: 'website.')!
+	if wsactions.len == 0 {
 		return
 	}
 
@@ -126,7 +126,6 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.header_add(template: template, logo: logo)!
-
 		} else if action.name == 'header_link_add' {
 			console.print_debug('website.header_link_add')
 			mut p := action.params
@@ -137,7 +136,6 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.header_link_add(page: page, label: label)!
-
 		} else if action.name == 'footer_add' {
 			console.print_debug('website.footer_add')
 			mut p := action.params

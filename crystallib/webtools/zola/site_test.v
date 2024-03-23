@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements
-
 import os
 import freeflowuniverse.crystallib.core.texttools
 
@@ -31,14 +30,14 @@ fn test_blog_add() ! {
 	// test adding post without adding doctree, should produce error
 	site.blog_add(
 		name: 'test_post'
-		collection: 'blog',
+		collection: 'blog'
 		file: 'a_better_understanding_of_wealth'
-	) or {
-		assert err is doctree.CollectionNotFound
-	}
+	) or { assert err is doctree.CollectionNotFound }
 
 	// test adding post after adding doctree, should work
-	site.doctree_add(url:'https://github.com/threefoldfoundation/threefold_data/tree/development_zola/content')!
+	site.doctree_add(
+		url: 'https://github.com/threefoldfoundation/threefold_data/tree/development_zola/content'
+	)!
 	site.blog_add(
 		name: 'test_post'
 		collection: 'blog'
@@ -46,5 +45,4 @@ fn test_blog_add() ! {
 	)!
 	assert 'test_post' in site.blog.posts
 	panic(site.blog.posts['test_post'])
-
 }

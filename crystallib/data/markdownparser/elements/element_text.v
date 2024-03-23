@@ -2,9 +2,8 @@ module elements
 
 @[heap]
 pub struct Text {
-	DocBase
-// pub mut:
-// 	replaceme string
+	DocBase // pub mut:
+	// 	replaceme string
 }
 
 pub fn (mut self Text) process() !int {
@@ -17,9 +16,8 @@ pub fn (self Text) markdown() !string {
 }
 
 pub fn (self Text) pug() !string {
-	return error("cannot return pug, not implemented")
+	return error('cannot return pug, not implemented')
 }
-
 
 pub fn (self Text) html() !string {
 	mut out := self.content

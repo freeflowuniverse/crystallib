@@ -1,4 +1,5 @@
 module doctree
+
 import freeflowuniverse.crystallib.webtools.mdbook
 import os
 
@@ -8,16 +9,16 @@ fn test_page_get() {
 	mut tree := new(name: 'test')!
 	tree.scan(
 		path: doctree.collections_path
-		heal:false
+		heal: false
 	)!
 
-	assert tree.collections.len==3
+	assert tree.collections.len == 3
 
 	// println(tree.collections.keys())
 	assert tree.collections.keys() == ['riverlov', 'server', 'sub2']
 
-	dest:="/tmp/mdbooktest"
-	tree.export(dest: "${dest}/tree", reset: true)!
+	dest := '/tmp/mdbooktest'
+	tree.export(dest: '${dest}/tree', reset: true)!
 
 	// mut mdb := mdbook.get(instance: "mdbooktest")!
 
@@ -35,6 +36,7 @@ fn test_page_get() {
 	// 	build_path: "${dest}/build"		
 	// )!	
 
-	if true{panic("fghjkjhgfghjk")}
-
+	if true {
+		panic('fghjkjhgfghjk')
+	}
 }
