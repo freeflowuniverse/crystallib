@@ -278,3 +278,22 @@ fn test_export_10() {
 
 	assert sha256.hexhash(paramsout) == 'bf583f6b9afe84476eb3ade1bdd60ba4a6f1196d95a6e7d0fbe6f8b9fb5779d2'
 }
+
+fn test_export_list() {
+	params := parse("list0: ['Kiwi']\nlist1: ['Apple', 'Banana']") or { panic(err) }
+	paramsout := params.export()
+	assert paramsout.trim_space() == "list0:['Kiwi'] list1:['Apple', 'Banana']"
+}
+
+fn test_export_text() {
+	params := Params{
+		params: [
+			Param{
+				key: 'text'
+				value: "This content contains the character ' in it"
+			},
+		]
+	}
+	paramsout := params.export()
+	assert paramsout.trim_space() == "text:'This content contains the character \\' in it'"
+}

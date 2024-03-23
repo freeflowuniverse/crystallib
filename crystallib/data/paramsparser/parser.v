@@ -124,7 +124,7 @@ pub fn parse(text string) !Params {
 			continue
 		}
 		if state == .quote {
-			if ch == "'" {
+			if ch == "'" && ch_prev != '\\' {
 				state = .start
 				result.set_with_comment(key, value, comment)
 				key = ''
