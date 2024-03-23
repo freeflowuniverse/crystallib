@@ -15,12 +15,13 @@ pub struct PeopleAddArgs {}
 
 pub struct Person {
 pub:
-	id          string         @[required]
-	name        string
-	image       ?&doctree.File
-	page        ?&doctree.Page
-	biography   string
+	cid string [required]
+	name string
+	image ?&doctree.File
+	page ?&doctree.Page
+	biography string
 	description string
+	organizations []string
 }
 
 // adds a people section to the zola site
@@ -83,24 +84,26 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 	}
 
 	definition := person_definitions[0]
-	name := definition.params.get_default('name', '')!
-	page_ := definition.params.get_default('bio', '')!
+	name := definition.params.get_default('title', '')!
 	image_ := definition.params.get_default('image', '')!
 	mut person := Person{
-		id: texttools.name_fix(name)
 		name: name
+		cid: texttools.name_fix(name)
+		description: definition.params.get_default('description', '')!
+		organizations: definition.params.get_list_default('organizations', [])!
+		biography: definition.params.get_default('bio', '')!
 	}
 
-	// add image and page to person if they exist
-	if page_ != '' {
-		person = Person{
-			...person
-			page: site.tree.page_get('${args.collection}:${page_}') or {
-				println(err)
-				return err
-			}
-		}
-	}
+	// // add image and page to person if they exist
+	// if page_ != '' {
+	// 	person = Person{
+	// 		...person,
+	// 		page: site.tree.page_get('${args.collection}:${page_}') or {
+	// 			println(err)
+	// 			return err
+	// 		}
+	// 	}
+	// }
 	if image_ != '' {
 		person = Person{
 			...person
@@ -111,13 +114,13 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 		}
 	}
 
-	people.persons[person.id] = person
+	people.persons[person.cid] = person
 	site.people = people
 }
 
 pub fn (person Person) export(people_dir string) ! {
 	person_dir := pathlib.get_dir(
-		path: '${people_dir}/${person.id}'
+		path: '${people_dir}/${person.cid}'
 		create: true
 	)!
 
@@ -131,11 +134,11 @@ pub fn (person Person) export(people_dir string) ! {
 		path: '${person_dir.path}/index.md'
 		create: true
 	)!
+	
+	// content := if mut page := person.page {
+	// 	page.doc()!.markdown()!
+	// } else {''}
+	content := person.biography
 
-	content := if mut page := person.page {
-		page.doc()!.markdown()!
-	} else {
-		''
-	}
 	person_page.write($tmpl('./templates/person.md'))!
 }

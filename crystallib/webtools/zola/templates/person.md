@@ -3,7 +3,7 @@ title: @{person.name}
 weight: 2
 description: @{person.description}
 taxonomies:
-    people: [@{person.id}]
+    people: [@{person.cid}]
     memberships: [foundation, twin, aci_members]
     categories: [foundation, twin, aci]
 extra:
