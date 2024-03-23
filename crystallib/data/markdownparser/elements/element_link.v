@@ -14,6 +14,7 @@ pub mut:
 	moresites   bool // this means we can look for the content on multiple source sites, site does not have to be specified
 	description string
 	url         string
+	anchor 		string
 	// identification of link:
 	filename string // is the name of the page/file where the link points too
 	path     string // is path in the site
@@ -50,6 +51,9 @@ pub fn (mut self Link) process() !int {
 	}
 	// self.trailing_lf = false
 	self.parse()
+	for mut child in self.children {
+		child.process()!
+	}
 	self.processed = true
 	self.content = ''
 	return 1
@@ -93,10 +97,18 @@ fn (self Link) markdown_include() string {
 }
 
 pub fn (self Link) markdown() !string {
+	if self.url.contains('header_new'){
+		print_backtrace()
+	}
 	if self.state == .init {
 		// means we need to give link before it was processed to resolve the link e.g. in doctree
 		return self.markdown_include()
 	}
+
+	// represent description as link if there is link child, might be processed
+	description := if self.children.len == 1 && self.children[0] is Link {
+		self.children[0].markdown()!
+	} else { self.description }
 
 	mut link_filename := self.filename
 
@@ -112,13 +124,14 @@ pub fn (self Link) markdown() !string {
 		if self.cat == LinkType.image {
 			pre = '!'
 		}
+		anchor := if self.anchor != '' {'#${self.anchor}'} else {''}
 		if self.extra.trim_space() == '' {
-			out = '${pre}[${self.description}](${link_filename})'
+			out = '${pre}[${description}](${link_filename}${anchor})'
 		} else {
-			out = '${pre}[${self.description}](${link_filename} ${self.extra})'
+			out = '${pre}[${description}](${link_filename}${anchor} ${self.extra})'
 		}
 	} else if self.cat == LinkType.html {
-		out = '[${self.description}](${self.url})'
+		out = '[${description}](${self.url})'
 	} else {
 		panic('bug')
 	}
@@ -174,9 +187,22 @@ fn (mut link Link) parse() {
 	if link.content.starts_with('!') {
 		link.cat = .image
 	}
-
-	link.description = link.content.all_after('[').all_before(']').trim_space()
+	link.description = link.content.all_after('[').all_before_last(']').trim_space()
 	link.url = link.content.all_after('(').all_before(')').trim_space()
+	if link.url.contains('#') {
+		link.anchor = link.url.all_after('#')
+		// link.url = link.url.all_before('#')
+	} else {
+		// TODO: this is temproary fix for non anchor links not working
+		link.url = '${link.url}#'
+	}
+
+	// // parse link description as paragraph
+	// if link.description != '' {
+	// 	link.paragraph_new(mut link.parent_doc(), link.description)
+	// 	println('debugzoni ${link.children()}')
+	// }
+	
 	if link.url.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true
