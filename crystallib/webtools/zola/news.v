@@ -168,7 +168,8 @@ pub fn (article Article) export(news_dir string) ! {
 		''
 	}
 	println('debugzo ${content}')
-	article_page.write($tmpl('./templates/article.md'))!
+	// TODO: TIMUR
+	// article_page.write($tmpl('./templates/article.md'))!
 }
 
 // pub fn (mut site ZolaSite) news_add(args BlogAddArgs) ! {
