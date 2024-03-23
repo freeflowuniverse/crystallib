@@ -58,7 +58,8 @@ fn (mut news News) export(content_dir string) ! {
 		path: '${news_dir.path}/_index.md'
 		create: true
 	)!
-	news_index.write($tmpl('./templates/news.md'))!
+	//TODO: need to be fixed (timur)
+	// news_index.write($tmpl('./templates/news.md'))!
 
 	for id, mut article in news.articles {
 		article.export(news_dir.path)!
