@@ -21,16 +21,16 @@ pub struct NewsAddArgs {}
 
 pub struct Article {
 pub:
-	id          string          @[required]
-	title       string
-	name        string
-	image       ?&doctree.File
-	tags        []string
-	authors     []Person
-	categories  []string
-	date        ourtime.OurTime
-	page        ?&doctree.Page
-	biography   string
+	cid string [required]
+	title string
+	name string
+	image ?&doctree.File
+	tags []string
+	authors []Person
+	categories []string
+	date ourtime.OurTime
+	page ?&doctree.Page
+	biography string
 	description string
 }
 
@@ -97,18 +97,23 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	definition := article_definitions[0]
 	name := definition.params.get_default('name', '')!
 	page_ := definition.params.get_default('page', '')!
-	image_ := definition.params.get_default('image', '')!
+	image_ := definition.params.get_default('image_path', '')!
 	authors_ := definition.params.get_list_default('authors', [])!
 
 	mut authors := []Person{}
 	for author in authors_ {
-		id := texttools.name_fix(author)
-		person := site.people?.persons[id] or { continue }
+		cid := texttools.name_fix(author)
+		people := site.people or { 
+			return error('to add authors to news, site must have people')
+		}
+		person := people.persons[cid] or {
+			continue
+		}
 		authors << person
 	}
 
 	mut article := Article{
-		id: texttools.name_fix(name)
+		cid: definition.params.get_default('cid', '')!
 		name: name
 		title: definition.params.get_default('title', '')!
 		authors: authors
@@ -126,6 +131,7 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 			}
 		}
 	}
+
 	if image_ != '' {
 		article = Article{
 			...article
@@ -136,13 +142,13 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 		}
 	}
 
-	news.articles[article.id] = article
+	news.articles[article.cid] = article
 	site.news = news
 }
 
 pub fn (article Article) export(news_dir string) ! {
 	article_dir := pathlib.get_dir(
-		path: '${news_dir}/${article.id}'
+		path: '${news_dir}/${article.cid}'
 		create: true
 	)!
 
