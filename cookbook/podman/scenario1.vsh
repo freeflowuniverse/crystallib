@@ -3,6 +3,8 @@
 import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.virt.podman
+import freeflowuniverse.crystallib.installers.sysadmintools.rfs
+import time
 
 // in this scenario we
 // 1- build an image from scratch
@@ -32,16 +34,22 @@ cont.run('bash -c "redis-server --daemonize yes && bash installer_hero.sh"', fal
 cont.set_entrypoint('redis-server')!
 cont.commit('localhost/myarch')!
 // install rfs
-osal.exec(
-	cmd: 'curl -fsSL https://github.com/threefoldtech/rfs/releases/download/v2.0.4/rfs -o /usr/local/bin/rfs'
-)!
-osal.exec(cmd: 'chmod +x /usr/local/bin/rfs')!
+rfs.install()!
 // remove the folder if it exists
 osal.exec(cmd: 'rm -fr /tmp/store1')!
 osal.exec(cmd: 'mkdir -p /tmp/mount_fl /tmp/store1')!
-osal.exec(
-	cmd: 'rfs pack -m output.fl -s dir:///tmp/store1 ${mount_path}'
-)!
+rfs.pack(meta_path: '/tmp/output.fl', stores: ['dir:///tmp/store1'], target: mount_path)!
 println('mounting to `/tmp/mount_fl` you can check the flist mounted there now, consider doing umount after u finish')
 println('after flist is fully uploaded to test the container do: `podman run -it --rm --read-only  --rootfs /tmp/mount_fl bash`')
-osal.exec(cmd: 'sudo rfs mount -m output.fl /tmp/mount_fl')!
+
+// osal.exec(cmd: 'sudo rfs mount -m output.fl /tmp/mount_fl')!
+
+rfs.mount(meta_path: '/tmp/output.fl', target: '/tmp/mount_fl')!
+println('flist is mounted..., switching to the container')
+time.sleep(time.second * 10)
+println("exec bash into container")
+osal.exec(
+	cmd: 'podman run -it --rm --read-only  --rootfs /tmp/mount_fl bash'
+	shell: true
+	debug: true
+)!
