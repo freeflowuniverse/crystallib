@@ -3,6 +3,7 @@ module codeparser
 import v.ast
 import v.parser
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.codemodel { CodeItem, Function, Param, Result, Struct, StructField, Sumtype, Type }
 import v.pref
 
