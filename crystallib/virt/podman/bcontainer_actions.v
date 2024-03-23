@@ -1,3 +1,4 @@
+
 module podman
 
 import json
@@ -8,10 +9,6 @@ pub struct RunArgs {
 pub mut:
 	cmd string
 	// TODO:/..
-}
-
-pub fn (mut self BContainer) run(args RunArgs) ! {
-	// TODO
 }
 
 @[params]
@@ -30,10 +27,20 @@ pub mut:
 // 	panic("implement")
 // }
 
+pub fn (mut self BContainer) run(cmd_ string, silent bool) ! {
+	cmd := 'buildah run ${self.id} ${cmd_}'
+	osal.exec(cmd: cmd, stdout: !silent)!
+}
+
 @[params]
 pub struct HeroInstall {
 pub mut:
 	reset bool
+}
+
+pub fn (mut self BContainer) copy(src string, dest string) ! {
+	cmd := 'buildah copy ${self.id} ${src} ${dest}'
+	osal.exec(cmd: cmd)!
 }
 
 pub fn (mut self BContainer) hero_install(args HeroInstall) ! {

@@ -7,10 +7,11 @@ import os
 @[heap]
 pub struct Summary {
 pub mut:
-	items       []SummaryItem
-	errors      []SummaryItem // means we found errors, so we need to add to summary
-	addpages    []SummaryItem // means we found pages as links, so we need to add them to the summary
-	collections []string
+	items         []SummaryItem
+	errors        []SummaryItem // means we found errors, so we need to add to summary
+	addpages      []SummaryItem // means we found pages as links, so we need to add them to the summary
+	collections   []string
+	summary_pages map[string]bool
 }
 
 pub struct SummaryItem {
@@ -107,6 +108,8 @@ pub fn (mut book MDBook) summary() !Summary {
 			pagename: pagename
 			collection: collection
 		}
+
+		summary.summary_pages['${collection}:${pagename}'] = true
 	}
 
 	return summary
@@ -122,7 +125,15 @@ fn (mut self Summary) add_error_page(collectionname string, pagename string) {
 	}
 }
 
+fn (mut self Summary) is_in_summary(collection_name string, page_name string) bool{
+	return self.summary_pages['${collection_name}:${page_name}']
+}
+
 fn (mut self Summary) add_page_additional(collectionname string, pagename string) {
+	if self.is_in_summary(collectionname, pagename) {
+		return
+	}
+
 	shortname := pagename.all_before_last('.').to_lower()
 	description := '${shortname}'
 	self.addpages << SummaryItem{
