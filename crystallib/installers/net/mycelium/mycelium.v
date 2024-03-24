@@ -20,7 +20,7 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	version := '0.3.1'
+	version := '0.4.4'
 
 	res := os.execute('${osal.profile_path_source_and()} mycelium -V')
 	if res.exit_code == 0 {
