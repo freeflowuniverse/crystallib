@@ -1,13 +1,10 @@
 module postgresql
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.osal.startupmanager
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import json
-import rand
 import db.pg
 
 @[params]
@@ -86,7 +83,7 @@ pub fn (mut server Server) start() ! {
 	if server.ok() {
 		return
 	}
-
+	
 	console.print_header('start postgresql: ${server.name}')
 
 	t1 := $tmpl('templates/compose.yaml')
@@ -107,10 +104,9 @@ pub fn (mut server Server) start() ! {
 	docker compose up	
 	echo "DOCKER COMPOSE ENDED, EXIT TO BASH"
 	'
-	mut z := zinit.new()!
-	processname := 'postgres_${server.name}'
-	mut p := z.process_new(
-		name: processname
+	mut sm:=startupmanager.get()!
+	sm.start(
+		name: 'postgres_${server.name}'
 		cmd: cmd
 	)!
 
