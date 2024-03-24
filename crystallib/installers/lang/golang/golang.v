@@ -14,7 +14,7 @@ pub mut:
 
 // install golang will return true if it was already installed
 pub fn install(args_ InstallArgs) ! {
-	version := '1.21.6'
+	version := '1.22.1'
 
 	mut args := args_
 	res := os.execute('go version')
