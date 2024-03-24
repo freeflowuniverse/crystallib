@@ -9,8 +9,7 @@ import freeflowuniverse.crystallib.installers.docker
 import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
 // import freeflowuniverse.crystallib.installers.base
 
-// run postgresql as docker compose
-pub fn install() ! {
+pub fn requirements() ! {
 	if !osal.done_exists('postgres_install') {
 		host_remove()!
 		docker.install()! // make sure docker is installed and working properly

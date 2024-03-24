@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.data.fskvs
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 import json
 import rand
 import db.pg
@@ -13,15 +14,14 @@ import db.pg
 pub struct Config {
 pub mut:
 	name   string = 'default'
-	path   string = '/data/postgresql'
-	passwd string
+	path   string // /data/postgresql/${name} for linux /hero/var/redis/${args.name} for osx
+	passwd string @[required]
 }
 
 pub struct Server {
 pub mut:
 	name        string
 	config      Config
-	process     ?zinit.ZProcess
 	path_config pathlib.Path
 	path_data   pathlib.Path
 	path_export pathlib.Path
@@ -34,51 +34,35 @@ pub mut:
 // passwd      string
 //```
 // if name exists already in the config DB, it will load for that name
-pub fn new(args_ Config) !Server {
-	install()! // make sure it has been build & ready to be used
+pub fn start(args_ Config) !Server {
 	mut args := args_
-	if args.passwd == '' {
-		args.passwd = rand.string(12)
-	}
-	if args.path == '' {
-		args.path = '/data/postgresql'
-	}
 	args.name = texttools.name_fix(args.name)
-	key := 'postgres_config_${args.name}'
-	mut kvs := fskvs.new(name: 'config')!
-	if !kvs.exists(key) {
-		data := json.encode(args)
-		kvs.set(key, data)!
-	}
-	return get(args.name)!
-}
-
-pub fn get(name_ string) !Server {
-	console.print_header('get postgresql server ${name_}')
-	name := texttools.name_fix(name_)
-	key := 'postgres_config_${name}'
-	mut kvs := fskvs.new(name: 'config')!
-	if kvs.exists(key) {
-		data := kvs.get(key)!
-		args := json.decode(Config, data)!
-
-		mut server := Server{
-			name: name
-			config: args
-			path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
-			path_data: pathlib.get_dir(path: '${args.path}/data', create: true)!
-			path_export: pathlib.get_dir(path: '${args.path}/exports', create: true)!
+	console.print_header('start postgresql server ${name}')
+	requirements()! // make sure requirements are done
+	if args.path == '' {
+		if osal.is_linux() {
+			args.path = '/data/postgresql/${args.name}'
+		}else{
+			args.path = '${os.home_dir()}/hero/var/redis/${args.name}'
 		}
-		mut z := zinit.new()!
-		processname := 'postgres_${name}'
-		if z.process_exists(processname) {
-			server.process = z.process_get(processname)!
-		}
-		// println(" - server get ok")
-		server.start()!
-		return server
 	}
-	return error("can't find server postgres with name ${name}")
+	mut server := Server{
+		name: args.name
+		config: args
+		path_config: pathlib.get_dir(path: '${args.path}/config', create: true)!
+		path_data: pathlib.get_dir(path: '${args.path}/data', create: true)!
+		path_export: pathlib.get_dir(path: '${args.path}/exports', create: true)!
+	}
+
+	
+	mut z := zinit.new()!
+	processname := 'postgres_${name}'
+	if z.process_exists(processname) {
+		server.process = z.process_get(processname)!
+	}
+	// println(" - server get ok")
+	server.start()!
+	return server
 }
 
 // return status
