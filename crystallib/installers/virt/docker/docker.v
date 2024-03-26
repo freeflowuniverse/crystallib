@@ -2,6 +2,7 @@ module docker
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.ui.console
 
 // install docker will return true if it was already installed
 pub fn install() ! {
@@ -13,7 +14,7 @@ pub fn install() ! {
 	base.install()!
 
 	if !osal.done_exists('install_docker') && !osal.cmd_exists('docker') {
-		osal.upgrade()!
+		// osal.upgrade()!
 		osal.package_install('mc,wget,htop,apt-transport-https,ca-certificates,curl,software-properties-common')!
 		cmd := '
 		rm -f /usr/share/keyrings/docker-archive-keyring.gpg

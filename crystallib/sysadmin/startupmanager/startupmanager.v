@@ -69,12 +69,23 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 pub fn (mut sm StartupManager) kill(name string) ! {
 	match sm.cat {
 		.screen{
-			mut scr := screen.new(reset: false)!
-			scr.kill(name)!
+			mut screen_factory := screen.new(reset: false)!
+			mut scr := screen_factory.get(name)!
+			scr.cmd_send('^C')!
+			screen_factory.kill(name)!
 		}else{
 			panic("to implement, startup manager only support screen for now")
 		}
 	}
 }
 
-
+pub fn(mut sm StartupManager) exists(name string)! bool{
+	match sm.cat{
+		.screen{
+			mut scr := screen.new(reset:false)!
+			return scr.exists(name)
+		}else{
+			panic("to implement. startup manager only support screen for now")
+		}
+	}
+}
