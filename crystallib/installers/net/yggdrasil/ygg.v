@@ -1,10 +1,8 @@
-module mycelium
+module yggdrasil
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.lang.golang
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.develop.gittools
@@ -53,27 +51,23 @@ Peers:
 			url: 'https://github.com/yggdrasil-network/yggdrasil-go.git'
 			reset: false
 		)!
-		osal.exec(cmd: 'cd ${path}/src && ./build &&  go build -o /src/genkeys cmd/genkeys/main.go')!
+		osal.exec(cmd: 'cd ${path} && PATH=\$PATH:/usr/local/go/bin ./build')!
+
+		osal.cmd_add(
+			source: '${path}/yggdrasil'
+		)!
+		osal.cmd_add(
+			source: '${path}/yggdrasilctl'
+		)!
+
+		osal.cmd_add(
+			source: '${path}/contrib/docker/entrypoint.sh'
+		)!
 		if !os.exists(config_path) {
-			osal.exec(cmd: '/usr/bin/yggdrasil -genconf > /etc/yggdrasil.conf')!
+			osal.exec(cmd: 'yggdrasil -genconf > /etc/yggdrasil.conf')!
 			config := os.read_file(config_path)!
 			config.replace('Peers: []', peers)
 		}
-		osal.cmd_add(
-			source: 'src/yggdrasil'
-		)!
-		osal.cmd_add(
-			source: 'src/yggdrasilctl'
-		)!
-		osal.cmd_add(
-			source: 'src/genkeys'
-		)!
-		osal.cmd_add(
-			source: 'contrib/docker/entrypoint.sh'
-		)!
-		restart()!
-	} else {
-		start()!
 	}
 }
 
