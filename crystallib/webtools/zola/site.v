@@ -21,9 +21,11 @@ pub mut:
 	tree         doctree.Tree @[skip; str: skip]
 	pages        []ZolaPage
 	header       ?Header
+	footer       ?Footer
 	blog         Blog
 	people       ?People
 	news         ?News
+	sections     []Section
 }
 
 pub struct Blog {
@@ -198,25 +200,6 @@ extra:
 	image.copy('${post_dir.path}/${image.file_name()}')!
 
 	site.blog.posts[args.name] = page.doc()!
-}
-
-pub fn (mut site ZolaSite) footer_add(args HeaderAddArgs) ! {
-	// site.tree.process_includes()!
-	// col := site.tree.collection_get(args.collection) or {
-	// 	println(err)
-	// 	return err
-	// }
-	// mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-	// 	println(err)
-	// 	return err
-	// }
-
-	// footer_dir := pathlib.get_dir(
-	// 	path:'${site.path_build.path}/content/footer'
-	// 	create: true
-	// )!
-
-	// page.export(dest: '${footer_dir.path}/_index.md')!
 }
 
 // add collections from doctree
