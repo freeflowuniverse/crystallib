@@ -12,25 +12,21 @@ mut:
 	articles map[string]Article
 }
 
-enum SortBy {
-	date
-}
-
 @[params]
 pub struct NewsAddArgs {}
 
 pub struct Article {
 pub:
-	cid string [required]
-	title string
-	name string
-	image ?&doctree.File
-	tags []string
-	authors []Person
-	categories []string
-	date ourtime.OurTime
-	page ?&doctree.Page
-	biography string
+	cid         string          @[required]
+	title       string
+	name        string
+	image       ?&doctree.File
+	tags        []string
+	authors     []Person
+	categories  []string
+	date        ourtime.OurTime
+	page        ?&doctree.Page
+	biography   string
 	description string
 }
 
@@ -53,8 +49,7 @@ fn (mut news News) export(content_dir string) ! {
 		path: '${news_dir.path}/_index.md'
 		create: true
 	)!
-	//TODO: need to be fixed (timur)
-	// news_index.write($tmpl('./templates/news.md'))!
+	news_index.write($tmpl('./templates/news.md'))!
 
 	for _, mut article in news.articles {
 		article.export(news_dir.path)!
@@ -66,6 +61,7 @@ pub struct ArticleAddArgs {
 	collection string @[required]
 	file       string @[required]
 	image      string
+	pointer    string
 }
 
 pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
@@ -75,11 +71,28 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	}
 
 	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
+
+	collection := if args.collection != '' {
+		_ = site.tree.collection_get(args.collection) or {
+			println(err)
+			return err
+		}
+		args.collection
+	} else {
+		if args.pointer != '' {
+			args.pointer.split(':')[0]
+		} else {
+			''
+		}
 	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
+
+	pointer := if args.pointer != '' {
+		args.pointer
+	} else {
+		'${collection}:${args.name}'
+	}
+
+	mut page := site.tree.page_get('${pointer}') or {
 		println(err)
 		return err
 	}
@@ -103,12 +116,9 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	mut authors := []Person{}
 	for author in authors_ {
 		cid := texttools.name_fix(author)
-		people := site.people or { 
-			return error('to add authors to news, site must have people')
-		}
-		person := people.persons[cid] or {
-			continue
-		}
+		people := site.people or { return error('to add authors to news, site must have people') }
+
+		person := people.persons[cid] or { continue }
 		authors << person
 	}
 
@@ -135,7 +145,7 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	if image_ != '' {
 		article = Article{
 			...article
-			image: site.tree.image_get('${args.collection}:${image_}') or {
+			image: site.tree.image_get('${collection}:${image_}') or {
 				println(err)
 				return err
 			}
@@ -146,6 +156,7 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 	site.news = news
 }
 
+// this function exports the article to a given folder
 pub fn (article Article) export(news_dir string) ! {
 	article_dir := pathlib.get_dir(
 		path: '${news_dir}/${article.cid}'
@@ -168,46 +179,5 @@ pub fn (article Article) export(news_dir string) ! {
 	} else {
 		''
 	}
-	println('debugzo ${content}')
-	// TODO: TIMUR
-	// article_page.write($tmpl('./templates/article.md'))!
+	article_page.write($tmpl('./templates/article.md'))!
 }
-
-// pub fn (mut site ZolaSite) news_add(args BlogAddArgs) ! {
-// 	site.tree.process_includes()!
-// 	_ = site.tree.collection_get(args.collection) or {
-// 		println(err)
-// 		return err
-// 	}
-// 	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-// 		println(err)
-// 		return err
-// 	}
-
-// 	mut news_index := pathlib.get_file(
-// 		path: '${site.path_build.path}/content/newsroom/_index.md'
-// 	)!
-// 	if !news_index.exists() {
-// 		news_index.write('---
-// title: "Our People"
-// paginate_by: 4
-// sort_by: "weight"
-// template: "layouts/people.html"
-// page_template: "partials/personCard.html"
-// insert_anchor_links: "left"
-// description: "Our team brings together +30 years of experience in cloud automation, Internet storage, and infrastructure services. We are a passionate group on a collective mission to improve the planet’s situation and benefit the people around us."
-// ---')!
-// 	}
-
-// 	news_dir := pathlib.get_dir(
-// 		path: '${site.path_build.path}/content/newsroom'
-// 		create: true
-// 	)!
-// 	fixed_name := '${texttools.name_fix(args.name)}'
-// 	article_dir := pathlib.get_dir(
-// 		path: '${news_dir.path}/${fixed_name}'
-// 		create: true
-// 	)!
-// 	page.export(dest: '${article_dir.path}/${fixed_name}.md')!
-// 	site.blog.posts[args.name] = page.doc()!
-// }

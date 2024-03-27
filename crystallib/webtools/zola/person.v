@@ -15,13 +15,17 @@ pub struct PeopleAddArgs {}
 
 pub struct Person {
 pub:
-	cid string [required]
-	name string
-	image ?&doctree.File
-	page ?&doctree.Page
-	biography string
-	description string
+	cid           string         @[required]
+	name          string
+	image         ?&doctree.File
+	page          ?&doctree.Page
+	biography     string
+	description   string
 	organizations []string
+	categories    []string
+	memberships   []string
+	countries     []string
+	cities        []string
 }
 
 // adds a people section to the zola site
@@ -52,23 +56,26 @@ fn (mut people People) export(content_dir string) ! {
 
 pub struct PersonAddArgs {
 	name       string
+	page       string
 	collection string @[required]
 	file       string @[required]
 	image      string
 }
 
 pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
+	if !site.sections.any(it.name == 'People') {
+		site.add_section(
+			name: 'People'
+		)!
+	}
+
 	mut people := site.people or {
 		site.people_add()!
 		site.people or { panic('this should never happen') }
 	}
 
 	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
+	mut page := site.tree.page_get(args.page) or {
 		println(err)
 		return err
 	}
@@ -84,8 +91,8 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 	}
 
 	definition := person_definitions[0]
-	name := definition.params.get_default('title', '')!
-	image_ := definition.params.get_default('image', '')!
+	name := definition.params.get_default('name', '')!
+	image_ := definition.params.get_default('image_path', '')!
 	mut person := Person{
 		name: name
 		cid: texttools.name_fix(name)
@@ -94,20 +101,12 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 		biography: definition.params.get_default('bio', '')!
 	}
 
+	collection := args.page.all_before(':')
 	// // add image and page to person if they exist
-	// if page_ != '' {
-	// 	person = Person{
-	// 		...person,
-	// 		page: site.tree.page_get('${args.collection}:${page_}') or {
-	// 			println(err)
-	// 			return err
-	// 		}
-	// 	}
-	// }
 	if image_ != '' {
 		person = Person{
 			...person
-			image: site.tree.image_get('${args.collection}:${image_}') or {
+			image: site.tree.image_get('${collection}:${image_}') or {
 				println(err)
 				return err
 			}
@@ -116,9 +115,35 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 
 	people.persons[person.cid] = person
 	site.people = people
+
+	image_path := if mut img := person.image {
+		// img.copy('${person_dir.path}/${img.file_name()}')!
+		img.file_name()
+	} else {
+		''
+	}
+
+	person_page := Page{
+		title: person.name
+		weight: 2
+		description: person.description
+		taxonomies: {
+			'people':      [person.cid]
+			'memberships': person.memberships
+			'categories':  person.categories
+		}
+		extra: {
+			'imgPath':       image_path
+			'organizations': person.organizations
+			'countries':     person.countries
+			'cities':        person.cities
+			'social_links':  ''
+		}
+	}
 }
 
 pub fn (person Person) export(people_dir string) ! {
+	println('exporting ${person}')
 	person_dir := pathlib.get_dir(
 		path: '${people_dir}/${person.cid}'
 		create: true
@@ -134,7 +159,7 @@ pub fn (person Person) export(people_dir string) ! {
 		path: '${person_dir.path}/index.md'
 		create: true
 	)!
-	
+
 	// content := if mut page := person.page {
 	// 	page.doc()!.markdown()!
 	// } else {''}
