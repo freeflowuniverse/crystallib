@@ -47,11 +47,11 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 
 				
 				action_element.content = mydoc2.markdown()!
-				md2 := mydoc2.markdown()!
-				if md2.contains('vindo0.png') {
-					println(mydoc2.markdown()!)
-					panic('vidostop')
-				}
+				// md2 := mydoc2.markdown()!
+				// if md2.contains('vindo0.png') {
+				// 	println(mydoc2.markdown()!)
+				// 	panic('vidostop')
+				// }
 
 			} else {
 				collection.error(

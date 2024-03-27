@@ -185,7 +185,7 @@ pub fn (mut self Summary) str() string {
 			for _ in 0 .. item.level {
 				pre += '  '
 			}
-			out << '${pre}- [${item.description}](${item.collection}/${item.pagename}.md)'
+			out << '${pre}- [${item.description}](${item.collection}/${item.pagename})'
 		}
 	}
 
