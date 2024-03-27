@@ -120,6 +120,7 @@ pub fn play_zola(mut session play.Session) ! {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
+<<<<<<< HEAD
 			site_.person_add(
 				name: name
 				collection: collection
@@ -161,6 +162,9 @@ pub fn play_zola(mut session play.Session) ! {
 				sort_by: sort_by
 				description: description
 			)!
+=======
+			site_.person_add(name: name, collection: collection, file: file, page:page)!
+>>>>>>> c09c2ea (zola fixes)
 		} else if action.name == 'news_add' {
 			console.print_debug('website.news_add')
 			mut p := action.params

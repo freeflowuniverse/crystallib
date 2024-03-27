@@ -8,7 +8,10 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser
+<<<<<<< HEAD
 import freeflowuniverse.crystallib.data.doctree
+=======
+>>>>>>> c09c2ea (zola fixes)
 import os
 
 pub fn (mut site ZolaSite) process() ! {
@@ -119,6 +122,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	if mut footer := site.footer {
 		footer.export(content_dir.path)!
 	}
+<<<<<<< HEAD
 
 	for key, mut section in site.sections {
 		section_dir := pathlib.get_dir(
@@ -127,6 +131,20 @@ pub fn (mut site ZolaSite) generate() ! {
 		)!
 		section.export(section_dir.path)!
 	}
+=======
+	if mut people := site.people {
+		people.export(content_dir.path)!
+	}
+	if mut news := site.news {
+		news.export(content_dir.path)!
+	}
+	if mut header := site.header {
+		header.export(content_dir.path)!
+	}
+	if mut footer := site.footer {
+		footer.export(content_dir.path)!
+	}
+>>>>>>> c09c2ea (zola fixes)
 
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')
 

@@ -1,5 +1,6 @@
 module zola
 
+<<<<<<< HEAD
 import toml
 import freeflowuniverse.crystallib.core.pathlib
 // see https://www.getzola.org/documentation/content/section/#front-matter
@@ -12,12 +13,29 @@ mut:
 }
 
 pub struct SectionFrontMatter {
+=======
+pub fn (mut site ZolaSite) add_section(section Section) ! {
+	if site.sections.any(it.name == section.name) {
+		return error('Section with name `${section.name}` already exists.')
+	}
+	site.sections << section
+}
+
+// see https://www.getzola.org/documentation/content/section/#front-matter
+pub struct Section {
+	name                string
+	pages               []Page
+>>>>>>> c09c2ea (zola fixes)
 	title               string
 	description         string
 	draft               bool
 	sort_by             SortBy
 	weight              int
+<<<<<<< HEAD
 	template            string
+=======
+	template            string = 'section.html'
+>>>>>>> c09c2ea (zola fixes)
 	page_template       string
 	paginate_by         int
 	paginate_path       string = 'page'
@@ -29,6 +47,7 @@ pub struct SectionFrontMatter {
 	transparent         bool
 	aliases             []string
 	generate_feed       bool
+<<<<<<< HEAD
 	// extra               map[string]Extra
 }
 
@@ -79,6 +98,11 @@ fn (s SectionFrontMatter) markdown() string {
 	}
 	return lines.filter(it != '').join_lines()
 }
+=======
+	extra               map[string]string
+}
+
+>>>>>>> c09c2ea (zola fixes)
 
 pub enum SortBy {
 	@none
@@ -88,7 +112,10 @@ pub enum SortBy {
 	title_bytes
 	weight
 	slug
+<<<<<<< HEAD
 	order
+=======
+>>>>>>> c09c2ea (zola fixes)
 }
 
 pub enum InsertAnchorLinks {
@@ -104,7 +131,14 @@ pub struct Page {
 	weight      int
 	description string
 	taxonomies  map[string][]string
+<<<<<<< HEAD
 	extra       map[string]Extra    @[skip; str: skip]
 }
 
 type Extra = []string | string
+=======
+	extra       map[string]Extra
+}
+
+type Extra = []string | int | map[string]string | string
+>>>>>>> c09c2ea (zola fixes)
