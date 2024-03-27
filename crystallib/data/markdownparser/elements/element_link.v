@@ -196,7 +196,7 @@ fn (mut link Link) parse() {
 		// link.url = link.url.all_before('#')
 	} else {
 		// TODO: this is temproary fix for non anchor links not working
-		link.url = '${link.url}#'
+		// link.url = '${link.url}#'
 	}
 
 	// // parse link description as paragraph

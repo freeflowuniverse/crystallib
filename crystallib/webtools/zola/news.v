@@ -2,12 +2,7 @@ module zola
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.ourtime
-import freeflowuniverse.crystallib.data.markdownparser.elements
-import os
-import time
 import freeflowuniverse.crystallib.core.texttools
 
 // News section for Zola site
@@ -41,7 +36,7 @@ pub:
 
 // adds a news section to the zola site
 fn (mut site ZolaSite) news_add(args NewsAddArgs) ! {
-	if news := site.news {
+	if _ := site.news {
 		return error('News section already exists in zola site')
 	} else {
 		site.news = News{}
@@ -54,14 +49,14 @@ fn (mut news News) export(content_dir string) ! {
 		create: true
 	)!
 
-	mut news_index := pathlib.get_file(
+	 _ := pathlib.get_file(
 		path: '${news_dir.path}/_index.md'
 		create: true
 	)!
 	//TODO: need to be fixed (timur)
 	// news_index.write($tmpl('./templates/news.md'))!
 
-	for id, mut article in news.articles {
+	for _, mut article in news.articles {
 		article.export(news_dir.path)!
 	}
 }
@@ -151,13 +146,13 @@ pub fn (article Article) export(news_dir string) ! {
 		create: true
 	)!
 
-	image_path := if mut img := article.image {
+	_ := if mut img := article.image {
 		img.copy('${article_dir.path}/${img.file_name()}')!
 		img.file_name()
 	} else {
 		''
 	}
-	mut article_page := pathlib.get_file(
+	_ := pathlib.get_file(
 		path: '${article_dir.path}/index.md'
 		create: true
 	)!

@@ -2,10 +2,6 @@ module zola
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.data.markdownparser
-import freeflowuniverse.crystallib.data.markdownparser.elements
-import os
 import freeflowuniverse.crystallib.core.texttools
 
 // People section for Zola site
@@ -29,7 +25,7 @@ pub:
 
 // adds a people section to the zola site
 fn (mut site ZolaSite) people_add(args PeopleAddArgs) ! {
-	if people := site.people {
+	if _ := site.people {
 		return error('People section already exists in zola site')
 	} else {
 		site.people = People{}
@@ -48,7 +44,7 @@ fn (mut people People) export(content_dir string) ! {
 	)!
 	people_index.write($tmpl('./templates/people.md'))!
 
-	for id, mut person in people.persons {
+	for _, mut person in people.persons {
 		person.export(people_dir.path)!
 	}
 }
