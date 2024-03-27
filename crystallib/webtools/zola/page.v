@@ -1,8 +1,6 @@
 module zola
 
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
 
 // ZolaPage extends doctree page with zola specific metadata
 pub struct ZolaPage {
@@ -45,10 +43,10 @@ struct ZolaPageArgs {
 }
 
 fn new_zola_page(args ZolaPageArgs) ZolaPage {
-	doctree_page := doctree.Page{
-		...args.page
-		name: texttools.name_fix(args.name)
-	}
+	// doctree_page := doctree.Page{
+	// 	...args.page
+	// 	name: texttools.name_fix(args.name)
+	// }
 
 	return ZolaPage{
 		Page: args.page
@@ -69,11 +67,11 @@ fn (mut site ZolaSite) page_add_check_args(args PageAddArgs) ! {
 		}
 		return error('`${homepages[0].name}` was already added as homepage')
 	}
-	col := site.tree.collection_get(args.collection) or {
+	_ := site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
-	page := site.tree.page_get('${args.collection}:${args.file}') or {
+	_ := site.tree.page_get('${args.collection}:${args.file}') or {
 		println(err)
 		return err
 	}
