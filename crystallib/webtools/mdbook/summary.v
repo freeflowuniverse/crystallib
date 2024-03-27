@@ -7,11 +7,10 @@ import os
 @[heap]
 pub struct Summary {
 pub mut:
-	items         []SummaryItem
-	errors        []SummaryItem // means we found errors, so we need to add to summary
-	addpages      []SummaryItem // means we found pages as links, so we need to add them to the summary
-	collections   []string
-	summary_pages map[string]bool
+	items       []SummaryItem
+	errors      []SummaryItem // means we found errors, so we need to add to summary
+	addpages    []SummaryItem // means we found pages as links, so we need to add them to the summary
+	collections []string
 }
 
 pub struct SummaryItem {
@@ -34,26 +33,15 @@ pub fn (mut book MDBook) summary() !Summary {
 	summary_path.link('${book.path_build.path}/edit/summary.md', true)!
 
 	mut level := 0
-	mut pre_last := ''
+	mut ident := 2
 
 	for mut line in c.split_into_lines() {
 		if !(line.trim_space().starts_with('-')) {
 			continue
 		}
 		pre := line.all_before('-')
-		// println("${line}  ===  '${pre}'")
-		if pre.len > pre_last.len {
-			// println("+")
-			level += 1 // increase level
-		} else if pre.len < pre_last.len {
-			level -= 1
-			// println("-")
-			if level < 0 {
-				panic('bug, level should never be below 0')
-			}
-		}
-		pre_last = pre
-
+		level = int(pre.len / ident)
+		// println("${line}  ===  '${pre}'  ${level}")
 		line = line.trim_left(' -')
 
 		// - [Dunia Yetu](dy_intro/dunia_yetu/dunia_yetu.md)
@@ -108,8 +96,6 @@ pub fn (mut book MDBook) summary() !Summary {
 			pagename: pagename
 			collection: collection
 		}
-
-		summary.summary_pages['${collection}:${pagename}'] = true
 	}
 
 	return summary
@@ -125,8 +111,33 @@ fn (mut self Summary) add_error_page(collectionname string, pagename string) {
 	}
 }
 
-fn (mut self Summary) is_in_summary(collection_name string, page_name string) bool {
-	return self.summary_pages['${collection_name}:${page_name}']
+fn (mut self Summary) is_in_summary(collection_name_ string, page_name_ string) bool {
+	mut collection_name := texttools.name_fix(collection_name_).to_lower()
+	mut page_name := texttools.name_fix(page_name_).to_lower()
+	if !(page_name.ends_with('.md')) {
+		page_name += '.md'
+	}
+
+	for i in self.items {
+		mut pname := texttools.name_fix(i.pagename.to_lower())
+		if !(pname.ends_with('.md')) {
+			pname += '.md'
+		}
+		if i.collection.to_lower() == collection_name && pname == page_name {
+			return true
+		}
+	}
+
+	for i in self.addpages {
+		mut pname := texttools.name_fix(i.pagename.to_lower())
+		if !(pname.ends_with('.md')) {
+			pname += '.md'
+		}
+		if i.collection.to_lower() == collection_name && pname == page_name {
+			return true
+		}
+	}
+	return false
 }
 
 fn (mut self Summary) add_page_additional(collectionname string, pagename string) {
@@ -174,7 +185,7 @@ pub fn (mut self Summary) str() string {
 			for _ in 0 .. item.level {
 				pre += '  '
 			}
-			out << '${pre}- [${item.description}](${item.collection}/${item.pagename})'
+			out << '${pre}- [${item.description}](${item.collection}/${item.pagename}.md)'
 		}
 	}
 

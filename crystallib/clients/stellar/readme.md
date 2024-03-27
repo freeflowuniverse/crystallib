@@ -1,6 +1,10 @@
-#!/usr/bin/env -S v -w -enable-globals run
-import freeflowuniverse.crystallib.clients.stellar
 
+# Stellar Client
+
+
+see [examples/clients/b2_kristof.vsh](examples/clients/stellar.vsh) for example
+
+```v
 mut cl:=stellar.get(instance:"test")!
 
 // cl.config_delete()!
@@ -19,4 +23,6 @@ cl.config_save()!
 
 //we will now see how the description has been overwritten
 println(cfg)
+
+```
 
