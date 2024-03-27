@@ -98,24 +98,26 @@ pub fn play_zola(mut session play.Session) ! {
 			console.print_debug('website.person_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
+			page := p.get_default('page', '')!
 			collection := p.get_default('collection', '')!
 			file := p.get_default('file', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.person_add(name: name, collection: collection, file: file)!
+			site_.person_add(name: name, collection: collection, file: file, page:page)!
 		} else if action.name == 'news_add' {
 			console.print_debug('website.news_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
 			collection := p.get_default('collection', '')!
+			pointer := p.get_default('pointer', '')!
 			file := p.get_default('file', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for news_add, should have been defined before with !!website.define")
 			}
 
-			site_.article_add(name: name, collection: collection, file: file)!
+			site_.article_add(name: name, collection: collection, file: file, pointer: pointer)!
 		} else if action.name == 'header_add' {
 			console.print_debug('website.header_add')
 			mut p := action.params

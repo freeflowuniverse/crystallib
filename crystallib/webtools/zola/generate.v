@@ -8,8 +8,6 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser
-import freeflowuniverse.crystallib.data.markdownparser.elements
-import freeflowuniverse.crystallib.data.doctree
 import os
 
 pub fn (mut site ZolaSite) process() ! {
@@ -66,26 +64,31 @@ pub fn (mut site ZolaSite) generate() ! {
 	for mut page in site.pages {
 		page.export(content_dir.path)!
 	}
-
 	if mut people := site.people {
 		people.export(content_dir.path)!
 	}
 	if mut news := site.news {
 		news.export(content_dir.path)!
 	}
-
-	mut header := site.header or { Header{} }
-
-	header.export(content_dir.path)!
+	if mut header := site.header {
+		header.export(content_dir.path)!
+	}
+	if mut footer := site.footer {
+		footer.export(content_dir.path)!
+	}
 
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')
 
 	mut tw := tailwind.new(
 		name: site.name
 		path_build: site.path_build.path
-		content_paths: ['${site.path_build.path}/templates/**/*.html',
-			'${site.path_build.path}/content/**/*.md']
+		content_paths: [
+			'${site.path_build.path}/templates/**/*.html',
+			'${site.path_build.path}/content/**/*.md',
+			'${site.path_build.path}/content/*.md',
+		]
 	)!
+	preprocessor.preprocess('${site.path_build.path}/content')!
 
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
@@ -100,8 +103,6 @@ pub fn (mut site ZolaSite) generate() ! {
 	mut p_build := pathlib.get_file(path: '${site.path_build.path}/build.sh', create: true)!
 	p_build.write(cmd)!
 	os.chmod(p_build.path, 0o777)!
-
-	preprocessor.preprocess('${site.path_build.path}/content')!
 
 	osal.exec(cmd: cmd)!
 	mut r := redisclient.core_get()!

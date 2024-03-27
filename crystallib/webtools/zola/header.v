@@ -1,7 +1,5 @@
 module zola
 
-import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 
 pub struct Header {

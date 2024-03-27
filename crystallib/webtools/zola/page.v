@@ -2,7 +2,6 @@ module zola
 
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
 
 // ZolaPage extends doctree page with zola specific metadata
 pub struct ZolaPage {
