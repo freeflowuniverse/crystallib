@@ -13,6 +13,7 @@ pub struct ZolaPage {
 	PageFrontMatter
 	doctree.Page
 pub mut:
+<<<<<<< HEAD
 	name     string
 	path     string
 	homepage bool
@@ -38,6 +39,31 @@ mut:
 	template        string
 	taxonomies      map[string][]string
 	extra           map[string]toml.Any
+=======
+	name string
+	path string
+	homepage bool
+	template string
+	document elements.Doc // markdown document of the page
+}
+
+pub struct PageFrontMatter {
+	id string
+	title string
+	description string
+	date time.Time
+	updated time.Time
+	weight int
+	draft bool
+	slug string @[omitempty]
+	path string
+	aliases []string
+	authors []string
+	in_search_index bool = true
+	template string 
+	taxonomies map[string][]string
+	extra map[string]toml.Any
+>>>>>>> e61681d (example fix wip)
 }
 
 pub struct PageAddArgs {
@@ -46,13 +72,24 @@ pub struct PageAddArgs {
 	file       string @[required]
 	homepage   bool
 	template   string
+<<<<<<< HEAD
 	path       string
+=======
+	path    string
+>>>>>>> e61681d (example fix wip)
 }
 
 pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 	site.page_add_check_args(args) or { return error('Can\'t add page `${args.name}`: ${err}') }
 
+<<<<<<< HEAD
 	mut page := site.tree.page_get('${args.collection}:${args.file}') or { return err }
+=======
+	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
+		println(err)
+		return err
+	}
+>>>>>>> e61681d (example fix wip)
 
 	pages_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/pages'
@@ -79,8 +116,13 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 }
 
 fn new_page(page_ ZolaPage) !ZolaPage {
+<<<<<<< HEAD
 	mut page := ZolaPage{
 		...page_
+=======
+	mut page := ZolaPage {
+		...page_,
+>>>>>>> e61681d (example fix wip)
 		Page: page_.Page
 	}
 	page.name = texttools.name_fix(page.name)
@@ -111,16 +153,20 @@ pub fn (mut page ZolaPage) export(content_dir string) ! {
 	front_matter := page.PageFrontMatter.markdown()
 	content := page.doc()!.markdown()!
 
+<<<<<<< HEAD
 	page_dir := pathlib.get_dir(
 		path: '${content_dir}/${page.name}'
 	)!
 
+=======
+>>>>>>> e61681d (example fix wip)
 	if page.homepage {
 		page.Page.export(dest: '${content_dir}/home/index.md')!
 	} else {
 		page.Page.export(dest: '${content_dir}/${page.name}/index.md')!
 	}
 
+<<<<<<< HEAD
 	mut page_file := pathlib.get_file(path: '${page_dir.path}/index.md')!
 	page_file.write('+++\n${front_matter}\n+++\n${content}')!
 
@@ -170,6 +216,59 @@ fn (p PageFrontMatter) markdown() string {
 				continue
 			}
 			line = 'extra = {${p.extra.to_toml()}}'
+		}
+	}
+	return lines.filter(it != '').join_lines()
+=======
+	mut page_file := pathlib.get_file(path: '${content_dir}/${page.name}/index.md')!
+	page_file.write('+++\n${front_matter}\n+++\n${content}')!
+
+	// page_dir := pathlib.get_dir(path: '${content_dir}/${page.name}')
+	// list := page_dir.list(regex:[r'.*\.md$'])
+	// // convert exported markdown files to pages
+	// for path in list.paths {
+	// 	path.write('+++\n${front_matter}\n+++\n${content}')!
+	// }
+>>>>>>> e61681d (example fix wip)
+}
+
+fn (p PageFrontMatter) markdown() string {
+	front_matter := toml.encode(p)
+	mut lines := front_matter.split_into_lines()
+	for i, mut line in lines {
+		if line.starts_with('date = ') {
+			if p.date.unix == 0 {
+				line = ''
+				continue
+			}
+			line = 'date = ${p.date.ymmdd()}'
+		}
+		if line.starts_with('updated = ') {
+			if p.updated.unix == 0 {
+				line = ''
+				continue
+			}
+			line = 'updated = ${p.updated.ymmdd()}'
+		}
+		else if line.starts_with('slug = ') {
+			if p.slug == '' {
+				line = ''
+				continue
+			}
+		}
+		else if line.starts_with('path = ') {
+			if p.path == '' {
+				line = ''
+				continue
+			}
+		}else if line.starts_with('template = ') {
+			if p.template == '' {
+				line = ''
+				continue
+			}
+		}else if line.starts_with('sort_by = ') {
+			line = ''
+			continue
 		}
 	}
 	return lines.filter(it != '').join_lines()

@@ -1,6 +1,7 @@
 module zola
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import toml
 import freeflowuniverse.crystallib.core.pathlib
 // see https://www.getzola.org/documentation/content/section/#front-matter
@@ -21,21 +22,38 @@ pub fn (mut site ZolaSite) add_section(section Section) ! {
 	site.sections << section
 }
 
+=======
+import toml
+import freeflowuniverse.crystallib.core.pathlib
+>>>>>>> e61681d (example fix wip)
 // see https://www.getzola.org/documentation/content/section/#front-matter
 pub struct Section {
+	SectionFrontMatter
 	name                string
+<<<<<<< HEAD
 	pages               []Page
 >>>>>>> c09c2ea (zola fixes)
+=======
+mut:
+	pages               []ZolaPage @[skip; str: skip]
+}
+
+pub struct SectionFrontMatter {
+>>>>>>> e61681d (example fix wip)
 	title               string
 	description         string
 	draft               bool
 	sort_by             SortBy
 	weight              int
 <<<<<<< HEAD
+<<<<<<< HEAD
 	template            string
 =======
 	template            string = 'section.html'
 >>>>>>> c09c2ea (zola fixes)
+=======
+	template            string
+>>>>>>> e61681d (example fix wip)
 	page_template       string
 	paginate_by         int
 	paginate_path       string = 'page'
@@ -47,6 +65,7 @@ pub struct Section {
 	transparent         bool
 	aliases             []string
 	generate_feed       bool
+<<<<<<< HEAD
 <<<<<<< HEAD
 	// extra               map[string]Extra
 }
@@ -103,6 +122,52 @@ fn (s SectionFrontMatter) markdown() string {
 }
 
 >>>>>>> c09c2ea (zola fixes)
+=======
+	// extra               map[string]Extra
+}
+
+pub fn (mut section Section) page_add(page ZolaPage) ! {
+	// = "page.html"
+	section.pages << page
+}
+
+pub fn (mut section Section) export(dest_dir string) ! {
+	println("debugzoni ${section}")
+	front_matter := section.SectionFrontMatter.markdown()
+
+	mut section_file := pathlib.get_file(path: '${dest_dir}/_index.md')!
+	section_file.write('+++\n${front_matter}\n+++')!
+	
+	for mut page in section.pages {
+		page.export(dest_dir)!
+	}
+}
+
+fn (s SectionFrontMatter) markdown() string {
+	front_matter := toml.encode(s)
+	mut lines := front_matter.split_into_lines()
+	for i, mut line in lines {
+		if line.starts_with('sort_by = ') {
+			line = ''
+			continue
+		}
+		if line.starts_with('insert_anchor_links = ') {
+			if s.insert_anchor_links == .@none {
+				line = ''
+				continue
+			}
+			line = 'insert_anchor_links = ${s.insert_anchor_links}'
+			continue
+		} else if line.starts_with('redirect_to = ') {
+			if s.redirect_to == '' {
+				line = ''
+				continue
+			}
+		}
+	}
+	return lines.filter(it != '').join_lines()
+}
+>>>>>>> e61681d (example fix wip)
 
 pub enum SortBy {
 	@none
@@ -132,6 +197,7 @@ pub struct Page {
 	description string
 	taxonomies  map[string][]string
 <<<<<<< HEAD
+<<<<<<< HEAD
 	extra       map[string]Extra    @[skip; str: skip]
 }
 
@@ -142,3 +208,9 @@ type Extra = []string | string
 
 type Extra = []string | int | map[string]string | string
 >>>>>>> c09c2ea (zola fixes)
+=======
+	extra       map[string]Extra @[skip; str: skip]
+}
+
+type Extra = []string | string
+>>>>>>> e61681d (example fix wip)

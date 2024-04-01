@@ -9,9 +9,14 @@ import freeflowuniverse.webcomponents.preprocessor
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser
 <<<<<<< HEAD
+<<<<<<< HEAD
 import freeflowuniverse.crystallib.data.doctree
 =======
 >>>>>>> c09c2ea (zola fixes)
+=======
+import freeflowuniverse.crystallib.data.doctree
+
+>>>>>>> e61681d (example fix wip)
 import os
 
 pub fn (mut site ZolaSite) process() ! {
@@ -73,7 +78,11 @@ pub fn (mut site ZolaSite) generate() ! {
 	// 	page.export(content_dir.path)!
 	// }
 
+<<<<<<< HEAD
 	mut tree := doctree.new(name: 'ws_pages_${site.name}')!
+=======
+	mut tree := doctree.new(name: 'ws_pages_${site.name}')! 
+>>>>>>> e61681d (example fix wip)
 	tree.scan(
 		path: '${site.path_build.path}/pages'
 		load: true
@@ -90,6 +99,7 @@ pub fn (mut site ZolaSite) generate() ! {
 		delete: true
 	)!
 
+<<<<<<< HEAD
 	mut errors_file := pathlib.get_file(
 		path: '${site.path_build.path}/tree/src/pages/errors.md'
 	)!
@@ -99,6 +109,8 @@ pub fn (mut site ZolaSite) generate() ! {
 		delete: true
 	)!
 
+=======
+>>>>>>> e61681d (example fix wip)
 	mut src_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/tree/src/pages'
 	)!
@@ -108,14 +120,21 @@ pub fn (mut site ZolaSite) generate() ! {
 		delete: true
 	)!
 
+<<<<<<< HEAD
 	// src_dir :=
 
+=======
+	// src_dir := 
+
+	
+>>>>>>> e61681d (example fix wip)
 	// if mut people := site.people {
 	// 	people.export(content_dir.path)!
 	// }
 	// if mut news := site.news {
 	// 	news.export(content_dir.path)!
 	// }
+<<<<<<< HEAD
 	if mut header := site.header {
 		header.export(content_dir.path)!
 	}
@@ -138,6 +157,8 @@ pub fn (mut site ZolaSite) generate() ! {
 	if mut news := site.news {
 		news.export(content_dir.path)!
 	}
+=======
+>>>>>>> e61681d (example fix wip)
 	if mut header := site.header {
 		header.export(content_dir.path)!
 	}
@@ -145,6 +166,14 @@ pub fn (mut site ZolaSite) generate() ! {
 		footer.export(content_dir.path)!
 	}
 >>>>>>> c09c2ea (zola fixes)
+
+	for key, mut section in site.sections {
+		section_dir := pathlib.get_dir(
+			path: '${content_dir.path}/${section.name}'
+			create: true
+		)!
+		section.export(section_dir.path)!
+	}
 
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')
 
