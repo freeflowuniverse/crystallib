@@ -6,12 +6,11 @@ import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.markdownparser.elements
-import freeflowuniverse.crystallib.data.markdownparser
 
 // ZolaPage extends doctree page with zola specific metadata
 pub struct ZolaPage {
 	PageFrontMatter
-	doctree.Page
+	// doctree.Page
 pub mut:
 	name string
 	path string
@@ -55,27 +54,29 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 		return err
 	}
 
-	pages_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/pages'
-		create: true
-	)!
-	collection_file := pathlib.get_file(
-		path: '${site.path_build.path}/pages/.collection'
-		create: true
+}
+
+pub fn (mut site ZolaSite) page_add_helper(path string, page_ ZolaPage) ! {
+	file := pathlib.get_file(
+		path: path
+		create: false
 	)!
 
-	mut zola_page := new_page(
-		name: args.name
-		homepage: args.homepage
-		template: args.template
-		Page: page
+	if !file.exists() {
+		return error('File at path ${path} doesn\'t exist.')
+	}
+
+	document := markdownparser.new(path: file.path)!
+	for 
+	
+	page := new_page(
+		...page_
+		document: markdownparser.new(path: file.path)!
+
 	)!
 
-	front_matter := zola_page.PageFrontMatter.markdown()
-	doc := markdownparser.new(content: '+++\n${front_matter}\n+++\n\n${page.doc()!.markdown()!}')!
-	page.doc_ = &doc
-	page.export(dest: '${pages_dir.path}/${page.name}.md')!
-	zola_page.doc_ = &doc
+	// front_matter := page.PageFrontMatter.markdown()
+	// zola_page.doc_ = markdownparser.new(content: '${front_matter}\n\n${page.doc()!.markdown()!}')!
 	site.pages << zola_page
 }
 
@@ -104,11 +105,11 @@ fn (mut site ZolaSite) page_add_check_args(args PageAddArgs) ! {
 		}
 		return error('`${homepages[0].name}` was already added as homepage')
 	}
-	_ := site.tree.collection_get(args.collection) or {
+	col := site.tree.collection_get(args.collection) or {
 		println(err)
 		return err
 	}
-	_ := site.tree.page_get('${args.collection}:${args.file}') or {
+	page := site.tree.page_get('${args.collection}:${args.file}') or {
 		println(err)
 		return err
 	}
@@ -124,15 +125,8 @@ pub fn (mut page ZolaPage) export(content_dir string) ! {
 		page.Page.export(dest: '${content_dir}/${page.name}/index.md')!
 	}
 
-	mut page_file := pathlib.get_file(path: '${content_dir}/${page.name}/index.md')!
+		mut page_file := pathlib.get_file(path: '${content_dir}/${page.name}/index.md')!
 	page_file.write('+++\n${front_matter}\n+++\n${content}')!
-
-	// page_dir := pathlib.get_dir(path: '${content_dir}/${page.name}')
-	// list := page_dir.list(regex:[r'.*\.md$'])
-	// // convert exported markdown files to pages
-	// for path in list.paths {
-	// 	path.write('+++\n${front_matter}\n+++\n${content}')!
-	// }
 }
 
 fn (p PageFrontMatter) markdown() string {

@@ -19,18 +19,14 @@ pub mut:
 	path_publish pathlib.Path
 	zola         &Zola        @[skip; str: skip]
 	tree         doctree.Tree @[skip; str: skip]
+	tree2         doctree.Tree @[skip; str: skip]
 	pages        []ZolaPage
 	header       ?Header
 	footer       ?Footer
 	blog         Blog
 	people       ?People
 	news         ?News
-	sections     []Section
-}
-
-pub struct Blog {
-pub mut:
-	posts map[string]elements.Doc
+	sections     map[string]Section
 }
 
 @[params]
@@ -53,6 +49,7 @@ pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
 		url: args.url
 		zola: &self
 		tree: doctree.new(name: 'ws_${args.name}')!
+		tree2: doctree.new(name: 'ws_${args.name}_2')!
 	}
 
 	self.sites[site.name] = &site
@@ -140,68 +137,6 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	}
 }
 
-pub struct BlogAddArgs {
-	name       string
-	collection string @[required]
-	file       string @[required]
-	image      string
-}
-
-pub fn (mut site ZolaSite) blog_add(args BlogAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-	mut image := site.tree.image_get('${args.collection}:${args.image}') or {
-		println(err)
-		return err
-	}
-
-	mut blog_index := pathlib.get_file(
-		path: '${site.path_build.path}/content/blog/_index.md'
-	)!
-	if !blog_index.exists() {
-		blog_index.write('---
-title: "Blog"
-paginate_by: 9
-
-# paginate_reversed: false
-
-sort_by: "date"
-insert_anchor_links: "left"
-#base_url: "posts"
-#first: "first"
-#last: "last"
-template: "layouts/blog.html"
-page_template: "blogPage.html"
-#transparent: true
-generate_feed: true
-extra:
-  imgPath: images/threefold_img2.png
----
-')!
-	}
-
-	blog_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/blog'
-		create: true
-	)!
-	fixed_name := '${texttools.name_fix(args.name)}'
-	post_dir := pathlib.get_dir(
-		path: '${blog_dir.path}/${fixed_name}'
-		create: true
-	)!
-	page.export(dest: '${post_dir.path}/index.md')!
-	image.copy('${post_dir.path}/${image.file_name()}')!
-
-	site.blog.posts[args.name] = page.doc()!
-}
-
 // add collections from doctree
 //```args for getting the template
 // path   string
@@ -221,7 +156,7 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 		regex: [r'.*\.md$']
 		include_links: true
 	)!
-	// println('debuzgo: ${md_list}')
+	site.tree.process_includes()!
 	// for mdfile in md_list.paths {
 	// 	doc := markdownparser.new(path: mdfile.path)!
 	// 	for include in doc.children.filter(it is elements.Include) {
@@ -230,4 +165,19 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	// 	// pointers := doc.action_pointers()
 	// 	// for
 	// }
+	site.tree.export(dest: '${site.path_build.path}/doctree')!
+}
+
+pub fn (mut site ZolaSite) add_section(section_ Section) ! {
+	section := Section {
+		...section_
+		name: texttools.name_fix(section_.name)
+	}
+	
+	if section.name in site.sections {
+		return error('Section with name `${section.name}` already exists.')
+	}
+
+	//  = 'section.html'
+	site.sections[section.name] = section
 }

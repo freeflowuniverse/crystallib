@@ -8,6 +8,8 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.data.doctree
+
 import os
 
 pub fn (mut site ZolaSite) process() ! {
@@ -60,21 +62,63 @@ pub fn (mut site ZolaSite) generate() ! {
 		path: '${site.path_build.path}/content'
 		create: true
 	)!
+	static_dir := pathlib.get_dir(
+		path: '${site.path_build.path}/static'
+		create: true
+	)!
 
-	for mut page in site.pages {
-		page.export(content_dir.path)!
-	}
-	if mut people := site.people {
-		people.export(content_dir.path)!
-	}
-	if mut news := site.news {
-		news.export(content_dir.path)!
-	}
+	// for mut page in site.pages {
+	// 	page.export(content_dir.path)!
+	// }
+
+	mut tree := doctree.new(name: 'ws_pages_${site.name}')! 
+	tree.scan(
+		path: '${site.path_build.path}/pages'
+		load: true
+	)!
+	tree.process_includes()!
+	tree.export(dest: '${site.path_build.path}/tree')!
+
+	mut img_dir := pathlib.get_dir(
+		path: '${site.path_build.path}/tree/src/pages/img'
+	)!
+
+	img_dir.move(
+		dest: '${static_dir.path}/img'
+		delete: true
+	)!
+
+	mut src_dir := pathlib.get_dir(
+		path: '${site.path_build.path}/tree/src/pages'
+	)!
+
+	src_dir.move(
+		dest: content_dir.path
+		delete: true
+	)!
+
+	// src_dir := 
+
+	
+	// if mut people := site.people {
+	// 	people.export(content_dir.path)!
+	// }
+	// if mut news := site.news {
+	// 	news.export(content_dir.path)!
+	// }
 	if mut header := site.header {
 		header.export(content_dir.path)!
 	}
 	if mut footer := site.footer {
 		footer.export(content_dir.path)!
+	}
+
+	for key, mut section in site.sections {
+		section_dir := pathlib.get_dir(
+			path: '${content_dir.path}/${section.name}'
+			create: true
+		)!
+		section.export(section_dir.path)!
 	}
 
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')

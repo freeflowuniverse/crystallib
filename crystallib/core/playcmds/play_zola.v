@@ -82,30 +82,46 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.doctree_add(url: url, path: path)!
+		} else if action.name == 'post_add' {
+			console.print_debug('website.post_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			collection := p.get_default('collection', '')!
+			file := p.get_default('file', '')!
+			page := p.get_default('page', '')!
+			pointer := p.get_default('pointer', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+
+			site_.post_add(name: name, collection: collection, file: file, pointer: pointer)!
 		} else if action.name == 'blog_add' {
 			console.print_debug('website.blog_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
 			collection := p.get_default('collection', '')!
 			file := p.get_default('file', '')!
-			image := p.get_default('image', '')!
+			page := p.get_default('page', '')!
+			pointer := p.get_default('pointer', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.blog_add(name: name, collection: collection, file: file, image: image)!
-		} else if action.name == 'person_add' {
+			site_.blog_add(name: name)!
+		}
+		 else if action.name == 'person_add' {
 			console.print_debug('website.person_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
 			page := p.get_default('page', '')!
 			collection := p.get_default('collection', '')!
 			file := p.get_default('file', '')!
+			pointer := p.get_default('pointer', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.person_add(name: name, collection: collection, file: file, page:page)!
+			site_.person_add(name: name, collection: collection, file: file, page:page, pointer: pointer)!
 		} else if action.name == 'news_add' {
 			console.print_debug('website.news_add')
 			mut p := action.params
