@@ -108,12 +108,7 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.blog_add(name: name)!
-<<<<<<< HEAD
 		} else if action.name == 'person_add' {
-=======
-		}
-		 else if action.name == 'person_add' {
->>>>>>> e61681d (example fix wip)
 			console.print_debug('website.person_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
@@ -125,8 +120,6 @@ pub fn play_zola(mut session play.Session) ! {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 			site_.person_add(
 				name: name
 				collection: collection
@@ -168,12 +161,6 @@ pub fn play_zola(mut session play.Session) ! {
 				sort_by: sort_by
 				description: description
 			)!
-=======
-			site_.person_add(name: name, collection: collection, file: file, page:page)!
->>>>>>> c09c2ea (zola fixes)
-=======
-			site_.person_add(name: name, collection: collection, file: file, page:page, pointer: pointer)!
->>>>>>> e61681d (example fix wip)
 		} else if action.name == 'news_add' {
 			console.print_debug('website.news_add')
 			mut p := action.params
