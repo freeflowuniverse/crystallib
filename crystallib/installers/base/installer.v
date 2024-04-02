@@ -74,7 +74,7 @@ pub fn install(args InstallArgs) ! {
 	} else if pl == .arch {
 		console.print_header(' - Arch prepare')
 		osal.package_refresh()!
-		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis-server')!
+		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}

@@ -1,6 +1,6 @@
 
 
-## Configuration
+## Configuration (OUTDATED)
 
 All configuration is stored in ~/hero/config as heroscripts.
 

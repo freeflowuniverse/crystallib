@@ -1,6 +1,7 @@
 module playbook
 
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.data.paramsparser
 import crypto.blake2b
 
 pub struct PlayBook {
@@ -24,7 +25,7 @@ pub mut:
 }
 
 // add action to the book
-fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
+pub fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
 	plbook.nractions += 1
 	mut a := Action{
 		id: plbook.nractions
@@ -34,6 +35,8 @@ fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
 		priority: args.priority
 		execute: args.execute
 		actiontype: args.actiontype
+		params: paramsparser.Params{}
+		result: paramsparser.Params{}
 	}
 	plbook.actions << &a
 	return &a

@@ -50,7 +50,7 @@ pub fn parse(text string) !Params {
 
 	for i in 0 .. text2.len {
 		ch = text2[i..i + 1]
-		println(" - '${ch_prev}${ch}' ${state}")
+		// println(" - '${ch_prev}${ch}' ${state}")
 		// check for comments end
 		if state == .start {
 			if ch == ' ' {
