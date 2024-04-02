@@ -5,6 +5,12 @@ Is an opinionated library as used by threefold mainly to automate cloud environm
 
 Please check also our [cookbook](https://github.com/freeflowuniverse/crystallib/tree/development/cookbook) which might give some ideas how to use it.
 
+## Get started with hero
+
+```bash
+curl -sL https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh | bash
+```
+
 ## Get started with crystallib
 
 the following script will install vlang and crystallib (report bugs please)

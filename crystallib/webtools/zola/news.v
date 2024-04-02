@@ -38,6 +38,7 @@ fn (mut site ZolaSite) news_add(args NewsAddArgs) ! {
 	if 'newsroom' in site.sections {
 		return error('News section already exists in zola site')
 	}
+
 	news_section := Section{
 		...args.Section
 		name: 'newsroom'

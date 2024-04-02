@@ -13,7 +13,7 @@ import os
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset bool
+	reset       bool
 	letsencrypt bool
 }
 
@@ -28,12 +28,12 @@ pub fn install(args InstallArgs) ! {
 
 	if !osal.is_linux() {
 		return error('only support linux for now')
-	}	
+	}
 
-	osal.package_install('lighttpd')! //lego is for letsencrypt
+	osal.package_install('lighttpd')! // lego is for letsencrypt
 
-	if args.letsencrypt{
-		osal.package_install('lego')! //lego is for letsencrypt
+	if args.letsencrypt {
+		osal.package_install('lego')! // lego is for letsencrypt
 	}
 
 	// install lighttpd if it was already done will return true
@@ -48,7 +48,7 @@ pub fn install(args InstallArgs) ! {
 @[params]
 pub struct WebConfig {
 pub mut:
-	path   string = '/var/www'
+	path string = '/var/www'
 }
 
 // configure lighttpd as default webserver & start
@@ -60,7 +60,7 @@ pub fn install_configure_default(config WebConfig) ! {
 	// if config.domain.len > 0 {
 	// 	config_file = $tmpl('templates/lighttpdfile_domain')
 	// }
-	install(letsencrypt:true)!
+	install(letsencrypt: true)!
 	os.mkdir_all(config.path)!
 
 	default_html := '
@@ -78,7 +78,7 @@ pub fn install_configure_default(config WebConfig) ! {
 
 	configuration_set(content: config_file)!
 
-	println(" INSTALL LIGHTTPD OK ON PORT 8000")
+	println(' INSTALL LIGHTTPD OK ON PORT 8000')
 }
 
 pub fn configuration_get() !string {
@@ -152,8 +152,8 @@ pub fn start(args StartArgs) ! {
 
 pub fn stop() ! {
 	console.print_header('Lighttpd Stop')
-	mut scr:=screen.new(reset:false)!
-	scr.kill("lighttpd")!
+	mut scr := screen.new(reset: false)!
+	scr.kill('lighttpd')!
 	// osal.process_kill_recursive(name:"lighttpd")! //kills myself
 }
 

@@ -14,8 +14,8 @@ pub mut:
 pub struct Config {
 	play.ConfigBase
 pub mut:
-	configtype string = 'stellarclient' // needs to be defined	
-	keyname    string
+	configtype  string = 'stellarclient' // needs to be defined	
+	keyname     string
 	secret      string
 	description string
 }
