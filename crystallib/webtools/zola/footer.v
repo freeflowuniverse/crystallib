@@ -26,7 +26,6 @@ pub fn (mut site ZolaSite) footer_link_add(args Link) ! {
 	mut footer := site.footer or { return error('footer needs to be defined') }
 	footer.links << args
 	site.footer = footer
-	println('site.footer: ${site.footer}')
 }
 
 pub fn (mut footer Footer) export(content_dir string) ! {

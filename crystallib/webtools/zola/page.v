@@ -13,29 +13,31 @@ pub struct ZolaPage {
 	PageFrontMatter
 	doctree.Page
 pub mut:
-	name string
-	path string
+	name     string
+	path     string
 	homepage bool
 	template string
-	document elements.Doc // markdown document of the page
+	document elements.Doc   // markdown document of the page
+	assets   []pathlib.Path // a list of paths to assets
 }
 
 pub struct PageFrontMatter {
-	id string
-	title string
-	description string
-	date time.Time
-	updated time.Time
-	weight int
-	draft bool
-	slug string @[omitempty]
-	path string
-	aliases []string
-	authors []string
+mut:
+	id              string
+	title           string
+	description     string
+	date            time.Time
+	updated         time.Time
+	weight          int
+	draft           bool
+	slug            string              @[omitempty]
+	path            string
+	aliases         []string
+	authors         []string
 	in_search_index bool = true
-	template string 
-	taxonomies map[string][]string
-	extra map[string]toml.Any
+	template        string
+	taxonomies      map[string][]string
+	extra           map[string]toml.Any
 }
 
 pub struct PageAddArgs {
@@ -44,16 +46,13 @@ pub struct PageAddArgs {
 	file       string @[required]
 	homepage   bool
 	template   string
-	path    string
+	path       string
 }
 
 pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 	site.page_add_check_args(args) or { return error('Can\'t add page `${args.name}`: ${err}') }
 
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
+	mut page := site.tree.page_get('${args.collection}:${args.file}') or { return err }
 
 	pages_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/pages'
@@ -80,8 +79,8 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 }
 
 fn new_page(page_ ZolaPage) !ZolaPage {
-	mut page := ZolaPage {
-		...page_,
+	mut page := ZolaPage{
+		...page_
 		Page: page_.Page
 	}
 	page.name = texttools.name_fix(page.name)
@@ -104,19 +103,17 @@ fn (mut site ZolaSite) page_add_check_args(args PageAddArgs) ! {
 		}
 		return error('`${homepages[0].name}` was already added as homepage')
 	}
-	_ := site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	_ := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
+	_ := site.tree.collection_get(args.collection) or { return err }
+	_ := site.tree.page_get('${args.collection}:${args.file}') or { return err }
 }
 
 pub fn (mut page ZolaPage) export(content_dir string) ! {
 	front_matter := page.PageFrontMatter.markdown()
 	content := page.doc()!.markdown()!
+
+	page_dir := pathlib.get_dir(
+		path: '${content_dir}/${page.name}'
+	)!
 
 	if page.homepage {
 		page.Page.export(dest: '${content_dir}/home/index.md')!
@@ -124,15 +121,12 @@ pub fn (mut page ZolaPage) export(content_dir string) ! {
 		page.Page.export(dest: '${content_dir}/${page.name}/index.md')!
 	}
 
-	mut page_file := pathlib.get_file(path: '${content_dir}/${page.name}/index.md')!
+	mut page_file := pathlib.get_file(path: '${page_dir.path}/index.md')!
 	page_file.write('+++\n${front_matter}\n+++\n${content}')!
 
-	// page_dir := pathlib.get_dir(path: '${content_dir}/${page.name}')
-	// list := page_dir.list(regex:[r'.*\.md$'])
-	// // convert exported markdown files to pages
-	// for path in list.paths {
-	// 	path.write('+++\n${front_matter}\n+++\n${content}')!
-	// }
+	for mut asset in page.assets {
+		asset.copy(dest: page_dir.path)!
+	}
 }
 
 fn (p PageFrontMatter) markdown() string {
@@ -152,26 +146,30 @@ fn (p PageFrontMatter) markdown() string {
 				continue
 			}
 			line = 'updated = ${p.updated.ymmdd()}'
-		}
-		else if line.starts_with('slug = ') {
+		} else if line.starts_with('slug = ') {
 			if p.slug == '' {
 				line = ''
 				continue
 			}
-		}
-		else if line.starts_with('path = ') {
+		} else if line.starts_with('path = ') {
 			if p.path == '' {
 				line = ''
 				continue
 			}
-		}else if line.starts_with('template = ') {
+		} else if line.starts_with('template = ') {
 			if p.template == '' {
 				line = ''
 				continue
 			}
-		}else if line.starts_with('sort_by = ') {
+		} else if line.starts_with('sort_by = ') {
 			line = ''
 			continue
+		} else if line.starts_with('extra = ') {
+			if p.extra.len == 0 {
+				line = ''
+				continue
+			}
+			line = 'extra = {${p.extra.to_toml()}}'
 		}
 	}
 	return lines.filter(it != '').join_lines()

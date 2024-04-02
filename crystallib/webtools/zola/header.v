@@ -34,7 +34,6 @@ pub fn (mut site ZolaSite) header_link_add(args Link) ! {
 	mut header := site.header or { return error('header needs to be defined') }
 	header.items << args
 	site.header = header
-	println('site.header: ${site.header}')
 }
 
 pub struct Dropdown {

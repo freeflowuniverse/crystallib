@@ -3,11 +3,12 @@ module zola
 import toml
 import freeflowuniverse.crystallib.core.pathlib
 // see https://www.getzola.org/documentation/content/section/#front-matter
+
 pub struct Section {
 	SectionFrontMatter
-	name                string
+	name string
 mut:
-	pages               []ZolaPage @[skip; str: skip]
+	pages []ZolaPage @[skip; str: skip]
 }
 
 pub struct SectionFrontMatter {
@@ -31,18 +32,21 @@ pub struct SectionFrontMatter {
 	// extra               map[string]Extra
 }
 
-pub fn (mut section Section) page_add(page ZolaPage) ! {
+pub fn (mut section Section) page_add(page_ ZolaPage) ! {
 	// = "page.html"
+	mut page := page_
+	if section.sort_by == .order {
+		page.weight = section.pages.len + 1
+	}
 	section.pages << page
 }
 
 pub fn (mut section Section) export(dest_dir string) ! {
-	println("debugzoni ${section}")
 	front_matter := section.SectionFrontMatter.markdown()
 
 	mut section_file := pathlib.get_file(path: '${dest_dir}/_index.md')!
 	section_file.write('+++\n${front_matter}\n+++')!
-	
+
 	for mut page in section.pages {
 		page.export(dest_dir)!
 	}
@@ -53,8 +57,11 @@ fn (s SectionFrontMatter) markdown() string {
 	mut lines := front_matter.split_into_lines()
 	for i, mut line in lines {
 		if line.starts_with('sort_by = ') {
-			line = ''
-			continue
+			if s.sort_by == .order {
+				line = 'sort_by = "weight"'
+				continue
+			}
+			line = 'sort_by = "${s.sort_by}"'
 		}
 		if line.starts_with('insert_anchor_links = ') {
 			if s.insert_anchor_links == .@none {
@@ -81,6 +88,7 @@ pub enum SortBy {
 	title_bytes
 	weight
 	slug
+	order
 }
 
 pub enum InsertAnchorLinks {
@@ -96,7 +104,7 @@ pub struct Page {
 	weight      int
 	description string
 	taxonomies  map[string][]string
-	extra       map[string]Extra @[skip; str: skip]
+	extra       map[string]Extra    @[skip; str: skip]
 }
 
 type Extra = []string | string

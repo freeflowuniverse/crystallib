@@ -12,14 +12,13 @@ import freeflowuniverse.crystallib.core.texttools
 pub struct ZolaSite {
 pub mut:
 	name         string
-	url          string       @[required] // base url of site
+	url          string             @[required] // base url of site
 	title        string
 	description  string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	zola         &Zola        @[skip; str: skip]
-	tree         doctree.Tree @[skip; str: skip]
-	tree2         doctree.Tree @[skip; str: skip]
+	zola         &Zola              @[skip; str: skip]
+	tree         doctree.Tree       @[skip; str: skip]
 	pages        []ZolaPage
 	header       ?Header
 	footer       ?Footer
@@ -49,7 +48,6 @@ pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
 		url: args.url
 		zola: &self
 		tree: doctree.new(name: 'ws_${args.name}')!
-		tree2: doctree.new(name: 'ws_${args.name}_2')!
 	}
 
 	self.sites[site.name] = &site
@@ -123,18 +121,6 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	content_dest := '${site.path_build.path}/content'
 	mut content_dir := pathlib.get_dir(path: content_dest)!
 	os.cp_all('${mypath}', content_dest, true)!
-
-	md_list := content_dir.list(
-		recursive: true
-		regex: [r'.*\.md$']
-	)!
-	for mdfile in md_list.paths {
-		_ = markdownparser.new(path: mdfile.path)!
-		// for include in doc.children.filter(it is elements.Include) {
-		// 	println('incl: ${include}')
-		// }
-		// pointers := doc.action_pointers()
-	}
 }
 
 // add collections from doctree
@@ -157,23 +143,14 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 		include_links: true
 	)!
 	site.tree.process_includes()!
-	// for mdfile in md_list.paths {
-	// 	doc := markdownparser.new(path: mdfile.path)!
-	// 	for include in doc.children.filter(it is elements.Include) {
-	// 		println('incl: ${include}')
-	// 	}
-	// 	// pointers := doc.action_pointers()
-	// 	// for
-	// }
-	site.tree.export(dest: '${site.path_build.path}/doctree')!
 }
 
 pub fn (mut site ZolaSite) add_section(section_ Section) ! {
-	section := Section {
+	section := Section{
 		...section_
 		name: texttools.name_fix(section_.name)
 	}
-	
+
 	if section.name in site.sections {
 		return error('Section with name `${section.name}` already exists.')
 	}

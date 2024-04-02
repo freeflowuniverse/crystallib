@@ -9,7 +9,6 @@ import freeflowuniverse.webcomponents.preprocessor
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.doctree
-
 import os
 
 pub fn (mut site ZolaSite) process() ! {
@@ -71,7 +70,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	// 	page.export(content_dir.path)!
 	// }
 
-	mut tree := doctree.new(name: 'ws_pages_${site.name}')! 
+	mut tree := doctree.new(name: 'ws_pages_${site.name}')!
 	tree.scan(
 		path: '${site.path_build.path}/pages'
 		load: true
@@ -88,6 +87,15 @@ pub fn (mut site ZolaSite) generate() ! {
 		delete: true
 	)!
 
+	mut errors_file := pathlib.get_file(
+		path: '${site.path_build.path}/tree/src/pages/errors.md'
+	)!
+
+	errors_file.move(
+		dest: '${site.path_build.path}/errors.md'
+		delete: true
+	)!
+
 	mut src_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/tree/src/pages'
 	)!
@@ -97,9 +105,8 @@ pub fn (mut site ZolaSite) generate() ! {
 		delete: true
 	)!
 
-	// src_dir := 
+	// src_dir :=
 
-	
 	// if mut people := site.people {
 	// 	people.export(content_dir.path)!
 	// }

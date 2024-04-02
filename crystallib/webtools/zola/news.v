@@ -40,9 +40,9 @@ fn (mut site ZolaSite) news_add(args NewsAddArgs) ! {
 	}
 	news_section := Section{
 		...args.Section
-		name: if args.name != '' { args.name } else { 'newsroom' }
+		name: 'newsroom'
 		title: if args.title != '' { args.title } else { 'Newsroom' }
-		sort_by: if args.sort_by != .@none { args.sort_by } else { .weight }
+		sort_by: if args.sort_by != .@none { args.sort_by } else { .date }
 		template: if args.template != '' { args.template } else { 'layouts/newsroom.html' }
 		page_template: if args.page_template != '' { args.page_template } else { 'newsPage.html' }
 		paginate_by: if args.paginate_by != 0 { args.paginate_by } else { 3 }
@@ -52,13 +52,13 @@ fn (mut site ZolaSite) news_add(args NewsAddArgs) ! {
 }
 
 pub struct ArticleAddArgs {
-	mut:
+mut:
 	name       string
 	collection string @[required]
 	file       string @[required]
 	image      string
 	pointer    string
-	page    string
+	page       string
 }
 
 pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
@@ -68,12 +68,24 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 		site.news_add()!
 	}
 
+	image := article.image or { return error('Article must have an image') }
+
 	news_page := new_page(
 		name: article.name
-		Page: article.page or {return error('article page for ${article.name} not found')}
+		Page: article.page or { return error('article page for ${article.name} not found') }
 		title: article.title
+		authors: article.authors
 		description: article.description
+		taxonomies: {
+			'people':        article.authors
+			'tags':          article.tags
+			'news-category': article.categories
+		}
 		date: article.date.time()
+		assets: [article.image?.path]
+		extra: {
+			'imgPath': image.file_name()
+		}
 	)!
 
 	site.sections['newsroom'].page_add(news_page)!
@@ -83,24 +95,22 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 	if args_.pointer == '' && (args_.collection == '' || args_.page == '') {
 		return error('Either pointer or post collection and page must be specified in order to add post')
 	}
-	
+
 	mut args := args_
 	if args.collection == '' {
 		args.collection = args.pointer.split(':')[0]
 	}
-	
+
 	// check collection exists
 	_ = site.tree.collection_get(args.collection) or {
 		return error('Collection ${args.collection} not found.')
 	}
-	
+
 	if args.pointer == '' {
 		args.pointer = '${args.collection}:${args.name}'
 	}
 
-	mut page := site.tree.page_get(args.pointer) or {
-		return err
-	}
+	mut page := site.tree.page_get(args.pointer) or { return err }
 
 	actions := page.doc()!.actions()
 
@@ -112,7 +122,6 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 		return error('specified file includes multiple article definitions')
 	}
 
-
 	definition := article_definitions[0]
 	page_ := definition.params.get_default('page_path', '')!
 	image_ := definition.params.get_default('image_path', '')!
@@ -122,6 +131,8 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 		page: page
 		cid: definition.params.get_default('cid', '')!
 		name: definition.params.get_default('name', '')!
+		categories: definition.params.get_list_default('categories', [])!
+		tags: definition.params.get_list_default('tags', [])!
 		title: definition.params.get_default('title', '')!
 		description: definition.params.get_default('description', '')!
 		date: definition.params.get_time_default('date', ourtime.now())!
@@ -137,20 +148,15 @@ fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 	if page_ != '' {
 		article = Article{
 			...article
-			page: site.tree.page_get('${args.collection}:${page_}') or {
-				return err
-			}
+			page: site.tree.page_get('${args.collection}:${page_}') or { return err }
 		}
 	}
 
-		// // add image and page to article if they exist
+	// // add image and page to article if they exist
 	if image_ != '' {
 		article = Article{
 			...article
-			image: site.tree.image_get('${args.collection}:${image_}') or {
-				println(err)
-				return err
-			}
+			image: site.tree.image_get('${args.collection}:${image_}') or { return err }
 		}
 	}
 
