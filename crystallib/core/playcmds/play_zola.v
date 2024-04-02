@@ -108,8 +108,7 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.blog_add(name: name)!
-		}
-		 else if action.name == 'person_add' {
+		} else if action.name == 'person_add' {
 			console.print_debug('website.person_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
@@ -121,7 +120,47 @@ pub fn play_zola(mut session play.Session) ! {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.person_add(name: name, collection: collection, file: file, page:page, pointer: pointer)!
+			site_.person_add(
+				name: name
+				collection: collection
+				file: file
+				page: page
+				pointer: pointer
+			)!
+		} else if action.name == 'people_add' {
+			console.print_debug('website.people_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			description := p.get_default('description', '')!
+			sort_by_ := p.get_default('sort_by', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for people_add, should have been defined before with !!website.define")
+			}
+
+			sort_by := zola.SortBy.from(sort_by_)!
+			site_.people_add(
+				name: name
+				title: p.get_default('title', '')!
+				sort_by: sort_by
+				description: description
+			)!
+		} else if action.name == 'blog_add' {
+			console.print_debug('website.blog_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			description := p.get_default('description', '')!
+			sort_by_ := p.get_default('sort_by', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for people_add, should have been defined before with !!website.define")
+			}
+
+			sort_by := zola.SortBy.from(sort_by_)!
+			site_.blog_add(
+				name: name
+				title: p.get_default('title', '')!
+				sort_by: sort_by
+				description: description
+			)!
 		} else if action.name == 'news_add' {
 			console.print_debug('website.news_add')
 			mut p := action.params
