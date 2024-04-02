@@ -14,6 +14,7 @@ pub struct ZolaPage {
 	doctree.Page
 pub mut:
 <<<<<<< HEAD
+<<<<<<< HEAD
 	name     string
 	path     string
 	homepage bool
@@ -42,28 +43,40 @@ mut:
 =======
 	name string
 	path string
+=======
+	name     string
+	path     string
+>>>>>>> 2007ff6 (fix sections processing)
 	homepage bool
 	template string
-	document elements.Doc // markdown document of the page
+	document elements.Doc   // markdown document of the page
+	assets   []pathlib.Path // a list of paths to assets
 }
 
 pub struct PageFrontMatter {
-	id string
-	title string
-	description string
-	date time.Time
-	updated time.Time
-	weight int
-	draft bool
-	slug string @[omitempty]
-	path string
-	aliases []string
-	authors []string
+mut:
+	id              string
+	title           string
+	description     string
+	date            time.Time
+	updated         time.Time
+	weight          int
+	draft           bool
+	slug            string              @[omitempty]
+	path            string
+	aliases         []string
+	authors         []string
 	in_search_index bool = true
+<<<<<<< HEAD
 	template string 
 	taxonomies map[string][]string
 	extra map[string]toml.Any
 >>>>>>> e61681d (example fix wip)
+=======
+	template        string
+	taxonomies      map[string][]string
+	extra           map[string]toml.Any
+>>>>>>> 2007ff6 (fix sections processing)
 }
 
 pub struct PageAddArgs {
@@ -73,15 +86,20 @@ pub struct PageAddArgs {
 	homepage   bool
 	template   string
 <<<<<<< HEAD
+<<<<<<< HEAD
 	path       string
 =======
 	path    string
 >>>>>>> e61681d (example fix wip)
+=======
+	path       string
+>>>>>>> 2007ff6 (fix sections processing)
 }
 
 pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 	site.page_add_check_args(args) or { return error('Can\'t add page `${args.name}`: ${err}') }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	mut page := site.tree.page_get('${args.collection}:${args.file}') or { return err }
 =======
@@ -90,6 +108,9 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 		return err
 	}
 >>>>>>> e61681d (example fix wip)
+=======
+	mut page := site.tree.page_get('${args.collection}:${args.file}') or { return err }
+>>>>>>> 2007ff6 (fix sections processing)
 
 	pages_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/pages'
@@ -117,12 +138,17 @@ pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
 
 fn new_page(page_ ZolaPage) !ZolaPage {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	mut page := ZolaPage{
 		...page_
 =======
 	mut page := ZolaPage {
 		...page_,
 >>>>>>> e61681d (example fix wip)
+=======
+	mut page := ZolaPage{
+		...page_
+>>>>>>> 2007ff6 (fix sections processing)
 		Page: page_.Page
 	}
 	page.name = texttools.name_fix(page.name)
@@ -154,18 +180,25 @@ pub fn (mut page ZolaPage) export(content_dir string) ! {
 	content := page.doc()!.markdown()!
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 	page_dir := pathlib.get_dir(
 		path: '${content_dir}/${page.name}'
 	)!
 
+<<<<<<< HEAD
 =======
 >>>>>>> e61681d (example fix wip)
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 	if page.homepage {
 		page.Page.export(dest: '${content_dir}/home/index.md')!
 	} else {
 		page.Page.export(dest: '${content_dir}/${page.name}/index.md')!
 	}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	mut page_file := pathlib.get_file(path: '${page_dir.path}/index.md')!
 	page_file.write('+++\n${front_matter}\n+++\n${content}')!
@@ -230,6 +263,14 @@ fn (p PageFrontMatter) markdown() string {
 	// 	path.write('+++\n${front_matter}\n+++\n${content}')!
 	// }
 >>>>>>> e61681d (example fix wip)
+=======
+	mut page_file := pathlib.get_file(path: '${page_dir.path}/index.md')!
+	page_file.write('+++\n${front_matter}\n+++\n${content}')!
+
+	for mut asset in page.assets {
+		asset.copy(dest: page_dir.path)!
+	}
+>>>>>>> 2007ff6 (fix sections processing)
 }
 
 fn (p PageFrontMatter) markdown() string {
@@ -249,26 +290,30 @@ fn (p PageFrontMatter) markdown() string {
 				continue
 			}
 			line = 'updated = ${p.updated.ymmdd()}'
-		}
-		else if line.starts_with('slug = ') {
+		} else if line.starts_with('slug = ') {
 			if p.slug == '' {
 				line = ''
 				continue
 			}
-		}
-		else if line.starts_with('path = ') {
+		} else if line.starts_with('path = ') {
 			if p.path == '' {
 				line = ''
 				continue
 			}
-		}else if line.starts_with('template = ') {
+		} else if line.starts_with('template = ') {
 			if p.template == '' {
 				line = ''
 				continue
 			}
-		}else if line.starts_with('sort_by = ') {
+		} else if line.starts_with('sort_by = ') {
 			line = ''
 			continue
+		} else if line.starts_with('extra = ') {
+			if p.extra.len == 0 {
+				line = ''
+				continue
+			}
+			line = 'extra = {${p.extra.to_toml()}}'
 		}
 	}
 	return lines.filter(it != '').join_lines()

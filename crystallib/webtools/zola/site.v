@@ -18,6 +18,7 @@ pub mut:
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 <<<<<<< HEAD
+<<<<<<< HEAD
 	zola         &Zola              @[skip; str: skip]
 	tree         doctree.Tree       @[skip; str: skip]
 =======
@@ -25,6 +26,10 @@ pub mut:
 	tree         doctree.Tree @[skip; str: skip]
 	tree2         doctree.Tree @[skip; str: skip]
 >>>>>>> e61681d (example fix wip)
+=======
+	zola         &Zola              @[skip; str: skip]
+	tree         doctree.Tree       @[skip; str: skip]
+>>>>>>> 2007ff6 (fix sections processing)
 	pages        []ZolaPage
 	header       ?Header
 	footer       ?Footer
@@ -67,7 +72,6 @@ pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
 		url: args.url
 		zola: &self
 		tree: doctree.new(name: 'ws_${args.name}')!
-		tree2: doctree.new(name: 'ws_${args.name}_2')!
 	}
 
 	self.sites[site.name] = &site
@@ -142,6 +146,7 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	mut content_dir := pathlib.get_dir(path: content_dest)!
 	os.cp_all('${mypath}', content_dest, true)!
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 	md_list := content_dir.list(
@@ -155,6 +160,8 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 		// }
 		// pointers := doc.action_pointers()
 	}
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 }
 
 <<<<<<< HEAD
@@ -244,6 +251,7 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	)!
 	site.tree.process_includes()!
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 
 pub fn (mut site ZolaSite) add_section(section_ Section) ! {
@@ -269,14 +277,16 @@ pub fn (mut site ZolaSite) add_section(section_ Section) ! {
 	// }
 	site.tree.export(dest: '${site.path_build.path}/doctree')!
 >>>>>>> e61681d (example fix wip)
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 }
 
 pub fn (mut site ZolaSite) add_section(section_ Section) ! {
-	section := Section {
+	section := Section{
 		...section_
 		name: texttools.name_fix(section_.name)
 	}
-	
+
 	if section.name in site.sections {
 		return error('Section with name `${section.name}` already exists.')
 	}

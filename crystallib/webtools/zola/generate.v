@@ -15,8 +15,11 @@ import freeflowuniverse.crystallib.data.doctree
 >>>>>>> c09c2ea (zola fixes)
 =======
 import freeflowuniverse.crystallib.data.doctree
+<<<<<<< HEAD
 
 >>>>>>> e61681d (example fix wip)
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 import os
 
 pub fn (mut site ZolaSite) process() ! {
@@ -79,10 +82,14 @@ pub fn (mut site ZolaSite) generate() ! {
 	// }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	mut tree := doctree.new(name: 'ws_pages_${site.name}')!
 =======
 	mut tree := doctree.new(name: 'ws_pages_${site.name}')! 
 >>>>>>> e61681d (example fix wip)
+=======
+	mut tree := doctree.new(name: 'ws_pages_${site.name}')!
+>>>>>>> 2007ff6 (fix sections processing)
 	tree.scan(
 		path: '${site.path_build.path}/pages'
 		load: true
@@ -100,6 +107,9 @@ pub fn (mut site ZolaSite) generate() ! {
 	)!
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 	mut errors_file := pathlib.get_file(
 		path: '${site.path_build.path}/tree/src/pages/errors.md'
 	)!
@@ -109,8 +119,11 @@ pub fn (mut site ZolaSite) generate() ! {
 		delete: true
 	)!
 
+<<<<<<< HEAD
 =======
 >>>>>>> e61681d (example fix wip)
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 	mut src_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/tree/src/pages'
 	)!
@@ -121,6 +134,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	)!
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// src_dir :=
 
 =======
@@ -128,6 +142,10 @@ pub fn (mut site ZolaSite) generate() ! {
 
 	
 >>>>>>> e61681d (example fix wip)
+=======
+	// src_dir :=
+
+>>>>>>> 2007ff6 (fix sections processing)
 	// if mut people := site.people {
 	// 	people.export(content_dir.path)!
 	// }

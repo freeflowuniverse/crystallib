@@ -27,9 +27,12 @@ pub fn (mut site ZolaSite) footer_link_add(args Link) ! {
 	footer.links << args
 	site.footer = footer
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	println('site.footer: ${site.footer}')
 >>>>>>> c09c2ea (zola fixes)
+=======
+>>>>>>> 2007ff6 (fix sections processing)
 }
 
 pub fn (mut footer Footer) export(content_dir string) ! {

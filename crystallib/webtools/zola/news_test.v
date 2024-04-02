@@ -7,6 +7,7 @@ fn test_news_add() ! {
 	site.news_add()!
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 // fn (mut news News) export(content_dir string) ! {
@@ -152,3 +153,5 @@ fn test_news_add() ! {
 // 	article_page.write($tmpl('./templates/article.md'))!
 // }
 >>>>>>> c09c2ea (zola fixes)
+=======
+>>>>>>> 2007ff6 (fix sections processing)
