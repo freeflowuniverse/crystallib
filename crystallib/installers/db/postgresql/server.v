@@ -1,12 +1,13 @@
 module postgresql
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.startupmanager
+import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import db.pg
 import os
+import time
 
 @[params]
 pub struct Config {
@@ -35,7 +36,7 @@ pub mut:
 pub fn start(args_ Config) !Server {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
-	console.print_header('start postgresql server ${name}')
+	console.print_header('start postgresql server ${args.name}')
 	requirements()! // make sure requirements are done
 	if args.path == '' {
 		if osal.is_linux() {
@@ -52,13 +53,14 @@ pub fn start(args_ Config) !Server {
 		path_export: pathlib.get_dir(path: '${args.path}/exports', create: true)!
 	}
 
-	mut z := zinit.new()!
-	processname := 'postgres_${name}'
-	if z.process_exists(processname) {
-		server.process = z.process_get(processname)!
+	processname := 'postgres_${args.name}'
+
+	mut manager := startupmanager.get()!
+	if !manager.exists(processname)! {
+		server.start()!
 	}
 	// println(" - server get ok")
-	server.start()!
+
 	return server
 }
 
@@ -73,10 +75,6 @@ pub fn start(args_ Config) !Server {
 // 	spawned
 // }
 // ```
-pub fn (mut server Server) status() zinit.ZProcessStatus {
-	mut process := server.process or { return .unknown }
-	return process.status() or { return .unknown }
-}
 
 // run postgresql as docker compose
 pub fn (mut server Server) start() ! {
@@ -99,20 +97,35 @@ pub fn (mut server Server) start() ! {
 	mut p3 := server.path_config.file_get_new('postgresql.conf')!
 	p3.write(t3)!
 
-	cmd := '
+	cmd := "bash -c \"
 	cd ${server.path_config.path}
-	docker compose up	
-	echo "DOCKER COMPOSE ENDED, EXIT TO BASH"
-	'
+	docker compose up 
+	\""
 	mut sm := startupmanager.get()!
 	sm.start(
 		name: 'postgres_${server.name}'
 		cmd: cmd
 	)!
 
-	p.output_wait('database system is ready to accept connections', 120)!
+	// p.output_wait('database system is ready to accept connections', 120)!
+	now := time.now()
+	mut ready := false
+	mut err_msg := ''
+	for time.since(now) < time.second * 10 {
+		server.check() or {
+			console.print_header('preparing database...')
+			err_msg = err.str()
+			time.sleep(time.millisecond * 100)
+			continue
+		}
 
-	server.check()!
+		ready = true
+		break
+	}
+
+	if !ready {
+		return error('failed to run database: ${err_msg}')
+	}
 
 	console.print_header('postgres login check worked')
 }
@@ -123,10 +136,10 @@ pub fn (mut server Server) restart() ! {
 }
 
 pub fn (mut server Server) stop() ! {
-	print_backtrace()
 	console.print_header('stop postgresql: ${server.name}')
-	mut process := server.process or { return }
-	return process.stop()
+
+	mut sm := startupmanager.get()!
+	sm.kill('postgres_${server.name}')!
 }
 
 // check health, return true if ok
@@ -136,7 +149,7 @@ pub fn (mut server Server) check() ! {
 		user: 'root'
 		password: server.config.passwd
 		dbname: 'postgres'
-	) or { return error('cant connect to postgresql server:\n${server}') }
+	) or { return error('cant connect to postgresql server:\n${server} due to error: ${err}') }
 	db.exec('SELECT version();') or {
 		return error('can\t select version from database.\n${server}')
 	}

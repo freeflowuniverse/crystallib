@@ -1,19 +1,14 @@
 module postgresql
 
-// import freeflowuniverse.crystallib.osal.tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
-// import freeflowuniverse.crystallib.core.pathlib
-// import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.installers.docker
-import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
-// import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.installers.virt.docker
 
 pub fn requirements() ! {
 	if !osal.done_exists('postgres_install') {
 		host_remove()!
 		docker.install()! // make sure docker is installed and working properly
-		zinitinstaller.install()!
+		// zinitinstaller.install()!
 		osal.package_install('libpq-dev,postgresql-client')!
 		osal.done_set('postgres_install', 'OK')!
 		console.print_header('postgresql installed')
