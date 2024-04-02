@@ -30,5 +30,5 @@ pub fn (self Comment) html() !string {
 }
 
 pub fn (self Comment) pug() !string {
-	return error("cannot return pug, not implemented")
+	return error('cannot return pug, not implemented')
 }

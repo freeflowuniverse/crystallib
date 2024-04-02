@@ -78,9 +78,9 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 	mut docs := new(content: content)!
 	assert docs.children.len == 9
 	assert docs.children[0] is Paragraph
-	md1:=docs.children[0].markdown()!
+	md1 := docs.children[0].markdown()!
 	// println("**${md1}**")
-	assert md1=="\n    \n"	
+	assert md1 == '\n    \n'
 	assert docs.children[0] is Paragraph
 	assert docs.children[1] is Header
 	assert docs.children[2] is Paragraph
@@ -140,8 +140,6 @@ some extra text
 		assert paragraph2.children[0] is Text
 	}
 
-
-
 	assert content.trim_space() == docs.markdown()!.trim_space()
 }
 
@@ -181,9 +179,9 @@ fn test_wiki_action() {
 			args: []
 		}
 	}
-	r:="# This is an action
+	r := '# This is an action
 
-!!farmerbot.nodemanager_define id:1 has_public_config:1 has_public_ip:yes twinid:20"
+!!farmerbot.nodemanager_define id:1 has_public_config:1 has_public_ip:yes twinid:20'
 	assert r.trim_space() == docs.markdown()!.trim_space()
 }
 
@@ -222,7 +220,7 @@ for x in list {
 	assert docs.children[7] is Codeblock
 	assert docs.children[8] is Paragraph
 	assert docs.children[9] is Header
-	assert docs.children[10] is Paragraph	
+	assert docs.children[10] is Paragraph
 	codeblock1 := docs.children[3]
 	if codeblock1 is Codeblock {
 		assert codeblock1.category == 'v'
@@ -235,7 +233,7 @@ for x in list {
 	// md2:=cb2.markdown()!
 	// println("**${md2}**")
 
-    r:="
+	r := '
 # This is some code
 
 ```v
@@ -252,17 +250,14 @@ for x in list {
 ```
 
 # This is some header
-"
+'
 	assert r.trim_space() == docs.markdown()!.trim_space()
 }
 
-
 /////TO ENABLE BELOW: FIX FIX FIX
 
-
-
 fn test_wiki_lists_links() {
-	//TODO: not working, fix, lets get links back in
+	// TODO: not working, fix, lets get links back in
 	content := '
 # this is a test
 
@@ -292,7 +287,7 @@ fn test_wiki_lists_links() {
 }
 
 fn test_wiki_header_too_long() {
-	//TODO: not working, fix
+	// TODO: not working, fix
 	content := '
 ##### Is ok
 
@@ -310,7 +305,7 @@ fn test_wiki_header_too_long() {
 }
 
 fn test_wiki_all_together() {
-	//TODO: not working, fix
+	// TODO: not working, fix
 	content := markdownparser.text
 	mut docs := new(content: content)!
 

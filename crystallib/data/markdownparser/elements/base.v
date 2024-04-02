@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.core.play
 @[heap]
 pub struct DocBase {
 mut:
-	parent_doc_ ?&Doc @[skip; str:skip]
+	parent_doc_ ?&Doc @[skip; str: skip]
 pub mut:
 	id        int
 	content   string
@@ -26,16 +26,17 @@ fn (mut self DocBase) process_base() ! {
 }
 
 fn (mut self DocBase) parent_doc() &Doc {
-	mut pd:=self.parent_doc_ or {
-		e:=doc_new() or {panic("bug")}
+	mut pd := self.parent_doc_ or {
+		e := doc_new() or { panic('bug') }
 		&e
 	}
+
 	return pd
 }
 
-
 fn (mut self DocBase) remove_empty_children() {
-	self.children = self.children.filter(!(it.content == '' && it.children.len == 0 && it.type_name in ['text','empty']))
+	self.children = self.children.filter(!(it.content == '' && it.children.len == 0
+		&& it.type_name in ['text', 'empty']))
 }
 
 pub fn (mut self DocBase) process() !int {
@@ -157,7 +158,7 @@ pub fn (self DocBase) html() !string {
 	return out
 }
 
-//example see https://github.com/RelaxedJS/ReLaXed-examples/blob/master/examples/letter/letter.pug
+// example see https://github.com/RelaxedJS/ReLaXed-examples/blob/master/examples/letter/letter.pug
 // is to generate pdf's
 pub fn (self DocBase) pug() !string {
 	mut out := ''
@@ -167,9 +168,8 @@ pub fn (self DocBase) pug() !string {
 	return out
 }
 
-
-//the markdown which represents how it created the element
-pub fn (self DocBase) markdown()! string {
+// the markdown which represents how it created the element
+pub fn (self DocBase) markdown() !string {
 	mut out := ''
 	for mut element in self.children() {
 		out += element.markdown()!

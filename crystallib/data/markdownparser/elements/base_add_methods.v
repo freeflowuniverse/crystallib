@@ -85,7 +85,6 @@ pub fn (mut base DocBase) empty_new() &Empty {
 	return &a
 }
 
-
 pub fn (mut base DocBase) comment_new(mut docparent ?&Doc, content string) &Comment {
 	mut a := Comment{
 		content: content

@@ -19,7 +19,11 @@ pub mut:
 	path_publish pathlib.Path
 	zola         &Zola        @[skip; str: skip]
 	tree         doctree.Tree @[skip; str: skip]
+	pages        []ZolaPage
+	header       ?Header
 	blog         Blog
+	people       ?People
+	news         ?News
 }
 
 pub struct Blog {
@@ -125,7 +129,6 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 		recursive: true
 		regex: [r'.*\.md$']
 	)!
-	println('debuzgo: ${site.tree.collections.keys()}')
 	for mdfile in md_list.paths {
 		_ = markdownparser.new(path: mdfile.path)!
 		// for include in doc.children.filter(it is elements.Include) {
@@ -197,159 +200,23 @@ extra:
 	site.blog.posts[args.name] = page.doc()!
 }
 
-pub fn (mut site ZolaSite) person_add(args BlogAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-
-	mut people_index := pathlib.get_file(
-		path: '${site.path_build.path}/content/people/_index.md'
-	)!
-	if !people_index.exists() {
-		people_index.write('---
-title: "Our People"
-paginate_by: 4
-sort_by: "weight"
-template: "layouts/people.html"
-page_template: "partials/personCard.html"
-insert_anchor_links: "left"
-description: "Our team brings together +30 years of experience in cloud automation, Internet storage, and infrastructure services. We are a passionate group on a collective mission to improve the planet’s situation and benefit the people around us."
----')!
-	}
-
-	people_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/people'
-		create: true
-	)!
-	fixed_name := '${texttools.name_fix(args.name)}'
-	person_dir := pathlib.get_dir(
-		path: '${people_dir.path}/${fixed_name}'
-		create: true
-	)!
-	page.export(dest: '${person_dir.path}/${fixed_name}.md')!
-	site.blog.posts[args.name] = page.doc()!
-}
-
-pub fn (mut site ZolaSite) news_add(args BlogAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-
-	mut news_index := pathlib.get_file(
-		path: '${site.path_build.path}/content/newsroom/_index.md'
-	)!
-	if !news_index.exists() {
-		news_index.write('---
-title: "Our People"
-paginate_by: 4
-sort_by: "weight"
-template: "layouts/people.html"
-page_template: "partials/personCard.html"
-insert_anchor_links: "left"
-description: "Our team brings together +30 years of experience in cloud automation, Internet storage, and infrastructure services. We are a passionate group on a collective mission to improve the planet’s situation and benefit the people around us."
----')!
-	}
-
-	news_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/newsroom'
-		create: true
-	)!
-	fixed_name := '${texttools.name_fix(args.name)}'
-	article_dir := pathlib.get_dir(
-		path: '${news_dir.path}/${fixed_name}'
-		create: true
-	)!
-	page.export(dest: '${article_dir.path}/${fixed_name}.md')!
-	site.blog.posts[args.name] = page.doc()!
-}
-
-pub struct HeaderAddArgs {
-	collection string @[required]
-	file       string @[required]
-}
-
-pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-
-	header_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/header'
-		create: true
-	)!
-
-	page.export(dest: '${header_dir.path}/index.md')!
-}
-
 pub fn (mut site ZolaSite) footer_add(args HeaderAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
+	// site.tree.process_includes()!
+	// col := site.tree.collection_get(args.collection) or {
+	// 	println(err)
+	// 	return err
+	// }
+	// mut page := site.tree.page_get('${args.collection}:${args.file}') or {
+	// 	println(err)
+	// 	return err
+	// }
 
-	footer_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/footer'
-		create: true
-	)!
-
-	page.export(dest: '${footer_dir.path}/_index.md')!
-}
-
-pub struct PageAddArgs {
-	name       string
-	collection string @[required]
-	file       string @[required]
-	homepage   bool
-}
-
-pub fn (mut site ZolaSite) page_add(args PageAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-
-	content_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content'
-		create: true
-	)!
-	fixed_name := '${texttools.name_fix(args.name)}'
-	// page_dir := pathlib.get_dir(
-	// 	path:'${content_dir.path}/${fixed_name}'
+	// footer_dir := pathlib.get_dir(
+	// 	path:'${site.path_build.path}/content/footer'
 	// 	create: true
 	// )!
 
-	if args.homepage {
-		page.export(dest: '${content_dir.path}/_index.md')!
-	}
-	page.export(dest: '${content_dir.path}/${fixed_name}.md')!
+	// page.export(dest: '${footer_dir.path}/_index.md')!
 }
 
 // add collections from doctree

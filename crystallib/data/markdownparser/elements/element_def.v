@@ -35,7 +35,7 @@ pub fn (self Def) markdown() !string {
 	if !self.processed {
 		return self.content
 	}
-	
+
 	return self.DocBase.markdown() // for children
 }
 

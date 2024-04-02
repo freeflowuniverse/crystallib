@@ -1,14 +1,14 @@
 module elements
 
-// import freeflowuniverse.crystallib.core.smartid
+import freeflowuniverse.crystallib.core.texttools
 
 @[heap]
 pub struct Doc {
 	DocBase
 pub mut:
 	// gid smartid.GID
-	pre          []HtmlSource
-	linked_pages []string // to know which collection:pages are needed to make this doc complete
+	pre             []HtmlSource
+	linked_pages    []string // to know which collection:pages are needed to make this doc complete
 	collection_name string
 }
 
@@ -42,8 +42,8 @@ enum HtmlSourceCat {
 @[params]
 pub struct DocNewArgs {
 pub mut:
-	pre     []HtmlSource
-	content string
+	pre             []HtmlSource
+	content         string
 	collection_name string
 }
 
@@ -74,3 +74,8 @@ pub fn (mut self Doc) process() !int {
 // pub fn (self Doc) html() string {
 // 	return ""
 // }
+
+pub fn (self Doc) pug() !string {
+	return ":markdown-it(linkify langPrefix='highlight-')\n${texttools.indent(self.markdown()!,
+		'  ')}"
+}

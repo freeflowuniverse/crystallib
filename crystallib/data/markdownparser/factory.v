@@ -8,15 +8,15 @@ import os
 @[params]
 pub struct NewDocArgs {
 pub:
-	path    string
-	content string
+	path            string
+	content         string
 	collection_name string
 }
 
 // get a parsed document, path is the path to the file, if not given content is needed
 pub fn new(args_ NewDocArgs) !elements.Doc {
 	mut args := args_
-	mut doc := elements.doc_new(collection_name:args.collection_name)!
+	mut doc := elements.doc_new(collection_name: args.collection_name)!
 	if args.path == '' {
 		doc.content = args.content
 	} else {

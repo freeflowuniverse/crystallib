@@ -20,11 +20,11 @@ mut:
 	endlf  bool // if there is a linefeed or \n at end
 }
 
-fn parser_line_new(mut doc &elements.Doc) !Parser {
+fn parser_line_new(mut doc elements.Doc) !Parser {
 	mut parser := Parser{
 		doc: doc
 	}
-	doc.paragraph_new(mut parser.doc,'')
+	doc.paragraph_new(mut parser.doc, '')
 	parser.lines = doc.content.split_into_lines()
 	if doc.content.ends_with('\n') {
 		parser.endlf = true
@@ -97,22 +97,21 @@ fn (mut parser Parser) next() {
 fn (mut parser Parser) next_start() ! {
 	// means we need to add paragraph because we don't know what comes next
 	if parser.doc.last()! !is elements.Paragraph {
-		parser.doc.paragraph_new(mut parser.doc,'')
+		parser.doc.paragraph_new(mut parser.doc, '')
 	}
 	parser.next()
 }
 
 fn (mut parser Parser) next_start_lf() ! {
 	if parser.doc.last()! !is elements.Paragraph {
-		parser.doc.paragraph_new(mut parser.doc,'\n')
+		parser.doc.paragraph_new(mut parser.doc, '\n')
 	}
 	parser.next()
 }
 
-
 fn (mut parser Parser) ensure_last_is_paragraph() ! {
 	if parser.doc.last()! !is elements.Paragraph {
-		parser.doc.paragraph_new(mut parser.doc,'')
+		parser.doc.paragraph_new(mut parser.doc, '')
 	}
 }
 

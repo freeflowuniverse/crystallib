@@ -345,7 +345,9 @@ pub fn (mut page Page) export(args_ PageSaveArgs) ! {
 	p.write(out)!
 
 	// mutate page to save updated doc
-	updated_doc := markdownparser.new(path: p.path,collection_name:page.collection_name) or { panic('cannot parse,${err}') }
+	updated_doc := markdownparser.new(path: p.path, collection_name: page.collection_name) or {
+		panic('cannot parse,${err}')
+	}
 	page.doc_ = updated_doc
 }
 
@@ -364,6 +366,8 @@ pub fn (mut page Page) save(args_ PageSaveArgs) ! {
 	p.write(out)!
 
 	// mutate page to save updated doc
-	updated_doc := markdownparser.new(path: p.path,collection_name:page.collection_name) or { panic('cannot parse,${err}') }
+	updated_doc := markdownparser.new(path: p.path, collection_name: page.collection_name) or {
+		panic('cannot parse,${err}')
+	}
 	page.doc_ = updated_doc
 }

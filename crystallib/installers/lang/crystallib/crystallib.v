@@ -76,7 +76,7 @@ pub fn hero_compile(args InstallArgs) ! {
 		return
 	}
 	console.print_header('compile hero')
-	
+
 	home_dir := os.home_dir()
 	cmd_hero := texttools.template_replace($tmpl('templates/hero.sh'))
 	osal.exec(cmd: cmd_hero, stdout: false)!

@@ -17,10 +17,10 @@ mut:
 	content   string
 	processed bool
 	// params    paramsparser.Params
-	type_name   string
-	changed     bool
+	type_name string
+	changed   bool
 	// trailing_lf bool
-	children    []Element
+	children []Element
 	process() !int
 	content_set(int, string)
 	id_set(int) int

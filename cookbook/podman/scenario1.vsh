@@ -15,7 +15,9 @@ import freeflowuniverse.crystallib.virt.podman
 // 8- mounting flist to /tmp/mount_fl
 //
 mut engine := podman.new(reset: false)!
+
 container_name := 'testarch'
+
 mut cont := engine.bcontainer_new(name: container_name, from: 'scratch')!
 mount_path := cont.mount_to_path()!
 osal.exec(
@@ -43,5 +45,4 @@ osal.exec(
 	cmd: 'rfs pack -m output.fl -s dir:///tmp/store1 ${mount_path}'
 )!
 println('mounting to `/tmp/mount_fl` you can check the flist mounted there now, consider doing umount after u finish')
-println('after flist is fully uploaded to test the container do: `podman run -it --rm --read-only  --rootfs /tmp/mount_fl bash`')
-osal.exec(cmd: 'sudo rfs mount -m output.fl /tmp/mount_fl')!
+osal.exec(cmd: 'sudo rfs mount -m output.fl /tmp/mount_fl', timeout: 90000)!

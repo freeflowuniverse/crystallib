@@ -21,10 +21,40 @@ add collections to the website
 Next, we add a header and a footer for our website
 
 ```js
-!!website.header_add 
-    collection: 'content'
-    file: 'header.md'
+!!website.header_add
+    logo: 'images/black_threefold.png'
 
+!!website.header_link_add
+    label: 'About'
+    page: 'about'
+
+!!website.header_link_add
+    label: 'Host'
+    page: 'host'
+
+!!website.header_link_add
+    label: 'Utilization'
+    page: 'utilization'
+
+!!website.header_link_add
+    label: 'News'
+    page: 'newsroom'
+
+!!website.header_link_add
+    label: 'Blog'
+    page: 'blog'
+
+!!website.header_link_add
+    label: 'People'
+    page: 'people'
+
+!!website.header_link_add
+    label: 'Documentation'
+    page: 'community'
+    new_tab: true
+```
+
+```js
 !!website.footer_add 
     collection: 'content'
     file: 'footer.md'
@@ -55,9 +85,20 @@ Let's then add our pages
     file: 'farm.md'
 
 !!website.page_add
-    name: 'Support'
+    name: 'Host'
     collection: 'content'
-    file: 'support.md'
+    file: 'host.md'
+
+!!website.page_add
+    name: 'Utilization'
+    collection: 'content'
+    file: 'utilization.md'
+
+!!website.page_add
+    name: 'Footer'
+    collection: 'content'
+    file: 'footer.md'
+
 ```
 
 Finally we can select and add some blog posts, news and people sections.
@@ -67,7 +108,7 @@ Finally we can select and add some blog posts, news and people sections.
 Below we select blogs relavant to threefold.io from our data repository
 
 ```js
-!!website.blog_add 
+!!website.blog_add
     name: 'A better understanding of wealth'
     collection: 'blog'
     file: 'a_better_understanding_of_wealth.md'
@@ -83,14 +124,9 @@ Below we select blogs relavant to threefold.io from our data repository
 ## People
 
 ```js
-!!website.person_add 
-    name: 'Adnan Fatayerji'
-    collection: 'person'
-    file: 'adnan_fatayerji.md'
-
-!!website.person_add 
+!!website.person_add
     name: 'Alexandre Hannelas'
-    collection: 'person'
+    collection: 'people'
     file: 'alexandre_hannelas.md'
 ```
 
@@ -100,8 +136,7 @@ Below we select blogs relavant to threefold.io from our data repository
 !!website.news_add 
     name: '3Bot Connect & TFConnect'
     collection: 'news'
-    file: '3bot_connect_tf_connect.md'
-
+    file: '3bot_connect_renamed_definition.md'
 ```
 
 ```js

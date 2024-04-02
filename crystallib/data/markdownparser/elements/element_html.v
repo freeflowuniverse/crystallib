@@ -24,7 +24,7 @@ pub fn (self Html) markdown() !string {
 }
 
 pub fn (self Html) pug() !string {
-	return error("cannot return pug, not implemented")
+	return error('cannot return pug, not implemented')
 }
 
 pub fn (self Html) html() !string {

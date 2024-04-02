@@ -29,7 +29,7 @@ fn (self Paragraph) markdown() !string {
 }
 
 pub fn (self Paragraph) pug() !string {
-	return error("cannot return pug, not implemented")
+	return error('cannot return pug, not implemented')
 }
 
 fn (self Paragraph) html() !string {
