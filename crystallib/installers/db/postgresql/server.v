@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import db.pg
+import os
 
 @[params]
 pub struct Config {
@@ -39,7 +40,7 @@ pub fn start(args_ Config) !Server {
 	if args.path == '' {
 		if osal.is_linux() {
 			args.path = '/data/postgresql/${args.name}'
-		}else{
+		} else {
 			args.path = '${os.home_dir()}/hero/var/redis/${args.name}'
 		}
 	}
@@ -51,7 +52,6 @@ pub fn start(args_ Config) !Server {
 		path_export: pathlib.get_dir(path: '${args.path}/exports', create: true)!
 	}
 
-	
 	mut z := zinit.new()!
 	processname := 'postgres_${name}'
 	if z.process_exists(processname) {
@@ -83,7 +83,7 @@ pub fn (mut server Server) start() ! {
 	if server.ok() {
 		return
 	}
-	
+
 	console.print_header('start postgresql: ${server.name}')
 
 	t1 := $tmpl('templates/compose.yaml')
@@ -104,7 +104,7 @@ pub fn (mut server Server) start() ! {
 	docker compose up	
 	echo "DOCKER COMPOSE ENDED, EXIT TO BASH"
 	'
-	mut sm:=startupmanager.get()!
+	mut sm := startupmanager.get()!
 	sm.start(
 		name: 'postgres_${server.name}'
 		cmd: cmd

@@ -49,11 +49,11 @@ fn (mut news News) export(content_dir string) ! {
 		create: true
 	)!
 
-	 _ := pathlib.get_file(
+	_ := pathlib.get_file(
 		path: '${news_dir.path}/_index.md'
 		create: true
 	)!
-	//TODO: need to be fixed (timur)
+	// TODO: need to be fixed (timur)
 	// news_index.write($tmpl('./templates/news.md'))!
 
 	for _, mut article in news.articles {
