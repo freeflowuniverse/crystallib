@@ -1,0 +1,36 @@
+module main
+
+import log
+import json
+import freeflowuniverse.crystallib.data.jsonrpc {JsonRpcHandler, jsonrpcrequest_decode}
+import freeflowuniverse.crystallib.data.rpcwebsocket
+${imports}
+
+struct CustomJsonRpcHandler {
+	JsonRpcHandler
+}
+
+@{handlers}
+
+// run_server creates and runs a jsonrpc ws server
+// handles rpc requests to reverse_echo function
+pub fn run_server() ! {
+	mut logger := log.Logger(&log.Log{
+		level: .debug
+	})
+
+	mut handler := CustomJsonRpcHandler{
+		JsonRpcHandler: jsonrpc.new_handler(&logger)!
+	}
+	@if states.len > 0
+	state := @{states[0].typ.symbol}{}
+	@end
+
+	handler.state = &state
+	// register rpc methods
+	@{registers}
+
+	// create & run rpc ws server
+	mut jsonrpc_ws_server := rpcwebsocket.new_rpcwsserver(8080, handler, &logger)!
+	jsonrpc_ws_server.run()!
+}
