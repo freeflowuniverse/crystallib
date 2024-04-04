@@ -94,7 +94,7 @@ pub fn (mut site ZolaSite) article_add(args ArticleAddArgs) ! {
 
 fn (site ZolaSite) get_article(args_ ArticleAddArgs) !Article {
 	if args_.pointer == '' && (args_.collection == '' || args_.page == '') {
-		return error('Either pointer or post collection and page must be specified in order to add post')
+		return error('Either pointer or article collection and page must be specified in order to add post')
 	}
 
 	mut args := args_

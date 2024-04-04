@@ -94,7 +94,7 @@ pub fn (mut site ZolaSite) person_add(args PersonAddArgs) ! {
 
 fn (site ZolaSite) get_person(args_ PersonAddArgs) !Person {
 	if args_.pointer == '' && (args_.collection == '' || args_.page == '') {
-		return error('Either pointer or post collection and page must be specified in order to add post')
+		return error('Either pointer or person collection and page must be specified in order to add post')
 	}
 
 	mut args := args_
