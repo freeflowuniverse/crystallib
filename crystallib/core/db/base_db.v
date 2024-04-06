@@ -202,9 +202,9 @@ pub fn (db DB) base_decoder_heroscript(txt string) ![]DecoderActionItem {
 	mut res := []DecoderActionItem{}
 	mut remarks := map[string][]paramsparser.Params{} // key is the gid of the base obj
 
-	mut parser := playbook.new(defaultcircle: 'aaa', text: txt)!
-	actions := parser.filtersort(actor: db.objtype)!
-	actions_remarks := parser.filtersort(actor: 'remark')!
+	mut parser := playbook.new(text: txt)!
+	actions := parser.find(filter: '${db.objtype}:*')!
+	actions_remarks := parser.find(filter: 'remark:*')!
 
 	for action in actions_remarks {
 		if action.name == 'define' {

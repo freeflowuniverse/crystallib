@@ -15,6 +15,7 @@ pub fn method_with_param(param string) {
 }
 
 pub fn method_with_return() string {
+	return ""
 }
 
 @[params]

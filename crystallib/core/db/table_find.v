@@ -13,7 +13,6 @@ import encoding.base32
 // 	query_int_less    map[string]int
 // 	query_int_greater map[string]int
 // }
-
 // return list of data blocks which then need to be deserialized based on the DBFindArgs
 fn table_find(db DB, args DBFindArgsI) ![][]u8 {
 	sql_statement_find := sql_build_find(db, args)

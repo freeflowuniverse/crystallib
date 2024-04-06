@@ -86,6 +86,7 @@ pub fn parse(text string) !Params {
 				ch_prev = ch
 				continue
 			} else if !validchars.contains(ch) {
+				print_backtrace()
 				return error("text to params processor: parameters can only be A-Za-z0-9 and _., found illegal char: '${key}${ch}' in\n${text2}\n\n")
 			} else {
 				key += ch
