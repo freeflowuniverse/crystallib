@@ -5,7 +5,7 @@ data_dir = "${args.data_dir}"
 metadata_fsync = false
 data_fsync = false
 
-db_engine = "lmdb"
+db_engine = "sqlite"
 
 block_size = "1M"
 
@@ -15,7 +15,7 @@ lmdb_map_size = "1T"
 
 compression_level = ${args.compression_level}
 
-rpc_secret = "${args.rpc_secret}"
+rpc_secret = "{GARAGE.RPCSECRET}"
 rpc_bind_addr = "${args.rpc_bind_addr}"
 rpc_bind_outgoing = ${args.rpc_bind_outgoing}
 rpc_public_addr = "${args.rpc_public_addr}"
@@ -23,24 +23,24 @@ rpc_public_addr = "${args.rpc_public_addr}"
 bootstrap_peers = ${args.bootstrap_peers}
 
 
-[consul_discovery]
-api = "catalog"
-consul_http_addr = "http://127.0.0.1:8500"
-service_name = "garage-daemon"
-ca_cert = "/etc/consul/consul-ca.crt"
-client_cert = "/etc/consul/consul-client.crt"
-client_key = "/etc/consul/consul-key.crt"
-# for `agent` API mode, unset client_cert and client_key, and optionally enable `token`
-# token = "abcdef-01234-56789"
-tls_skip_verify = false
-tags = [ "dns-enabled" ]
-meta = { dns-acl = "allow trusted" }
+# [consul_discovery]
+# api = "catalog"
+# consul_http_addr = "http://127.0.0.1:8500"
+# service_name = "garage-daemon"
+# ca_cert = "/etc/consul/consul-ca.crt"
+# client_cert = "/etc/consul/consul-client.crt"
+# client_key = "/etc/consul/consul-key.crt"
+# # for `agent` API mode, unset client_cert and client_key, and optionally enable `token`
+# # token = "abcdef-01234-56789"
+# tls_skip_verify = false
+# tags = [ "dns-enabled" ]
+# meta = { dns-acl = "allow trusted" }
 
 
-[kubernetes_discovery]
-namespace = "garage"
-service_name = "garage-daemon"
-skip_crd = false
+# [kubernetes_discovery]
+# namespace = "garage"
+# service_name = "garage-daemon"
+# skip_crd = false
 
 
 [s3_api]
@@ -54,6 +54,6 @@ root_domain = "${args.web_root_domain}"
 
 [admin]
 api_bind_addr = "${args.admin_api_bind_addr}"
-metrics_token = "${args.admin_metrics_token}"
-admin_token = "${args.admin_token}"
+metrics_token = "{GARAGE.METRICSTOKEN}"
+admin_token = "{GARAGE.ADMINTOKEN}"
 trace_sink = "${args.admin_trace_sink}"

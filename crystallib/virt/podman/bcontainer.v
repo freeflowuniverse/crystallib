@@ -129,6 +129,7 @@ pub fn (mut self BContainer) inspect() !ContainerInfo {
 	return r
 }
 
+//mount the build container to a path and return
 pub fn (mut self BContainer) mount_to_path() !string {
 	cmd := 'buildah mount ${self.containername}'
 	return osal.execute_silent(cmd)!

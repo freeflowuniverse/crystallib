@@ -44,8 +44,8 @@ pub fn (mut e CEngine) images_load() ! {
 	mut lines := osal.execute_silent("podman images --format '{{.ID}}||{{.Id}}||{{.Repository}}||{{.Tag}}||{{.Digest}}||{{.Size}}||{{.CreatedAt}}'")!
 	for line in lines.split_into_lines() {
 		fields := line.split('||').map(utils.clear_str)
-		if fields.len < 6 {
-			panic('podman image needs to output 6 parts.\n${fields}')
+		if fields.len != 7 {
+			panic('podman image needs to output 7 parts.\n${fields}')
 		}
 		mut image := BAHImage{
 			engine: &e

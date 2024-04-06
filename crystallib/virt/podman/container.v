@@ -52,7 +52,7 @@ pub fn (mut e CEngine) containers_load() ! {
 		ignore_error_codes: [6]
 		stdout: false
 	)!
-	lines := ljob.output
+	lines := ljob.output.split_into_lines()
 	for line in lines {
 		if line.trim_space() == '' {
 			continue

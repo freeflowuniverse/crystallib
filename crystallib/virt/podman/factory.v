@@ -17,11 +17,11 @@ pub fn new(args_ NewArgs) !CEngine {
 		podmaninstaller.install()!
 	}
 
-	mut bah := CEngine{}
-	bah.init()!
+	mut engine := CEngine{}
+	engine.init()!
 	if args.reset {
-		bah.reset_all()!
+		engine.reset_all()!
 	}
 
-	return bah
+	return engine
 }
