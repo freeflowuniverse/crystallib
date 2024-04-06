@@ -25,6 +25,6 @@ import freeflowuniverse.crystallib.osal.screen
 // dagu_installer.check(secret:"1234")!
 
 
-vlang.install(reset:true)!
+vlang.v_analyzer_install()!
 
 // b2_installer.install()!

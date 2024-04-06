@@ -64,7 +64,7 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 
 // add repository to gitstructure
 pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
-	println("repo_add:$args")
+	println('repo_add:${args}')
 	if args.path.len > 0 {
 		mut repo := gs.repo_from_path(args.path)!
 		gs.repo_add_(&repo)!
@@ -128,8 +128,8 @@ pub mut:
 pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
 	mut args := args_
 	console.print_header('code get url:${args.url} or path:${args.path}')
-	_ = gs.repo_add(args)!
-	println('added repo ${_}')
+	myrepo := gs.repo_add(args)!
+	println('added repo ${myrepo}')
 	mut locator := gs.locator_new(args.url)!
 	println('got locator ${locator}')
 

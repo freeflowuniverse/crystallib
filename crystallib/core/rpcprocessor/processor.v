@@ -24,103 +24,103 @@ pub fn get_subscriber() eventbus.Subscriber[string] {
 @[heap]
 struct RPCProcessor {
 mut:
-    logger  &log.Logger = &log.Logger(&log.Log{
-        level: .debug
-    })
-    redis_client redisclient.Redis
-    handler_queue string = 'rpc_handler_queue'
-    result_queue string = 'rpc_result_queue'
-    // ws_server    rpcwebsocket.RpcWsServer // Placeholder for your WebSocket server type
+	logger &log.Logger = &log.Logger(&log.Log{
+	level: .debug
+})
+	redis_client  redisclient.Redis
+	handler_queue string = 'rpc_handler_queue'
+	result_queue  string = 'rpc_result_queue'
+	// ws_server    rpcwebsocket.RpcWsServer // Placeholder for your WebSocket server type
 pub mut:
-    handlers []IHandler
+	handlers []IHandler
 }
 
 // Handler is the structure responsible of handling a list of supported RPCs over a redis queue
 pub interface IHandler {
-    name string // name of handler
-    methods []string // list of supported methods
-    description string
-    threads int
-    typ string
-    last_activity time.Time
-    activity []Activity
-    rpc_no int
-    average_time time.Duration
-    success_rate f64
+	name          string // name of handler
+	methods       []string // list of supported methods
+	description   string
+	threads       int
+	typ           string
+	last_activity time.Time
+	activity      []Activity
+	rpc_no        int
+	average_time  time.Duration
+	success_rate  f64
 mut:
-    queue redisclient.RedisQueue // queue of handler
+	queue redisclient.RedisQueue // queue of handler
 }
+
 // Handler is the structure responsible of handling a list of supported RPCs over a redis queue
 pub struct Handler {
 pub:
-    name string // name of handler
-    methods []string // list of supported methods
-    description string
-    threads int
-    typ string
-    last_activity time.Time
-    activity []Activity
-    rpc_no int
-    average_time time.Duration
-    success_rate f64
+	name          string   // name of handler
+	methods       []string // list of supported methods
+	description   string
+	threads       int
+	typ           string
+	last_activity time.Time
+	activity      []Activity
+	rpc_no        int
+	average_time  time.Duration
+	success_rate  f64
 mut:
-    queue redisclient.RedisQueue // queue of handler
+	queue redisclient.RedisQueue // queue of handler
 }
 
 struct RPCRequest {
-    id      string
-    payload string
+	id      string
+	payload string
 }
 
 struct RPCResponse {
-    id      string
-    result  string
+	id     string
+	result string
 }
 
 @[params]
 pub struct ProcessorConfig {
-    redis_client redisclient.Redis
+	redis_client redisclient.Redis
 }
 
 pub fn new(config ProcessorConfig) !RPCProcessor {
-    // Initialize Redis client
+	// Initialize Redis client
 
-    processor := RPCProcessor{
-        redis_client: config.redis_client
-    }
+	processor := RPCProcessor{
+		redis_client: config.redis_client
+	}
 
-    return processor
+	return processor
 }
 
 pub fn (mut p RPCProcessor) register_handler(handler IHandler) {
-    p.handlers << handler
+	p.handlers << handler
 }
 
 struct API {}
 
 pub fn new_api() API {
-    api := API{}
-    mut sub := rpcprocessor.get_subscriber()
+	api := API{}
+	mut sub := get_subscriber()
 	sub.subscribe_method('event_foo', on_foo, api)
-    return api
+	return api
 }
 
 fn on_foo(mut receiver API, e &EventMetadata, sender voidptr) {
-    println('on_foo :: ' + e.message)
+	println('on_foo :: ' + e.message)
 }
 
 // pub fn (mut ui RPCProcessorUI) handler() vweb.Result {
 //     return ui.html($tmpl('./templates/handler.html'))
 // }
 
-
 struct Activity {
 pub:
-    name string
-    caller string
-    method string
-    time time.Time
-    rpc_id string
+	name   string
+	caller string
+	method string
+	time   time.Time
+	rpc_id string
 }
 
 pub struct Duration {
@@ -129,44 +129,36 @@ pub:
 }
 
 fn (mut p RPCProcessor) handler(client &websocket.Client, message string) string {
-    method := jsonrpc.jsonrpcrequest_decode_method(message) or { return '' }
+	method := jsonrpc.jsonrpcrequest_decode_method(message) or { return '' }
 	id := jsonrpc.jsonrpcrequest_decode_id(message) or { return '' }
-    p.logger.info('Processing RPC ${id}')
-	
-    duration := Duration{10}
-    
-    event_metadata := &EventMetadata{'Processing RPC ${id}'}
+	p.logger.info('Processing RPC ${id}')
+
+	duration := Duration{10}
+
+	event_metadata := &EventMetadata{'Processing RPC ${id}'}
 	rpcprocessor.eb.publish('event_foo', duration, event_metadata)
-    
-    p.redis_client.hset('rpcs.db', id, message) or {
-        panic(err)
-    }
+
+	p.redis_client.hset('rpcs.db', id, message) or { panic(err) }
 
 	// mut q_handler := p.redis_client.queue_get(method)
-    mut handler := p.get_method_handler(method) or {
-        panic('Handler for RPC ${method} not found')
-    }
-    p.logger.info('Adding RPC to handler: `${handler.name}` queue.')
-    handler.queue.add(id) or {
-        panic(err)
-    }
+	mut handler := p.get_method_handler(method) or { panic('Handler for RPC ${method} not found') }
+	p.logger.info('Adding RPC to handler: `${handler.name}` queue.')
+	handler.queue.add(id) or { panic(err) }
 
 	mut q_response := p.redis_client.queue_get(id)
-    p.logger.info('Awaiting response to RPC `${id}` in queue.')
-    response := q_response.get(1000) or {
-        panic(err)
-    }
-    println('message: ${response}')
-    return response
+	p.logger.info('Awaiting response to RPC `${id}` in queue.')
+	response := q_response.get(1000) or { panic(err) }
+	println('message: ${response}')
+	return response
 }
 
 // returns, if exists, the handler responsible for the RPC Call
 fn (p RPCProcessor) get_method_handler(method string) ?IHandler {
-    handlers := p.handlers.filter(method in it.methods)
-    if handlers.len > 1 {
-        panic('multiple handlers for method found, this should never happen')
-    } else if handlers.len == 0 {
-        return none
-    }
-    return handlers[0]
+	handlers := p.handlers.filter(method in it.methods)
+	if handlers.len > 1 {
+		panic('multiple handlers for method found, this should never happen')
+	} else if handlers.len == 0 {
+		return none
+	}
+	return handlers[0]
 }

@@ -51,11 +51,9 @@ pub fn install(args_ InstallArgs) ! {
 		dest: '/tmp/garage'
 		reset: true
 	)!
-
+	console.print_debug('download garage done')
 	osal.cmd_add(
 		cmdname: 'garage'
-		source: '${dest.path}/garage_'
+		source: '${dest.path}'
 	)!
-
-	return
 }
