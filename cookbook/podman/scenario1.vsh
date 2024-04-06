@@ -16,9 +16,9 @@ import freeflowuniverse.crystallib.virt.podman
 //
 mut engine := podman.new(reset: false)!
 
-engine.reset_all()!
+// engine.reset_all()!
 
-engine.crystal_builder_new()!
+// engine.crystal_builder_new()!
 
 engine.hero_build()!
 
