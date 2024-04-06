@@ -15,7 +15,12 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '5.0.1'
+	mut version := '5.0.1'
+
+	if osal.platform() in [.arch] {
+		//no idea why this is but the version shown is older
+		version = '4.9.2'
+	}
 
 	// if  args.uninstall {
 	// 		console.print_header('uninstall podman')
@@ -32,6 +37,10 @@ pub fn install(args_ InstallArgs) ! {
 
 		v := texttools.version(r[0].all_after('version'))
 		if v < texttools.version(version) {
+			// println(v)
+			// println(texttools.version(version))
+			// println(version)
+			// if true{panic("s")}
 			args.reset = true
 		}
 	} else {
@@ -68,7 +77,7 @@ pub fn install(args_ InstallArgs) ! {
 		osal.execute_interactive(cmd)!
 		console.print_header(' - pkg installed.')
 	} else if osal.platform() in [.alpine, .arch, .ubuntu] {
-		osal.package_install('docker,podman-docker,buildah')!
+		osal.package_install('docker,podman,podman-docker,buildah')!
 		osal.exec(cmd: 'systemctl start podman.socket')!
 
 		// TODO:

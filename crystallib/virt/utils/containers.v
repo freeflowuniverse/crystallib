@@ -106,7 +106,10 @@ pub fn parse_container_state(state string) !ContainerStatus {
 	if state.contains('exited') {
 		return ContainerStatus.down
 	}
-	return error('Could not find docker status: ${state}')
+	if state.contains('stopped') {
+		return ContainerStatus.down
+	}	
+	return error('Could not find podman container status: ${state}')
 }
 
 pub fn clear_str(s string) string {

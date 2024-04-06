@@ -107,43 +107,46 @@ pub fn (err ImageGetError) code() int {
 // 	id string
 // id_full
 pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
-	mut counter := 0
-	mut result_digest := ''
-
+	
 	for i in e.images {
-		if i.digest == args.digest {
+		if args.digest != "" &&  i.digest == args.digest {
 			return i
 		}
+		if args.id != '' && i.id == args.id {
+			return i
+		}
+		if args.id_full != '' && i.id_full == args.id_full {
+			return i
+		}		
+	}
 
-		if args.repo != '' && i.repo != args.repo {
-			continue
+
+	if args.repo != '' || args.tag != '' {
+		mut counter := 0
+		mut result_digest := ''
+		for i in e.images {
+			if args.repo != '' && i.repo != args.repo {
+				continue
+			}
+			if args.tag != '' && i.tag != args.tag {
+				continue
+			}
+			println('found image: ${i} -- ${args}')
+			result_digest = i.digest
+			counter += 1
 		}
-		if args.tag != '' && i.tag != args.tag {
-			continue
-		}
-		if args.id != '' && i.id != args.id {
-			continue
-		}
-		if args.id_full != '' && i.id_full != args.id_full {
-			continue
-		}
-		result_digest = i.digest
-		counter += 1
 		if counter > 1 {
 			return ImageGetError{
 				args: args
 				toomany: true
 			}
-		}
+		}		
+		return e.image_get(digest: result_digest)!		
 	}
-
-	if counter == 0 {
-		return ImageGetError{
-			args: args
-			notfound: true
-		}
+	return ImageGetError{
+		args: args
+		notfound: true
 	}
-	return e.image_get(digest: result_digest)!
 }
 
 pub fn (mut e CEngine) image_exists(args ImageGetArgs) !bool {

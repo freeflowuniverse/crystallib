@@ -66,7 +66,7 @@ pub fn (mut e CEngine) containers_load() ! {
 		if fields[2] == '' {
 			continue
 		}
-		image := e.image_get(id_full: fields[2])!
+		mut image := e.image_get(id_full: fields[2])!
 		mut container := Container{
 			engine: &e
 			image: &image
@@ -112,7 +112,7 @@ pub fn (err ContainerGetError) msg() string {
 		return 'Could not find image with args:\n${err.args}'
 	}
 	if err.toomany {
-		return 'can not get container, Found more than 1 image with args:\n${err.args}'
+		return 'can not get container, Found more than 1 container with args:\n${err.args}'
 	}
 	panic('unknown error for ContainerGetError')
 }

@@ -6,11 +6,11 @@ import freeflowuniverse.crystallib.osal
 pub fn (mut e CEngine) builder_get() ! {
 
 	//todo: check if builder already exists
-	e.builder_new()!
+	e.crystal_builder_new()!
 }
 
-//create a builder from scratch
-pub fn (mut engine CEngine) builder_new() ! {
+//create a v & crystallib builder from scratch
+pub fn (mut engine CEngine) crystal_builder_new() ! {
 
 	mut builder := engine.bcontainer_new(name: "builder", from: 'scratch')!
 
@@ -26,8 +26,17 @@ pub fn (mut engine CEngine) builder_new() ! {
 	// builder.run('curl -fsSL https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh -o installer_hero.sh',
 	// 	false)!
 	// builder.run('bash installer_hero.sh"', false)!		
-	builder.run('bash -c "redis-server --daemonize yes && bash installer_hero.sh"', false)!
+	builder.run('bash -c "redis-server --daemonize yes"', false)!
 	builder.set_entrypoint('redis-server')!
 	builder.commit('localhost/builder')!
+	builder.delete()!
+
+}
+pub fn (mut engine CEngine) hero_build() ! {
+
+	mut builder := engine.bcontainer_new(name: "builder", from: 'localhost/builder',delete:true)!
+	mount_path := builder.mount_to_path()!
+	println(mount_path)
+
 
 }

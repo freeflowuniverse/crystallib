@@ -132,7 +132,8 @@ pub fn (mut self BContainer) inspect() !ContainerInfo {
 //mount the build container to a path and return
 pub fn (mut self BContainer) mount_to_path() !string {
 	cmd := 'buildah mount ${self.containername}'
-	return osal.execute_silent(cmd)!
+	out:= osal.execute_silent(cmd)!
+	return out.trim_space()
 }
 
 pub fn (mut self BContainer) commit(image_name string) ! {
