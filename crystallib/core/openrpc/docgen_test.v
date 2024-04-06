@@ -143,7 +143,7 @@ fn test_fn_to_method() {
 // test_docgen tests whether OpenRPC document generation for the PetStore JSON-RPC Client
 // works across different configurations
 fn test_docgen() ! {
-	client_path := os.dir(@FILE) + '/examples/petstore_client'
+	client_path := os.dir(@FILE) + '/testdata/petstore_client'
 	doc := docgen(
 		title: 'test'
 		source: client_path

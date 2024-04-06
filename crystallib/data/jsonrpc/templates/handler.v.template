@@ -1,0 +1,14 @@
+fn @{function.name}_handler(data string) !string {
+@if function.params.len > 0
+    request := jsonrpcrequest_decode[@{function.params[0].typ.symbol}](data)!
+@else
+	request := ''
+@end
+	result := @{function.name}(request.params)
+	response := jsonrpc.JsonRpcResponse[@{function.result.typ.symbol}]{
+		jsonrpc: '2.0.0'
+		id: request.id
+		result: result
+	}
+    return response.to_json()
+}
