@@ -84,7 +84,8 @@ pub enum JobStatus {
 pub enum RunTime {
 	bash
 	python
-	bashshell
+	heroscript
+	v
 }
 
 pub struct Job {
@@ -156,7 +157,16 @@ pub fn exec(cmd Command) !Job {
 		$if debug {
 			console.print_debug('cmd shell: ${cmd.cmd}')
 		}
-		process_args := job.cmd_to_process_args()!
+		mut process_args:=[]string{}
+		if cmd.runtime == .bashshell {
+			// bash -s 'echo ready'
+			runtime = ['/bin/bash', '-s', "'echo **READY**'"]
+		}else if cmd.runtime == .pythonshell {
+			runtime = ['/opt/homebrew/bin/python3']
+		}else{
+			panic("bug")
+		}
+	
 		if cmd.retry > 0 {
 			job.error += 'cmd retry cannot be > 0 if shell used\n'
 			job.exit_code = 999
@@ -194,12 +204,11 @@ pub fn (mut job Job) execute() ! {
 	job.runnr += 1
 	job.start = time.now()
 	job.status = .running
-	// start:=job.start.unix_time()
 
-	process_args := job.cmd_to_process_args()!
+	job.cmd.scriptpath = cmd_to_script_path(job.cmd)!
 
 	// println(" - process execute ${process_args[0]}")
-	mut p := os.new_process(process_args[0])
+	mut p := os.new_process(job.cmd.scriptpath)
 
 	if job.cmd.work_folder.len > 0 {
 		p.set_work_folder(job.cmd.work_folder)
@@ -235,6 +244,7 @@ pub fn (mut job Job) wait() ! {
 		// println(result)
 		if job.status == .done {			
 			// console.print_stderr("wait done")
+			job.close()!
 			return
 		}
 		time.sleep(10 * time.millisecond)
@@ -284,12 +294,12 @@ pub fn (mut job Job) process() ! {
 			job.exit_code = p.code
 			job.status = .error_exec
 			job.cmd.scriptkeep = true
-			p.signal_pgkill()
-			p.close()
-		} else {
-			// println('wait')
-			p.wait()
-			p.close()
+			// p.signal_pgkill()
+			// p.close()
+		// } else {
+		// 	// println('wait')
+		// 	p.wait()
+		// 	p.close()
 		}
 	}
 }
@@ -373,61 +383,6 @@ pub fn (mut job Job) close() ! {
 			error_type: .exec
 		}
 	}
-}
-
-// process commands to arguments which can be given to a process manager
-// will return temporary path and args for process
-fn (mut job Job) cmd_to_process_args() ![]string {
-	if job.cmd.runtime == .bashshell {
-		// bash -s 'echo ready'
-		// return ['/bin/bash', '-s', "'echo **READY**'"]
-		return ['/opt/homebrew/bin/python3']
-	}
-	// all will be done over filessytem now
-	mut cmd := texttools.dedent(job.cmd.cmd)
-	if !cmd.ends_with('\n') {
-		cmd += '\n'
-	}
-
-	if job.cmd.environment.len > 0 {
-		mut cmdenv := ''
-		for key, val in job.cmd.environment {
-			cmdenv += "export ${key}='${val}'\n"
-		}
-		cmd = cmdenv + '\n' + cmd
-		// process.set_environment(args.environment)
-	}
-
-	// use bash debug and die on error features
-	mut firstlines := '#!/bin/bash\n'
-	if !job.cmd.ignore_error {
-		firstlines += 'set -e\n' // exec 2>&1\n
-	} else {
-		firstlines += 'set +e\n' // exec 2>&1\n
-	}
-	if job.cmd.debug {
-		firstlines += 'set -x\n' // exec 2>&1\n
-	}
-
-	if !job.cmd.interactive && job.cmd.runtime == .bash {
-		// firstlines += 'export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n'
-		firstlines += 'export DEBIAN_FRONTEND=noninteractive\n\n'
-	}
-
-	cmd = firstlines + '\n' + cmd
-
-	scriptpath := if job.cmd.scriptpath.len > 0 {
-		job.cmd.scriptpath
-	} else {
-		''
-	}
-	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath, name: job.cmd.name) or {
-		return error('error: cannot write script to execute: ${err}')
-	}
-
-	os.chmod(job.cmd.scriptpath, 0o777)!
-	// println(" - scriptpath: ${job.cmd.scriptpath}")
-	return ['/bin/bash', job.cmd.scriptpath]
 }
 
 // shortcut to execute a job silent

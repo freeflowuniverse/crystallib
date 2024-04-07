@@ -26,9 +26,59 @@ pub mut:
 // 	panic("implement")
 // }
 
-pub fn (mut self BContainer) run(cmd_ string, silent bool) ! {
-	cmd := 'buildah run ${self.id} ${cmd_}'
-	osal.exec(cmd: cmd, stdout: !silent)!
+@[params]
+pub struct Command {
+pub mut:
+	name               string // to give a name to your command, good to see logs...
+	cmd                string
+	description        string
+	timeout            int  = 3600 // timeout in sec
+	stdout             bool = true
+	stdout_log         bool = true
+	raise_error        bool = true // if false, will not raise an error but still error report
+	ignore_error       bool // means if error will just exit and not raise, there will be no error reporting
+	work_folder        string // location where cmd will be executed
+	environment        map[string]string // env variables
+	ignore_error_codes []int
+	scriptpath         string // is the path where the script will be put which is executed
+	scriptkeep         bool   // means we don't remove the script
+	debug              bool   // if debug will put +ex in the script which is being executed and will make sure script stays
+	shell              bool   // means we will execute it in a shell interactive
+	retry              int
+	interactive        bool = true
+	async              bool
+	runtime            RunTime
+}
+
+pub enum RunTime {
+	bash
+	python
+	heroscript
+	v
+}
+
+pub fn (mut self BContainer) run(cmd Command) ! {
+	scriptpath:=osal.cmd_to_script_path(cmd:cmd_)
+	self.copy(scriptpath, scriptpath)!
+	cmd := 'buildah run ${self.id} "${scriptpath} && rm -f ${scriptpath}"'
+	osal.exec(
+		name:cmd.name
+		cmd:cmd
+		description:cmd.description
+		timeout:cmd.timeout
+		stdout:cmd.stdout
+		stdout_log:cmd.stdout_log
+		raise_error:cmd.raise_error
+		ignore_error:cmd.ignore_error
+		ignore_error_codes:cmd.ignore_error_codes
+		scriptpath:cmd.scriptpath
+		scriptkeep:cmd.scriptkeep
+		debug:cmd.debug
+		shell:cmd.shell
+		retry:cmd.retry
+		interactive:cmd.interactive
+		async:cmd.async
+	)!
 }
 
 @[params]

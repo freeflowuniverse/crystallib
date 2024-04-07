@@ -15,7 +15,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.20.0'
+	version := '0.21.0'
 
 	if args.reset || args.uninstall {
 		console.print_header('uninstall lima')
