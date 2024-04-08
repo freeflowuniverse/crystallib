@@ -2,7 +2,7 @@ module hetzner
 
 import encoding.base64
 import freeflowuniverse.crystallib.ui as gui
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 // import os
 // import json

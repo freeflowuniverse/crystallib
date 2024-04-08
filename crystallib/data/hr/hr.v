@@ -1,6 +1,6 @@
 module hr
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 pub struct HRData {
 pub mut:

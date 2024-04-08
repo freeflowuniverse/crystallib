@@ -2,7 +2,7 @@
 
 import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.builder
 import time
 

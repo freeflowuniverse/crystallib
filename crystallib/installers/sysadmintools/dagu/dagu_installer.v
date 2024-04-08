@@ -92,7 +92,7 @@ pub fn start(args_ InstallArgs) ! {
 	mut args := args_
 
 	if args.title == '' {
-		args.title = 'HERO'
+		args.title = 'HERO DAG'
 	}
 
 	if check(args)! {

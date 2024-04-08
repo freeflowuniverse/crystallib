@@ -1,7 +1,7 @@
 module tfrobot
 
 import freeflowuniverse.crystallib.installers.tfgrid.tfrobot as tfrobot_installer
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 

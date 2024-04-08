@@ -1,7 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 pub fn play_git(mut session play.Session) ! {
 	for mut action in session.plbook.find(filter: 'gittools.*')! {

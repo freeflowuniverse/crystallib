@@ -1,6 +1,6 @@
 module hr
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
 
 pub struct Person {

@@ -5,7 +5,9 @@ import freeflowuniverse.crystallib.installers.sysadmintools.fungistor
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.installers.db.zdb
+import freeflowuniverse.crystallib.installers.db.redis
 
+redis.install(start:true)!
 
 zdb.install(start:true)!
 

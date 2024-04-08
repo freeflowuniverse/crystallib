@@ -1,0 +1,32 @@
+<domain type='kvm'>
+  <name>alpine_arm_vm</name>
+  <memory unit='MiB'>1024</memory>
+  <vcpu placement='static'>2</vcpu>
+  <os>
+    <type arch='aarch64' machine='virt'>hvm</type>
+    <boot dev='cdrom'/>
+    <boot dev='hd'/>
+  </os>
+  <devices>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='$HDD_PATH'/>
+      <target dev='vda' bus='virtio'/>
+    </disk>
+    <disk type='file' device='cdrom'>
+      <source file='$ISO_PATH'/>
+      <target dev='hdc' bus='sata'/>
+      <readonly/>
+    </disk>
+    <interface type='user'>
+      <model type='virtio'/>
+      <source network='default'/>
+    </interface>
+    <console type='pty'/>
+    <graphics type='vnc' port='5902' listen='0.0.0.0' passwd='password'/>
+    <filesystem type='mount' accessmode='mapped'>
+      <source dir='$SHARED_DIR'/>
+      <target dir='$TAG'/>
+    </filesystem>
+  </devices>
+</domain>

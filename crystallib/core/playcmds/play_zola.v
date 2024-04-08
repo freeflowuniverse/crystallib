@@ -3,7 +3,7 @@ module playcmds
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.webtools.zola
 // import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 struct WebsiteItem {
 mut:

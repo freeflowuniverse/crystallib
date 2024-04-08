@@ -2,7 +2,7 @@ module gitea
 
 // import os
 import freeflowuniverse.crystallib.clients.httpconnection
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import os
 
 struct GiteaClient[T] {

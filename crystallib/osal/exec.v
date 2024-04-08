@@ -158,11 +158,11 @@ pub fn exec(cmd Command) !Job {
 			console.print_debug('cmd shell: ${cmd.cmd}')
 		}
 		mut process_args:=[]string{}
-		if cmd.runtime == .bashshell {
+		if cmd.runtime == .bash {
 			// bash -s 'echo ready'
-			runtime = ['/bin/bash', '-s', "'echo **READY**'"]
-		}else if cmd.runtime == .pythonshell {
-			runtime = ['/opt/homebrew/bin/python3']
+			process_args = ['/bin/bash', '-s', "'echo **READY**'"]
+		}else if cmd.runtime == .python {
+			process_args = ['/opt/homebrew/bin/python3']
 		}else{
 			panic("bug")
 		}
@@ -218,7 +218,7 @@ pub fn (mut job Job) execute() ! {
 	}
 	p.set_redirect_stdio()
 	// println("process setargs ${process_args[1..process_args.len]}")
-	p.set_args(process_args[1..process_args.len])
+	// p.set_args(process_args[1..process_args.len])
 	if job.cmd.stdout {
 		println('')
 	}
@@ -448,6 +448,6 @@ pub fn exec_string(cmd Command) !string {
 		cmd: cmd
 	}
 	job.start = time.now()
-	process_args := job.cmd_to_process_args()!
-	return process_args[process_args.len - 1]
+	job.cmd.scriptpath = cmd_to_script_path(job.cmd)!
+	return job.cmd.scriptpath
 }

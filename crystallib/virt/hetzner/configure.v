@@ -1,6 +1,6 @@
 module hetzner
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 @[heap]
 pub struct HetznerConfig {

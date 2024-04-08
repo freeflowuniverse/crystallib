@@ -1,7 +1,7 @@
 module podman
 
 import freeflowuniverse.crystallib.installers.virt.podman as podmaninstaller
-// import freeflowuniverse.crystallib.core.play
+// import freeflowuniverse.crystallib.core.base
 
 @[params]
 pub struct NewArgs {

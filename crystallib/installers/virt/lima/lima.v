@@ -51,12 +51,12 @@ pub fn install(args_ InstallArgs) ! {
 	if args.reset {
 		console.print_header('install lima')
 		mut url := ''
-		mut dest_on_os := '${os.home_dir()}/hero/bin'
+		mut dest_on_os := '${os.home_dir()}/hero'
 		if osal.is_linux_arm() {
-			dest_on_os = '/usr/local/bin'
+			dest_on_os = '/usr/local'
 			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Linux-aarch64.tar.gz'
 		} else if osal.is_linux_intel() {
-			dest_on_os = '/usr/local/bin'
+			dest_on_os = '/usr/local'
 			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Linux-x86_64.tar.gz'
 		} else if osal.is_osx_arm() {
 			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-arm64.tar.gz'

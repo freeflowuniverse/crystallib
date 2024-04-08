@@ -1,7 +1,7 @@
 module mdbook
 
 // import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import os
 
 @[heap]

@@ -2,7 +2,7 @@ module playcmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
 // import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.data.doctree
 
 pub fn play_mdbook(mut session play.Session) ! {

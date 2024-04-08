@@ -2,7 +2,7 @@ module zola
 
 import freeflowuniverse.crystallib.installers.web.tailwind as tailwindinstaller
 import freeflowuniverse.crystallib.installers.web.zola as zolainstaller
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import os
 
 @[heap; params]
