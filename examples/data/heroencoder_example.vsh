@@ -1,9 +1,9 @@
 #!/usr/bin/env -S v -w -cg -enable-globals run
-import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.data.encoderhero
 
 //this is docu at top
 @[name:"teststruct " ; params]
-struct TestStruct {
+pub struct TestStruct {
 //this is docu at mid
 pub mut:
 	id    int 	@[hi]
@@ -17,14 +17,15 @@ pub mut:
 	ss2 	[]SubStruct
 }
 
-struct SubStruct {
+pub struct SubStruct {
+pub mut:
 	color string
 	size int
 }
 
 fn (self TestStruct) heroscript()!string {
 	mut out:=""
-	mut p := paramsparser.encode[TestStruct](self)!
+	mut p := encoderhero.encode[TestStruct](self)!
 	// out += "!!hr.teststruct_define " + p.heroscript() + "\n"
 	// p = paramsparser.encode[SubStruct](self.ss)!
 	// p.set("teststruct_id",self.id.str())
@@ -34,7 +35,7 @@ fn (self TestStruct) heroscript()!string {
 	// 	p.set("teststruct_id",self.id.str())
 	// 	out += "!!hr.substruct_item_define " + p.heroscript() + "\n"
 	// }
-	return out
+	return p
 }
 
 

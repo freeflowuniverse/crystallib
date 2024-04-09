@@ -59,21 +59,6 @@ struct Person {
 ```
 
 
-#### raw decode
-
-```v
-import x.json2
-import net.http
-
-fn main() {
-	resp := http.get('https://reqres.in/api/products/1')!
-
-	// This returns an Any type
-	raw_product := json2.raw_decode(resp.body)!
-}
-```
-
-
 ## License
 
 for all original code as used from Alexander:

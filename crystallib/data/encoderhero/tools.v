@@ -1,4 +1,5 @@
-module heroencoder
+module encoderhero
+import v.reflection
 
 //if at top of struct we have: @[name:"teststruct " ; params] .
 //will return {'name': 'teststruct', 'params': ''}
