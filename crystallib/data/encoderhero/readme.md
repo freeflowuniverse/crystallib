@@ -59,21 +59,6 @@ struct Person {
 ```
 
 
-#### raw decode
-
-```v
-import x.json2
-import net.http
-
-fn main() {
-	resp := http.get('https://reqres.in/api/products/1')!
-
-	// This returns an Any type
-	raw_product := json2.raw_decode(resp.body)!
-}
-```
-
-
 ## License
 
 for all original code as used from Alexander:
@@ -81,3 +66,28 @@ for all original code as used from Alexander:
 // Copyright (c) 2019-2024 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by an MIT license
 // that can be found in the LICENSE file.
+
+
+
+r:1,2,3,4
+r:"1, 2 ,  3;4"
+r:"1,2,3,4"
+r:1,this_is_something,3,4
+r:1,"this_is something",3,4
+
+
+	r:'
+		one
+		two
+		
+		three
+	'
+
+
+!!db.person.define name:timur color:red 
+
+!!db.person.contact.define person:timur tel:... 
+
+!!db.person.comment.define person:timur ...
+
+
