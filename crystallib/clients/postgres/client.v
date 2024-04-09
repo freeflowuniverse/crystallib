@@ -1,6 +1,6 @@
 module postgres
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import db.pg
 import freeflowuniverse.crystallib.core.texttools
 
@@ -49,15 +49,3 @@ struct LocalConfig {
 	passwd string
 }
 
-// // is there a local server can we get the passwd
-// fn local_server_config_get(name_ string) !LocalConfig {
-// 	name := texttools.name_fix(name_)
-// 	key := 'postgres_config_${name}'
-// 	mut kvs := fskvs.new(name: 'config')!
-// 	if kvs.exists(key) {
-// 		data := kvs.get(key)!
-// 		args := json.decode(LocalConfig, data)!
-// 		return args
-// 	}
-// 	return LocalConfig{}
-// }

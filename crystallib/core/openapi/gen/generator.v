@@ -31,7 +31,7 @@ fn (mut gen ClientGenerator) generate_client_struct() Struct {
 		embeds: [
 			Struct{
 				name: 'Base'
-				mod: 'freeflowuniverse.crystallib.core.play'
+				mod: 'freeflowuniverse.crystallib.core.base'
 				generics: {
 					'T': ''
 				}
@@ -57,7 +57,7 @@ fn generate_client_config() Struct {
 		embeds: [
 			Struct{
 				name: 'ConfigBase'
-				mod: 'freeflowuniverse.crystallib.core.play'
+				mod: 'freeflowuniverse.crystallib.core.base'
 				generics: {
 					'T': ''
 				}
@@ -99,7 +99,7 @@ fn (mut gen ClientGenerator) generate_get_function(client Struct) codemodel.Func
 				name: 'args'
 				struct_: Struct{
 					name: 'PlayArgs'
-					mod: 'freeflowuniverse.crystallib.core.play'
+					mod: 'freeflowuniverse.crystallib.core.base'
 					generics: {
 						'': 'Config'
 					}
@@ -129,7 +129,7 @@ fn (mut gen ClientGenerator) heroplay_function(config Struct) codemodel.Function
 				name: 'args'
 				struct_: Struct{
 					name: 'PlayBookAddArgs'
-					mod: 'freeflowuniverse.crystallib.core.play'
+					mod: 'freeflowuniverse.crystallib.core.base'
 				}
 			},
 		]

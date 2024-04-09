@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.webtools.mdbook
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.installers.web.mdbook as mdbookinstaller
 
 import os

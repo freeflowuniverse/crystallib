@@ -118,7 +118,7 @@ pub fn (err ContainerGetError) msg() string {
 		return 'Could not find image with args:\n${err.args}'
 	}
 	if err.toomany {
-		return 'Found more than 1 image with args:\n${err.args}'
+		return 'Found more than 1 container with args:\n${err.args}'
 	}
 	panic('unknown error for ContainerGetError')
 }

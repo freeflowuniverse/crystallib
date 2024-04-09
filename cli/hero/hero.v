@@ -3,7 +3,7 @@ module main
 import os
 import cli { Command }
 import freeflowuniverse.crystallib.core.herocmds
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui

@@ -155,13 +155,13 @@ fn (mut r Redis) write_line(data []u8) ! {
 
 fn (mut r Redis) write(data []u8) ! {
 	lock redis_connections {
-		redis_connections[redis_connections.len - 1].write(data)!
+		redis_connections[r.connection_nr[0]].write(data)!
 	}
 }
 
 fn (mut r Redis) read(size int) ![]u8 {
 	lock redis_connections {
-		mut res := redis_connections[redis_connections.len - 1].read(size)!
+		mut res := redis_connections[r.connection_nr[0]].read(size)!
 		return res
 	}
 	panic('bug')
@@ -169,7 +169,7 @@ fn (mut r Redis) read(size int) ![]u8 {
 
 fn (mut r Redis) read_line() !string {
 	lock redis_connections {
-		mut res := redis_connections[redis_connections.len - 1].read_line()!
+		mut res :=redis_connections[r.connection_nr[0]].read_line()!
 		return res
 	}
 	panic('bug')

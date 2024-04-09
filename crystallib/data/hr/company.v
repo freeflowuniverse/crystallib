@@ -1,15 +1,15 @@
 module hr
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
 
 pub struct Company {
 pub mut:
 	name        string
 	country     &Country
-	description ?string
-	purpose     ?string
-	address     ?string
+	description string
+	purpose     string
+	address     string
 	shares      ?CompanyShares
 }
 

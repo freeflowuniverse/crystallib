@@ -1,5 +1,5 @@
 module paramsparser
-
+import v.reflection
 // TODO: support more field types
 pub fn (params Params) decode[T]() !T {
 	mut t := T{}
@@ -18,6 +18,7 @@ pub fn (params Params) decode[T]() !T {
 			t.$(field.name) = params.get_list(field.name)!
 		}
 		$if field.typ is []int {
+			// println(params.get_list_int(field.name)!)
 			t.$(field.name) = params.get_list_int(field.name)!
 		}
 	}
@@ -26,14 +27,61 @@ pub fn (params Params) decode[T]() !T {
 
 pub fn encode[T](t T) !Params {
 	mut params := Params{}
+	
+	mut mytype:=reflection.type_of[T](t)
+
+	struct_attrs:=attrs_get_reflection(mytype)
+
 	$for field in T.fields {
-		// for some reason kwargs_add wont work so add manually
+		field_attrs := attrs_get(field.attrs)
+		println(field.name)
+		println(field.typ)
+		println(field_attrs)
 		val := t.$(field.name)
-		param := Param{
-			key: field.name
-			value: '${val}'
+		$if field.typ is string {
+			params.params << Param{key: field.name,value: '${val}'}
 		}
-		params.params << param
+		$else $if field.typ is int {
+			params.params << Param{key: field.name,value: '${val}'}
+		}
+		$else $if field.typ is bool {
+			if val{
+				params.params << Param{key: field.name,value: 'true'}
+			}else{
+				params.params << Param{key: field.name,value: 'false'}
+			}
+		}
+		$else $if field.typ is []string {
+			mut v2:=""
+			for i in val{
+				if i.contains(" "){
+					v2+='\"${i}\",'
+				}else{
+					v2+='${i},'
+				}
+				
+			}
+			v2=v2.trim(",")			
+			params.params << Param{key: field.name,value: v2}
+		}
+		$else $if field.typ is []int {
+			mut v2:=""
+			for i in val{
+				v2+="${i},"
+			}
+			v2=v2.trim(",")
+			params.params << Param{key: field.name,value: v2}
+		}
+
+		$else $if field.typ is $struct {
+			println(field.typ)
+			panic("s")
+		}
+
+		$else {}
+
+
+
 	}
 	return params
 }

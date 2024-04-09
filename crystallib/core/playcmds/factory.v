@@ -1,6 +1,6 @@
 module playcmds
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
 
 pub fn run(mut session play.Session) ! {

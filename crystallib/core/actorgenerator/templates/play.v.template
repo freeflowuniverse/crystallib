@@ -1,4 +1,4 @@
-import freeflowuniverse.crystallib.core.playbook  {ActionsArgs, Actions}
+import freeflowuniverse.crystallib.core.basebook  {ActionsArgs, Actions}
 import freeflowuniverse.crystallib.data.params  {Params}
 
 __global(

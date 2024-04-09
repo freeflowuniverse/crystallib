@@ -6,7 +6,8 @@ module startupmanager
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.osal.screen
 import json
-// import os
+import os
+import rand
 
 pub enum StartupManagerType {
 	screen
@@ -54,6 +55,11 @@ pub mut:
 }
 
 // launch a new process
+//```
+// name  string
+// cmd   string
+// reset bool
+//```
 pub fn (mut sm StartupManager) start(args StartArgs) ! {
 	match sm.cat {
 		.screen {
@@ -81,14 +87,43 @@ pub fn (mut sm StartupManager) kill(name string) ! {
 	}
 }
 
-pub fn (mut sm StartupManager) exists(name string) !bool {
+pub fn (mut sm StartupManager) exists(name string) bool {
 	match sm.cat {
 		.screen {
-			mut scr := screen.new(reset: false)!
+			mut scr := screen.new(reset: false) or {panic("can't get screen")}
 			return scr.exists(name)
 		}
 		else {
 			panic('to implement. startup manager only support screen for now')
 		}
 	}
+}
+
+
+
+pub struct SecretArgs {
+pub mut:
+	name string @[required]
+	cat SecretType
+}
+
+
+pub enum SecretType {
+	normal
+}
+
+
+//creates a secret if it doesn exist yet
+pub fn (mut sm StartupManager) secret(args SecretArgs) !string {
+	if ! (sm.exists(args.name)){
+		return error("can't find screen with name ${args.name}, for secret")
+	}
+	key:="secrets:startup:${args.name}"
+	mut redis := redisclient.core_get()!
+	mut secret := redis.get(key)!
+	if secret.len==0  {
+		secret = rand.hex(16)
+		redis.set(key,secret)!
+	}
+	return secret
 }

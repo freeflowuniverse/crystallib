@@ -91,5 +91,5 @@ pub fn tcp_port_test(args TcpPortTestArgs) bool {
 pub fn ipaddr_pub_get() !string {
 	cmd := 'dig @resolver4.opendns.com myip.opendns.com +short'
 	ipaddr := exec(cmd: cmd)!
-	return ipaddr.output.join_lines().trim('\n').trim(' \n')
+	return ipaddr.output.trim('\n').trim(' \n')
 }

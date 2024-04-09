@@ -1,6 +1,6 @@
 module herocmds
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.webtools.zola
 import cli { Command, Flag }
 

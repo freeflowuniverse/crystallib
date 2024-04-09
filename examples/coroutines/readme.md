@@ -7,4 +7,3 @@
 - no .wait()
 - dynamic linking, so need to copy the .so file next to the executable: cp /v/thirdparty/photon/photonwrapper.so .
 - vfmt will replace “go" with  “spawn”, so don't use it for now 
-- only macos arm64 for now, linux and x64 macos will be supported later today

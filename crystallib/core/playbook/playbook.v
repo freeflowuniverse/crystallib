@@ -1,5 +1,5 @@
 module playbook
-
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 import crypto.blake2b
@@ -11,6 +11,7 @@ pub mut:
 	othertext  string // in case there is text outside of the actions
 	nractions  int
 	done       []int // which actions did we already find
+	session &base.Session
 }
 
 @[params]
@@ -25,7 +26,7 @@ pub mut:
 }
 
 // add action to the book
-pub fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
+fn (mut plbook PlayBook) action_new(args ActionNewArgs) &Action {
 	plbook.nractions += 1
 	mut a := Action{
 		id: plbook.nractions

@@ -2,7 +2,7 @@ module playcmds
 
 // import freeflowuniverse.crystallib.core.playbook
 // import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 // !!context.configure
 //     name:'test'

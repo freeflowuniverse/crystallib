@@ -1,7 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.osal.sshagent
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 pub fn play_ssh(mut session play.Session) ! {
 	mut agent := sshagent.new()!

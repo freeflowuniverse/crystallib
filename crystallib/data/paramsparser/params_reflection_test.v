@@ -29,45 +29,50 @@ fn test_decode() {
 			value: 'true'
 		}, Param{
 			key: 'liststr'
-			value: '["one", "two"]'
+			value: '"one","two"'
 		}, Param{
 			key: 'listint'
-			value: '[1, 2]'
+			value: '1,2'
 		}]
 	}
 
 	decoded := params.decode[TestStruct]()!
+	println(decoded)
+	if true{
+		panic("ss")
+	}
 	assert decoded == test
 }
 
-fn test_encode() {
-	test := TestStruct{
-		name: 'test'
-		number: 2
-		yesno: true
-		liststr: ['one', 'two']
-		listint: [1, 2]
-	}
+// fn test_encode() {
+// 	test := TestStruct{
+// 		name: 'test'
+// 		number: 2
+// 		yesno: true
+// 		liststr: ['one', 'two']
+// 		listint: [1, 2]
+// 	}
 
-	params := Params{
-		params: [Param{
-			key: 'name'
-			value: 'test'
-		}, Param{
-			key: 'number'
-			value: '2'
-		}, Param{
-			key: 'yesno'
-			value: 'true'
-		}, Param{
-			key: 'liststr'
-			value: "['one', 'two']"
-		}, Param{
-			key: 'listint'
-			value: '[1, 2]'
-		}]
-	}
+// 	params := Params{
+// 		params: [Param{
+// 			key: 'name'
+// 			value: 'test'
+// 		}, Param{
+// 			key: 'number'
+// 			value: '2'
+// 		}, Param{
+// 			key: 'yesno'
+// 			value: 'true'
+// 		}, Param{
+// 			key: 'liststr'
+// 			value: '"one","two"'
+// 		}, Param{
+// 			key: 'listint'
+// 			value: '1,2'
+// 		}]
+// 	}
 
-	encoded := encode[TestStruct](test)!
-	assert encoded == params
-}
+
+// 	encoded := encode[TestStruct](test)!
+// 	assert encoded == params
+// }

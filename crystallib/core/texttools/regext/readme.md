@@ -11,6 +11,7 @@ Tool to flexibly replace elements in file(s) or text.
 next example does it for 
 
 ```golang
+import freeflowuniverse.crystallib.core.texttools.regext
 text := '
 
 this is test_1 SomeTest
@@ -33,7 +34,7 @@ need to replace ThreeFold to ThreeFold
 
 '
 
-mut ri := regex_instructions_new()
+mut ri := regext.regex_instructions_new()
 ri.add(['TF:ThreeFold0:ThreeFold1:ThreeFold']) or { panic(err) }
 ri.add_item('test_1', 'TTT') or { panic(err) }
 ri.add_item('^Stest 1', 'TTT') or { panic(err) } //will be case insensitive search
@@ -41,3 +42,5 @@ ri.add_item('^Stest 1', 'TTT') or { panic(err) } //will be case insensitive sear
 mut text_out2 := ri.replace(text: text, dedent: true) or { panic(err) }
 
 ```
+
+
