@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-
 pub fn install(args_ S3Config) ! {
 	mut args := args_
 	version := '0.9.3'
@@ -25,8 +24,7 @@ pub fn install(args_ S3Config) ! {
 		args.reset = true
 	}
 
-	if args.reset  {
-
+	if args.reset {
 		console.print_header('install garage')
 
 		mut url := ''
@@ -51,7 +49,7 @@ pub fn install(args_ S3Config) ! {
 		)!
 	}
 
-	if args.start{
+	if args.start {
 		start(args)!
 	}
 }

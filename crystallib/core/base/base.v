@@ -6,7 +6,6 @@ mut:
 	session_ ?&Session
 }
 
-
 // return a session which has link to the actions and params on context and session level
 // the session also has link to dbfs (filesystem key val stor and gitstructure if relevant)
 //```
@@ -23,6 +22,7 @@ pub fn (mut self Base) session(args PlayArgs) &Session {
 		self.session_ = s
 		s
 	}
+
 	return mysession
 }
 

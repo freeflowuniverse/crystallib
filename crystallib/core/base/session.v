@@ -11,12 +11,12 @@ import freeflowuniverse.crystallib.core.dbfs
 @[heap]
 pub struct Session {
 pub mut:
-	name                string // unique id for session (session id), can be more than one per context
-	interactive         bool = true
-	params              paramsparser.Params
-	start               ourtime.OurTime
-	end                 ourtime.OurTime
-	context             Context             @[skip; str: skip]
+	name        string // unique id for session (session id), can be more than one per context
+	interactive bool = true
+	params      paramsparser.Params
+	start       ourtime.OurTime
+	end         ourtime.OurTime
+	context     Context             @[skip; str: skip]
 }
 
 @[params]

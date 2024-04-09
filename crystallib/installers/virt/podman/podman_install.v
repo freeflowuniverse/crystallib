@@ -17,8 +17,8 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	mut version := '5.0.1'
 
-	if osal.platform() in [.arch] {
-		//no idea why this is but the version shown is older
+	if osal.platform() == .arch {
+		// no idea why this is but the version shown is older
 		version = '4.9.2'
 	}
 

@@ -112,7 +112,6 @@ module playbook
 // 	}
 // }
 
-
 // pub fn (mut c Session) str() string {
 // 	return c.heroscript() or { "BUG: can't represent the object properly." }
 // }

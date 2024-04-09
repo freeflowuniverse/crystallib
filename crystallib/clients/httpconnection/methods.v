@@ -55,7 +55,7 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 	mut err_message := ''
 	mut from_cache := false // used to know if result came from cache
 	is_cacheable := h.is_cacheable(req)
-	
+
 	// 1 - Check cache if enabled try to get result from cache
 	if is_cacheable {
 		result = h.cache_get(req)!
@@ -67,12 +67,12 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 	if result.code in [0, -1] {
 		// 3 - Do request, if needed
 		url := h.url(req)
-		mut new_req := http.new_request(req.method, url, req.data)		
+		mut new_req := http.new_request(req.method, url, req.data)
 		// joining the header from the HTTPConnection with the one from Request
 		new_req.header = h.header()
-		if req.debug{
+		if req.debug {
 			console.print_debug(new_req.str())
-		}			
+		}
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
 				err_message = 'Cannot send rew:${req}\nerror:${err}'
@@ -81,9 +81,9 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 			}
 			break
 		}
-		if req.debug{
+		if req.debug {
 			console.print_debug(response.str())
-		}			
+		}
 		if response.status_code == 0 {
 			return error(err_message)
 		}
@@ -143,8 +143,8 @@ pub fn (mut h HTTPConnection) get_json(req Request) !string {
 // Get Request with json data and return response as string
 pub fn (mut h HTTPConnection) get(req_ Request) !string {
 	mut req := req_
-	req.method = .get	
-	result := h.send(req)!	
+	req.method = .get
+	result := h.send(req)!
 	return result.data
 }
 

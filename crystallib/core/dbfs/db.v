@@ -10,14 +10,14 @@ pub mut:
 	name      string
 	path      pathlib.Path
 	encrypted bool
-	parent    &DBCollection   @[skip; str: skip]
+	parent    &DBCollection @[skip; str: skip]
 }
 
 // get the value, if it doesn't exist then return empty string
 pub fn (mut db DB) get(name_ string) !string {
 	name := texttools.name_fix(name_)
-	if !db.exists(name_){
-		return ""
+	if !db.exists(name_) {
+		return ''
 	}
 	mut datafile := db.path.file_get_new(name)!
 	mut data := datafile.read()!
@@ -35,7 +35,7 @@ pub fn (mut db DB) set(name_ string, data_ string) ! {
 	mut data := data_
 	if data.len == 0 {
 		panic('data cannot be empty for set:${name_}')
-	}	
+	}
 	if data.len == 0 {
 		return error('data cannot be empty for set:${name_}')
 	}
@@ -60,12 +60,10 @@ pub fn (mut db DB) delete(name_ string) ! {
 	datafile.delete()!
 }
 
-//delete the db, will not be able to use it any longer
+// delete the db, will not be able to use it any longer
 pub fn (mut db DB) destroy() ! {
 	db.path.delete()!
 }
-
-
 
 // get all keys of the db (e.g. per session) can be with a prefix
 pub fn (mut db DB) keys(prefix_ string) ![]string {
@@ -73,46 +71,43 @@ pub fn (mut db DB) keys(prefix_ string) ![]string {
 	mut r := db.path.list(recursive: false)!
 	mut res := []string{}
 	for item in r.paths {
-		name:=item.name()
-		if prefix=="" || name.starts_with(prefix) {
+		name := item.name()
+		if prefix == '' || name.starts_with(prefix) {
 			res << name
 		}
 	}
 	return res
 }
 
-
 // delete all data
 pub fn (mut db DB) empty() ! {
 	db.path.empty()!
-	if db.encrypted{
-		//need to make sure we restore the encrypted file
-		db.path.file_get_new("encrypted")!
+	if db.encrypted {
+		// need to make sure we restore the encrypted file
+		db.path.file_get_new('encrypted')!
 	}
 }
-
 
 fn (mut db DB) secret() !string {
-	if db.encrypted{
+	if db.encrypted {
 		return db.parent.secret
 	}
-	return ""
+	return ''
 }
 
-//will mark db for encryption .
-//will go over all existing keys and encrypt
+// will mark db for encryption .
+// will go over all existing keys and encrypt
 pub fn (mut db DB) encrypt() ! {
 	if db.encrypted {
 		return
 	}
-	db.secret()! //just to check if ok
-	for key in db.keys("")!{
+	db.secret()! // just to check if ok
+	for key in db.keys('')! {
 		db.encrypted = false
-		v:=db.get(key)!
+		v := db.get(key)!
 		db.encrypted = true
-		db.set(key,v)!
+		db.set(key, v)!
 	}
 	db.encrypted = true
-	db.path.file_get_new("encrypted")!
-	
+	db.path.file_get_new('encrypted')!
 }

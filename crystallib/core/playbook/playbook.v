@@ -1,4 +1,5 @@
 module playbook
+
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
@@ -11,7 +12,7 @@ pub mut:
 	othertext  string // in case there is text outside of the actions
 	nractions  int
 	done       []int // which actions did we already find
-	session &base.Session
+	session    &base.Session
 }
 
 @[params]

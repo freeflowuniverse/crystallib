@@ -107,9 +107,8 @@ pub fn (err ImageGetError) code() int {
 // 	id string
 // id_full
 pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
-	
 	for i in e.images {
-		if args.digest != "" &&  i.digest == args.digest {
+		if args.digest != '' && i.digest == args.digest {
 			return i
 		}
 		if args.id != '' && i.id == args.id {
@@ -117,9 +116,8 @@ pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
 		}
 		if args.id_full != '' && i.id_full == args.id_full {
 			return i
-		}		
+		}
 	}
-
 
 	if args.repo != '' || args.tag != '' {
 		mut counter := 0
@@ -140,8 +138,8 @@ pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
 				args: args
 				toomany: true
 			}
-		}		
-		return e.image_get(digest: result_digest)!		
+		}
+		return e.image_get(digest: result_digest)!
 	}
 	return ImageGetError{
 		args: args

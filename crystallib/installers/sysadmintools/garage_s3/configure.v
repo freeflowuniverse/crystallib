@@ -21,7 +21,7 @@ pub mut:
 	rpc_secret        string //{GARAGE.RPCSECRET}
 	rpc_bind_addr     string = '[::]:3901'
 	rpc_bind_outgoing bool
-	rpc_public_addr   string = "127.0.0.1:3901"
+	rpc_public_addr   string = '127.0.0.1:3901'
 
 	bootstrap_peers []string
 
@@ -38,43 +38,50 @@ pub mut:
 	admin_trace_sink    string = 'http://localhost:4317'
 
 	reset bool
-	start bool	
+	start bool
 }
 
 pub fn start(args_ S3Config) ! {
-
-	mut args:=args_
+	mut args := args_
 	mut config_file := $tmpl('templates/garage.toml')
 
 	console.print_header('garage start')
 
-	//create the paths
-	myconfigpath_:="${args.metadata_dir}/garage.toml"
+	// create the paths
+	myconfigpath_ := '${args.metadata_dir}/garage.toml'
 
-	mut box:=secrets.get()!
-	config_file=box.replace(txt:config_file,
-			defaults:{
-					"GARAGE.RPCSECRET":secrets.DefaultSecretArgs{secret:args.rpc_secret,cat:.openssl_hex},
-					"GARAGE.METRICSTOKEN":secrets.DefaultSecretArgs{secret:args.admin_metrics_token,cat:.openssl_base64},
-					"GARAGE.ADMINTOKEN":secrets.DefaultSecretArgs{secret:args.admin_token,cat:.openssl_base64}
-					},
-			printsecrets:true
-			)!
+	mut box := secrets.get()!
+	config_file = box.replace(
+		txt: config_file
+		defaults: {
+			'GARAGE.RPCSECRET':    secrets.DefaultSecretArgs{
+				secret: args.rpc_secret
+				cat: .openssl_hex
+			}
+			'GARAGE.METRICSTOKEN': secrets.DefaultSecretArgs{
+				secret: args.admin_metrics_token
+				cat: .openssl_base64
+			}
+			'GARAGE.ADMINTOKEN':   secrets.DefaultSecretArgs{
+				secret: args.admin_token
+				cat: .openssl_base64
+			}
+		}
+		printsecrets: true
+	)!
 
-	mut myconfigpath:=pathlib.get_file(path:myconfigpath_,create:true)!
+	mut myconfigpath := pathlib.get_file(path: myconfigpath_, create: true)!
 	myconfigpath.write(config_file)!
-	pathlib.get_dir(path:args.data_dir,create:true)!
-	
+	pathlib.get_dir(path: args.data_dir, create: true)!
 
-	mut sm:=startupmanager.get()!
-
+	mut sm := startupmanager.get()!
 
 	sm.start(
 		name: 'garage'
 		cmd: 'garage -c ${myconfigpath_} server'
 	)!
 
-	console.print_debug( 'garage -c ${myconfigpath_} server')
+	console.print_debug('garage -c ${myconfigpath_} server')
 
 	for _ in 0 .. 50 {
 		if check(args)! {
@@ -88,9 +95,8 @@ pub fn start(args_ S3Config) ! {
 
 pub fn stop() ! {
 	console.print_header('garage stop')
-	mut sm:=startupmanager.get()!
+	mut sm := startupmanager.get()!
 	sm.kill('garage')!
-
 }
 
 fn check(args S3Config) !bool {

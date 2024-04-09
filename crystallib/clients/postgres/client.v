@@ -19,7 +19,11 @@ pub mut:
 }
 
 pub fn get(clientargs ClientArgs) !PostgresClient {
-	mut plargs := clientargs.playargs or { play.PlayArgs{} }
+	mut plargs := clientargs.playargs or {
+		play.PlayArgs
+		{
+		}
+	}
 	mut cfg := configurator(clientargs.instance, plargs)!
 	mut args := cfg.get()!
 
@@ -48,4 +52,3 @@ struct LocalConfig {
 	path   string
 	passwd string
 }
-

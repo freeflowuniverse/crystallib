@@ -1,4 +1,5 @@
 module encoderhero
+
 import freeflowuniverse.crystallib.data.paramsparser
 import time
 import v.reflection
@@ -7,93 +8,94 @@ import v.reflection
 // It provides parameters in order to change the end result.
 pub struct Encoder {
 pub mut:
-	escape_unicode       bool = true
-	action_names []string
-	params paramsparser.Params
-	children []Encoder
-	parent ?&Encoder @[skip; str: skip]
+	escape_unicode bool = true
+	action_names   []string
+	params         paramsparser.Params
+	children       []Encoder
+	parent         ?&Encoder           @[skip; str: skip]
 }
 
 // encode is a generic function that encodes a type into a HEROSCRIPT string.
 pub fn encode[T](val T) !string {
-	mut e:=Encoder{params:paramsparser.Params{}}
+	mut e := Encoder{
+		params: paramsparser.Params{}
+	}
 	$if T is $struct {
 		e.encode_struct[T](val)!
 	} $else {
-		return error("can only add elements for struct or array of structs. \n${val}")
-	}	
-	return ""
+		return error('can only add elements for struct or array of structs. \n${val}')
+	}
+	return ''
 }
 
-//needs to be a struct we are adding
-//parent is the name of the action e.g define.customer:contact 
+// needs to be a struct we are adding
+// parent is the name of the action e.g define.customer:contact
 pub fn (mut e Encoder) add[T](val T) ! {
 	// $if T is []$struct {
 	// 	panic("not implemented")
 	// 	// for valitem in val{
 	// 	// 	mut e2:=e.add[T](valitem)!
 	// 	// }		
-	// }  
-	mut e2:=Encoder{params:paramsparser.Params{},parent:&e,action_names:e.action_names}
+	// }
+	mut e2 := Encoder{
+		params: paramsparser.Params{}
+		parent: &e
+		action_names: e.action_names
+	}
 	$if T is $struct {
 		e2.encode_struct[T](val)!
-		e.children<<e2
+		e.children << e2
 	} $else {
-		return error("can only add elements for struct or array of structs. \n${val}")
+		return error('can only add elements for struct or array of structs. \n${val}')
 	}
 }
 
-//now encode the struct
+// now encode the struct
 pub fn (mut e Encoder) encode_struct[T](val0 T) ! {
+	mut mytype := reflection.type_of[T](val0)
+	struct_attrs := attrs_get_reflection(mytype)
 
-	mut mytype:=reflection.type_of[T](val0)
-	struct_attrs:=attrs_get_reflection(mytype)
-	
 	mut action_name := T.name.to_lower()
-	if "alias" in struct_attrs{
-		action_name = struct_attrs["alias"].to_lower()
-	}	
+	if 'alias' in struct_attrs {
+		action_name = struct_attrs['alias'].to_lower()
+	}
 	e.action_names << action_name
-
 
 	$for field in T.fields {
 		field_attrs := attrs_get(field.attrs)
 		mut field_name := field.name
-		if "alias" in field_attrs{
-			field_name=field_attrs["alias"]
+		if 'alias' in field_attrs {
+			field_name = field_attrs['alias']
 		}
-		println("FIELD: ${field_name} ${field.typ}")
+		println('FIELD: ${field_name} ${field.typ}')
 
 		val := val0.$(field.name)
 		$if field.typ is string || field.typ is int {
-			e.params.set(field.name,'${val}')
-		}
-		$else $if field.typ is bool {
-			if val{
-				e.params.set(  field.name,'true')
-			}else{
-				e.params.set(  field.name,'false')
+			e.params.set(field.name, '${val}')
+		} $else $if field.typ is bool {
+			if val {
+				e.params.set(field.name, 'true')
+			} else {
+				e.params.set(field.name, 'false')
 			}
-		}
-		$else $if field.typ is []string {
-			mut v2:=""
-			for i in val{
-				if i.contains(" "){
-					v2+='\"${i}\",'
-				}else{
-					v2+='${i},'
+		} $else $if field.typ is []string {
+			mut v2 := ''
+			for i in val {
+				if i.contains(' ') {
+					v2 += "\"${i}\","
+				} else {
+					v2 += '${i},'
 				}
 			}
-			v2=v2.trim(",")			
-			e.params.set(field.name,v2)
-		}
-		$else $if field.typ is []int {
-			mut v2:=""
-			for i in val{
-				v2+="${i},"
+			v2 = v2.trim(',')
+			e.params.set(field.name, v2)
+		} $else $if field.typ is []int {
+			mut v2 := ''
+			for i in val {
+				v2 += '${i},'
 			}
-			v2=v2.trim(",")
-			e.params.set( field.name,v2.str())
+			v2 = v2.trim(',')
+			e.params.set(field.name, v2.str())
 		}
 		// $else $if field.typ $enum {
 		// 	e.params.set( field.name,v2.str())
@@ -102,16 +104,11 @@ pub fn (mut e Encoder) encode_struct[T](val0 T) ! {
 			e.add(val)!
 			// println(e.children)
 			// panic("s")
-		}
-		$else {
+		} $else {
 			return error("can't find field type ${field.typ}")
 		}
 	}
 }
-
-
-
-
 
 // fn (e &Encoder) encode_map[T](value T, level int) ! {
 // 	params << json2.curly_open_rune

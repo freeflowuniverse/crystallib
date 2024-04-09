@@ -308,9 +308,6 @@ module encoderhero
 // 	return m
 // }
 
-
-
-
 // // str returns the JSON string representation of the `map[string]Any` type.
 // pub fn (f map[string]Any) str() string {
 // 	return Any(f).json_str()

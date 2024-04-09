@@ -17,12 +17,11 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	mut version := '10.0.0'
 
-
-	if  args.uninstall {
-			console.print_header('uninstall qemu')
-			uninstall()!
-			println(' - ok')
-		}
+	if args.uninstall {
+		console.print_header('uninstall qemu')
+		uninstall()!
+		println(' - ok')
+	}
 
 	res := os.execute('virsh -v')
 	if res.exit_code == 0 {
@@ -47,9 +46,9 @@ pub fn install(args_ InstallArgs) ! {
 	base.install()!
 	if osal.platform() in [.arch, .ubuntu] {
 		osal.package_install('qemu,libvirt,qemu-common,qemu-img,qemu-system-arm,qemu-system-x86,qemu-tools,libguestfs')!
-		osal.exec(cmd:"systemctl start libvirtd && systemctl enable libvirtd")!
-	}else{
-		return error("can only install qemu on ubuntu & arc")
+		osal.exec(cmd: 'systemctl start libvirtd && systemctl enable libvirtd')!
+	} else {
+		return error('can only install qemu on ubuntu & arc')
 	}
 
 	if exists()! {

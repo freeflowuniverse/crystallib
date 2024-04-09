@@ -14,14 +14,14 @@ import time
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset   bool
-	secret  string
-	start   bool = true
-	restart bool
-	sequential bool //if sequential then we autoincrement the keys
-	datadir string = '${os.home_dir()}/var/zdb/data'
-	indexdir string = '${os.home_dir()}/var/zdb/index'
-	rotateperiod int = 1200 //20 min
+	reset        bool
+	secret       string
+	start        bool = true
+	restart      bool
+	sequential   bool // if sequential then we autoincrement the keys
+	datadir      string = '${os.home_dir()}/var/zdb/data'
+	indexdir     string = '${os.home_dir()}/var/zdb/index'
+	rotateperiod int    = 1200 // 20 min
 }
 
 pub fn install(args_ InstallArgs) ! {
@@ -34,7 +34,7 @@ pub fn install(args_ InstallArgs) ! {
 		if r.len != 3 {
 			return error("couldn't parse zdb version.\n${res.output}")
 		}
-		myversion:=r[1].all_after_first("server, v").all_before_last("(").trim_space()
+		myversion := r[1].all_after_first('server, v').all_before_last('(').trim_space()
 		if texttools.version(version) > texttools.version(myversion) {
 			args.reset = true
 		}
@@ -80,7 +80,7 @@ pub fn restart(args_ InstallArgs) ! {
 
 pub fn stop(args_ InstallArgs) ! {
 	console.print_header('zdb stop')
-	mut sm:=startupmanager.get()!
+	mut sm := startupmanager.get()!
 	sm.kill('zdb')!
 }
 
@@ -89,18 +89,18 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('zdb start')
 
-	mut box:=secrets.get()!
-	secret:=box.secret(key:"ZDB.SECRET",default:args.secret)!
+	mut box := secrets.get()!
+	secret := box.secret(key: 'ZDB.SECRET', default: args.secret)!
 
-	mut sm:=startupmanager.get()!
+	mut sm := startupmanager.get()!
 
-	mut cmd:='zdb --socket ${os.home_dir()}/hero/var/zdb.sock --port 3355 --admin ${secret} --data ${args.datadir} --index ${args.indexdir} --dualnet --protect --rotate ${args.rotateperiod}'
+	mut cmd := 'zdb --socket ${os.home_dir()}/hero/var/zdb.sock --port 3355 --admin ${secret} --data ${args.datadir} --index ${args.indexdir} --dualnet --protect --rotate ${args.rotateperiod}'
 	if args.sequential {
 		cmd += ' --mode seq'
 	}
 
-	pathlib.get_dir(path:"${os.home_dir()}/hero/var",create:true)!
-	
+	pathlib.get_dir(path: '${os.home_dir()}/hero/var', create: true)!
+
 	sm.start(
 		name: 'zdb'
 		cmd: cmd
@@ -118,21 +118,19 @@ pub fn start(args_ InstallArgs) ! {
 }
 
 pub fn check() !bool {
-		
-
-	cmd:="redis-cli -s /root/hero/var/zdb.sock PING"
+	cmd := 'redis-cli -s /root/hero/var/zdb.sock PING'
 
 	result := os.execute(cmd)
 	if result.exit_code > 0 {
 		return error('${cmd} failed with exit code: ${result.exit_code} and error: ${result.output}')
 	}
 
-	if  result.output.trim_space() == "PONG"{
+	if result.output.trim_space() == 'PONG' {
 		console.print_debug('zdb is answering.')
 		// return true
 	}
 
-	//TODO: need to work on socket version
+	// TODO: need to work on socket version
 	// mut db := zdb.get('${os.home_dir()}/hero/var/zdb.sock', secret()!, 'test')!
 	mut db := client()!
 
@@ -146,10 +144,9 @@ pub fn check() !bool {
 	return true
 }
 
-
 pub fn secret() !string {
-	mut box:=secrets.get()!
-	secret:=box.get("ZDB.SECRET")!	
+	mut box := secrets.get()!
+	secret := box.get('ZDB.SECRET')!
 	return secret
 }
 

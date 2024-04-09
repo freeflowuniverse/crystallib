@@ -2,7 +2,6 @@ module encoderhero
 
 import time
 
-
 // byte array versions of the most common tokens/chars to avoid reallocations
 const null_in_bytes = 'null'
 
@@ -36,7 +35,6 @@ const curly_open_rune = `{`
 const curly_close_rune = `}`
 
 const ascii_especial_characters = [u8(`\\`), `"`, `/`]!
-
 
 // // `Any` is a sum type that lists the possible types to be decoded and used.
 // pub type Any = Null

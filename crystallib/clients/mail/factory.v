@@ -8,7 +8,7 @@ import net.smtp
 pub struct MailClient[T] {
 	play.BaseConfig
 pub mut:
-	config Config
+	config      Config
 	smtp_client &smtp.Client
 }
 

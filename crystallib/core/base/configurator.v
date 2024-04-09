@@ -2,8 +2,6 @@ module base
 
 import json
 
-
-
 @[heap]
 pub struct ConfigBase {
 pub mut:
@@ -12,7 +10,6 @@ pub mut:
 	description string
 	configured  bool
 }
-
 
 @[heap]
 pub struct Configurator[T] {
@@ -42,7 +39,7 @@ fn (mut self Configurator[T]) config_key() string {
 	return '${self.configtype}_config_${self.instance}'
 }
 
-//set the full configuration as one object to dbconfig
+// set the full configuration as one object to dbconfig
 pub fn (mut self Configurator[T]) set(args_ T) ! {
 	mut args := args_
 	args.instance = self.instance

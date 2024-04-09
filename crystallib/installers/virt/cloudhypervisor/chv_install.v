@@ -52,7 +52,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 
 		console.print_header('download ${url}')
-		dest:=osal.download(
+		dest := osal.download(
 			url: url
 			minsize_kb: 4000
 			reset: args.reset
@@ -62,11 +62,10 @@ pub fn install(args_ InstallArgs) ! {
 		osal.cmd_add(
 			cmdname: 'cloud-hypervisor'
 			source: '${dest.path}'
-		)!		
-
+		)!
 	}
 }
 
 pub fn uninstall() ! {
-	panic("not implemented")
+	panic('not implemented')
 }

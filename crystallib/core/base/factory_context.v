@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.clients.redisclient
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.dbfs
 
-
 @[params]
 pub struct ContextConfigureArgs {
 pub mut:
@@ -42,13 +41,12 @@ fn context_configure(args_ ContextConfigureArgs) ! {
 		interactive: args.interactive
 		secret: args.secret
 	)!
-	mut db := dbcollection.get( 'context')!
+	mut db := dbcollection.get('context')!
 	db.set('coderoot', args.coderoot)!
 
 	if args.params.len > 0 {
-		db.set("params", args.params)!
+		db.set('params', args.params)!
 	}
-		
 }
 
 @[params]

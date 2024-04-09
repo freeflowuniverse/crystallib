@@ -169,7 +169,7 @@ fn (mut r Redis) read(size int) ![]u8 {
 
 fn (mut r Redis) read_line() !string {
 	lock redis_connections {
-		mut res :=redis_connections[r.connection_nr[0]].read_line()!
+		mut res := redis_connections[r.connection_nr[0]].read_line()!
 		return res
 	}
 	panic('bug')

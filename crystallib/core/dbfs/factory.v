@@ -10,9 +10,9 @@ import os
 @[params]
 pub struct CollectionGetArgs {
 pub mut:
-	context        string = 'default'
+	context     string = 'default'
 	interactive bool
-	secret string
+	secret      string
 }
 
 // will return the dbcollection for a specific context
@@ -63,7 +63,6 @@ pub fn get(args_ CollectionGetArgs) !DBCollection {
 	}
 	return db
 }
-
 
 pub fn exists(context_ string) bool {
 	context := texttools.name_fix(context_)

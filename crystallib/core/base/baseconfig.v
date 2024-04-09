@@ -1,6 +1,6 @@
 module base
 
-//is an object which has a configurator, session and config object which is unique for the model
+// is an object which has a configurator, session and config object which is unique for the model
 // T is the Config Object
 pub struct BaseConfig[T] {
 mut:
@@ -10,7 +10,6 @@ mut:
 pub mut:
 	instance string
 }
-
 
 // management class of the configs of this obj
 pub fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {

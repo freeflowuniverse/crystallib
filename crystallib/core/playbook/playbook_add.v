@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 
-
 enum State {
 	start
 	comment_for_action_maybe
@@ -17,11 +16,11 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 	mut args := args_
 
 	if args.git_url.len > 0 {
-		mut gs:=args.session.context.gitstructure()!
+		mut gs := args.session.context.gitstructure()!
 		args.path = gs.code_get(
-			url: args.git_url,
-			branch: args.git_branch,
-			pull: args.git_pull,
+			url: args.git_url
+			branch: args.git_branch
+			pull: args.git_pull
 			reset: args.git_reset
 		)!
 	}
@@ -35,13 +34,13 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 		}
 		if p.is_file() {
 			c := p.read()!
-			plbook.add(text: c, prio: args.prio,session:args_.session)!
+			plbook.add(text: c, prio: args.prio, session: args_.session)!
 			return
 		} else if p.is_dir() {
 			mut ol := p.list(recursive: true, regex: [r'.*\.md$'])!
 			for mut p2 in ol.paths {
 				c2 := p2.read()!
-				plbook.add(text: c2, prio: args.prio,session:args_.session)!
+				plbook.add(text: c2, prio: args.prio, session: args_.session)!
 			}
 			return
 		}

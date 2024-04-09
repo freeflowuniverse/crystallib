@@ -108,7 +108,7 @@ pub fn parse_container_state(state string) !ContainerStatus {
 	}
 	if state.contains('stopped') {
 		return ContainerStatus.down
-	}	
+	}
 	return error('Could not find podman container status: ${state}')
 }
 

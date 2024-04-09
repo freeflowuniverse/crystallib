@@ -13,7 +13,7 @@ pub mut:
 }
 
 pub fn (mut dbcollection DBCollection) get_encrypted(name_ string) !DB {
-	mut db:=dbcollection.get(name_)!
+	mut db := dbcollection.get(name_)!
 	db.encrypt()!
 	return db
 }
@@ -76,4 +76,3 @@ pub fn (mut collection DBCollection) prefix(prefix string) ![]string {
 pub fn (mut collection DBCollection) destroy() ! {
 	collection.path.delete()!
 }
-

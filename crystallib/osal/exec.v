@@ -157,16 +157,16 @@ pub fn exec(cmd Command) !Job {
 		$if debug {
 			console.print_debug('cmd shell: ${cmd.cmd}')
 		}
-		mut process_args:=[]string{}
+		mut process_args := []string{}
 		if cmd.runtime == .bash {
 			// bash -s 'echo ready'
 			process_args = ['/bin/bash', '-s', "'echo **READY**'"]
-		}else if cmd.runtime == .python {
+		} else if cmd.runtime == .python {
 			process_args = ['/opt/homebrew/bin/python3']
-		}else{
-			panic("bug")
+		} else {
+			panic('bug')
 		}
-	
+
 		if cmd.retry > 0 {
 			job.error += 'cmd retry cannot be > 0 if shell used\n'
 			job.exit_code = 999
@@ -227,10 +227,9 @@ pub fn (mut job Job) execute() ! {
 	job.wait()!
 }
 
-
-//ORDER IS
-// EXECUTE 
-// LOOP -> WAIT -> PROCESS -> READ 
+// ORDER IS
+// EXECUTE
+// LOOP -> WAIT -> PROCESS -> READ
 // -> CLOSE
 
 // wait till the job finishes or goes in error
@@ -242,7 +241,7 @@ pub fn (mut job Job) wait() ! {
 	for {
 		job.process()!
 		// println(result)
-		if job.status == .done {			
+		if job.status == .done {
 			// console.print_stderr("wait done")
 			job.close()!
 			return
@@ -251,20 +250,17 @@ pub fn (mut job Job) wait() ! {
 	}
 }
 
-
-
-
 // process (read std.err and std.out of process)
 pub fn (mut job Job) process() ! {
 	// $if debug{println(" - job process: $job")}
 	if job.status == .init {
-		panic("should not be here")
+		panic('should not be here')
 		// job.execute()!
 	}
 	mut p := job.process or { return error('there is not process on job') }
 
 	// mut result := job.read()!
-	
+
 	job.read()!
 	if p.is_alive() {
 		job.read()!
@@ -283,7 +279,7 @@ pub fn (mut job Job) process() ! {
 				}
 			}
 		}
-	}else{
+	} else {
 		// console.print_stderr(" - process stopped")
 		job.read()!
 		job.read()!
@@ -296,14 +292,13 @@ pub fn (mut job Job) process() ! {
 			job.cmd.scriptkeep = true
 			// p.signal_pgkill()
 			// p.close()
-		// } else {
-		// 	// println('wait')
-		// 	p.wait()
-		// 	p.close()
+			// } else {
+			// 	// println('wait')
+			// 	p.wait()
+			// 	p.close()
 		}
 	}
 }
-
 
 fn (mut job Job) read() ! {
 	mut p := job.process or { return error('there is no process on job') }
@@ -321,11 +316,8 @@ fn (mut job Job) read() ! {
 			console.print_stderr(out_error)
 		}
 		job.error += out_error
-
 	}
 }
-
-
 
 // will wait & close
 pub fn (mut job Job) close() ! {
@@ -392,10 +384,9 @@ pub fn execute_silent(cmd string) !string {
 }
 
 pub fn execute_debug(cmd string) !string {
-	job := exec(cmd: cmd, stdout: true, debug:true)!
+	job := exec(cmd: cmd, stdout: true, debug: true)!
 	return job.output
 }
-
 
 // shortcut to execute a job to stdout
 pub fn execute_stdout(cmd string) !string {

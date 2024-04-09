@@ -38,8 +38,8 @@ fn test_decode() {
 
 	decoded := params.decode[TestStruct]()!
 	println(decoded)
-	if true{
-		panic("ss")
+	if true {
+		panic('ss')
 	}
 	assert decoded == test
 }
@@ -71,7 +71,6 @@ fn test_decode() {
 // 			value: '1,2'
 // 		}]
 // 	}
-
 
 // 	encoded := encode[TestStruct](test)!
 // 	assert encoded == params

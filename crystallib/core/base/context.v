@@ -11,14 +11,13 @@ pub struct Context {
 mut:
 	gitstructure_ ?&gittools.GitStructure @[skip; str: skip]
 pub mut:
-	cid       string // rid.cid or just cid
-	name      string // a unique name in cid
-	params    paramsparser.Params
-	snippets  map[string]string
-	redis     &redisclient.Redis  @[skip; str: skip]
-	dbcollection &dbfs.DBCollection    @[skip; str: skip]
+	cid          string // rid.cid or just cid
+	name         string // a unique name in cid
+	params       paramsparser.Params
+	snippets     map[string]string
+	redis        &redisclient.Redis  @[skip; str: skip]
+	dbcollection &dbfs.DBCollection  @[skip; str: skip]
 }
-
 
 // return the gistructure as is being used in context
 pub fn (mut self Context) gitstructure() !&gittools.GitStructure {
@@ -40,7 +39,7 @@ pub fn (mut self Context) gitstructure_reload() ! {
 
 // return the coderoot as is used in context
 pub fn (mut self Context) coderoot() !string {
-	mut db := self.dbcollection.get( 'context')!
+	mut db := self.dbcollection.get('context')!
 	coderoot := db.get('coderoot')!
 	return coderoot
 }
@@ -53,9 +52,9 @@ fn (mut self Context) key() string {
 
 // load the params from redis
 pub fn (mut self Context) load() ! {
-	mut db := self.dbcollection.get( 'context')!
-	if db.exists("params") {
-		paramtxt:=db.get("params")!
+	mut db := self.dbcollection.get('context')!
+	if db.exists('params') {
+		paramtxt := db.get('params')!
 		self.params = paramsparser.new(paramtxt)!
 	}
 }
@@ -105,10 +104,10 @@ pub fn (mut self Context) guid() string {
 }
 
 fn (mut self Context) db_get(dbname string) !dbfs.DB {
-	return self.dbcollection.get( dbname)!
+	return self.dbcollection.get(dbname)!
 }
 
-//always return the config db which is the same for all apps in context
+// always return the config db which is the same for all apps in context
 fn (mut self Context) db_config_get() !dbfs.DB {
 	return self.dbcollection.get('config')!
 }

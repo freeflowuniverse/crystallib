@@ -14,8 +14,8 @@ import time
 pub struct InstallArgs {
 pub mut:
 	reset   bool
-	passwd  string //can be empty, if yes {DAGU.PASSWD} will be set
-	secret  string //can be empty, if yes {DAGU.AUTHTOKEN} will be set
+	passwd  string // can be empty, if yes {DAGU.PASSWD} will be set
+	secret  string // can be empty, if yes {DAGU.AUTHTOKEN} will be set
 	title   string
 	start   bool = true
 	restart bool
@@ -84,7 +84,7 @@ pub fn restart(args_ InstallArgs) ! {
 
 pub fn stop(args_ InstallArgs) ! {
 	console.print_header('dagu stop')
-	mut sm:=startupmanager.get()!
+	mut sm := startupmanager.get()!
 	sm.kill('dagu')!
 }
 
@@ -101,27 +101,33 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('dagu start')
 
-	//create the paths
-	myconfigpath_:="${os.home_dir()}/var/dagu/config.yaml"
-	homedir:="${os.home_dir()}/var/dagu"
+	// create the paths
+	myconfigpath_ := '${os.home_dir()}/var/dagu/config.yaml'
+	homedir := '${os.home_dir()}/var/dagu'
 	mut mycode := $tmpl('templates/admin.yaml')
 
-	mut box:=secrets.get()!
-	mycode=box.replace(txt:mycode,
-			defaults:{
-					"DAGU.PASSWD":secrets.DefaultSecretArgs{secret:args.passwd},
-					"DAGU.AUTHTOKEN":secrets.DefaultSecretArgs{secret:args.secret,cat:.openssl_hex},
-					},
-			printsecrets:true
-			)!
+	mut box := secrets.get()!
+	mycode = box.replace(
+		txt: mycode
+		defaults: {
+			'DAGU.PASSWD':    secrets.DefaultSecretArgs{
+				secret: args.passwd
+			}
+			'DAGU.AUTHTOKEN': secrets.DefaultSecretArgs{
+				secret: args.secret
+				cat: .openssl_hex
+			}
+		}
+		printsecrets: true
+	)!
 
 	mut path := pathlib.get_file(path: myconfigpath_, create: true)!
 	path.write(mycode)!
 
-	mut sm:=startupmanager.get()!
+	mut sm := startupmanager.get()!
 
-	cmd:='dagu server --config ${myconfigpath_}'
-	
+	cmd := 'dagu server --config ${myconfigpath_}'
+
 	sm.start(
 		name: 'dagu'
 		cmd: cmd
@@ -148,7 +154,7 @@ pub fn check(args InstallArgs) !bool {
 	conn.default_header.add(.content_type, 'application/json')
 	console.print_debug('check connection to dagu')
 	// r := conn.get_json_dict(prefix: 'dags') or { return false }
-	r := conn.get_json_dict(prefix: 'dags',debug:false)!
+	r := conn.get_json_dict(prefix: 'dags', debug: false)!
 	dags := r['DAGs'] or { return false }
 	// println(dags)
 	// dags:=r["DAGs"] or {return error("can't find DAG's in json.\n$r")}
@@ -161,9 +167,8 @@ pub fn check(args InstallArgs) !bool {
 	return true
 }
 
-
 pub fn apitoken() !string {
-	mut box:=secrets.get()!
-	secret:=box.get("DAGU.AUTHTOKEN")!	
+	mut box := secrets.get()!
+	secret := box.get('DAGU.AUTHTOKEN')!
 	return secret
 }
