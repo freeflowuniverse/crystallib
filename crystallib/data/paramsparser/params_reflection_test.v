@@ -37,10 +37,6 @@ fn test_decode() {
 	}
 
 	decoded := params.decode[TestStruct]()!
-	println(decoded)
-	if true {
-		panic('ss')
-	}
 	assert decoded == test
 }
 
