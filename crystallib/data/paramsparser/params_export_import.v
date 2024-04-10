@@ -39,8 +39,8 @@ fn (item ParamExportItem) oneline() string {
 fn (item ParamExportItem) getval() string {
 	mut val := item.value
 	val = val.replace('\n', '\\n')
-	if (val.contains(' ') || val.contains(':') || val.contains(',')
-		|| val.contains('\\n') || item.key in ['cid', 'oid', 'gid']) && !value_is_list(val) {
+	if val.contains(' ') || val.contains(':')
+		|| val.contains('\\n') || item.key in ['cid', 'oid', 'gid'] {
 		val = val.replace('"', "'")
 		if val.contains("'") {
 			val = val.replace("'", "\\'")
@@ -48,11 +48,6 @@ fn (item ParamExportItem) getval() string {
 		val = "'${val}'"
 	}
 	return val
-}
-
-fn value_is_list(val_ string) bool {
-	val := val_.trim_space()
-	return val.starts_with('[') && val.ends_with(']')
 }
 
 // to put after the first line

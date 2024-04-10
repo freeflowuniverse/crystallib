@@ -5,7 +5,7 @@ fn test_get_list_single_quotes() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: "['A','A','A','A']"
+				value: "A,A,A,A"
 			},
 		]
 	}
@@ -98,7 +98,7 @@ fn test_get_list_u8() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, 5, 7, 2]'
+				value: '1, 5, 7, 2'
 			},
 		]
 	}
@@ -119,7 +119,7 @@ fn test_get_list_u16() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, 5, 7, 2]'
+				value: '1, 5, 7, 2'
 			},
 		]
 	}
@@ -140,7 +140,7 @@ fn test_get_list_u32() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, 5, 7, 15148]'
+				value: '1, 5, 7, 15148'
 			},
 		]
 	}
@@ -161,7 +161,7 @@ fn test_get_list_u64() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, 5, 7, 15148]'
+				value: '1, 5, 7, 15148'
 			},
 		]
 	}
@@ -182,7 +182,7 @@ fn test_get_list_i8() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, -5, 10, -2]'
+				value: '1, -5, 10, -2'
 			},
 		]
 	}
@@ -203,7 +203,7 @@ fn test_get_list_i16() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, -25, 165, -148]'
+				value: '1, -25, 165, -148'
 			},
 		]
 	}
@@ -224,7 +224,7 @@ fn test_get_list_int() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, -25, 165, -1484984]'
+				value: '1, -25, 165, -1484984'
 			},
 		]
 	}
@@ -245,7 +245,7 @@ fn test_get_list_i64() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1, -25, 165, -148]'
+				value: '1, -25, 165, -148'
 			},
 		]
 	}
@@ -266,7 +266,7 @@ fn test_get_list_f32() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1.5, 5.78, 7.478, 15148.4654]'
+				value: '1.5, 5.78, 7.478, 15148.4654'
 			},
 		]
 	}
@@ -287,7 +287,7 @@ fn test_get_list_f64() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: '[1.5, 5.78, 7.478, 15148.4654]'
+				value: '1.5, 5.78, 7.478, 15148.4654'
 			},
 		]
 	}
