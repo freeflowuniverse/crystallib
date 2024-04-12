@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 
 pub struct TFRobot[T] {
-	play.Base[T]
+	base.Base[T]
 pub mut:
 	jobs map[string]Job
 }
