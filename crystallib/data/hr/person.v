@@ -91,7 +91,7 @@ pub mut:
 	comment      ?string
 }
 
-fn (mut self HRData) add_people(mut session play.Session) {
+fn (mut self HRData) add_people(mut session base.Session) {
 	self.add_person_definitions(mut session)
 	self.add_salary_outstandings(mut session)
 	self.add_tokens(mut session)
@@ -100,7 +100,7 @@ fn (mut self HRData) add_people(mut session play.Session) {
 	self.add_share_holders(mut session)
 }
 
-fn (mut self HRData) add_share_holders(mut session play.Session) {
+fn (mut self HRData) add_share_holders(mut session base.Session) {
 	for mut action in session.plbook.find(filter: 'cos:shareholding_define') or { [] } {
 		share_holder := self.extract_share_holder_infomation(mut action) or {
 			self.errors << 'invalid share holder information: ${err}'
@@ -130,7 +130,7 @@ fn (mut self HRData) extract_share_holder_infomation(mut action playbook.Action)
 	}
 }
 
-fn (mut self HRData) add_remunerations(mut session play.Session) {
+fn (mut self HRData) add_remunerations(mut session base.Session) {
 	mut digital_payout := self.get_digital_payout(mut session)
 	for mut action in session.plbook.find(filter: 'cos:remuneration') or { [] } {
 		username, remuneration := self.extract_remuneration_information(mut action, digital_payout) or {
@@ -147,7 +147,7 @@ fn (mut self HRData) add_remunerations(mut session play.Session) {
 	}
 }
 
-fn (mut self HRData) get_digital_payout(mut session play.Session) map[string]DigitalPayout {
+fn (mut self HRData) get_digital_payout(mut session base.Session) map[string]DigitalPayout {
 	mut digital_payout_map := map[string]DigitalPayout{}
 	for mut action in session.plbook.find(filter: 'cos:payout_digital') or { [] } {
 		name, digital_payout := self.extract_digital_payout_information(mut action) or {
@@ -225,7 +225,7 @@ fn (mut self HRData) extract_remuneration_information(mut action playbook.Action
 	return username, remuneration
 }
 
-fn (mut self HRData) add_loan_outstandings(mut session play.Session) {
+fn (mut self HRData) add_loan_outstandings(mut session base.Session) {
 	for mut action in session.plbook.find(filter: 'cos:loan_outstanding') or { [] } {
 		username, loan := self.extract_loan_outstanding_information(mut action) or {
 			self.errors << 'invalid loan outstanding information: ${err}'
@@ -263,7 +263,7 @@ fn (mut self HRData) extract_loan_outstanding_information(mut action playbook.Ac
 	return username, loan
 }
 
-fn (mut self HRData) add_tokens(mut session play.Session) {
+fn (mut self HRData) add_tokens(mut session base.Session) {
 	for mut action in session.plbook.find(filter: 'cos:tokens') or { [] } {
 		username, tokens := self.extract_tokens_information(mut action) or {
 			self.errors << 'invalid tokens information: ${err}'
@@ -299,7 +299,7 @@ fn (mut self HRData) extract_tokens_information(mut action playbook.Action) !(st
 	return username, tokens
 }
 
-fn (mut self HRData) add_salary_outstandings(mut session play.Session) {
+fn (mut self HRData) add_salary_outstandings(mut session base.Session) {
 	for mut action in session.plbook.find(filter: 'cos:salary_outstanding') or { [] } {
 		username, salary := self.extract_salary_outstanding_information(mut action) or {
 			self.errors << 'invalid salary outstanding data: ${err}'
@@ -332,7 +332,7 @@ fn (mut self HRData) extract_salary_outstanding_information(mut action playbook.
 	return username, salary
 }
 
-fn (mut self HRData) add_person_definitions(mut session play.Session) {
+fn (mut self HRData) add_person_definitions(mut session base.Session) {
 	for mut action in session.plbook.find(filter: 'cos:person_define') or { [] } {
 		person := self.extract_person_information(mut action) or {
 			self.errors << 'invalid person data: ${err}'

@@ -3,7 +3,7 @@ module playcmds
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
 
-pub fn run(mut session play.Session) ! {
+pub fn run(mut session base.Session) ! {
 	session.process()!
 
 	session.plbook.filtersort(priorities: session.playbook_priorities)!

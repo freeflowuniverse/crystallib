@@ -2,7 +2,7 @@ module s3
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import json
 import rand
@@ -53,7 +53,7 @@ pub fn new(args_ Config) !Server {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 	key := 's3_config_${args.name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if !kvs.exists(key) {
 		if args.access_key == '' {
 			args.access_key = rand.string(12)
@@ -71,7 +71,7 @@ pub fn new(args_ Config) !Server {
 pub fn get(name_ string) !Server {
 	name := texttools.name_fix(name_)
 	key := 's3_config_${name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if kvs.exists(key) {
 		data := kvs.get(key)!
 		args := json.decode(Config, data)!

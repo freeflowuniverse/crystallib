@@ -11,7 +11,7 @@ pub mut:
 	errors        []string
 }
 
-pub fn new_from_session(mut session play.Session) !HRData {
+pub fn new_from_session(mut session base.Session) !HRData {
 	mut data := HRData{}
 
 	data.add_countries(mut session)

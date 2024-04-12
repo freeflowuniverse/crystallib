@@ -95,7 +95,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 }
 
 // returns the session and the path of the fetched repo
-fn session_run_get(cmd Command) !(&play.Session, string) {
+fn session_run_get(cmd Command) !(&base.Session, string) {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
 
@@ -115,7 +115,7 @@ fn session_run_get(cmd Command) !(&play.Session, string) {
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	interactive := !cmd.flags.get_bool('script') or { false }
 
-	mut session := play.session_new(
+	mut session := base.session_new(
 		session_name: sessionname
 		context_name: contextname
 		interactive: interactive
@@ -135,7 +135,7 @@ fn session_run_get(cmd Command) !(&play.Session, string) {
 }
 
 // same as session_run_get but will also run the playbook
-fn session_run_do(cmd Command) !(&play.Session, string) {
+fn session_run_do(cmd Command) !(&base.Session, string) {
 	mut session, path := session_run_get(cmd)!
 
 	if path.len == 0 {
@@ -153,7 +153,7 @@ fn session_run_do(cmd Command) !(&play.Session, string) {
 }
 
 // get the repo, check if we need to do
-fn session_run_edit_sourcecode(cmd Command) !(&play.Session, string) {
+fn session_run_edit_sourcecode(cmd Command) !(&base.Session, string) {
 	edit := cmd.flags.get_bool('edit') or { false }
 	treedo := cmd.flags.get_bool('sourcetree') or { false }
 

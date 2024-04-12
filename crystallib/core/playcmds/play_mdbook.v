@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.webtools.mdbook
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.data.doctree
 
-pub fn play_mdbook(mut session play.Session) ! {
+pub fn play_mdbook(mut session base.Session) ! {
 	mut buildroot := ''
 	mut publishroot := ''
 	mut coderoot := ''

@@ -11,7 +11,7 @@ mut:
 	site ?&zola.ZolaSite
 }
 
-pub fn play_zola(mut session play.Session) ! {
+pub fn play_zola(mut session base.Session) ! {
 	// mut coderoot := ''
 	mut buildroot := ''
 	mut publishroot := ''

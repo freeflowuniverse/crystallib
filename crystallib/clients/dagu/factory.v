@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.ui.console
 import os
 
 pub struct DaguClient[T] {
-	play.Base[T]
+	base.Base[T]
 pub mut:
 	connection &httpconnection.HTTPConnection
 }

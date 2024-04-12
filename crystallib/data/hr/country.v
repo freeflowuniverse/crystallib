@@ -26,7 +26,7 @@ fn country_id_from_str(str string) !CountryID {
 	return country
 }
 
-fn (mut self HRData) add_countries(mut session play.Session) {
+fn (mut self HRData) add_countries(mut session base.Session) {
 	for mut action in session.plbook.find(filter: 'cos:country_define') or { [] } {
 		country := self.extract_country_information(mut action) or {
 			self.errors << 'invalid country information: ${err}'

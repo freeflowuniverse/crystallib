@@ -2,7 +2,7 @@ module gdrive
 
 import freeflowuniverse.crystallib.lang.python
 // import  json
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import os
@@ -25,7 +25,7 @@ pub fn new(args GDriveNewArgs) !GDrive {
 
 	mut drive := GDrive{}
 
-	mut db := fskvs.new(name: 'gdrive_${name}')! //,encryption:true
+	mut db := dbfs.new(name: 'gdrive_${name}')! //,encryption:true
 	if args.reset {
 		db.delete('key')!
 	}

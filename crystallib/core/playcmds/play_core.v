@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.core.base
 //     coderoot:...
 //     interactive:true
 
-pub fn play_core(mut session play.Session) ! {
+pub fn play_core(mut session base.Session) ! {
 	for mut action in session.plbook.find(filter: 'context.configure')! {
 		mut p := action.params
 		if p.exists('name') || session.context.name == '' {

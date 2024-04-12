@@ -3,7 +3,7 @@ module playcmds
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.base
 
-pub fn play_git(mut session play.Session) ! {
+pub fn play_git(mut session base.Session) ! {
 	for mut action in session.plbook.find(filter: 'gittools.*')! {
 		mut p := action.params
 		mut repo := p.get_default('repo', '')!
