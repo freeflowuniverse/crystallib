@@ -7,7 +7,7 @@ import os
 
 @[heap; params]
 pub struct Zola {
-	play.Base
+	base.Base
 pub mut:
 	path_build   string
 	path_publish string

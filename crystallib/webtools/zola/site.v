@@ -17,39 +17,15 @@ pub mut:
 	description  string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-<<<<<<< HEAD
-<<<<<<< HEAD
 	zola         &Zola              @[skip; str: skip]
 	tree         doctree.Tree       @[skip; str: skip]
-=======
-	zola         &Zola        @[skip; str: skip]
-	tree         doctree.Tree @[skip; str: skip]
-	tree2         doctree.Tree @[skip; str: skip]
->>>>>>> e61681d (example fix wip)
-=======
-	zola         &Zola              @[skip; str: skip]
-	tree         doctree.Tree       @[skip; str: skip]
->>>>>>> 2007ff6 (fix sections processing)
 	pages        []ZolaPage
 	header       ?Header
 	footer       ?Footer
 	blog         Blog
 	people       ?People
 	news         ?News
-<<<<<<< HEAD
-<<<<<<< HEAD
 	sections     map[string]Section
-=======
-	sections     []Section
-}
-
-pub struct Blog {
-pub mut:
-	posts map[string]elements.Doc
->>>>>>> c09c2ea (zola fixes)
-=======
-	sections     map[string]Section
->>>>>>> e61681d (example fix wip)
 }
 
 @[params]
@@ -145,91 +121,8 @@ pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	content_dest := '${site.path_build.path}/content'
 	mut content_dir := pathlib.get_dir(path: content_dest)!
 	os.cp_all('${mypath}', content_dest, true)!
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
-	md_list := content_dir.list(
-		recursive: true
-		regex: [r'.*\.md$']
-	)!
-	for mdfile in md_list.paths {
-		_ = markdownparser.new(path: mdfile.path)!
-		// for include in doc.children.filter(it is elements.Include) {
-		// 	println('incl: ${include}')
-		// }
-		// pointers := doc.action_pointers()
-	}
-=======
->>>>>>> 2007ff6 (fix sections processing)
 }
 
-<<<<<<< HEAD
-pub struct BlogAddArgs {
-	name       string
-	collection string @[required]
-	file       string @[required]
-	image      string
-}
-
-pub fn (mut site ZolaSite) blog_add(args BlogAddArgs) ! {
-	site.tree.process_includes()!
-	_ = site.tree.collection_get(args.collection) or {
-		println(err)
-		return err
-	}
-	mut page := site.tree.page_get('${args.collection}:${args.file}') or {
-		println(err)
-		return err
-	}
-	mut image := site.tree.image_get('${args.collection}:${args.image}') or {
-		println(err)
-		return err
-	}
-
-	mut blog_index := pathlib.get_file(
-		path: '${site.path_build.path}/content/blog/_index.md'
-	)!
-	if !blog_index.exists() {
-		blog_index.write('---
-title: "Blog"
-paginate_by: 9
-
-# paginate_reversed: false
-
-sort_by: "date"
-insert_anchor_links: "left"
-#base_url: "posts"
-#first: "first"
-#last: "last"
-template: "layouts/blog.html"
-page_template: "blogPage.html"
-#transparent: true
-generate_feed: true
-extra:
-  imgPath: images/threefold_img2.png
----
-')!
-	}
-
-	blog_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content/blog'
-		create: true
-	)!
-	fixed_name := '${texttools.name_fix(args.name)}'
-	post_dir := pathlib.get_dir(
-		path: '${blog_dir.path}/${fixed_name}'
-		create: true
-	)!
-	page.export(dest: '${post_dir.path}/index.md')!
-	image.copy('${post_dir.path}/${image.file_name()}')!
-
-	site.blog.posts[args.name] = page.doc()!
->>>>>>> c09c2ea (zola fixes)
-}
-
-=======
->>>>>>> e61681d (example fix wip)
 // add collections from doctree
 //```args for getting the template
 // path   string
@@ -250,35 +143,6 @@ pub fn (mut site ZolaSite) doctree_add(args gittools.GSCodeGetFromUrlArgs) ! {
 		include_links: true
 	)!
 	site.tree.process_includes()!
-<<<<<<< HEAD
-<<<<<<< HEAD
-}
-
-pub fn (mut site ZolaSite) add_section(section_ Section) ! {
-	section := Section{
-		...section_
-		name: texttools.name_fix(section_.name)
-	}
-
-	if section.name in site.sections {
-		return error('Section with name `${section.name}` already exists.')
-	}
-
-	//  = 'section.html'
-	site.sections[section.name] = section
-=======
-	// for mdfile in md_list.paths {
-	// 	doc := markdownparser.new(path: mdfile.path)!
-	// 	for include in doc.children.filter(it is elements.Include) {
-	// 		println('incl: ${include}')
-	// 	}
-	// 	// pointers := doc.action_pointers()
-	// 	// for
-	// }
-	site.tree.export(dest: '${site.path_build.path}/doctree')!
->>>>>>> e61681d (example fix wip)
-=======
->>>>>>> 2007ff6 (fix sections processing)
 }
 
 pub fn (mut site ZolaSite) add_section(section_ Section) ! {
