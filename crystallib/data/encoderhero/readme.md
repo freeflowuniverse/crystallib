@@ -24,7 +24,7 @@ mut person := Person{
     name: 'Bob'
     birthday: time.now()
 }
-person_json := encoderhero.encode[Person](person)
+person_json := encoderhero.encode[Person](person)!
 
 ```
 

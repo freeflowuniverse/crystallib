@@ -70,15 +70,28 @@ pub fn (mut e Encoder) encode_struct[T](val0 T) ! {
 		println('FIELD: ${field_name} ${field.typ}')
 
 		val := val0.$(field.name)
-		$if field.typ is string || field.typ is int {
-			e.params.set(field.name, '${val}')
-		} $else $if field.typ is bool {
-			if val {
-				e.params.set(field.name, 'true')
-			} else {
-				e.params.set(field.name, 'false')
+		value_str := e.encode_value(val)!
+		e.params.set(field.name, value_str)
+	}
+}
+
+// encode_value encodes a value
+pub fn (mut e Encoder) encode_value[T](val T) !string {
+		$if val is $option {
+			workaround := val
+			if workaround != none {
+				e.encode_value(val)!
 			}
-		} $else $if field.typ is []string {
+		}
+		$else $if T is string || T is int || T is i64 {
+			return '${val}'
+		} $else $if T is bool {
+			if val {
+				return 'true'
+			} else {
+				return 'false'
+			}
+		} $else $if T is []string {
 			mut v2 := ''
 			for i in val {
 				if i.contains(' ') {
@@ -88,26 +101,26 @@ pub fn (mut e Encoder) encode_struct[T](val0 T) ! {
 				}
 			}
 			v2 = v2.trim(',')
-			e.params.set(field.name, v2)
-		} $else $if field.typ is []int {
+			return v2
+		} $else $if T is []int {
 			mut v2 := ''
 			for i in val {
 				v2 += '${i},'
 			}
 			v2 = v2.trim(',')
-			e.params.set(field.name, v2.str())
+			return v2.str()
 		}
 		// $else $if field.typ $enum {
 		// 	e.params.set( field.name,v2.str())
 		// }
-		$else $if field.typ is $struct {
+		$else $if T is $struct {
 			e.add(val)!
-			// println(e.children)
-			// panic("s")
+			println(e.children)
+			panic("s")
 		} $else {
-			return error("can't find field type ${field.typ}")
+			return error("can't find field type ${typeof(val)}")
 		}
-	}
+		return error('error')
 }
 
 // fn (e &Encoder) encode_map[T](value T, level int) ! {
