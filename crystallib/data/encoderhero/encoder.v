@@ -9,6 +9,7 @@ import v.reflection
 pub struct Encoder {
 pub mut:
 	escape_unicode bool = true
+	action_name string
 	action_names   []string
 	params         paramsparser.Params
 	children       []Encoder
@@ -20,29 +21,40 @@ pub fn encode[T](val T) !string {
 	mut e := Encoder{
 		params: paramsparser.Params{}
 	}
+
 	$if T is $struct {
 		e.encode_struct[T](val)!
 	} $else {
 		return error('can only add elements for struct or array of structs. \n${val}')
 	}
-	return ''
+
+	println('main: \n${e.children}\n')
+	return e.export()!
+}
+
+// export exports an encoder into encoded heroscript
+pub fn (e Encoder) export() !string {
+	mut script := e.params.export(pre:'!!define.${e.action_names.join('.')}')
+	script += e.children.map(it.export()!).join('\n')
+	return script
 }
 
 // needs to be a struct we are adding
 // parent is the name of the action e.g define.customer:contact
 pub fn (mut e Encoder) add[T](val T) ! {
 	// $if T is []$struct {
-	// 	panic("not implemented")
-	// 	// for valitem in val{
-	// 	// 	mut e2:=e.add[T](valitem)!
-	// 	// }		
+	// 	// panic("not implemented")
+	// 	for valitem in val{
+	// 		mut e2:=e.add[T](valitem)!
+	// 	}		
 	// }
 	mut e2 := Encoder{
 		params: paramsparser.Params{}
 		parent: &e
-		action_names: e.action_names
+		action_names: e.action_names 
 	}
-	$if T is $struct {
+	$if T is $struct && T !is time.Time {
+		e2.params.set('key', '${val}')
 		e2.encode_struct[T](val)!
 		e.children << e2
 	} $else {
@@ -50,77 +62,95 @@ pub fn (mut e Encoder) add[T](val T) ! {
 	}
 }
 
+pub fn (mut e Encoder) encode_array[U](val []U) ! {
+	for i in 0 .. val.len {
+		$if U is $struct {
+			e.add(val[i])!
+		}
+	}
+}
+
 // now encode the struct
-pub fn (mut e Encoder) encode_struct[T](val0 T) ! {
-	mut mytype := reflection.type_of[T](val0)
+pub fn (mut e Encoder) encode_struct[T](t T) ! {
+
+	
+	mut mytype := reflection.type_of[T](t)
 	struct_attrs := attrs_get_reflection(mytype)
 
-	mut action_name := T.name.to_lower()
+	mut action_name := T.name.to_lower().all_after_last('.')
 	if 'alias' in struct_attrs {
 		action_name = struct_attrs['alias'].to_lower()
 	}
 	e.action_names << action_name
 
-	$for field in T.fields {
-		field_attrs := attrs_get(field.attrs)
-		mut field_name := field.name
-		if 'alias' in field_attrs {
-			field_name = field_attrs['alias']
-		}
-		println('FIELD: ${field_name} ${field.typ}')
 
-		val := val0.$(field.name)
-		value_str := e.encode_value(val)!
-		e.params.set(field.name, value_str)
+	params := paramsparser.encode[T](t, recursive: false)!
+	e.params = params
+	$for field in T.fields {
+		val := t.$(field.name)
+		$if val is $struct && val !is time.Time{
+			e.add(val)!
+		}
+		$else $if val is $array {
+			e.encode_array(val)!
+		}
 	}
+	// }
+	// panic(params)
+
+	// $for field in T.fields {
+	// 	val := val0.$(field.name)
+
+	// 	field_attrs := attrs_get(field.attrs)
+	// 	mut field_name := field.name
+	// 	if 'alias' in field_attrs {
+	// 		field_name = field_attrs['alias']
+	// 	}
+	// 	println('FIELD: ${field_name} ${field.typ}')
+
+	// 	e.encode_value(val, field_name)!
+	// }
 }
 
 // encode_value encodes a value
-pub fn (mut e Encoder) encode_value[T](val T) !string {
-		$if val is $option {
-			workaround := val
-			if workaround != none {
-				e.encode_value(val)!
-			}
-		}
-		$else $if T is string || T is int || T is i64 {
-			return '${val}'
-		} $else $if T is bool {
-			if val {
-				return 'true'
-			} else {
-				return 'false'
-			}
-		} $else $if T is []string {
-			mut v2 := ''
-			for i in val {
-				if i.contains(' ') {
-					v2 += "\"${i}\","
-				} else {
-					v2 += '${i},'
-				}
-			}
-			v2 = v2.trim(',')
-			return v2
-		} $else $if T is []int {
-			mut v2 := ''
-			for i in val {
-				v2 += '${i},'
-			}
-			v2 = v2.trim(',')
-			return v2.str()
-		}
-		// $else $if field.typ $enum {
-		// 	e.params.set( field.name,v2.str())
-		// }
-		$else $if T is $struct {
-			e.add(val)!
-			println(e.children)
-			panic("s")
-		} $else {
-			return error("can't find field type ${typeof(val)}")
-		}
-		return error('error')
+pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
+	// $if val is $option {
+	// 	// unwrap and encode optionals
+	// 	workaround := val
+	// 	if workaround != none {
+	// 		e.encode_value(val, key)!
+	// 	}
+	// }
+	
+	//  $else $if T is string || T is int || T is bool || T is i64 || T is time.Time{
+	// 	e.params.set(key, '${val}')
+	// } $else $if T is []string {
+	// 	mut v2 := ''
+	// 	for i in val {
+	// 		if i.contains(' ') {
+	// 			v2 += "\"${i}\","
+	// 		} else {
+	// 			v2 += '${i},'
+	// 		}
+	// 	}
+	// 	v2 = v2.trim(',')
+	// 	e.params.set(key, '${v2}')
+	// } $else $if T is []int {
+	// 	mut v2 := ''
+	// 	for i in val {
+	// 		v2 += '${i},'
+	// 	}
+	// 	v2 = v2.trim(',')
+	// 	e.params.set(key, v2.str())
+	// }
+	// $else $if field.typ $enum {
+	// 	e.params.set( field.name,v2.str())
+	// }
+	// $else $if T is $struct{
+	// 	e.add(val)!
+	// } $else {
+	// 	return error("can't find field type ${typeof(val)}")
+	// }
 }
 
 // fn (e &Encoder) encode_map[T](value T, level int) ! {
