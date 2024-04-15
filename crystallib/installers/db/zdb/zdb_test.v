@@ -1,18 +1,22 @@
 module zdb
 
+import freeflowuniverse.crystallib.clients.zdb
+
 fn test_get() {
 	// must set unix domain with --socket argument when running zdb
 	// run zdb as following:
 	//		mkdir -p ~/.zdb/ && zdb --socket ~/.zdb/socket --admin 1234
-	mut zdb := get('~/.zdb/socket', '1234', 'test')!
+	install(secret: 'hamada', start: true) or { panic(err) }
+	
+	mut client := zdb.get('/root/hero/var/zdb.sock', 'hamada', 'test') or { panic(err) }
 
 	// check info returns info about zdb
-	info := zdb.info()!
+	info := client.info()!
 	assert info.contains('server_name: 0-db')
 
-	nslist := zdb.nslist()!
+	nslist := client.nslist()!
 	assert nslist == ['default', 'test']
 
-	nsinfo := zdb.nsinfo('default')!
-	assert 'name: default' in nsinfo
+	nsinfo := client.nsinfo('default')!
+	assert nsinfo['name'] == 'default'
 }
