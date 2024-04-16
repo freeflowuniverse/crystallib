@@ -6,9 +6,6 @@ fn test_news_add() ! {
 	mut site := sites.new(name: @FILE)!
 	site.news_add()!
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
 // fn (mut news News) export(content_dir string) ! {
 // 	news_dir := pathlib.get_dir(
@@ -152,6 +149,3 @@ fn test_news_add() ! {
 // 	}
 // 	article_page.write($tmpl('./templates/article.md'))!
 // }
->>>>>>> c09c2ea (zola fixes)
-=======
->>>>>>> 2007ff6 (fix sections processing)

@@ -98,7 +98,7 @@ pub fn encode[T](t T) !Params {
 			}
 		} $else $if field.typ is $struct {
 			child_params := encode(val)!
-			params.params << Param {
+			params.params << Param{
 				key: field.name
 				value: child_params.export()
 			}

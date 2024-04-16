@@ -58,26 +58,26 @@ pub enum RunTime {
 }
 
 pub fn (mut self BContainer) run(cmd Command) ! {
-	scriptpath:=osal.cmd_to_script_path(cmd:cmd_)
+	scriptpath := osal.cmd_to_script_path(cmd: cmd_)
 	self.copy(scriptpath, scriptpath)!
-	cmd := 'buildah run ${self.id} "${scriptpath} && rm -f ${scriptpath}"'
+	cmd_str := 'buildah run ${self.id} "${scriptpath} && rm -f ${scriptpath}"'
 	osal.exec(
-		name:cmd.name
-		cmd:cmd
-		description:cmd.description
-		timeout:cmd.timeout
-		stdout:cmd.stdout
-		stdout_log:cmd.stdout_log
-		raise_error:cmd.raise_error
-		ignore_error:cmd.ignore_error
-		ignore_error_codes:cmd.ignore_error_codes
-		scriptpath:cmd.scriptpath
-		scriptkeep:cmd.scriptkeep
-		debug:cmd.debug
-		shell:cmd.shell
-		retry:cmd.retry
-		interactive:cmd.interactive
-		async:cmd.async
+		name: cmd.name
+		cmd: cmd_str
+		description: cmd.description
+		timeout: cmd.timeout
+		stdout: cmd.stdout
+		stdout_log: cmd.stdout_log
+		raise_error: cmd.raise_error
+		ignore_error: cmd.ignore_error
+		ignore_error_codes: cmd.ignore_error_codes
+		scriptpath: cmd.scriptpath
+		scriptkeep: cmd.scriptkeep
+		debug: cmd.debug
+		shell: cmd.shell
+		retry: cmd.retry
+		interactive: cmd.interactive
+		async: cmd.async
 	)!
 }
 

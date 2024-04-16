@@ -13,7 +13,7 @@ import freeflowuniverse.crystallib.core.playbook
 pub fn play_core(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'context.configure')! {
 		mut p := action.params
-		mut session:=plbook.session
+		mut session := plbook.session
 		// if p.exists('name') || session.context.name == '' {
 		// 	session.context.name = p.get_default('name', 'default')!
 		// }

@@ -11,7 +11,7 @@ pub mut:
 	git_pull   bool
 	git_branch string
 	git_reset  bool
-	prio       int  = 50
+	prio       int = 50
 	priorities map[int]string // filter and give priority, see filtersort method to know how to use
 	session    ?&base.Session
 }
@@ -28,11 +28,10 @@ pub mut:
 // ```
 pub fn new(args_ PlayBookNewArgs) !PlayBook {
 	mut args := args_
-	mut s:=args.session or {
-		base.session_new(
-			interactive:true
-		)!	
-	}
+	mut s := args.session or { base.session_new(
+		interactive: true
+	)! }
+
 	mut plbook := PlayBook{
 		session: s
 	}
@@ -49,10 +48,9 @@ pub fn new(args_ PlayBookNewArgs) !PlayBook {
 		)!
 	}
 
-	if args.priorities.len>0{
-		plbook.filtersort(priorities:args.priorities)!
+	if args.priorities.len > 0 {
+		plbook.filtersort(priorities: args.priorities)!
 	}
-
 
 	return plbook
 }

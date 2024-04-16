@@ -24,6 +24,7 @@ pub fn get(clientargs ClientArgs) !PostgresClient {
 		{
 		}
 	}
+
 	mut cfg := configurator(clientargs.instance, plargs)!
 	mut args := cfg.get()!
 

@@ -18,7 +18,7 @@ mut:
 //```
 pub fn (mut self Base) session(args SessionNewArgs) !&Session {
 	mut mysession := self.session_ or {
-		mut s := session_new(args)!// or { panic("can't get session with args:${args}") }
+		mut s := session_new(args)! // or { panic("can't get session with args:${args}") }
 		self.session_ = s
 		s
 	}

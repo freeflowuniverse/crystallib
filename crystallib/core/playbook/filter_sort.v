@@ -22,10 +22,10 @@ pub:
 pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ![]&Action {
 	mut nrs := args.priorities.keys()
 	nrs.sort()
-	plbook.priorities=map[int][]int{} //reset the prio's
+	plbook.priorities = map[int][]int{} // reset the prio's
 	for prio in nrs {
-		if prio>49{
-			return error("prio cannot be higher than 49")
+		if prio > 49 {
+			return error('prio cannot be higher than 49')
 		}
 		argsfilter := args.priorities[prio] or { panic('bug') }
 		mut actionsfound := plbook.find(filter: argsfilter)!

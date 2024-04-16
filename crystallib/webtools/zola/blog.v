@@ -100,7 +100,6 @@ fn (site ZolaSite) check_post_add_args(args_ PostAddArgs) !PostAddArgs {
 		args.collection = args.pointer.split(':')[0]
 	}
 
-
 	// check collection exists
 	_ = site.tree.collection_get(args.collection) or {
 		return error('Collection ${args.collection} not found.')

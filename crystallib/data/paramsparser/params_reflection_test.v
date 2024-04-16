@@ -1,21 +1,21 @@
 module paramsparser
 
 struct TestStruct {
-	name    string
-	number  int
-	yesno   bool
-	liststr []string
-	listint []int
+	name     string
+	number   int
+	yesno    bool
+	liststr  []string
+	listint  []int
 	listbool []bool
-	child TestChild
+	child    TestChild
 }
 
 struct TestChild {
-	child_name string
-	child_number  int
-	child_yesno   bool
-	child_liststr []string
-	child_listint []int
+	child_name     string
+	child_number   int
+	child_yesno    bool
+	child_liststr  []string
+	child_listint  []int
 	child_listbool []bool
 }
 
@@ -74,12 +74,12 @@ const test_params = Params{
 }
 
 fn test_decode() {
-	decoded := test_params.decode[TestStruct]()!
-	assert decoded == test_struct
+	decoded := paramsparser.test_params.decode[TestStruct]()!
+	assert decoded == paramsparser.test_struct
 }
 
 fn test_encode() {
-	encoded := encode[TestStruct](test_struct)!
+	encoded := encode[TestStruct](paramsparser.test_struct)!
 	// println(en)
-	assert encoded == test_params
+	assert encoded == paramsparser.test_params
 }
