@@ -8,6 +8,7 @@ import net
 import time
 import freeflowuniverse.crystallib.data.resp
 import os
+import net.unix
 
 __global (
 	redis_connections shared []RedisInternal
@@ -94,8 +95,16 @@ pub fn get(addr string) !Redis {
 fn (mut r RedisInternal) socket_connect() ! {
 	// print_backtrace()
 	addr := os.expand_tilde_to_home(r.addr)
-	// print(' - REDIS CONNECT: ${addr}')
-	r.socket = net.dial_tcp(addr)!
+	// println(' - REDIS CONNECT: ${addr}')
+	if !addr.contains(':'){
+		unix_socket := unix.connect_stream(addr)!
+		tcp_socket := net.tcp_socket_from_handle_raw(unix_socket.sock.Socket.handle)
+		tcp_conn := net.TcpConn{sock: tcp_socket, handle: unix_socket.sock.Socket.handle}
+		r.socket = tcp_conn
+	}else{
+		r.socket = net.dial_tcp(addr)!
+	}
+	
 	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(1 * time.second)
 	// println("---OK")
