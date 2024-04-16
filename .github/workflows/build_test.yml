@@ -50,7 +50,6 @@ jobs:
           v -enable-globals -stats test crystallib/core/pathlib
           v -enable-globals -stats test crystallib/core/texttools
           v -enable-globals -stats test crystallib/core/playbook
-          v -enable-globals -stats test crystallib/data/fskvs
           v -enable-globals -stats test crystallib/data/encoder
           v -enable-globals -stats test crystallib/data/currency
           v -enable-globals -stats test crystallib/data/markdownparser

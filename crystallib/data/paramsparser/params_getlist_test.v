@@ -5,7 +5,7 @@ fn test_get_list_single_quotes() {
 		params: [
 			Param{
 				key: 'mylist'
-				value: "A,A,A,A"
+				value: 'A,A,A,A'
 			},
 		]
 	}

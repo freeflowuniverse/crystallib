@@ -8,8 +8,8 @@ import crypto.blake2b
 pub struct PlayBook {
 pub mut:
 	actions    []&Action
-	priorities map[int][]int //first key is the priority, the list of int's is position in list self.actions
-	othertext  string // in case there is text outside of the actions
+	priorities map[int][]int // first key is the priority, the list of int's is position in list self.actions
+	othertext  string        // in case there is text outside of the actions
 	nractions  int
 	done       []int // which actions did we already find/run?
 	session    &base.Session
@@ -18,10 +18,10 @@ pub mut:
 @[params]
 pub struct ActionNewArgs {
 pub mut:
-	cid        string
-	name       string
-	actor      string
-	priority   int  = 10 // 0 is highest, do 10 as default
+	cid      string
+	name     string
+	actor    string
+	priority int = 10 // 0 is highest, do 10 as default
 	// run    bool = true // certain actions can be defined but meant to be executed directly
 	actiontype ActionType
 }
@@ -54,19 +54,18 @@ pub mut:
 	prio_only bool // if true only show the actions which were prioritized before
 }
 
-
-//only return the actions which are not done  yet
-//if filtered is set, it means we only get the ones which were prioritized before
+// only return the actions which are not done  yet
+// if filtered is set, it means we only get the ones which were prioritized before
 pub fn (mut plbook PlayBook) actions_sorted(args SortArgs) ![]&Action {
 	mut res := []&Action{}
 	mut nrs := plbook.priorities.keys()
 	nrs.sort()
-	if nrs.len==0{
-		//means sorting did not happen before
+	if nrs.len == 0 {
+		// means sorting did not happen before
 		return plbook.actions
 	}
 	for nr in nrs {
-		if args.prio_only && nr>49{
+		if args.prio_only && nr > 49 {
 			continue
 		}
 		action_ids := plbook.priorities[nr] or { panic('bug') }

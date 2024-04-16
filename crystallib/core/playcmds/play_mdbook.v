@@ -83,7 +83,5 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 			build_path: build_path
 		)!
 		action.done = true
-
-
 	}
 }

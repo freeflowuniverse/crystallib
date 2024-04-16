@@ -6,30 +6,30 @@ import v.reflection
 
 struct Person {
 mut:
-	name     string
-	age      ?int = 20
+	name string
+	age  ?int = 20
 	// height f64
 	// weight f64
 	birthday time.Time
 	deathday ?time.Time
-	car Car
+	car      Car
 	profiles []Profile
 }
 
 struct Car {
-	name string
-	year int
+	name      string
+	year      int
 	insurance Insurance
 }
 
 struct Insurance {
-	provider string
+	provider   string
 	expiration time.Time
 }
 
 struct Profile {
 	platform string
-	url string
+	url      string
 }
 
 const person_heroscript = "
@@ -46,17 +46,17 @@ fn test_encode() ! {
 			month: 12
 			year: 2012
 		)
-		car: Car {
-			name: 'Bob\'s car'
+		car: Car{
+			name: "Bob's car"
 			year: 2014
 		}
 		profiles: [
 			Profile{
 				platform: 'Github'
 				url: 'github.com/example'
-			}
+			},
 		]
 	}
-	person_script := encoderhero.encode[Person](person)!
-	assert person_script.trim_space() == person_heroscript.trim_space()
+	person_script := encode[Person](person)!
+	assert person_script.trim_space() == encoderhero.person_heroscript.trim_space()
 }

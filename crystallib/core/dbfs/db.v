@@ -50,7 +50,7 @@ pub fn (mut db DB) set(name_ string, data_ string) ! {
 // check if entry exists based on keyname
 pub fn (mut db DB) exists(name_ string) bool {
 	name := texttools.name_fix(name_)
-	if !(db.path.file_exists(name)){
+	if !(db.path.file_exists(name)) {
 		return false
 	}
 	mut datafile := db.path.file_get(name) or { panic(err) }

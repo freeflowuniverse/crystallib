@@ -162,7 +162,6 @@ pub fn parse(text string) !Params {
 			continue
 		}
 
-		
 		// if state == .array {
 		// 	if ch == ']' {
 		// 		state = .start
@@ -203,7 +202,7 @@ pub fn parse(text string) !Params {
 			if requires_quotes(last_item) {
 				value = '${value.all_before_last(',')},"${last_item}"'
 			}
-		} 
+		}
 		result.set_with_comment(key, value, comment)
 	}
 
@@ -218,6 +217,8 @@ pub fn parse(text string) !Params {
 
 // returns wether a provided value requires quotes
 fn requires_quotes(value string) bool {
-	if value.contains(' ') {return true}
+	if value.contains(' ') {
+		return true
+	}
 	return false
 }

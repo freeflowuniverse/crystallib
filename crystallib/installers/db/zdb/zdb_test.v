@@ -7,7 +7,7 @@ fn test_get() {
 	// run zdb as following:
 	//		mkdir -p ~/.zdb/ && zdb --socket ~/.zdb/socket --admin 1234
 	install(secret: 'hamada', start: true) or { panic(err) }
-	
+
 	mut client := zdb.get('/root/hero/var/zdb.sock', 'hamada', 'test') or { panic(err) }
 
 	// check info returns info about zdb

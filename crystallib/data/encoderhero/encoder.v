@@ -9,7 +9,7 @@ import v.reflection
 pub struct Encoder {
 pub mut:
 	escape_unicode bool = true
-	action_name string
+	action_name    string
 	action_names   []string
 	params         paramsparser.Params
 	children       []Encoder
@@ -34,7 +34,7 @@ pub fn encode[T](val T) !string {
 
 // export exports an encoder into encoded heroscript
 pub fn (e Encoder) export() !string {
-	mut script := e.params.export(pre:'!!define.${e.action_names.join('.')}')
+	mut script := e.params.export(pre: '!!define.${e.action_names.join('.')}')
 	script += e.children.map(it.export()!).join('\n')
 	return script
 }
@@ -51,7 +51,7 @@ pub fn (mut e Encoder) add[T](val T) ! {
 	mut e2 := Encoder{
 		params: paramsparser.Params{}
 		parent: &e
-		action_names: e.action_names 
+		action_names: e.action_names
 	}
 	$if T is $struct && T !is time.Time {
 		e2.params.set('key', '${val}')
@@ -72,8 +72,6 @@ pub fn (mut e Encoder) encode_array[U](val []U) ! {
 
 // now encode the struct
 pub fn (mut e Encoder) encode_struct[T](t T) ! {
-
-	
 	mut mytype := reflection.type_of[T](t)
 	struct_attrs := attrs_get_reflection(mytype)
 
@@ -83,15 +81,13 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	}
 	e.action_names << action_name
 
-
 	params := paramsparser.encode[T](t, recursive: false)!
 	e.params = params
 	$for field in T.fields {
 		val := t.$(field.name)
-		$if val is $struct && val !is time.Time{
+		$if val is $struct && val !is time.Time {
 			e.add(val)!
-		}
-		$else $if val is $array {
+		} $else $if val is $array {
 			e.encode_array(val)!
 		}
 	}
@@ -121,7 +117,7 @@ pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
 	// 		e.encode_value(val, key)!
 	// 	}
 	// }
-	
+
 	//  $else $if T is string || T is int || T is bool || T is i64 || T is time.Time{
 	// 	e.params.set(key, '${val}')
 	// } $else $if T is []string {

@@ -16,7 +16,7 @@ module paramsparser
 
 // pub fn (mut params Params) json_schema() jsonschema.Schema {
 // 	return jsonschema.Schema {
-		
+
 // 	}
 // }
 

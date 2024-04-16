@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.installers.web.zola as zolainstaller
 import freeflowuniverse.crystallib.core.base
 import os
 
-
 pub fn new(zola_ Zola) !Zola {
 	mut zola := zola_
 
