@@ -18,11 +18,15 @@ pub:
 // the action_names or actor_names can be a glob in match_glob .
 // see https://modules.vlang.io/index.html#string.match_glob .
 // the highest priority will always be chosen . (it can be a match happens 2x)
-// return  []Action
-pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ! {
+// return  []Action (will only return actions which wered filtered, included in the filter-sort args)
+pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ![]&Action {
 	mut nrs := args.priorities.keys()
 	nrs.sort()
+	plbook.priorities=map[int][]int{} //reset the prio's
 	for prio in nrs {
+		if prio>49{
+			return error("prio cannot be higher than 49")
+		}
 		argsfilter := args.priorities[prio] or { panic('bug') }
 		mut actionsfound := plbook.find(filter: argsfilter)!
 		// console.print_header('- ${prio}:(${actionsfound.len})\n${argsfilter}')
@@ -51,6 +55,8 @@ pub fn (mut plbook PlayBook) filtersort(args FilterSortArgs) ! {
 			plbook.done << action.id
 		}
 	}
+
+	return plbook.actions_sorted()
 }
 
 @[params]

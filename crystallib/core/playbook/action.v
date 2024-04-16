@@ -14,7 +14,7 @@ pub mut:
 	priority   int = 10 // 0 is highest, do 10 as default
 	params     paramsparser.Params
 	result     paramsparser.Params // can be used to remember outputs
-	execute    bool = true // certain actions can be defined but meant to be executed directly
+	// run    bool = true // certain actions can be defined but meant to be executed directly
 	actiontype ActionType
 	comments   string
 	done       bool // if done then no longer need to process

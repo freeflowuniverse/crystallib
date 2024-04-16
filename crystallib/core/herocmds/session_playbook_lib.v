@@ -145,6 +145,9 @@ fn session_run_do(cmd Command) !(&playbook.PlayBook, string) {
 
 	// add all actions inside to the playbook
 	mut plbook := playbook.new(path: path,session:session)!
+
+	playcmds.run(mut plbook)!
+	
 	console.print_stdout(plbook.str())
 	return &plbook,path
 }

@@ -12,7 +12,7 @@ pub mut:
 	git_branch string
 	git_reset  bool
 	prio       int  = 50
-	execute    bool = true
+	priorities map[int]string // filter and give priority, see filtersort method to know how to use
 	session    ?&base.Session
 }
 
@@ -24,7 +24,6 @@ pub mut:
 // git_pull bool
 // git_branch string
 // git_reset bool
-// execute bool = true
 // session &base.Session
 // ```
 pub fn new(args_ PlayBookNewArgs) !PlayBook {
@@ -37,7 +36,6 @@ pub fn new(args_ PlayBookNewArgs) !PlayBook {
 	mut plbook := PlayBook{
 		session: s
 	}
-
 	if args.path.len > 0 || args.text.len > 0 || args.git_url.len > 0 {
 		plbook.add(
 			path: args.path
@@ -50,9 +48,11 @@ pub fn new(args_ PlayBookNewArgs) !PlayBook {
 			session: args.session
 		)!
 	}
-	if args.execute {
-		// plbook.execute()
-		panic('not implemented')
+
+	if args.priorities.len>0{
+		plbook.filtersort(priorities:args.priorities)!
 	}
+
+
 	return plbook
 }
