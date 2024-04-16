@@ -14,8 +14,12 @@ pub mut:
 // management class of the configs of this obj
 pub fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {
 	mut configurator := self.configurator_ or {
+		session := self.session_ or {
+			return error('base config must be initialized')
+		}
+
 		mut c := configurator_new[T](
-			context: self.context()!
+			context: &session.context
 			instance: self.instance
 		)!
 		self.configurator_ = c
