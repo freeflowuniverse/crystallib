@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playcmds
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.develop.sourcetree
@@ -135,29 +136,25 @@ fn session_run_get(cmd Command) !(&base.Session, string) {
 }
 
 // same as session_run_get but will also run the playbook
-fn session_run_do(cmd Command) !(&base.Session, string) {
+fn session_run_do(cmd Command) !(&playbook.PlayBook, string) {
 	mut session, path := session_run_get(cmd)!
 
 	if path.len == 0 {
 		return error(cmd.help_message())
 	}
 
-	if path.len > 0 {
-		// add all actions inside to the playbook
-		session.playbook_add(path: path)!
-		session.process()!
-		console.print_stdout(session.plbook.str())
-		playcmds.run(mut session)!
-	}
-	return session, path
+	// add all actions inside to the playbook
+	mut plbook := playbook.new(path: path,session:session)!
+	console.print_stdout(plbook.str())
+	return &plbook,path
 }
 
 // get the repo, check if we need to do
-fn session_run_edit_sourcecode(cmd Command) !(&base.Session, string) {
+fn session_run_edit_sourcecode(cmd Command) !(&playbook.PlayBook, string) {
 	edit := cmd.flags.get_bool('edit') or { false }
 	treedo := cmd.flags.get_bool('sourcetree') or { false }
 
-	mut session, path := session_run_do(cmd)!
+	mut plbook, path := session_run_do(cmd)!
 
 	if path.len == 0 {
 		return error('path or url needs to be specified')
@@ -171,5 +168,5 @@ fn session_run_edit_sourcecode(cmd Command) !(&base.Session, string) {
 		vscode.open(path: path)!
 	}
 
-	return session, path
+	return plbook, path
 }

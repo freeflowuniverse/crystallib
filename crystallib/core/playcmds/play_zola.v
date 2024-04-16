@@ -2,8 +2,7 @@ module playcmds
 
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.webtools.zola
-// import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.core.playbook
 
 struct WebsiteItem {
 mut:
@@ -11,19 +10,19 @@ mut:
 	site ?&zola.ZolaSite
 }
 
-pub fn play_zola(mut session base.Session) ! {
+pub fn play_zola(mut plbook playbook.PlayBook) ! {
 	// mut coderoot := ''
 	mut buildroot := ''
 	mut publishroot := ''
 	mut install := true
 	mut reset := false
 
-	wsactions := session.plbook.find(filter: 'website.')!
+	wsactions := plbook.find(filter: 'website.')!
 	if wsactions.len == 0 {
 		return
 	}
 
-	mut config_actions := session.plbook.find(filter: 'websites:configure')!
+	mut config_actions := plbook.find(filter: 'websites:configure')!
 	if config_actions.len > 1 {
 		return error('can only have 1 config action for websites')
 	} else if config_actions.len == 1 {
@@ -44,7 +43,7 @@ pub fn play_zola(mut session base.Session) ! {
 
 	mut ws := WebsiteItem{}
 
-	for mut action in session.plbook.find(filter: 'website.')! {
+	for mut action in plbook.find(filter: 'website.')! {
 		if action.name == 'define' {
 			console.print_debug('website.define')
 			mut p := action.params

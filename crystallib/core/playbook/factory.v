@@ -13,7 +13,7 @@ pub mut:
 	git_reset  bool
 	prio       int  = 50
 	execute    bool = true
-	session    &base.Session
+	session    ?&base.Session
 }
 
 // get a new playbook, can scan a directory or just add text
@@ -29,8 +29,13 @@ pub mut:
 // ```
 pub fn new(args_ PlayBookNewArgs) !PlayBook {
 	mut args := args_
+	mut s:=args.session or {
+		base.session_new(
+			interactive:true
+		)!	
+	}
 	mut plbook := PlayBook{
-		session: args_.session
+		session: s
 	}
 
 	if args.path.len > 0 || args.text.len > 0 || args.git_url.len > 0 {

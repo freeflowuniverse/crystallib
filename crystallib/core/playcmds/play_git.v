@@ -1,10 +1,10 @@
 module playcmds
 
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.core.playbook
 
-pub fn play_git(mut session base.Session) ! {
-	for mut action in session.plbook.find(filter: 'gittools.*')! {
+pub fn play_git(mut plbook playbook.PlayBook) ! {
+	for mut action in plbook.find(filter: 'gittools.*')! {
 		mut p := action.params
 		mut repo := p.get_default('repo', '')!
 		mut account := p.get_default('account', '')!

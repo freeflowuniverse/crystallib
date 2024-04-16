@@ -20,24 +20,21 @@ the first one is the action, the rest are the params
 
 ```v
 import freeflowuniverse.crystallib.core.playbook
+
+
+// path string
+// text string
+// git_url string
+// git_pull bool
+// git_branch string
+// git_reset bool
+// execute bool = true
+// session  ?&base.Session      is optional
+
 mut plbook := playbook.new(text: "....") or { panic(err) }
 
-//path    string
-//text    string
-//url     sstring
-//prio    int   = 99
-plbook.add(path:...)!
-
 ```
-
-
-Depending specified cid or circle or actor, we make a default selection
-
 ## way how to use for a module
-
-The idea is we can use heroscript (our parser script) to do things with a module
-
-The generic parser()... is used to make all happen.
 
 
 ```go

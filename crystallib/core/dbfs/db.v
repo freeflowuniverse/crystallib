@@ -16,13 +16,13 @@ pub mut:
 // get the value, if it doesn't exist then return empty string
 pub fn (mut db DB) get(name_ string) !string {
 	name := texttools.name_fix(name_)
-	if !db.exists(name_) {
+	if !db.exists(name) {
 		return ''
 	}
 	mut datafile := db.path.file_get_new(name)!
 	mut data := datafile.read()!
 	if data.len == 0 {
-		panic('data cannot be empty for get:${name_}')
+		panic('data cannot be empty for get:${name}')
 	}
 	if db.encrypted {
 		data = aes_symmetric.decrypt_str(data, db.secret()!)
@@ -50,7 +50,16 @@ pub fn (mut db DB) set(name_ string, data_ string) ! {
 // check if entry exists based on keyname
 pub fn (mut db DB) exists(name_ string) bool {
 	name := texttools.name_fix(name_)
-	return db.path.file_exists(name)
+	if !(db.path.file_exists(name)){
+		return false
+	}
+	mut datafile := db.path.file_get(name) or { panic(err) }
+	mut data := datafile.read() or { panic(err) }
+	if data.len == 0 {
+		datafile.delete() or { panic(err) }
+		return false
+	}
+	return true
 }
 
 // delete an entry

@@ -38,6 +38,11 @@ pub fn (mut self BaseConfig[T]) config() !&T {
 	return config
 }
 
+pub fn (mut self BaseConfig[T]) context() !&Context {
+	mut configurator := self.configurator()!
+	return configurator.context
+}
+
 pub fn (mut self BaseConfig[T]) config_save() ! {
 	mut config := self.config()!
 	mut configurator := self.configurator()!
@@ -50,10 +55,10 @@ pub fn (mut self BaseConfig[T]) config_delete() ! {
 	self.config_ = none
 }
 
-// init our class with the base playargs
-pub fn (mut self BaseConfig[T]) init(playargs ?PlayArgs) ! {
-	mut plargs := playargs or {
-		mut plargs0 := PlayArgs{}
+// init our class with the base session_args
+pub fn (mut self BaseConfig[T]) init(session_args ?SessionNewArgs) ! {
+	mut plargs := session_args or {
+		mut plargs0 := SessionNewArgs{}
 		plargs0
 	}
 

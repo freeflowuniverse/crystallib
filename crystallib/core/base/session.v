@@ -20,7 +20,7 @@ pub mut:
 }
 
 @[params]
-pub struct SessionNewArgs {
+pub struct ContextSessionNewArgs {
 pub mut:
 	name        string // unique id for session (session id), there can be more than 1 per id
 	start       string // can be e.g. +1h
@@ -34,7 +34,7 @@ pub mut:
 // ```
 // name string
 // ```
-pub fn (context Context) session_new(args_ SessionNewArgs) !Session {
+pub fn (context Context) session_new(args_ ContextSessionNewArgs) !Session {
 	mut args := args_
 	t := ourtime.new(args.start)!
 	mut s := Session{

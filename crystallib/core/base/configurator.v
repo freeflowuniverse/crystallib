@@ -62,7 +62,7 @@ pub fn (mut self Configurator[T]) get() !T {
 		}
 		// return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
 	}
-	data := dbcollection.get(self.config_key())!
+	data := db.get(self.config_key())!
 	return json.decode(T, data)!
 }
 
@@ -94,7 +94,7 @@ pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
 	mut db := self.context.db_config_get()!
 	if args.name.len > 0 {
 		if db.exists(self.config_key()) {
-			data := dbcollection.get(self.config_key())!
+			data := db.get(self.config_key())!
 			c := json.decode(T, data)!
 			println(c)
 			println('')
@@ -110,9 +110,9 @@ pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
 	}
 }
 
-// init our class with the base playargs
-// pub fn (mut self Configurator[T]) init(playargs_ PlayArgs) ! {
-// 	self.session_=playargs.session or {
-// 		session_new(playargs)!
+// init our class with the base session_args
+// pub fn (mut self Configurator[T]) init(session_args_ SessionNewArgs) ! {
+// 	self.session_=session_args.session or {
+// 		session_new(session_args)!
 // 	 }
 // }

@@ -16,9 +16,9 @@ mut:
 // interactive         bool = true //can ask questions, default on true
 // coderoot            string //this will define where all code is checked out
 //```
-pub fn (mut self Base) session(args PlayArgs) &Session {
+pub fn (mut self Base) session(args SessionNewArgs) !&Session {
 	mut mysession := self.session_ or {
-		mut s := session_new(args) or { panic("can't get session with args:${args}") }
+		mut s := session_new(args)!// or { panic("can't get session with args:${args}") }
 		self.session_ = s
 		s
 	}
@@ -26,7 +26,7 @@ pub fn (mut self Base) session(args PlayArgs) &Session {
 	return mysession
 }
 
-pub fn (mut self Base) context() &Context {
-	mut session := self.session()
+pub fn (mut self Base) context() !&Context {
+	mut session := self.session()!
 	return &session.context
 }

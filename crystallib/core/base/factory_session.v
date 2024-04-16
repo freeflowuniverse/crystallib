@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.data.ourtime
 
 // return a session which has link to the actions and params on context and session level
 // the session also has link to dbfs (filesystem key val stor and gitstructure if relevant)
-pub fn session_new(args_ PlayArgs) !&Session {
+pub fn session_new(args_ SessionNewArgs) !&Session {
 	mut args := args_
 
 	if args.session != none {
@@ -56,17 +56,6 @@ pub fn session_new(args_ PlayArgs) !&Session {
 	}
 
 	session.interactive = args.interactive
-
-	// session.playbook_priorities = args.playbook_priorities.clone()
-
-	// session.playbook_add(
-	// 	path: args.playbook_path
-	// 	text: args.playbook_text
-	// 	git_url: args.playbook_url
-	// 	git_pull: args.git_pull
-	// 	git_reset: args.git_reset
-	// 	run: args.run
-	// )!
 
 	return session
 }

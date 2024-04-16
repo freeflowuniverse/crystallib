@@ -17,7 +17,7 @@ pub mut:
 	path_publish string = '${os.home_dir()}/hero/www/info'
 }
 
-pub fn get(args base.PlayArgs) !MDBooks[Config] {
+pub fn get(args base.SessionNewArgs) !MDBooks[Config] {
 	mut books := MDBooks[Config]{}
 	books.init(args)!
 
