@@ -81,11 +81,11 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 	}
 	mut code := []CodeItem{}
 
-	table := ast.new_table()
+	mut table := ast.new_table()
 	fpref := &pref.Preferences{ // preferences for parsing
 		is_fmt: true
 	}
-	file_ast := parser.parse_file(path, table, .parse_comments, fpref)
+	file_ast := parser.parse_file(path, mut table, .parse_comments, fpref)
 	mut preceeding_comments := []ast.Comment{}
 
 	for stmt in file_ast.stmts {

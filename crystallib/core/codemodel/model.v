@@ -3,7 +3,7 @@ module codemodel
 // Code is a list of statements
 // pub type Code = []CodeItem
 
-pub type CodeItem = Comment | CustomCode | Function | Import | Struct | Sumtype
+pub type CodeItem = Alias | Comment | CustomCode | Function | Import | Struct | Sumtype
 
 // item for adding custom code in
 pub struct CustomCode {
@@ -35,7 +35,7 @@ pub:
 }
 
 pub struct StructField {
-pub:
+pub mut:
 	comments    []Comment
 	attrs       []Attribute
 	name        string
@@ -46,7 +46,6 @@ pub:
 	is_ref      bool
 	anon_struct Struct // sometimes fields may hold anonymous structs
 	typ         Type
-pub mut:
 	structure Struct
 }
 
@@ -95,7 +94,7 @@ pub:
 
 // todo: maybe make 'is_' fields methods?
 pub struct Type {
-pub:
+pub mut:
 	is_reference bool
 	is_map       bool
 	is_array     bool
@@ -116,6 +115,13 @@ pub mut:
 pub struct Module {
 	name    string
 	files   []CodeFile
-	model   CodeFile
-	methods CodeFile
+	// model   CodeFile
+	// methods CodeFile
+}
+
+pub struct Alias {
+	pub:
+	name        string
+	description string
+	typ Type
 }
