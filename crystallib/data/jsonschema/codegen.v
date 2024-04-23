@@ -1,5 +1,7 @@
 module jsonschema
 
+import freeflowuniverse.crystallib.core.codemodel { Struct, StructField }
+
 const vtypes = {
 	'integer': 'int'
 	'string':  'string'
@@ -74,4 +76,27 @@ pub fn (schema Schema) vtype_encode() !string {
 		return error('unknown type `${schema.typ}` ')
 	}
 	return property_str
+}
+
+pub fn (schema Schema) to_struct() Struct {
+	mut fields := []StructField{}
+	for key, val in schema.properties {
+		if val is Schema {
+			fields << val.to_struct_field(key)
+		}
+	}
+
+	return Struct{
+		name: schema.title
+		description: schema.description
+		fields: fields
+	}
+}
+
+pub fn (schema Schema) to_struct_field(name string) StructField {
+	return StructField{
+		name: name
+		structure: schema.to_struct()
+		description: schema.description
+	}
 }

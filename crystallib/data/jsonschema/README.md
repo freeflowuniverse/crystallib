@@ -31,3 +31,7 @@ The properties of a JSON Schema is a list of key value pairs, where keys represe
 It's good practice to define object type schemas separately and reference them in properties, especially if the same schema is used in multiple places. However, object type schemas can also be defined in property definitions. This may make sense if the schema is exclusively used as a property of a schema, similar to using an anonymous struct for the type definition of a field of a struct.
 
 As such, schema's generated from structs that declare anonymous structs as field types, include a schema definition in the property field.
+
+## Notes
+
+As [this issue](https://github.com/vlang/v/issues/15081) is still not resolved, a json schema cannot be decoded into the json schema structure defined in this module. As such, to decode json schema string into a structure the `pub fn decode(data str) !Schema` function defined in `decode.v` must be used.
