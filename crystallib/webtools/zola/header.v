@@ -1,5 +1,7 @@
 module zola
 
+import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 
 pub struct Header {
@@ -34,6 +36,7 @@ pub fn (mut site ZolaSite) header_link_add(args Link) ! {
 	mut header := site.header or { return error('header needs to be defined') }
 	header.items << args
 	site.header = header
+	println('site.header: ${site.header}')
 }
 
 pub struct Dropdown {

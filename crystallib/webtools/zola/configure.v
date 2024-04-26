@@ -1,6 +1,6 @@
 module zola
 
-// import freeflowuniverse.crystallib.core.base
+// import freeflowuniverse.crystallib.core.play
 
 // @[heap]
 // pub struct WebSiteConfig {

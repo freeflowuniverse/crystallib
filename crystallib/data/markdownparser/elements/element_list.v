@@ -43,13 +43,13 @@ fn (mut self List) parse() ! {
 	lines := self.content.trim(' \n').split('\n')
 	mut line_index := 0
 	for line_index < lines.len {
-		list, next_index := parse_list_level(self.parent_doc_, line_index, lines)!
+		list, next_index := parse_list_level(mut self.parent_doc_, line_index, lines)!
 		line_index = next_index
 		self.children << list
 	}
 }
 
-fn parse_list_level(docparent ?&Doc, line_index int, lines []string) !(List, int) {
+fn parse_list_level(mut docparent ?&Doc, line_index int, lines []string) !(List, int) {
 	mut list := List{
 		type_name: 'list'
 		parent_doc_: docparent
@@ -59,6 +59,7 @@ fn parse_list_level(docparent ?&Doc, line_index int, lines []string) !(List, int
 	mut list_item := ListItem{
 		content: line
 		type_name: 'listitem'
+		parent_doc_: docparent
 	}
 	list_item.process()!
 
@@ -82,7 +83,7 @@ fn parse_list_level(docparent ?&Doc, line_index int, lines []string) !(List, int
 
 		if li.calculate_indentation() > list.indentation {
 			// create a child group
-			child_group, next_index := parse_list_level(docparent, i, lines)!
+			child_group, next_index := parse_list_level(mut docparent, i, lines)!
 			i = next_index
 			list.children << child_group
 			continue
