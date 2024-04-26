@@ -328,11 +328,13 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	}
 
 	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
-
+	mut fields := vparser.parse_fields(args.struct_decl.fields, args.table)
+	fields << vparser.parse_embeds(args.struct_decl.embeds, args.table)
+	
 	return Struct{
 		name: args.struct_decl.name.all_after_last('.')
 		description: comments.join(' ')
-		fields: vparser.parse_fields(args.struct_decl.fields, args.table)
+		fields: fields
 		mod: args.struct_decl.name.all_before_last('.')
 		attrs: args.struct_decl.attrs.map(codemodel.Attribute{ name: it.name })
 		is_pub: args.struct_decl.is_pub
@@ -402,6 +404,23 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 	// 		}
 	// 	}
 	// )
+}
+
+// parse_embeds parses ast.embeds into struct fields
+// TODO: Support requiresive fields
+fn (vparser VParser) parse_embeds(embeds []ast.Embed, table &ast.Table) []StructField {
+	mut fields := []StructField{}
+	for embed in embeds {
+		$if debug {
+			console.print_debug('Parsing embed: ${table.sym(embed.typ).info}')
+		}
+		embed_info := table.sym(embed.typ).info
+		if embed_info is ast.Struct {
+			// embeds: vparser.parse_embeds(embed_info.embeds, table)
+			fields << vparser.parse_fields(embed_info.fields, table)
+		}
+	}
+	return fields
 }
 
 // parse_fields parses ast struct fields into struct fields
