@@ -8,7 +8,6 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.webcomponents.preprocessor
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser
-import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.data.doctree
 import os
 
@@ -72,14 +71,94 @@ pub fn (mut site ZolaSite) generate() ! {
 	}
 	header.export(content_dir.path)!
 
+	// set default home page as the first page added
+	if !site.pages.any(it.homepage) {
+		site.pages[0].homepage = true
+	}
+
+	content_dir := pathlib.get_dir(
+		path: '${site.path_build.path}/content'
+		create: true
+	)!
+	static_dir := pathlib.get_dir(
+		path: '${site.path_build.path}/static'
+		create: true
+	)!
+
+	// for mut page in site.pages {
+	// 	page.export(content_dir.path)!
+	// }
+
+	mut tree := doctree.new(name: 'ws_pages_${site.name}')!
+	tree.scan(
+		path: '${site.path_build.path}/pages'
+		load: true
+	)!
+	tree.process_includes()!
+	tree.export(dest: '${site.path_build.path}/tree')!
+
+	mut img_dir := pathlib.get_dir(
+		path: '${site.path_build.path}/tree/src/pages/img'
+	)!
+
+	img_dir.move(
+		dest: '${static_dir.path}/img'
+		delete: true
+	)!
+
+	mut errors_file := pathlib.get_file(
+		path: '${site.path_build.path}/tree/src/pages/errors.md'
+	)!
+
+	errors_file.move(
+		dest: '${site.path_build.path}/errors.md'
+		delete: true
+	)!
+
+	mut src_dir := pathlib.get_dir(
+		path: '${site.path_build.path}/tree/src/pages'
+	)!
+
+	src_dir.move(
+		dest: content_dir.path
+		delete: true
+	)!
+
+	// src_dir :=
+
+	// if mut people := site.people {
+	// 	people.export(content_dir.path)!
+	// }
+	// if mut news := site.news {
+	// 	news.export(content_dir.path)!
+	// }
+	if mut header := site.header {
+		header.export(content_dir.path)!
+	}
+	if mut footer := site.footer {
+		footer.export(content_dir.path)!
+	}
+
+	for key, mut section in site.sections {
+		section_dir := pathlib.get_dir(
+			path: '${content_dir.path}/${section.name}'
+			create: true
+		)!
+		section.export(section_dir.path)!
+	}
+
 	console.print_header(' website generate: ${site.name} on ${site.path_build.path}')
 
 	mut tw := tailwind.new(
 		name: site.name
 		path_build: site.path_build.path
-		content_paths: ['${site.path_build.path}/templates/**/*.html',
-			'${site.path_build.path}/content/**/*.md']
+		content_paths: [
+			'${site.path_build.path}/templates/**/*.html',
+			'${site.path_build.path}/content/**/*.md',
+			'${site.path_build.path}/content/*.md',
+		]
 	)!
+	preprocessor.preprocess('${site.path_build.path}/content')!
 
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
@@ -94,8 +173,6 @@ pub fn (mut site ZolaSite) generate() ! {
 	mut p_build := pathlib.get_file(path: '${site.path_build.path}/build.sh', create: true)!
 	p_build.write(cmd)!
 	os.chmod(p_build.path, 0o777)!
-
-	preprocessor.preprocess('${site.path_build.path}/content')!
 
 	osal.exec(cmd: cmd)!
 	mut r := redisclient.core_get()!

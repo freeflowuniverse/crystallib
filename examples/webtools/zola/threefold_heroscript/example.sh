@@ -1,3 +1,3 @@
 #!/bin/bash
 
-hero zola -u https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/main/heroscript
+hero zola -u https://github.com/threefoldfoundation/www_threefold_io/tree/development_zola/playbook

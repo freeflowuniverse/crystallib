@@ -1,5 +1,7 @@
 # JSON Schema
+
 A V library for the JSON Schema model, and a few handy functions. 
+
 ## JSON Schema Model
 
 Defined [here](https://json-schema.org/), "JSON Schema is a declarative language that allows you to annotate and validate JSON documents." The model in this module provides a struct that can easily be encoded into a JSON Schema.

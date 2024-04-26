@@ -9,6 +9,7 @@ enum ParamStatus {
 	value // value started, so was no quote
 	quote // quote found means value in between ''
 	comment
+	array // means inside square brackets
 }
 
 // convert text with e.g. color:red or color:'red' to arguments
@@ -85,6 +86,7 @@ pub fn parse(text string) !Params {
 				ch_prev = ch
 				continue
 			} else if !validchars.contains(ch) {
+				print_backtrace()
 				return error("text to params processor: parameters can only be A-Za-z0-9 and _., found illegal char: '${key}${ch}' in\n${text2}\n\n")
 			} else {
 				key += ch
@@ -96,6 +98,12 @@ pub fn parse(text string) !Params {
 			if ch == "'" {
 				state = .quote
 				ch_prev = ch
+				continue
+			}
+			if ch == '[' {
+				state = .array
+				ch_prev = ch
+				value = '['
 				continue
 			}
 			// means the value started, we can go to next state
@@ -117,8 +125,22 @@ pub fn parse(text string) !Params {
 			continue
 		}
 		if state == .quote {
-			if ch == "'" {
+			if ch == "'" && ch_prev != '\\' {
 				state = .start
+				result.set_with_comment(key, value, comment)
+				key = ''
+				value = ''
+				comment = ''
+			} else {
+				value += ch
+			}
+			ch_prev = ch
+			continue
+		}
+		if state == .array {
+			if ch == ']' {
+				state = .start
+				value += ch
 				result.set_with_comment(key, value, comment)
 				key = ''
 				value = ''

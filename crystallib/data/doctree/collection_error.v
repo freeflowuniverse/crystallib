@@ -45,7 +45,7 @@ pub struct ObjNotFound {
 pub:
 	name       string
 	collection string
-	info string
+	info       string
 }
 
 pub fn (err ObjNotFound) msg() string {

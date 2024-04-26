@@ -51,7 +51,7 @@ fn (mut parser ParserChar) char(nr int) !string {
 		return error('before file')
 	}
 	if parser.eof() {
-		return ""
+		return ''
 	}
 	mut c := parser.chars.substr(nr, nr + 1)
 	if c == '`' {
@@ -67,7 +67,7 @@ fn (mut parser ParserChar) char(nr int) !string {
 // get current char
 // will return error if out of scope
 fn (mut parser ParserChar) char_current() string {
-	return parser.char(parser.charnr) or { "" }
+	return parser.char(parser.charnr) or { '' }
 }
 
 fn (mut parser ParserChar) forward(nr int) {

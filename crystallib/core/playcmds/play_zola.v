@@ -17,6 +17,12 @@ pub fn play_zola(mut session play.Session) ! {
 	mut publishroot := ''
 	mut install := true
 	mut reset := false
+
+	wsactions := session.plbook.find(filter: 'website.')!
+	if wsactions.len == 0 {
+		return
+	}
+
 	mut config_actions := session.plbook.find(filter: 'websites:configure')!
 	if config_actions.len > 1 {
 		return error('can only have 1 config action for websites')
@@ -76,40 +82,97 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.doctree_add(url: url, path: path)!
+		} else if action.name == 'post_add' {
+			console.print_debug('website.post_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			collection := p.get_default('collection', '')!
+			file := p.get_default('file', '')!
+			page := p.get_default('page', '')!
+			pointer := p.get_default('pointer', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			}
+
+			site_.post_add(name: name, collection: collection, file: file, pointer: pointer)!
 		} else if action.name == 'blog_add' {
 			console.print_debug('website.blog_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
 			collection := p.get_default('collection', '')!
 			file := p.get_default('file', '')!
-			image := p.get_default('image', '')!
+			page := p.get_default('page', '')!
+			pointer := p.get_default('pointer', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.blog_add(name: name, collection: collection, file: file, image: image)!
+			site_.blog_add(name: name)!
 		} else if action.name == 'person_add' {
 			console.print_debug('website.person_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
+			page := p.get_default('page', '')!
 			collection := p.get_default('collection', '')!
 			file := p.get_default('file', '')!
+			pointer := p.get_default('pointer', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.person_add(name: name, collection: collection, file: file)!
+			site_.person_add(
+				name: name
+				collection: collection
+				file: file
+				page: page
+				pointer: pointer
+			)!
+		} else if action.name == 'people_add' {
+			console.print_debug('website.people_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			description := p.get_default('description', '')!
+			sort_by_ := p.get_default('sort_by', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for people_add, should have been defined before with !!website.define")
+			}
+
+			sort_by := zola.SortBy.from(sort_by_)!
+			site_.people_add(
+				name: name
+				title: p.get_default('title', '')!
+				sort_by: sort_by
+				description: description
+			)!
+		} else if action.name == 'blog_add' {
+			console.print_debug('website.blog_add')
+			mut p := action.params
+			name := p.get_default('name', '')!
+			description := p.get_default('description', '')!
+			sort_by_ := p.get_default('sort_by', '')!
+			mut site_ := ws.site or {
+				return error("can't find website for people_add, should have been defined before with !!website.define")
+			}
+
+			sort_by := zola.SortBy.from(sort_by_)!
+			site_.blog_add(
+				name: name
+				title: p.get_default('title', '')!
+				sort_by: sort_by
+				description: description
+			)!
 		} else if action.name == 'news_add' {
 			console.print_debug('website.news_add')
 			mut p := action.params
 			name := p.get_default('name', '')!
 			collection := p.get_default('collection', '')!
+			pointer := p.get_default('pointer', '')!
 			file := p.get_default('file', '')!
 			mut site_ := ws.site or {
 				return error("can't find website for news_add, should have been defined before with !!website.define")
 			}
 
-			site_.person_add(name: name, collection: collection, file: file)!
+			site_.article_add(name: name, collection: collection, file: file, pointer: pointer)!
 		} else if action.name == 'header_add' {
 			console.print_debug('website.header_add')
 			mut p := action.params
@@ -120,7 +183,6 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.header_add(template: template, logo: logo)!
-
 		} else if action.name == 'header_link_add' {
 			console.print_debug('website.header_link_add')
 			mut p := action.params
@@ -131,7 +193,6 @@ pub fn play_zola(mut session play.Session) ! {
 			}
 
 			site_.header_link_add(page: page, label: label)!
-
 		} else if action.name == 'footer_add' {
 			console.print_debug('website.footer_add')
 			mut p := action.params

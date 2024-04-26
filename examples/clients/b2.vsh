@@ -1,19 +1,19 @@
 #!/usr/bin/env -S v -w -enable-globals run
-import freeflowuniverse.crystallib.clients.b2
+import freeflowuniverse.crystallib.clients.stellar
 
-mut cl:=b2.get(instance:"test")!
+mut cl:=stellar.get(instance:"test")!
 
 // cl.config_delete()!
 
 mut cfg:=cl.config()!
-if cfg.appkey==""{
+if cfg.secret==""{
 	// will ask questions if not filled in yet
-	// cl.config_interactive()!
+	cl.config_interactive()!
 }
 println(cfg)
 
 //will now change programatically
-cfg.description="something else"
+cfg.description="this is my main key"
 //will now save the config
 cl.config_save()!
 

@@ -1,4 +1,3 @@
-
 module podman
 
 import json
@@ -36,6 +35,11 @@ pub fn (mut self BContainer) run(cmd_ string, silent bool) ! {
 pub struct HeroInstall {
 pub mut:
 	reset bool
+}
+
+pub fn (mut self BContainer) copy(src string, dest string) ! {
+	cmd := 'buildah copy ${self.id} ${src} ${dest}'
+	osal.exec(cmd: cmd)!
 }
 
 pub fn (mut self BContainer) hero_install(args HeroInstall) ! {

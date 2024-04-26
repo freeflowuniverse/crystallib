@@ -1,0 +1,24 @@
+fn (mut handler CustomJsonRpcHandler)@{function.name}_handle(data string) !string {
+	mut receiver := &@{function.receiver.typ.symbol}(handler.state)
+@if function.params.len > 0
+	request := jsonrpcrequest_decode[@{function.params[0].typ.symbol}](data)!
+	@{fn_call}(request.params)!
+@else
+	request := json.decode(jsonrpc.JsonRpcRequestAny, data)!
+	@{fn_call}()!
+@end
+@if function.result.name != ''
+	response := jsonrpc.JsonRpcResponse[@{function.result.typ.symbol}]{
+		jsonrpc: '2.0.0'
+		id: request.id
+		result: result
+	}
+@else
+	response := jsonrpc.JsonRpcResponse[string]{
+		jsonrpc: '2.0.0'
+		id: request.id
+		result: ''
+	}
+@end
+    return response.to_json()
+}

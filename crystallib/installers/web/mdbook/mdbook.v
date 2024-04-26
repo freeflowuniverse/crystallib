@@ -26,8 +26,7 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-	for plname in ['mdbook-mermaid', 'mdbook-echarts', 'mdbook-embed', 'mdbook-kroki-preprocessor',
-		'mdbook-pdf'] {
+	for plname in ['mdbook-mermaid', 'mdbook-echarts', 'mdbook-kroki-preprocessor', 'mdbook-pdf'] {
 		if !osal.cmd_exists(plname) {
 			console.print_header('did not find: ${plname}')
 			args.reset = true
@@ -44,7 +43,7 @@ pub fn install(args_ InstallArgs) ! {
 
 // install mdbook will return true if it was already installed
 pub fn build() ! {
-	console.print_header('build mdbook')
+	console.print_header('compile mdbook')
 	rust.install()!
 	cmd := '
 	source ~/.cargo/env

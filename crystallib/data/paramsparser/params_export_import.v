@@ -39,11 +39,20 @@ fn (item ParamExportItem) oneline() string {
 fn (item ParamExportItem) getval() string {
 	mut val := item.value
 	val = val.replace('\n', '\\n')
-	if val.contains(' ') || val.contains(':') || val.contains(',') || val.contains('\\n')
-		|| item.key in ['cid', 'oid', 'gid'] {
+	if (val.contains(' ') || val.contains(':') || val.contains(',')
+		|| val.contains('\\n') || item.key in ['cid', 'oid', 'gid']) && !value_is_list(val) {
+		val = val.replace('"', "'")
+		if val.contains("'") {
+			val = val.replace("'", "\\'")
+		}
 		val = "'${val}'"
 	}
 	return val
+}
+
+fn value_is_list(val_ string) bool {
+	val := val_.trim_space()
+	return val.starts_with('[') && val.ends_with(']')
 }
 
 // to put after the first line
@@ -121,6 +130,10 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 
 	// now we will process the params (comments and args done)
 	for param in p.params {
+		// skip empty parameter when exporting
+		if args.skip_empty && val_is_empty(param.value) {
+			continue
+		}
 		mut key := texttools.name_fix(param.key)
 		keys_existing << key
 		if key !in args.presort && key !in args.postsort {
@@ -178,6 +191,10 @@ fn (p Params) export_helper(args_ ExportArgs) ![]ParamExportItem {
 	return result_params
 }
 
+fn val_is_empty(val string) bool {
+	return val == '' || val == '[]'
+}
+
 @[params]
 pub struct ExportArgs {
 pub mut:
@@ -192,6 +209,7 @@ pub mut:
 	multiline       bool = true // if we will put the multiline strings as multiline in output
 	indent          string
 	pre             string // e.g. can be used to insert action e.g. !!remark.define (pre=prefix on the first line)
+	skip_empty      bool
 }
 
 // standardised export format .
@@ -231,7 +249,7 @@ pub fn (p Params) export(args ExportArgs) string {
 			if item.firstline {
 				out << item.oneline()
 			} else {
-				out_post << item.afterline()
+				out_post << '${args.indent}${item.afterline()}'
 			}
 		}
 	}

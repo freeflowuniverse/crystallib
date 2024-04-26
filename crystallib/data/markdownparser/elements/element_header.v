@@ -23,11 +23,10 @@ pub fn (self Header) markdown() !string {
 	return '${h} ${self.content}'
 }
 
-
 pub fn (self Header) html() !string {
 	return '<h${self.depth}>${self.content}</h${self.depth}>\n'
 }
 
 pub fn (self Header) pug() !string {
-	return error("cannot return pug, not implemented")
+	return error('cannot return pug, not implemented')
 }

@@ -1,6 +1,6 @@
 module markdownparser
 
-import freeflowuniverse.crystallib.data.markdownparser.elements { Row, Table }
+import freeflowuniverse.crystallib.data.markdownparser.elements { Table }
 
 fn test_table_no_rows_invalid() {
 	content := '
@@ -24,13 +24,16 @@ fn test_table_one_row() {
 	table := docs.children[1]
 	if table is Table {
 		assert table.num_columns == 3
-		assert table.header == ['Column1', 'Column2', 'Column3']
+		assert table.header.len == 3
+		assert table.header_markdown()! == '| Column1 | Column2 | Column3 |'
 		assert table.alignments == [.left, .left, .left]
-		assert table.rows == [
-			Row{
-				cells: ['Row1Col1', 'Row1Col2', 'Row1Col3']
-			},
-		]
+		assert table.rows.len == 1
+
+		// assert table.rows == [
+		// 	Row{
+		// 		cells: ['Row1Col1', 'Row1Col2', 'Row1Col3']
+		// 	},
+		// ]
 		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | :-- | :-- | :-- |
 | Row1Col1 | Row1Col2 | Row1Col3 |
@@ -51,16 +54,18 @@ fn test_table_two_rows() {
 	table := docs.children[1]
 	if table is Table {
 		assert table.num_columns == 3
-		assert table.header == ['Column1', 'Column2', 'Column3']
+		assert table.header.len == 3
+		assert table.header_markdown()! == '| Column1 | Column2 | Column3 |'
 		assert table.alignments == [.left, .left, .left]
-		assert table.rows == [
-			Row{
-				cells: ['Row1Col1', 'Row1Col2', 'Row1Col3']
-			},
-			Row{
-				cells: ['Row2Col1', 'Row2Col2', 'Row2Col3']
-			},
-		]
+		assert table.rows.len == 2
+		// assert table.rows == [
+		// 	Row{
+		// 		cells: ['Row1Col1', 'Row1Col2', 'Row1Col3']
+		// 	},
+		// 	Row{
+		// 		cells: ['Row2Col1', 'Row2Col2', 'Row2Col3']
+		// 	},
+		// ]
 		assert table.markdown()! == '| Column1 | Column2 | Column3 |
 | :-- | :-- | :-- |
 | Row1Col1 | Row1Col2 | Row1Col3 |
@@ -99,7 +104,7 @@ fn test_table_two_rows_one_is_filled_too_much() {
 // |   Column1   | Column2      | Column3 |
 // -|--------------------------|--
 // |   Row1Col1  | Row1Col2     | Row1Col3
-// Row2Col1  | Row2Col2     | Row2Col3       
+// Row2Col1  | Row2Col2     | Row2Col3
 // '
 // 	)!
 // 	assert docs.children.len == 1

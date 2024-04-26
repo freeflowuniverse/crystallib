@@ -3,7 +3,6 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import os
-import freeflowuniverse.crystallib.core.texttools
 
 @[params]
 pub struct TreeExportArgs {

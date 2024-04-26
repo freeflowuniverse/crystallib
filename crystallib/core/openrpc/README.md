@@ -5,9 +5,7 @@ OpenRPC V library. Model for OpenRPC, client code generation, and specification 
 ## Definitions
 
 - OpenRPC Specifications: Specifications that define standards for describing JSON-RPC API's.
-
 - [OpenRPC Document](https://spec.open-rpc.org/#openrpc-document): "A document that defines or describes an API conforming to the OpenRPC Specification."
-
 - OpenRPC Client: An API Client (using either HTTP or Websocket) that governs functions (one per RPC Method defined in OpenRPC Document) to communicate with RPC servers and perform RPCs.
 
 ## OpenRPC Document Generation
@@ -107,6 +105,6 @@ The best way to understand how the document generation works is through the exam
 Run this command from the root of the openrpc module.
 
 ```bash
-    v run cli/cli.v docgen -t 'PetStore API' -o examples/petstore_client -f 'client.v' examples/petstore_client
+v run cli/cli.v docgen -t 'PetStore API' -o examples/petstore_client -f 'client.v' examples/petstore_client
 ```
 This generates an OpenRPC Document called PetStore API from the code in examples/petstore_client, excluding the client.v file, and writes it to examples/petstore_client/openrpc.json

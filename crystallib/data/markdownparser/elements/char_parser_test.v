@@ -68,7 +68,7 @@ fn test_charparser3_error() {
 		assert ln.type_name == 'link'
 		assert ln.cat == .image
 		assert ln.state == .error
-		assert ln.error_msg.contains("any link starting with ! needs to be image")		
+		assert ln.error_msg.contains('any link starting with ! needs to be image')
 	}
 }
 
@@ -100,7 +100,6 @@ fn test_charparser_link() {
 	}
 }
 
-
 fn test_charparser_link_error() {
 	mut txt := '![a](b)'
 	mut p2 := Paragraph{
@@ -123,10 +122,9 @@ fn test_charparser_link_error() {
 		assert ln.url == 'b'
 		assert ln.filename == 'b'
 		assert ln.state == .error
-		assert ln.error_msg.contains("any link starting with ! needs to be image")
+		assert ln.error_msg.contains('any link starting with ! needs to be image')
 	}
 }
-
 
 fn test_charparser_link_trailing_spaces() {
 	mut txt := '[a](b) '
@@ -155,7 +153,7 @@ fn test_charparser_link_ignore_trailing_newlines() {
 	assert p2.children.len == 2
 	assert p2.children[0].markdown()! == '[a](b.md)'
 	assert p2.children.last().markdown()! == '\n \n'
-	assert p2.children.last().type_name == 'text'	
+	assert p2.children.last().type_name == 'text'
 }
 
 fn test_charparser_link_comment_text() {

@@ -14,7 +14,7 @@ pub mut:
 	moresites   bool // this means we can look for the content on multiple source sites, site does not have to be specified
 	description string
 	url         string
-	anchor 		string
+	anchor      string
 	// identification of link:
 	filename string // is the name of the page/file where the link points too
 	path     string // is path in the site
@@ -97,7 +97,7 @@ fn (self Link) markdown_include() string {
 }
 
 pub fn (self Link) markdown() !string {
-	if self.url.contains('header_new'){
+	if self.url.contains('header_new') {
 		print_backtrace()
 	}
 	if self.state == .init {
@@ -108,7 +108,9 @@ pub fn (self Link) markdown() !string {
 	// represent description as link if there is link child, might be processed
 	description := if self.children.len == 1 && self.children[0] is Link {
 		self.children[0].markdown()!
-	} else { self.description }
+	} else {
+		self.description
+	}
 
 	mut link_filename := self.filename
 
@@ -124,7 +126,7 @@ pub fn (self Link) markdown() !string {
 		if self.cat == LinkType.image {
 			pre = '!'
 		}
-		anchor := if self.anchor != '' {'#${self.anchor}'} else {''}
+		anchor := if self.anchor != '' { '#${self.anchor}' } else { '' }
 		if self.extra.trim_space() == '' {
 			out = '${pre}[${description}](${link_filename}${anchor})'
 		} else {
@@ -194,7 +196,7 @@ fn (mut link Link) parse() {
 		// link.url = link.url.all_before('#')
 	} else {
 		// TODO: this is temproary fix for non anchor links not working
-		link.url = '${link.url}#'
+		// link.url = '${link.url}#'
 	}
 
 	// // parse link description as paragraph
@@ -202,7 +204,7 @@ fn (mut link Link) parse() {
 	// 	link.paragraph_new(mut link.parent_doc(), link.description)
 	// 	println('debugzoni ${link.children()}')
 	// }
-	
+
 	if link.url.contains('://') {
 		// linkstate = LinkState.ok
 		link.isexternal = true

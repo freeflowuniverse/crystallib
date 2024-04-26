@@ -91,6 +91,11 @@ pub fn jsonrpcrequest_decode_method(data string) !string {
 	return decoded.method
 }
 
+pub fn jsonrpcrequest_decode_id(data string) !string {
+	decoded := json.decode(JsonRpcRequestAny, data)!
+	return decoded.id
+}
+
 pub fn jsonrpcresponse_decode[D](data string) !JsonRpcResponse[D] {
 	return json.decode(JsonRpcResponse[D], data)!
 }
