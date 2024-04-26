@@ -15,7 +15,7 @@ import freeflowuniverse.crystallib.lang.python
 
 //a generic which inherits from base
 pub struct B2Client[T] {
-	play.BaseConfig[T]
+	base.BaseConfig[T]
 pub mut:
     //this is the custom part of the client
 	py  python.PythonEnv
@@ -25,7 +25,7 @@ pub mut:
 
 @[params]
 pub struct Config {
-	play.ConfigBase
+	base.ConfigBase
 	configtype string = 'b2client' //needs to be defined
 pub mut:
     //the custom config as relevant for this client (app)

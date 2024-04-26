@@ -1,7 +1,7 @@
 module python
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.core.dbfs
+// import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.core.texttools
@@ -59,7 +59,7 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 		// means error
 		mut msg := ' - error in execution of python script: ${scriptpath}\n'
 		msg += 'ERROR:\n'
-		msg += job.error.join_lines()
+		msg += job.error.str()
 		return error(msg)
 	}
 
@@ -67,7 +67,7 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 
 	mut o := []string{}
 	mut start := false
-	for l in job.output {
+	for l in job.output.split_into_lines() {
 		if l.trim_space().starts_with(args.result_delimiter) {
 			start = true
 			continue

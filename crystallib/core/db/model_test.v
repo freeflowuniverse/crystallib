@@ -127,7 +127,7 @@ fn test_find_remark() {
 
 	r = m.remarks.find_remark(
 		time_from: ourtime.OurTime{
-			unix: i64(time.now().unix_time()) - time.second
+			unix: i64(time.now().unix()) - time.second
 		}
 	)!
 	assert r.len == 3

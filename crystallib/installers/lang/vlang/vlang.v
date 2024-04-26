@@ -1,18 +1,38 @@
 module vlang
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.sysadmin.downloader
 
-pub fn install(args InstallArgs) ! {
+pub fn install(args_ InstallArgs) ! {
+
+	mut args := args_
+	version := '0.4.5'
+
+	res := os.execute('${osal.profile_path_source_and()} v --version')
+	if res.exit_code == 0 {
+		r := res.output.split_into_lines().filter(it.trim_space().starts_with('V'))
+		if r.len != 1 {
+			return error("couldn't parse v-analyzer version.\n${res.output}")
+		}
+		myversion := r[0].all_after_first('V ').all_before(' ').trim_space()
+		println("V version: '${myversion}'")
+		if texttools.version(version) > texttools.version(myversion) {
+			args.reset = true
+		}
+	} else {
+		args.reset = true
+	}
+
 	// install vlang if it was already done will return true
-	if args.reset == false && osal.done_exists('install_vlang') {
-		// println('   v already installed')
+	if args.reset == false{
 		return
 	}
+
 	console.print_header('install vlang')
 	base.develop(reset: args.reset)!
 
@@ -54,10 +74,10 @@ pub mut:
 
 pub fn v_analyzer_install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.0.4-beta.1.27d09e3'
+	version := '0.0.4'
 
-	res := os.execute('${osal.profile_path_source_and()} v-analyzer --version')
-	if res.exit_code == 0 {
+	res := os.execute('${osal.profile_path_source_and()} v-analyzer version')
+	if false && res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().starts_with('v-analyzer'))
 		if r.len != 1 {
 			return error("couldn't parse v-analyzer version.\n${res.output}")

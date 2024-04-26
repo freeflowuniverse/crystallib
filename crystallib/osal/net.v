@@ -69,10 +69,10 @@ pub mut:
 // timeout u16 = 2000 // total time in milliseconds to keep on trying
 //```
 pub fn tcp_port_test(args TcpPortTestArgs) bool {
-	start_time := time.now().unix_time_milli()
+	start_time := time.now().unix_milli()
 	mut run_time := 0.0
 	for true {
-		run_time = time.now().unix_time_milli()
+		run_time = time.now().unix_milli()
 		if run_time > start_time + args.timeout {
 			return false
 		}

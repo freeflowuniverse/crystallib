@@ -235,7 +235,7 @@ pub fn (mut w Window) output() !string {
 
 pub fn (mut w Window) output_wait(c_ string, timeoutsec int) ! {
 	mut t := ourtime.now()
-	start := t.unix_time()
+	start := t.unix()
 	c := c_.replace('\n', '')
 	for i in 0 .. 2000 {
 		o := w.output()!
@@ -248,7 +248,7 @@ pub fn (mut w Window) output_wait(c_ string, timeoutsec int) ! {
 			return
 		}
 		mut t2 := ourtime.now()
-		if t2.unix_time() > start + timeoutsec {
+		if t2.unix() > start + timeoutsec {
 			return error('timeout on output wait for tmux.\n${w} .\nwaiting for:\n${c}')
 		}
 		time.sleep(100 * time.millisecond)

@@ -2,25 +2,26 @@ module base
 
 import json
 
+// @[heap]
+// pub struct BaseConfigurator {
+// pub mut:
+
+// }
+
 @[heap]
-pub struct ConfigBase {
+pub struct Configurator[T] {
 pub mut:
 	context     &Context @[skip; str: skip]
 	instance    string
 	description string
 	configured  bool
-}
-
-@[heap]
-pub struct Configurator[T] {
-	ConfigBase
 	configtype string // e.g. sshclient
 }
 
 @[params]
 pub struct ConfiguratorArgs {
 pub mut:
-	context  &Context
+	context  &Context //optional context for the configurator
 	instance string   @[required]
 }
 
@@ -28,9 +29,10 @@ pub mut:
 // instance is the instance of the config e.g. kds
 // the context defines the context in which we operate, is optional will get the default one if not set
 pub fn configurator_new[T](args ConfiguratorArgs) !Configurator[T] {
+
 	return Configurator[T]{
 		context: args.context
-		configtype: T{}.configtype
+		configtype: T.name.to_lower()
 		instance: args.instance
 	}
 }
@@ -40,9 +42,7 @@ fn (mut self Configurator[T]) config_key() string {
 }
 
 // set the full configuration as one object to dbconfig
-pub fn (mut self Configurator[T]) set(args_ T) ! {
-	mut args := args_
-	args.instance = self.instance
+pub fn (mut self Configurator[T]) set(args T) ! {
 	mut db := self.context.db_config_get()!
 	data := json.encode_pretty(args)
 	db.set(self.config_key(), data)!

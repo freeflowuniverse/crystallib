@@ -86,12 +86,12 @@ pub fn (ot OurTime) day() string {
 
 // returns as epoch (seconds)
 pub fn (ot OurTime) int() int {
-	return int(ot.time().unix_time())
+	return int(ot.time().unix())
 }
 
 // set ourtime to now
 pub fn (mut t OurTime) now() {
-	t.unix = i64(time.now().unix_time())
+	t.unix = i64(time.now().unix())
 }
 
 // get time from vlang
@@ -100,7 +100,7 @@ pub fn (t OurTime) time() time.Time {
 }
 
 // get time from vlang
-pub fn (t OurTime) unix_time() i64 {
+pub fn (t OurTime) unix() i64 {
 	return t.unix
 }
 

@@ -158,9 +158,9 @@ fn (mut pm ProcessMap) str() string {
 }
 
 fn (mut pm ProcessMap) scan() ! {
-	now := time.now().unix_time()
+	now := time.now().unix()
 	// only scan if we didn't do in last 5 seconds
-	if pm.lastscan.unix_time() > now - 5 {
+	if pm.lastscan.unix() > now - 5 {
 		// means scan is ok
 		if pm.state == PMState.ok {
 			return

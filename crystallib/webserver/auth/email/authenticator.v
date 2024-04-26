@@ -134,7 +134,7 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 		sha256.block_size)
 
 	encoded_signature := base64.url_encode(signature.bytestr().bytes())
-	link := '<a href="${config.link}/${config.email}/${expiration.unix_time()}/${encoded_signature}">Click to login</a>'
+	link := '<a href="${config.link}/${config.email}/${expiration.unix()}/${encoded_signature}">Click to login</a>'
 	auth.logger.debug('Email authenticator: Created login link ${link}')
 
 	mail := smtp.Mail{
