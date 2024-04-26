@@ -18,6 +18,7 @@ module httpconnection
 import x.json2
 import net.http
 import freeflowuniverse.crystallib.core.crystaljson
+import freeflowuniverse.crystallib.ui.console
 
 // Build url from Request and httpconnection
 fn (mut h HTTPConnection) url(req Request) string {
@@ -54,6 +55,7 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 	mut err_message := ''
 	mut from_cache := false // used to know if result came from cache
 	is_cacheable := h.is_cacheable(req)
+
 	// 1 - Check cache if enabled try to get result from cache
 	if is_cacheable {
 		result = h.cache_get(req)!
@@ -68,6 +70,9 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 		mut new_req := http.new_request(req.method, url, req.data)
 		// joining the header from the HTTPConnection with the one from Request
 		new_req.header = h.header()
+		if req.debug {
+			console.print_debug(new_req.str())
+		}
 		for _ in 0 .. h.retry {
 			response = new_req.do() or {
 				err_message = 'Cannot send rew:${req}\nerror:${err}'
@@ -75,6 +80,9 @@ pub fn (mut h HTTPConnection) send(req Request) !Result {
 				continue
 			}
 			break
+		}
+		if req.debug {
+			console.print_debug(response.str())
 		}
 		if response.status_code == 0 {
 			return error(err_message)
@@ -112,7 +120,6 @@ pub fn (mut h HTTPConnection) post_json_str(req_ Request) !string {
 pub fn (mut h HTTPConnection) get_json_dict(req Request) !map[string]json2.Any {
 	data_ := h.get(req)!
 	mut data := map[string]json2.Any{}
-	// println(data_)
 	data = crystaljson.json_dict_filter_any(data_, false, [], [])!
 	return data
 }
@@ -129,6 +136,7 @@ pub fn (mut h HTTPConnection) get_json_list(req Request) ![]string {
 pub fn (mut h HTTPConnection) get_json(req Request) !string {
 	h.default_header.add(.content_language, 'Content-Type: application/json')
 	mut data_ := h.get(req)!
+
 	return data_
 }
 

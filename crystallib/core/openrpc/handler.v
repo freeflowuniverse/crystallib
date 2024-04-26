@@ -1,3 +1,3 @@
 module openrpc
 
-// pub struct 
+// pub struct

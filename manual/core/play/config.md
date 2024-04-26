@@ -8,7 +8,7 @@ A good example to look at is [crystallib/clients/b2](crystallib/clients/b2)
 
 ```golang
 module b2
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.lang.python

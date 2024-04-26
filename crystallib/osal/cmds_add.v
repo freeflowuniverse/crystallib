@@ -142,7 +142,7 @@ pub fn profile_path_source_and() string {
 	}
 	pp := profile_path()
 	if os.exists(pp) {
-		return 'source ${pp} &&'
+		return '. ${pp} &&'
 	}
 	return ''
 }

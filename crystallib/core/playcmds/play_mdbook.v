@@ -1,11 +1,10 @@
 module playcmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
-// import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.core.playbook
 
-pub fn play_mdbook(mut session play.Session) ! {
+pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 	mut buildroot := ''
 	mut publishroot := ''
 	mut coderoot := ''
@@ -14,12 +13,12 @@ pub fn play_mdbook(mut session play.Session) ! {
 	mut pull := false
 
 	// check if any actions for doctree, if not then nothing to do here
-	dtactions := session.plbook.find(filter: 'doctree.')!
+	dtactions := plbook.find(filter: 'doctree.')!
 	if dtactions.len == 0 {
 		return
 	}
 
-	mut config_actions := session.plbook.find(filter: 'books:configure')!
+	mut config_actions := plbook.find(filter: 'books:configure')!
 
 	if config_actions.len > 1 {
 		return error('can only have 1 config action for books')
@@ -44,7 +43,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 		name: 'main'
 	)!
 
-	for mut action in session.plbook.find(filter: 'doctree:add')! {
+	for mut action in plbook.find(filter: 'doctree:add')! {
 		mut p := action.params
 		url := p.get_default('url', '')!
 		path := p.get_default('path', '')!
@@ -58,7 +57,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 		action.done = true
 	}
 
-	for mut action in session.plbook.find(filter: 'book:generate')! {
+	for mut action in plbook.find(filter: 'book:generate')! {
 		mut p := action.params
 		name := p.get('name')!
 		url := p.get('url')!
@@ -69,7 +68,7 @@ pub fn play_mdbook(mut session play.Session) ! {
 		buildroot_book := '${buildroot}/${name}'
 		tree.export(dest: buildroot_book, reset: true)!
 
-		mut mdbooks := mdbook.get(instance: name, session: &session)!
+		mut mdbooks := mdbook.get(instance: name, session: plbook.session)!
 
 		mut cfg := mdbooks.config()!
 		cfg.path_build = buildroot

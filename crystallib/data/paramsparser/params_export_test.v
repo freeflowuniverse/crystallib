@@ -280,9 +280,9 @@ fn test_export_10() {
 }
 
 fn test_export_list() {
-	params := parse("list0: ['Kiwi']\nlist1: ['Apple', 'Banana']") or { panic(err) }
+	params := parse("list0: 'Kiwi'\nlist1: 'Apple', 'Banana'") or { panic(err) }
 	paramsout := params.export()
-	assert paramsout.trim_space() == "list0:['Kiwi'] list1:['Apple', 'Banana']"
+	assert paramsout.trim_space() == 'list0:Kiwi list1:Apple,Banana'
 }
 
 fn test_export_text() {

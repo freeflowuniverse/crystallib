@@ -1,6 +1,5 @@
 module elements
 
-import strconv
 import os
 
 // is a char parser
@@ -54,9 +53,6 @@ fn (mut parser ParserChar) char(nr int) !string {
 		return ''
 	}
 	mut c := parser.chars.substr(nr, nr + 1)
-	if c == '`' {
-		c = "'"
-	}
 	if c == '“' { // TODO: doesn't seem to be working, it can't because unicode chars are not 1 char, they are more than 1
 		c = '"'
 	}

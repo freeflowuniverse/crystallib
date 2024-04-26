@@ -61,6 +61,10 @@ pub fn (mut e CEngine) reset_all() ! {
 	exec(cmd: 'podman rmi -a -f', stdout: false)!
 	e.bcontainers_delete_all()!
 	osal.done_reset()!
+	if osal.platform() == .arch {
+		exec(cmd: 'systemctl status podman.socket', stdout: false)!
+	}
+
 	e.load()!
 }
 

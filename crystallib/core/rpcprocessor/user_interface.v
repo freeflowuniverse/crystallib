@@ -11,57 +11,51 @@ import eventbus
 import rand
 
 struct RPCProcessorUI {
-    vweb.Context
+	vweb.Context
 pub mut:
-    processor RPCProcessor @[vweb_global]
-    client Client @[vweb_global]
+	processor RPCProcessor @[vweb_global]
+	client    Client       @[vweb_global]
 }
 
 pub fn (mut p RPCProcessor) run_ui() ! {
-    client := new_client() or {panic(err)}
-    ui := RPCProcessorUI{
-        processor: p
-        client: client
-    }
-    vweb.run(ui, 8080)
+	client := new_client() or { panic(err) }
+	ui := RPCProcessorUI{
+		processor: p
+		client: client
+	}
+	vweb.run(ui, 8080)
 }
 
 pub fn (mut ui RPCProcessorUI) index() vweb.Result {
-    handlers := ui.client.get_handlers() or {panic(err)}
-    latest_activity := ui.client.get_latest_activity() or {panic(err)}
-    return ui.html($tmpl('./templates/index.html'))
+	handlers := ui.client.get_handlers() or { panic(err) }
+	latest_activity := ui.client.get_latest_activity() or { panic(err) }
+	return ui.html($tmpl('./templates/index.html'))
 }
 
 // pub fn (mut ui RPCProcessorUI) handler() vweb.Result {
 //     return ui.html($tmpl('./templates/handler.html'))
 // }
 
-@[get; '/handler/:name']
+@['/handler/:name'; get]
 pub fn (mut ui RPCProcessorUI) handler_page(name string) vweb.Result {
-    handler := ui.client.get_handler(name) or {
-        panic(err)
-    }
-    return ui.html($tmpl('./templates/handler.html'))
+	handler := ui.client.get_handler(name) or { panic(err) }
+	return ui.html($tmpl('./templates/handler.html'))
 }
 
-@[get; '/rpcs/:id']
+@['/rpcs/:id'; get]
 pub fn (mut ui RPCProcessorUI) rpc(id string) vweb.Result {
-    rpc := ui.client.get_rpc(id) or {
-        panic(err)
-    }
-    return ui.html($tmpl('./templates/rpc.html'))
+	rpc := ui.client.get_rpc(id) or { panic(err) }
+	return ui.html($tmpl('./templates/rpc.html'))
 }
 
 struct Method {
 pub:
-    name string
+	name string
 }
 
-@[get; '/handler/:name/methods']
+@['/handler/:name/methods'; get]
 pub fn (mut ui RPCProcessorUI) handler_methods(name string) vweb.Result {
-    methods := []Method{}
-    handler := ui.client.get_handler(name) or {
-        panic(err)
-    }
-    return ui.html($tmpl('./templates/handler_methods.html'))
+	methods := []Method{}
+	handler := ui.client.get_handler(name) or { panic(err) }
+	return ui.html($tmpl('./templates/handler_methods.html'))
 }

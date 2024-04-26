@@ -62,7 +62,7 @@ pub fn (mut executor ExecutorSSH) exec(args_ ExecArgs) !string {
 	}
 	args.cmd = 'ssh -o StrictHostKeyChecking=no ${executor.user}@${executor.ipaddr.addr} ${port} "${args.cmd}"'
 	res := osal.exec(cmd: args.cmd, stdout: args.stdout, debug: executor.debug)!
-	return res.output.join_lines()
+	return res.output
 }
 
 pub fn (mut executor ExecutorSSH) exec_interactive(args_ ExecArgs) ! {

@@ -13,7 +13,7 @@ pub mut:
 
 pub fn (mut executor ExecutorLocal) exec(args ExecArgs) !string {
 	res := osal.exec(cmd: args.cmd, stdout: args.stdout, debug: executor.debug)!
-	return res.output.join_lines()
+	return res.output
 }
 
 pub fn (mut executor ExecutorLocal) exec_interactive(args ExecArgs) ! {

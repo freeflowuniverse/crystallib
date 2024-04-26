@@ -2,11 +2,11 @@ module gitea
 
 // import os
 import freeflowuniverse.crystallib.clients.httpconnection
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import os
 
 struct GiteaClient[T] {
-	play.Base[T]
+	base.Base[T]
 pub mut:
 	connection &httpconnection.HTTPConnection
 }

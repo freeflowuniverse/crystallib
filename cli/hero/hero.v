@@ -3,8 +3,8 @@ module main
 import os
 import cli { Command }
 import freeflowuniverse.crystallib.core.herocmds
-import freeflowuniverse.crystallib.core.play
-import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.installers.base as installerbase
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.osal
@@ -30,7 +30,7 @@ fn do() ! {
 				default: true
 			)!
 			if toinstall{
-				base.install()!
+				installerbase.install()!
 			}			
 			console.clear()
 			console.print_stderr("Brew installed, please follow instructions and do hero ... again.")
@@ -40,10 +40,9 @@ fn do() ! {
 	}
 
 	if toinstall{
-		base.install()!
+		installerbase.install()!
 	}
 
-	play.init_default()!
 
 	herocmds.cmd_bootstrap(mut cmd)
 	herocmds.cmd_run(mut cmd)

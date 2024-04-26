@@ -2,7 +2,7 @@ module hetzner
 
 import encoding.base64
 import freeflowuniverse.crystallib.ui as gui
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 // import os
 // import json
@@ -23,7 +23,7 @@ import freeflowuniverse.crystallib.core.play
 pub struct ClientArgsGet {
 pub mut:
 	instance string = 'default'
-	session  ?&play.Session
+	session  ?&base.Session
 }
 
 pub fn get(args_ ClientArgsGet) !HetznerClient {
@@ -70,7 +70,7 @@ pub mut:
 	login    string
 	passwd   string
 	base     string = 'https://robot-ws.your-server.de'
-	session  ?&play.Session
+	session  ?&base.Session
 }
 
 // get a new hetzner client, will create if it doesn't exist or ask for new configuration

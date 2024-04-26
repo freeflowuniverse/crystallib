@@ -1,13 +1,14 @@
 module mail
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import net.smtp
 
 pub struct MailClient[T] {
-	play.Base[T]
+	play.BaseConfig
 pub mut:
+	config      Config
 	smtp_client &smtp.Client
 }
 

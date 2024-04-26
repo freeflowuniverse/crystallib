@@ -12,7 +12,6 @@ pub fn package_refresh() ! {
 		// nothing to do
 		return
 	}
-
 	if platform_ == .ubuntu {
 		exec(cmd: 'apt-get update') or { return error('Could not update packages\nerror:\n${err}') }
 		return

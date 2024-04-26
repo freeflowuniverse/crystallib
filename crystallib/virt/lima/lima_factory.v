@@ -1,6 +1,6 @@
 module lima
 
-import freeflowuniverse.crystallib.installers.lima
+import freeflowuniverse.crystallib.installers.virt.lima
 import freeflowuniverse.crystallib.ui.console
 import virt.lima.raw
 import os

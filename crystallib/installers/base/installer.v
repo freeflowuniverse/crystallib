@@ -74,7 +74,7 @@ pub fn install(args InstallArgs) ! {
 	} else if pl == .arch {
 		console.print_header(' - Arch prepare')
 		osal.package_refresh()!
-		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis')!
+		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis,unzip')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
@@ -113,7 +113,7 @@ pub fn develop(args InstallArgs) ! {
 		return
 	}
 
-	install()!
+	install(reset: args.reset)!
 	if pl == .osx {
 		console.print_header(' - OSX prepare for development.')
 		osal.package_install('bdw-gc,libpq')!
@@ -128,7 +128,7 @@ pub fn develop(args InstallArgs) ! {
 	} else if pl == .alpine {
 		osal.package_install('libpq-dev,make')!
 	} else if pl == .arch {
-		osal.package_install('cc,make,libpq')!
+		osal.package_install('tcc,make,postgresql-libs')!
 	} else {
 		panic('only arch, alpine, ubuntu and osx supported for now')
 	}

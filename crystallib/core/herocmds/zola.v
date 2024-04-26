@@ -61,11 +61,11 @@ fn cmd_zola_execute(cmd Command) ! {
 	mut path := cmd.flags.get_string('path') or { '' }
 	if path.len > 0 || url.len > 0 {
 		// execute the attached playbook
-		mut session, _ := session_run_do(cmd)!
+		mut plbook, _ := session_run_do(cmd)!
 
 		// get name from the book.generate action
 		if name == '' {
-			mut a := session.plbook.action_get_by_name(actor: 'zola', name: 'generate')!
+			mut a := plbook.action_get_by_name(actor: 'zola', name: 'generate')!
 			name = a.params.get('name') or { '' }
 		}
 	} else {

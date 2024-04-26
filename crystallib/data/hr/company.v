@@ -1,15 +1,15 @@
 module hr
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
 
 pub struct Company {
 pub mut:
 	name        string
 	country     &Country
-	description ?string
-	purpose     ?string
-	address     ?string
+	description string
+	purpose     string
+	address     string
 	shares      ?CompanyShares
 }
 
@@ -20,7 +20,7 @@ pub mut:
 	valuation_date   string
 }
 
-fn (mut self HRData) add_companies(mut session play.Session) {
+fn (mut self HRData) add_companies(mut session base.Session) {
 	for mut action in session.plbook.find(filter: 'cos:company_define') or { [] } {
 		company := self.extract_company_information(mut action) or {
 			self.errors << 'invalid company information: ${err}'

@@ -102,7 +102,7 @@ pub fn (mut j Job) deploy_vms(config VMConfig, quantity int) {
 // 	j.
 // 	result := osal.exec(cmd: 'tfrobot deploy -c ${jsonfile.path}', stdout: true)!
 
-// 	vms := parse_output(result.output.join_lines())!
+// 	vms := parse_output(result.output)!
 // 	// for vm in vms {
 // 	// 	j.vms[vm.name] = vm
 // 	// }

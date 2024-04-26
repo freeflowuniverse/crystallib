@@ -10,7 +10,7 @@ cid       string // rid.cid or just cid
 name      string // a unique name in cid
 params    paramsparser.Params
 redis     &redisclient.Redis
-contextdb &fskvs.ContextDB  
+dbcollection &dbfs.DBCollection  
 ```    
 
 - cid is the unique id for a circle.
@@ -21,7 +21,7 @@ contextdb &fskvs.ContextDB
 
 
 ```golang
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 
 struct ContextGetArgs {
@@ -63,10 +63,10 @@ fn (mut self Context) save() !
 ```golang
 
 //get a unique db with a name per context
-fn (mut self Context) db_get(dbname string) !fskvs.DB 
+fn (mut self Context) db_get(dbname string) !dbfs.DB 
 
 //get configuration DB is always per context
-fn (mut self Context) db_config_get() !fskvs.DB
+fn (mut self Context) db_config_get() !dbfs.DB
 
 ```
 

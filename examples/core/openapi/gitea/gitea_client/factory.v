@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.clients.httpconnection
 import os
 
 struct GiteaClient[T] {
-	play.Base[T]
+	base.Base[T]
 mut:
 	connection &httpconnection.HTTPConnection
 }

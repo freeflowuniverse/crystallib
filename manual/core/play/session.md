@@ -23,7 +23,7 @@ context             Context        //link back to the context
 - playbook_text       string        //heroscript to execute
 
 ```golang
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.develop.gittools
 
 mut session:=play.session_new(
@@ -74,9 +74,9 @@ is stored on filesystem
 ```golang
 
 // get db of the session, is unique per session
-fn (mut self Session) db_get() !fskvs.DB {
+fn (mut self Session) db_get() !dbfs.DB {
 
 // get the db of the config, is unique per context
-fn (mut self Session) db_config_get() !fskvs.DB {
+fn (mut self Session) db_config_get() !dbfs.DB {
 
 ```
