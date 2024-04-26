@@ -9,7 +9,6 @@ title = "@book.args.title"
 enable = true
 level = "@book.args.foldlevel"
 
-
 [output]
 
 [output.html]
