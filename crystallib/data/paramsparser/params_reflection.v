@@ -16,9 +16,12 @@ pub fn (params Params) decode_struct[T](_ T) !T {
 		$if field.typ is string {
 			t.$(field.name) = params.get(field.name)!
 		}
-		$if field.typ is int {
+		$if field.typ is int  {
 			t.$(field.name) = params.get_int(field.name)!
 		}
+		$if field.typ is f64 || field.typ is f32 {
+			t.$(field.name) = params.get_float(field.name)!
+		}		
 		$if field.typ is bool {
 			t.$(field.name) = params.get_default_true(field.name)
 		}
@@ -37,7 +40,13 @@ pub fn (params Params) decode_struct[T](_ T) !T {
 	return t
 }
 
-pub fn encode[T](t T) !Params {
+@[params]
+pub struct EncodeArgs{
+pub:
+	recursive bool = true
+}
+
+pub fn encode[T](t T, args EncodeArgs) !Params {
 	mut params := Params{}
 
 	mut mytype := reflection.type_of[T](t)
@@ -60,6 +69,11 @@ pub fn encode[T](t T) !Params {
 				key: field.name
 				value: '${val}'
 			}
+		} $else $if field.typ is f64 {
+			params.params << Param{
+				key: field.name
+				value: '${val}'
+			}			
 		} $else $if field.typ is bool {
 			if val {
 				params.params << Param{
@@ -96,11 +110,23 @@ pub fn encode[T](t T) !Params {
 				key: field.name
 				value: v2
 			}
-		} $else $if field.typ is $struct {
-			child_params := encode(val)!
+		} $else $if field.typ is []f64 {
+			mut v2 := ''
+			for i in val {
+				v2 += '${i},'
+			}
+			v2 = v2.trim(',')
 			params.params << Param{
 				key: field.name
-				value: child_params.export()
+				value: v2
+			}			
+		} $else $if field.typ is $struct {
+			if args.recursive{
+				child_params := encode(val)!
+				params.params << Param{
+					key: field.name
+					value: child_params.export()
+				}
 			}
 		} $else {
 		}
@@ -108,4 +134,4 @@ pub fn encode[T](t T) !Params {
 	return params
 }
 
-// BACKLOG: can we do the encode recursive?
+

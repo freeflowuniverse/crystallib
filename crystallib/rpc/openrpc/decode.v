@@ -9,18 +9,18 @@ import freeflowuniverse.crystallib.data.jsonschema { Reference, decode_schemaref
 fn decode(data string) !OpenRPC {
 	mut object := json.decode(OpenRPC, data)!
 	data_map := json2.raw_decode(data)!.as_map()
-	if 'components' in data_map { 
+	if 'components' in data_map {
 		object.components = decode_components(data_map)!
 	}
 
 	return object
 }
 
-fn decode_components(data_map map[string]Any) !Components {	
+fn decode_components(data_map map[string]Any) !Components {
 	mut components := Components{}
 	components_map := data_map['components'].as_map()
-	
-	if 'contentDescriptors' in components_map { 
+
+	if 'contentDescriptors' in components_map {
 		descriptors_map := components_map['contentDescriptors'].as_map()
 		for key, value in descriptors_map {
 			descriptor := decode_content_descriptor_ref(value.as_map())!
@@ -28,7 +28,7 @@ fn decode_components(data_map map[string]Any) !Components {
 		}
 	}
 
-	if 'schemas' in components_map { 
+	if 'schemas' in components_map {
 		schemas_map := components_map['schemas'].as_map()
 		for key, value in schemas_map {
 			schema := jsonschema.decode(value.str())!

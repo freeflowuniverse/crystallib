@@ -58,7 +58,7 @@ pub fn (mut backend Indexer) new[T](obj T) !int {
 	}
 	insert_query := 'insert into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
 	backend.db.exec(insert_query)!
-	
+
 	return id
 }
 

@@ -3,6 +3,7 @@ module encoderhero
 import freeflowuniverse.crystallib.data.paramsparser
 import time
 import v.reflection
+import freeflowuniverse.crystallib.data.ourtime
 
 // Encoder encodes the an `Any` type into HEROSCRIPT representation.
 // It provides parameters in order to change the end result.
@@ -24,6 +25,8 @@ pub fn encode[T](val T) !string {
 
 	$if T is $struct {
 		e.encode_struct[T](val)!
+	} $else $if T is []$struct {
+		e.add_child_list[T](val,"TODO")
 	} $else {
 		return error('can only add elements for struct or array of structs. \n${val}')
 	}
@@ -41,20 +44,21 @@ pub fn (e Encoder) export() !string {
 
 // needs to be a struct we are adding
 // parent is the name of the action e.g define.customer:contact
-pub fn (mut e Encoder) add[T](val T) ! {
-	// $if T is []$struct {
-	// 	// panic("not implemented")
-	// 	for valitem in val{
-	// 		mut e2:=e.add[T](valitem)!
-	// 	}		
-	// }
+pub fn (mut e Encoder) add_child[T](val T,parent string) ! {
+	$if T is []$struct {
+		mut counter:=0
+		for valitem in val{
+			mut e2:=e.add_child[T](valitem,"${parent}:${counter}")!
+		}
+		return	
+	}
 	mut e2 := Encoder{
 		params: paramsparser.Params{}
 		parent: &e
 		action_names: e.action_names
 	}
-	$if T is $struct && T !is time.Time {
-		e2.params.set('key', '${val}')
+	$if T is $struct {
+		e2.params.set('key', parent)
 		e2.encode_struct[T](val)!
 		e.children << e2
 	} $else {
@@ -62,10 +66,12 @@ pub fn (mut e Encoder) add[T](val T) ! {
 	}
 }
 
-pub fn (mut e Encoder) encode_array[U](val []U) ! {
+pub fn (mut e Encoder) add_child_list[U](val []U, parent string) ! {
 	for i in 0 .. val.len {
+		mut counter:=0
 		$if U is $struct {
-			e.add(val[i])!
+			e.add_child(val[i],"${parent}:${counter}")!
+			counter+=1
 		}
 	}
 }
@@ -81,14 +87,22 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	}
 	e.action_names << action_name
 
-	params := paramsparser.encode[T](t, recursive: false)!
+	params := paramsparser.encode[T](t,recursive=false)!
 	e.params = params
 	$for field in T.fields {
 		val := t.$(field.name)
-		$if val is $struct && val !is time.Time {
-			e.add(val)!
+		$if val is time.Time {
+			// e.add(val)!
+			panic("time not supported")
+		} $else $if val is ourtime.OurTime {
+			panic("ourtime not supported")
+			// e.add(val)!
+		} $else $if val is $struct {
+			e.add_child(val)!
 		} $else $if val is $array {
 			e.encode_array(val)!
+		} $else {
+			return error("can't encode to hero.\n${t}")
 		}
 	}
 	// }

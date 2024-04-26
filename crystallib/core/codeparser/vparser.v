@@ -330,7 +330,7 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
 	mut fields := vparser.parse_fields(args.struct_decl.fields, args.table)
 	fields << vparser.parse_embeds(args.struct_decl.embeds, args.table)
-	
+
 	return Struct{
 		name: args.struct_decl.name.all_after_last('.')
 		description: comments.join(' ')

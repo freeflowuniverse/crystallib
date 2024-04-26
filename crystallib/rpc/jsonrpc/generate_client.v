@@ -1,28 +1,28 @@
 module jsonrpc
 
-import freeflowuniverse.crystallib.core.codemodel {CodeItem, Result, Param, Attribute, Type, StructField, Function, Module, CodeFile, Struct}
+import freeflowuniverse.crystallib.core.codemodel { Attribute, CodeFile, CodeItem, Function, Module, Param, Result, Struct, StructField, Type }
 
 pub struct GenerateClientConfig {
-	name string
+	name    string
 	methods []Function
 }
 
 pub fn generate_client(config GenerateClientConfig) Module {
 	factory_file := generate_client_factory(config.name)
 	return Module{
-		files:[
-			factory_file
+		files: [
+			factory_file,
 		]
 	}
-} 
+}
 
 // generate_client_factory generates a factory code file with factory functions for the client
 pub fn generate_client_factory(name string) CodeFile {
 	mut code := []CodeItem{}
 	code << generate_client_struct(name)
 	code << generate_ws_factory_code(name)
-	
-	return CodeFile {
+
+	return CodeFile{
 		mod: name
 		imports: []
 		items: code
@@ -30,43 +30,53 @@ pub fn generate_client_factory(name string) CodeFile {
 }
 
 pub fn generate_client_struct(name string) Struct {
-	return Struct {
+	return Struct{
 		is_pub: true
 		name: name
 		fields: [
 			StructField{
 				name: 'transport'
-				typ: Type{ symbol: 'jsonrpc.IRpcTransportClient'}
+				typ: Type{
+					symbol: 'jsonrpc.IRpcTransportClient'
+				}
 				is_ref: true
-			}
+			},
 		]
 	}
 }
 
 pub fn generate_ws_factory_code(name string) []CodeItem {
-	ws_factory_param := Struct {
+	ws_factory_param := Struct{
 		name: 'WsClientConfig'
-		attrs: [Attribute{name: 'params'}]
+		attrs: [Attribute{
+			name: 'params'
+		}]
 		fields: [
 			StructField{
 				name: 'address'
-				typ:Type{symbol:'string'}
+				typ: Type{
+					symbol: 'string'
+				}
 			},
 			StructField{
 				name: 'logger'
-				typ:Type{symbol:'log.Logger'}
-			}
+				typ: Type{
+					symbol: 'log.Logger'
+				}
+			},
 		]
 	}
 
-	ws_factory_function := Function {
+	ws_factory_function := Function{
 		is_pub: true
 		name: 'new_ws_client'
 		params: [
 			Param{
 				name: 'config'
-				typ: Type{symbol:'WsClientConfig'}
-			}
+				typ: Type{
+					symbol: 'WsClientConfig'
+				}
+			},
 		]
 		body: 'mut transport := rpcwebsocket.new_rpcwsclient(config.address, config.logger)!
 	spawn transport.run()
@@ -75,7 +85,9 @@ pub fn generate_ws_factory_code(name string) []CodeItem {
 	}'
 		result: Result{
 			result: true
-			typ: Type{symbol: name}
+			typ: Type{
+				symbol: name
+			}
 		}
 	}
 	return [ws_factory_param, ws_factory_function]
@@ -93,7 +105,9 @@ pub fn (mut client PetstoreJsonRpcClient) get_pet(name string) !Pet {
 }
 */
 pub fn generate_client_method(client_struct Struct, method Function) !Function {
-	if method.params.len > 1 { return error('json rpc calls with more than 1 param are not supported')}
+	if method.params.len > 1 {
+		return error('json rpc calls with more than 1 param are not supported')
+	}
 
 	request_stmt := if method.params.len == 0 {
 		"request := jsonrpc.new_jsonrpcrequest[string]('${method.name}', '')"
@@ -109,15 +123,17 @@ pub fn generate_client_method(client_struct Struct, method Function) !Function {
 		'
 	}
 
-	return Function {
+	return Function{
 		...method
-		receiver: Param {
+		receiver: Param{
 			name: 'client'
-			typ: Type{symbol:client_struct.name}
+			typ: Type{
+				symbol: client_struct.name
+			}
 		}
-		result: Result {
+		result: Result{
 			optional: true
 		}
-		body: "${request_stmt}\n${return_stmt}"
+		body: '${request_stmt}\n${return_stmt}'
 	}
 }

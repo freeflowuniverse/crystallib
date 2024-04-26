@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.data.encoderhero
 
 pub struct Backend {
 	indexer Indexer
-	dbs dbfs.DBCollection
+	dbs     dbfs.DBCollection
 }
 
 pub fn new(db_path string) !Backend {

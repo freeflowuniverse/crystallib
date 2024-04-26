@@ -21,7 +21,7 @@ fn test_encode_blank() ! {
 		methods: []Method{}
 	}
 	encoded := doc.encode()!
-	assert encoded.trim_space().split_into_lines().map(it.trim_space()) == blank_openrpc.split_into_lines().map(it.trim_space())
+	assert encoded.trim_space().split_into_lines().map(it.trim_space()) == openrpc.blank_openrpc.split_into_lines().map(it.trim_space())
 }
 
 // test if can correctly encode an OpenRPC doc with a method

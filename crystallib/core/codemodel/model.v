@@ -46,7 +46,7 @@ pub mut:
 	is_ref      bool
 	anon_struct Struct // sometimes fields may hold anonymous structs
 	typ         Type
-	structure Struct
+	structure   Struct
 }
 
 pub struct Attribute {
@@ -113,15 +113,15 @@ pub mut:
 }
 
 pub struct Module {
-	name    string
-	files   []CodeFile
+	name  string
+	files []CodeFile
 	// model   CodeFile
 	// methods CodeFile
 }
 
 pub struct Alias {
-	pub:
+pub:
 	name        string
 	description string
-	typ Type
+	typ         Type
 }

@@ -43,7 +43,7 @@ pub struct License {
 // TODO: make variables field optional bug fixed: https://github.com/vlang/v/issues/18000
 // TODO: server name is required but not for version 1.0.0
 pub struct Server {
-	name        string                    // A name to be used as the cannonical name for the server.
+	name        string // A name to be used as the cannonical name for the server.
 	url         RuntimeExpression         @[required] // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenRPC document is being served. Server Variables are passed into the Runtime Expression to produce a server URL.
 	summary     ?string // A short summary of what the server is.
 	description ?string // An optional string describing the host designated by the URL.
@@ -164,7 +164,7 @@ mut:
 	examples                map[string]Example   // An object to hold reusable Example Objects.
 	links                   map[string]Link      // An object to hold reusable Link Objects.
 	error                   map[string]Error     // An object to hold reusable Error Objects.
-	example_pairing_objects map[string]ExamplePairing    @[json: examplePairingObjects] // An object to hold reusable Example Pairing Objects.
+	example_pairing_objects map[string]ExamplePairing       @[json: examplePairingObjects] // An object to hold reusable Example Pairing Objects.
 	tags                    map[string]Tag // An object to hold reusable Tag Objects.
 }
 
