@@ -37,6 +37,12 @@ pub mut:
 pub fn (context Context) session_new(args_ ContextSessionNewArgs) !Session {
 	mut args := args_
 	if args.name==""{
+		mut r := self.context.redis
+		rkey := 'hero:session:params:${self.name}'
+		if r.exists(rkey)! {
+			paramtxt := r.get(rkey)!
+			self.params = paramsparser.new(paramtxt)!
+		}		
 
 	}
 	t := ourtime.new(args.start)!

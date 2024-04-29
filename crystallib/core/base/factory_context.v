@@ -67,6 +67,8 @@ pub fn context_get(args_ ContextGetArgs) !Context {
 		//make sure we are on the right db
 		r.selectdb(args.id)!
 	}
+
+	
 	
 	mut p := paramsparser.new('')!
 
