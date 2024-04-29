@@ -38,7 +38,7 @@ fn (mut repo GitRepo) load_from_url() ! {
 		}
 		osal.exec(cmd: cmd, debug: false) or {
 			console.print_stderr('GIT FAILED: ${cmd}')
-			return error('Cannot pull repo: ${repo.addr.path()}. Error was ${err}')
+			return error('Cannot pull repo: ${repo.addr.path()!}. Error was ${err}')
 		}
 		repo.load()!
 	}
