@@ -54,7 +54,7 @@ pub mut:
 import freeflowuniverse.crystallib.core.base
 
 pub struct B2Client {
-	play.BaseConfig
+	base.BaseConfig
 pub mut:
 	someprop string
 }
@@ -79,7 +79,6 @@ This will give some super powers to each base inheritted class
 // session_name        string //default will be based on a date when run
 // interactive         bool = true //can ask questions, default on true
 //```
-
 pub fn (mut self BaseConfig) session(args PlayArgs) &Session
 
 pub fn (mut self BaseConfig) context() &Context

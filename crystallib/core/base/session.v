@@ -45,17 +45,17 @@ pub fn (context Context) session_new(args_ ContextSessionNewArgs) !Session {
 	return s
 }
 
-@[params]
-pub struct PLayBookAddArgs {
-pub mut:
-	path      string
-	text      string
-	git_url   string
-	git_pull  bool // will pull if this is set
-	git_reset bool // this means will pull and reset all changes	
-	prio      int = 10
-	run       bool
-}
+// @[params]
+// pub struct PLayBookAddArgs {
+// pub mut:
+// 	path      string
+// 	text      string
+// 	git_url   string
+// 	git_pull  bool // will pull if this is set
+// 	git_reset bool // this means will pull and reset all changes	
+// 	prio      int = 10
+// 	run       bool
+// }
 
 ///////// LOAD & SAVE
 

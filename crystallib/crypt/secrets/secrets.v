@@ -9,6 +9,9 @@ import crypto.md5
 import regex
 import os
 
+import encoding.base64
+
+
 pub struct SecretBox {
 pub mut:
 	secret string
@@ -20,6 +23,29 @@ pub mut:
 	reset       bool
 	interactive bool = true
 }
+
+//will use our secret as configured for the hero to encrypt
+pub fn encrypt(txt string) !string {
+	mut b:=get()!
+	d:= aes_symmetric.encrypt_str(txt, b.secret)
+	return base64.encode_str(d)
+
+}
+
+pub fn decrypt(txt string) !string {
+	mut b:=get()!
+	txt2:=base64.decode_str(txt)
+	return aes_symmetric.decrypt_str(txt2, b.secret)
+}
+
+//make sure that the default passphrase  or passwd is gone
+pub fn delete_passwd() ! {
+	mut b:=get()!
+	mut r := redisclient.core_get()!
+	key := 'secretbox:main'
+	r.del(key)!
+}
+
 
 pub fn get(args SecretBoxArgs) !SecretBox {
 	if args.reset {

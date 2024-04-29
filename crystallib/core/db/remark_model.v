@@ -166,13 +166,13 @@ pub fn (remarks Remarks) find_remark(args FindRemarkArgs) ![]Remark {
 		}
 
 		if p := args.time_from {
-			if remark.time.unix_time() < p.unix_time() {
+			if remark.time.unix() < p.unix() {
 				continue
 			}
 		}
 
 		if p := args.time_to {
-			if remark.time.unix_time() > p.unix_time() {
+			if remark.time.unix() > p.unix() {
 				continue
 			}
 		}

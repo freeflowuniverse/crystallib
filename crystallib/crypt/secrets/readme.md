@@ -1,4 +1,19 @@
-# startup manager
+# Secrets
+
+Basic example, it will look for the secret on `secretbox:main` in redis if not found will ask for it.
+This secret is the same for all the hero sessions.
+
+```go
+import freeflowuniverse.crystallib.crypt.secrets
+
+secrets.delete_passwd()!
+r:= secrets.encrypt("aaa")!
+println(r)
+assert "aaa"==secrets.decrypt(r)!
+
+```
+
+## replace some text
 
 some utils to manage secret keys and easily change them in text, ideal for config files.
 
@@ -26,3 +41,5 @@ test_string2:=box.replace(txt:test_string,defaults:{"MYAPP.SOMETHING.A":secrets.
 println(test_string2)
 
 ```
+
+

@@ -21,13 +21,13 @@ pub fn (mut q RedisQueue) add(val string) ! {
 
 // timeout in msec
 pub fn (mut q RedisQueue) get(timeout u64) !string {
-	start := u64(time.now().unix_time_milli())
+	start := u64(time.now().unix_milli())
 	for {
 		r := q.redis.rpop(q.key) or { '' }
 		if r != '' {
 			return r
 		}
-		if u64(time.now().unix_time_milli()) > (start + timeout) {
+		if u64(time.now().unix_milli()) > (start + timeout) {
 			break
 		}
 		time.sleep(time.microsecond)

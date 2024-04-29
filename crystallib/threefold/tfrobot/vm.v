@@ -35,7 +35,7 @@ pub mut:
 // will check all available channels till it can ssh into the node
 pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 	mut b := builder.new()!
-	start_time := time.now().unix_time_milli()
+	start_time := time.now().unix_milli()
 	mut run_time := 0.0
 	for true {
 		if args.ip4 && vm.public_ip4.len > 0 {
@@ -68,7 +68,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 				)!
 			}
 		}
-		run_time = time.now().unix_time_milli()
+		run_time = time.now().unix_milli()
 		if run_time > start_time + args.timeout * 1000 {
 			break
 		}
@@ -79,7 +79,7 @@ pub fn (vm VMOutput) node(args NodeArgs) !&builder.Node {
 
 pub fn (vm VMOutput) tcpport_addr_get(port int) !string {
 	mut b := builder.new()!
-	start_time := time.now().unix_time_milli()
+	start_time := time.now().unix_milli()
 	mut run_time := 0.0
 	for true {
 		if vm.planetary_ip.len > 0 {
@@ -104,7 +104,7 @@ pub fn (vm VMOutput) tcpport_addr_get(port int) !string {
 		// 		return b.node_new(ipaddr:"root@[${vm.public_ip6}]",name:"${vm.deployment_name}_${vm.name}")!
 		// 	}
 		// }
-		run_time = time.now().unix_time_milli()
+		run_time = time.now().unix_milli()
 		if run_time > start_time + 20000 {
 			break
 		}

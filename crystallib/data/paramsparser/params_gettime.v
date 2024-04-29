@@ -46,10 +46,10 @@ pub fn (params &Params) get_time_interval(key string) !Duration {
 	}
 	start := params.get_time(data[0])!
 	end := params.get_time(data[1])!
-	if end.unix_time() < start.unix_time() {
+	if end.unix() < start.unix() {
 		return error('Invalid time interval: begin time cannot be after end time')
 	}
-	return end.unix_time() - start.unix_time()
+	return end.unix() - start.unix()
 	// NEXT: document and give examples, make sure there is test
 }
 

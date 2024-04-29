@@ -265,7 +265,7 @@ pub fn (mut job Job) process() ! {
 	if p.is_alive() {
 		job.read()!
 		// result=job.read()!
-		if time.now().unix_time() > job.start.unix_time() + job.cmd.timeout * 1000 {
+		if time.now().unix() > job.start.unix() + job.cmd.timeout * 1000 {
 			// console.print_stderr("TIMEOUT TIMEOUT TIMEOUT TIMEOUT")
 			p.signal_pgkill()
 			p.close()

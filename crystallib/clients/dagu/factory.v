@@ -19,6 +19,7 @@ pub mut:
 	url        string
 	username   string
 	password   string
+	apisecret string
 }
 
 pub fn get(args play.PlayArgs) !DaguClient[Config] {
@@ -76,6 +77,13 @@ pub fn (mut self DaguClient[Config]) config_interactive() ! {
 		default: cfg.password
 		minlen: 6
 	)!
+
+	cfg.apisecret = myui.ask_question(
+		question: 'dagu server api secret'
+		default: cfg.password
+		minlen: 6
+	)!
+
 
 	self.config_save()!
 }

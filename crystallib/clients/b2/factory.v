@@ -5,14 +5,14 @@ import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.lang.python
 
-pub struct B2Client[T] {
-	play.BaseConfig[T]
+pub struct B2Client {
 pub mut:
 	py python.PythonEnv
+	config Configurator
 }
 
-pub struct Config {
-	play.ConfigBase
+pub struct MyConfigurator {
+	base.ConfigBase
 pub mut:
 	configtype string = 'b2client' // needs to be defined	
 	keyname    string
@@ -25,8 +25,8 @@ pub mut:
 // instance string = "default".
 // playargs ?PlayArgs (defines how to get session and/or context)
 //
-pub fn get(args play.PlayArgs) !B2Client[Config] {
-	mut py := python.new(name: 'default')! // a python env with name test
+pub fn get(args base.PlayArgs) !B2Client{
+	mut py := python.new(name: 'default')! // a python env with name default
 	mut client := B2Client[Config]{
 		py: py
 	}
@@ -48,9 +48,9 @@ pub fn get(args play.PlayArgs) !B2Client[Config] {
 // text    string
 // git_url     string
 //```	
-pub fn heroplay(args play.PLayBookAddArgs) ! {
+pub fn heroplay(args base.PLayBookAddArgs) ! {
 	// make session for configuring from heroscript
-	mut session := play.session_new(session_name: 'config')!
+	mut session := base.session_new(session_name: 'config')!
 	session.playbook_add(path: args.path, text: args.text, git_url: args.git_url)!
 	for mut action in session.plbook.find(filter: 'b2client.define')! {
 		mut p := action.params
