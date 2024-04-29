@@ -2,6 +2,7 @@ module dbfs
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.clients.redisclient	
 import os
 
 @[heap]
@@ -10,6 +11,9 @@ pub mut:
 	path   pathlib.Path
 	name   string
 	secret string
+	contextid id
+	memberid int //needed to do autoincrement of the DB, when user logged in we need memberid, memberid is unique per circle
+	member_pubkeys map[int]string
 }
 
 pub fn (mut dbcollection DBCollection) get_encrypted(name_ string) !DB {
@@ -17,6 +21,29 @@ pub fn (mut dbcollection DBCollection) get_encrypted(name_ string) !DB {
 	db.encrypt()!
 	return db
 }
+
+pub fn (mut dbcollection DBCollection) incr() !int {
+
+	mut r := redisclient.core_get()!
+	if dbcollection.contextid>0{
+		//make sure we are on the right db
+		r.selectdb(dbcollection.contextid)!
+	}	
+	lid:=r.get("context:lastid")!
+	if lid==none{
+		incr_file:=dbcollection.path.file_get("incr_${memberid}")!
+		c:=incr_file.read() or {""}
+		if c==""{
+			c:=incr_file.write("1")!
+			r.set("context:lastid","1")!
+			return 1
+		}
+	}
+
+}
+
+
+
 
 // get a DB from the dbcollection
 pub fn (mut dbcollection DBCollection) get(name_ string) !DB {

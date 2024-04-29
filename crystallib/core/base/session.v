@@ -22,7 +22,7 @@ pub mut:
 @[params]
 pub struct ContextSessionNewArgs {
 pub mut:
-	name        string // unique id for session (session id), there can be more than 1 per id
+	name        string // unique name for session (id), there can be more than 1 session per context
 	start       string // can be e.g. +1h
 	load        bool = true // get it from the redis backend
 	save        bool
@@ -36,6 +36,9 @@ pub mut:
 // ```
 pub fn (context Context) session_new(args_ ContextSessionNewArgs) !Session {
 	mut args := args_
+	if args.name==""{
+
+	}
 	t := ourtime.new(args.start)!
 	mut s := Session{
 		name: args.name
@@ -45,23 +48,11 @@ pub fn (context Context) session_new(args_ ContextSessionNewArgs) !Session {
 	return s
 }
 
-// @[params]
-// pub struct PLayBookAddArgs {
-// pub mut:
-// 	path      string
-// 	text      string
-// 	git_url   string
-// 	git_pull  bool // will pull if this is set
-// 	git_reset bool // this means will pull and reset all changes	
-// 	prio      int = 10
-// 	run       bool
-// }
-
 ///////// LOAD & SAVE
 
-fn (mut self Session) key() string {
-	return 'sessions:${self.guid()}'
-}
+// fn (mut self Session) key() string {
+// 	return 'hero:sessions:${self.guid()}'
+// }
 
 // get db of the session, is unique per session
 pub fn (mut self Session) db_get() !dbfs.DB {

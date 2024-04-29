@@ -53,14 +53,17 @@ pub fn (mut self Configurator[T]) exists() !bool {
 	return db.exists(self.config_key())
 }
 
+pub fn (mut self Configurator[T]) new() !T {
+	return T{
+		instance: self.instance
+		description: self.description
+	}
+}
+
 pub fn (mut self Configurator[T]) get() !T {
 	mut db := self.context.db_config_get()!
 	if !db.exists(self.config_key()) {
-		return T{
-			instance: self.instance
-			description: self.description
-		}
-		// return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
+		return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
 	}
 	data := db.get(self.config_key())!
 	return json.decode(T, data)!

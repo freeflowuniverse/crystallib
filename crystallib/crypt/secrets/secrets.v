@@ -93,6 +93,13 @@ pub enum SecretType {
 	openssl_base64
 }
 
+
+
+
+pub fn hex_secret() !string {
+	return rand.hex(24)
+}
+
 pub fn openssl_hex_secret() !string {
 	cmd := 'openssl rand -hex 32'
 	result := os.execute(cmd)

@@ -3,43 +3,47 @@
 
 import freeflowuniverse.crystallib.core.base
 
-//THIS EXAMPLE IS A VERY EASY ONE WHERE WE SET THE CONFIG AFTERWARDS
-
 
 pub struct MyClient[T] {
 	base.BaseConfig[T]
 }
 
+@[params]
 pub struct MyConfig {
 pub mut:
 	//the config items which are important to remember
 	keyname    string
 	keyid      string
-	appkey     string
+	appkey     string @[secret]
 }
 
-@[params]
-pub struct MyClientArgs {
-pub mut:
-	instance string = "default"
+pub fn new(instance string, cfg MyConfig) !MyClient[MyConfig]{
+	mut self:=MyClient[MyConfig]{}
+	self.init(instance:instance,action:.new)!
+	self.config_set(cfg)!
+	return self
 }
 
-pub fn get(args MyClientArgs) !MyClient[MyConfig]{
-	mut client:=MyClient[MyConfig]{}
-	client.init(instance:args.instance)!
-	return client
+pub fn get(instance string) !MyClient[MyConfig]{
+	mut self:=MyClient[MyConfig]{}
+	self.init(instance:instance,action:.get)!
+	return self
 }
 
-mut cl:=get()!
+pub fn delete(instance string) !{
+	mut self:=MyClient[MyConfig]{}
+	self.init(instance:instance,action:.delete)!
+}
 
-mut myconfig:=cl.config()!
+//EXAMPLE USAGE
 
-//first time this config will be empty, next time will already be populated
-println(myconfig)
+mut cl:=new("testinstance",keyname:"somekey",appkey:"will be secret")!
+println(cl.config_get()!)
 
-myconfig.keyname="akey"
-myconfig.appkey="1234"
+//now get the client, will give error if it doesn't exist
+mut cl2:=get("testinstance")!
+println(cl2.config_get()!)
 
-cl.config_save()!
+delete("testinstance")!
 
-println(cl.config_)
+

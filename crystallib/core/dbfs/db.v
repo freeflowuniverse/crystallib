@@ -7,22 +7,22 @@ import freeflowuniverse.crystallib.crypt.aes_symmetric
 @[heap]
 pub struct DB {
 pub mut:
-	name      string
+	dbname      string
 	path      pathlib.Path
 	encrypted bool
 	parent    &DBCollection @[skip; str: skip]
 }
 
 // get the value, if it doesn't exist then return empty string
-pub fn (mut db DB) get(name_ string) !string {
-	name := texttools.name_fix(name_)
-	if !db.exists(name) {
+pub fn (mut db DB) get(key_ string) !string {
+	key := texttools.name_fix(key_)
+	if !db.exists(key) {
 		return ''
 	}
-	mut datafile := db.path.file_get_new(name)!
+	mut datafile := db.path.file_get_new(key)!
 	mut data := datafile.read()!
 	if data.len == 0 {
-		panic('data cannot be empty for get:${name}')
+		panic('data cannot be empty for get:${key}')
 	}
 	if db.encrypted {
 		data = aes_symmetric.decrypt_str(data, db.secret()!)
@@ -31,16 +31,17 @@ pub fn (mut db DB) get(name_ string) !string {
 }
 
 // set the key/value will go to filesystem, is organzed per context and each db has a name
-pub fn (mut db DB) set(name_ string, data_ string) ! {
+// if key empty then will be an autoincrement resulting in a sid, this will be based on the participant nr
+pub fn (mut db DB) set(key_ string, data_ string) ! {
 	mut data := data_
 	if data.len == 0 {
-		panic('data cannot be empty for set:${name_}')
+		panic('data cannot be empty for set:${key_}')
 	}
 	if data.len == 0 {
-		return error('data cannot be empty for set:${name_}')
+		return error('data cannot be empty for set:${key_}')
 	}
-	name := texttools.name_fix(name_)
-	mut datafile := db.path.file_get_new(name)!
+	key := texttools.name_fix(key_)
+	mut datafile := db.path.file_get_new(key)!
 	if db.encrypted {
 		data = aes_symmetric.encrypt_str(data, db.secret()!)
 	}
@@ -48,12 +49,12 @@ pub fn (mut db DB) set(name_ string, data_ string) ! {
 }
 
 // check if entry exists based on keyname
-pub fn (mut db DB) exists(name_ string) bool {
-	name := texttools.name_fix(name_)
-	if !(db.path.file_exists(name)) {
+pub fn (mut db DB) exists(key_ string) bool {
+	key := texttools.name_fix(key_)
+	if !(db.path.file_exists(key)) {
 		return false
 	}
-	mut datafile := db.path.file_get(name) or { panic(err) }
+	mut datafile := db.path.file_get(key) or { panic(err) }
 	mut data := datafile.read() or { panic(err) }
 	if data.len == 0 {
 		datafile.delete() or { panic(err) }
@@ -63,9 +64,9 @@ pub fn (mut db DB) exists(name_ string) bool {
 }
 
 // delete an entry
-pub fn (mut db DB) delete(name_ string) ! {
-	name := texttools.name_fix(name_)
-	mut datafile := db.path.file_get(name) or { return }
+pub fn (mut db DB) delete(key_ string) ! {
+	key := texttools.name_fix(key_)
+	mut datafile := db.path.file_get(key) or { return }
 	datafile.delete()!
 }
 
@@ -120,3 +121,21 @@ pub fn (mut db DB) encrypt() ! {
 	db.encrypted = true
 	db.path.file_get_new('encrypted')!
 }
+
+
+pub fn (mut db DB) encrypt() ! {
+	if db.encrypted {
+		return
+	}
+	db.secret()! // just to check if ok
+	for key in db.keys('')! {
+		db.encrypted = false
+		v := db.get(key)!
+		db.encrypted = true
+		db.set(key, v)!
+	}
+	db.encrypted = true
+	db.path.file_get_new('encrypted')!
+}
+
+		incr_file:=dbcollection.path.file_get_new("incr_${memberid}")!

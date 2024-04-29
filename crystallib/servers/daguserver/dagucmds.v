@@ -1,4 +1,4 @@
-module dagu
+module daguserver
 
 import os
 import freeflowuniverse.crystallib.osal

@@ -4,38 +4,47 @@ import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.playbook
 import os
 
 pub struct DaguClient[T] {
-	base.Base[T]
+	base.BaseConfig[T]
 pub mut:
-	connection &httpconnection.HTTPConnection
+	connection &httpconnection.HTTPConnection	
 }
 
-pub struct Config {
-	play.ConfigBase
+pub struct DaguClientConfig {
 pub mut:
-	configtype string = 'daguclient' // needs to be defined	
 	url        string
 	username   string
 	password   string
 	apisecret string
 }
 
-pub fn get(args play.PlayArgs) !DaguClient[Config] {
+@[params]
+pub struct DaguClientArgs {
+pub mut:
+	instance string = "default"
+	config ?DaguClientConfig
+}
+
+pub fn get(args DaguClientArgs) !DaguClient[DaguClientConfig] {
 	con := httpconnection.HTTPConnection{}
-	mut client := DaguClient[Config]{
+	mut client := DaguClient[DaguClientConfig]{
 		connection: &con
 	}
-	client.init(args)!
+	client.init(instance:args.instance)!
+
+	if args.config!=none{
+		myconfig := args.config or {panic("bug")}
+		client.config_set(myconfig)!
+	}
+
 	return client
 }
 
-pub fn heroplay(args play.PLayBookAddArgs) ! {
-	// make session for configuring from heroscript
-	mut session := play.session_new(session_name: 'config')!
-	session.playbook_add(path: args.path, text: args.text, git_url: args.git_url)!
-	for mut action in session.plbook.find(filter: 'daguclient.define')! {
+pub fn heroplay(mut plbook playbook.PlayBook) ! {
+	for mut action in plbook.find(filter: 'daguclient.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
 		mut cl := get(instance: instance)!
@@ -47,7 +56,7 @@ pub fn heroplay(args play.PLayBookAddArgs) ! {
 	}
 }
 
-pub fn (mut self DaguClient[Config]) config_interactive() ! {
+pub fn (mut self DaguClient[DaguClientConfig]) config_interactive() ! {
 	mut myui := ui.new()!
 	console.clear()
 	println('\n## Configure Dagu Client')

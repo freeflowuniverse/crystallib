@@ -3,7 +3,8 @@ module redisclient
 @[params]
 pub struct RedisURL {
 	address string = '127.0.0.1'
-	port    u16    = 6379
+	port    int     = 6379
+	db  int
 }
 
 pub fn get_redis_url(url string) !RedisURL {

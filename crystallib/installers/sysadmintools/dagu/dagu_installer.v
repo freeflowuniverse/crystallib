@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.httpconnection
-import freeflowuniverse.crystallib.crypt.secrets
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
@@ -14,11 +13,11 @@ import time
 pub struct InstallArgs {
 pub mut:
 	reset   bool
-	passwd  string // can be empty, if yes {DAGU.PASSWD} will be set
-	secret  string // can be empty, if yes {DAGU.AUTHTOKEN} will be set
-	title   string
 	start   bool = true
 	restart bool
+	passwd  string
+	secret  string
+	title   string
 }
 
 pub fn install(args_ InstallArgs) ! {
@@ -101,25 +100,11 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('dagu start')
 
-	// create the paths
-	myconfigpath_ := '${os.home_dir()}/var/dagu/config.yaml'
-	homedir := '${os.home_dir()}/var/dagu'
-	mut mycode := $tmpl('templates/admin.yaml')
+	myconfigpath_ := '${os.home_dir()}/hero/cfg/dagu.yaml'
+	homedir := '${os.home_dir()}/hero/var/dagu'
 
-	mut box := secrets.get()!
-	mycode = box.replace(
-		txt: mycode
-		defaults: {
-			'DAGU.PASSWD':    secrets.DefaultSecretArgs{
-				secret: args.passwd
-			}
-			'DAGU.AUTHTOKEN': secrets.DefaultSecretArgs{
-				secret: args.secret
-				cat: .openssl_hex
-			}
-		}
-		printsecrets: true
-	)!
+	//FILL IN THE TEMPLATE
+	mut mycode := $tmpl('templates/admin.yaml')
 
 	mut path := pathlib.get_file(path: myconfigpath_, create: true)!
 	path.write(mycode)!
@@ -150,25 +135,14 @@ pub fn check(args InstallArgs) !bool {
 	mut conn := httpconnection.new(name: 'dagu', url: 'http://localhost:3333/api/v1/')!
 
 	// console.print_debug("curl http://localhost:3333/api/v1/dags --oauth2-bearer ${secret}")
-	conn.default_header.add(.authorization, 'Bearer ${apitoken()!}')
+	conn.default_header.add(.authorization, 'Bearer ${args.secret}')
 	conn.default_header.add(.content_type, 'application/json')
 	console.print_debug('check connection to dagu')
 	// r := conn.get_json_dict(prefix: 'dags') or { return false }
 	r := conn.get_json_dict(prefix: 'dags', debug: false)!
 	dags := r['DAGs'] or { return false }
 	// println(dags)
-	// dags:=r["DAGs"] or {return error("can't find DAG's in json.\n$r")}
-	// println(dags)
-	// println(dags.arr().len)
-	// if r.trim_space() == "OK" {
-	// 	return true
-	// }
 	console.print_debug('Dagu is answering.')
 	return true
 }
 
-pub fn apitoken() !string {
-	mut box := secrets.get()!
-	secret := box.get('DAGU.AUTHTOKEN')!
-	return secret
-}

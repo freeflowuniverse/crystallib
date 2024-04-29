@@ -10,10 +10,9 @@ import freeflowuniverse.crystallib.installers.net.mycelium as mycelium_installer
 import freeflowuniverse.crystallib.osal.screen
 // import freeflowuniverse.crystallib.osal
 
-// dbfs.dbcontext_init_default()!
+redis_installer.new()!
+dagu_installer.install(passwd:"1234",secret:"1234",restart:true)!
 
-// redis_installer.new()!
-// dagu_installer.install(passwd:"1234",secret:"1234",restart:true)!
 // coredns_installer.install()!
 // mycelium_installer.install()!
 // mycelium_installer.restart()!

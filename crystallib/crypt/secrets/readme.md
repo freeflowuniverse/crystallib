@@ -11,7 +11,16 @@ r:= secrets.encrypt("aaa")!
 println(r)
 assert "aaa"==secrets.decrypt(r)!
 
+
+hex_secret:=secrets.hex_secret()!
+
+openssl_hex_secret:=secrets.openssl_hex_secret()!
+
+openssl_base64_secret:=secrets.openssl_base64_secret()!
+
 ```
+
+
 
 ## replace some text
 

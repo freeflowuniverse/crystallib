@@ -5,25 +5,27 @@ import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import net.smtp
 
+
 pub struct MailClient[T] {
-	play.BaseConfig
+	base.BaseConfig[T]
 pub mut:
 	config      Config
 	smtp_client &smtp.Client
-}
+}	
 
-pub struct Config {
-	play.ConfigBase
+pub struct MailConfig {
 pub mut:
 	configtype  string = 'mailclient' // needs to be defined	
 	instance    string
-	mail_from   string
 	smtp_addr   string
 	smtp_login  string
 	smtp_port   int = 587
 	smtp_passwd string
 	ssl         bool
 	starttls    bool = true
+	mail_from   string
+	mail_to     string
+	prefix      string
 }
 
 pub fn get(args play.PlayArgs) !MailClient[Config] {

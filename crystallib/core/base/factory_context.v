@@ -8,20 +8,17 @@ import freeflowuniverse.crystallib.core.dbfs
 
 @[params]
 pub struct ContextConfigureArgs {
-pub mut:
-	cid            string = '000' // rid.cid or cid allone
-	name           string // a unique name in cid
+pub mut:	
+	name           string = "default"
 	params         string
 	coderoot       string
 	interactive    bool
-	fsdb_encrypted bool
 	secret         string
 }
 
 // configure a context object
 // params: .
 // ```
-// cid          string = "000" // rid.cid or cid allone
 // name         string = "default" // a unique name in cid
 // params       string
 // coderoot	 string
@@ -29,7 +26,7 @@ pub mut:
 // secret string
 // ```
 //
-fn context_configure(args_ ContextConfigureArgs) ! {
+fn context_new(args_ ContextConfigureArgs) ! {
 	mut args := args_
 
 	if args.name == '' {
@@ -52,7 +49,8 @@ fn context_configure(args_ ContextConfigureArgs) ! {
 @[params]
 pub struct ContextGetArgs {
 pub mut:
-	name        string // a unique name in cid
+	id string 
+	name        string
 	interactive bool = true
 }
 
@@ -65,6 +63,11 @@ pub fn context_get(args_ ContextGetArgs) !Context {
 	) or { return error('cannot get dbcollection: ${args.name}') }
 
 	mut r := redisclient.core_get()!
+	if args.id>0{
+		//make sure we are on the right db
+		r.selectdb(args.id)!
+	}
+	
 	mut p := paramsparser.new('')!
 
 	mut c := Context{
