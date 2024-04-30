@@ -1,6 +1,8 @@
 module paramsparser
 
+import time
 import v.reflection
+// import freeflowuniverse.crystallib.data.encoderhero
 // TODO: support more field types
 
 pub fn (params Params) decode[T]() !T {
@@ -12,32 +14,68 @@ pub fn (params Params) decode[T]() !T {
 pub fn (params Params) decode_struct[T](_ T) !T {
 	mut t := T{}
 	$for field in T.fields {
-		// value := params.get(field.name)!
-		$if field.typ is string {
-			t.$(field.name) = params.get(field.name)!
-		}
-		$if field.typ is int {
-			t.$(field.name) = params.get_int(field.name)!
-		}
-		$if field.typ is bool {
-			t.$(field.name) = params.get_default_true(field.name)
-		}
-		$if field.typ is []string {
-			t.$(field.name) = params.get_list(field.name)!
-		}
-		$if field.typ is []int {
-			t.$(field.name) = params.get_list_int(field.name)!
-		}
-		$if field.typ is $struct {
-			child_params := params.get_params(field.name)!
-			child := child_params.decode_struct(t.$(field.name))!
-			t.$(field.name) = child
-		}
+		t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
 	}
 	return t
 }
 
-pub fn encode[T](t T) !Params {
+
+pub fn (params Params) decode_value[T](_ T, key string) !T {
+	// $if T is $option {
+	// 	// unwrap and encode optionals
+	// 	workaround := t
+	// 	if workaround != none {
+	// 		encode(t, args)!
+	// 	}
+	// }
+	// value := params.get(field.name)!
+
+	// TODO: handle required fields
+	if !params.exists(key) {
+		return T{}
+	}
+
+	$if T is string {
+		return params.get(key)!
+	}
+	$else $if T is int {
+		return params.get_int(key)!
+	}
+	$else $if T is bool {
+		return params.get_default_true(key)
+	}
+	$else $if T is []string {
+		return params.get_list(key)!
+	}
+	$else $if T is []int {
+		return params.get_list_int(key)!
+	}
+	$else $if T is time.Time {
+		time_str := params.get(key)!
+		return time.parse(time_str)!
+	}
+	$else $if T is $struct {
+		child_params := params.get_params(key)!
+		child := child_params.decode_struct(T{})!
+		return child
+	}
+	return T{}
+}
+
+
+@[params]
+pub struct EncodeArgs {
+	recursive bool = true
+}
+
+pub fn encode[T](t T, args EncodeArgs) !Params {
+	$if t is $option {
+		// unwrap and encode optionals
+		workaround := t
+		if workaround != none {
+			encode(t, args)!
+		}
+	}
 	mut params := Params{}
 
 	mut mytype := reflection.type_of[T](t)
@@ -45,33 +83,16 @@ pub fn encode[T](t T) !Params {
 	// struct_attrs := attrs_get_reflection(mytype)
 
 	$for field in T.fields {
-		// field_attrs := attrs_get(field.attrs)
-		// println(field.name)
-		// println(field.typ)
-		// println(field_attrs)
 		val := t.$(field.name)
-		$if field.typ is string {
-			params.params << Param{
-				key: field.name
-				value: '${val}'
-			}
-		} $else $if field.typ is int {
-			params.params << Param{
-				key: field.name
-				value: '${val}'
-			}
-		} $else $if field.typ is bool {
-			if val {
-				params.params << Param{
-					key: field.name
-					value: 'true'
-				}
-			} else {
-				params.params << Param{
-					key: field.name
-					value: 'false'
-				}
-			}
+		field_attrs := attrs_get(field.attrs)
+		mut key := field.name
+		if 'alias' in field_attrs {
+			key = field_attrs['alias']
+		}
+		println('FIELD: ${key} ${field.typ}')
+
+		$if val is string || val is int || val is bool || val is i64 || val is time.Time {
+			params.set(key, '${val}')
 		} $else $if field.typ is []string {
 			mut v2 := ''
 			for i in val {
@@ -97,10 +118,13 @@ pub fn encode[T](t T) !Params {
 				value: v2
 			}
 		} $else $if field.typ is $struct {
-			child_params := encode(val)!
-			params.params << Param{
-				key: field.name
-				value: child_params.export()
+			if args.recursive {
+				println('argsoz ${args}')
+				child_params := encode(val)!
+				params.params << Param {
+					key: field.name
+					value: child_params.export()
+				}
 			}
 		} $else {
 		}
@@ -109,3 +133,27 @@ pub fn encode[T](t T) !Params {
 }
 
 // BACKLOG: can we do the encode recursive?
+
+
+// if at top of struct we have: @[name:"teststruct " ; params] .
+// will return {'name': 'teststruct', 'params': ''}
+fn attrs_get_reflection(mytype reflection.Type) map[string]string {
+	if mytype.sym.info is reflection.Struct {
+		return attrs_get(mytype.sym.info.attrs)
+	}
+	return map[string]string{}
+}
+
+// will return {'name': 'teststruct', 'params': ''}
+fn attrs_get(attrs []string) map[string]string {
+	mut out := map[string]string{}
+	for i in attrs {
+		if i.contains('=') {
+			kv := i.split('=')
+			out[kv[0].trim_space().to_lower()] = kv[1].trim_space().to_lower()
+		} else {
+			out[i.trim_space().to_lower()] = ''
+		}
+	}
+	return out
+}
