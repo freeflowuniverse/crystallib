@@ -21,8 +21,8 @@ pub mut:
 	description string
 	mod         string
 	is_pub      bool
-	embeds      []Struct
-	generics    map[string]string
+	embeds      []Struct @[str: skip]
+	generics    map[string]string @[str: skip]
 	attrs       []Attribute
 	fields      []StructField
 }
@@ -44,9 +44,9 @@ pub mut:
 	is_pub      bool
 	is_mut      bool
 	is_ref      bool
-	anon_struct Struct // sometimes fields may hold anonymous structs
+	anon_struct Struct @[str: skip] // sometimes fields may hold anonymous structs
 	typ         Type
-	structure Struct
+	structure Struct @[str: skip]
 }
 
 pub struct Attribute {
@@ -95,15 +95,15 @@ pub:
 // todo: maybe make 'is_' fields methods?
 pub struct Type {
 pub mut:
-	is_reference bool
-	is_map       bool
-	is_array     bool
-	is_mutable   bool
-	is_shared    bool
-	is_optional  bool
-	is_result    bool
+	is_reference bool @[str: skip]
+	is_map       bool @[str: skip]
+	is_array     bool @[str: skip]
+	is_mutable   bool @[str: skip]
+	is_shared    bool @[str: skip]
+	is_optional  bool @[str: skip]
+	is_result    bool @[str: skip]
 	symbol       string
-	mod          string
+	mod          string @[str: skip]
 }
 
 pub struct Import {
