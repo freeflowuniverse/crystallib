@@ -29,7 +29,7 @@ is done per instance of an object which inherits from BaseConfig.
 - see [base](base.md)
 - see [config](config.md)
 
-## KVS
+## KVS = FSDB
 
 there is a KVS attached to each context/session
 
