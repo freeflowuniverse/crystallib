@@ -2,8 +2,20 @@ module zola
 
 import freeflowuniverse.crystallib.installers.web.tailwind as tailwindinstaller
 import freeflowuniverse.crystallib.installers.web.zola as zolainstaller
-import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.core.play
 import os
+
+@[heap; params]
+pub struct Zola {
+	play.Base
+pub mut:
+	path_build   string
+	path_publish string
+	tailwindcss  bool = true
+	install      bool = true
+	reset        bool
+	sites        map[string]&ZolaSite
+}
 
 pub fn new(zola_ Zola) !Zola {
 	mut zola := zola_
