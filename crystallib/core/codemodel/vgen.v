@@ -4,22 +4,6 @@ import os
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 
-pub struct CodeFile {
-pub:
-	name    string
-	mod     string
-	imports []Import
-	items   []CodeItem
-	content string
-}
-
-pub fn new_file(config CodeFile) CodeFile {
-	return CodeFile{
-		mod: config.mod
-		items: config.items
-	}
-}
-
 pub struct WriteCode {
 	destination string
 }
@@ -50,8 +34,10 @@ pub fn vgen(code []CodeItem) string {
 
 // vgen_import generates an import statement for a given type
 pub fn (import_ Import) vgen() string {
-	types_str := import_.types.join(', ') // comma separated string list of  types
-	return 'import ${import_.mod} {${types_str}}'
+	types_str := if import_.types.len > 0 {
+		"{${import_.types.join(', ')}}"
+	} else {''} // comma separated string list of  types
+	return 'import ${import_.mod} ${types_str}'
 }
 
 // TODO: enfore that cant be both mutable and shared
@@ -177,12 +163,15 @@ pub fn (param Param) vgen() string {
 	if param.name == '' {
 		return ''
 	}
-	vstr := if param.struct_.name != '' {
+	sym := if param.struct_.name != '' {
 		param.struct_.get_type_symbol()
 	} else {
 		param.typ.symbol
 	}
-	return '(${param.name} ${vstr})'
+
+	mut vstr := '${param.name} ${sym}'
+	if param.mutable {vstr = 'mut ${vstr}'}
+	return '(${vstr})'
 }
 
 // vgen_function generates a function statement for a function
@@ -254,32 +243,7 @@ pub struct WriteOptions {
 
 pub fn (mod Module) write_v(path string, options WriteOptions) ! {
 	dir := pathlib.get_dir(path: path, create: true, empty: options.overwrite)!
-	for name, codefile in mod.files {
+	for codefile in mod.files {
 		codefile.write_v(dir.path, options)!
-	}
-}
-
-pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
-	filename := '${texttools.name_fix(code.name)}.v'
-	mut filepath := pathlib.get('${path}/${filename}')
-
-	if !options.overwrite && filepath.exists() {
-		return
-	}
-
-	file_str := if code.content != '' {
-		code.content
-	} else {
-		code_str := vgen(code.items)
-		$tmpl('./templates/code/code.v.template')
-	}
-
-	mut file := pathlib.get_file(
-		path: filepath.path
-		create: true
-	)!
-	file.write(file_str)!
-	if options.format {
-		os.execute('v fmt -w ${file.path}')
 	}
 }
