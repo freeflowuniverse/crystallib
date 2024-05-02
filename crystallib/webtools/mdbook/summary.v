@@ -58,7 +58,7 @@ pub fn (mut book MDBook) summary() !Summary {
 		}
 
 		description := line.all_after_first('[').all_before(']').trim_space()
-		path := line.all_after_first('(').all_before_last(')').trim_space()
+		path := line.all_after_last('(').all_before_last(')').trim_space()
 
 		if !path.contains('/') {
 			book.error(
