@@ -1,7 +1,8 @@
-module actor_backend
+module backend
 
 import json
 import db.sqlite
+import freeflowuniverse.crystallib.core.texttools
 
 pub struct Indexer {
 	db sqlite.DB
@@ -57,13 +58,15 @@ pub fn (mut backend Indexer) new[T](obj T) !int {
 		}
 	}
 	insert_query := 'insert into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
-	backend.db.exec(insert_query)!
-
+	backend.db.exec(insert_query) or {
+		return error('Error inserting object ${obj} into table ${table_name}')
+	}
+	
 	return id
 }
 
 // save the session to redis & mem
-pub fn (mut backend Indexer) set[T](mut obj T) ! {
+pub fn (mut backend Indexer) set[T](obj T) ! {
 	mut table_name := ''
 	$for attr in T.attributes {
 		if attr.name == 'table' && attr.arg.len > 0 {
@@ -73,7 +76,7 @@ pub fn (mut backend Indexer) set[T](mut obj T) ! {
 	obj_encoded := json.encode(obj)
 
 	// todo: check table and entry exists
-	db.exec("update ${table_name} set data='${obj_encoded}' where id=${obj.id}")!
+	backend.db.exec("update ${table_name} set data='${obj_encoded}' where id=${obj.id}")!
 }
 
 // save the session to redis & mem
@@ -84,19 +87,14 @@ pub fn (mut backend Indexer) delete[T](id int) ! {
 			table_name = attr.arg
 		}
 	}
-	obj_encoded := json.encode(obj)
 
 	// todo: check table and entry exists
-	db.exec('delete from ${table_name} where id=${id}')!
-	db.exec('delete from root_objects where id=${id}')!
+	backend.db.exec('delete from ${table_name} where id=${id}')!
+	backend.db.exec('delete from root_objects where id=${id}')!
 }
 
 // save the session to redis & mem
 pub fn (mut backend Indexer) get[T](id int) !T {
-	if !is_root_struct[T]() {
-		return error('Filter method can only be used for root structs')
-	}
-
 	table_name := get_table_name[T]()
 
 	// check root object and table exists
@@ -130,43 +128,42 @@ pub fn (mut backend Indexer) list[T]() ![]T {
 	return responses.map(json.decode(T, it.vals[1]) or { panic('JSON decode failed.') })
 }
 
+
+// from and to for int f64 time etc.
 @[params]
 pub struct FilterParams {
-	indices     map[string]string // map of index values that are being filtered by, in order of priority.
+	// indices     map[string]string // map of index values that are being filtered by, in order of priority.
 	limit       int  // limit to the number of values to be returned, in order of priority
 	fuzzy       bool // if fuzzy matching is enabled in matching indices
 	matches_all bool // if results should match all indices or any
 }
 
 // filter lists root objects of type T that match provided index parameters and params.
-pub fn (mut backend Indexer) filter[T](params FilterParams) ![]int {
-	if !is_root_struct[T]() {
-		return error('Filter method can only be used for root structs')
-	}
-
+pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]int {
 	table_name := get_table_name[T]()
 	table_indices := backend.get_table_indices(table_name) or { panic(err) }
 
-	for index, _ in params.indices {
-		if index !in table_indices {
-			return error('Index ${index} not found for root struct ${typeof[T]()}')
+	$for field in D.fields {
+		if field.name !in table_indices {
+			return error('Index ${field.name} not found for root struct ${typeof[T]()}')
 		}
 	}
 
 	mut select_stmt := 'select * from ${table_name}'
 
-	if params.indices.len > 0 {
+	// $if D.fields.len > 0 {
 		select_stmt += ' where'
-		for index, value in params.indices {
-			select_stmt += " ${index} == '${value}'"
+		$for field in D.fields {
+			val := filter.$(field.name)
+			select_stmt += " ${field.name} == '${val}'"
 		}
-	}
+	// }
 
 	// println(select_stmt)
 	responses := backend.db.exec(select_stmt) or { panic(err) }
 	ids := responses.map(it.vals[0])
 	// objects := responses.map(json.decode(T, it.vals[1]) or { panic(err) })
-	return if params.limit == 0 { ids } else { ids[..params.limit] }
+	return if params.limit == 0 { ids.map(it.int()) } else { ids.map(it.int())[..params.limit] }
 }
 
 // create_root_struct_table creates a table for a root_struct with columns for each index field
@@ -200,6 +197,8 @@ fn get_table_name[T]() string {
 	if table_name == '' {
 		table_name = typeof[T]()
 	}
+	table_name = texttools.name_fix(table_name)
+	table_name = table_name.replace('.', '_')
 	return table_name
 }
 

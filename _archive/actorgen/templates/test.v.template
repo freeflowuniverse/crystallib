@@ -1,0 +1,39 @@
+module example
+
+import os
+
+const db_dir = '${os.home_dir()}/hero/db'
+const actor_name = 'example_actor_test'
+
+fn test_suite_begin() {
+	if os.exists('${db_dir}/${actor_name}') {
+		os.rmdir_all('${db_dir}/${actor_name}')!
+	}
+	if os.exists('${db_dir}/${actor_name}.sqlite') {
+		os.rm('${db_dir}/${actor_name}.sqlite')!
+	}	
+}
+
+fn test_suite_end() {
+	if os.exists('${db_dir}/${actor_name}') {
+		os.rmdir_all('${db_dir}/${actor_name}')!
+	}
+	if os.exists('${db_dir}/${actor_name}.sqlite') {
+		os.rm('${db_dir}/${actor_name}.sqlite')!
+	}	
+}
+
+fn test_create_object() ! {
+	mut actor := get(name: actor_name)!
+	mut object_id := actor.create_object(Object{})!
+	assert object_id == 1
+
+	object_id = actor.create_object(Object{})!
+	assert object_id == 2
+}
+
+fn test_read_object() ! {
+	mut actor := get(name: actor_name)!
+	mut object := actor.read_object(0)!
+	assert object == Object{0}
+}

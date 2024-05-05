@@ -1,61 +1,72 @@
-module actor_backend
+module backend
 
-import json
-import db.sqlite
+import os
 import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.data.encoderhero
 
 pub struct Backend {
+mut:
 	indexer Indexer
-	dbs     dbfs.DBCollection
+	dbs dbfs.DBCollection
 }
 
-pub fn new(db_path string) !Backend {
-	mut backend := Backend{
-		indexer: new_indexer(db_path)!
-	}
+[params]
+pub struct BackendConfig {
+	name string
+	secret string
+}
 
+pub fn new(config BackendConfig) !Backend {
+	mut backend := Backend{
+		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite')!
+		dbs: dbfs.get(
+			context: config.name
+			secret: config.secret
+		)!
+	}
 	return backend
 }
 
 pub fn (mut backend Backend) new[T](obj T) !int {
-	db := backend.dbs.get(get_table_name[T])
+	mut db := backend.dbs.get(get_table_name[T]())!
 	id := backend.indexer.new[T](obj)!
 	data := encoderhero.encode[T](obj)!
-	db.set(id, data)!
+	db.set('${id}', data)!
 	return id
 }
 
-pub fn (mut backend Backend) set[T](mut obj T) ! {
-	db := backend.dbs.get(get_table_name[T])
+pub fn (mut backend Backend) set[T](obj T) ! {
+	mut db := backend.dbs.get(get_table_name[T]())!
 	backend.indexer.set[T](obj)!
 	data := encoderhero.encode[T](obj)!
 	// TODO: see if data changed
-	db.set(obj.id, data)!
+	db.set('${obj.id}', data)!
 }
 
 pub fn (mut backend Backend) delete[T](id int) ! {
 	backend.indexer.delete[T](id)!
-	db := backend.dbs.get(get_table_name[T])
-	return db.delete(id)!
+	mut db := backend.dbs.get(get_table_name[T]())!
+	db.delete('${id}')!
 }
 
 pub fn (mut backend Backend) get[T](id int) !T {
-	db := backend.dbs.get(get_table_name[T])
-	data := db.get(id)!
-	return heroencoder.decode[T](data)!
+	mut db := backend.dbs.get(get_table_name[T]())!
+	data := db.get('${id}')!
+	return encoderhero.decode[T](data)!
 }
 
 pub fn (mut backend Backend) list[T]() ![]T {
-	db := backend.dbs.get(get_table_name[T])
-	keys := db.keys()!
+	mut db := backend.dbs.get(get_table_name[T]())!
+	keys := db.keys('')!
 	datas := keys.map(db.get(it)!)
-	return datas.map(heroencoder.decode[T](it)!)
+	return datas.map(encoderhero.decode[T](it)!)
 }
 
-pub fn (mut backend Backend) filter[T](params FilterParams) ![]T {
-	db := backend.dbs.get(get_table_name[T])
-	ids := backend.indexer.filter(params)!
-	datas := ids.map(db.get(it)!)
-	return datas.map(heroencoder.decode[T](it)!)
+pub fn (mut backend Backend) filter[T,D](filter D, params FilterParams) ![]T {
+	mut db := backend.dbs.get(get_table_name[T]())!
+	ids := backend.indexer.filter[T, D](filter, params)!
+	println('debugzo ${ids}')
+	datas := ids.map(db.get('${it}')!)
+	println('debugzo2 ${datas}')
+	return datas.map(encoderhero.decode[T](it)!)
 }

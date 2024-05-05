@@ -1,4 +1,4 @@
-module actorgenerator
+module generator
 
 import freeflowuniverse.crystallib.core.codemodel
 import freeflowuniverse.crystallib.core.pathlib
@@ -12,7 +12,7 @@ pub struct GenerateParams {
 // generate generates actor code from model code
 pub fn (generator ActorGenerator) generate(code []codemodel.CodeItem) ![]codemodel.CodeItem {
 	root_structs := generator.get_root_structs(code)
-	actor_struct := generator.generate_actor_struct(root_structs)
+	actor_struct := generator.generate_actor_struct()
 
 	mut crud_methods := []codemodel.Function{}
 	for root_struct in root_structs {
@@ -20,7 +20,7 @@ pub fn (generator ActorGenerator) generate(code []codemodel.CodeItem) ![]codemod
 			parent: actor_struct
 			child: root_struct
 		)
-		crud_methods << generator.generate_crud_methods(
+		crud_methods << generator.generate_object_methods(
 			actor_field: field
 			actor_name: actor_struct.name
 			root_struct: root_struct
@@ -31,7 +31,7 @@ pub fn (generator ActorGenerator) generate(code []codemodel.CodeItem) ![]codemod
 	// actor_code := $tmpl('templates/actor.v.template')
 
 	custom_code := codemodel.CustomCode{
-		text: $tmpl('./templates/play.v.template')
+		// text: $tmpl('./templates/play.v.template')
 	}
 
 	mut actor_code := []codemodel.CodeItem{}

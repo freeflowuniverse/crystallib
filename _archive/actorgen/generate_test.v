@@ -1,4 +1,4 @@
-module actorgenerator
+module generator
 
 import freeflowuniverse.crystallib.core.codemodel
 import freeflowuniverse.crystallib.core.pathlib

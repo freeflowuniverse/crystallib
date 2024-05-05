@@ -1,20 +1,20 @@
-module actorgenerator
+module generator
 
 import freeflowuniverse.crystallib.core.codemodel
 import freeflowuniverse.crystallib.core.codeparser
 import os
 
-// // generate_crud_methods generates CRUD actor methods for a provided structure
-// pub fn (generator ActorGenerator) generate_crud_methods(structure codemodel.Struct) []codemodel.Function {
+// // generate_object_methods generates CRUD actor methods for a provided structure
+// pub fn (generator ActorGenerator) generate_object_methods(structure codemodel.Struct) []codemodel.Function {
 // 	return [
 // 		generator.generate_get_method(structure),
-// 		generator.generate_set_method(structure),
-// 		generator.generate_delete_method(structure),
-// 		generator.generate_create_method(structure),
+// 		// generator.generate_set_method(structure),
+// 		// generator.generate_delete_method(structure),
+// 		// generator.generate_create_method(structure),
 // 	]
 // }
 
-// generate_crud_methods generates CRUD actor methods for a provided structure
+// generate_object_methods generates CRUD actor methods for a provided structure
 pub fn test_generate_get_method() {
 	generator := ActorGenerator{'test'}
 	actor_struct := codemodel.Struct{
@@ -44,10 +44,9 @@ pub fn test_generate_get_method() {
 	)
 	println(method.vgen())
 
-	panic('sh')
 }
 
-// // generate_crud_methods generates CRUD actor methods for a provided structure
+// // generate_object_methods generates CRUD actor methods for a provided structure
 // pub fn (generator ActorGenerator) generate_set_method(structure codemodel.Struct) codemodel.Function {
 // 	params_getter := "id := params.get('id')!"
 // 	field := generator.get_object_field(structure)
@@ -76,7 +75,7 @@ pub fn test_generate_get_method() {
 // 	return get_method
 // }
 
-// // generate_crud_methods generates CRUD actor methods for a provided structure
+// // generate_object_methods generates CRUD actor methods for a provided structure
 // pub fn (generator ActorGenerator) generate_create_method(structure codemodel.Struct) codemodel.Function {
 // 	params_getter := "id := params.get('id')!"
 // 	field := generator.get_object_field(structure)
@@ -105,7 +104,7 @@ pub fn test_generate_get_method() {
 // 	return get_method
 // }
 
-// // generate_crud_methods generates CRUD actor methods for a provided structure
+// // generate_object_methods generates CRUD actor methods for a provided structure
 // pub fn (generator ActorGenerator) generate_delete_method(structure codemodel.Struct) codemodel.Function {
 // 	params_getter := "id := params.get('id')!"
 // 	field := generator.get_object_field(structure)
