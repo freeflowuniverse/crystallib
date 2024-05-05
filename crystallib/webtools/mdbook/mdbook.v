@@ -23,8 +23,9 @@ pub struct MDBookArgs {
 pub mut:
 	name         string @[required]
 	title        string
-	foldlevel    int    = 0
-	printbook    string = 'true'
+
+	foldlevel    int
+	printbook    bool
 	summary_url  string // url of the summary.md file
 	summary_path string // can also give the path to the summary file (can be the dir or the summary itself)
 	doctree_url  string
