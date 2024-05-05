@@ -26,7 +26,7 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-	for plname in ['mdbook-mermaid', 'mdbook-echarts', 'mdbook-kroki-preprocessor', 'mdbook-pdf'] {
+	for plname in ['mdbook-mermaid', 'mdbook-echarts', 'mdbook-kroki-preprocessor', 'mdbook-pdf', 'mdbook-last-changed'] {
 		if !osal.cmd_exists(plname) {
 			console.print_header('did not find: ${plname}')
 			args.reset = true
@@ -49,6 +49,7 @@ pub fn build() ! {
 	source ~/.cargo/env
 	cargo install mdbook
 	cargo install mdbook-mermaid
+	cargo install mdbook-last-changed
 	cargo install mdbook-echarts
 	#cargo install mdbook-embed
 	#cargo install mdbook-plantuml

@@ -27,6 +27,10 @@ enable = "@book.args.printbook"
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
 
+[preprocessor.last-changed]
+command = "mdbook-last-changed"
+renderer = ["html"]
+
 #use as mdbook preprocessor
 [preprocessor.echarts]
 
