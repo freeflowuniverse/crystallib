@@ -190,7 +190,7 @@ fn (mut link Link) parse() {
 		link.cat = .image
 	}
 	link.description = link.content.all_after('[').all_before_last(']').trim_space()
-	link.url = link.content.all_after('(').all_before(')').trim_space()
+	link.url = link.content.all_after('](').all_before(')').trim_space()
 	if link.url.contains('#') {
 		link.anchor = link.url.all_after('#')
 		// link.url = link.url.all_before('#')
