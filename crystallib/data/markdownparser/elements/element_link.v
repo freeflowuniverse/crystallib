@@ -190,7 +190,7 @@ fn (mut link Link) parse() {
 		link.cat = .image
 	}
 	link.description = link.content.all_after('[').all_before_last(']').trim_space()
-	link.url = link.content.all_after('(').all_before(')').trim_space()
+	link.url = link.content.all_after('](').all_before(')').trim_space()
 	if link.url.contains('#') {
 		link.anchor = link.url.all_after('#')
 		// link.url = link.url.all_before('#')
@@ -325,6 +325,10 @@ fn (mut link Link) parse() {
 				return
 			}
 			link.cat = LinkType.page
+			if link.filename.contains('@@') {
+				link.filename = '../' + link.filename.all_before('@@') + '/' + link.filename.all_after('@@')
+				link.site = ''
+			}
 		} else if ext in ['html', 'htm'] {
 			if link.cat == .image {
 				link.error('any link starting with ! needs to be image now html, content is ${link.content}')
