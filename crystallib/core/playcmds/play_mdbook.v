@@ -64,6 +64,8 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		title := p.get_default('title', name)!
 		publish_path := p.get_default('publish_path', '')!
 		build_path := p.get_default('build_path', '')!
+		printbook := p.get_default_false('printbook')
+		foldlevel := p.get_int_default('foldlevel', 0)!
 
 		buildroot_book := '${buildroot}/${name}'
 		tree.export(dest: buildroot_book, reset: true)!
@@ -81,6 +83,8 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 			summary_url: url
 			publish_path: publish_path
 			build_path: build_path
+			printbook: printbook
+			foldlevel: foldlevel
 		)!
 		action.done = true
 	}
