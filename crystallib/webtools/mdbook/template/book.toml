@@ -7,7 +7,7 @@ title = "@book.args.title"
 
 [output.html.fold]
 enable = true
-level = "@book.args.foldlevel"
+level = @book.args.foldlevel
 
 [output]
 
@@ -20,12 +20,16 @@ additional-js = ["mermaid.min.js", "mermaid-init.js", "echarts.min.js"]
 create-missing = false
 
 [output.html.print]
-enable = "@book.args.printbook"
+enable = @book.args.printbook
 
 [preprocessor]
 
 [preprocessor.mermaid]
 command = "mdbook-mermaid"
+
+[preprocessor.last-changed]
+command = "mdbook-last-changed"
+renderer = ["html"]
 
 #use as mdbook preprocessor
 [preprocessor.echarts]
