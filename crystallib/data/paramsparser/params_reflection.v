@@ -14,7 +14,11 @@ pub fn (params Params) decode[T]() !T {
 pub fn (params Params) decode_struct[T](_ T) !T {
 	mut t := T{}
 	$for field in T.fields {
-		t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
+		if field.name[0].is_capital() {
+			t.$(field.name) = params.decode_struct(t.$(field.name))!
+		} else {
+			t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
+		}
 	}
 	return t
 }
@@ -52,6 +56,10 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 	}
 	$else $if T is time.Time {
 		time_str := params.get(key)!
+		// todo: 'handle other null times'
+		if time_str == '0000-00-00 00:00:00' {
+			return time.Time{}
+		}
 		return time.parse(time_str)!
 	}
 	$else $if T is $struct {
@@ -89,7 +97,6 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 		if 'alias' in field_attrs {
 			key = field_attrs['alias']
 		}
-		println('FIELD: ${key} ${field.typ}')
 
 		$if val is string || val is int || val is bool || val is i64 || val is time.Time {
 			params.set(key, '${val}')
@@ -119,7 +126,6 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 			}
 		} $else $if field.typ is $struct {
 			if args.recursive {
-				println('argsoz ${args}')
 				child_params := encode(val)!
 				params.params << Param {
 					key: field.name
