@@ -1,0 +1,62 @@
+{
+  "openrpc": "1.0.0",
+  "info": {
+    "title": "Coordinator",
+    "version": "1.0.0"
+  },
+  "methods": [
+    {
+      "name": "create_story",
+      "summary": "creates the Story with the given object id",
+      "params": [
+        {
+          "name": "story",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Story"
+          }
+        }
+      ]
+    },
+    {
+      "name": "read_story",
+      "summary": "gets the story with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_story",
+      "summary": "gets the Story with the given object id",
+      "params": [
+        {
+          "name": "story",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Story"
+          }
+        }
+      ]
+    },
+    {
+      "name": "delete_story",
+      "summary": "deletes the Story with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    {
+      "name": "list_story",
+      "summary": "lists all of the story objects",
+      "params": []
+    }
+  ]
+}

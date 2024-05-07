@@ -1,30 +1,84 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel {Import, Struct,Param, CodeFile, Function, Result, Type}
+import freeflowuniverse.crystallib.core.codemodel {Module, Import, Struct,Param, CodeFile, Function, Result, Type}
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
+pub fn generate_actor(name string, objects []Struct) !Actor {
+	actor_struct := generate_actor_struct(name)
+	
+	return Actor {
+		name: name
+		mod: generate_actor_module(name, objects)!
+		methods: generate_actor_methods(actor_struct, objects)!
+	}
+}
+
+pub fn generate_actor_methods(actor Struct, objects []Struct) ![]ActorMethod {
+	mut methods := []ActorMethod{}
+	for object in objects {
+	methods << [
+		ActorMethod {
+			name: object.name
+			func: generate_create_method(actor, object)
+		},
+		ActorMethod {
+			name: object.name
+			func: generate_read_method(actor, object)
+		},
+		ActorMethod {
+			name: object.name
+			func: generate_update_method(actor, object)
+		},
+		ActorMethod {
+			name: object.name
+			func: generate_delete_method(actor, object)
+		},
+		ActorMethod {
+			name: object.name
+			func: generate_list_method(actor, object)
+		},
+	]
+	}
+	return methods
+}
+
+pub fn generate_actor_module(name string, objects []Struct) !Module {
+	actor := generate_actor_struct(name)
+	mut files := [generate_factory_file(name)]
+
+	// generate code files for each of the objects the actor is responsible for
+	for object in objects {
+		files << generate_object_code(actor, object)
+		files << generate_object_test_code(actor, object)!
+	}
+	return Module {
+		name: name
+		files: files
+	}
+}
+
 pub struct GenerateActorParams {
 	model_path string
 }
 
-pub fn (gen ActorGenerator) generate_actor() CodeFile {
-	actor_struct := gen.generate_actor_struct()
-	actor_factory := gen.generate_actor_factory(actor_struct)
+pub fn generate_factory_file(name string) CodeFile {
+	actor_struct := generate_actor_struct(name)
+	actor_factory := generate_actor_factory(actor_struct)
 	return codemodel.new_file(
-		mod: texttools.name_fix(gen.model_name)
+		mod: texttools.name_fix(name)
 		name: 'actor'
 		imports: [Import{mod:'freeflowuniverse.crystallib.baobab.actor'}]
 		items: [actor_struct, actor_factory]
 	)
 }
 
-pub fn (gen ActorGenerator) generate_actor_struct() Struct {
+pub fn generate_actor_struct(name string) Struct {
 	return codemodel.Struct{
 		is_pub: true
-		name: '${gen.model_name.title()}'
+		name: '${name.title()}'
 		embeds: [Struct{name:'actor.Actor'}]
 	}
 }
@@ -34,7 +88,7 @@ pub fn (gen ActorGenerator) generate_actor_struct() Struct {
 // 		Actor: actor.new(config)!
 // 	}
 // }
-pub fn (gen ActorGenerator) generate_actor_factory(actor Struct) Function {
+pub fn generate_actor_factory(actor Struct) Function {
 	return Function{
 		is_pub: true
 		params: [Param{name: 'config', typ:Type{symbol:'actor.ActorConfig'}}]

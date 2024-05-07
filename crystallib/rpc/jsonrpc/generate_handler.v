@@ -1,6 +1,6 @@
 module jsonrpc
 
-import freeflowuniverse.crystallib.core.codemodel
+import freeflowuniverse.crystallib.core.codemodel {CodeFile, Struct}
 
 pub struct HandlerArgs {
 	stateful bool

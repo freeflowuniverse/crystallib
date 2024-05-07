@@ -70,7 +70,7 @@ pub fn generate_ws_factory_code(name string) []CodeItem {
 		]
 		body: 'mut transport := rpcwebsocket.new_rpcwsclient(config.address, config.logger)!
 	spawn transport.run()
-	return @{client_name} {
+	return ${name} {
 		transport: transport
 	}'
 		result: Result{

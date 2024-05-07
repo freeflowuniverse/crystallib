@@ -27,9 +27,20 @@ pub fn new(config BackendConfig) !Backend {
 	return backend
 }
 
-pub fn (mut backend Backend) new[T](obj T) !int {
+pub fn (mut backend Backend) new[T](obj_ T) !int {
+	mut obj := obj_
 	mut db := backend.dbs.get(get_table_name[T]())!
 	id := backend.indexer.new[T](obj)!
+
+	$for field in T.fields {
+		if field.name == 'id' {
+			obj.id = '${id}'
+		}
+		else if field.name == 'Base' {
+			obj.id = '${id}'
+		}
+	}
+
 	data := encoderhero.encode[T](obj)!
 	db.set('${id}', data)!
 	return id
@@ -49,9 +60,9 @@ pub fn (mut backend Backend) delete[T](id int) ! {
 	db.delete('${id}')!
 }
 
-pub fn (mut backend Backend) get[T](id int) !T {
+pub fn (mut backend Backend) get[T](id string) !T {
 	mut db := backend.dbs.get(get_table_name[T]())!
-	data := db.get('${id}')!
+	data := db.get(id)!
 	return encoderhero.decode[T](data)!
 }
 
@@ -65,8 +76,6 @@ pub fn (mut backend Backend) list[T]() ![]T {
 pub fn (mut backend Backend) filter[T,D](filter D, params FilterParams) ![]T {
 	mut db := backend.dbs.get(get_table_name[T]())!
 	ids := backend.indexer.filter[T, D](filter, params)!
-	println('debugzo ${ids}')
 	datas := ids.map(db.get('${it}')!)
-	println('debugzo2 ${datas}')
 	return datas.map(encoderhero.decode[T](it)!)
 }

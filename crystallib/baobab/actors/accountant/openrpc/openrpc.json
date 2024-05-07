@@ -1,0 +1,62 @@
+{
+  "openrpc": "1.0.0",
+  "info": {
+    "title": "Accountant",
+    "version": "1.0.0"
+  },
+  "methods": [
+    {
+      "name": "create_budget",
+      "summary": "creates the Budget with the given object id",
+      "params": [
+        {
+          "name": "budget",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Budget"
+          }
+        }
+      ]
+    },
+    {
+      "name": "read_budget",
+      "summary": "gets the budget with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_budget",
+      "summary": "gets the Budget with the given object id",
+      "params": [
+        {
+          "name": "budget",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Budget"
+          }
+        }
+      ]
+    },
+    {
+      "name": "delete_budget",
+      "summary": "deletes the Budget with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    {
+      "name": "list_budget",
+      "summary": "lists all of the budget objects",
+      "params": []
+    }
+  ]
+}

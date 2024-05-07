@@ -20,10 +20,10 @@ pub fn call[T, D](msg string, method fn(T)!D) !string {
 
 // performs jsonrpc call on provided method without parameters
 pub fn invoke[T](msg string, method fn()!T) !string {
-	request := jsonrpc.jsonrpcrequest_decode[string](msg)!
+	id := jsonrpc.jsonrpcrequest_decode_id(msg)!
 	if result := method() {
-		response := jsonrpc.JsonRpcResponse[D]{
-			id: request.id,
+		response := jsonrpc.JsonRpcResponse[T]{
+			id: id,
 			jsonrpc: request.jsonrpc
 			result: result
 		}
@@ -34,7 +34,7 @@ pub fn invoke[T](msg string, method fn()!T) !string {
 	}
 }
 
-pub fn notify[T](msg string, method fn(T)) ! {
+pub fn notify[T](msg string, method fn(T)!) ! {
 	request := jsonrpc.jsonrpcrequest_decode[T](msg)!
-	method(request.params)
+	method(request.params)!
 }
