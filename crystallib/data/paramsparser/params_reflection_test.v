@@ -3,27 +3,27 @@ module paramsparser
 import time
 
 struct TestStruct {
-	name    string
-	nick    ?string
+	name     string
+	nick     ?string
 	birthday time.Time
-	number  int
-	yesno   bool
-	liststr []string
-	listint []int
+	number   int
+	yesno    bool
+	liststr  []string
+	listint  []int
 	listbool []bool
-	child TestChild
+	child    TestChild
 }
 
 struct TestChild {
-	child_name string
-	child_number  int
-	child_yesno   bool
-	child_liststr []string
-	child_listint []int
+	child_name     string
+	child_number   int
+	child_yesno    bool
+	child_liststr  []string
+	child_listint  []int
 	child_listbool []bool
 }
 
-const test_child = TestChild {
+const test_child = TestChild{
 	child_name: 'test_child'
 	child_number: 3
 	child_yesno: false
@@ -46,24 +46,28 @@ const test_struct = TestStruct{
 	child: test_child
 }
 
-const test_child_params = Params {
+const test_child_params = Params{
 	params: [
 		Param{
 			key: 'child_name'
 			value: 'test_child'
-		}, Param{
+		},
+		Param{
 			key: 'child_number'
 			value: '3'
-		}, Param{
+		},
+		Param{
 			key: 'child_yesno'
 			value: 'false'
-		}, Param{
+		},
+		Param{
 			key: 'child_liststr'
 			value: 'three,four'
-		}, Param{
+		},
+		Param{
 			key: 'child_listint'
 			value: '3,4'
-		}
+		},
 	]
 }
 
@@ -97,16 +101,16 @@ const test_params = Params{
 
 fn test_decode() {
 	// test single level struct
-	decoded_child := test_child_params.decode[TestChild]()!
-	assert decoded_child == test_child
+	decoded_child := paramsparser.test_child_params.decode[TestChild]()!
+	assert decoded_child == paramsparser.test_child
 
 	// test recursive decode struct with child
-	decoded := test_params.decode[TestStruct]()!
-	assert decoded == test_struct
+	decoded := paramsparser.test_params.decode[TestStruct]()!
+	assert decoded == paramsparser.test_struct
 }
 
 fn test_encode() {
 	// test single level struct
-	encoded_child := encode[TestChild](test_child)!
-	assert encoded_child == test_child_params
+	encoded_child := encode[TestChild](paramsparser.test_child)!
+	assert encoded_child == paramsparser.test_child_params
 }

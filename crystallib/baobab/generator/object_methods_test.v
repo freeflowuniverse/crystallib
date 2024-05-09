@@ -43,7 +43,6 @@ pub fn test_generate_get_method() {
 		root_struct: test_struct
 	)
 	println(method.vgen())
-
 }
 
 // // generate_object_methods generates CRUD actor methods for a provided structure

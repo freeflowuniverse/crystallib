@@ -15,7 +15,7 @@ pub mut:
 
 pub fn new_file(config CodeFile) CodeFile {
 	return CodeFile{
-		...config,
+		...config
 		mod: texttools.name_fix(config.mod)
 		items: config.items
 	}

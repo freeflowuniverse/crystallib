@@ -103,7 +103,7 @@ pub fn start(args_ InstallArgs) ! {
 	myconfigpath_ := '${os.home_dir()}/hero/cfg/dagu.yaml'
 	homedir := '${os.home_dir()}/hero/var/dagu'
 
-	//FILL IN THE TEMPLATE
+	// FILL IN THE TEMPLATE
 	mut mycode := $tmpl('templates/admin.yaml')
 
 	mut path := pathlib.get_file(path: myconfigpath_, create: true)!
@@ -145,4 +145,3 @@ pub fn check(args InstallArgs) !bool {
 	console.print_debug('Dagu is answering.')
 	return true
 }
-

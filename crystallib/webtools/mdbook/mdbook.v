@@ -21,8 +21,8 @@ pub mut:
 @[params]
 pub struct MDBookArgs {
 pub mut:
-	name         string @[required]
-	title        string
+	name  string @[required]
+	title string
 
 	foldlevel    int
 	printbook    bool

@@ -9,7 +9,6 @@ import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.sysadmin.downloader
 
 pub fn install(args_ InstallArgs) ! {
-
 	mut args := args_
 	version := '0.4.5'
 
@@ -29,7 +28,7 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	// install vlang if it was already done will return true
-	if args.reset == false{
+	if args.reset == false {
 		return
 	}
 

@@ -75,12 +75,14 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 			mutable: true
 			struct_: handler_struct
 		}
-		params: [codemodel.Param{
-			name: 'msg'
-			typ: codemodel.Type{
-				symbol: 'string'
-			}
-		}]
+		params: [
+			codemodel.Param{
+				name: 'msg'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			},
+		]
 		result: codemodel.Result{
 			typ: codemodel.Type{
 				symbol: 'string'

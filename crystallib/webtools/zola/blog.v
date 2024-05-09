@@ -35,7 +35,6 @@ pub:
 	cities      []string
 }
 
-
 pub struct PostAddArgs {
 mut:
 	name       string

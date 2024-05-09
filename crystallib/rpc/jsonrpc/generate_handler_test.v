@@ -8,12 +8,14 @@ const receiver = codemodel.Struct{
 const methods = [
 	codemodel.Function{
 		name: 'test_notification_method'
-		params: [codemodel.Param{
-			name: 'key'
-			typ: codemodel.Type{
-				symbol: 'string'
-			}
-		}]
+		params: [
+			codemodel.Param{
+				name: 'key'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			},
+		]
 	},
 	codemodel.Function{
 		name: 'test_invocation_method'
@@ -26,12 +28,14 @@ const methods = [
 	},
 	codemodel.Function{
 		name: 'test_method'
-		params: [codemodel.Param{
-			name: 'key'
-			typ: codemodel.Type{
-				symbol: 'string'
-			}
-		}]
+		params: [
+			codemodel.Param{
+				name: 'key'
+				typ: codemodel.Type{
+					symbol: 'string'
+				}
+			},
+		]
 		result: codemodel.Result{
 			name: 'value'
 			typ: codemodel.Type{
@@ -41,12 +45,14 @@ const methods = [
 	},
 	codemodel.Function{
 		name: 'test_method_structs'
-		params: [codemodel.Param{
-			name: 'key_struct'
-			typ: codemodel.Type{
-				symbol: 'Key'
-			}
-		}]
+		params: [
+			codemodel.Param{
+				name: 'key_struct'
+				typ: codemodel.Type{
+					symbol: 'Key'
+				}
+			},
+		]
 		result: codemodel.Result{
 			name: 'value_struct'
 			typ: codemodel.Type{

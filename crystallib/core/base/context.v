@@ -8,22 +8,22 @@ import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import crypto.md5
+import base64
 
 @[heap]
 pub struct Context {
 mut:
 	gitstructure_ ?&gittools.GitStructure @[skip; str: skip]
-	priv_key_     ?&secp256k1.Secp256k1	
+	priv_key_     ?&secp256k1.Secp256k1
 	secret_       string
 pub mut:
-	id 			 int //corresponds to redis DB, min is 1
+	id           int // corresponds to redis DB, min is 1
 	name         string
 	params       paramsparser.Params
 	snippets     map[string]string
 	redis        &redisclient.Redis  @[skip; str: skip]
 	dbcollection &dbfs.DBCollection  @[skip; str: skip]
-	interactive bool = true
-
+	interactive  bool = true
 }
 
 // return the gistructure as is being used in context
@@ -34,6 +34,7 @@ pub fn (mut self Context) gitstructure() !&gittools.GitStructure {
 		self.gitstructure_ = &gs
 		&gs
 	}
+
 	return gs2
 }
 
@@ -118,54 +119,51 @@ fn (mut self Context) db_config_get() !dbfs.DB {
 	return self.dbcollection.get('config')!
 }
 
-
 /////////////PRIVKEY
 
-pub fn (mut self Context) privkey_new() !&secp256k1.Secp256k1	 {
-	mypk := secp256k1.new()!	
+pub fn (mut self Context) privkey_new() !&secp256k1.Secp256k1 {
+	mypk := secp256k1.new()!
 	return self.privkey_set(mypk.private_key())!
 }
 
-pub fn (mut self Context) privkey_set(key string) !&secp256k1.Secp256k1	 {
+pub fn (mut self Context) privkey_set(key string) !&secp256k1.Secp256k1 {
 	mut mypk := secp256k1.new(
 		privhex: key
 	)!
-	privkeyencr:=self.secret_encrypt(mypk.private_key())!
-	self.redis.set("context:privkey",privkeyencr)!
+	privkeyencr := self.secret_encrypt(mypk.private_key())!
+	self.redis.set('context:privkey', privkeyencr)!
 	return self.privkey()
 }
 
-//get the private key
-pub fn (mut self Context) privkey() !&secp256k1.Secp256k1	 {
+// get the private key
+pub fn (mut self Context) privkey() !&secp256k1.Secp256k1 {
 	mut mypk := self.priv_key_ or {
-		mut key:=self.redis.get("context:privkey") or {""}
-		if key==""{
+		mut key := self.redis.get('context:privkey') or { '' }
+		if key == '' {
 			return error("can't find priv key for context:${self.id}")
 		}
-		key=self.secret_decrypt(key)!
+		key = self.secret_decrypt(key)!
 		mut mypk := secp256k1.new(
 			privhex: key
-		)!		
+		)!
 		self.priv_key_ = &mypk
 		&mypk
-	}	
+	}
+
 	return mypk
 }
 
-
 /////////////SECRET MANAGEMENT
 
-//show a UI in console to configure the secret
+// show a UI in console to configure the secret
 pub fn (mut self Context) secret_configure() ! {
 	mut myui := ui.new()!
 	console.clear()
 	secret_ := myui.ask_question(question: 'Please enter your hero secret string:')!
 	return self.secret_set(secret_)!
-
 }
 
-
-//unhashed secret
+// unhashed secret
 pub fn (mut self Context) secret_set(secret string) ! {
 	mut r := self.redis
 	secret2 = md5.hexhash(secret)
@@ -175,14 +173,14 @@ pub fn (mut self Context) secret_set(secret string) ! {
 }
 
 pub fn (mut self Context) secret_get() !string {
-	if self.secret_==""{
+	if self.secret_ == '' {
 		mut r := self.redis
 		key := 'context:secret'
 		mut secret := r.get(key)!
 		if secret.len == 0 {
 			if self.interactive == false {
 				return error("can't use secret_get in non-interactive mode on context")
-			}			
+			}
 			return self.secret_configure()!
 		}
 		self.secret_ = secret
@@ -190,18 +188,15 @@ pub fn (mut self Context) secret_get() !string {
 	return self.secret_
 }
 
-
-//will use our secret as configured for the hero to encrypt
+// will use our secret as configured for the hero to encrypt
 pub fn (mut self Context) secret_encrypt(txt string) !string {
-	mut secret:=self.secret_get()!
-	d:= aes_symmetric.encrypt_str(txt, secret)
+	mut secret := self.secret_get()!
+	d := aes_symmetric.encrypt_str(txt, secret)
 	return base64.encode_str(d)
-
 }
 
 pub fn (mut self Context) secret_decrypt(txt string) !string {
-	mut secret:=self.secret_get()!
-	txt2:=base64.decode_str(txt)
+	mut secret := self.secret_get()!
+	txt2 := base64.decode_str(txt)
 	return aes_symmetric.decrypt_str(txt2, secret)
 }
-

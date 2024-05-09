@@ -5,13 +5,12 @@ import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import net.smtp
 
-
 pub struct MailClient[T] {
 	base.BaseConfig[T]
 pub mut:
 	config      Config
 	smtp_client &smtp.Client
-}	
+}
 
 pub struct MailConfig {
 pub mut:

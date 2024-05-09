@@ -10,22 +10,22 @@ import os
 pub struct DaguClient[T] {
 	base.BaseConfig[T]
 pub mut:
-	connection &httpconnection.HTTPConnection	
+	connection &httpconnection.HTTPConnection
 }
 
 pub struct DaguClientConfig {
 pub mut:
-	url        string
-	username   string
-	password   string
+	url       string
+	username  string
+	password  string
 	apisecret string
 }
 
 @[params]
 pub struct DaguClientArgs {
 pub mut:
-	instance string = "default"
-	config ?DaguClientConfig
+	instance string = 'default'
+	config   ?DaguClientConfig
 }
 
 pub fn get(args DaguClientArgs) !DaguClient[DaguClientConfig] {
@@ -33,10 +33,10 @@ pub fn get(args DaguClientArgs) !DaguClient[DaguClientConfig] {
 	mut client := DaguClient[DaguClientConfig]{
 		connection: &con
 	}
-	client.init(instance:args.instance)!
+	client.init(instance: args.instance)!
 
-	if args.config!=none{
-		myconfig := args.config or {panic("bug")}
+	if args.config != none {
+		myconfig := args.config or { panic('bug') }
 		client.config_set(myconfig)!
 	}
 
@@ -92,7 +92,6 @@ pub fn (mut self DaguClient[DaguClientConfig]) config_interactive() ! {
 		default: cfg.password
 		minlen: 6
 	)!
-
 
 	self.config_save()!
 }

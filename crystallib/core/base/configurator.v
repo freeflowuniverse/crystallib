@@ -15,13 +15,13 @@ pub mut:
 	instance    string
 	description string
 	configured  bool
-	configtype string // e.g. sshclient
+	configtype  string // e.g. sshclient
 }
 
 @[params]
 pub struct ConfiguratorArgs {
 pub mut:
-	context  &Context //optional context for the configurator
+	context  &Context // optional context for the configurator
 	instance string   @[required]
 }
 
@@ -29,7 +29,6 @@ pub mut:
 // instance is the instance of the config e.g. kds
 // the context defines the context in which we operate, is optional will get the default one if not set
 pub fn configurator_new[T](args ConfiguratorArgs) !Configurator[T] {
-
 	return Configurator[T]{
 		context: args.context
 		configtype: T.name.to_lower()

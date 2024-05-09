@@ -1,6 +1,6 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel {StructField, Import,Param,Struct CodeFile, CustomCode, Function, CodeItem, Type}
+import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Function, Import, Param, Struct, StructField, Type }
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import os
@@ -9,7 +9,7 @@ pub fn (gen ActorGenerator) generate_object_code(params_ GenerateCrudMethods) Co
 	object_name := texttools.name_fix(params_.root_struct.name)
 	object_type := params_.root_struct.name
 	params := GenerateCrudMethods{
-		...params_, 
+		...params_
 		object_type: params_.root_struct.name
 		object_name: object_name
 	}
@@ -20,18 +20,18 @@ pub fn (gen ActorGenerator) generate_object_code(params_ GenerateCrudMethods) Co
 			Import{
 				mod: '${params.root_struct.mod}'
 				types: [object_type]
-			}
+			},
 			Import{
 				mod: 'freeflowuniverse.crystallib.baobab.backend'
 				types: ['FilterParams']
-			}
+			},
 		]
 		items: [
-		gen.generate_create_method(params),
-		gen.generate_read_method(params),
-		gen.generate_update_method(params),
-		gen.generate_delete_method(params),
-		gen.generate_list_method(params),
+			gen.generate_create_method(params),
+			gen.generate_read_method(params),
+			gen.generate_update_method(params),
+			gen.generate_delete_method(params),
+			gen.generate_list_method(params),
 		]
 	)
 	filter_params := gen.generate_filter_params(params)
@@ -43,15 +43,15 @@ pub fn (gen ActorGenerator) generate_object_code(params_ GenerateCrudMethods) Co
 @[params]
 pub struct GenerateCrudMethods {
 pub:
-	actor_name  string                @[required] // name of actor struct
+	actor_name  string      @[required] // name of actor struct
 	object_type string
-	actor_field codemodel.StructField // field in actor belonging to root object
-	root_struct codemodel.Struct    
+	actor_field StructField // field in actor belonging to root object
+	root_struct Struct
 	object_name string
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-pub fn (generator ActorGenerator) generate_object_methods(params GenerateCrudMethods) []codemodel.Function {
+pub fn (generator ActorGenerator) generate_object_methods(params GenerateCrudMethods) []Function {
 	return [
 		generator.generate_create_method(params),
 		generator.generate_read_method(params),
@@ -63,27 +63,29 @@ pub fn (generator ActorGenerator) generate_object_methods(params GenerateCrudMet
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn (generator ActorGenerator) generate_read_method(params GenerateCrudMethods) codemodel.Function {
-	get_method := codemodel.Function{
+fn (generator ActorGenerator) generate_read_method(params GenerateCrudMethods) Function {
+	get_method := Function{
 		name: 'read_${params.object_name}'
 		description: 'gets the ${params.object_name} with the given object id'
-		receiver: codemodel.Param{
+		receiver: Param{
 			mutable: true
 			name: 'actor'
-			typ: codemodel.Type{
+			typ: Type{
 				symbol: params.actor_name
 			}
 		}
 		params: [
-			codemodel.Param{
+			Param{
 				name: 'id'
-				typ: codemodel.Type{
+				typ: Type{
 					symbol: 'int'
 				}
 			},
 		]
 		result: codemodel.Result{
-			typ: Type{symbol:params.root_struct.name}
+			typ: Type{
+				symbol: params.root_struct.name
+			}
 			result: true
 		}
 		body: 'return actor.backend.get[${params.object_type}](id)!'
@@ -92,27 +94,27 @@ fn (generator ActorGenerator) generate_read_method(params GenerateCrudMethods) c
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn (generator ActorGenerator) generate_update_method(params GenerateCrudMethods) codemodel.Function {
+fn (generator ActorGenerator) generate_update_method(params GenerateCrudMethods) Function {
 	param_getters := generate_param_getters(
 		structure: params.root_struct
 		prefix: ''
 		only_mutable: true
 	)
-	body := "actor.backend.set[${params.object_type}](${params.object_name})!"
-	get_method := codemodel.Function{
+	body := 'actor.backend.set[${params.object_type}](${params.object_name})!'
+	get_method := Function{
 		name: 'update_${params.root_struct.name.to_lower()}'
 		description: 'gets the ${params.root_struct.name} with the given object id'
-		receiver: codemodel.Param{
+		receiver: Param{
 			mutable: true
 			name: 'actor'
-			typ: codemodel.Type{
+			typ: Type{
 				symbol: params.actor_name
 			}
 		}
 		params: [
-			codemodel.Param{
+			Param{
 				name: params.object_name
-				typ: codemodel.Type{
+				typ: Type{
 					symbol: params.object_type
 				}
 			},
@@ -126,22 +128,22 @@ fn (generator ActorGenerator) generate_update_method(params GenerateCrudMethods)
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn (generator ActorGenerator) generate_delete_method(params GenerateCrudMethods) codemodel.Function {
+fn (generator ActorGenerator) generate_delete_method(params GenerateCrudMethods) Function {
 	body := 'actor.backend.delete[${params.object_type}](id)!'
-	get_method := codemodel.Function{
+	get_method := Function{
 		name: 'delete_${params.root_struct.name.to_lower()}'
 		description: 'deletes the ${params.root_struct.name} with the given object id'
-		receiver: codemodel.Param{
+		receiver: Param{
 			mutable: true
 			name: 'actor'
-			typ: codemodel.Type{
+			typ: Type{
 				symbol: params.actor_name
 			}
 		}
 		params: [
-			codemodel.Param{
+			Param{
 				name: 'id'
-				typ: codemodel.Type{
+				typ: Type{
 					symbol: 'int'
 				}
 			},
@@ -155,34 +157,36 @@ fn (generator ActorGenerator) generate_delete_method(params GenerateCrudMethods)
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn (generator ActorGenerator) generate_create_method(params GenerateCrudMethods) codemodel.Function {
+fn (generator ActorGenerator) generate_create_method(params GenerateCrudMethods) Function {
 	param_getters := generate_param_getters(
 		structure: params.root_struct
 		prefix: ''
 		only_mutable: false
 	)
-	body := "return actor.backend.new[${params.object_type}](${params.object_name})!"
-	create_method := codemodel.Function{
+	body := 'return actor.backend.new[${params.object_type}](${params.object_name})!'
+	create_method := Function{
 		name: 'create_${params.root_struct.name.to_lower()}'
 		description: 'creates the ${params.root_struct.name} with the given object id'
-		receiver: codemodel.Param{
+		receiver: Param{
 			name: 'actor'
-			typ: codemodel.Type{
+			typ: Type{
 				symbol: params.actor_name
 			}
 			mutable: true
 		}
 		params: [
-			codemodel.Param{
+			Param{
 				name: params.object_name
-				typ: codemodel.Type{
+				typ: Type{
 					symbol: params.object_type
 				}
 			},
 		]
 		result: codemodel.Result{
 			result: true
-			typ: Type{symbol:'int'}
+			typ: Type{
+				symbol: 'int'
+			}
 		}
 		body: body
 	}
@@ -190,26 +194,28 @@ fn (generator ActorGenerator) generate_create_method(params GenerateCrudMethods)
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn (generator ActorGenerator) generate_list_method(params GenerateCrudMethods) codemodel.Function {
+fn (generator ActorGenerator) generate_list_method(params GenerateCrudMethods) Function {
 	param_getters := generate_param_getters(
 		structure: params.root_struct
 		prefix: ''
 		only_mutable: false
 	)
-	body := "return actor.backend.list[${params.object_type}]()!"
-	create_method := codemodel.Function{
+	body := 'return actor.backend.list[${params.object_type}]()!'
+	create_method := Function{
 		name: 'list_${params.root_struct.name.to_lower()}'
 		description: 'lists all of the ${params.object_name} objects'
-		receiver: codemodel.Param{
+		receiver: Param{
 			name: 'actor'
-			typ: codemodel.Type{
+			typ: Type{
 				symbol: params.actor_name
 			}
 			mutable: true
 		}
 		params: []
 		result: codemodel.Result{
-			typ: Type{symbol:'[]${params.object_type}'}
+			typ: Type{
+				symbol: '[]${params.object_type}'
+			}
 			result: true
 		}
 		body: body
@@ -217,45 +223,61 @@ fn (generator ActorGenerator) generate_list_method(params GenerateCrudMethods) c
 	return create_method
 }
 
-fn (generator ActorGenerator) generate_filter_params(params GenerateCrudMethods) []codemodel.Struct {
-	return [Struct {
-		name: 'Filter${params.object_type}Params'
-		fields: [
-			StructField{name: 'filter', typ: Type{symbol: '${params.object_type}Filter'}},
-			StructField{name: 'params', typ: Type{symbol: 'FilterParams'}}
-		]
-	}, Struct {
-		name: '${params.object_type}Filter'
-		fields: params.root_struct.fields.filter(it.attrs.any(it.name == 'index'))
-	}
+fn (generator ActorGenerator) generate_filter_params(params GenerateCrudMethods) []Struct {
+	return [
+		Struct{
+			name: 'Filter${params.object_type}Params'
+			fields: [
+				StructField{
+					name: 'filter'
+					typ: Type{
+						symbol: '${params.object_type}Filter'
+					}
+				},
+				StructField{
+					name: 'params'
+					typ: Type{
+						symbol: 'FilterParams'
+					}
+				},
+			]
+		},
+		Struct{
+			name: '${params.object_type}Filter'
+			fields: params.root_struct.fields.filter(it.attrs.any(it.name == 'index'))
+		},
 	]
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn (generator ActorGenerator) generate_filter_method(params GenerateCrudMethods) codemodel.Function {
+fn (generator ActorGenerator) generate_filter_method(params GenerateCrudMethods) Function {
 	param_getters := generate_param_getters(
 		structure: params.root_struct
 		prefix: ''
 		only_mutable: false
 	)
 	params_type := 'Filter${params.object_type}Params'
-	body := "return actor.backend.filter[${params.object_type}, ${params.object_type}Filter](filter.filter, filter.params)!"
-	return codemodel.Function{
+	body := 'return actor.backend.filter[${params.object_type}, ${params.object_type}Filter](filter.filter, filter.params)!'
+	return Function{
 		name: 'filter_${params.object_name}'
 		description: 'lists all of the ${params.object_name} objects'
-		receiver: codemodel.Param{
+		receiver: Param{
 			name: 'actor'
-			typ: codemodel.Type{
+			typ: Type{
 				symbol: params.actor_name
 			}
 			mutable: true
 		}
 		params: [Param{
 			name: 'filter'
-			typ: Type{symbol: params_type}
+			typ: Type{
+				symbol: params_type
+			}
 		}]
 		result: codemodel.Result{
-			typ: Type{symbol:'[]${params.object_type}'}
+			typ: Type{
+				symbol: '[]${params.object_type}'
+			}
 			result: true
 		}
 		body: body
@@ -264,7 +286,7 @@ fn (generator ActorGenerator) generate_filter_method(params GenerateCrudMethods)
 
 @[params]
 struct GenerateParamGetters {
-	structure    codemodel.Struct
+	structure    Struct
 	prefix       string
 	only_mutable bool // if true generates param.get methods for only mutable  struct fields. Used for updating.
 }
@@ -317,11 +339,11 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 
 @[params]
 struct GetChildField {
-	parent codemodel.Struct @[required]
-	child  codemodel.Struct @[required]
+	parent Struct @[required]
+	child  Struct @[required]
 }
 
-fn get_child_field(params GetChildField) codemodel.StructField {
+fn get_child_field(params GetChildField) StructField {
 	fields := params.parent.fields.filter(it.typ.symbol == 'map[string]&${params.child.name}')
 	if fields.len != 1 {
 		panic('this should never happen')

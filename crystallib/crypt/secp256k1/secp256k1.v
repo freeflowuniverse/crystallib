@@ -3,6 +3,7 @@ module secp256k1
 
 import encoding.hex
 import crypto.sha256
+import encoding.base64
 
 #include "@VMODROOT/secp256k1mod.h"
 
@@ -98,11 +99,12 @@ fn C.secp256k1_generate_key(secp &Secp256k1_t) int
 @[params]
 pub struct Secp256NewArgs {
 pub:
-	keyhex  string // old way, same as privhex
-	pubhex  string // public key hex  (eg 0x03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21)
-	privhex string // private key hex (eg 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83)
+	pubhex  string // public key hex  (eg 03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21)
+	privhex string // private key hex (eg 478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83)
+	pubbase64 string
+	privbase64 string
 
-	key []u8 // is in binary form (not implemented)
+	//key []u8 // is in binary form (not implemented)
 }
 
 // get a Secp256k1 key, can start from an existing key in string hex format (starts with 0x)
@@ -121,49 +123,51 @@ pub fn new(args_ Secp256NewArgs) !Secp256k1 {
 	secp := Secp256k1{}
 	secp.cctx = C.secp256k1_new()
 
-	if args.key.len > 0 && args.keyhex.len > 0 {
-		return error('cannot specify hexkey and key at same time')
-	}
+	// if args.key.len > 0 && args.privhex.len > 0 {
+	// 	return error('cannot specify privhex and key at same time')
+	// }
 
 	if args.privhex.len > 0 && args.pubhex.len > 0 {
 		return error('cannot specify private and public key at same time')
 	}
-
-	if (args.key.len == 0 && args.keyhex.len == 0 && args.privhex.len == 0 && args.pubhex.len == 0) {
-		// no keys specified, generating new private and public key
-		C.secp256k1_generate_key(secp.cctx)
-	} else {
-		if args.keyhex.len > 0 {
-			// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
-			// key is the private key
-			load := C.secp256k1_load_private_key(secp.cctx, args.keyhex.str)
-			if load > 0 {
-				return error('invalid private key')
-			}
+	if args.privhex.len > 0 {
+		// same as keyhex (backward compatibility)
+		// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
+		// key is the private key
+		if !(args.privhex.starts_with("0x")){
+			args.privhex="0x${args.privhex}"
 		}
-
-		if args.privhex.len > 0 {
-			// same as keyhex (backward compatibility)
-			// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
-			// key is the private key
-			load := C.secp256k1_load_private_key(secp.cctx, args.privhex.str)
-			if load > 0 {
-				return error('invalid private key')
-			}
+		load := C.secp256k1_load_private_key(secp.cctx, args.privhex.str)
+		if load > 0 {
+			return error('invalid private key')
 		}
-
-		if args.pubhex.len > 0 {
-			// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
-			// key is the public key, this only allow signature check, shared keys, etc.
-			load := C.secp256k1_load_public_key(secp.cctx, args.pubhex.str)
-			if load > 0 {
-				return error('invalid public key')
-			}
+	} else if args.pubhex.len > 0 {
+		// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
+		// key is the public key, this only allow signature check, shared keys, etc.
+		if !(args.pubhex.starts_with("0x")){
+			args.pubhex="0x${args.pubhex}"
+		}			
+		load := C.secp256k1_load_public_key(secp.cctx, args.pubhex.str)
+		if load > 0 {
+			return error('invalid public key')
 		}
+	}else if args.privbase64.len > 0 {
+		keybin:=base64.decode(args.privbase64)
+		keyhex:=hex.encode(keybin)
+		keyhex2:="0x${keyhex}"
+		return new(privhex:keyhex2)!
+	}else if args.pubbase64.len > 0 {
+		keybin:=base64.decode(args.pubbase64)
+		keyhex:=hex.encode(keybin)
+		keyhex2:="0x${keyhex}"
+		return new(pubhex:keyhex2)!
+	}else{
+		C.secp256k1_generate_key(secp.cctx)	
+	}
+		
 
 		// TODO: implement the binary key input
 		// TODO: check format in side and report properly
-	}
 
 	// dumps keys for debugging purpose
 	// secp.keys()	
@@ -197,20 +201,43 @@ pub fn (s Secp256k1) export() string {
 // shared commun key, this key is unique with that pair.
 pub fn (s Secp256k1) sharedkeys(target Secp256k1) []u8 {
 	shr := C.secp265k1_shared_key(s.cctx, target.cctx)
-
 	return unsafe { shr.vbytes(32) } // 32 bytes shared key
 }
 
-// returns private key in hex format
-pub fn (s Secp256k1) private_key() string {
-	key := C.secp256k1_private_key(s.cctx)
-	return unsafe { key.vstring() }
+pub fn (s Secp256k1) sharedkeys_hex(target Secp256k1) string {
+	keybin := s.sharedkeys(target)
+	return hex.encode(keybin)
 }
 
+pub fn (s Secp256k1) sharedkeys_base64(target Secp256k1) string {
+	keybin := s.sharedkeys(target)
+	return base64.encode(keybin)
+}
+
+// returns private key in hex format
+pub fn (s Secp256k1) private_key_hex() string {
+	key := C.secp256k1_private_key(s.cctx)
+	return unsafe { key.vstring()[2..] }
+}
+
+pub fn (s Secp256k1) private_key_base64() string {
+	key := s.private_key_hex()
+	keybin := hex.decode(key) or {panic("can't decode hex")}
+	return base64.encode(keybin)
+}
+
+
 // return public key in hex format
-pub fn (s Secp256k1) public_key() string {
+pub fn (s Secp256k1) public_key_hex() string {
 	key := C.secp256k1_public_key(s.cctx)
-	return unsafe { key.vstring() }
+	return unsafe { key.vstring()[2..] }
+}
+
+
+pub fn (s Secp256k1) public_key_base64() string {
+	key := s.public_key_hex()
+	keybin := hex.decode(key) or {panic("can't decode hex")}
+	return base64.encode(keybin)
 }
 
 //
@@ -232,6 +259,11 @@ pub fn (s Secp256k1) sign_data_hex(data []u8) string {
 	return hex.encode(payload)
 }
 
+pub fn (s Secp256k1) sign_data_base64(data []u8) string {
+	payload := s.sign_data(data)
+	return base64.encode(payload)
+}
+
 pub fn (s Secp256k1) sign_str(data string) []u8 {
 	return s.sign_data(data.bytes())
 }
@@ -239,6 +271,11 @@ pub fn (s Secp256k1) sign_str(data string) []u8 {
 // return a hex string of the signature
 pub fn (s Secp256k1) sign_str_hex(data string) string {
 	return s.sign_data_hex(data.bytes())
+}
+
+pub fn (s Secp256k1) sign_str_base64(data string) string {
+	payload :=  s.sign_data(data.bytes())
+	return base64.encode(payload)
 }
 
 //
@@ -260,9 +297,16 @@ pub fn (s Secp256k1) verify_data(signature []u8, data []u8) bool {
 	return false
 }
 
-pub fn (s Secp256k1) verify_str(signature []u8, input string) bool {
-	return s.verify_data(signature, input.bytes())
+pub fn (s Secp256k1) verify_str_base64(signature string, input string) bool {
+	signature2:=base64.decode(signature) 
+	return s.verify_data(signature2, input.bytes())
 }
+
+pub fn (s Secp256k1) verify_str_hex(signature string, input string) bool {
+	signature2:=hex.decode(signature) or {panic("couldn't decode 64")}
+	return s.verify_data(signature2, input.bytes())
+}
+
 
 //
 // sign (schnorr) data

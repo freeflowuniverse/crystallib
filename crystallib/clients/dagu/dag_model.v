@@ -30,7 +30,6 @@ pub:
 	expected  string
 }
 
-
 pub struct HandlerOn {
 pub:
 	success string

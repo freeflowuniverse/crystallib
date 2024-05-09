@@ -61,7 +61,7 @@ pub fn (mut backend Indexer) new[T](obj T) !int {
 	backend.db.exec(insert_query) or {
 		return error('Error inserting object ${obj} into table ${table_name}')
 	}
-	
+
 	return id
 }
 
@@ -87,7 +87,6 @@ pub fn (mut backend Indexer) delete[T](id int) ! {
 			table_name = attr.arg
 		}
 	}
-
 	// todo: check table and entry exists
 	backend.db.exec('delete from ${table_name} where id=${id}')!
 	backend.db.exec('delete from root_objects where id=${id}')!
@@ -128,7 +127,6 @@ pub fn (mut backend Indexer) list[T]() ![]T {
 	return responses.map(json.decode(T, it.vals[1]) or { panic('JSON decode failed.') })
 }
 
-
 // from and to for int f64 time etc.
 @[params]
 pub struct FilterParams {
@@ -148,15 +146,14 @@ pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]int 
 			return error('Index ${field.name} not found for root struct ${typeof[T]()}')
 		}
 	}
-
 	mut select_stmt := 'select * from ${table_name}'
 
 	// $if D.fields.len > 0 {
-		select_stmt += ' where'
-		$for field in D.fields {
-			val := filter.$(field.name)
-			select_stmt += " ${field.name} == '${val}'"
-		}
+	select_stmt += ' where'
+	$for field in D.fields {
+		val := filter.$(field.name)
+		select_stmt += " ${field.name} == '${val}'"
+	}
 	// }
 
 	// println(select_stmt)

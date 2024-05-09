@@ -34,7 +34,7 @@ pub fn (mut dbcollection DBCollection) incr() !int {
 		incr_file:=dbcollection.path.file_get("incr_${memberid}")!
 		c:=incr_file.read() or {""}
 		if c==""{
-			c:=incr_file.write("1")!
+			incr_file.write("1")!
 			r.set("context:lastid","1")!
 			return 1
 		}

@@ -10,12 +10,11 @@ import crypto.sha256
 import freeflowuniverse.crystallib.crypt.secp256k1
 
 fn test_check() {
-
 	console.print_debug('${'[+] initializing libsecp256 vlang wrapper'}')
 
 	wendy := secp256k1.new()!
-	webdy_priv_key:=wendy.private_key()
-	webdy_pub_key:=wendy.public_key()
+	webdy_priv_key := wendy.private_key()
+	webdy_pub_key := wendy.public_key()
 	console.print_debug('-------')
 	console.print_debug('Wendy Private: ${webdy_priv_key}')
 	console.print_debug('Wendy Public: ${webdy_pub_key}')
@@ -86,14 +85,13 @@ fn test_check() {
 	console.print_debug('${signed_str.len}')
 
 	signed_str_hex := alice.sign_str_hex(message)
-	assert signed_str_hex=="656699dde22d8b89d91070dee4fc8dba136172fb54e6de475024c40e4f8d5111562212c8976b5a4ccd530bdb7f40c5d9bd2cdeeec1473656566fbb9c4576ed8c"
-	assert signed_str_hex.len==128
+	assert signed_str_hex == '656699dde22d8b89d91070dee4fc8dba136172fb54e6de475024c40e4f8d5111562212c8976b5a4ccd530bdb7f40c5d9bd2cdeeec1473656566fbb9c4576ed8c'
+	assert signed_str_hex.len == 128
 
 	// instanciate alice with only her public key
 	assert alicepub.verify_data(signed, message.bytes()) == true
 	assert alicepub.verify_str(signed_str, message) == true
-	assert alicepub.verify_str(signed_str, message+"s") == false
-
+	assert alicepub.verify_str(signed_str, message + 's') == false
 
 	//
 	// signature (schnorr)
@@ -116,6 +114,4 @@ fn test_check() {
 	// // should fails, it's not the right signature method (ecdsa / schnorr)
 	// console.print_debug('${alicepub.verify_data(schnorr_signed, message.bytes())}')
 	// console.print_debug('${alicepub.verify_str(schnorr_signed_str, message)}')
-
-
 }

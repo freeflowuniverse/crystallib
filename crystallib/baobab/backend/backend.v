@@ -7,12 +7,12 @@ import freeflowuniverse.crystallib.data.encoderhero
 pub struct Backend {
 mut:
 	indexer Indexer
-	dbs dbfs.DBCollection
+	dbs     dbfs.DBCollection
 }
 
-[params]
+@[params]
 pub struct BackendConfig {
-	name string
+	name   string
 	secret string
 }
 
@@ -62,7 +62,7 @@ pub fn (mut backend Backend) list[T]() ![]T {
 	return datas.map(encoderhero.decode[T](it)!)
 }
 
-pub fn (mut backend Backend) filter[T,D](filter D, params FilterParams) ![]T {
+pub fn (mut backend Backend) filter[T, D](filter D, params FilterParams) ![]T {
 	mut db := backend.dbs.get(get_table_name[T]())!
 	ids := backend.indexer.filter[T, D](filter, params)!
 	println('debugzo ${ids}')

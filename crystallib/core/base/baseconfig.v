@@ -1,8 +1,10 @@
 module base
+
 import freeflowuniverse.crystallib.crypt.secrets
 import v.reflection
 // is an object which has a configurator, session and config object which is unique for the model
 // T is the Config Object
+
 pub struct BaseConfig[T] {
 mut:
 	configurator_ ?Configurator[T] @[skip; str: skip]
@@ -27,7 +29,7 @@ fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {
 	return &configurator
 }
 
-//will overwrite the config
+// will overwrite the config
 pub fn (mut self BaseConfig[T]) config_set(myconfig T) ! {
 	self.config_ = &myconfig
 	self.config_save()!
@@ -40,10 +42,10 @@ pub fn (mut self BaseConfig[T]) config_new() !&T {
 		self.config_ = &c
 		&c
 	}
+
 	self.config_save()!
 	return config
 }
-
 
 pub fn (mut self BaseConfig[T]) config_get() !&T {
 	mut config := self.config_ or {
@@ -52,11 +54,11 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 		$for field in T.fields {
 			field_attrs := attrs_get(field.attrs)
 			if 'secret' in field_attrs {
-				v:=c.$(field.name)
-				c.$(field.name)=secrets.decrypt(v)!
-				//println('FIELD DECRYPTED: ${field.name}')		
+				v := c.$(field.name)
+				c.$(field.name) = secrets.decrypt(v)!
+				// println('FIELD DECRYPTED: ${field.name}')		
 			}
-		}		
+		}
 		self.config_ = &c
 		&c
 	}
@@ -70,16 +72,16 @@ pub fn (mut self BaseConfig[T]) context() !&Context {
 }
 
 pub fn (mut self BaseConfig[T]) config_save() ! {
-	mut config2 := *self.config_get()! //dereference so we don't modify the original
+	mut config2 := *self.config_get()! // dereference so we don't modify the original
 
 	// //walk over the properties see where they need to be encrypted, if yes encrypt
 	$for field in T.fields {
-	 	field_attrs := attrs_get(field.attrs)
-	 	if 'secret' in field_attrs {
-	 		v:=config2.$(field.name)
-		 	config2.$(field.name)=secrets.encrypt(v)!
-	 		//println('FIELD ENCRYPTED: ${field.name}')		
-	 	}
+		field_attrs := attrs_get(field.attrs)
+		if 'secret' in field_attrs {
+			v := config2.$(field.name)
+			config2.$(field.name) = secrets.encrypt(v)!
+			// println('FIELD ENCRYPTED: ${field.name}')		
+		}
 	}
 	mut configurator := self.configurator()!
 	configurator.set(config2)!
@@ -94,18 +96,17 @@ pub fn (mut self BaseConfig[T]) config_delete() ! {
 @[params]
 pub struct ConfigInitArgs {
 pub mut:
-	instance string = "default"
-	action Action
-	session  ?&Session
-	session_new_args ?SessionNewArgs	
+	instance         string = 'default'
+	action           Action
+	session          ?&Session
+	session_new_args ?SessionNewArgs
 }
 
-pub enum Action{
+pub enum Action {
 	get
 	new
 	delete
 }
-
 
 // init our class with the base session_args
 pub fn (mut self BaseConfig[T]) init(args ConfigInitArgs) ! {
@@ -121,20 +122,19 @@ pub fn (mut self BaseConfig[T]) init(args ConfigInitArgs) ! {
 		mut s := session_new(session_new_args)!
 		s
 	}
-	self.session_ = session	
+
+	self.session_ = session
 	mut configurator := self.configurator()!
-	if args.action==.get{
+	if args.action == .get {
 		self.config_get()!
-	}else if args.action==.new{
+	} else if args.action == .new {
 		self.config_new()!
-	}else if args.action==.delete{
+	} else if args.action == .delete {
 		self.config_delete()!
-	}else{
-		panic("bug")
+	} else {
+		panic('bug')
 	}
 }
-
-
 
 // will return {'name': 'teststruct', 'params': ''}
 fn attrs_get(attrs []string) map[string]string {

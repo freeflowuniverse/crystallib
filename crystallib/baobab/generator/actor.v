@@ -1,6 +1,6 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel {Import, Struct,Param, CodeFile, Function, Result, Type}
+import freeflowuniverse.crystallib.core.codemodel { CodeFile, Function, Import, Param, Result, Struct, Type }
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
@@ -16,16 +16,20 @@ pub fn (gen ActorGenerator) generate_actor() CodeFile {
 	return codemodel.new_file(
 		mod: texttools.name_fix(gen.model_name)
 		name: 'actor'
-		imports: [Import{mod:'freeflowuniverse.crystallib.baobab.actor'}]
+		imports: [Import{
+			mod: 'freeflowuniverse.crystallib.baobab.actor'
+		}]
 		items: [actor_struct, actor_factory]
 	)
 }
 
 pub fn (gen ActorGenerator) generate_actor_struct() Struct {
-	return codemodel.Struct{
+	return Struct{
 		is_pub: true
 		name: '${gen.model_name.title()}'
-		embeds: [Struct{name:'actor.Actor'}]
+		embeds: [Struct{
+			name: 'actor.Actor'
+		}]
 	}
 }
 
@@ -37,10 +41,15 @@ pub fn (gen ActorGenerator) generate_actor_struct() Struct {
 pub fn (gen ActorGenerator) generate_actor_factory(actor Struct) Function {
 	return Function{
 		is_pub: true
-		params: [Param{name: 'config', typ:Type{symbol:'actor.ActorConfig'}}]
+		params: [Param{
+			name: 'config'
+			typ: Type{
+				symbol: 'actor.ActorConfig'
+			}
+		}]
 		result: Result{
-			typ:Type{
-				symbol:actor.name
+			typ: Type{
+				symbol: actor.name
 				is_optional: true
 			}
 			result: true
