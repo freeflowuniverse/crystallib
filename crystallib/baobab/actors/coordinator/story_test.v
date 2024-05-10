@@ -6,7 +6,6 @@ import baobab.seeds.project { Story }
 const db_dir = '${os.home_dir()}/hero/db'
 const actor_name = 'Coordinator_test_actor'
 
-//
 pub fn testsuite_begin() {
 	if os.exists('${coordinator.db_dir}/${coordinator.actor_name}') {
 		os.rmdir_all('${coordinator.db_dir}/${coordinator.actor_name}')!
@@ -16,7 +15,6 @@ pub fn testsuite_begin() {
 	}
 }
 
-//
 pub fn testsuite_end() {
 	if os.exists('${coordinator.db_dir}/${coordinator.actor_name}') {
 		os.rmdir_all('${coordinator.db_dir}/${coordinator.actor_name}')!
@@ -26,36 +24,36 @@ pub fn testsuite_end() {
 	}
 }
 
-// creates the Story with the given object id
-pub fn test_create_story() ! {
+// news the Story with the given object id
+pub fn test_new_story() ! {
 	mut actor := get(name: coordinator.actor_name)!
-	mut story_id := actor.create_story(Story{ name: 'mock_string_Bkg' })!
-	assert story_id == 1
+	mut story_id := actor.new_story(Story{ name: 'mock_string_DQt' })!
+	assert story_id == '1'
 
-	story_id = actor.create_story(Story{ name: 'mock_string_Bkg' })!
-	assert story_id == 2
+	story_id = actor.new_story(Story{ name: 'mock_string_DQt' })!
+	assert story_id == '2'
 }
 
-// creates the Story with the given object id
-pub fn test_read_story() ! {
+// news the Story with the given object id
+pub fn test_get_story() ! {
 	mut actor := get(name: coordinator.actor_name)!
 	mut story := Story{
-		name: 'mock_string_nmx'
+		name: 'mock_string_tTU'
 	}
-	story.id = '${actor.create_story(story)!}'
-	assert story == actor.read_story(story.id)!
+	story.id = '${actor.new_story(story)!}'
+	assert story == actor.get_story(story.id)!
 }
 
-// creates the Story with the given object id
+// news the Story with the given object id
 pub fn test_filter_story() ! {
 	mut actor := get(name: coordinator.actor_name)!
 
-	story_id0 := actor.create_story(Story{ tag: 'mock_string_ndP', name: 'mock_string_JGl' })!
+	story_id0 := actor.new_story(Story{ tag: 'mock_string_ZPz', name: 'mock_string_AMa' })!
 	story_list0 := actor.filter_story(
 		filter: StoryFilter{
-			tag: 'mock_string_ndP'
+			tag: 'mock_string_ZPz'
 		}
 	)!
 	assert story_list0.len == 1
-	assert story_list0[0].tag == 'mock_string_ndP'
+	assert story_list0[0].tag == 'mock_string_ZPz'
 }

@@ -27,7 +27,7 @@ pub fn new(config BackendConfig) !Backend {
 	return backend
 }
 
-pub fn (mut backend Backend) new[T](obj_ T) !int {
+pub fn (mut backend Backend) new[T](obj_ T) !string {
 	mut obj := obj_
 	mut db := backend.dbs.get(get_table_name[T]())!
 	id := backend.indexer.new[T](obj)!
@@ -43,7 +43,7 @@ pub fn (mut backend Backend) new[T](obj_ T) !int {
 
 	data := encoderhero.encode[T](obj)!
 	db.set('${id}', data)!
-	return id
+	return '${id}'
 }
 
 pub fn (mut backend Backend) set[T](obj T) ! {
@@ -54,7 +54,7 @@ pub fn (mut backend Backend) set[T](obj T) ! {
 	db.set('${obj.id}', data)!
 }
 
-pub fn (mut backend Backend) delete[T](id int) ! {
+pub fn (mut backend Backend) delete[T](id string) ! {
 	backend.indexer.delete[T](id)!
 	mut db := backend.dbs.get(get_table_name[T]())!
 	db.delete('${id}')!
@@ -63,6 +63,9 @@ pub fn (mut backend Backend) delete[T](id int) ! {
 pub fn (mut backend Backend) get[T](id string) !T {
 	mut db := backend.dbs.get(get_table_name[T]())!
 	data := db.get(id)!
+	if data == '' {
+		return error('Failed to get ${T.name} object with id: ${id}')
+	}
 	return encoderhero.decode[T](data)!
 }
 

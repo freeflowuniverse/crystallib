@@ -41,5 +41,5 @@ for name, objects in actor_object_map {
 	openrpc_module := generator.generate_openrpc_module(actor)!
 
 	openrpc_path := '${actors_dir}/${name}/openrpc'
-	openrpc_module.write_v(openrpc_path, format: true)!
+	openrpc_module.write_v(openrpc_path, format: true, document: true)!
 }

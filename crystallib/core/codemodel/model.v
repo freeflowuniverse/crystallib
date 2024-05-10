@@ -1,5 +1,6 @@
 module codemodel
 
+import freeflowuniverse.crystallib.core.pathlib
 // Code is a list of statements
 // pub type Code = []CodeItem
 
@@ -106,17 +107,34 @@ pub mut:
 	mod          string @[str: skip]
 }
 
+
+
 pub struct Import {
 pub mut:
 	mod   string
 	types []string
 }
 
-pub struct Module {
-	name    string
-	files   []CodeFile
-	// model   CodeFile
-	// methods CodeFile
+pub fn parse_import(code_ string) Import {
+	code := code_.trim_space()
+	types_str := if code.contains(' ') {code.all_after(' ').trim('{}')} else {''}
+	return Import{
+		mod: code.all_before(' ')
+		types: if types_str != '' { 
+			types_str.split(',').map(it.trim_space())
+		} else {[]string{}}
+	}
+}
+
+pub struct File {
+	name string
+	extension string
+	content string
+}
+
+pub fn (f File) write(path string) ! {
+	mut fd_file := pathlib.get_file(path: '${path}/${f.name}.${f.extension}')!
+	fd_file.write(f.content)!
 }
 
 pub struct Alias {

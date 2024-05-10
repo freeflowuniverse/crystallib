@@ -3,23 +3,23 @@ module coordinator
 import baobab.seeds.project { Story }
 import freeflowuniverse.crystallib.baobab.backend { FilterParams }
 
-// creates the Story with the given object id
-pub fn (mut actor Coordinator) create_story(story Story) !int {
+// news the Story with the given object id
+pub fn (mut actor Coordinator) new_story(story Story) !string {
 	return actor.backend.new[Story](story)!
 }
 
 // gets the story with the given object id
-pub fn (mut actor Coordinator) read_story(id string) !Story {
+pub fn (mut actor Coordinator) get_story(id string) !Story {
 	return actor.backend.get[Story](id)!
 }
 
 // gets the Story with the given object id
-pub fn (mut actor Coordinator) update_story(story Story) ! {
+pub fn (mut actor Coordinator) set_story(story Story) ! {
 	actor.backend.set[Story](story)!
 }
 
 // deletes the Story with the given object id
-pub fn (mut actor Coordinator) delete_story(id int) ! {
+pub fn (mut actor Coordinator) delete_story(id string) ! {
 	actor.backend.delete[Story](id)!
 }
 

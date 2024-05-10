@@ -1,6 +1,7 @@
 module jsonrpc
 
 import freeflowuniverse.crystallib.core.codemodel {CodeItem, Result, Param, Attribute, Type, StructField, Function, Module, CodeFile, Struct}
+import freeflowuniverse.crystallib.core.texttools
 
 pub struct GenerateClientConfig {
 	name string
@@ -32,7 +33,7 @@ pub fn generate_client_factory(name string) CodeFile {
 pub fn generate_client_struct(name string) Struct {
 	return Struct {
 		is_pub: true
-		name: name
+		name: texttools.name_fix_snake_to_pascal(name)
 		fields: [
 			StructField{
 				name: 'transport'
@@ -43,7 +44,8 @@ pub fn generate_client_struct(name string) Struct {
 	}
 }
 
-pub fn generate_ws_factory_code(name string) []CodeItem {
+pub fn generate_ws_factory_code(name_ string) []CodeItem {
+	name := texttools.name_fix_snake_to_pascal(name_)
 	ws_factory_param := Struct {
 		name: 'WsClientConfig'
 		attrs: [Attribute{name: 'params'}]

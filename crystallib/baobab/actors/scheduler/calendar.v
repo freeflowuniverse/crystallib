@@ -3,23 +3,23 @@ module scheduler
 import baobab.seeds.schedule { Calendar }
 import freeflowuniverse.crystallib.baobab.backend { FilterParams }
 
-// creates the Calendar with the given object id
-pub fn (mut actor Scheduler) create_calendar(calendar Calendar) !int {
+// news the Calendar with the given object id
+pub fn (mut actor Scheduler) new_calendar(calendar Calendar) !string {
 	return actor.backend.new[Calendar](calendar)!
 }
 
 // gets the calendar with the given object id
-pub fn (mut actor Scheduler) read_calendar(id string) !Calendar {
+pub fn (mut actor Scheduler) get_calendar(id string) !Calendar {
 	return actor.backend.get[Calendar](id)!
 }
 
 // gets the Calendar with the given object id
-pub fn (mut actor Scheduler) update_calendar(calendar Calendar) ! {
+pub fn (mut actor Scheduler) set_calendar(calendar Calendar) ! {
 	actor.backend.set[Calendar](calendar)!
 }
 
 // deletes the Calendar with the given object id
-pub fn (mut actor Scheduler) delete_calendar(id int) ! {
+pub fn (mut actor Scheduler) delete_calendar(id string) ! {
 	actor.backend.delete[Calendar](id)!
 }
 

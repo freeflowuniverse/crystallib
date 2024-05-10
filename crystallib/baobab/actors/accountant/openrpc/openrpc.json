@@ -6,8 +6,8 @@
   },
   "methods": [
     {
-      "name": "create_budget",
-      "summary": "creates the Budget with the given object id",
+      "name": "new_budget",
+      "summary": "news the Budget with the given object id",
       "params": [
         {
           "name": "budget",
@@ -18,7 +18,7 @@
       ]
     },
     {
-      "name": "read_budget",
+      "name": "get_budget",
       "summary": "gets the budget with the given object id",
       "params": [
         {
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "name": "update_budget",
+      "name": "set_budget",
       "summary": "gets the Budget with the given object id",
       "params": [
         {
@@ -48,7 +48,7 @@
         {
           "name": "id",
           "schema": {
-            "type": "integer"
+            "type": "string"
           }
         }
       ]

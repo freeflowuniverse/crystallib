@@ -239,11 +239,5 @@ pub fn (result Result) vgen() string {
 pub struct WriteOptions {
 	format    bool
 	overwrite bool
-}
-
-pub fn (mod Module) write_v(path string, options WriteOptions) ! {
-	dir := pathlib.get_dir(path: path, create: true, empty: options.overwrite)!
-	for codefile in mod.files {
-		codefile.write_v(dir.path, options)!
-	}
+	document bool
 }

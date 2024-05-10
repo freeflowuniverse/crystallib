@@ -80,7 +80,7 @@ pub fn (mut backend Indexer) set[T](obj T) ! {
 }
 
 // save the session to redis & mem
-pub fn (mut backend Indexer) delete[T](id int) ! {
+pub fn (mut backend Indexer) delete[T](id string) ! {
 	mut table_name := ''
 	$for attr in T.attributes {
 		if attr.name == 'table' && attr.arg.len > 0 {
@@ -94,7 +94,7 @@ pub fn (mut backend Indexer) delete[T](id int) ! {
 }
 
 // save the session to redis & mem
-pub fn (mut backend Indexer) get[T](id int) !T {
+pub fn (mut backend Indexer) get[T](id string) !T {
 	table_name := get_table_name[T]()
 
 	// check root object and table exists

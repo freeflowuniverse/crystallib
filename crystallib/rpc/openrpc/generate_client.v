@@ -22,7 +22,11 @@ pub fn (o OpenRPC) generate_client_file() !CodeFile {
 	return CodeFile {
 		name: 'client'
 		mod: name
-		imports: []
+		imports: [
+			codemodel.parse_import('freeflowuniverse.crystallib.rpc.jsonrpc'),
+			codemodel.parse_import('freeflowuniverse.crystallib.rpc.rpcwebsocket'),
+			codemodel.parse_import('log')
+		]
 		items: code
 	}
 }

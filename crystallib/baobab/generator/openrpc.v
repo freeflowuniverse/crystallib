@@ -34,6 +34,7 @@ pub fn generate_openrpc_module(actor Actor) !Module {
 		files: [
 			client_file,
 			handler_file,
+			handler_test_file,
 		]
 		misc_files: [openrpc_file]
 	}

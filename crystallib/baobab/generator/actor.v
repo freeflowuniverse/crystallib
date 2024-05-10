@@ -22,15 +22,15 @@ pub fn generate_actor_methods(actor Struct, objects []Struct) ![]ActorMethod {
 	methods << [
 		ActorMethod {
 			name: object.name
-			func: generate_create_method(actor, object)
+			func: generate_new_method(actor, object)
 		},
 		ActorMethod {
 			name: object.name
-			func: generate_read_method(actor, object)
+			func: generate_get_method(actor, object)
 		},
 		ActorMethod {
 			name: object.name
-			func: generate_update_method(actor, object)
+			func: generate_set_method(actor, object)
 		},
 		ActorMethod {
 			name: object.name
