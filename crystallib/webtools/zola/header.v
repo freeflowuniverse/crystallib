@@ -6,18 +6,19 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub struct Header {
 	template string
-	logo     string
+	logo string
 pub mut:
 	items []HeaderItem
 }
 
-type HeaderItem = Dropdown | Link
+type HeaderItem = Link | Dropdown
 
 pub struct HeaderAddArgs {
-	items    []HeaderItem
+	items []HeaderItem
 	template string
-	logo     string
+	logo string
 }
+
 
 pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
 	site.header = Header{
@@ -27,21 +28,21 @@ pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
 }
 
 pub struct Link {
-	label   string
-	page    string
+	label string
+	page string
 	new_tab bool
 }
 
 pub fn (mut site ZolaSite) header_link_add(args Link) ! {
-	mut header := site.header or { return error('header needs to be defined') }
+	mut header := site.header or {return error('header needs to be defined')}
 	header.items << args
 	site.header = header
 	println('site.header: ${site.header}')
 }
 
 pub struct Dropdown {
-	label   string
-	url     string
+	label string
+	url string
 	new_tab bool
 }
 
@@ -51,11 +52,11 @@ pub fn (mut site ZolaSite) header_dropdown_add(args Dropdown) ! {
 
 pub fn (mut header Header) export(content_dir string) ! {
 	// header.Page.export(dest: '${content_dir}/header.md')!
-	mut content := '---
+	mut content := "---
 ---
 !!flowrift.header
 	logo: ${header.logo}
-'
+"
 	for item in header.items {
 		if item is Link {
 			content += "\n\n!!flowrift.header_item	
