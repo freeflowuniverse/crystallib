@@ -1,6 +1,7 @@
 module jsonrpc
 
 import json
+import x.json2
 import rand
 
 const jsonrpc_version = '2.0'
@@ -25,7 +26,7 @@ pub mut:
 }
 
 pub fn (j &JsonRpcResponse[D]) to_json() string {
-	return json.encode(j)
+	return 'json.encode(j)'
 }
 
 pub struct JsonRpcError {
@@ -35,7 +36,7 @@ pub mut:
 	id      string            @[required]
 }
 
-struct InnerJsonRpcError {
+pub struct InnerJsonRpcError {
 pub mut:
 	code    int    @[required]
 	message string @[required]
@@ -63,14 +64,18 @@ pub fn new_jsonrpcresponse[T](id string, result T) JsonRpcResponse[T] {
 	}
 }
 
-pub fn new_jsonrpcerror(id string, code int, message string, data string) JsonRpcError {
+pub fn new_response[T](id string, result T) JsonRpcResponse[T] {
+	return JsonRpcResponse[T]{
+		jsonrpc: jsonrpc.jsonrpc_version
+		result: result
+		id: id
+	}
+}
+
+pub fn new_jsonrpcerror(id string, error InnerJsonRpcError) JsonRpcError {
 	return JsonRpcError{
 		jsonrpc: jsonrpc.jsonrpc_version
-		error: InnerJsonRpcError{
-			code: code
-			message: message
-			data: data
-		}
+		error: error
 		id: id
 	}
 }
@@ -79,7 +84,11 @@ pub fn jsonrpcrequest_decode[T](data string) !JsonRpcRequest[T] {
 	return json.decode(JsonRpcRequest[T], data)!
 }
 
-struct JsonRpcRequestAny {
+pub fn decode_request[T](data string) !JsonRpcRequest[T] {
+	return json.decode(JsonRpcRequest[T], data)!
+}
+
+pub struct JsonRpcRequestAny {
 pub mut:
 	jsonrpc string @[required]
 	method  string @[required]
@@ -89,6 +98,34 @@ pub mut:
 pub fn jsonrpcrequest_decode_method(data string) !string {
 	decoded := json.decode(JsonRpcRequestAny, data)!
 	return decoded.method
+}
+
+pub fn decode_request_method(data string) !string {
+	decoded := json.decode(JsonRpcRequestAny, data)!
+	return decoded.method
+}
+
+pub fn jsonrpcrequest_decode_any(data string) !JsonRpcRequestAny {
+	decoded := json.decode(JsonRpcRequestAny, data)!
+	return decoded
+}
+
+pub fn request_decode_any(data string) !JsonRpcRequestAny {
+	decoded := json.decode(JsonRpcRequestAny, data)!
+	return decoded
+}
+
+// returns json encoded params field of request
+pub fn request_params(data string) !string {
+	data_any := json2.raw_decode(data)!
+	data_map := data_any.as_map()
+	params := data_map['params'].str()
+	return params
+}
+
+pub fn decode_request_id(data string) !string {
+	decoded := json.decode(JsonRpcRequestAny, data)!
+	return decoded.id
 }
 
 pub fn jsonrpcresponse_decode[D](data string) !JsonRpcResponse[D] {
