@@ -1,7 +1,7 @@
 module source
 
 pub struct Story {
-pub:
+pub mut:
 	id string
 	name string @[required]
 	tag string @[index]

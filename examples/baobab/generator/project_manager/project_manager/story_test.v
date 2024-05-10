@@ -1,51 +1,61 @@
-module testactor
+module projectmanager
 
 import os
 import source { Story }
 
 const db_dir = '${os.home_dir()}/hero/db'
-const actor_name = 'TestActor_test_actor'
+const actor_name = 'ProjectManager_test_actor'
 
 //
 pub fn testsuite_begin() {
-	if os.exists('${testactor.db_dir}/${testactor.actor_name}') {
-		os.rmdir_all('${testactor.db_dir}/${testactor.actor_name}')!
+	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}') {
+		os.rmdir_all('${projectmanager.db_dir}/${projectmanager.actor_name}')!
 	}
-	if os.exists('${testactor.db_dir}/${testactor.actor_name}.sqlite') {
-		os.rm('${testactor.db_dir}/${testactor.actor_name}.sqlite')!
+	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite') {
+		os.rm('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite')!
 	}
 }
 
 //
 pub fn testsuite_end() {
-	if os.exists('${testactor.db_dir}/${testactor.actor_name}') {
-		os.rmdir_all('${testactor.db_dir}/${testactor.actor_name}')!
+	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}') {
+		os.rmdir_all('${projectmanager.db_dir}/${projectmanager.actor_name}')!
 	}
-	if os.exists('${testactor.db_dir}/${testactor.actor_name}.sqlite') {
-		os.rm('${testactor.db_dir}/${testactor.actor_name}.sqlite')!
+	if os.exists('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite') {
+		os.rm('${projectmanager.db_dir}/${projectmanager.actor_name}.sqlite')!
 	}
 }
 
 // creates the Story with the given object id
 pub fn test_create_story() ! {
-	mut actor := get(name: testactor.actor_name)!
-	mut story_id := actor.create_story(Story{ name: '' })!
+	mut actor := get(name: projectmanager.actor_name)!
+	mut story_id := actor.create_story(Story{ name: 'mock_string_SXz' })!
 	assert story_id == 1
 
-	story_id = actor.create_story(Story{ name: '' })!
+	story_id = actor.create_story(Story{ name: 'mock_string_SXz' })!
 	assert story_id == 2
 }
 
 // creates the Story with the given object id
-pub fn test_filter_story() ! {
-	mut actor := get(name: testactor.actor_name)!
+pub fn test_read_story() ! {
+	mut actor := get(name: projectmanager.actor_name)!
+	mut story := Story{
+		name: 'mock_string_fqW'
+	}
+	story.id = '${actor.create_story(story)!}'
+	assert story == actor.read_story(story.id)!
+}
 
-	story_id0 := actor.create_story(Story{ tag: 'test_string', name: 'test_string' })!
+// creates the Story with the given object id
+pub fn test_filter_story() ! {
+	mut actor := get(name: projectmanager.actor_name)!
+
+	story_id0 := actor.create_story(Story{ tag: 'mock_string_DWn', name: 'mock_string_EZN' })!
 	story_list0 := actor.filter_story(
 		filter: StoryFilter{
-			tag: 'test_string'
+			tag: 'mock_string_DWn'
 		}
 	)!
 	assert story_list0.len == 1
-	assert story_list0[0].tag == 'test_string'
+	assert story_list0[0].tag == 'mock_string_DWn'
 }
