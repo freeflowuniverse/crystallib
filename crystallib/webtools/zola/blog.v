@@ -13,11 +13,6 @@ mut:
 	posts map[string]Post
 }
 
-// pub struct Blog {
-// pub mut:
-// 	posts map[string]elements.Doc
-// }
-
 pub struct Post {
 pub:
 	cid         string          @[required]
@@ -33,6 +28,29 @@ pub:
 	authors     []string
 	countries   []string
 	cities      []string
+}
+
+@[params]
+pub struct BlogAddArgs {
+	Section
+}
+
+// adds a blog section to the zola site
+pub fn (mut site ZolaSite) blog_add(args BlogAddArgs) ! {
+	blog_section := Section{
+		...args.Section
+		name: 'blog'
+		title: if args.title != '' { args.title } else { 'Blog' }
+		sort_by: if args.sort_by != .@none { args.sort_by } else { .date }
+		template: if args.template != '' { args.template } else { 'layouts/blog.html' }
+		page_template: if args.page_template != '' {
+			args.page_template
+		} else {
+			'partials/postCard.html'
+		}
+		paginate_by: if args.paginate_by != 0 { args.paginate_by } else { 3 }
+	}
+	site.add_section(blog_section)!
 }
 
 pub struct PostAddArgs {

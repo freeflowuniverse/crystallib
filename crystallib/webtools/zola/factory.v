@@ -5,18 +5,6 @@ import freeflowuniverse.crystallib.installers.web.zola as zolainstaller
 import freeflowuniverse.crystallib.core.base
 import os
 
-@[heap; params]
-pub struct Zola {
-	base.Base
-pub mut:
-	path_build   string
-	path_publish string
-	tailwindcss  bool = true
-	install      bool = true
-	reset        bool
-	sites        map[string]&ZolaSite
-}
-
 pub fn new(zola_ Zola) !Zola {
 	mut zola := zola_
 
