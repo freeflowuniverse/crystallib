@@ -24,11 +24,6 @@ pub mut:
 	blog         Blog
 }
 
-pub struct Blog {
-pub mut:
-	posts map[string]elements.Doc
-}
-
 @[params]
 pub struct ZolaSiteArgs {
 pub mut:
