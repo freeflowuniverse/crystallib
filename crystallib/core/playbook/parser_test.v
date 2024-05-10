@@ -17,7 +17,7 @@ fn test_parse_1() {
 	assert a.actions.len == 1
 	mut s := a.actions_sorted()!
 	assert s.len == 1
-	mut sorted := a.actions_sorted(filtered: true)!
+	mut sorted := a.actions_sorted(prio_only: true)!
 	assert sorted.len == 0
 
 	mut myaction := s[0] or { panic('bug') }

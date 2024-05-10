@@ -8,8 +8,8 @@ enum ParamStatus {
 	value_wait // wait for value to start (can be quote or end of spaces and first meaningful char)
 	value // value started, so was no quote
 	quote // quote found means value in between ''
+	value_end // quote found means value in between ''
 	comment
-	array // means inside square brackets
 }
 
 // convert text with e.g. color:red or color:'red' to arguments
@@ -46,18 +46,40 @@ pub fn parse(text string) !Params {
 	mut result := Params{}
 	mut key := ''
 	mut value := ''
+	mut list := false
 	mut comment := ''
 
 	for i in 0 .. text2.len {
 		ch = text2[i..i + 1]
 		// println(" - '${ch_prev}${ch}' ${state}")
+
+		if state == .value_end {
+			if ch == ' ' {
+				ch_prev = ch
+				continue
+			} else if ch == ',' {
+				list = true
+				// means we are in list, must wait for next value
+				last_item := value.all_after_last(',')
+				if requires_quotes(last_item) {
+					value = '${value.all_before_last(',')},"${last_item}"'
+				}
+				state = .value_wait
+			} else {
+				state = .start
+				result.set_with_comment(key, value, comment)
+				key = ''
+				value = ''
+				comment = ''
+			}
+		}
+
 		// check for comments end
 		if state == .start {
 			if ch == ' ' {
 				ch_prev = ch
 				continue
 			}
-
 			state = .name
 		}
 		if state == .name {
@@ -86,6 +108,7 @@ pub fn parse(text string) !Params {
 				ch_prev = ch
 				continue
 			} else if !validchars.contains(ch) {
+				print_backtrace()
 				return error("text to params processor: parameters can only be A-Za-z0-9 and _., found illegal char: '${key}${ch}' in\n${text2}\n\n")
 			} else {
 				key += ch
@@ -99,24 +122,30 @@ pub fn parse(text string) !Params {
 				ch_prev = ch
 				continue
 			}
-			if ch == '[' {
-				state = .array
-				ch_prev = ch
-				value = '['
-				continue
-			}
+			// if ch == '[' {
+			// 	state = .array
+			// 	ch_prev = ch
+			// 	value = ''
+			// 	continue
+			// }
 			// means the value started, we can go to next state
 			if ch != ' ' {
 				state = .value
 			}
 		}
+
+		if state == .value {
+			if ch == ',' {
+				// means in list and our value has ended
+				value += ch
+				list = true
+				state = .value_wait
+			}
+		}
+
 		if state == .value {
 			if ch == ' ' {
-				state = .start
-				result.set_with_comment(key, value, comment)
-				key = ''
-				value = ''
-				comment = ''
+				state = .value_end
 			} else {
 				value += ch
 			}
@@ -125,31 +154,27 @@ pub fn parse(text string) !Params {
 		}
 		if state == .quote {
 			if ch == "'" && ch_prev != '\\' {
-				state = .start
-				result.set_with_comment(key, value, comment)
-				key = ''
-				value = ''
-				comment = ''
+				state = .value_end
 			} else {
 				value += ch
 			}
 			ch_prev = ch
 			continue
 		}
-		if state == .array {
-			if ch == ']' {
-				state = .start
-				value += ch
-				result.set_with_comment(key, value, comment)
-				key = ''
-				value = ''
-				comment = ''
-			} else {
-				value += ch
-			}
-			ch_prev = ch
-			continue
-		}
+
+		// if state == .array {
+		// 	if ch == ']' {
+		// 		state = .start
+		// 		result.set_with_comment(key, value, comment)
+		// 		key = ''
+		// 		value = ''
+		// 		comment = ''
+		// 	} else {
+		// 		value += ch
+		// 	}
+		// 	ch_prev = ch
+		// 	continue
+		// }
 
 		if state == .value || state == ParamStatus.start {
 			if ch == '/' && ch_prev == '/' {
@@ -171,7 +196,13 @@ pub fn parse(text string) !Params {
 	}
 
 	// last value
-	if state == ParamStatus.value || state == ParamStatus.quote {
+	if state == ParamStatus.value || state == ParamStatus.quote || state == .value_end {
+		if list {
+			last_item := value.all_after_last(',')
+			if requires_quotes(last_item) {
+				value = '${value.all_before_last(',')},"${last_item}"'
+			}
+		}
 		result.set_with_comment(key, value, comment)
 	}
 
@@ -182,4 +213,12 @@ pub fn parse(text string) !Params {
 	}
 
 	return result
+}
+
+// returns wether a provided value requires quotes
+fn requires_quotes(value string) bool {
+	if value.contains(' ') {
+		return true
+	}
+	return false
 }

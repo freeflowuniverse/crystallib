@@ -1,1 +1,0 @@
-../../../manual/core/play/base.md

@@ -1,13 +1,13 @@
 module dagu
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import os
 
 pub struct DaguClient[T] {
-	play.Base[T]
+	base.Base[T]
 pub mut:
 	connection &httpconnection.HTTPConnection
 }

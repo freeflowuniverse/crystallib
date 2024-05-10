@@ -85,8 +85,7 @@ pub fn (params &Params) get_list_namefix_default(key string, def []string) ![]st
 
 fn (params &Params) get_list_numbers(key string) ![]string {
 	mut valuestr := params.get(key)!
-	valuestr = valuestr.trim('[] ')
-	return valuestr.split(', ')
+	return valuestr.split(',').map(it.trim_space())
 }
 
 // Looks for a list of u8 with the provided key. If it does not exist an error is returned.

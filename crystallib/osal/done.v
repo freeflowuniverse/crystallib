@@ -1,19 +1,22 @@
 module osal
 
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 
 pub fn done_set(key string, val string) ! {
-	mut db := fskvs.db_core(dbname: 'todo')!
+	mut collection := dbfs.get()!
+	mut db := collection.get('todo')!
 	db.set(key, val)!
 }
 
 pub fn done_get(key string) ?string {
-	mut db := fskvs.db_core(dbname: 'todo') or { return none }
+	mut collection := dbfs.get() or { panic('Failed to get DB Collection') }
+	mut db := collection.get('todo') or { panic('Failed to get DB') }
 	return db.get(key) or { return none }
 }
 
 pub fn done_delete(key string) ! {
-	mut db := fskvs.db_core(dbname: 'todo')!
+	mut collection := dbfs.get()!
+	mut db := collection.get('todo')!
 	db.delete(key)!
 }
 
@@ -28,20 +31,23 @@ pub fn done_get_int(key string) int {
 }
 
 pub fn done_exists(key string) bool {
-	mut db := fskvs.db_core(dbname: 'todo') or { return false }
+	mut collection := dbfs.get() or { panic('Failed to get DB Collection') }
+	mut db := collection.get('todo') or { panic('Failed to get DB') }
 	return db.exists(key)
 }
 
 pub fn done_print() ! {
-	mut db := fskvs.db_core(dbname: 'todo')!
+	mut collection := dbfs.get()!
+	mut db := collection.get('todo')!
 	mut output := 'DONE:\n'
-	for key in db.keys()! {
+	for key in db.keys('')! {
 		output += '\t${key} = ${done_get_str(key)}\n'
 	}
 	println('${output}')
 }
 
 pub fn done_reset() ! {
-	mut db := fskvs.db_core(dbname: 'todo')!
+	mut collection := dbfs.get()!
+	mut db := collection.get('todo')!
 	db.destroy()!
 }

@@ -45,7 +45,7 @@ pub fn (mut o Base) params_set(text string) ! {
 
 // will merge the params
 pub fn (mut o Base) params_add(text string) ! {
-	o.params.merge(text)!
+	o.params.add(text)!
 }
 
 // returns bin encoder already populated with all base properties
@@ -53,7 +53,7 @@ pub fn (o Base) bin_encoder() !encoder.Encoder {
 	mut b := encoder.new()
 	b.add_u8(o.version_base) // remember which version this is	
 	b.add_string(o.gid.str())
-	b.add_string(o.params.str())
+	b.add_string(o.params.export()) // don't use str
 	b.add_string(o.name)
 	b.add_string(o.description)
 	b.add_bytes(o.remarks.serialize_binary())
@@ -67,7 +67,9 @@ pub fn base_decoder(data []u8) !(encoder.Decoder, Base) {
 	mut d := encoder.decoder_new(data)
 	assert d.get_u8() == 1
 	o.gid = smartid.gid(gid_str: d.get_string())!
-	o.params = paramsparser.new(d.get_string())!
+
+	paramsdata := d.get_string()
+	o.params = paramsparser.new(paramsdata)!
 	o.name = d.get_string()
 	o.description = d.get_string()
 	remarksbytes := d.get_bytes()

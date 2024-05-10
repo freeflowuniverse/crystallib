@@ -1,10 +1,10 @@
 module garage_s3
 
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.sysadmin.startupmanager
+import freeflowuniverse.crystallib.crypt.secrets
 // import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.clients.httpconnection
 // import os
 import time
@@ -13,15 +13,15 @@ import time
 pub struct S3Config {
 pub mut:
 	replication_mode    string = '3'
-	metadata_dir        string = '/var/lib/garage/meta'
-	data_dir            string = '/var/lib/garage/data'
+	metadata_dir        string = '/var/garage/meta'
+	data_dir            string = '/var/garage/data'
 	sled_cache_capacity u32    = 128 // in MB
 	compression_level   u8     = 1
 
-	rpc_secret        string
+	rpc_secret        string //{GARAGE.RPCSECRET}
 	rpc_bind_addr     string = '[::]:3901'
 	rpc_bind_outgoing bool
-	rpc_public_addr   string
+	rpc_public_addr   string = '127.0.0.1:3901'
 
 	bootstrap_peers []string
 
@@ -32,32 +32,56 @@ pub mut:
 	web_bind_addr   string = '[::]:3902'
 	web_root_domain string = '.web.garage'
 
-	admin_api_bind_addr string = '0.0.0.0:3903'
-	admin_metrics_token string
-	admin_token         string
+	admin_api_bind_addr string = '[::]:3903'
+	admin_metrics_token string //{GARAGE:METRICSTOKEN}
+	admin_token         string //{GARAGE:ADMINTOKEN}
 	admin_trace_sink    string = 'http://localhost:4317'
+
+	reset bool
+	start bool
 }
 
-// configure caddy as default webserver & start
-// node, path, domain
-// path e.g. /var/www
-// domain e.g. www.myserver.com
-pub fn start(args S3Config) ! {
-	install()!
-
+pub fn start(args_ S3Config) ! {
+	mut args := args_
 	mut config_file := $tmpl('templates/garage.toml')
 
 	console.print_header('garage start')
 
-	name := 'garage'
+	// create the paths
+	myconfigpath_ := '${args.metadata_dir}/garage.toml'
 
-	mut scr := screen.new()!
+	mut box := secrets.get()!
+	config_file = box.replace(
+		txt: config_file
+		defaults: {
+			'GARAGE.RPCSECRET':    secrets.DefaultSecretArgs{
+				secret: args.rpc_secret
+				cat: .openssl_hex
+			}
+			'GARAGE.METRICSTOKEN': secrets.DefaultSecretArgs{
+				secret: args.admin_metrics_token
+				cat: .openssl_base64
+			}
+			'GARAGE.ADMINTOKEN':   secrets.DefaultSecretArgs{
+				secret: args.admin_token
+				cat: .openssl_base64
+			}
+		}
+		printsecrets: true
+	)!
 
-	mut s := scr.add(name: name, reset: true)!
+	mut myconfigpath := pathlib.get_file(path: myconfigpath_, create: true)!
+	myconfigpath.write(config_file)!
+	pathlib.get_dir(path: args.data_dir, create: true)!
 
-	cmd := 'garage server'
+	mut sm := startupmanager.get()!
 
-	s.cmd_send(cmd)!
+	sm.start(
+		name: 'garage'
+		cmd: 'garage -c ${myconfigpath_} server'
+	)!
+
+	console.print_debug('garage -c ${myconfigpath_} server')
 
 	for _ in 0 .. 50 {
 		if check(args)! {
@@ -66,16 +90,13 @@ pub fn start(args S3Config) ! {
 		time.sleep(100 * time.millisecond)
 	}
 
-	return error('garage serveer is not healthy, could not call api.')
+	return error('garage server did not start properly.')
 }
 
 pub fn stop() ! {
 	console.print_header('garage stop')
-
-	name := 'garage'
-
-	mut scr := screen.new()!
-	scr.kill(name)!
+	mut sm := startupmanager.get()!
+	sm.kill('garage')!
 }
 
 fn check(args S3Config) !bool {

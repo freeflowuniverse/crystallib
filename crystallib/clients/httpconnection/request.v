@@ -13,6 +13,7 @@ pub mut:
 	cache_disable bool = true
 	header        Header
 	dict_key      string
+	debug         bool
 }
 
 // get new request

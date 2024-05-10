@@ -51,6 +51,25 @@ pub fn (mut site ZolaSite) process() ! {
 
 pub fn (mut site ZolaSite) generate() ! {
 	site.process()!
+	
+	// set default home page as the first page added
+	if !site.pages.any(it.homepage) {
+		site.pages[0].homepage = true
+	}
+
+	content_dir := pathlib.get_dir(
+		path:'${site.path_build.path}/content'
+		create: true
+	)!
+
+	for mut page in site.pages {
+		page.export(content_dir.path)!
+	}
+
+	mut header := site.header or {
+		Header{}
+	}
+	header.export(content_dir.path)!
 
 	// set default home page as the first page added
 	if !site.pages.any(it.homepage) {

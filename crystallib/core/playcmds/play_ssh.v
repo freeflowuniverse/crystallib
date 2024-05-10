@@ -1,11 +1,11 @@
 module playcmds
 
 import freeflowuniverse.crystallib.osal.sshagent
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.playbook
 
-pub fn play_ssh(mut session play.Session) ! {
+pub fn play_ssh(mut plbook playbook.PlayBook) ! {
 	mut agent := sshagent.new()!
-	for mut action in session.plbook.find(filter: 'sshagent.*')! {
+	for mut action in plbook.find(filter: 'sshagent.*')! {
 		mut p := action.params
 		match action.name {
 			'key_add' {

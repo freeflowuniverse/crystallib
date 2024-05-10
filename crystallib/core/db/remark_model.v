@@ -53,11 +53,11 @@ pub fn (mut o Remark) params_set(text string) ! {
 
 // will merge the params
 pub fn (mut o Remark) params_add(text string) ! {
-	o.params.merge(text)!
+	o.params.add(text)!
 }
 
 @[heap]
-struct RemarkAddArgs {
+pub struct RemarkAddArgs {
 pub mut:
 	content string
 	time    ?ourtime.OurTime
@@ -78,7 +78,7 @@ pub fn (mut o Remarks) remark_add(args_ RemarkAddArgs) !Remark {
 		time: time_obj
 		author: args.author
 		rtype: args.rtype
-		params: paramsparser.parse(args.params.str())!
+		params: paramsparser.parse(args.params)!
 	}
 	o.remarks << r
 
@@ -93,7 +93,7 @@ pub fn (o Remark) serialize_binary() []u8 {
 	b.add_int(o.time.int())
 	agid := o.author or { smartid.GID{} }
 	b.add_string(agid.str())
-	b.add_string(o.params.str())
+	b.add_string(o.params.export())
 	return b.data
 }
 

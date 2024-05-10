@@ -69,7 +69,6 @@ pub fn (mut site ZolaSite) post_add(args_ PostAddArgs) ! {
 	if 'blog' !in site.sections {
 		site.blog_add()!
 	}
-
 	post := site.get_post(args)!
 	image := post.image or { return error('Post must have an image') }
 	mut post_page := new_page(
@@ -114,9 +113,7 @@ fn (site ZolaSite) check_post_add_args(args_ PostAddArgs) !PostAddArgs {
 
 fn (site ZolaSite) get_post(args PostAddArgs) !Post {
 	mut page := site.tree.page_get('${args.pointer}') or { return err }
-
 	actions := page.doc()!.actions()
-
 	post_definitions := actions.filter(it.name == 'post_define')
 	if post_definitions.len == 0 {
 		return error('specified file does not include a post definition.')
@@ -124,7 +121,6 @@ fn (site ZolaSite) get_post(args PostAddArgs) !Post {
 	if post_definitions.len > 1 {
 		return error('specified file includes multiple post definitions')
 	}
-
 	definition := post_definitions[0]
 	name := definition.params.get_default('name', '')!
 	image_ := definition.params.get_default('image_path', '')!
@@ -138,7 +134,6 @@ fn (site ZolaSite) get_post(args PostAddArgs) !Post {
 		tags: definition.params.get_list_default('tags', [])!
 		categories: definition.params.get_list_default('categories', [])!
 		authors: definition.params.get_list_default('authors', [])!
-		biography: definition.params.get_default('bio', '')!
 	}
 
 	if post.cid == '' {
@@ -161,11 +156,6 @@ fn (site ZolaSite) get_post(args PostAddArgs) !Post {
 			image: site.tree.image_get('${args.collection}:${image_}') or { return err }
 		}
 	}
-	// image_path := if mut img := post.image {
-	// 	// img.copy('${post_dir.path}/${img.file_name()}')!
-	// 	img.file_name()
-	// } else {
-	// 	''
-	// }
+
 	return post
 }

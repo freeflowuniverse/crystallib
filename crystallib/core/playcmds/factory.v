@@ -1,20 +1,16 @@
 module playcmds
 
-import freeflowuniverse.crystallib.core.play
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.playbook
 
-pub fn run(mut session play.Session) ! {
-	session.process()!
+pub fn run(mut plbook playbook.PlayBook) ! {
+	play_core(mut plbook)!
+	play_ssh(mut plbook)!
+	play_git(mut plbook)!
+	play_mdbook(mut plbook)!
+	play_zola(mut plbook)!
 
-	session.plbook.filtersort(priorities: session.playbook_priorities)!
-
-	play_core(mut session)!
-	play_ssh(mut session)!
-	play_git(mut session)!
-	play_mdbook(mut session)!
-	play_zola(mut session)!
-
-	session.plbook.empty_check()!
+	plbook.empty_check()!
 
 	console.print_item('All actions concluded succesfully.')
 }

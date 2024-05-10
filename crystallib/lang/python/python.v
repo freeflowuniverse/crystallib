@@ -1,7 +1,7 @@
 module python
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.core.texttools
@@ -11,7 +11,7 @@ pub struct PythonEnv {
 pub mut:
 	name string
 	path pathlib.Path
-	db   fskvs.DB
+	db   dbfs.DB
 }
 
 @[params]
@@ -31,7 +31,7 @@ pub fn new(args_ PythonEnvArgs) !PythonEnv {
 		python.install()!
 		isnew = true
 	}
-	mut cdb := fskvs.contextdb_get()!
+	mut cdb := dbfs.contextdb_get()!
 	mut db := cdb.db_get(dbname: 'python_${name}')!
 	py := PythonEnv{
 		name: name

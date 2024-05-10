@@ -1,7 +1,7 @@
 module podman
 
 import freeflowuniverse.crystallib.installers.virt.podman as podmaninstaller
-// import freeflowuniverse.crystallib.core.play
+// import freeflowuniverse.crystallib.core.base
 
 @[params]
 pub struct NewArgs {
@@ -17,11 +17,11 @@ pub fn new(args_ NewArgs) !CEngine {
 		podmaninstaller.install()!
 	}
 
-	mut bah := CEngine{}
-	bah.init()!
+	mut engine := CEngine{}
+	engine.init()!
 	if args.reset {
-		bah.reset_all()!
+		engine.reset_all()!
 	}
 
-	return bah
+	return engine
 }

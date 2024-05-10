@@ -1,6 +1,6 @@
 module postgres
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 
@@ -25,14 +25,14 @@ pub fn config(args Config) Config {
 // get the configurator
 pub fn configurator(instance string, mut context play.Context) !play.Configurator[Config] {
 	mut c := play.configurator_new[Config](
-		name: 'postgresclient'
+		context_name: 'postgresclient'
 		instance: instance
 		context: context
 	)!
 	return c
 }
 
-pub fn play_session(mut session play.Session) ! {
+pub fn play_session(mut session base.Session) ! {
 	for mut action in session.plbook.find(filter: 'postgresclient.define')! {
 		mut p := action.params
 		mut args := config()
@@ -51,7 +51,7 @@ pub fn play_session(mut session play.Session) ! {
 	}
 }
 
-pub fn configure_interactive(mut args Config, mut session play.Session) ! {
+pub fn configure_interactive(mut args Config, mut session base.Session) ! {
 	mut myui := ui.new()!
 
 	console.clear()

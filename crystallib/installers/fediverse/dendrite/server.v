@@ -2,7 +2,7 @@ module dendrite
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.postgresql
@@ -49,7 +49,7 @@ pub fn new(args_ Config) !Server {
 	}
 	args.name = texttools.name_fix(args.name)
 	key := 'dendrite_config_${args.name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if args.reset || !kvs.exists(key) {
 		data := json.encode_pretty(args)
 		kvs.set(key, data)!
@@ -61,7 +61,7 @@ pub fn get(name_ string) !Server {
 	console.print_header('get dendrite server ${name_}')
 	name := texttools.name_fix(name_)
 	key := 'dendrite_config_${name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if kvs.exists(key) {
 		data := kvs.get(key)!
 		args := json.decode(Config, data)!

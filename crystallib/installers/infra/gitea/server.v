@@ -2,7 +2,7 @@ module gitea
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.postgresql
@@ -54,7 +54,7 @@ pub fn new(args_ Config) !Server {
 	}
 	args.name = texttools.name_fix(args.name)
 	key := 'gitea_config_${args.name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if !kvs.exists(key) {
 		// jwt_secret        string
 		// lfs_jwt_secret    string
@@ -88,7 +88,7 @@ pub fn get(name_ string) !Server {
 	console.print_header('get gitea server ${name_}')
 	name := texttools.name_fix(name_)
 	key := 'gitea_config_${name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if kvs.exists(key) {
 		data := kvs.get(key)!
 		args := json.decode(Config, data)!

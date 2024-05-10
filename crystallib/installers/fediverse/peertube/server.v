@@ -2,7 +2,7 @@ module peertube
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.postgresql
@@ -33,7 +33,7 @@ pub fn server_new(myconfig_ Config) !Server {
 	}
 	myconfig.name = texttools.name_fix(myconfig.name)
 	key := 'peertube_config_${myconfig.name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if myconfig.reset || !kvs.exists(key) {
 		data := json.encode(myconfig)
 		kvs.set(key, data)!
@@ -45,7 +45,7 @@ pub fn server_get(name_ string) !Server {
 	name := texttools.name_fix(name_)
 	console.print_header('get peertube server ${name}')
 	key := 'peertube_config_${name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if kvs.exists(key) {
 		data := kvs.get(key)!
 		myconfig := json.decode(Config, data)!

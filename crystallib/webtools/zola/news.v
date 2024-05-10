@@ -1,9 +1,9 @@
 module zola
 
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.data.ourtime
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.texttools
 
 // News section for Zola site
 pub struct News {

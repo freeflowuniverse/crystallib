@@ -1,6 +1,6 @@
 module hetzner
 
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 
 @[heap]
 pub struct HetznerConfig {
@@ -11,7 +11,7 @@ pub mut:
 	base     string
 }
 
-fn configurator(instance string, mut session play.Session) !play.Configurator[HetznerConfig] {
+fn configurator(instance string, mut session base.Session) !play.Configurator[HetznerConfig] {
 	mut c := play.configurator_new[HetznerConfig](
 		name: 'hetzner'
 		instance: instance

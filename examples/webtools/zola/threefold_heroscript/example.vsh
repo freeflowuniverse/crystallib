@@ -2,7 +2,7 @@
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.play
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playcmds
 import os
 

@@ -3,7 +3,7 @@ module herocmds
 import freeflowuniverse.crystallib.clients.mail
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import cli { Command, Flag }
 import os
@@ -97,7 +97,7 @@ fn cmd_configure_execute(cmd Command) ! {
 		}
 	} else {
 		panic('implement')
-		// mut kvs := fskvs.new(name: 'config')!
+		// mut kvs := dbfs.new(name: 'config')!
 		// key := '${category}_config_${instance}'
 		// data := kvs.get(key) or { return error('cannot find object with key: ${key}') }
 		// println(data)

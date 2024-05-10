@@ -5,13 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-@[params]
-pub struct InstallArgs {
-pub mut:
-	reset bool
-}
-
-pub fn install(args_ InstallArgs) ! {
+pub fn install(args_ S3Config) ! {
 	mut args := args_
 	version := '0.9.3'
 
@@ -30,32 +24,32 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-	if args.reset == false {
-		return
+	if args.reset {
+		console.print_header('install garage')
+
+		mut url := ''
+		if osal.is_linux_arm() {
+			url = 'https://garagehq.deuxfleurs.fr/_releases/v${version}/aarch64-unknown-linux-musl/garage'
+		} else if osal.is_linux_intel() {
+			url = 'https://garagehq.deuxfleurs.fr/_releases/v${version}/x86_64-unknown-linux-musl/garage'
+		} else {
+			return error('unsported platform')
+		}
+
+		mut dest := osal.download(
+			url: url
+			minsize_kb: 15 * 1024
+			dest: '/tmp/garage'
+			reset: true
+		)!
+		console.print_debug('download garage done')
+		osal.cmd_add(
+			cmdname: 'garage'
+			source: '${dest.path}'
+		)!
 	}
 
-	console.print_header('install garage')
-
-	mut url := ''
-	if osal.is_linux_arm() {
-		url = 'https://garagehq.deuxfleurs.fr/_releases/v${version}/aarch64-unknown-linux-musl/garage'
-	} else if osal.is_linux_intel() {
-		url = 'https://garagehq.deuxfleurs.fr/_releases/v${version}/x86_64-unknown-linux-musl/garage'
-	} else {
-		return error('unsported platform')
+	if args.start {
+		start(args)!
 	}
-
-	mut dest := osal.download(
-		url: url
-		minsize_kb: 15 * 1024
-		dest: '/tmp/garage'
-		reset: true
-	)!
-
-	osal.cmd_add(
-		cmdname: 'garage'
-		source: '${dest.path}/garage_'
-	)!
-
-	return
 }

@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import json
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 // import freeflowuniverse.crystallib.develop.gittools
 import os
 
@@ -25,7 +25,7 @@ fn configure_init(reset bool, mut args Config) ! {
 	args.name = texttools.name_fix(args.name)
 
 	key := 'peertube_config_${args.name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if reset || !kvs.exists(key) {
 		data := json.encode_pretty(args)
 		kvs.set(key, data)!

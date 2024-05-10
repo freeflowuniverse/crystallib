@@ -33,10 +33,10 @@ fn (err JobError) msg() string {
 		msg += '\nscript path:${err.job.cmd.scriptpath}'
 	}
 	if err.job.output.len > 0 {
-		msg += '\n\n## stdout:\n${err.job.output.join_lines()}'
+		msg += '\n\n## stdout:\n${err.job.output}'
 	}
 	if err.job.error.len > 0 {
-		msg += '\n\n## stderr:\n${err.job.error.join_lines()}'
+		msg += '\n\n## stderr:\n${err.job.error}'
 	}
 	return msg
 }
@@ -67,7 +67,7 @@ pub mut:
 	debug              bool   // if debug will put +ex in the script which is being executed and will make sure script stays
 	shell              bool   // means we will execute it in a shell interactive
 	retry              int
-	interactive        bool = true // make sure we run in non interactive way
+	interactive        bool = true
 	async              bool
 	runtime            RunTime
 }
@@ -84,7 +84,8 @@ pub enum JobStatus {
 pub enum RunTime {
 	bash
 	python
-	bashshell
+	heroscript
+	v
 }
 
 pub struct Job {
@@ -92,8 +93,8 @@ pub mut:
 	start     time.Time
 	end       time.Time
 	cmd       Command
-	output    []string
-	error     []string
+	output    string
+	error     string
 	exit_code int
 	status    JobStatus
 	process   ?&os.Process @[skip; str: skip]
@@ -156,9 +157,18 @@ pub fn exec(cmd Command) !Job {
 		$if debug {
 			console.print_debug('cmd shell: ${cmd.cmd}')
 		}
-		process_args := job.cmd_to_process_args()!
+		mut process_args := []string{}
+		if cmd.runtime == .bash {
+			// bash -s 'echo ready'
+			process_args = ['/bin/bash', '-s', "'echo **READY**'"]
+		} else if cmd.runtime == .python {
+			process_args = ['/opt/homebrew/bin/python3']
+		} else {
+			panic('bug')
+		}
+
 		if cmd.retry > 0 {
-			job.error << 'cmd retry cannot be > 0 if shell used'
+			job.error += 'cmd retry cannot be > 0 if shell used\n'
 			job.exit_code = 999
 			return JobError{
 				job: job
@@ -194,12 +204,11 @@ pub fn (mut job Job) execute() ! {
 	job.runnr += 1
 	job.start = time.now()
 	job.status = .running
-	// start:=job.start.unix_time()
 
-	process_args := job.cmd_to_process_args()!
+	job.cmd.scriptpath = cmd_to_script_path(job.cmd)!
 
 	// println(" - process execute ${process_args[0]}")
-	mut p := os.new_process(process_args[0])
+	mut p := os.new_process(job.cmd.scriptpath)
 
 	if job.cmd.work_folder.len > 0 {
 		p.set_work_folder(job.cmd.work_folder)
@@ -209,61 +218,55 @@ pub fn (mut job Job) execute() ! {
 	}
 	p.set_redirect_stdio()
 	// println("process setargs ${process_args[1..process_args.len]}")
-	p.set_args(process_args[1..process_args.len])
+	// p.set_args(process_args[1..process_args.len])
 	if job.cmd.stdout {
 		println('')
 	}
 	p.run()
 	job.process = p
-	// println( p.is_alive() )
-	// time.sleep(1000 * time.millisecond)
-	// println( p.is_alive() )
-	// println("running?")
+	job.wait()!
 }
 
-pub struct ReceiveResult {
-pub mut:
-	output string
-	error  string
-	done   bool
-}
+// ORDER IS
+// EXECUTE
+// LOOP -> WAIT -> PROCESS -> READ
+// -> CLOSE
 
-fn (mut job Job) read() !ReceiveResult {
-	mut result := ReceiveResult{}
+// wait till the job finishes or goes in error
+pub fn (mut job Job) wait() ! {
+	// if job.status != .running && job.status != .init {
+	// 	return error('can only wait for running job')
+	// }
 
-	mut p := job.process or { return error('there is not process on job') }
-
-	out_std := p.pipe_read(.stdout) or { '' }
-	if out_std.len > 0 {
-		if job.cmd.stdout {
-			console.print_stdout(out_std)
+	for {
+		job.process()!
+		// println(result)
+		if job.status == .done {
+			// console.print_stderr("wait done")
+			job.close()!
+			return
 		}
-		job.output << out_std.split_into_lines()
-		result.error = out_std
+		time.sleep(10 * time.millisecond)
 	}
-	out_error := p.pipe_read(.stderr) or { '' }
-	if out_error.len > 0 {
-		if job.cmd.stdout {
-			console.print_stderr(out_error)
-		}
-		job.error << out_error.split_into_lines()
-		result.error = out_error
-	}
-	return result
 }
 
 // process (read std.err and std.out of process)
-pub fn (mut job Job) process() !ReceiveResult {
+pub fn (mut job Job) process() ! {
 	// $if debug{println(" - job process: $job")}
 	if job.status == .init {
-		job.execute()!
+		panic('should not be here')
+		// job.execute()!
 	}
 	mut p := job.process or { return error('there is not process on job') }
 
-	mut result := job.read()!
+	// mut result := job.read()!
+
+	job.read()!
 	if p.is_alive() {
+		job.read()!
 		// result=job.read()!
 		if time.now().unix_time() > job.start.unix_time() + job.cmd.timeout * 1000 {
+			// console.print_stderr("TIMEOUT TIMEOUT TIMEOUT TIMEOUT")
 			p.signal_pgkill()
 			p.close()
 			job.exit_code = 9999
@@ -276,48 +279,49 @@ pub fn (mut job Job) process() !ReceiveResult {
 				}
 			}
 		}
-		// println("4")
-		return result
-	}
-	// println(" - process stopped")
-	job.status = .done
-	result.done = true
-	if p.code > 0 {
-		// println(" ########## Process CODE IS > 0")
-		job.exit_code = p.code
-		job.status = .error_exec
-		job.cmd.scriptkeep = true
-		p.signal_pgkill()
-		p.close()
 	} else {
-		// println('wait')
-		p.wait()
-		p.close()
+		// console.print_stderr(" - process stopped")
+		job.read()!
+		job.read()!
+		job.status = .done
+		// result.done = true
+		if p.code > 0 {
+			// console.print_stderr(" ########## Process CODE IS > 0")
+			job.exit_code = p.code
+			job.status = .error_exec
+			job.cmd.scriptkeep = true
+			// p.signal_pgkill()
+			// p.close()
+			// } else {
+			// 	// println('wait')
+			// 	p.wait()
+			// 	p.close()
+		}
 	}
-	return result
 }
 
-// wait till the job finishes or goes in error
-pub fn (mut job Job) wait() ! {
-	if job.status != .running && job.status != .init {
-		return error('can only wait for running job')
-	}
+fn (mut job Job) read() ! {
+	mut p := job.process or { return error('there is no process on job') }
 
-	for {
-		result := job.process()!
-		// println(result)
-		if result.done {
-			job.status = .done
-			// println("wait done")
-			return
+	out_std := p.pipe_read(.stdout) or { '' }
+	if out_std.len > 0 {
+		if job.cmd.stdout {
+			console.print_stdout(out_std)
 		}
-		time.sleep(100 * time.millisecond)
+		job.output += out_std
+	}
+	out_error := p.pipe_read(.stderr) or { '' }
+	if out_error.len > 0 {
+		if job.cmd.stdout {
+			console.print_stderr(out_error)
+		}
+		job.error += out_error
 	}
 }
 
 // will wait & close
 pub fn (mut job Job) close() ! {
-	mut p := job.process or { return error('there is not process on job') }
+	mut p := job.process or { return error('there is no process on job') }
 
 	p.signal_pgkill()
 	p.wait()
@@ -336,7 +340,7 @@ pub fn (mut job Job) close() ! {
 			mut errortxt := '# ERROR:\n\n'
 			errortxt += job.cmd.cmd + '\n'
 			errortxt += '## OUTPUT:\n\n'
-			errortxt += job.output.join_lines()
+			errortxt += job.output
 			os.write_file(errorpath2, errortxt) or {
 				msg := 'cannot write error to ${errorpath2}'
 				return error(msg)
@@ -373,71 +377,21 @@ pub fn (mut job Job) close() ! {
 	}
 }
 
-// process commands to arguments which can be given to a process manager
-// will return temporary path and args for process
-fn (mut job Job) cmd_to_process_args() ![]string {
-	if job.cmd.runtime == .bashshell {
-		// bash -s 'echo ready'
-		// return ['/bin/bash', '-s', "'echo **READY**'"]
-		return ['/opt/homebrew/bin/python3']
-	}
-	// all will be done over filessytem now
-	mut cmd := texttools.dedent(job.cmd.cmd)
-	if !cmd.ends_with('\n') {
-		cmd += '\n'
-	}
-
-	if job.cmd.environment.len > 0 {
-		mut cmdenv := ''
-		for key, val in job.cmd.environment {
-			cmdenv += "export ${key}='${val}'\n"
-		}
-		cmd = cmdenv + '\n' + cmd
-		// process.set_environment(args.environment)
-	}
-
-	// use bash debug and die on error features
-	mut firstlines := '#!/bin/bash\n'
-	if !job.cmd.ignore_error {
-		firstlines += 'set -e\n' // exec 2>&1\n
-	} else {
-		firstlines += 'set +e\n' // exec 2>&1\n
-	}
-	if job.cmd.debug {
-		firstlines += 'set -x\n' // exec 2>&1\n
-	}
-
-	if !job.cmd.interactive && job.cmd.runtime == .bash {
-		// firstlines += 'export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n'
-		firstlines += 'export DEBIAN_FRONTEND=noninteractive\n\n'
-	}
-
-	cmd = firstlines + '\n' + cmd
-
-	scriptpath := if job.cmd.scriptpath.len > 0 {
-		job.cmd.scriptpath
-	} else {
-		''
-	}
-	job.cmd.scriptpath = pathlib.temp_write(text: cmd, path: scriptpath, name: job.cmd.name) or {
-		return error('error: cannot write script to execute: ${err}')
-	}
-
-	os.chmod(job.cmd.scriptpath, 0o777)!
-	// println(" - scriptpath: ${job.cmd.scriptpath}")
-	return ['/bin/bash', job.cmd.scriptpath]
-}
-
 // shortcut to execute a job silent
 pub fn execute_silent(cmd string) !string {
 	job := exec(cmd: cmd, stdout: false)!
-	return job.output.join_lines()
+	return job.output
+}
+
+pub fn execute_debug(cmd string) !string {
+	job := exec(cmd: cmd, stdout: true, debug: true)!
+	return job.output
 }
 
 // shortcut to execute a job to stdout
 pub fn execute_stdout(cmd string) !string {
 	job := exec(cmd: cmd, stdout: true)!
-	return job.output.join_lines()
+	return job.output
 }
 
 // shortcut to execute a job interactive means in shell
@@ -485,6 +439,6 @@ pub fn exec_string(cmd Command) !string {
 		cmd: cmd
 	}
 	job.start = time.now()
-	process_args := job.cmd_to_process_args()!
-	return process_args[process_args.len - 1]
+	job.cmd.scriptpath = cmd_to_script_path(job.cmd)!
+	return job.cmd.scriptpath
 }
