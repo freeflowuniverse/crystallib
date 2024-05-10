@@ -76,10 +76,6 @@ pub fn (mut site ZolaSite) generate() ! {
 		site.pages[0].homepage = true
 	}
 
-	content_dir := pathlib.get_dir(
-		path: '${site.path_build.path}/content'
-		create: true
-	)!
 	static_dir := pathlib.get_dir(
 		path: '${site.path_build.path}/static'
 		create: true
@@ -132,9 +128,7 @@ pub fn (mut site ZolaSite) generate() ! {
 	// if mut news := site.news {
 	// 	news.export(content_dir.path)!
 	// }
-	if mut header := site.header {
-		header.export(content_dir.path)!
-	}
+
 	if mut footer := site.footer {
 		footer.export(content_dir.path)!
 	}
