@@ -14,8 +14,8 @@ import io
 // or
 // telnet 127.0.0.1 12345
 fn server1() {
-	mut server := net.listen_tcp(.ip6, ':12345') or { panic(err) }
-	//mut server := net.listen_tcp(.ip, ':12345') or {panic(err)}
+	//mut server := net.listen_tcp(.ip6, ':12345') or { panic(err) }
+	mut server := net.listen_tcp(.ip, ':12345') or {panic(err)}
 	laddr := server.addr() or { panic(err) }
 	eprintln('Listen on ${laddr} ...')
 	for {
@@ -103,6 +103,25 @@ fn foo2(ch chan string) {
 	}
 }
 
+fn monitor(ch 	chan string, counter int, mut t &Test) {
+	for {
+		//println('2 ${m}')
+		// coroutines.sleep(1 * time.second)
+		t.mycounter += 1
+		println('hello from monitor ${counter}')
+		coroutines.sleep(100 * time.millisecond)
+		println(t)
+	
+	}
+}
+
+pub struct Test{
+pub mut:
+	mycounter int
+}
+
+
+
 fn main() {
 	ch1 := chan string{}
 	ch2 := chan string{}
@@ -111,6 +130,14 @@ fn main() {
 	go server2()
 	go foo1(ch1)
 	go foo2(ch2)
+
+	mut t:=Test{}
+	mut c:=0
+	for i in 0..10 {
+		c++
+		go monitor(ch2,c,mut &t)
+		//coroutines.sleep(1000 * time.millisecond)
+	}
 
 	$if is_coroutine ? {
 		println('IS COROUTINE=true')
