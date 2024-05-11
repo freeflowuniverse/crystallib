@@ -122,20 +122,4 @@ pub fn (mut db DB) encrypt() ! {
 	db.path.file_get_new('encrypted')!
 }
 
-
-pub fn (mut db DB) encrypt() ! {
-	if db.encrypted {
-		return
-	}
-	db.secret()! // just to check if ok
-	for key in db.keys('')! {
-		db.encrypted = false
-		v := db.get(key)!
-		db.encrypted = true
-		db.set(key, v)!
-	}
-	db.encrypted = true
-	db.path.file_get_new('encrypted')!
-}
-
-		incr_file:=dbcollection.path.file_get_new("incr_${memberid}")!
+// incr_file:=dbcollection.path.file_get_new("incr_${memberid}")!

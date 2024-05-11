@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import crypto.md5
-import base64
+import encoding.base64
 
 @[heap]
 pub struct Context {
