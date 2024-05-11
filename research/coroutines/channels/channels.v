@@ -107,10 +107,10 @@ fn main() {
 	ch1 := chan string{}
 	ch2 := chan string{}
 
-	go server1()
-	go server2()
-	go foo1(ch1)
-	go foo2(ch2)
+	// go server1()
+	// go server2()
+	// go foo1(ch1)
+	// go foo2(ch2)
 
 	$if is_coroutine ? {
 		println('IS COROUTINE=true')

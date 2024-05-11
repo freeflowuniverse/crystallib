@@ -103,7 +103,7 @@ fn foo2(ch chan string) {
 	}
 }
 
-fn monitor(ch 	chan string, counter int, mut t &Test) {
+fn monitor(ch chan string, counter int, mut t &Test) {
 	for {
 		//println('2 ${m}')
 		// coroutines.sleep(1 * time.second)
@@ -136,7 +136,7 @@ fn main() {
 	for {
 		c++
 		go monitor(ch2,c,mut &t)
-		coroutines.sleep(1000 * time.millisecond)
+		#coroutines.sleep(1000 * time.millisecond)
 	}
 
 	$if is_coroutine ? {
