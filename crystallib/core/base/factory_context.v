@@ -42,10 +42,6 @@ fn context_new(args_ ContextConfigArgs) !&Context {
 			secret:args_.secret
 		}
 	
-	if args.id in contexts{
-		return contexts[args.id] or { panic("bug") }
-	}
-
 	mut r := redisclient.core_get()!
 	if args.id > 0 {
 		// make sure we are on the right db
@@ -69,12 +65,11 @@ fn context_new(args_ ContextConfigArgs) !&Context {
 		dbcollection: &dbcollection
 	}
 
-	c.save()!
-
 	if args_.priv_key_hex.len>0{
 		c.privkey_set(args_.priv_key_hex)!
 	}
 
+	c.save()!
 
 	if args.params.len > 0 {
 		mut p := paramsparser.new('')!
@@ -92,6 +87,9 @@ fn context_get(id u32) !&Context {
 	if id in contexts{
 		return contexts[id] or {panic("bug")}
 	}
+
+
+
 	return error("cant find context with id: %{id}")
 }
 

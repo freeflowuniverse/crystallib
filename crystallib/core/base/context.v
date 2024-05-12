@@ -10,21 +10,19 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import crypto.md5
-import encoding.base64
 import json
 
 @[heap]
 pub struct Context {
 mut:
 	gitstructure_ ?&gittools.GitStructure @[skip; str: skip]
-	priv_key_     ?&secp256k1.Secp256k1
-	params_		 ?&paramsparser.Params
+	priv_key_     ?&secp256k1.Secp256k1 @[skip; str: skip]
+	params_		  ?&paramsparser.Params
+	dbcollection_ ?&dbfs.DBCollection @[skip; str: skip]
 pub mut:
-	snippets     map[string]string
+	//snippets     map[string]string
 	redis        &redisclient.Redis  @[skip; str: skip]
-	dbcollection &dbfs.DBCollection  @[skip; str: skip]
 	config 		 ContextConfig
-	
 }
 
 @[params]
@@ -35,10 +33,23 @@ pub mut:
 	params      string
 	coderoot    string
 	interactive bool
-	secret      string
+	secret      string //is hashed secret
 	priv_key string //encrypted version
+	db_path string //path to dbcollection 
 }
 
+// return the gistructure as is being used in context
+pub fn (mut self Context) dbcollection() !&dbfs.DBCollection {
+	mut p := self.dbcollection_ or {
+		if self.config.db_path.len==0{
+			self.config.db_path := '${os.home_dir()}/hero/db/${self.config.id}'
+		}		
+		mut dbcollection := dbfs.get(secret:self.config.secret)!
+		self.dbcollection_ = &p
+		&p
+	}
+	return p
+}
 
 // return the gistructure as is being used in context
 pub fn (mut self Context) params() !&paramsparser.Params {

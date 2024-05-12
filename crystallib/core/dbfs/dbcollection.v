@@ -9,9 +9,9 @@ import os
 pub struct DBCollection {
 pub mut:
 	path   pathlib.Path
-	name   string
+	//name   string
 	secret string
-	contextid id
+	//contextid id
 	memberid int //needed to do autoincrement of the DB, when user logged in we need memberid, memberid is unique per circle
 	member_pubkeys map[int]string
 }
