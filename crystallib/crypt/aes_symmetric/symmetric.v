@@ -4,6 +4,7 @@ import crypto.aes
 import crypto.md5
 import crypto.cipher
 import encoding.binary as bin
+import encoding.base64
 
 fn padded_length(source []u8, blocksize int) int {
 	if (source.len % blocksize) == 0 {
@@ -15,7 +16,7 @@ fn padded_length(source []u8, blocksize int) int {
 
 pub fn encrypt_str(data string, secret string) string {
 	mut d := encrypt(data.bytes(), secret)
-	return d.bytestr()
+	return base64.encode(d)
 }
 
 pub fn encrypt(data []u8, secret string) []u8 {
@@ -45,13 +46,15 @@ pub fn encrypt(data []u8, secret string) []u8 {
 	return destination
 }
 
+//input needs to be base64 encoded
 pub fn decrypt_str(data string, secret string) string {
 	if data.len == 0 {
 		return ''
 		// print_backtrace()
 		// panic('data cannot be empty (decrypt aes)')
 	}
-	mut d := decrypt(data.bytes(), secret)
+	data_decoded:=base64.decode(data)
+	mut d := decrypt(data_decoded, secret)
 	return d.bytestr()
 }
 

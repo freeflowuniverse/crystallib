@@ -2,6 +2,25 @@ module base
 
 import freeflowuniverse.crystallib.data.ourtime
 
+
+@[params]
+pub struct SessionNewArgs {
+pub mut:
+	instance     string
+	context      ?&Context @[skip; str: skip]
+	session      ?&Session @[skip; str: skip]
+	context_name string = 'default'
+	session_name string // default will be based on a date when run
+	interactive  bool = true // can ask questions, default on true
+	coderoot     string // this will define where all code is checked out
+}
+
+//get the args for function session new
+pub fn session_new_args_get(args SessionNewArgs) SessionNewArgs {
+	return args
+}
+
+
 // return a session which has link to the actions and params on context and session level
 // the session also has link to dbfs (filesystem key val stor and gitstructure if relevant)
 pub fn session_new(args_ SessionNewArgs) !&Session {
@@ -59,3 +78,5 @@ pub fn session_new(args_ SessionNewArgs) !&Session {
 
 	return session
 }
+
+

@@ -10,7 +10,7 @@ import os
 @[params]
 pub struct CollectionGetArgs {
 pub mut:
-	context     string = 'default'
+	context_id     u32 @[required]
 	interactive bool
 	secret      string
 }
@@ -20,11 +20,9 @@ pub mut:
 // will check on env variable "MYCONTEXT" if found this will be the chosen context (overrules the context as given in args)
 pub fn get(args_ CollectionGetArgs) !DBCollection {
 	mut args := args_
-	args.context = texttools.name_fix(args.context)
-
 	mut secret := args.secret
 
-	dbpath := '${os.home_dir()}/hero/db/${args.context}'
+	dbpath := '${os.home_dir()}/hero/db/${args.context_id}'
 	mut p := pathlib.get_dir(create: true, path: dbpath)!
 
 	mut redis := redisclient.core_get()!
