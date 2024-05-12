@@ -1,9 +1,5 @@
 module secp256k1
 
-import os
-import freeflowuniverse.crystallib.osal.sshagent
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import encoding.hex
 import crypto.sha256
@@ -13,8 +9,8 @@ fn test_check() {
 	console.print_debug('${'[+] initializing libsecp256 vlang wrapper'}')
 
 	wendy := secp256k1.new()!
-	webdy_priv_key := wendy.private_key()
-	webdy_pub_key := wendy.public_key()
+	webdy_priv_key := wendy.private_key_hex()
+	webdy_pub_key := wendy.public_key_hex()
 	console.print_debug('-------')
 	console.print_debug('Wendy Private: ${webdy_priv_key}')
 	console.print_debug('Wendy Public: ${webdy_pub_key}')
@@ -32,12 +28,12 @@ fn test_check() {
 
 	// create 'bobpub' from bob only public key, reduced features available (only sign check, shared keys, etc.)
 	bobpub := secp256k1.new(
-		pubhex: bob.public_key()
+		pubhex: bob.public_key_hex()
 	)!
 
 	// create 'alicepub' from alice only public key, reduced features available
 	alicepub := secp256k1.new(
-		pubhex: alice.public_key()
+		pubhex: alice.public_key_hex()
 	)!
 
 	shr1 := bob.sharedkeys(alice)
@@ -90,8 +86,8 @@ fn test_check() {
 
 	// instanciate alice with only her public key
 	assert alicepub.verify_data(signed, message.bytes()) == true
-	assert alicepub.verify_str(signed_str, message) == true
-	assert alicepub.verify_str(signed_str, message + 's') == false
+	assert alicepub.verify_str_hex(signed_str_hex, message) == true
+	assert alicepub.verify_str_hex(signed_str_hex, message + 's') == false
 
 	//
 	// signature (schnorr)
