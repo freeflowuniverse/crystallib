@@ -51,11 +51,11 @@ pub fn (mut db NameDB) set(key string, data string) !u32 {
     mut lines_out:=[]string{}
     mut idfound:=0
     for mut line in lines {
-        key_in_file,dataout:=namedb_process_line(mypath.path,line)
+        key_in_file,_:=namedb_process_line(mypath.path,line)
         if key_in_file==key{
             line = "${key}:${data}"
             if idfound>0{
-                panic("bug")
+                panic("bug, there is double key, should not be possible")
             }
             idfound=myid+line_num
         }

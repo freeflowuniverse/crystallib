@@ -41,6 +41,9 @@ mut dbcollection := get(context: 'test', secret: '123456')!
 
 mut db := dbcollection.get_encrypted("db_a")!
 
+
+>> TODO: need to be updated, is now based on key and id
+
 //get the value
 fn (mut db DB) get(name_ string) !string {
 

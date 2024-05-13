@@ -3,6 +3,7 @@ module dbfs
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.crypt.aes_symmetric
+import encoding.base64
 
 @[heap]
 pub struct DB {
@@ -20,20 +21,40 @@ pub mut:
 	encrypted bool
 	withkeys bool //if set means we will use keys in stead of only u32
 	keyshashed bool //if its ok to hash the keys, which will generate id out of these keys and its more scalable
+	ext string //extension if we want to use it in DB e.g. 'json'
 	//base64 bool //if binary data will be base encoded
 }
 
+@[params]
+pub struct GetArgs {
+pub mut:
+	key     string
+	id      u32
+}
 
 // get the value, if it doesn't exist then return empty string
-pub fn (mut db DB) get(key_ string) !string {
-	key := texttools.name_fix(key_)
-	if !db.exists(key) {
-		return ''
+pub fn (mut db DB) get(args_ GetArgs) !string {
+	mut args:=args_
+	args.key = texttools.name_fix(args.key)
+	if args.key.len>0{
+		if db.config.withkeys{
+			if db.config.keyshashed{
+				//means we use a namedb
+				mut ndb := db.namedb or {
+						panic("namedb should be available")
+					}
+				args.id,_ =ndb.getdata(args.key)!
+			}else{
+
+			}
+		}
 	}
-	mut datafile := db.path.file_get_new(key)!
-	mut data := datafile.read()!
+
+	mut pathsrc:=db.path_get(args.id)!
+
+	mut data := pathsrc.read()!
 	if data.len == 0 {
-		panic('data cannot be empty for get:${key}')
+		panic('data cannot be empty for get:${args}')
 	}
 	if db.config.encrypted {
 		data = aes_symmetric.decrypt_str(data, db.secret()!)
@@ -66,53 +87,60 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 		args.value = ""
 	}	
 	
-	mut datafile := db.path.file_get_new(key)!
+	//lets deal with key
+	if args.key.len>0{
+		if args.id>0{
+			return error("cant have id and key at same time")
+		}
+		if db.config.withkeys{
+			if db.config.keyshashed{
+				//means we use a namedb
+				mut ndb := db.namedb or {
+						panic("namedb should be available")
+					}
+				args.id = ndb.set(args.key,"")!
+			}else{
+				//write key in other ways
+				args.id = db.parent.incr()!
+			}
+		}else{
+			return error("if key specified, then db needs to be in keymode")
+		}
+	}
+	mut pathsrc:=db.path_get(args.id)!
+	//make symlink if keys are not hashed
+	if db.config.withkeys && ! (db.config.keyshashed){
+		mut destname:="${db.path.path}/${args.key}"
+		if db.config.ext.len>0{
+			destname+=".${db.config.ext}"
+		}
+		pathsrc.link(destname,true)! //link the key to the right source info
+	}
 	if db.config.encrypted {
 		args.valueb = aes_symmetric.encrypt(args.valueb, db.secret()!)
 	}
-	datafile.write(args.valueb)!
+	//shortcut for now, need to use writeb later
+	pathsrc.write(base64.encode(args.valueb))!
+
+	assert args.id>0
+	return args.id
 }
 
-@[params]
-pub struct GetArgs {
-pub mut:
-	key     string
-	id      u32
+//get path based on int id in the DB
+fn (mut db DB) path_get(myid u32) !pathlib.Path {	
+	a,b,c:=namedb_dbid(myid)
+	mut destname:=c.str()
+	if db.config.ext.len>0{
+		destname+=".${db.config.ext}"
+	}	
+	mut mydatafile := pathlib.get_file(
+		path: "${db.path.path}/${a}/${b}/${destname}"
+		create: true
+	)!
+	return mydatafile
 }
 
-pub fn (mut db DB) key_register(key string,data string) !u32 {
-	if db.config.withkeys{
-		if db.config.keyshashed{
-			//means we use a namedb
-			mut ndb := db.namedb or {
-					panic("namedb should be available")
-				}
-			return ndb.set(key,data)!
-		}
-		if data.len>0{panic("bug, data should not be used for when namedb is not available")}
-		return db.parent.incr()!
-	}else{
-		return error("can't use keys for database which is not configured as such.")
-	}
-}
 
-//key can be linked to a string and this will also be returned, is stored in our namedb
-pub fn (mut db DB) key_get(key string) !(u32,string) {
-	if db.config.withkeys{
-		if db.config.keyshashed{
-			//means we use a namedb
-			mut ndb := db.namedb or {
-					panic("namedb should be available")
-				}
-			return ndb.get(key)!
-		}
-		if data.len>0{panic("bug, data should not be used for when namedb is not available")}
-		return db.parent.incr()!
-	}else{
-		return error("can't use keys for database which is not configured as such.")
-	}
-
-}
 
 // check if entry exists based on keyname
 pub fn (mut db DB) exists(key_ string) bool {
