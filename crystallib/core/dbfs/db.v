@@ -18,11 +18,11 @@ pub mut:
 pub struct DBConfig {
 pub mut:
 	name string
-	encrypted bool
-	withkeys bool //if set means we will use keys in stead of only u32
+	encrypted bool //means all data values in db are encrypted
+	withkeys bool //if set means we will use keys in stead of u32 id
 	keyshashed bool //if its ok to hash the keys, which will generate id out of these keys and its more scalable
 	ext string //extension if we want to use it in DB e.g. 'json'
-	//base64 bool //if binary data will be base encoded
+	//base64 bool //if binary data will be base encoded, not used now
 }
 
 @[params]

@@ -20,6 +20,11 @@ pub mut:
 
 //TODO: need to put levels in, so that use less directories if nr of items in DB is small
 
+//purpose of this file is to create an index (can optionally have data attached to this index per key)
+// so we can easily map between a key and an id or other way around
+
+//if key and ok to hash, then we can generated unique id out of the hashed key
+
 
 pub fn namedb_new(path string) !NameDB {
     mut p:=pathlib.get_dir(path:path,create:true)!
