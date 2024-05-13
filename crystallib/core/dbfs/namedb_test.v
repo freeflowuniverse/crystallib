@@ -41,20 +41,16 @@ fn test_dbname1() {
         ids << myid
         i++
     }
+
     // Retrieve public keys using their unique IDs
-    print("retrieve starts")
-    mut i2:=0
-    for  myid in ids {
-        if i2 % 1000 == 0 {
-            println('c ${i2}')
-        }
+    println("retrieve starts")
+    for  i2, myid in ids {
         retrieved_pubkey,data := ndb.get(myid)!
         myid_found,data_found := ndb.getdata(retrieved_pubkey)!
         assert myid_found==myid
         assert data_found==data
         tc:=test_cases[i2] or {panic("can't find ${i2} in test_cases with len: ${test_cases.len}")}
         assert retrieved_pubkey == tc, 'Retrieved pubkey doesn\'t match for ID: $myid'
-        i2++
     }
 
     println('All tests passed!')
@@ -62,7 +58,7 @@ fn test_dbname1() {
 }
 
 
-fn test_dbname1() {
+fn test_dbname2() {
 
 
 	assert namedb_dbid(0).str() == "(0, 0, 0)"

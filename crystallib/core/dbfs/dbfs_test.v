@@ -1,47 +1,47 @@
 module dbfs
 
+import time
+
 fn test_dbfs() {
-	mut dbcollection := get(context: 'test', secret: '123456')!
+	mut dbcollection := get(contextid: 0, secret: '123456')!
 
-	mut db := dbcollection.get_encrypted('db_a')!
+	mut db := dbcollection.db_create(name: 'db_a', encrypted: true, withkeys: true)!
 
-	db.set('a', 'bbbb')!
-	assert 'bbbb' == db.get('a')!
+	db.set(key: 'a', value: 'bbbb')!
+	assert 'bbbb' == db.get(key: 'a')!
 
-	assert db.exists('a')
+	assert db.exists(key: 'a')
 
-	db.delete('a')!
-	assert db.exists('a') == false
+	db.delete(key: 'a')!
+	assert db.exists(key: 'a') == false
 
-	assert exists('test')
-
-	db.set('a', 'bbbb')!
+	assert db.exists(key: 'test') == false
 
 	dbcollection.destroy()!
 
 	assert dbcollection.exists('a') == false
 
-	assert exists('test') == false
+	assert db.exists(key: 'test') == false
 }
 
 fn test_dbfs2() {
-	mut dbcollection := get(context: 'test', secret: '123456')!
+	mut dbcollection := get(contextid: 0, secret: '123456')!
 
-	mut db := dbcollection.get('db_b')!
+	mut db := dbcollection.db_create(name:'hamada', withkeys: true)!
 
-	db.set('a', 'bbbb')!
-	assert 'bbbb' == db.get('a')!
+	db.set(key: 'a', value: 'bbbb')!
+	assert 'bbbb' == db.get(key: 'a')!
 
-	assert db.exists('a')
-	assert !db.exists('ad')
+	assert db.exists(key: 'a')
+	assert !db.exists(key: 'ad')
 
-	assert exists('test')
+	assert dbcollection.exists('hamada')
 
 	dbcollection.destroy()!
 
 	assert dbcollection.exists('a') == false
 
-	assert exists('test') == false
+	assert db.exists(key: 'test') == false
 
-	assert db.encrypted == false
+	assert db.is_encrypted() == false
 }

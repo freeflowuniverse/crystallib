@@ -7,7 +7,7 @@ import encoding.base64
 
 @[heap]
 pub struct DB {
-pub:
+mut:
 	config DBConfig
 pub mut:
 	path      pathlib.Path
@@ -16,10 +16,11 @@ pub mut:
 }
 
 pub struct DBConfig {
-pub mut:
+mut:
+	encrypted bool
+pub:
 	name string
-	encrypted bool //means all data values in db are encrypted
-	withkeys bool //if set means we will use keys in stead of u32 id
+	withkeys bool //if set means we will use keys in stead of only u32
 	keyshashed bool //if its ok to hash the keys, which will generate id out of these keys and its more scalable
 	ext string //extension if we want to use it in DB e.g. 'json'
 	//base64 bool //if binary data will be base encoded, not used now
@@ -56,7 +57,7 @@ pub fn (mut db DB) get(args_ GetArgs) !string {
 	if data.len == 0 {
 		panic('data cannot be empty for get:${args}')
 	}
-	if db.config.encrypted {
+	if db.is_encrypted() {
 		data = aes_symmetric.decrypt_str(data, db.secret()!)
 	}
 	return data
@@ -145,8 +146,9 @@ fn (mut db DB) path_get(myid u32) !pathlib.Path {
 // check if entry exists based on keyname
 pub fn (mut db DB) exists(args_ GetArgs) bool {
 	//TODO: see get, to improve this one
-	if args.key.len>0{
-		args.key = texttools.name_fix(args.key)
+	mut key := args_.key
+	if key.len>0{
+		key = texttools.name_fix(key)
 	}
 
 	if !(db.path.file_exists(key)) {
@@ -164,7 +166,7 @@ pub fn (mut db DB) exists(args_ GetArgs) bool {
 // delete an entry
 pub fn (mut db DB) delete(args_ GetArgs) ! {
 	//TODO: see get, to improve this one
-	key := texttools.name_fix(key_)
+	key := texttools.name_fix(args_.key)
 	mut datafile := db.path.file_get(key) or { return }
 	datafile.delete()!
 }
@@ -195,7 +197,7 @@ pub fn (mut db DB) empty() ! {
 }
 
 fn (mut db DB) secret() !string {
-	if db.config.encrypted {
+	if db.is_encrypted() {
 		return db.parent.secret
 	}
 	return ''
@@ -210,13 +212,15 @@ pub fn (mut db DB) encrypt() ! {
 	}
 	db.secret()! // just to check if ok
 	for key in db.keys('')! {
-		db.config.encrypted = false
-		v := db.get(key)!
-		db.config.encrypted = true
-		db.set(key, v)!
+		v := db.get(key: key)!
+		encrypted_v := aes_symmetric.encrypt(v.bytes(), db.secret()!)
+		db.set(key: key, valueb: encrypted_v)!
 	}
+
 	db.config.encrypted = true
 	db.path.file_get_new('encrypted')!
 }
 
-// incr_file:=dbcollection.path.file_get_new("incr_${memberid}")!
+pub fn (db DB) is_encrypted() bool{
+	return db.config.encrypted
+}

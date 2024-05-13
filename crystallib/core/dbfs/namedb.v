@@ -1,8 +1,6 @@
 module dbfs
 import json
-import os
 import crypto.md5
-import encoding.hex
 import freeflowuniverse.crystallib.core.pathlib
 
 
@@ -72,7 +70,8 @@ pub fn (mut db NameDB) set(key string, data string) !u32 {
         lines << "${key}:${data}"
     }    
     mypath.write(lines.join("\n"))!
-    return u32(idfound)
+
+    return u32(myid+lines.len-1)
 }
 
 
@@ -97,7 +96,7 @@ pub fn (mut db NameDB) get(myid u32) !(string,string) {
     //println("key get: ${myid}")
     mut mypath:=db.dbpath(myid)!
     //println("path: ${mypath.path}")
-    a,b,c := namedb_dbid(myid)
+    _,_,c := namedb_dbid(myid)
     //println("ids: ${a} ${b} ${c}")
     content:=mypath.read()!
     mut lines:=content.trim_space().split_into_lines()
@@ -112,7 +111,7 @@ pub fn (mut db NameDB) get(myid u32) !(string,string) {
 
 
 
-//calculate the id's as needed to create the path
+// calculate the id's as needed to create the path
 fn namedb_dbid(myid u32) (u8,u8,u16) {
     a := u8(myid / (256 * 256))
     a_post := myid - a * int(256 * 256)
@@ -121,6 +120,7 @@ fn namedb_dbid(myid u32) (u8,u8,u16) {
     c := u16(b_post)
     return a,b,c
 }
+
 fn (mut db NameDB) key2path(key string) !(u32,pathlib.Path) {
     hash_bytes := md5.sum(key.bytes())
     if key.len<2{
@@ -145,7 +145,7 @@ fn namedb_process_line(path string, line string) (string,string){
 }
 
 fn (mut db NameDB) dbpath(myid u32) !pathlib.Path {
-    a,b,c := namedb_dbid(myid)
+    a,b,_ := namedb_dbid(myid)
     //println("dbpath ids: ${a} ${b} ${c}")
     dir_name := a.hex()
     file_name :=  b.hex()
