@@ -20,18 +20,13 @@ assert 'bbbb' == db.get('a')!
 
 ```
 
-## env variables
+## dbname 
 
-- env variable "MYSECRET" if found will use to encrypt/decrypt .
-- env variable "MYCONTEXT" if found this will be the chosen context (overrules the context as given in args)
+DBName has functionality to efficiently store millions of names and generate a unique id for it, each name gets a unique id, and based on the id the name can be found back easily.
 
-```bash
-#used to configure without having to call in code
-export MYSECRET='1234'
-export MYCONTEXT='mycontext'
-```
+Some string based data can be attached to one name so it becomes a highly efficient key value stor, can be used for e.g. having DB of pubkeys, for a nameserver, ...
 
-## examples
+## dbfs examples
 
 Each session has such a DB attached to it, data is stored on filesystem, 
 

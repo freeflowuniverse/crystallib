@@ -4,67 +4,109 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.clients.redisclient	
 import os
+import json
 
 @[heap]
 pub struct DBCollection {
 pub mut:
 	path   pathlib.Path
-	//name   string
+	contextid u32
 	secret string
-	//contextid id
-	memberid int //needed to do autoincrement of the DB, when user logged in we need memberid, memberid is unique per circle
+	memberid u16 //needed to do autoincrement of the DB, when user logged in we need memberid, memberid is unique per circle
 	member_pubkeys map[int]string
+	redis redisclient.Redis
 }
 
-pub fn (mut dbcollection DBCollection) get_encrypted(name_ string) !DB {
-	mut db := dbcollection.get(name_)!
-	db.encrypt()!
-	return db
-}
 
-pub fn (mut dbcollection DBCollection) incr() !int {
-
-	mut r := redisclient.core_get()!
-	if dbcollection.contextid>0{
-		//make sure we are on the right db
-		r.selectdb(dbcollection.contextid)!
-	}	
-	lid:=r.get("context:lastid")!
-	if lid==none{
-		incr_file:=dbcollection.path.file_get("incr_${memberid}")!
-		c:=incr_file.read() or {""}
-		if c==""{
-			incr_file.write("1")!
-			r.set("context:lastid","1")!
-			return 1
-		}
+pub fn (mut dbcollection DBCollection) incr() !u32 {
+	mut incr_file:=dbcollection.path.file_get("incr_${dbcollection.memberid}")!
+	c:=incr_file.read() or {""}
+	mut c_int:=c.u32()
+	if c==""{
+		c_int=256*256*dbcollection.memberid //in future we will have to check that we don't go over range for 1 member
 	}
-
+	c_int+=1
+	incr_file.write("${c_int}")!
+	return c_int
 }
 
 
 
+@[params]
+pub struct DBCreateArgs {
+pub mut:
+	name string
+	encrypted bool
+	withkeys bool //if set means we will use keys in stead of only u32
+	keyshashed bool //if its ok to hash the keys, which will generate id out of these keys and its more scalable
+}
+// create the dabase (init), cannot use unless this is done
+//```
+// name string
+// encrypted bool
+// withkeys bool //if set means we will use keys in stead of only u32
+// keyshashed bool //if its ok to hash the keys, which will generate id out of these keys and its more scalable
+//```
+pub fn (mut dbcollection DBCollection) db_create(args_ DBCreateArgs) !DB {
+	mut args:=args_
+	args.name = texttools.name_fix(args.name)
+	mut p := pathlib.get_dir(create: true, path: '${dbcollection.path.path}/${args.name}')!
+	cfg:=DBConfig{
+		withkeys:args.withkeys
+		name:args.name
+		encrypted:args.encrypted
+		keyshashed:args.keyshashed
+	}
+	mut path_meta := p.file_get('.meta') or {
+		p2:=pathlib.get_file(path: '${p.path}/.meta', create: true)!
+        p2
+	}
+	metadata:=json.encode(cfg)
+	path_meta.write(metadata)!
+
+	return dbcollection.db_get(args.name)
+
+}
 
 // get a DB from the dbcollection
-pub fn (mut dbcollection DBCollection) get(name_ string) !DB {
-	name := texttools.name_fix(name_)
-	mut p := pathlib.get_dir(create: true, path: '${dbcollection.path.path}/${name}')!
-	mut encrypted := false
-	if os.exists('${dbcollection.path.path}/${name}/encrypted') {
-		encrypted = true
-	}
-	mut db2 := DB{
-		name: name
-		path: p
-		encrypted: encrypted
+pub fn (mut dbcollection DBCollection) db_get(name_ string) !DB {
+	name:=texttools.name_fix(name_)
+	dirpath:='${dbcollection.path.path}/${name}'
+	mut p := pathlib.get_dir(create: false, path:dirpath ) or { 
+		return error("cant open dabase or find on ${dirpath}")
+	 }
+	mut path_meta := p.file_get('.meta') or {
+		p2:=pathlib.get_file(path: '${p.path}/.meta', create: true)!
+        p2
+	}    
+    data:=path_meta.read()!
+    mut cfg :=DBConfig{}
+    if data.len>0{
+        cfg = json.decode(DBConfig,data)!
+    }
+	mut db := DB{
+		path:p,
+		config:cfg
 		parent: &dbcollection
 	}
-	if encrypted {
+	if cfg.encrypted {
 		if dbcollection.secret.len < 4 {
 			return error('secret needs to be specified on dbcollection level, now < 4 chars. \nDB: ${dbcollection}')
 		}
 	}
-	return db2
+	if db.config.withkeys{
+		if db.config.keyshashed{
+			//means we use a namedb
+			db.namedb = namedb_new("${db.path.path}/names")!
+		}
+	}	
+	return db
+}
+
+pub fn (mut dbcollection DBCollection) get_encrypted(name_ string) !DB {
+	mut db := dbcollection.db_get(name_)!
+	db.encrypt()!
+	return db
 }
 
 pub fn (mut collection DBCollection) exists(name_ string) bool {

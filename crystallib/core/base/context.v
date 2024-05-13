@@ -44,7 +44,7 @@ pub fn (mut self Context) dbcollection() !&dbfs.DBCollection {
 		if self.config.db_path.len==0{
 			self.config.db_path := '${os.home_dir()}/hero/db/${self.config.id}'
 		}		
-		mut dbcollection := dbfs.get(secret:self.config.secret)!
+		mut dbcollection := dbfs.get(secret:self.config.secret,)!
 		self.dbcollection_ = &p
 		&p
 	}

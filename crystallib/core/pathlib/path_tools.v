@@ -344,6 +344,11 @@ pub fn (mut path Path) write(content string) ! {
 	os.write_file(path.path, content)!
 }
 
+pub fn (mut path Path) writeb(content u8) ! {
+	panic("implement")
+	//https://modules.vlang.io/os.html#open_file
+}
+
 // read content from file
 pub fn (mut path Path) read() !string {
 	path.check()

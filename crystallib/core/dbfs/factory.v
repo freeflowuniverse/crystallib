@@ -1,10 +1,7 @@
 module dbfs
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.clients.redisclient
-import crypto.md5
-import freeflowuniverse.crystallib.ui as gui
 import os
 
 @[params]
@@ -12,6 +9,7 @@ pub struct CollectionGetArgs {
 pub mut:
 	dbpath    string
 	secret      string
+	contextid   u32//needed to connect to the redis
 }
 
 // will return the dbcollection for a specific context
@@ -20,13 +18,20 @@ pub mut:
 pub fn get(args_ CollectionGetArgs) !DBCollection {
 	mut args := args_
 	mut secret := args.secret
+	if args.dbpath==""{
+		args.dbpath = "${os.home_dir()}/var/dbfs"
+	}
 	mut p := pathlib.get_dir(create: true, path: args.dbpath)!
 
-	mut db := DBCollection{
+	mut r := redisclient.core_get()!
+	r.selectdb(args_.contextid)!
+
+	mut dbcollection := DBCollection{
 		path: p
 		secret: secret
-		name: args.context
+		contextid: args.contextid
+		redis:r
 	}
-	return db
+	return dbcollection
 }
 
