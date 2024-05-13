@@ -143,7 +143,8 @@ fn (mut db DB) path_get(myid u32) !pathlib.Path {
 
 
 // check if entry exists based on keyname
-pub fn (mut db DB) exists(key_ string) bool {
+pub fn (mut db DB) exists(args_ GetArgs) bool {
+	//TODO: see get, to improve this one
 	if args.key.len>0{
 		args.key = texttools.name_fix(args.key)
 	}
@@ -161,7 +162,8 @@ pub fn (mut db DB) exists(key_ string) bool {
 }
 
 // delete an entry
-pub fn (mut db DB) delete(key_ string) ! {
+pub fn (mut db DB) delete(args_ GetArgs) ! {
+	//TODO: see get, to improve this one
 	key := texttools.name_fix(key_)
 	mut datafile := db.path.file_get(key) or { return }
 	datafile.delete()!
@@ -174,6 +176,7 @@ pub fn (mut db DB) destroy() ! {
 
 // get all keys of the db (e.g. per session) can be with a prefix
 pub fn (mut db DB) keys(prefix_ string) ![]string {
+	//TODO: see get, to fix this one
 	prefix := texttools.name_fix(prefix_)
 	mut r := db.path.list(recursive: false)!
 	mut res := []string{}
@@ -189,10 +192,6 @@ pub fn (mut db DB) keys(prefix_ string) ![]string {
 // delete all data
 pub fn (mut db DB) empty() ! {
 	db.path.empty()!
-	if db.config.encrypted {
-		// need to make sure we restore the encrypted file
-		db.path.file_get_new('encrypted')!
-	}
 }
 
 fn (mut db DB) secret() !string {
@@ -205,6 +204,7 @@ fn (mut db DB) secret() !string {
 // will mark db for encryption .
 // will go over all existing keys and encrypt
 pub fn (mut db DB) encrypt() ! {
+	//TODO: see get, to fix this one
 	if db.config.encrypted {
 		return
 	}
