@@ -19,7 +19,7 @@ pub mut:
 
 
 pub fn (mut dbcollection DBCollection) incr() !u32 {
-	mut incr_file:=dbcollection.path.file_get("incr_${dbcollection.memberid}")!
+	mut incr_file:=dbcollection.path.file_get_new("incr_${dbcollection.memberid}")!
 	c:=incr_file.read() or {""}
 	mut c_int:=c.u32()
 	if c==""{

@@ -7,8 +7,8 @@ fn test_dbfs() {
 
 	mut db := dbcollection.db_create(name: 'db_a', encrypted: true, withkeys: true)!
 
-	db.set(key: 'a', value: 'bbbb')!
-	assert 'bbbb' == db.get(key: 'a')!
+	id := db.set(key: 'a', value: 'bbbb')!
+	assert 'bbbb' == db.get(id: id, key: 'a')!
 
 	assert db.exists(key: 'a')
 
@@ -29,8 +29,8 @@ fn test_dbfs2() {
 
 	mut db := dbcollection.db_create(name:'hamada', withkeys: true)!
 
-	db.set(key: 'a', value: 'bbbb')!
-	assert 'bbbb' == db.get(key: 'a')!
+	id := db.set(key: 'a', value: 'bbbb')!
+	assert 'bbbb' == db.get(id: id, key: 'a')!
 
 	assert db.exists(key: 'a')
 	assert !db.exists(key: 'ad')

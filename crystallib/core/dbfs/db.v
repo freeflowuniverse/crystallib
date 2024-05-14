@@ -117,11 +117,13 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 		}
 		pathsrc.link(destname,true)! //link the key to the right source info
 	}
+
 	if db.config.encrypted {
 		args.valueb = aes_symmetric.encrypt(args.valueb, db.secret()!)
+		pathsrc.write(base64.encode(args.valueb))!
+	}else{
+		pathsrc.writeb(args.valueb)!
 	}
-	//shortcut for now, need to use writeb later
-	pathsrc.write(base64.encode(args.valueb))!
 
 	assert args.id>0
 	return args.id
