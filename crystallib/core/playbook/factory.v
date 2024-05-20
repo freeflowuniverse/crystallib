@@ -34,7 +34,7 @@ pub fn new(args_ PlayBookNewArgs) !PlayBook {
 	mut s:=c.session_new()!	
 
 	mut plbook := PlayBook{
-		session: s
+		session: &s
 	}
 	if args.path.len > 0 || args.text.len > 0 || args.git_url.len > 0 {
 		plbook.add(
