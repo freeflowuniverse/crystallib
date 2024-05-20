@@ -48,7 +48,7 @@ pub fn (mut session Session) log(args_ LogArgs) !LogItem {
 		cat: args.cat
 		log: args.log
 		time: ourtime.now()
-		session: session.guid()
+		// session: session.guid()
 	}
 
 	// TODO: get string output and put to redis

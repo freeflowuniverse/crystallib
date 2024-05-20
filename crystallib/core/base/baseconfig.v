@@ -1,14 +1,14 @@
 module base
 
-import freeflowuniverse.crystallib.crypt.secrets
-import v.reflection
+//import v.reflection
 // is an object which has a configurator, session and config object which is unique for the model
 // T is the Config Object
 
 pub struct BaseConfig[T] {
+	Base	
 mut:
 	configurator_ ?Configurator[T] @[skip; str: skip]
-	session_      ?&Session        @[skip; str: skip]
+	// session_      ?&Session        @[skip; str: skip]
 	config_       ?&T
 pub mut:
 	instance string
@@ -17,9 +17,8 @@ pub mut:
 // management class of the configs of this obj
 fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {
 	mut configurator := self.configurator_ or {
-		session := self.session_ or { return error('base config must be initialized') }
+		//session := self.session_ or { return error('base config must be initialized') }
 		mut c := configurator_new[T](
-			context: &session.context
 			instance: self.instance
 		)!
 		self.configurator_ = c
@@ -48,6 +47,7 @@ pub fn (mut self BaseConfig[T]) config_new() !&T {
 }
 
 pub fn (mut self BaseConfig[T]) config_get() !&T {
+	mut mycontext:=context()!
 	mut config := self.config_ or {
 		mut configurator := self.configurator()!
 		mut c := configurator.get()!
@@ -55,7 +55,7 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 			field_attrs := attrs_get(field.attrs)
 			if 'secret' in field_attrs {
 				v := c.$(field.name)
-				c.$(field.name) = secrets.decrypt(v)!
+				c.$(field.name) = mycontext.secret_decrypt(v)!
 				// println('FIELD DECRYPTED: ${field.name}')		
 			}
 		}
@@ -66,20 +66,15 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 	return config
 }
 
-pub fn (mut self BaseConfig[T]) context() !&Context {
-	mut configurator := self.configurator()!
-	return configurator.context
-}
-
 pub fn (mut self BaseConfig[T]) config_save() ! {
 	mut config2 := *self.config_get()! // dereference so we don't modify the original
-
+	mut mycontext:=context()!
 	// //walk over the properties see where they need to be encrypted, if yes encrypt
 	$for field in T.fields {
 		field_attrs := attrs_get(field.attrs)
 		if 'secret' in field_attrs {
-			v := config2.$(field.name)
-			config2.$(field.name) = secrets.encrypt(v)!
+			v := config2.$(field.name)			
+			config2.$(field.name) = mycontext.secret_encrypt(v)!
 			// println('FIELD ENCRYPTED: ${field.name}')		
 		}
 	}
@@ -98,8 +93,8 @@ pub struct ConfigInitArgs {
 pub mut:
 	instance         string = 'default'
 	action           Action
-	session          ?&Session
-	session_new_args ?SessionNewArgs
+	// session          ?&Session
+	// session_new_args ?SessionNewArgs
 }
 
 pub enum Action {
@@ -113,17 +108,6 @@ pub fn (mut self BaseConfig[T]) init(args ConfigInitArgs) ! {
 	if self.instance == '' {
 		self.instance = args.instance
 	}
-	mut session_new_args := args.session_new_args or {
-		mut session_new_args0 := SessionNewArgs{}
-		session_new_args0
-	}
-
-	mut session := args.session or {
-		mut s := session_new(session_new_args)!
-		s
-	}
-
-	self.session_ = session
 	mut configurator := self.configurator()!
 	if args.action == .get {
 		self.config_get()!

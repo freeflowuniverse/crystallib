@@ -10,6 +10,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.doctree
 import os
+import freeflowuniverse.crystallib.core.base
 
 pub fn (mut site ZolaSite) process() ! {
 	// site.tree.process_defs()! // process includes
@@ -169,7 +170,8 @@ pub fn (mut site ZolaSite) generate() ! {
 	os.chmod(p_build.path, 0o777)!
 
 	osal.exec(cmd: cmd)!
-	mut r := redisclient.core_get()!
+	mut c:=base.context()!
+	mut r:=c.redis()!
 	r.set('zola:${site.name}:publish', site.path_publish.path)!
 	r.expire('zola:${site.name}:publish', 3600 * 12)!
 }

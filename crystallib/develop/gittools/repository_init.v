@@ -1,8 +1,8 @@
 module gittools
 
-import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.osal
 
 // this will clone the repo if it doesn't exist yet
 fn (mut repo GitRepo) load_from_url() ! {

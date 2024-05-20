@@ -245,6 +245,7 @@ pub fn (mut db DB) destroy() ! {
 // get all keys of the db (e.g. per session) can be with a prefix
 pub fn (mut db DB) keys(prefix_ string) ![]string {
 	//TODO: see get, to fix this one
+	panic("implement")
 	prefix := texttools.name_fix(prefix_)
 	mut r := db.path.list(recursive: false)!
 	mut res := []string{}

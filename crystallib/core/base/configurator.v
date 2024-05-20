@@ -2,16 +2,11 @@ module base
 
 import json
 
-// @[heap]
-// pub struct BaseConfigurator {
-// pub mut:
-
-// }
 
 @[heap]
 pub struct Configurator[T] {
 pub mut:
-	context     &Context @[skip; str: skip]
+	// context     &Context @[skip; str: skip]
 	instance    string
 	description string
 	configured  bool
@@ -21,7 +16,7 @@ pub mut:
 @[params]
 pub struct ConfiguratorArgs {
 pub mut:
-	context  &Context // optional context for the configurator
+	//context  &Context // optional context for the configurator
 	instance string   @[required]
 }
 
@@ -30,7 +25,7 @@ pub mut:
 // the context defines the context in which we operate, is optional will get the default one if not set
 pub fn configurator_new[T](args ConfiguratorArgs) !Configurator[T] {
 	return Configurator[T]{
-		context: args.context
+		//context: args.context
 		configtype: T.name.to_lower()
 		instance: args.instance
 	}
@@ -42,14 +37,16 @@ fn (mut self Configurator[T]) config_key() string {
 
 // set the full configuration as one object to dbconfig
 pub fn (mut self Configurator[T]) set(args T) ! {
-	mut db := self.context.db_config_get()!
+	mut mycontext:=context()!
+	mut db := mycontext.db_config_get()!
 	data := json.encode_pretty(args)
-	db.set(self.config_key(), data)!
+	db.set(key:self.config_key(), value:data)!
 }
 
 pub fn (mut self Configurator[T]) exists() !bool {
-	mut db := self.context.db_config_get()!
-	return db.exists(self.config_key())
+	mut mycontext:=context()!
+	mut db := mycontext.db_config_get()!
+	return db.exists(key:self.config_key())
 }
 
 pub fn (mut self Configurator[T]) new() !T {
@@ -60,22 +57,25 @@ pub fn (mut self Configurator[T]) new() !T {
 }
 
 pub fn (mut self Configurator[T]) get() !T {
-	mut db := self.context.db_config_get()!
-	if !db.exists(self.config_key()) {
-		return error("can't find configuration with name: ${self.config_key()} in context:'${self.context.name}'")
+	mut mycontext:=context()!
+	mut db := mycontext.db_config_get()!
+	if ! db.exists(key:self.config_key())! {
+		return error("can't find configuration with name: ${self.config_key()} in context:'${mycontext.config.name}'")
 	}
-	data := db.get(self.config_key())!
+	data := db.get(key:self.config_key())!
 	return json.decode(T, data)!
 }
 
 pub fn (mut self Configurator[T]) delete() ! {
-	mut db := self.context.db_config_get()!
-	db.delete(self.config_key())!
+	mut mycontext:=context()!
+	mut db := mycontext.db_config_get()!
+	db.delete(key:self.config_key())!
 }
 
 pub fn (mut self Configurator[T]) getset(args T) !T {
-	mut db := self.context.db_config_get()!
-	if db.exists(self.config_key()) {
+	mut mycontext:=context()!
+	mut db := mycontext.db_config_get()!
+	if db.exists(key:self.config_key())! {
 		return self.get()!
 	}
 	self.set(args)!
@@ -93,10 +93,11 @@ pub fn (mut self Configurator[T]) list() ![]string {
 }
 
 pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
-	mut db := self.context.db_config_get()!
+	mut mycontext:=context()!
+	mut db := mycontext.db_config_get()!
 	if args.name.len > 0 {
-		if db.exists(self.config_key()) {
-			data := db.get(self.config_key())!
+		if db.exists(key:self.config_key())! {
+			data := db.get(key:self.config_key())!
 			c := json.decode(T, data)!
 			println(c)
 			println('')

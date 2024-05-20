@@ -1,20 +1,20 @@
 module base
 
 import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.clients.redisclient
-import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import crypto.md5
 
+@[params]
 pub struct ContextConfigArgs {
 pub mut:
-	id			u32 @[required]
+	id			u32
 	name        string = 'default'
 	params      string
 	coderoot    string
 	interactive bool
 	secret      string
+	encrypt 	bool
 	priv_key_hex string //hex representation of private key
 }
 
@@ -40,36 +40,31 @@ fn context_new(args_ ContextConfigArgs) !&Context {
 			coderoot:args_.coderoot
 			interactive:args_.interactive
 			secret:args_.secret
+			encrypt:args_.encrypt
 		}
 	
-	mut r := redisclient.core_get()!
-	if args.id > 0 {
-		// make sure we are on the right db
-		r.selectdb(args.id)!
-	}
 
-	if args.secret == '' && args.interactive {
+	if args.encrypt && args.secret == '' && args.interactive {
 		mut myui := ui.new()!
 		console.clear()
 		args.secret = myui.ask_question(question: 'Please enter your hero secret string:')!
 
 	}
 
-	args.secret = md5.hexhash(args.secret)
+	if args.encrypt && args.secret.len>0{
+		args.secret = md5.hexhash(args.secret)
+	}
 
-	mut dbcollection := dbfs.get(context_id: args.id)!
 
 	mut c := Context{
 		config: args
-		redis: &r
-		dbcollection: &dbcollection
 	}
 
 	if args_.priv_key_hex.len>0{
 		c.privkey_set(args_.priv_key_hex)!
 	}
 
-	c.save()!
+	// c.save()!
 
 	if args.params.len > 0 {
 		mut p := paramsparser.new('')!
@@ -82,14 +77,25 @@ fn context_new(args_ ContextConfigArgs) !&Context {
 }
 
 
-fn context_get(id u32) !&Context {
-
-	if id in contexts{
+pub fn context_get(id u32) !&Context {
+	context_current = id
+	if id in contexts{		
 		return contexts[id] or {panic("bug")}
+	}else{
+		if id==0{
+			return context_new()!
+		}
 	}
-
-
-
 	return error("cant find context with id: %{id}")
+}
+
+
+pub fn context_select(id u32) !&Context {
+	context_current = id
+	return context()!
+}
+
+pub fn context() !&Context {	
+	return context_get(context_current)!
 }
 

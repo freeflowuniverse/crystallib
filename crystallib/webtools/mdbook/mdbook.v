@@ -6,6 +6,8 @@ import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.core.base
 
 @[heap]
 pub struct MDBook {
@@ -49,7 +51,8 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		args.publish_path = '${cfg.path_publish}/${args.name}'
 	}
 
-	mut r := redisclient.core_get()!
+	mut c:=base.context()!
+	mut r:=c.redis()!
 	r.set('mdbook:${args.name}:build', args.build_path)!
 	r.set('mdbook:${args.name}:publish', args.publish_path)!
 	r.expire('mdbook:${args.name}:build', 3600 * 12)! // expire after 12h

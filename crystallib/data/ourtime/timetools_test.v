@@ -100,6 +100,11 @@ fn test_absolute_time() {
 	}
 }
 
+fn test_from_epoch() {
+	mut t:=new_from_epoch(1670271275)
+	assert t.str() == "2022-12-05 20:14"
+}
+
 // NEXT: need some better test to see if time parsing works, more full tests
 
 fn test_parse_date() {

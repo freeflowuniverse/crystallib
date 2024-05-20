@@ -3,7 +3,8 @@ module smartid
 import freeflowuniverse.crystallib.clients.redisclient
 
 fn cleanup() ! {
-	mut r := redisclient.core_get()!
+	mut c:=base.context()!
+mut r:=c.redis()!
 	all_keys := r.keys('circle:test:*')!
 	for key in all_keys {
 		r.del(key)!

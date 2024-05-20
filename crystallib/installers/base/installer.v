@@ -1,10 +1,10 @@
 module base
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.builder
+// import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.develop.gittools
+// import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import os
 

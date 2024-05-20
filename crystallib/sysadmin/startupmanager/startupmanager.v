@@ -26,13 +26,15 @@ pub mut:
 }
 
 pub fn configure(args StartupManagerArgs) ! {
-	mut r := redisclient.core_get()!
+	mut c:=base.context()!
+mut r:=c.redis()!
 	mut d := json.encode_pretty(args)
 	r.set('startupmanager', d)!
 }
 
 pub fn get() !StartupManager {
-	mut r := redisclient.core_get()!
+	mut c:=base.context()!
+mut r:=c.redis()!
 	exists := r.exists('startupmanager')!
 	if !exists {
 		configure(cat: .screen)!

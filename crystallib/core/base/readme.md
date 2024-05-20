@@ -5,7 +5,7 @@ Everything we do in hero lives in a context, each context has a unique name.
 Redis is used to manage the contexts and the sessions.
 
 - redis db 0
-    - `context:current` curent id of the context, 1+, is the DB if redis
+    - `context:current` curent id of the context, is also the DB if redis if redis is used
 - redis db X, x is nr of context
     - `context:name` name of this context
     - `context:secret` secret as is used in context (is md5 of original config secret)
@@ -27,13 +27,13 @@ Session id is $contextid:$sessionid  (e.g. 10:111)
 ```v
 import freeflowuniverse.crystallib.core.base
 
-mut session:=base.context_new(
+mut session:=context_new(
     coderoot:'/tmp/code'
     interactive:true
 )!
 
-mut session:=base.session_new(context:'default',session:'mysession1')!
-mut session:=base.session_new()! //returns default context & incremental new session
+mut session:=session_new(context:'default',session:'mysession1')!
+mut session:=session_new()! //returns default context & incremental new session
 
 ```
 

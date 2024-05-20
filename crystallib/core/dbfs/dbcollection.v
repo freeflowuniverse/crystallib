@@ -2,7 +2,7 @@ module dbfs
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.clients.redisclient	
+//import freeflowuniverse.crystallib.clients.redisclient	
 import os
 import json
 
@@ -14,7 +14,7 @@ pub mut:
 	secret string
 	memberid u16 //needed to do autoincrement of the DB, when user logged in we need memberid, memberid is unique per circle
 	member_pubkeys map[int]string
-	redis redisclient.Redis
+	// redis redisclient.Redis
 }
 
 
@@ -67,6 +67,31 @@ pub fn (mut dbcollection DBCollection) db_create(args_ DBCreateArgs) !DB {
 	return dbcollection.db_get(args.name)
 
 }
+
+pub fn (mut dbcollection DBCollection) db_get_create(args_ DBCreateArgs) !DB {
+	if dbcollection.exists(args_.name){
+		return dbcollection.db_get(args_.name)!
+	}
+	mut args:=args_
+	args.name = texttools.name_fix(args.name)
+	mut p := pathlib.get_dir(create: true, path: '${dbcollection.path.path}/${args.name}')!
+	cfg:=DBConfig{
+		withkeys:args.withkeys
+		name:args.name
+		encrypted:args.encrypted
+		keyshashed:args.keyshashed
+	}
+	mut path_meta := p.file_get('.meta') or {
+		p2:=pathlib.get_file(path: '${p.path}/.meta', create: true)!
+        p2
+	}
+	metadata:=json.encode(cfg)
+	path_meta.write(metadata)!
+
+	return dbcollection.db_get(args.name)
+
+}
+
 
 // get a DB from the dbcollection
 pub fn (mut dbcollection DBCollection) db_get(name_ string) !DB {

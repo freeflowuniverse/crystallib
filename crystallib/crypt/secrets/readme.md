@@ -1,16 +1,15 @@
-# Secrets
+# Secret Box
 
-Basic example, it will look for the secret on `secretbox:main` in redis if not found will ask for it.
-This secret is the same for all the hero sessions.
+Some tools to work with encryption/decryption (symmetric)
 
 ```go
 import freeflowuniverse.crystallib.crypt.secrets
 
-secrets.delete_passwd()!
-r:= secrets.encrypt("aaa")!
-println(r)
-assert "aaa"==secrets.decrypt(r)!
+mut box:=secrets.get(secret:"mysecret")!
 
+r:= box.encrypt("aaa")!
+println(r)
+assert "aaa"==box.decrypt(r)!
 
 hex_secret:=secrets.hex_secret()!
 
@@ -20,7 +19,7 @@ openssl_base64_secret:=secrets.openssl_base64_secret()!
 
 ```
 
-
+<!-- 
 
 ## replace some text
 
@@ -42,7 +41,7 @@ mut test_string := "This is a test string with {ss} and {MYAPP.SOMETHING.A} and 
 
 test_string1:=box.replace(txt:test_string)!
 
-println(test_string1)
+println(test_string1) -->
 
 
 test_string2:=box.replace(txt:test_string,defaults:{"MYAPP.SOMETHING.A":secrets.DefaultSecretArgs{secret:"AAA"}})!
