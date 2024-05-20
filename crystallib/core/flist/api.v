@@ -1,17 +1,21 @@
 module flist
 
 // list directories and files in root directory. if recursive is allowed directories are explored.
-pub fn (mut f Flist) list(recursive bool) ![]Inode {
-	rows := match recursive {
+pub fn (mut f Flist) list(recursive bool) ![]Inode{
+	inodes := match recursive {
 		true {
-			f.con.exec('select * from inode;')!
+			res := sql f.con {
+				select from Inode
+			}!
+			res
 		}
-		false {
-			f.con.exec('select * from inode where parent = 1;')!
+		false{
+			res := sql f.con {
+				select from Inode where parent == 1
+			}!
+			res
 		}
 	}
-
-	inodes := inodes_from_rows(rows)!
 
 	return inodes
 }
@@ -30,26 +34,28 @@ pub fn (mut f Flist) delete_path(path_ string) ! {
 	items := path.split('/')
 	mut parent := u64(1)
 	mut inode := Inode{}
-	for item in items {
-		rows := f.con.exec_param_many('select * from inode where name = ? and parent = ?;',
-			[item, '${parent}'])!
+	for item in items{
+		inodes := sql f.con{
+			select from Inode where name == item && parent == parent
+		}!
 
 		// at most only one entry should match
-		if rows.len == 0 {
+		if inodes.len == 0{
 			return error('file or directory ${item} does not exist in flist')
 		}
 
-		inode = inode_from_row(rows[0])!
+		inode = inodes[0]
 		parent = inode.ino
 	}
 
 	f.delete_inode(inode.ino)!
 }
 
-// delete any entry that matches glob
-pub fn (mut f Flist) delete_match(glob string) ! {
-	inodes := f.find(glob)!
-	for inode in inodes {
+
+// delete_match deletes any entry that matches pattern. it simply calls find() and deletes matching inodes.
+pub fn (mut f Flist) delete_match(pattern string)!{
+	inodes := f.find(pattern)!
+	for inode in inodes{
 		f.delete_inode(inode.ino)!
 	}
 }
@@ -62,9 +68,11 @@ pub fn (mut f Flist) delete_inode(ino u64) ! {
 	f.con.exec_param('delete from extra where ino = ?;', '${ino}')!
 
 	// get children if any
-	rows := f.con.exec_param('select * from inode where parent = ?;', '${ino}')!
-	children := inodes_from_rows(rows)!
-	for child in children {
+	children := sql f.con {
+		select form Inode where parent == ino
+	}!
+
+	for child in children{
 		f.delete_inode(child.ino)!
 	}
 
@@ -74,10 +82,12 @@ pub fn (mut f Flist) delete_inode(ino u64) ! {
 
 // pub fn (mut f Flist) merge() !
 
-// find entries that match glob
-pub fn (mut f Flist) find(glob string) ![]Inode {
-	rows := f.con.exec_param('select * from inode where name glob ?', glob)!
-	inodes := inodes_from_rows(rows)!
+// find entries that match pattern, it uses the `LIKE` operator; 
+// The percent sign (%) matches zero or more characters and the underscore (_) matches exactly one.
+pub fn (mut f Flist) find(pattern string) ![]Inode{
+	inodes := sql f.con {
+		select from Inode where name like pattern
+	}!
 
 	return inodes
 }

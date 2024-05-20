@@ -2,7 +2,6 @@ module flist
 
 import os
 import db.sqlite
-import orm
 import rand
 import time
 
@@ -123,7 +122,7 @@ fn test_find() {
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (100, 1, "dir1", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (101, 1, "dir2", 0, 0, 0, 0, 0, 0, 0)')!
 
-	inodes := fl.find('dir*')!
+	inodes := fl.find('dir%')!
 	assert inodes.len == 2
 }
 
@@ -133,8 +132,8 @@ fn test_delete_match() {
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (102, 1, "dir3", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (103, 1, "dir4", 0, 0, 0, 0, 0, 0, 0)')!
 
-	fl.delete_match('dir*')!
+	fl.delete_match('dir%')!
 
-	inodes := fl.find('dir*')!
+	inodes := fl.find('dir%')!
 	assert inodes.len == 0
 }
