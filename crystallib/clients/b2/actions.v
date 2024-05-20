@@ -8,7 +8,7 @@ import time
 // res:=py.exec(cmd:cmd)!
 
 fn (mut self B2Client[Config]) pycode_init() !string {
-	mut cfg := self.config()!
+	mut cfg := self.config_get()!
 	c := "
 		import json
 		from b2sdk.v2 import *
@@ -22,9 +22,9 @@ fn (mut self B2Client[Config]) pycode_init() !string {
 fn (mut self B2Client[Config]) check_installed() ! {
 	needed := 'b2sdk,ipython'
 	for item in texttools.to_array(needed) {
-		if !self.py.pips_done_check(item) {
-			self.py.pip(item)!
-		}
+		self.py.pip(item)!
+		// if !self.py.pips_done_check(item) {
+		// }
 	}
 }
 
@@ -63,7 +63,7 @@ pub mut:
 
 pub fn (mut self B2Client[Config]) upload(args_ UploadArgs) ! {
 	mut args := args_
-	mut cfg := self.config()!
+	mut cfg := self.config_get()!
 
 	if !os.exists(args.src) {
 		return error('cannot upload ${args.src} to b2 client with name: ${self.instance}')
@@ -100,7 +100,7 @@ pub mut:
 
 pub fn (mut self B2Client[Config]) download(args_ DownloadArgs) ! {
 	mut args := args_
-	mut cfg := self.config()!
+	mut cfg := self.config_get()!
 
 	if !os.exists(os.dir(args.dest)) {
 		return error("cannot download ${args.file_name} to local file system: ${os.dir(args.dest)} doesn't exist")
@@ -145,7 +145,7 @@ pub mut:
 
 pub fn (mut self B2Client[Config]) create_bucket(args_ CreateBucketArgs) ! {
 	mut args := args_
-	mut cfg := self.config()!
+	mut cfg := self.config_get()!
 	if args.bucketname == '' {
 		args.bucketname = cfg.bucketname
 	}
@@ -169,7 +169,7 @@ pub mut:
 
 pub fn (mut self B2Client[Config]) delete_bucket(args_ DeleteBucketArgs) ! {
 	mut args := args_
-	mut cfg := self.config()!
+	mut cfg := self.config_get()!
 	if args.bucketname == '' {
 		args.bucketname = cfg.bucketname
 	}
@@ -196,7 +196,7 @@ pub struct BucketFile {
 
 pub fn (mut self B2Client[Config]) list_files(args_ ListBucketArgs) ![]BucketFile {
 	mut args := args_
-	mut cfg := self.config()!
+
 	self.check_installed()!
 	code0 := self.pycode_init()!
 	mut code := '
@@ -224,7 +224,6 @@ pub struct SyncArgs {
 
 pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) ! {
 	mut args := args_
-	mut cfg := self.config()!
 
 	self.check_installed()!
 	code0 := self.pycode_init()!

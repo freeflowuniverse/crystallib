@@ -6,14 +6,13 @@ import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.lang.python
 
-pub struct B2Client {
+pub struct B2Client[T] {
+	base.BaseConfig[T]
 pub mut:
 	py python.PythonEnv
-	config Configurator
 }
 
-pub struct MyConfigurator {
-	base.ConfigBase
+pub struct Config {
 pub mut:
 	configtype string = 'b2client' // needs to be defined	
 	keyname    string
@@ -22,17 +21,33 @@ pub mut:
 	bucketname string // can be empty is the default
 }
 
-// get instance of our client params: .
-// instance string = "default".
-// playargs ?PlayArgs (defines how to get session and/or context)
-//
-pub fn get(args base.PlayArgs) !B2Client{
+pub fn new(instance string, cfg Config) !B2Client[Config] {
 	mut py := python.new(name: 'default')! // a python env with name default
-	mut client := B2Client[Config]{
+	mut self := B2Client[Config]{
+		type_name: 'b2client'
 		py: py
 	}
-	client.init(args)!
-	return client
+	self.init(instance: instance, action: .new)!
+	self.config_set(cfg)!
+	return self
+}
+
+// get instance of our client params
+pub fn get(instance string) !B2Client[Config] {
+	mut py := python.new(name: 'default')! // a python env with name default
+	mut self := B2Client[Config]{
+		type_name: 'b2client'
+		py: py
+	}
+	self.init(instance: instance, action: .get)!
+	return self
+}
+
+pub fn delete(instance string) ! {
+	mut self := B2Client[Config]{
+		type_name: 'b2client'
+	}
+	self.init(instance: instance, action: .delete)!
 }
 
 // run heroscript starting from path, text or giturl
@@ -54,14 +69,13 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'b2client.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
-		mut cl := get(instance: instance)!
-		mut cfg := cl.config()!
-		cfg.description = p.get('description')!
+		mut cl := get(instance)!
+		mut cfg := cl.config_get()!
 		cfg.keyid = p.get('keyid')!
 		cfg.keyname = p.get('keyname')!
 		cfg.appkey = p.get('appkey')!
+		cfg.bucketname = p.get('bucketname')!
 		cl.config_save()!
-		//>TODO: fix
 	}
 }
 
@@ -71,18 +85,13 @@ pub fn (mut self B2Client[Config]) config_interactive() ! {
 	println('\n## Configure B2 Client')
 	println('========================\n\n')
 
-	mut cfg := self.config()!
+	mut cfg := self.config_get()!
 
 	self.instance = myui.ask_question(
 		question: 'name for B2 (backblaze) client'
 		default: self.instance
 	)!
 
-	cfg.description = myui.ask_question(
-		question: 'description'
-		minlen: 0
-		default: cfg.description
-	)!
 	cfg.keyid = myui.ask_question(
 		question: 'keyid e.g. 003e2a7be6357fb0000000001'
 		minlen: 5
