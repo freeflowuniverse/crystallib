@@ -13,7 +13,7 @@ struct CreateDagResponse {
 }
 
 fn (mut cl DaguClient[Config]) set_http_connection() ! {
-	cfg := cl.config()!
+	cfg := cl.config_get()!
 	if cl.connection.base_url != '${cfg.url}/api/v1' {
 		mut con := httpconnection.new(
 			name: 'dagu'
@@ -65,16 +65,16 @@ pub:
 	error_t   string    @[json: 'ErrorT']
 }
 
-pub struct DAG {
-pub:
-	group          string     @[json: 'Group']
-	name           string     @[json: 'Name']
-	schedule       []Schedule @[json: 'Schedule']
-	description    string     @[json: 'Description']
-	params         []string   @[json: 'Params']
-	default_params string     @[json: 'DefaultParams']
-	tags           []string   @[json: 'Tags']
-}
+// pub struct DAG {
+// pub:
+// 	group          string     @[json: 'Group']
+// 	name           string     @[json: 'Name']
+// 	schedule       []Schedule @[json: 'Schedule']
+// 	description    string     @[json: 'Description']
+// 	params         []string   @[json: 'Params']
+// 	default_params string     @[json: 'DefaultParams']
+// 	tags           []string   @[json: 'Tags']
+// }
 
 pub struct Schedule {
 	expression string @[json: 'Expression']
