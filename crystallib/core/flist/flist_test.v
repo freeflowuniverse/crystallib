@@ -137,3 +137,27 @@ fn test_delete_match() {
 	inodes := fl.find('dir%')!
 	assert inodes.len == 0
 }
+
+fn test_copy(){
+	mut fl := new('/tmp/fl1.fl')!
+	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (1, 0, "/", 0, 0, 0, 0, 0, 0, 0)')!
+	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (104, 1, "dir1", 0, 0, 0, 0, 0, 0, 0)')!
+	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (105, 104, "file1", 0, 0, 0, 0, 0, 0, 0)')!
+	fl.con.exec('insert into block (ino, id, key) values (105, "asdf", "qwer");')!
+	fl.con.exec('insert into extra (ino, data) values (105, "data");')!
+
+	fl.copy('dir1', 'dir2')!
+
+	dir2 := fl.find('dir2')!
+	assert dir2.len == 1
+
+	file1 := fl.find('file1')!
+	assert file1.len == 2
+
+	dir2file1 := if file1[0].ino == 105 {
+		file1[1]
+	}else { file1[0] }
+
+	assert fl.con.exec_param('select * from block where ino = ?;', '${dir2file1.ino}')!.len == 1
+	assert fl.con.exec_param('select * from extra where ino = ?;', '${dir2file1.ino}')!.len == 1
+}
