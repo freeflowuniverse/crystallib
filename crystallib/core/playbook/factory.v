@@ -28,9 +28,10 @@ pub mut:
 // ```
 pub fn new(args_ PlayBookNewArgs) !PlayBook {
 	mut args := args_
-	mut s := args.session or { base.session_new(
-		interactive: true
-	)! }
+
+	mut c:=base.context()!
+
+	mut s:=c.session_new()!	
 
 	mut plbook := PlayBook{
 		session: s

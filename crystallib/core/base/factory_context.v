@@ -71,6 +71,7 @@ fn context_new(args_ ContextConfigArgs) !&Context {
 		c.params_ = &p
 	}
 	
+	c.save()!
 	contexts[args.id] = &c
 
 	return contexts[args.id] or {panic("bug")}
@@ -81,12 +82,14 @@ pub fn context_get(id u32) !&Context {
 	context_current = id
 	if id in contexts{		
 		return contexts[id] or {panic("bug")}
-	}else{
-		if id==0{
-			return context_new()!
-		}
 	}
-	return error("cant find context with id: %{id}")
+	mut mycontext:=Context{config:ContextConfig{id:id}}
+	if mycontext.cfg_redis_exists()!{
+		mycontext.load()!
+		return &mycontext
+	}
+	mut mycontext2:=context_new(id:id)!
+	return mycontext2
 }
 
 

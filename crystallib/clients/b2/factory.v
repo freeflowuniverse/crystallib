@@ -1,6 +1,7 @@
 module b2
 
 import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.lang.python
@@ -17,7 +18,7 @@ pub mut:
 	configtype string = 'b2client' // needs to be defined	
 	keyname    string
 	keyid      string
-	appkey     string
+	appkey     string @[secret]
 	bucketname string // can be empty is the default
 }
 
@@ -48,11 +49,9 @@ pub fn get(args base.PlayArgs) !B2Client{
 // text    string
 // git_url     string
 //```	
-pub fn heroplay(args base.PLayBookAddArgs) ! {
+pub fn heroplay(mut plbook playbook.PlayBook) ! {
 	// make session for configuring from heroscript
-	mut session := base.session_new(session_name: 'config')!
-	session.playbook_add(path: args.path, text: args.text, git_url: args.git_url)!
-	for mut action in session.plbook.find(filter: 'b2client.define')! {
+	for mut action in plbook.find(filter: 'b2client.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
 		mut cl := get(instance: instance)!
@@ -62,6 +61,7 @@ pub fn heroplay(args base.PLayBookAddArgs) ! {
 		cfg.keyname = p.get('keyname')!
 		cfg.appkey = p.get('appkey')!
 		cl.config_save()!
+		//>TODO: fix
 	}
 }
 

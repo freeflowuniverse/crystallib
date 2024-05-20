@@ -5,7 +5,11 @@ import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
+import freeflowuniverse.crystallib.ui
+import freeflowuniverse.crystallib.ui.console
+import json
 import os
+import crypto.md5
 
 @[heap]
 pub struct Context {
@@ -95,18 +99,29 @@ pub fn (mut self Context) redis()!&redisclient.Redis {
 	return r2	
 }
 
-// pub fn (mut self Context) save()! {
-// 	jsonargs:=json.encode_pretty(self.config)
-// 	// mut r:=self.redis()!
-// 	// r.set("context:config",jsonargs)! 
-// }
+pub fn (mut self Context) save()! {
+	jsonargs:=json.encode_pretty(self.config)
+	mut r:=self.redis()!
+	// println("save")
+	// println(jsonargs)	
+	r.set("context:config",jsonargs)! 
+}
 
-// //get context from out of redis
-// pub fn (mut self Context) load()! {
-// 	// mut r:=self.redis()!
-// 	// d:=r.get("context:config")! 
-// 	self.config =json.decode(ContextConfig,d)!
-// }
+//get context from out of redis
+pub fn (mut self Context) load()! {
+	mut r:=self.redis()!
+	d:=r.get("context:config")! 
+	// println("load")
+	// println(d)
+	if d.len>0{
+		self.config =json.decode(ContextConfig,d)!
+	}	
+}
+
+fn (mut self Context) cfg_redis_exists()!bool {
+	mut r:=self.redis()!
+	return r.exists("context:config")!
+}
 
 // return the gistructure as is being used in context
 pub fn (mut self Context) dbcollection() !&dbfs.DBCollection {
@@ -169,37 +184,41 @@ pub fn (mut self Context) privkey() !&secp256k1.Secp256k1 {
 
 // will use our secret as configured for the hero to encrypt, uses base64
 pub fn (mut self Context) secret_encrypt(txt string) !string {
-	mut secret := self.config.secret
-	if secret==""{
-		return txt
-	}
-	d := aes_symmetric.encrypt_str(txt, secret)
-	return d
+	return aes_symmetric.encrypt_str(txt, self.secret_get()!)
 }
 
 pub fn (mut self Context) secret_decrypt(txt string) !string {
-	mut secret := self.config.secret
-	if secret==""{
-		return txt
-	}	
-	return aes_symmetric.decrypt_str(txt, secret)
+	return aes_symmetric.decrypt_str(txt, self.secret_get()!)
 }
 
 
+pub fn (mut self Context) secret_get() !string {
+	mut secret := self.config.secret
+	if secret==""{
+		self.secret_configure()!
+		secret = self.config.secret
+		self.save()!
+	}
+	if secret==""{
+		return error("can't get secret")
+	}
+	return secret
+}
+
 /////////////SECRET MANAGEMENT
 
-// // show a UI in console to configure the secret
-// pub fn (mut self Context) secret_configure() ! {
-// 	mut myui := ui.new()!
-// 	console.clear()
-// 	secret_ := myui.ask_question(question: 'Please enter your hero secret string:')!
-// 	self.secret_set(secret_)!
-// }
+// show a UI in console to configure the secret
+pub fn (mut self Context) secret_configure() ! {
+	mut myui := ui.new()!
+	console.clear()
+	secret_ := myui.ask_question(question: 'Please enter your hero secret string:')!
+	self.secret_set(secret_)!
+}
 
-// // unhashed secret
-// pub fn (mut self Context) secret_set(secret_ string) ! {	
-// 	secret := secret_.trim_space()
-// 	secret2 := md5.hexhash(secret)
-// 	self.config.secret = secret2
-// 	self.save()!
-// }
+// unhashed secret
+pub fn (mut self Context) secret_set(secret_ string) ! {	
+	secret := secret_.trim_space()
+	secret2 := md5.hexhash(secret)
+	self.config.secret = secret2
+	self.save()!
+}

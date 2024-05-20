@@ -1,5 +1,8 @@
 ## context & sessions
 
+
+>TODO: old
+
 Everything we do in hero lives in a context, each context has a unique name.
 
 Redis is used to manage the contexts and the sessions.
