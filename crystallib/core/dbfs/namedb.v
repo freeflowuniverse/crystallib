@@ -74,9 +74,29 @@ pub fn (mut db NameDB) set(key string, data string) !u32 {
     return u32(myid+lines.len-1)
 }
 
+pub fn (mut db NameDB) delete(key string) ! {
+    _,mut mypath:=db.key2path(key)!
+    content:=mypath.read()!
+    mut lines:=content.trim_space().split_into_lines()
+    mut lines_out:=[]string{}
+    mut found:=false
+    for mut line in lines {
+        key_in_file,_:=namedb_process_line(mypath.path,line)
+        if key_in_file==key{
+            found=true
+            continue //skip
+        }
+        lines_out<<line
+    }
+    if found{
+        mypath.write(lines.join("\n"))!
+    }
+}
+
+
 
 //will store in a place where it can easily be found back and it returns a unique u32
-pub fn (mut db NameDB) getdata(key string) !(u32,string) {
+pub fn (mut db NameDB) get(key string) !(u32,string) {
     myid,mut mypath:=db.key2path(key)!
     mut line_num := 0
     content:=mypath.read()!
@@ -91,8 +111,22 @@ pub fn (mut db NameDB) getdata(key string) !(u32,string) {
     return error("can't find key:${key} in db:${db.path.path}")
 }
 
+pub fn (mut db NameDB) exists(key string) !bool {
+    _,mut mypath:=db.key2path(key)!
+    content:=mypath.read()!
+    mut lines:=content.trim_space().split_into_lines()
+    for line in lines {
+        key_in_file,_:=namedb_process_line(mypath.path,line)
+        if key_in_file == key {
+            return true
+        }
+    }
+    return false
+}
 
-pub fn (mut db NameDB) get(myid u32) !(string,string) {
+
+
+pub fn (mut db NameDB) get_from_id(myid u32) !(string,string) {
     //println("key get: ${myid}")
     mut mypath:=db.dbpath(myid)!
     //println("path: ${mypath.path}")

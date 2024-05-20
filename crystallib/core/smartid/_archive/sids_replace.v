@@ -8,7 +8,6 @@ import regex
 // does also do a sid_acknowledge
 fn sids_replace(cid string, txt_ string) !string {
 	mut txt := txt_
-	sids_acknowledge(cid, txt)! // just to make sure
 	pattern := r'id:[\*]{3,6}[\s$]'
 	mut re := regex.regex_opt(pattern) or { panic(err) }
 	// re.replace_by_fn(txt,sid_empty_replace_unit)

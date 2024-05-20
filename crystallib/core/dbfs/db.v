@@ -37,21 +37,31 @@ pub mut:
 pub fn (mut db DB) get(args_ GetArgs) !string {
 	mut args:=args_
 	args.key = texttools.name_fix(args.key)
+	mut pathsrc:=pathlib.Path{}
 	if args.key.len>0{
+		if args.id>0{
+			return error("cann't specify id and key")
+		}
 		if db.config.withkeys{
 			if db.config.keyshashed{
 				//means we use a namedb
 				mut ndb := db.namedb or {
 						panic("namedb should be available")
 					}
-				args.id,_ =ndb.getdata(args.key)!
+				args.id,_ =ndb.get(args.key)!
+				pathsrc=db.path_get(args.id)!
 			}else{
-
+				//now we need to use the link as set
+				mut datapath0:="${db.path.path}/${args.key}"
+				if db.config.ext.len>0{
+					datapath0+=".${db.config.ext}"
+				}
+				pathsrc=pathlib.get_link(path:datapath0,create:false)!
 			}
+		}else{
+			pathsrc=db.path_get(args.id)!
 		}
 	}
-
-	mut pathsrc:=db.path_get(args.id)!
 
 	mut data := pathsrc.read()!
 	if data.len == 0 {
@@ -87,35 +97,47 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 		args.valueb = args.value.bytes()
 		args.value = ""
 	}	
+
+	mut pathsrc:=pathlib.Path{}
 	
 	//lets deal with key
 	if args.key.len>0{
 		if args.id>0{
 			return error("cant have id and key at same time")
 		}
-		if db.config.withkeys{
-			if db.config.keyshashed{
-				//means we use a namedb
-				mut ndb := db.namedb or {
-						panic("namedb should be available")
-					}
-				args.id = ndb.set(args.key,"")!
-			}else{
-				//write key in other ways
-				args.id = db.parent.incr()!
-			}
+		if !db.config.withkeys{
+			return error("db needs to be with keys")
+		}		
+		if db.config.keyshashed{
+			//means we use a namedb
+			mut ndb := db.namedb or {
+					panic("namedb should be available")
+				}
+			args.id = ndb.set(args.key,"")!
+			pathsrc=db.path_get(args.id)!
 		}else{
-			return error("if key specified, then db needs to be in keymode")
+			mut datapath0:="${db.path.path}/${args.key}"
+			if db.config.ext.len>0{
+				datapath0+=".${db.config.ext}"
+			}
+			pathsrc=pathlib.get_link(path:datapath0,create:false)!		
+			if !pathsrc.exists(){
+				args.id = db.parent.incr()!
+				mut destname:="${db.path.path}/${args.key}"
+				if db.config.ext.len>0{
+					destname+=".${db.config.ext}"
+				}
+				pathsrc=db.path_get(args.id)!
+				pathsrc.write("")!
+				pathsrc.link(destname,true)! //link the key to the right source info					
+			}else{
+				mut p3:=pathsrc.getlink()!
+				p3_name := p3.name()
+				args.id = p3_name.u32()
+			}		
 		}
-	}
-	mut pathsrc:=db.path_get(args.id)!
-	//make symlink if keys are not hashed
-	if db.config.withkeys && ! (db.config.keyshashed){
-		mut destname:="${db.path.path}/${args.key}"
-		if db.config.ext.len>0{
-			destname+=".${db.config.ext}"
-		}
-		pathsrc.link(destname,true)! //link the key to the right source info
+	}else{
+		pathsrc=db.path_get(args.id)!
 	}
 
 	if db.config.encrypted {
@@ -138,7 +160,7 @@ fn (mut db DB) path_get(myid u32) !pathlib.Path {
 	}	
 	mut mydatafile := pathlib.get_file(
 		path: "${db.path.path}/${a}/${b}/${destname}"
-		create: true
+		create: false
 	)!
 	return mydatafile
 }
@@ -146,31 +168,73 @@ fn (mut db DB) path_get(myid u32) !pathlib.Path {
 
 
 // check if entry exists based on keyname
-pub fn (mut db DB) exists(args_ GetArgs) bool {
-	//TODO: see get, to improve this one
-	mut key := args_.key
-	if key.len>0{
-		key = texttools.name_fix(key)
+pub fn (mut db DB) exists(args_ GetArgs) !bool {
+	mut args:=args_
+	args.key = texttools.name_fix(args.key)
+	mut pathsrc:=pathlib.Path{}
+	if args.key.len>0{
+		if args.id>0{
+			return error("cann't specify id and key")
+		}
+		if !db.config.withkeys{
+			return error("db needs to be with keys")
+		}
+		if db.config.keyshashed{
+			//means we use a namedb
+			mut ndb := db.namedb or {
+					panic("namedb should be available")
+				}
+			return ndb.exists(args.key)!
+		}else{
+			mut datapath0:="${db.path.path}/${args.key}"
+			if db.config.ext.len>0{
+				datapath0+=".${db.config.ext}"
+			}
+			pathsrc=pathlib.get_link(path:datapath0,create:false)!
+		}
+	}else{
+		pathsrc=db.path_get(args.id)!
 	}
-
-	if !(db.path.file_exists(key)) {
-		return false
-	}
-	mut datafile := db.path.file_get(key) or { panic(err) }
-	mut data := datafile.read() or { panic(err) }
-	if data.len == 0 {
-		datafile.delete() or { panic(err) }
-		return false
-	}
-	return true
+	return pathsrc.exists()
 }
 
 // delete an entry
 pub fn (mut db DB) delete(args_ GetArgs) ! {
-	//TODO: see get, to improve this one
-	key := texttools.name_fix(args_.key)
-	mut datafile := db.path.file_get(key) or { return }
-	datafile.delete()!
+	mut args:=args_
+	if args.key.len>0{
+		args.key = texttools.name_fix(args.key)
+	}
+	mut pathsrc:=pathlib.Path{}
+	if args.key.len>0{
+		if args.id>0{
+			return error("cant have id and key at same time")
+		}
+		if !db.config.withkeys{
+			return error("db needs to be with keys")
+		}		
+		if db.config.keyshashed{
+			//means we use a namedb
+			mut ndb := db.namedb or {
+					panic("namedb should be available")
+				}
+			args.id,_ = ndb.get(args.key)!
+			pathsrc=db.path_get(args.id)!
+			ndb.delete(args.key)!
+		}else{
+			mut datapath0:="${db.path.path}/${args.key}"
+			if db.config.ext.len>0{
+				datapath0+=".${db.config.ext}"
+			}
+			pathsrc=pathlib.get_link(path:datapath0,create:false)!		
+			if pathsrc.exists(){
+				mut p3:=pathsrc.getlink()!
+				p3.delete()!				
+			}		
+		}
+	}else{
+		pathsrc=db.path_get(args.id)!
+	}
+	pathsrc.delete()!
 }
 
 // delete the db, will not be able to use it any longer
