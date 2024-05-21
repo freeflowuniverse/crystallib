@@ -3,18 +3,18 @@ module main
 import coroutines
 import time
 
-fn monitor(ch chan string, counter int, mut t &Test) {
-	//println('2 ${m}')
-	// coroutines.sleep(1 * time.second)
+pub struct TestStruct{
+pub mut:
+	mycounter int
+}
+
+
+
+fn monitor(ch chan string, counter int, mut t &TestStruct) {
 	t.mycounter += 1
 	println('hello from monitor ${counter}')
 	coroutines.sleep(5000 * time.second)
 	println(t)
-}
-
-pub struct Test{
-pub mut:
-	mycounter int
 }
 
 
@@ -23,7 +23,7 @@ fn main() {
 	ch1 := chan string{}
 	ch2 := chan string{}
 
-	mut t:=Test{}
+	mut t:=TestStruct{}
 	mut c:=0
 	for i in 0..1000 {
 		c++

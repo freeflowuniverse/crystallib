@@ -33,7 +33,7 @@ pub mut:
 // has also support for os.environ variables .
 // - MULTIBRANCH .
 // - DIR_CODE , default: ${os.home_dir()}/code/ .
-pub fn configure(config_ GitStructureConfig) !GitStructure {
+pub fn new(config_ GitStructureConfig) !GitStructure {
 	mut config := config_
 
 	datajson := json.encode(config)
@@ -78,7 +78,7 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	mut datajson := redis.get(gitstructure_config_key(args.name))!
 	if datajson == '' {
 		if args.name == "default"{
-			configure()!
+			new()!
 			datajson = redis.get(gitstructure_config_key(args.name))!
 		}else{
 			return error("can't find gitstructure with name ${args.name}")

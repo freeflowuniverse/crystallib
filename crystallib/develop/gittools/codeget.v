@@ -1,10 +1,12 @@
 module gittools
 import os
 import freeflowuniverse.crystallib.core.pathlib
+import crypto.md5
 
 @[params]
 pub struct CodeGetFromUrlArgs {
 pub mut:
+	coderoot string
 	gitstructure_name string = "default"
 	url               string
 	pull   bool // will pull if this is set
@@ -31,7 +33,14 @@ pub mut:
 // reload bool // reload the cache
 // ```
 pub fn code_get(args CodeGetFromUrlArgs) !string {
-	mut gs := get(name: args.gitstructure_name)!
+	mut gs := get()!
+	mut name := args.gitstructure_name
+	if args.coderoot.len>0{
+		name=md5.hexhash(args.coderoot)
+		gs = gittools.new(name:name,root:args.coderoot)!	
+	}else{
+		gs = get(name: args.gitstructure_name)!
+	}
 	return gs.code_get(url: args.url, pull: args.pull, reset: args.reset, reload: args.reload)
 }
 

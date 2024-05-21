@@ -99,7 +99,8 @@ pub fn do(args_ GeneratorArgs) ! {
 	generate(args)!
 }
 
-pub fn clients_ask(mut args GeneratorArgs) ! {
+pub fn clients_ask(args_ GeneratorArgs) ! {
+	mut args:=args_
 	mut myui := ui.new()!
 	if args.clients.len == 0 {
 		if args.interactive {

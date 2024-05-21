@@ -55,10 +55,10 @@ Git repo's get checked out under
 import freeflowuniverse.crystallib.develop.gittools
 
 coderoot := '/tmp/code_test'
-mut gs := gittools.get(coderoot: coderoot)!
+mut gs := gittools.get(root: coderoot)!
 
 mut path := gittools.code_get(
-    coderoot: coderoot
+    root: coderoot
     pull: true
     reset: true    
     url: 'https://github.com/despiegk/ourworld_data'

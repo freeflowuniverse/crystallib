@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
 import cli { Command, Flag }
 import os
+import crypto.md5
 
 pub fn cmd_git(mut cmdroot Command) {
 	mut cmd_run := Command{
@@ -172,12 +173,11 @@ fn cmd_git_execute(cmd Command) ! {
 		coderoot = os.environ()['CODEROOT']
 	}
 
-	mut gs := gittools.get(coderoot: coderoot) or {
-		if coderoot.len > 0 {
-			return error('Could not load gittools: coderoot:${coderoot}\n${err}')
-		} else {
-			return error('Could not load gittools:\n${err}')
-		}
+	mut gs := gittools.get()!
+	if coderoot.len>0{
+		//when other coderoot, need to make sure we get a new name and make unique instance
+		name:=md5.hexhash(coderoot)
+		gs = gittools.new(name:name,root:coderoot)!
 	}
 
 	// create the filter for doing group actions, or action on 1 repo

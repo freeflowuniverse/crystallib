@@ -6,7 +6,7 @@ import json
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.generator.generic
+//import freeflowuniverse.crystallib.core.generator.generic
 
 @[params]
 pub struct GeneratorArgs {
@@ -142,7 +142,7 @@ pub fn do(args_ GeneratorArgs) ! {
 			path: args.path
 			clients: args.clients
 		}
-		generic.clients_ask(mut args_generic)!
+		generic.clients_ask(args_generic)!
 		generic.generate(args_generic)!
 
 		mut p_config := pathlib.get_file(path: config_path, create: true)!

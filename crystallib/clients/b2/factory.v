@@ -12,42 +12,28 @@ pub mut:
 	py python.PythonEnv
 }
 
+@[params]
 pub struct Config {
 pub mut:
-	configtype string = 'b2client' // needs to be defined	
-	keyname    string
 	keyid      string
 	appkey     string @[secret]
 	bucketname string // can be empty is the default
 }
 
-pub fn new(instance string, cfg Config) !B2Client[Config] {
+pub fn get(instance string, cfg Config) !B2Client[Config] {
 	mut py := python.new(name: 'default')! // a python env with name default
 	mut self := B2Client[Config]{
 		py: py
-	}	
-	self.init(instance: instance, action: .new)!
-	self.config_set(cfg)!
+	}
+	if cfg.appkey.len>0{
+		//first the type of the instance, then name of instance, then action
+		self.init("b2lclient",instance,.set,cfg)!
+	}else{
+		self.init("b2lclient",instance,.get)!
+	}
 	return self
 }
 
-// get instance of our client params
-pub fn get(instance string) !B2Client[Config] {
-	mut py := python.new(name: 'default')! // a python env with name default
-	mut self := B2Client[Config]{
-		type_name: 'b2client'
-		py: py
-	}
-	self.init(instance: instance, action: .get)!
-	return self
-}
-
-pub fn delete(instance string) ! {
-	mut self := B2Client[Config]{
-		type_name: 'b2client'
-	}
-	self.init(instance: instance, action: .delete)!
-}
 
 // run heroscript starting from path, text or giturl
 //```
@@ -68,13 +54,12 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'b2client.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
-		mut cl := get(instance)!
-		mut cfg := cl.config_get()!
-		cfg.keyid = p.get('keyid')!
-		cfg.keyname = p.get('keyname')!
-		cfg.appkey = p.get('appkey')!
-		cfg.bucketname = p.get('bucketname')!
-		cl.config_save()!
+		//cfg.keyname = p.get('keyname')!
+		mut cl := get(instance,
+			keyid:p.get('keyid')!
+			appkey:p.get('appkey')!
+			bucketname:p.get('bucketname')!
+		)!
 	}
 }
 

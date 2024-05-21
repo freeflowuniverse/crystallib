@@ -1,6 +1,5 @@
 module base
 
-//import v.reflection
 // is an object which has a configurator, session and config object which is unique for the model
 // T is the Config Object
 
@@ -9,6 +8,7 @@ mut:
 	configurator_ ?Configurator[T] @[skip; str: skip]
 	config_       ?&T
 	session_ ?&Session @[skip; str: skip]
+	configtype 	  string
 pub mut:
 	instance string
 }
@@ -17,9 +17,9 @@ pub fn (mut self BaseConfig[T]) session() !&Session {
 	mut mysession := self.session_ or {
 		mut c := context()!
 		mut r := c.redis()!
-		incrkey := 'sessions:base:latest:${self.type_name}:${self.instance}'
+		incrkey := 'sessions:base:latest:${self.configtype}:${self.instance}'
 		latestid:=r.incr(incrkey)!
-		name:="${self.type_name}_${self.instance}_${latestid}"
+		name:="${self.configtype}_${self.instance}_${latestid}"
 		mut s:=c.session_new(name:name)!
 		self.session_ = &s
 		&s
@@ -28,9 +28,9 @@ pub fn (mut self BaseConfig[T]) session() !&Session {
 }
 
 
-
 // management class of the configs of this obj
-fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {
+pub fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {
+
 	mut configurator := self.configurator_ or {
 		//session := self.session_ or { return error('base config must be initialized') }
 		mut c := configurator_new[T](
@@ -61,10 +61,21 @@ pub fn (mut self BaseConfig[T]) config_new() !&T {
 	return config
 }
 
+pub fn (mut self BaseConfig[T]) config() !&T {
+	mut config := self.config_ or {
+		return error("config was not initialized yet")
+	}
+	return config
+}
+
 pub fn (mut self BaseConfig[T]) config_get() !&T {
 	mut mycontext:=context()!
 	mut config := self.config_ or {
 		mut configurator := self.configurator()!
+		if ! (configurator.exists()!){
+			mut mycfg:=self.config_new()!
+			return mycfg
+		}
 		mut c := configurator.get()!
 		$for field in T.fields {
 			field_attrs := attrs_get(field.attrs)
@@ -103,37 +114,31 @@ pub fn (mut self BaseConfig[T]) config_delete() ! {
 	self.config_ = none
 }
 
-@[params]
-pub struct ConfigInitArgs {
-pub mut:
-	instance         string = 'default'
-	action           Action
-	// session          ?&Session
-	// session_new_args ?SessionNewArgs
-}
-
 pub enum Action {
+	set
 	get
 	new
 	delete
 }
 
 // init our class with the base session_args
-pub fn (mut self BaseConfig[T]) init(args ConfigInitArgs) ! {
-	if self.instance == '' {
-		self.instance = args.instance
-	}
-	mut configurator := self.configurator()!
-	if args.action == .get {
+pub fn (mut self BaseConfig[T]) init(configtype string,instance string, action Action, myconfig T) ! {
+	self.instance = instance
+	self.configtype = configtype
+	if action == .get {
 		self.config_get()!
-	} else if args.action == .new {
+	} else if action == .new {
 		self.config_new()!
-	} else if args.action == .delete {
+	} else if action == .delete {
 		self.config_delete()!
+	} else if action == .set {
+		self.config_set(myconfig)!		
 	} else {
 		panic('bug')
 	}
 }
+
+
 
 // will return {'name': 'teststruct', 'params': ''}
 fn attrs_get(attrs []string) map[string]string {

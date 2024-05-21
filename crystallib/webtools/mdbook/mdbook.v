@@ -5,9 +5,8 @@ import os
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.develop.gittools
 
 @[heap]
 pub struct MDBook {
@@ -51,15 +50,15 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		args.publish_path = '${cfg.path_publish}/${args.name}'
 	}
 
-	mut c:=base.context()!
-	mut r:=c.redis()!
+	mut mycontext:=base.context()!
+	mut r:=mycontext.redis()!
 	r.set('mdbook:${args.name}:build', args.build_path)!
 	r.set('mdbook:${args.name}:publish', args.publish_path)!
 	r.expire('mdbook:${args.name}:build', 3600 * 12)! // expire after 12h
 	r.expire('mdbook:${args.name}:publish', 3600 * 12)!
 
-	mut context := books.context()!
-	mut gs := context.gitstructure()!
+	//mut context := base.context()!
+	mut gs := gittools.get()!
 
 	if args.summary_url.len > 0 {
 		mut locator1 := gs.locator_new(args.summary_url)!

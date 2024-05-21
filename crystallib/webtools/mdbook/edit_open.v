@@ -1,8 +1,8 @@
 module mdbook
 
-import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.core.base
 import os
 
 pub fn book_open(name string) ! {
@@ -23,7 +23,7 @@ mut r:=c.redis()!
 
 pub fn book_edit(name string) ! {
 	mut c:=base.context()!
-mut r:=c.redis()!
+	mut r:=c.redis()!
 	path_build := r.get('mdbook:${name}:build')!
 	if path_build.len == 0 {
 		return error("can't find book: ${name}, was it generated before?")
