@@ -15,28 +15,27 @@ import crypto.md5
 pub struct Context {
 mut:
 	priv_key_     ?&secp256k1.Secp256k1 @[skip; str: skip]
-	params_		  ?&paramsparser.Params
-	dbcollection_ ?&dbfs.DBCollection @[skip; str: skip]
-	redis_        ?&redisclient.Redis  @[skip; str: skip]
+	params_       ?&paramsparser.Params
+	dbcollection_ ?&dbfs.DBCollection   @[skip; str: skip]
+	redis_        ?&redisclient.Redis   @[skip; str: skip]
 pub mut:
-	//snippets     map[string]string
-	config 		 ContextConfig
+	// snippets     map[string]string
+	config ContextConfig
 }
 
 @[params]
 pub struct ContextConfig {
 pub mut:
-	id			u32 @[required]
+	id          u32    @[required]
 	name        string = 'default'
 	params      string
 	coderoot    string
 	interactive bool
-	secret      string //is hashed secret
-	priv_key string //encrypted version
-	db_path string //path to dbcollection 
-	encrypt bool
+	secret      string // is hashed secret
+	priv_key    string // encrypted version
+	db_path     string // path to dbcollection
+	encrypt     bool
 }
-
 
 // return the gistructure as is being used in context
 pub fn (mut self Context) params() !&paramsparser.Params {
@@ -45,6 +44,7 @@ pub fn (mut self Context) params() !&paramsparser.Params {
 		self.params_ = &p
 		&p
 	}
+
 	return p
 }
 
@@ -86,7 +86,7 @@ pub fn (mut self Context) id() string {
 // 	return ""
 // }
 
-pub fn (mut self Context) redis()!&redisclient.Redis {
+pub fn (mut self Context) redis() !&redisclient.Redis {
 	mut r2 := self.redis_ or {
 		mut r := redisclient.core_get()!
 		if self.config.id > 0 {
@@ -96,56 +96,61 @@ pub fn (mut self Context) redis()!&redisclient.Redis {
 		self.redis_ = &r
 		&r
 	}
-	return r2	
+
+	return r2
 }
 
-pub fn (mut self Context) save()! {
-	jsonargs:=json.encode_pretty(self.config)
-	mut r:=self.redis()!
+pub fn (mut self Context) save() ! {
+	jsonargs := json.encode_pretty(self.config)
+	mut r := self.redis()!
 	// println("save")
 	// println(jsonargs)	
-	r.set("context:config",jsonargs)! 
+	r.set('context:config', jsonargs)!
 }
 
-//get context from out of redis
-pub fn (mut self Context) load()! {
-	mut r:=self.redis()!
-	d:=r.get("context:config")! 
+// get context from out of redis
+pub fn (mut self Context) load() ! {
+	mut r := self.redis()!
+	d := r.get('context:config')!
 	// println("load")
 	// println(d)
-	if d.len>0{
-		self.config =json.decode(ContextConfig,d)!
-	}	
+	if d.len > 0 {
+		self.config = json.decode(ContextConfig, d)!
+	}
 }
 
-fn (mut self Context) cfg_redis_exists()!bool {
-	mut r:=self.redis()!
-	return r.exists("context:config")!
+fn (mut self Context) cfg_redis_exists() !bool {
+	mut r := self.redis()!
+	return r.exists('context:config')!
 }
 
 // return the gistructure as is being used in context
 pub fn (mut self Context) dbcollection() !&dbfs.DBCollection {
 	mut dbc2 := self.dbcollection_ or {
-		if self.config.db_path.len==0{
+		if self.config.db_path.len == 0 {
 			self.config.db_path = '${os.home_dir()}/hero/db/${self.config.id}'
-		}		
-		mut dbc := dbfs.get(contextid: self.config.id,dbpath:self.config.db_path, secret: self.config.secret)!
+		}
+		mut dbc := dbfs.get(
+			contextid: self.config.id
+			dbpath: self.config.db_path
+			secret: self.config.secret
+		)!
 		self.dbcollection_ = &dbc
 		&dbc
 	}
+
 	return dbc2
 }
 
-
 fn (mut self Context) db_get(dbname string) !dbfs.DB {
-	mut dbc:= self.dbcollection()!
-	return dbc.db_get_create(name:dbname,withkeys: true)!
+	mut dbc := self.dbcollection()!
+	return dbc.db_get_create(name: dbname, withkeys: true)!
 }
 
 // always return the config db which is the same for all apps in context
 fn (mut self Context) db_config_get() !dbfs.DB {
-	mut dbc:= self.dbcollection()!
-	return dbc.db_get_create(name:'config', withkeys: true)!
+	mut dbc := self.dbcollection()!
+	return dbc.db_get_create(name: 'config', withkeys: true)!
 }
 
 /////////////PRIVKEY
@@ -165,7 +170,7 @@ pub fn (mut self Context) privkey_set(keyhex string) !&secp256k1.Secp256k1 {
 // get the private key
 pub fn (mut self Context) privkey() !&secp256k1.Secp256k1 {
 	mut mypk := self.priv_key_ or {
-		mut r:=self.redis()!
+		mut r := self.redis()!
 		mut key := r.get('context:privkey') or { '' }
 		if key == '' {
 			return error("can't find priv key for context:${self.config.id}")
@@ -181,7 +186,6 @@ pub fn (mut self Context) privkey() !&secp256k1.Secp256k1 {
 	return mypk
 }
 
-
 // will use our secret as configured for the hero to encrypt, uses base64
 pub fn (mut self Context) secret_encrypt(txt string) !string {
 	return aes_symmetric.encrypt_str(txt, self.secret_get()!)
@@ -191,15 +195,14 @@ pub fn (mut self Context) secret_decrypt(txt string) !string {
 	return aes_symmetric.decrypt_str(txt, self.secret_get()!)
 }
 
-
 pub fn (mut self Context) secret_get() !string {
 	mut secret := self.config.secret
-	if secret==""{
+	if secret == '' {
 		self.secret_configure()!
 		secret = self.config.secret
 		self.save()!
 	}
-	if secret==""{
+	if secret == '' {
 		return error("can't get secret")
 	}
 	return secret
@@ -216,7 +219,7 @@ pub fn (mut self Context) secret_configure() ! {
 }
 
 // unhashed secret
-pub fn (mut self Context) secret_set(secret_ string) ! {	
+pub fn (mut self Context) secret_set(secret_ string) ! {
 	secret := secret_.trim_space()
 	secret2 := md5.hexhash(secret)
 	self.config.secret = secret2

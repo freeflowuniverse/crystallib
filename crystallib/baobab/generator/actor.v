@@ -41,12 +41,14 @@ pub fn (gen ActorGenerator) generate_actor_struct() Struct {
 pub fn (gen ActorGenerator) generate_actor_factory(actor Struct) Function {
 	return Function{
 		is_pub: true
-		params: [Param{
-			name: 'config'
-			typ: Type{
-				symbol: 'actor.ActorConfig'
-			}
-		}]
+		params: [
+			Param{
+				name: 'config'
+				typ: Type{
+					symbol: 'actor.ActorConfig'
+				}
+			},
+		]
 		result: Result{
 			typ: Type{
 				symbol: actor.name

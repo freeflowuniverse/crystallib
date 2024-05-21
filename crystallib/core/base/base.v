@@ -1,6 +1,5 @@
 module base
 
-
 @[heap]
 pub struct Base {
 	configtype string @[required]
@@ -13,7 +12,7 @@ pub fn (mut self Base) session() !&Session {
 	mut mysession := self.session_ or {
 		mut c := context()!
 		mut r := c.redis()!
-		panic("sdsdsd")
+		panic('sdsdsd')
 		// incrkey := 'sessions:base:latest:${self.type_name}:${self.instance}'
 		// latestid:=r.incr(incrkey)!
 		// name:="${self.type_name}_${self.instance}_${latestid}"
@@ -21,6 +20,6 @@ pub fn (mut self Base) session() !&Session {
 		// self.session_ = &s
 		// &s
 	}
+
 	return mysession
 }
-

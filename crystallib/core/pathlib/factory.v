@@ -112,7 +112,7 @@ pub fn get_link(args_ GetArgs) !Path {
 	mut p2 := get_no_check(args.path)
 	if args.check {
 		p2.check()
-		if ! p2.exists(){
+		if !p2.exists() {
 			p2.cat = Category.linkfile
 			return p2
 		}
@@ -123,11 +123,9 @@ pub fn get_link(args_ GetArgs) !Path {
 			p2.delete()!
 		}
 		if args.empty {
-			mut p3:=p2.getlink()!
+			mut p3 := p2.getlink()!
 			p3.empty()!
 		}
-
 	}
 	return p2
 }
-

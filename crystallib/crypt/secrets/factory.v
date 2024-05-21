@@ -3,19 +3,16 @@ module secrets
 pub struct SecretBox {
 pub mut:
 	secret string
-	items map[string]string 
+	items  map[string]string
 }
-
 
 @[params]
 pub struct SecretBoxArgs {
 pub mut:
-	//reset       bool
-	//interactive bool = true
+	// reset       bool
+	// interactive bool = true
 	secret string @[required]
-	
 }
-
 
 pub fn get(args SecretBoxArgs) !SecretBox {
 	// if args.reset {
@@ -32,4 +29,3 @@ pub fn get(args SecretBoxArgs) !SecretBox {
 		secret: args.secret
 	}
 }
-

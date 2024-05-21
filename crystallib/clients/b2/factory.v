@@ -25,15 +25,14 @@ pub fn get(instance string, cfg Config) !B2Client[Config] {
 	mut self := B2Client[Config]{
 		py: py
 	}
-	if cfg.appkey.len>0{
-		//first the type of the instance, then name of instance, then action
-		self.init("b2lclient",instance,.set,cfg)!
-	}else{
-		self.init("b2lclient",instance,.get)!
+	if cfg.appkey.len > 0 {
+		// first the type of the instance, then name of instance, then action
+		self.init('b2lclient', instance, .set, cfg)!
+	} else {
+		self.init('b2lclient', instance, .get)!
 	}
 	return self
 }
-
 
 // run heroscript starting from path, text or giturl
 //```
@@ -54,11 +53,11 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'b2client.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
-		//cfg.keyname = p.get('keyname')!
+		// cfg.keyname = p.get('keyname')!
 		mut cl := get(instance,
-			keyid:p.get('keyid')!
-			appkey:p.get('appkey')!
-			bucketname:p.get('bucketname')!
+			keyid: p.get('keyid')!
+			appkey: p.get('appkey')!
+			bucketname: p.get('bucketname')!
 		)!
 	}
 }

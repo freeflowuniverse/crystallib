@@ -20,7 +20,7 @@ pub fn (mut gs GitStructure) locator_new(url string) !GitLocator {
 
 // will use url to get git locator (is a pointer to a file, dir or part of file)
 pub fn locator_new(gsconfig_ GitStructureConfig, url string) !GitLocator {
-	mut gsconfig :=gsconfig_
+	mut gsconfig := gsconfig_
 	// println(" ** URL: $url **")
 	mut urllower := url.to_lower()
 	if url.trim_space() == '' {

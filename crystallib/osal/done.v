@@ -3,26 +3,26 @@ module osal
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.dbfs
 
-fn donedb()!&dbfs.DB{
-	mut context:=base.context()!
+fn donedb() !&dbfs.DB {
+	mut context := base.context()!
 	mut collection := context.dbcollection()!
-	mut db := collection.db_get_create(name:'todo', withkeys: true)!
+	mut db := collection.db_get_create(name: 'todo', withkeys: true)!
 	return &db
 }
 
-pub fn done_set(key string, val string) ! {	
-	mut db:=donedb()!
-	db.set(key:key, value:val)!
+pub fn done_set(key string, val string) ! {
+	mut db := donedb()!
+	db.set(key: key, value: val)!
 }
 
 pub fn done_get(key string) ?string {
-	mut db:=donedb() or {panic(err)}
-	return db.get(key:key) or { return none }
+	mut db := donedb() or { panic(err) }
+	return db.get(key: key) or { return none }
 }
 
 pub fn done_delete(key string) ! {
-	mut db:=donedb()!
-	db.delete(key:key)!
+	mut db := donedb()!
+	db.delete(key: key)!
 }
 
 pub fn done_get_str(key string) string {
@@ -36,12 +36,12 @@ pub fn done_get_int(key string) int {
 }
 
 pub fn done_exists(key string) bool {
-	mut db:=donedb() or {panic(err)}
-	return db.exists(key:key) or {false}
+	mut db := donedb() or { panic(err) }
+	return db.exists(key: key) or { false }
 }
 
 pub fn done_print() ! {
-	mut db:=donedb()!
+	mut db := donedb()!
 	mut output := 'DONE:\n'
 	for key in db.keys('')! {
 		output += '\t${key} = ${done_get_str(key)}\n'
@@ -50,6 +50,6 @@ pub fn done_print() ! {
 }
 
 pub fn done_reset() ! {
-	mut db:=donedb()!
+	mut db := donedb()!
 	db.destroy()!
 }

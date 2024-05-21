@@ -32,8 +32,8 @@ pub fn (repo GitRepo) key() string {
 }
 
 fn (repo GitRepo) cache_delete() ! {
-	mut c:=base.context()!
-    mut redis:=c.redis()!
+	mut c := base.context()!
+	mut redis := c.redis()!
 	redis.del(repo.addr.cache_key_status())!
 	redis.del(repo.cache_key_path())!
 }
@@ -60,8 +60,8 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 }
 
 fn (repo GitRepo) status_exists() !bool {
-	mut c:=base.context()!
-    mut redis:=c.redis()!
+	mut c := base.context()!
+	mut redis := c.redis()!
 	mut data := redis.get(repo.addr.cache_key_status()) or { return false }
 	if data.len == 0 {
 		return false
@@ -80,8 +80,8 @@ fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
 }
 
 pub fn (mut repo GitRepo) status() !GitRepoStatus {
-	mut c:=base.context()!
-    mut redis:=c.redis()!
+	mut c := base.context()!
+	mut redis := c.redis()!
 	mut cache_key := ''
 	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
 		|| repo.addr.branch == '' {

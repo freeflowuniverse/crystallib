@@ -48,7 +48,7 @@ pub fn rsync(args_ RsyncArgs) ! {
 		fast_rsync: args.fast_rsync
 	}
 
-	//TODO: is only for ssh right now, we prob need support for a real ssh server as well
+	// TODO: is only for ssh right now, we prob need support for a real ssh server as well
 	cmdoptions := pathlib.rsync_cmd_options(args2)!
 	cmd := 'rsync ${cmdoptions}'
 	$if debug {

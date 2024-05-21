@@ -29,9 +29,9 @@ pub mut:
 pub fn new(args_ PlayBookNewArgs) !PlayBook {
 	mut args := args_
 
-	mut c:=base.context()!
+	mut c := base.context()!
 
-	mut s:=c.session_new()!	
+	mut s := c.session_new()!
 
 	mut plbook := PlayBook{
 		session: &s

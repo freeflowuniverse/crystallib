@@ -67,8 +67,8 @@ pub fn (mut node Node) readfromsystem() ! {
 // load the node from redis cache, if not there will load from system .
 // return true if the data was in redis (cache)
 pub fn (mut node Node) load() !bool {
-	mut mycontext:=base.context()!
-	mut r:=mycontext.redis()!	
+	mut mycontext := base.context()!
+	mut r := mycontext.redis()!
 	data := r.hget('nodes', node.key())!
 	if data == '' {
 		node.readfromsystem()!
@@ -91,7 +91,7 @@ pub fn (mut node Node) load() !bool {
 // get remote environment arguments in memory
 pub fn (mut node Node) save() ! {
 	data := json.encode(node)
-	mut mycontext:=base.context()!
-	mut r:=mycontext.redis()!	
+	mut mycontext := base.context()!
+	mut r := mycontext.redis()!
 	r.hset('nodes', node.key(), data)!
 }

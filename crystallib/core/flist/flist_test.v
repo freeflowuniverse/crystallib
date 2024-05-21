@@ -117,7 +117,7 @@ fn test_delete_path() {
 	assert fl.con.exec('select * from extra where ino = 101;')!.len == 0
 }
 
-fn test_find(){
+fn test_find() {
 	mut fl := new('/tmp/fl1.fl')!
 
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (100, 1, "dir1", 0, 0, 0, 0, 0, 0, 0)')!
@@ -127,7 +127,7 @@ fn test_find(){
 	assert inodes.len == 2
 }
 
-fn test_delete_match(){
+fn test_delete_match() {
 	mut fl := new('/tmp/fl1.fl')!
 
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (102, 1, "dir3", 0, 0, 0, 0, 0, 0, 0)')!

@@ -19,7 +19,7 @@ pub fn install(args_ InstallArgs) ! {
 	res := os.execute('${osal.profile_path_source_and()} mdbook --version')
 	if res.exit_code == 0 {
 		v := texttools.version(res.output)
-		if v < texttools.version("0.4.40") {
+		if v < texttools.version('0.4.40') {
 			args.reset = true
 		}
 	} else {
@@ -48,8 +48,8 @@ pub fn build() ! {
 	mut dest_on_os := '${os.home_dir()}/hero/bin'
 	if osal.is_linux() {
 		dest_on_os = '/usr/local/bin'
-	}	
-	mut ok:=false
+	}
+	mut ok := false
 	cmd := '
 	set +ex
 	rm ${os.home_dir()}/.cargo/bin/mdb* 2>&1 >/dev/null
@@ -69,16 +69,15 @@ pub fn build() ! {
 
 	cp ${os.home_dir()}/.cargo/bin/mdb* ${dest_on_os}/	
 	'
-	defer {		
-		if ! ok{
-			println("ERROR IN INSTALL MDBOOK, WILL ABORT")
-			osal.execute_stdout("rm ${os.home_dir()}/.cargo/bin/mdb*") or {}
-			osal.execute_stdout("rm ${dest_on_os}/mdb*") or {}
+	defer {
+		if !ok {
+			println('ERROR IN INSTALL MDBOOK, WILL ABORT')
+			osal.execute_stdout('rm ${os.home_dir()}/.cargo/bin/mdb*') or {}
+			osal.execute_stdout('rm ${dest_on_os}/mdb*') or {}
 		}
 	}
 	osal.execute_stdout(cmd)!
-	ok=true
+	ok = true
 	osal.done_set('install_mdbook', 'OK')!
 	console.print_header('mdbook installed')
-
 }

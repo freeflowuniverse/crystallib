@@ -27,7 +27,7 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 		if p.exists('coderoot') {
 			mut coderoot := p.get_path_create('coderoot')!
 			mut gs := gittools.get()!
-			}
+		}
 		action.done = true
 	}
 

@@ -47,10 +47,11 @@ pub fn new(txt_ string) !OurTime {
 }
 
 pub fn new_from_epoch(ut u64) OurTime {
-	mut ot := OurTime{unixt:ut}
+	mut ot := OurTime{
+		unixt: ut
+	}
 	return ot
 }
-
 
 pub fn now() OurTime {
 	mut ot := OurTime{}

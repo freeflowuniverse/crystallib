@@ -268,12 +268,14 @@ fn (generator ActorGenerator) generate_filter_method(params GenerateCrudMethods)
 			}
 			mutable: true
 		}
-		params: [Param{
-			name: 'filter'
-			typ: Type{
-				symbol: params_type
-			}
-		}]
+		params: [
+			Param{
+				name: 'filter'
+				typ: Type{
+					symbol: params_type
+				}
+			},
+		]
 		result: codemodel.Result{
 			typ: Type{
 				symbol: '[]${params.object_type}'

@@ -24,7 +24,7 @@ mut:
 }
 
 fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
-	mut args:=args_
+	mut args := args_
 	mut mydoc := page.doc()!
 
 	mut collection := page.collection()!
@@ -56,7 +56,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 					} else {
 						out = '![${element.description}](img/${linkimage.file_name()} ${element.extra})'
 					}
-					
+
 					mydoc.content_set(element.id, out)
 					element.processed = false
 					element.process()!

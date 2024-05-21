@@ -3,7 +3,6 @@ module gittools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.base
-
 import json
 
 fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
@@ -64,7 +63,7 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 		}
 	}
 
-	locator := locator_new( addr.gsconfig, st.remote_url)!
+	locator := locator_new(addr.gsconfig, st.remote_url)!
 	addr = locator.addr
 	addr.branch = st.branch
 
@@ -76,8 +75,8 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	// }
 
 	jsondata := json.encode(st)
-	mut c:=base.context()!
-    mut redis:=c.redis()!
+	mut c := base.context()!
+	mut redis := c.redis()!
 	redis.set(addr.cache_key_status(), jsondata)!
 	redis.set(addr.cache_key_path(path), addr.cache_key_status())! // remember the key in redis starting from path
 	redis.expire(addr.cache_key_status(), 3600 * 24 * 7)!

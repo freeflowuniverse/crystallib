@@ -1,8 +1,7 @@
 module gittools
 
-import freeflowuniverse.crystallib.core.pathlib
-
 // import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
 
@@ -25,8 +24,8 @@ pub fn (gs GitStructure) name() string {
 
 // remove cache
 pub fn (gs GitStructure) cache_reset() ! {
-	mut c:=base.context()!
-	mut redis:=c.redis()!
+	mut c := base.context()!
+	mut redis := c.redis()!
 	key_check := gs.cache_key()
 	keys := redis.keys(key_check + ':*')!
 	for key in keys {

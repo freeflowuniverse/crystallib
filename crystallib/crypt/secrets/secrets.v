@@ -25,7 +25,6 @@ pub enum SecretType {
 	openssl_base64
 }
 
-
 // // creates a secret if it doesn exist yet
 // pub fn (mut b SecretBox) secret_add(args_ SecretArgs) !string {
 // 	mut args := args_
@@ -72,7 +71,7 @@ pub enum SecretType {
 // 	}
 // }
 
-//TODO: need to re-implement
+// TODO: need to re-implement
 
 // pub fn (mut sm SecretBox) secret_get(name_ string) !string {
 // 	name := name_.replace('.', ':').trim(':') // make sure we remove at start and end
@@ -140,7 +139,6 @@ pub enum SecretType {
 
 // 	return args.txt
 // }
-
 
 pub fn hex_secret() !string {
 	return rand.hex(24)

@@ -27,25 +27,34 @@ pub mut:
 	config   ?Config
 }
 
-pub fn new(instance string, cfg Config) !DaguClient[Config]{
+pub fn new(instance string, cfg Config) !DaguClient[Config] {
 	mut con := httpconnection.HTTPConnection{}
-	mut self:=DaguClient[Config]{type_name:"DaguClient", connection: &con}
-	self.init(instance:instance,action:.new)!
+	mut self := DaguClient[Config]{
+		type_name: 'DaguClient'
+		connection: &con
+	}
+	self.init(instance: instance, action: .new)!
 	self.config_set(cfg)!
 	return self
 }
 
-pub fn get(instance string) !DaguClient[Config]{
+pub fn get(instance string) !DaguClient[Config] {
 	mut con := httpconnection.HTTPConnection{}
-	mut self:=DaguClient[Config]{type_name:"DaguClient", connection: &con}
-	self.init(instance:instance,action:.get)!
+	mut self := DaguClient[Config]{
+		type_name: 'DaguClient'
+		connection: &con
+	}
+	self.init(instance: instance, action: .get)!
 	return self
 }
 
-pub fn delete(instance string) !{
+pub fn delete(instance string) ! {
 	mut con := httpconnection.HTTPConnection{}
-	mut self:=DaguClient[Config]{type_name:"DaguClient", connection: &con}
-	self.init(instance:instance,action:.delete)!
+	mut self := DaguClient[Config]{
+		type_name: 'DaguClient'
+		connection: &con
+	}
+	self.init(instance: instance, action: .delete)!
 }
 
 pub fn heroplay(mut plbook playbook.PlayBook) ! {

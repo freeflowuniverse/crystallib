@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.core.base
 import os
 
 pub fn site_open(name string) ! {
-	mut c:=base.context()!
-	mut r:=c.redis()!
+	mut c := base.context()!
+	mut r := c.redis()!
 	mut path_publish := r.get('zola:${name}:publish')!
 	path_publish = path_publish.replace('~', os.home_dir())
 	if path_publish.len == 0 {

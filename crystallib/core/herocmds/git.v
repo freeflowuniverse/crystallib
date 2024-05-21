@@ -174,10 +174,10 @@ fn cmd_git_execute(cmd Command) ! {
 	}
 
 	mut gs := gittools.get()!
-	if coderoot.len>0{
-		//when other coderoot, need to make sure we get a new name and make unique instance
-		name:=md5.hexhash(coderoot)
-		gs = gittools.new(name:name,root:coderoot)!
+	if coderoot.len > 0 {
+		// when other coderoot, need to make sure we get a new name and make unique instance
+		name := md5.hexhash(coderoot)
+		gs = gittools.new(name: name, root: coderoot)!
 	}
 
 	// create the filter for doing group actions, or action on 1 repo
