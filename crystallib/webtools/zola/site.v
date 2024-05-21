@@ -3,8 +3,8 @@ module zola
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.data.markdownparser
-import freeflowuniverse.crystallib.data.markdownparser.elements
+// import freeflowuniverse.crystallib.data.markdownparser
+// import freeflowuniverse.crystallib.data.markdownparser.elements
 import os
 import freeflowuniverse.crystallib.core.texttools
 
@@ -49,8 +49,7 @@ pub mut:
 // reload bool // reload the cache
 //```
 pub fn (mut site ZolaSite) template_add(args gittools.GSCodeGetFromUrlArgs) ! {
-	mut session := site.zola.session()!
-	mut gs := session.context.gitstructure()!
+	mut gs := gittools.get()!
 	mypath := gs.code_get(args)!
 	for i in ['css', 'static', 'templates'] {
 		os.cp_all('${mypath}/${i}', '${site.path_build.path}/${i}', true)!
@@ -69,8 +68,7 @@ pub fn (mut site ZolaSite) template_add(args gittools.GSCodeGetFromUrlArgs) ! {
 //```
 pub fn (mut site ZolaSite) content_add(args gittools.GSCodeGetFromUrlArgs) ! {
 	site.tree.scan(git_url: args.url, git_reset: args.reset, git_pull: args.pull, load: true)!
-	mut session := site.zola.session()!
-	mut gs := session.context.gitstructure()!
+	mut gs := gittools.get()!
 	mut mypath := gs.code_get(args)!
 	if os.exists('${mypath}/content') {
 		mypath = '${mypath}/content'

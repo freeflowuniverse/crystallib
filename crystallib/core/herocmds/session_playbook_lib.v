@@ -1,5 +1,5 @@
 module herocmds
-
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.core.playbook
@@ -95,8 +95,8 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 	})
 }
 
-// returns the session and the path of the fetched repo
-fn session_run_get(cmd Command) !(&base.Session, string) {
+// returns the path of the fetched repo
+fn session_run_get(cmd Command) ! string {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
 
@@ -116,13 +116,7 @@ fn session_run_get(cmd Command) !(&base.Session, string) {
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	interactive := !cmd.flags.get_bool('script') or { false }
 
-	mut session := base.session_new(
-		session_name: sessionname
-		context_name: contextname
-		interactive: interactive
-	)!
-
-	mut gs := session.context.gitstructure()!
+	mut gs := gittools.get()!
 	if url.len > 0 {
 		path = gs.code_get(
 			pull: pull
@@ -132,19 +126,19 @@ fn session_run_get(cmd Command) !(&base.Session, string) {
 		)!
 	}
 
-	return session, path
+	return path
 }
 
 // same as session_run_get but will also run the playbook
 fn session_run_do(cmd Command) !(&playbook.PlayBook, string) {
-	mut session, path := session_run_get(cmd)!
+	path := session_run_get(cmd)!
 
 	if path.len == 0 {
 		return error(cmd.help_message())
 	}
 
 	// add all actions inside to the playbook
-	mut plbook := playbook.new(path: path, session: session)!
+	mut plbook := playbook.new(path: path)!
 
 	playcmds.run(mut plbook)!
 

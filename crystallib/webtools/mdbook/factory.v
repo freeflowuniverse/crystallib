@@ -9,6 +9,7 @@ pub struct MDBooks[T] {
 	base.BaseConfig[T]
 }
 
+@[params]
 pub struct Config {
 pub mut:
 	path_build   string = '${os.home_dir()}/hero/var/mdbuild'

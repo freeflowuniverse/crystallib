@@ -70,7 +70,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		buildroot_book := '${buildroot}/${name}'
 		tree.export(dest: buildroot_book, reset: true)!
 
-		mut mdbooks := mdbook.get(instance: name, session: plbook.session)!
+		mut mdbooks := mdbook.get()!
 
 		mut cfg := mdbooks.config()!
 		cfg.path_build = buildroot

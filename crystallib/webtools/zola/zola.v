@@ -1,14 +1,12 @@
 module zola
 
-import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-@[heap; params]
+@[heap]
 pub struct Zola {
-	base.Base
 pub mut:
 	path_build   string
 	path_publish string

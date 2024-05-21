@@ -1,6 +1,6 @@
 module gittools
 
-
+import crypto.md5
 import os
 import json
 import freeflowuniverse.crystallib.core.pathlib
@@ -54,6 +54,7 @@ pub fn new(config_ GitStructureConfig) !GitStructure {
 @[params]
 pub struct GitStructureGetArgs {
 pub mut:
+	coderoot string
 	name string = "default"
 	reload   bool
 }
@@ -64,6 +65,13 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	mut args := args_
 	mut c:=base.context()!
 	// println("GET GS:\n$args")
+
+	if args.coderoot.len>0{
+		args.name=md5.hexhash(args.coderoot)
+		gittools.new(name:args.name,root:args.coderoot)!
+	}
+
+
 	gitname := "${c.id()}_${args.name}"
 	rlock gsinstances {
 		if c.id()in gsinstances {
@@ -84,7 +92,18 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 			return error("can't find gitstructure with name ${args.name}")
 		}
 	}
-	config := json.decode(GitStructureConfig, datajson)!
+	mut config := json.decode(GitStructureConfig, datajson)!
+
+
+	mut mycontext:=base.context()!
+
+	if config.root == "" {
+		config.root = mycontext.config.coderoot
+	}	
+
+	if config.root==""{
+		config.root="${os.home_dir()}/code"
+	}
 
 	mut gs := GitStructure{
 		config: config
