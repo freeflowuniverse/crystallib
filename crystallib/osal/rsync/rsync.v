@@ -1,7 +1,8 @@
-module osal
+module rsync
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.osal
 
 @[params]
 pub struct RsyncArgs {
@@ -47,11 +48,12 @@ pub fn rsync(args_ RsyncArgs) ! {
 		fast_rsync: args.fast_rsync
 	}
 
+	//TODO: is only for ssh right now, we prob need support for a real ssh server as well
 	cmdoptions := pathlib.rsync_cmd_options(args2)!
 	cmd := 'rsync ${cmdoptions}'
 	$if debug {
 		console.print_debug('rsync command (osal):\n${cmd}')
 	}
 	// println(cmd)
-	exec(cmd: cmd, stdout: args_.stdout)!
+	osal.exec(cmd: cmd, stdout: args_.stdout)!
 }

@@ -286,16 +286,11 @@ pub fn (mut job Job) process() ! {
 		job.status = .done
 		// result.done = true
 		if p.code > 0 {
-			// console.print_stderr(" ########## Process CODE IS > 0")
+			console.print_stderr(" ########## Process CODE IS > 0")
 			job.exit_code = p.code
 			job.status = .error_exec
 			job.cmd.scriptkeep = true
-			// p.signal_pgkill()
-			// p.close()
-			// } else {
-			// 	// println('wait')
-			// 	p.wait()
-			// 	p.close()
+			job.close()!
 		}
 	}
 }
@@ -303,14 +298,18 @@ pub fn (mut job Job) process() ! {
 fn (mut job Job) read() ! {
 	mut p := job.process or { return error('there is no process on job') }
 
+	// print("READ STDOUT")
 	out_std := p.pipe_read(.stdout) or { '' }
+	// println(" OK")
 	if out_std.len > 0 {
 		if job.cmd.stdout {
 			console.print_stdout(out_std)
 		}
 		job.output += out_std
 	}
+	// print("READ ERROR")
 	out_error := p.pipe_read(.stderr) or { '' }
+	// println(" OK")
 	if out_error.len > 0 {
 		if job.cmd.stdout {
 			console.print_stderr(out_error)
@@ -322,7 +321,7 @@ fn (mut job Job) read() ! {
 // will wait & close
 pub fn (mut job Job) close() ! {
 	mut p := job.process or { return error('there is no process on job') }
-
+	//println("CLOSE")
 	p.signal_pgkill()
 	p.wait()
 	p.close()
