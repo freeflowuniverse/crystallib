@@ -10,10 +10,10 @@ navbarTitle: ${args.title}                                 # header title for we
 
 isBasicAuth: true
 basicAuthUsername: admin
-basicAuthPassword: {DAGU.PASSWD}
+basicAuthPassword: ${args.passwd}
 
 isAuthToken: true                                    # enables API token
-authToken: {DAGU.AUTHTOKEN}
+authToken: ${args.secret}
 
 # Base Config
 baseConfig: ${homedir}/config.yaml

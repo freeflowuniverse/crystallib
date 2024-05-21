@@ -55,7 +55,7 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 	// println(args)
 	mut args := args_
 	mut cmd := args.cmd
-	mut now_epoch := time.now().unix_time()
+	mut now_epoch := time.now().unix()
 	mut now_str := now_epoch.str()
 	if cmd.contains('\n') {
 		cmd = texttools.dedent(cmd)

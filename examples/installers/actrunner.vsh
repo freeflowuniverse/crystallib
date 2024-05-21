@@ -4,4 +4,4 @@ import freeflowuniverse.crystallib.installers.sysadmintools.actrunner
 import freeflowuniverse.crystallib.installers.virt.podman
 
 actrunner.install()!
-podman.install()!
+podman.start()!

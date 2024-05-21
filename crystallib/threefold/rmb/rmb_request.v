@@ -13,7 +13,7 @@ pub fn (mut z RMBClient) rmb_request(cmd string, dst u32, payload string) !RmbRe
 		dat: base64.encode_str(payload)
 		dst: [dst]
 		ret: rand.uuid_v4()
-		now: u64(time.now().unix_time())
+		now: u64(time.now().unix())
 	}
 	request := json.encode_pretty(msg)
 	z.redis.lpush('msgbus.system.local', request)!

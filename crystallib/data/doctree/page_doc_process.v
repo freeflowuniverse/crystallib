@@ -23,7 +23,8 @@ mut:
 	done []string
 }
 
-fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
+fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
+	mut args:=args_
 	mut mydoc := page.doc()!
 
 	mut collection := page.collection()!
@@ -79,7 +80,7 @@ fn (mut page Page) doc_process_link(mut args DocArgs) !&Doc {
 							mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
 							println(' ------- COPY TO: ${dest_page_copy}')
 							mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
-							linkdoc := linkpage.doc_process_link(mut args)!
+							linkdoc := linkpage.doc_process_link(args)!
 							p_linked.write(linkdoc.markdown()!)!
 						}
 						args.done << linkpage.name

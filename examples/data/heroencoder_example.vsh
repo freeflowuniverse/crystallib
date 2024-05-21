@@ -1,5 +1,6 @@
 #!/usr/bin/env -S v -w -cg -enable-globals run
 import freeflowuniverse.crystallib.data.encoderhero
+import freeflowuniverse.crystallib.core.base
 
 //this is docu at top
 @[name:"teststruct " ; params]

@@ -1,18 +1,14 @@
 module builder
 
-import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.core.base
 
 @[heap]
 pub struct BuilderFactory {
-pub mut:
-	redis &redisclient.Redis
 }
 
 pub fn new() !BuilderFactory {
-	mut r := redisclient.core_get()!
-	mut bf := BuilderFactory{
-		redis: &r
-	}
+	mut c:=base.context()!
+	mut bf := BuilderFactory{}
 	return bf
 }
 

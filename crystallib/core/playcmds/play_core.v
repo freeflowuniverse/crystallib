@@ -1,8 +1,6 @@
 module playcmds
 
-// import freeflowuniverse.crystallib.core.playbook
-// import freeflowuniverse.crystallib.develop.gittools
-// import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.playbook
 
 // !!context.configure
@@ -28,13 +26,8 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 		// }
 		if p.exists('coderoot') {
 			mut coderoot := p.get_path_create('coderoot')!
-			mut gs := session.context.gitstructure()!
-			if gs.rootpath.path != coderoot {
-				mut db := session.context.dbcollection.get('context')!
-				db.set('coderoot', coderoot)!
-				session.context.gitstructure_reload()!
+			mut gs := gittools.get()!
 			}
-		}
 		action.done = true
 	}
 

@@ -35,8 +35,10 @@ pub fn vgen(code []CodeItem) string {
 // vgen_import generates an import statement for a given type
 pub fn (import_ Import) vgen() string {
 	types_str := if import_.types.len > 0 {
-		"{${import_.types.join(', ')}}"
-	} else {''} // comma separated string list of  types
+		'{${import_.types.join(', ')}}'
+	} else {
+		''
+	} // comma separated string list of  types
 	return 'import ${import_.mod} ${types_str}'
 }
 
@@ -169,7 +171,9 @@ pub fn (param Param) vgen() string {
 	}
 
 	mut vstr := '${param.name} ${sym}'
-	if param.mutable {vstr = 'mut ${vstr}'}
+	if param.mutable {
+		vstr = 'mut ${vstr}'
+	}
 	return '(${vstr})'
 }
 

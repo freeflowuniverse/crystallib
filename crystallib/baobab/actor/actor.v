@@ -7,7 +7,7 @@ mut:
 	backend backend.Backend
 }
 
-pub struct ActorConfig{
+pub struct ActorConfig {
 	backend.BackendConfig
 }
 

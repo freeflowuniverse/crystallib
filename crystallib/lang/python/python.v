@@ -11,7 +11,7 @@ pub struct PythonEnv {
 pub mut:
 	name string
 	path pathlib.Path
-	db   dbfs.DB
+	// db   dbfs.DB
 }
 
 @[params]
@@ -31,12 +31,12 @@ pub fn new(args_ PythonEnvArgs) !PythonEnv {
 		python.install()!
 		isnew = true
 	}
-	mut cdb := dbfs.contextdb_get()!
-	mut db := cdb.db_get(dbname: 'python_${name}')!
+	// mut cdb := dbfs.contextdb_get()!
+	// mut db := cdb.db_get(dbname: 'python_${name}')!
 	py := PythonEnv{
 		name: name
 		path: pathlib.get_dir(path: pp, create: true)!
-		db: db
+		// db: db
 	}
 
 	if isnew {
@@ -67,11 +67,8 @@ pub fn (py PythonEnv) update() ! {
 // comma separated list of packages to install
 pub fn (mut py PythonEnv) pip(packages string) ! {
 	mut out := []string{}
-	mut pips := py.pips_done()
 	for i in packages.split(',') {
-		if i !in pips {
-			out << '${i.trim_space()}'
-		}
+		out << '${i.trim_space()}'
 	}
 	if out.len == 0 {
 		return
@@ -83,44 +80,41 @@ pub fn (mut py PythonEnv) pip(packages string) ! {
 	pip3 install ${packages2} -q
 	'
 	osal.exec(cmd: cmd)!
-	for o in out {
-		py.pips_done_add(o)!
-	}
 }
 
-pub fn (mut py PythonEnv) pips_done_reset() {
-	py.db.delete('pips_${py.name}') or {}
-}
+// pub fn (mut py PythonEnv) pips_done_reset() {
+// 	py.db.delete('pips_${py.name}') or {}
+// }
 
-pub fn (mut py PythonEnv) pips_done() []string {
-	mut res := []string{}
-	pips := py.db.get('pips_${py.name}') or { '' }
-	for pip_ in pips.split_into_lines() {
-		pip := pip_.trim_space()
-		if pip !in res && pip.len > 0 {
-			res << pip
-		}
-	}
-	return res
-}
+// pub fn (mut py PythonEnv) pips_done() []string {
+// 	mut res := []string{}
+// 	pips := py.db.get('pips_${py.name}') or { '' }
+// 	for pip_ in pips.split_into_lines() {
+// 		pip := pip_.trim_space()
+// 		if pip !in res && pip.len > 0 {
+// 			res << pip
+// 		}
+// 	}
+// 	return res
+// }
 
-pub fn (mut py PythonEnv) pips_done_add(name string) ! {
-	mut pips := py.pips_done()
-	if name in pips {
-		return
-	}
-	pips << name
-	out := pips.join_lines()
-	py.db.set('pips_${py.name}', out)!
-}
+// pub fn (mut py PythonEnv) pips_done_add(name string) ! {
+// 	mut pips := py.pips_done()
+// 	if name in pips {
+// 		return
+// 	}
+// 	pips << name
+// 	out := pips.join_lines()
+// 	py.db.set('pips_${py.name}', out)!
+// }
 
-pub fn (mut py PythonEnv) pips_done_check(name string) bool {
-	mut pips := py.pips_done()
-	if name in pips {
-		return true
-	}
-	return false
-}
+// pub fn (mut py PythonEnv) pips_done_check(name string) bool {
+// 	mut pips := py.pips_done()
+// 	if name in pips {
+// 		return true
+// 	}
+// 	return false
+// }
 
 // remember the requirements list for all pips
 pub fn (mut py PythonEnv) freeze(name string) ! {
@@ -133,21 +127,21 @@ pub fn (mut py PythonEnv) freeze(name string) ! {
 	if res.exit_code > 0 {
 		return error('could not execute freeze.\n${res}\n${cmd}')
 	}
-	py.db.set('freeze_${name}', res.output)!
+	// py.db.set('freeze_${name}', res.output)!
 }
 
 // remember the requirements list for all pips
-pub fn (mut py PythonEnv) unfreeze(name string) ! {
-	requirements := py.db.get('freeze_${name}')!
-	mut p := py.path.file_get_new('requirements.txt')!
-	p.write(requirements)!
-	cmd := '
-	cd ${py.path.path}
-	source bin/activate
-	python3 -m pip install -r requirements.txt
-	'
-	res := os.execute(cmd)
-	if res.exit_code > 0 {
-		return error('could not execute unfreeze.\n${res}\n${cmd}')
-	}
-}
+// pub fn (mut py PythonEnv) unfreeze(name string) ! {
+// 	// requirements := py.db.get('freeze_${name}')!
+// 	mut p := py.path.file_get_new('requirements.txt')!
+// 	p.write(requirements)!
+// 	cmd := '
+// 	cd ${py.path.path}
+// 	source bin/activate
+// 	python3 -m pip install -r requirements.txt
+// 	'
+// 	res := os.execute(cmd)
+// 	if res.exit_code > 0 {
+// 		return error('could not execute unfreeze.\n${res}\n${cmd}')
+// 	}
+// }

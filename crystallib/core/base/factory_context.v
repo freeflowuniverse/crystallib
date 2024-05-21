@@ -1,78 +1,104 @@
 module base
 
 import freeflowuniverse.crystallib.data.paramsparser
-// import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.clients.redisclient
-// import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.ui
+import freeflowuniverse.crystallib.ui.console
+import crypto.md5
 
 @[params]
-pub struct ContextConfigureArgs {
+pub struct ContextConfigArgs {
 pub mut:
-	cid            string = '000' // rid.cid or cid allone
-	name           string // a unique name in cid
-	params         string
-	coderoot       string
-	interactive    bool
-	fsdb_encrypted bool
-	secret         string
+	id			u32
+	name        string = 'default'
+	params      string
+	coderoot    string
+	interactive bool
+	secret      string
+	encrypt 	bool
+	priv_key_hex string //hex representation of private key
 }
+
+
 
 // configure a context object
 // params: .
 // ```
-// cid          string = "000" // rid.cid or cid allone
-// name         string = "default" // a unique name in cid
-// params       string
-// coderoot	 string
-// interactive  bool
-// secret string
+// id			u32 @[required]
+// name        string = 'default'
+// params      string
+// coderoot    string
+// interactive bool
+// secret      string
+// priv_key_hex string //hex representation of private key
 // ```
-//
-fn context_configure(args_ ContextConfigureArgs) ! {
-	mut args := args_
+fn context_new(args_ ContextConfigArgs) !&Context {
+	
+	mut args := ContextConfig{
+			id:args_.id
+			name:args_.name
+			params:args_.params
+			coderoot:args_.coderoot
+			interactive:args_.interactive
+			secret:args_.secret
+			encrypt:args_.encrypt
+		}
+	
 
-	if args.name == '' {
-		args.name = 'default'
+	if args.encrypt && args.secret == '' && args.interactive {
+		mut myui := ui.new()!
+		console.clear()
+		args.secret = myui.ask_question(question: 'Please enter your hero secret string:')!
+
 	}
 
-	mut dbcollection := dbfs.get(
-		context: args.name
-		interactive: args.interactive
-		secret: args.secret
-	)!
-	mut db := dbcollection.get('context')!
-	db.set('coderoot', args.coderoot)!
-
-	if args.params.len > 0 {
-		db.set('params', args.params)!
+	if args.encrypt && args.secret.len>0{
+		args.secret = md5.hexhash(args.secret)
 	}
-}
 
-@[params]
-pub struct ContextGetArgs {
-pub mut:
-	name        string // a unique name in cid
-	interactive bool = true
-}
-
-pub fn context_get(args_ ContextGetArgs) !Context {
-	mut args := args_
-
-	mut dbcollection := dbfs.get(
-		context: args.name
-		interactive: args.interactive
-	) or { return error('cannot get dbcollection: ${args.name}') }
-
-	mut r := redisclient.core_get()!
-	mut p := paramsparser.new('')!
 
 	mut c := Context{
-		name: args.name
-		params: p
-		redis: &r
-		dbcollection: &dbcollection
+		config: args
 	}
-	c.load()!
-	return c
+
+	if args_.priv_key_hex.len>0{
+		c.privkey_set(args_.priv_key_hex)!
+	}
+
+	// c.save()!
+
+	if args.params.len > 0 {
+		mut p := paramsparser.new('')!
+		c.params_ = &p
+	}
+	
+	c.save()!
+	contexts[args.id] = &c
+
+	return contexts[args.id] or {panic("bug")}
 }
+
+
+pub fn context_get(id u32) !&Context {
+	context_current = id
+	if id in contexts{		
+		return contexts[id] or {panic("bug")}
+	}
+	mut mycontext:=Context{config:ContextConfig{id:id}}
+	if mycontext.cfg_redis_exists()!{
+		mycontext.load()!
+		return &mycontext
+	}
+	mut mycontext2:=context_new(id:id)!
+	return mycontext2
+}
+
+
+pub fn context_select(id u32) !&Context {
+	context_current = id
+	return context()!
+}
+
+pub fn context() !&Context {	
+	return context_get(context_current)!
+}
+

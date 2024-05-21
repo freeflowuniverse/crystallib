@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.codemodel {CodeFile, Struct}
 pub struct HandlerArgs {
 	stateful bool
 	receiver codemodel.Struct
-	methods []codemodel.Function
+	methods  []codemodel.Function
 }
 
 /*
@@ -30,7 +30,7 @@ pub fn (mut handler PetstoreJsonRpcHandler)handle(msg string) !string {
 	return error('this should never happen')
 }
 */
-// 
+//
 pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 	if args.methods.any(it.params.len > 1) {
 		return error('multiple method parameters for jsonrpc calls are not supported yet.')
@@ -40,14 +40,16 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 		return error('cannot generate handler for method without any parameters and return')
 	}
 
-	handler_struct := codemodel.Struct {
+	handler_struct := codemodel.Struct{
 		name: '${args.receiver.name}Handler'
-		attrs: [codemodel.Attribute{name:'heap'}]
+		attrs: [codemodel.Attribute{
+			name: 'heap'
+		}]
 		fields: [
-			codemodel.StructField {
+			codemodel.StructField{
 				name: 'state'
 				structure: args.receiver
-			}
+			},
 		]
 	}
 
@@ -65,7 +67,7 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 	return error('this should never happen')"
 
 	// handler method responsible for handling JSONRPC Request
-	handle_method := codemodel.Function {
+	handle_method := codemodel.Function{
 		name: 'handle'
 		description: 'handle handles an incoming JSON-RPC encoded message and returns an encoded response'
 		receiver: codemodel.Param{
@@ -94,7 +96,7 @@ fn method_to_call(method codemodel.Function) string {
 	} else if method.result.typ.symbol == ''{
 		stmt += "return jsonrpc.call_void[${method.params[0].typ.symbol}]"
 	} else {
-		stmt += "return jsonrpc.call[${method.params[0].typ.symbol}, ${method.result.typ.symbol}]"
+		stmt += 'return jsonrpc.call[${method.params[0].typ.symbol}, ${method.result.typ.symbol}]'
 	}
-	return "${stmt}(msg, handler.state.${method.name})! }"
+	return '${stmt}(msg, handler.state.${method.name})! }'
 }

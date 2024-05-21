@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.data.ipaddress
 // import freeflowuniverse.crystallib.ui.console
 
 // get node connection to local machine
-// pass your redis client there
 pub fn (mut bldr BuilderFactory) node_local() !&Node {
 	return bldr.node_new(name: 'localhost')
 }

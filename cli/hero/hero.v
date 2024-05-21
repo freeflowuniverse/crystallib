@@ -3,7 +3,6 @@ module main
 import os
 import cli { Command }
 import freeflowuniverse.crystallib.core.herocmds
-import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.installers.base as installerbase
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui
@@ -13,7 +12,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.16'
+		version: '1.0.18'
 		disable_man: true
 	}
 

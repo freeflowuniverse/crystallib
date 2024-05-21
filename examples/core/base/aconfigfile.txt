@@ -1,0 +1,7 @@
+
+//This is a config file, ofcourse not correct
+//the {CAPITALS} will be converted to the name of the argument
+
+keyname : ${myconfig.keyname}
+keyid   : ''
+appkey  : ${myconfig.appkey}

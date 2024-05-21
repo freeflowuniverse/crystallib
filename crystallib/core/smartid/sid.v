@@ -7,41 +7,41 @@ import freeflowuniverse.crystallib.core.texttools.regext
 
 // each part min3 max 6 chars, each char = a...z or 0...9
 // to create a new one we need to know the circle
-fn sid_new(cid string) !string {
-	mut redis := redisclient.core_get()!
-	key := 'circle:sid:${cid}'
-	mut sidlast := redis.get(key)! // is the last sid
-	if sidlast == '' {
-		redis.set(key, '10')!
-		sidlast = redis.get(key)! // need to make sure we reserve the first 10 ones
-	}
-	sidlasti := sidlast.u32() + 1 // is a new one
-	redis.set(key, '${sidlasti}')!
-	return sid_str(sidlasti)
-}
+// pub fn sid_new(cid string) !string {
+// 	mut redis := redisclient.core_get()!
+// 	key := 'circle:sid:${cid}'
+// 	mut sidlast := redis.get(key)! // is the last sid
+// 	if sidlast == '' {
+// 		redis.set(key, '10')!
+// 		sidlast = redis.get(key)! // need to make sure we reserve the first 10 ones
+// 	}
+// 	sidlasti := sidlast.u32() + 1 // is a new one
+// 	redis.set(key, '${sidlasti}')!
+// 	return sid_str(sidlasti)
+// }
 
-// make sure redis knows about it, will return true if its not known in redis yet
-fn sid_acknowledge(cid string, sid string) !bool {
-	mut redis := redisclient.core_get()!
-	key := 'circle:sid:${cid}'
-	sidlast := redis.get(key)! // is the last sid
-	sidlasti := sidlast.u32()
-	sidnewi := sid_int(sid)
-	if sidnewi > sidlasti {
-		redis.set(key, '${sidnewi}')!
-		return true
-	}
-	return false
-}
+// // make sure redis knows about it, will return true if its not known in redis yet
+// fn sid_acknowledge(cid string, sid string) !bool {
+// 	mut redis := redisclient.core_get()!
+// 	key := 'circle:sid:${cid}'
+// 	sidlast := redis.get(key)! // is the last sid
+// 	sidlasti := sidlast.u32()
+// 	sidnewi := sid_int(sid)
+// 	if sidnewi > sidlasti {
+// 		redis.set(key, '${sidnewi}')!
+// 		return true
+// 	}
+// 	return false
+// }
 
 // set the sids in redis, so we remember them all, and we know which one is the latest
 // this is for all sids as found in text
-fn sids_acknowledge(cid string, text string) ! {
-	res := regext.find_sid(text)
-	for sid in res {
-		sid_acknowledge(cid, sid)!
-	}
-}
+// fn sids_acknowledge(cid string, text string) ! {
+// 	res := regext.find_sid(text)
+// 	for sid in res {
+// 		sid_acknowledge(cid, sid)!
+// 	}
+// }
 
 // // make sure that we don't use an existing one
 // pub fn sid_new_unique(existing []string) !string {
@@ -69,7 +69,7 @@ pub fn sid_int(sid string) u32 {
 }
 
 // represent sid as string, from u32
-fn sid_str(sid u32) string {
+pub fn sid_str(sid u32) string {
 	mut completed := false
 	mut remaining := int(sid)
 	mut decimals := []f64{}
@@ -98,7 +98,7 @@ fn sid_str(sid u32) string {
 
 // check if format is [..5].[..5].[..5] . and [..5] is string
 // return error if issue
-fn sid_check(sid string) bool {
+pub fn sid_check(sid string) bool {
 	if sid.len > 6 || sid.len < 2 {
 		return false
 	}
@@ -111,7 +111,7 @@ fn sid_check(sid string) bool {
 }
 
 // raise error if smartid not valid
-fn sid_test(sid string) ! {
+pub fn sid_test(sid string) ! {
 	if !sid_check(sid) {
 		return error('sid:${sid} is not valid.')
 	}

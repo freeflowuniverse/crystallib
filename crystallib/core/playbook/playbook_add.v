@@ -3,7 +3,8 @@ module playbook
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.base
+// import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.develop.gittools
 
 enum State {
 	start
@@ -16,7 +17,7 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 	mut args := args_
 
 	if args.git_url.len > 0 {
-		mut gs := plbook.session.context.gitstructure()!
+		mut gs:=gittools.get()!
 		args.path = gs.code_get(
 			url: args.git_url
 			branch: args.git_branch

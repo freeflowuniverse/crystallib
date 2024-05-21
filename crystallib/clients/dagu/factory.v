@@ -4,41 +4,56 @@ import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
-import os
+import freeflowuniverse.crystallib.core.playbook
 
 pub struct DaguClient[T] {
-	base.Base[T]
+	base.BaseConfig[T]
 pub mut:
 	connection &httpconnection.HTTPConnection
 }
 
 pub struct Config {
-	play.ConfigBase
 pub mut:
-	configtype string = 'daguclient' // needs to be defined	
-	url        string
-	username   string
-	password   string
+	url       string
+	username  string
+	password  string
+	apisecret string @[secret]
 }
 
-pub fn get(args play.PlayArgs) !DaguClient[Config] {
-	con := httpconnection.HTTPConnection{}
-	mut client := DaguClient[Config]{
-		connection: &con
-	}
-	client.init(args)!
-	return client
+@[params]
+pub struct DaguClientArgs {
+pub mut:
+	instance string = 'default'
+	config   ?Config
 }
 
-pub fn heroplay(args play.PLayBookAddArgs) ! {
-	// make session for configuring from heroscript
-	mut session := play.session_new(session_name: 'config')!
-	session.playbook_add(path: args.path, text: args.text, git_url: args.git_url)!
-	for mut action in session.plbook.find(filter: 'daguclient.define')! {
+pub fn new(instance string, cfg Config) !DaguClient[Config]{
+	mut con := httpconnection.HTTPConnection{}
+	mut self:=DaguClient[Config]{type_name:"DaguClient", connection: &con}
+	self.init(instance:instance,action:.new)!
+	self.config_set(cfg)!
+	return self
+}
+
+pub fn get(instance string) !DaguClient[Config]{
+	mut con := httpconnection.HTTPConnection{}
+	mut self:=DaguClient[Config]{type_name:"DaguClient", connection: &con}
+	self.init(instance:instance,action:.get)!
+	return self
+}
+
+pub fn delete(instance string) !{
+	mut con := httpconnection.HTTPConnection{}
+	mut self:=DaguClient[Config]{type_name:"DaguClient", connection: &con}
+	self.init(instance:instance,action:.delete)!
+}
+
+pub fn heroplay(mut plbook playbook.PlayBook) ! {
+	for mut action in plbook.find(filter: 'daguclient.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
-		mut cl := get(instance: instance)!
-		mut cfg := cl.config()!
+		mut cl := get(instance)!
+		mut cfg := cl.config_get()!
 		cfg.url = p.get('url')!
 		cfg.username = p.get('username')!
 		cfg.password = p.get('password')!
@@ -52,7 +67,7 @@ pub fn (mut self DaguClient[Config]) config_interactive() ! {
 	println('\n## Configure Dagu Client')
 	println('========================\n\n')
 
-	mut cfg := self.config()!
+	mut cfg := self.config_get()!
 
 	self.instance = myui.ask_question(
 		question: 'name for Dagu client'
@@ -73,6 +88,12 @@ pub fn (mut self DaguClient[Config]) config_interactive() ! {
 
 	cfg.password = myui.ask_question(
 		question: 'dagu server password'
+		default: cfg.password
+		minlen: 6
+	)!
+
+	cfg.apisecret = myui.ask_question(
+		question: 'dagu server api secret'
 		default: cfg.password
 		minlen: 6
 	)!

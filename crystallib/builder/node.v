@@ -2,6 +2,7 @@ module builder
 
 import json
 import freeflowuniverse.crystallib.data.paramsparser { Params }
+import freeflowuniverse.crystallib.core.base
 // import freeflowuniverse.crystallib.ui.console
 import crypto.md5
 
@@ -66,7 +67,9 @@ pub fn (mut node Node) readfromsystem() ! {
 // load the node from redis cache, if not there will load from system .
 // return true if the data was in redis (cache)
 pub fn (mut node Node) load() !bool {
-	data := node.factory.redis.hget('nodes', node.key())!
+	mut mycontext:=base.context()!
+	mut r:=mycontext.redis()!	
+	data := r.hget('nodes', node.key())!
 	if data == '' {
 		node.readfromsystem()!
 		return false
@@ -88,5 +91,7 @@ pub fn (mut node Node) load() !bool {
 // get remote environment arguments in memory
 pub fn (mut node Node) save() ! {
 	data := json.encode(node)
-	node.factory.redis.hset('nodes', node.key(), data)!
+	mut mycontext:=base.context()!
+	mut r:=mycontext.redis()!	
+	r.hset('nodes', node.key(), data)!
 }

@@ -29,6 +29,12 @@ make -j 5
 make install
 ```
 
+### Arch
+
+```bash
+pacman -Su extra/libsecp256k1
+```
+
 ### Gentoo
 
 ```bash
@@ -60,6 +66,7 @@ This is a simple private/public key schema. This wrapper deals with hexdump of k
 
 In this library, you can instanciate a secp256k1 object from 3 ways:
 ```vlang
+import freeflowuniverse.crystallib.crypt.secp256k1
 secp256k1.new()
 ```
 Constructor without any arguments, will generate a new private and public key

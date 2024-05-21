@@ -4,7 +4,7 @@ import time
 
 pub struct OurTime {
 pub mut:
-	unix i64
+	unixt i64
 }
 
 // Get Expiration object from time string input .
@@ -40,11 +40,17 @@ pub fn new(txt_ string) !OurTime {
 		ot.now()
 		return ot
 	}
-	unix := parse(txt_)!
+	unixt := parse(txt_)!
 	return OurTime{
-		unix: unix
+		unixt: unixt
 	}
 }
+
+pub fn new_from_epoch(ut u64) OurTime {
+	mut ot := OurTime{unixt:ut}
+	return ot
+}
+
 
 pub fn now() OurTime {
 	mut ot := OurTime{}
@@ -54,7 +60,7 @@ pub fn now() OurTime {
 
 // will check if the time is empty, if yes then will fill it in
 pub fn (mut ot OurTime) check() {
-	if ot.unix == 0 {
+	if ot.unixt == 0 {
 		ot.now()
 	}
 }
@@ -86,26 +92,26 @@ pub fn (ot OurTime) day() string {
 
 // returns as epoch (seconds)
 pub fn (ot OurTime) int() int {
-	return int(ot.time().unix_time())
+	return int(ot.time().unix())
 }
 
 // set ourtime to now
 pub fn (mut t OurTime) now() {
-	t.unix = i64(time.now().unix_time())
+	t.unixt = i64(time.now().unix())
 }
 
 // get time from vlang
 pub fn (t OurTime) time() time.Time {
-	return time.unix(i64(t.unix))
+	return time.unix(i64(t.unixt))
 }
 
 // get time from vlang
-pub fn (t OurTime) unix_time() i64 {
-	return t.unix
+pub fn (t OurTime) unix() i64 {
+	return t.unixt
 }
 
 pub fn (t OurTime) empty() bool {
-	return t.unix == 0
+	return t.unixt == 0
 }
 
 // move the time, e.g. +1h means we go 1 h further
@@ -122,5 +128,5 @@ pub fn (t OurTime) empty() bool {
 //
 pub fn (mut t OurTime) warp(warp string) ! {
 	println(relative_sec(warp)!)
-	t.unix += relative_sec(warp)!
+	t.unixt += relative_sec(warp)!
 }

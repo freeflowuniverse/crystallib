@@ -321,10 +321,14 @@ pub fn (mut path Path) delete() ! {
 
 // remove all content but if dir let the dir exist
 pub fn (mut path Path) empty() ! {
-	path.delete()!
 	if path.cat == .dir {
 		os.mkdir_all(path.path)!
 		path.exist = .yes
+	}else if path.cat == Category.linkfile{
+		mut p2:=path.getlink()!
+		p2.empty()!
+	}else{
+		path.write("")!
 	}
 }
 
@@ -344,6 +348,23 @@ pub fn (mut path Path) write(content string) ! {
 	os.write_file(path.path, content)!
 }
 
+// write bytes to file
+pub fn (mut path Path) writeb(content []u8) ! {
+	if !os.exists(path.path_dir()) {
+		os.mkdir_all(path.path_dir())!
+	}
+	if path.exists() && path.cat == Category.linkfile {
+		mut pathlinked := path.getlink()!
+		pathlinked.writeb(content)!
+	}	
+
+	if path.exists() && path.cat != Category.file && path.cat != Category.linkfile {
+		return error('Path must be a file for ${path}')
+	}
+
+	os.write_file_array(path.path, content)!
+}
+
 // read content from file
 pub fn (mut path Path) read() !string {
 	path.check()
@@ -354,6 +375,23 @@ pub fn (mut path Path) read() !string {
 				return error('File is not exist, ${p} is a wrong path')
 			}
 			return os.read_file(p)
+		}
+		else {
+			return error('Path is not a file when reading. ${path.path}')
+		}
+	}
+}
+
+// read bytes from file
+pub fn (mut path Path) readb() ![]u8{
+	path.check()
+	match path.cat {
+		.file, .linkfile {
+			p := path.absolute()
+			if !os.exists(p) {
+				return error('File does not exist, ${p} is a wrong path')
+			}
+			return os.read_bytes(p)
 		}
 		else {
 			return error('Path is not a file when reading. ${path.path}')

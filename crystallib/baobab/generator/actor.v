@@ -115,7 +115,9 @@ pub fn generate_factory_file(name string) CodeFile {
 	return codemodel.new_file(
 		mod: texttools.name_fix(name)
 		name: 'actor'
-		imports: [Import{mod:'freeflowuniverse.crystallib.baobab.actor'}]
+		imports: [Import{
+			mod: 'freeflowuniverse.crystallib.baobab.actor'
+		}]
 		items: [actor_struct, actor_factory]
 	)
 }

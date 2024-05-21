@@ -23,7 +23,6 @@ pub fn (params Params) decode_struct[T](_ T) !T {
 	return t
 }
 
-
 pub fn (params Params) decode_value[T](_ T, key string) !T {
 	// $if T is $option {
 	// 	// unwrap and encode optionals
@@ -41,35 +40,28 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 
 	$if T is string {
 		return params.get(key)!
-	}
-	$else $if T is int {
+	} $else $if T is int {
 		return params.get_int(key)!
-	}
-	$else $if T is bool {
+	} $else $if T is bool {
 		return params.get_default_true(key)
-	}
-	$else $if T is []string {
+	} $else $if T is []string {
 		return params.get_list(key)!
-	}
-	$else $if T is []int {
+	} $else $if T is []int {
 		return params.get_list_int(key)!
-	}
-	$else $if T is time.Time {
+	} $else $if T is time.Time {
 		time_str := params.get(key)!
 		// todo: 'handle other null times'
 		if time_str == '0000-00-00 00:00:00' {
 			return time.Time{}
 		}
 		return time.parse(time_str)!
-	}
-	$else $if T is $struct {
+	} $else $if T is $struct {
 		child_params := params.get_params(key)!
 		child := child_params.decode_struct(T{})!
 		return child
 	}
 	return T{}
 }
-
 
 @[params]
 pub struct EncodeArgs {
@@ -127,7 +119,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 		} $else $if field.typ is $struct {
 			if args.recursive {
 				child_params := encode(val)!
-				params.params << Param {
+				params.params << Param{
 					key: field.name
 					value: child_params.export()
 				}
@@ -139,7 +131,6 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 }
 
 // BACKLOG: can we do the encode recursive?
-
 
 // if at top of struct we have: @[name:"teststruct " ; params] .
 // will return {'name': 'teststruct', 'params': ''}

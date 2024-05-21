@@ -198,7 +198,7 @@ pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 	_ = new_rpc_client()
 	zp.check()!
 	mut t := ourtime.now()
-	start := t.unix_time()
+	start := t.unix()
 	c := c_.replace('\n', '')
 	for _ in 0 .. 2000 {
 		o := zp.log()!
@@ -211,7 +211,7 @@ pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 			return
 		}
 		mut t2 := ourtime.now()
-		if t2.unix_time() > start + timeoutsec {
+		if t2.unix() > start + timeoutsec {
 			return error('timeout on output wait for zinit.\n${zp.name} .\nwaiting for:\n${c}')
 		}
 		time.sleep(100 * time.millisecond)

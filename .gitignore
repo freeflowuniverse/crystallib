@@ -16,4 +16,7 @@ remote_update_compile_hero
 remote_install_v_hero
 zdb-data
 zdb-index
+.idea/
+
+
 

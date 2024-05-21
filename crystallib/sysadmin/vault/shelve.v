@@ -15,7 +15,7 @@ pub mut:
 
 // save the metadata for the backups
 fn (mut shelve Shelve) meta_data(current_time time.Time) string {
-	mut out := ['time:${current_time.unix_time()}']
+	mut out := ['time:${current_time.unix()}']
 	for item in shelve.items {
 		out << item.meta()
 	}
@@ -48,7 +48,7 @@ pub fn (mut shelve Shelve) load() ! {
 			if splitted.len != 4 {
 				panic('format shelve data is wrong, not enough parts on ${line}')
 			}
-			// "${i.sha256()}|${i.time.unix_time()}|${i.nr}|${i.name}"
+			// "${i.sha256()}|${i.time.unix()}|${i.nr}|${i.name}"
 			mut item := Item{
 				sha256: splitted[0].trim_space()
 				time: time.unix(splitted[1].i64())

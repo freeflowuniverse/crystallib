@@ -49,7 +49,7 @@ pub:
 // 	wait bool=true
 pub fn (mut q RedisRpc) call(args RPCArgs) !string {
 	retqueue := rand.uuid_v4()
-	now := time.now().unix_time()
+	now := time.now().unix()
 	message := Message{
 		ret_queue: retqueue
 		now: now
@@ -67,7 +67,7 @@ pub fn (mut q RedisRpc) call(args RPCArgs) !string {
 
 // get return once result processed
 pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
-	start := u64(time.now().unix_time_milli())
+	start := u64(time.now().unix_milli())
 	for {
 		r := q.redis.rpop(retqueue) or { '' }
 		if r != '' {
@@ -78,7 +78,7 @@ pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
 			return res.result
 		}
 
-		if u64(time.now().unix_time_milli()) > (start + timeout) {
+		if u64(time.now().unix_milli()) > (start + timeout) {
 			break
 		}
 		time.sleep(time.millisecond)
@@ -89,7 +89,7 @@ pub fn (mut q RedisRpc) result(timeout u64, retqueue string) !string {
 // to be used by processor, to get request and execute, this is the server side of a RPC mechanism
 // 2nd argument is a function which needs to execute the job: fn (string,string) !string
 pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !string {
-	start := u64(time.now().unix_time_milli())
+	start := u64(time.now().unix_milli())
 	for {
 		r := q.redis.rpop(q.key) or { '' }
 		if r != '' {
@@ -117,7 +117,7 @@ pub fn (mut q RedisRpc) process(timeout u64, op fn (string, string) !string) !st
 			q.redis.lpush(returnqueue, encoded)!
 			return returnqueue
 		}
-		if u64(time.now().unix_time_milli()) > (start + timeout) {
+		if u64(time.now().unix_milli()) > (start + timeout) {
 			break
 		}
 		time.sleep(time.microsecond)

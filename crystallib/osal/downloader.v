@@ -81,15 +81,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 		size := dest.size_kb()!
 		if args.minsize_kb > 0 {
 			if size > args.minsize_kb {
-				if args.maxsize_kb > 0 {
-					if size < args.maxsize_kb {
-						todownload = false
-					}
-				} else {
-					if args.expand_dir.len > 0 {
-						todownload = false
-					}
-				}
+				todownload = false
 			}
 		}
 	}

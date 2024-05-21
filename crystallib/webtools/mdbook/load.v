@@ -86,12 +86,12 @@ fn loader() !FileLoader {
 // 	mut last := i64(0)
 // 	for {
 // 		t.now()
-// 		console.print_stdout('${t} ${t.unix_time()} period:${args.period}')
-// 		if t.unix_time() > last + args.period {
+// 		console.print_stdout('${t} ${t.unix()} period:${args.period}')
+// 		if t.unix() > last + args.period {
 // 			console.print_header(' will try to check the mdbooks')
 // 			self.pull(args.reset) or { panic(" - ERROR: couldn't pull the repo's.\n${err}") }
 // 			self.generate() or { panic(" - ERROR: couldn't generate the repo's.\n${err}") }
-// 			last = t.unix_time()
+// 			last = t.unix()
 // 		}
 // 		time.sleep(time.second)
 // 		if args.period == 0 {

@@ -1,4 +1,27 @@
-# startup manager
+# Secret Box
+
+Some tools to work with encryption/decryption (symmetric)
+
+```go
+import freeflowuniverse.crystallib.crypt.secrets
+
+mut box:=secrets.get(secret:"mysecret")!
+
+r:= box.encrypt("aaa")!
+println(r)
+assert "aaa"==box.decrypt(r)!
+
+hex_secret:=secrets.hex_secret()!
+
+openssl_hex_secret:=secrets.openssl_hex_secret()!
+
+openssl_base64_secret:=secrets.openssl_base64_secret()!
+
+```
+
+<!-- 
+
+## replace some text
 
 some utils to manage secret keys and easily change them in text, ideal for config files.
 
@@ -18,7 +41,7 @@ mut test_string := "This is a test string with {ss} and {MYAPP.SOMETHING.A} and 
 
 test_string1:=box.replace(txt:test_string)!
 
-println(test_string1)
+println(test_string1) -->
 
 
 test_string2:=box.replace(txt:test_string,defaults:{"MYAPP.SOMETHING.A":secrets.DefaultSecretArgs{secret:"AAA"}})!
@@ -26,3 +49,5 @@ test_string2:=box.replace(txt:test_string,defaults:{"MYAPP.SOMETHING.A":secrets.
 println(test_string2)
 
 ```
+
+

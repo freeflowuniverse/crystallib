@@ -6,7 +6,7 @@ import time
 // TODO: need to update the tests
 
 fn check_input(input_string string, seconds int) {
-	nnow := time.now().unix_time()
+	nnow := time.now().unix()
 	thetime := parse(input_string) or { panic('cannot get expiration for ${input_string}') }
 	assert thetime == (nnow + seconds), 'expiration was incorrect for ${input_string}'
 }
@@ -96,8 +96,13 @@ fn test_absolute_time() {
 	}
 	for key, value in input_strings {
 		thetime := new(key) or { panic('cannot get expiration for ${key}') }
-		assert thetime.unix_time() == value, 'expiration was incorrect for ${key}'
+		assert thetime.unix() == value, 'expiration was incorrect for ${key}'
 	}
+}
+
+fn test_from_epoch() {
+	mut t:=new_from_epoch(1670271275)
+	assert t.str() == "2022-12-05 20:14"
 }
 
 // NEXT: need some better test to see if time parsing works, more full tests
@@ -111,7 +116,7 @@ fn test_parse_date() {
 	for key, value in input_strings {
 		test_value := new(key) or { panic('parse_date failed for ${key}, with error ${err}') }
 
-		assert test_value.unix_time() == value
+		assert test_value.unix() == value
 	}
 }
 

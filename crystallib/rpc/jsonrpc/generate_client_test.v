@@ -1,6 +1,6 @@
 module jsonrpc
 
-import freeflowuniverse.crystallib.core.codemodel {Struct, Function, Param, Type, Result}
+import freeflowuniverse.crystallib.core.codemodel { Function, Param, Result, Struct, Type }
 
 pub fn test_generate_client_factory() ! {
 	factory_file := generate_client_factory('TestJsonRpcClient')
@@ -12,8 +12,18 @@ pub fn test_generate_client_method() ! {
 	client_struct := generate_client_struct('TestJsonRpcClient')
 	test_method := Function{
 		name: 'test_jsonrpc_call'
-		params: [Param{name:'key', typ: Type{symbol:'string'}}]
-		result: Result{name: 'result', typ:Type{symbol:'string'}}
+		params: [Param{
+			name: 'key'
+			typ: Type{
+				symbol: 'string'
+			}
+		}]
+		result: Result{
+			name: 'result'
+			typ: Type{
+				symbol: 'string'
+			}
+		}
 	}
 	client_method := generate_client_method(client_struct, test_method)!
 	assert client_method.name == test_method.name

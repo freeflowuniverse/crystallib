@@ -4,18 +4,18 @@ import freeflowuniverse.crystallib.core.codemodel {parse_import,parse_function, 
 import freeflowuniverse.crystallib.core.texttools
 
 pub struct GenerateClientConfig {
-	name string
+	name    string
 	methods []Function
 }
 
 pub fn generate_client(config GenerateClientConfig) Module {
 	factory_file := generate_client_factory(config.name) or {panic(err)}
 	return Module{
-		files:[
-			factory_file
+		files: [
+			factory_file,
 		]
 	}
-} 
+}
 
 // generate_client_factory generates a factory code file with factory functions for the client
 pub fn generate_client_factory(name string) !CodeFile {
@@ -57,8 +57,10 @@ pub fn generate_ws_factory_code(name_ string) ![]CodeItem {
 			},
 			StructField{
 				name: 'logger'
-				typ:Type{symbol:'log.Logger'}
-			}
+				typ: Type{
+					symbol: 'log.Logger'
+				}
+			},
 		]
 	}
 
@@ -86,7 +88,9 @@ pub fn (mut client PetstoreJsonRpcClient) get_pet(name string) !Pet {
 }
 */
 pub fn generate_client_method(client_struct Struct, method Function) !Function {
-	if method.params.len > 1 { return error('json rpc calls with more than 1 param are not supported')}
+	if method.params.len > 1 {
+		return error('json rpc calls with more than 1 param are not supported')
+	}
 
 	request_stmt := if method.params.len == 0 {
 		"request := jsonrpc.new_jsonrpcrequest[string]('${method.name}', '')"
@@ -112,12 +116,12 @@ pub fn generate_client_method(client_struct Struct, method Function) !Function {
 	println('debugzone ${method}')
 	mut func := Function {
 		...method
-		receiver: Param {
+		receiver: Param{
 			name: 'client'
 			typ: Type{symbol:client_struct.name}
 			mutable: true
 		}
-		body: "${request_stmt}\n${return_stmt}"
+		body: '${request_stmt}\n${return_stmt}'
 	}
 	func.result.result = true
 	return func

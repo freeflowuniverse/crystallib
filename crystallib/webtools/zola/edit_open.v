@@ -3,10 +3,12 @@ module zola
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.core.base
 import os
 
 pub fn site_open(name string) ! {
-	mut r := redisclient.core_get()!
+	mut c:=base.context()!
+	mut r:=c.redis()!
 	mut path_publish := r.get('zola:${name}:publish')!
 	path_publish = path_publish.replace('~', os.home_dir())
 	if path_publish.len == 0 {

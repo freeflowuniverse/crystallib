@@ -15,11 +15,11 @@ pub fn generate_object_code(actor Struct, object Struct) CodeFile {
 			Import{
 				mod: object.mod
 				types: [object_type]
-			}
+			},
 			Import{
 				mod: 'freeflowuniverse.crystallib.baobab.backend'
 				types: ['FilterParams']
-			}
+			},
 		]
 		items: [
 			generate_new_method(actor, object),
@@ -57,7 +57,7 @@ fn generate_get_method(actor Struct, object Struct) codemodel.Function {
 			}
 		}
 		params: [
-			codemodel.Param{
+			Param{
 				name: 'id'
 				typ: codemodel.Type{
 					symbol: 'string'
@@ -127,7 +127,7 @@ fn generate_delete_method(actor Struct, object Struct) codemodel.Function {
 			}
 		}
 		params: [
-			codemodel.Param{
+			Param{
 				name: 'id'
 				typ: codemodel.Type{
 					symbol: 'string'
@@ -265,7 +265,9 @@ fn generate_filter_method(actor Struct, object Struct) codemodel.Function {
 		}
 		params: [Param{
 			name: 'filter'
-			typ: Type{symbol: params_type}
+			typ: Type{
+				symbol: params_type
+			}
 		}]
 		result: codemodel.Result{
 			typ: Type{symbol:'[]${object_type}'}
@@ -277,7 +279,7 @@ fn generate_filter_method(actor Struct, object Struct) codemodel.Function {
 
 @[params]
 struct GenerateParamGetters {
-	structure    codemodel.Struct
+	structure    Struct
 	prefix       string
 	only_mutable bool // if true generates param.get methods for only mutable  struct fields. Used for updating.
 }
@@ -330,11 +332,11 @@ fn generate_param_getters(params GenerateParamGetters) []string {
 
 @[params]
 struct GetChildField {
-	parent codemodel.Struct @[required]
-	child  codemodel.Struct @[required]
+	parent Struct @[required]
+	child  Struct @[required]
 }
 
-fn get_child_field(params GetChildField) codemodel.StructField {
+fn get_child_field(params GetChildField) StructField {
 	fields := params.parent.fields.filter(it.typ.symbol == 'map[string]&${params.child.name}')
 	if fields.len != 1 {
 		panic('this should never happen')

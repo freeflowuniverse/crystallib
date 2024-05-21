@@ -1,6 +1,6 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel {Import,Struct, CodeFile, CustomCode, Function, CodeItem, Type}
+import freeflowuniverse.crystallib.core.codemodel { CodeFile, CustomCode, Function, Import, Struct }
 import freeflowuniverse.crystallib.core.codeparser
 import rand
 import freeflowuniverse.crystallib.core.texttools
@@ -18,12 +18,12 @@ pub fn generate_object_test_code(actor Struct, object Struct) !CodeFile {
 		os.rm('\${db_dir}/\${actor_name}.sqlite')!
 	}	"
 
-	testsuite_begin := Function {
+	testsuite_begin := Function{
 		name: 'testsuite_begin'
 		body: clean_code
 	}
 
-	testsuite_end := Function {
+	testsuite_end := Function{
 		name: 'testsuite_end'
 		body: clean_code
 	}
@@ -37,11 +37,13 @@ pub fn generate_object_test_code(actor Struct, object Struct) !CodeFile {
 		name: '${object_name}_test'
 		mod: texttools.name_fix(actor_name)
 		imports: [
-			Import{mod: 'os'},
+			Import{
+				mod: 'os'
+			},
 			Import{
 				mod: '${object.mod}'
 				types: [object_type]
-			}
+			},
 		]
 		items: [
 			consts,
@@ -135,8 +137,8 @@ fn generate_filter_test(actor Struct, object Struct) !codemodel.Function {
 		"
 	}
 
-	body := "mut actor := get(name: actor_name)!
-	\n${index_tests.join('\n\n')}"
+	body := 'mut actor := get(name: actor_name)!
+	\n${index_tests.join('\n\n')}'
 
 	return codemodel.Function{
 		name: 'test_filter_${object_name}'

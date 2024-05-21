@@ -4,7 +4,7 @@ import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.develop.sourcetree
 import json
@@ -32,7 +32,8 @@ pub fn (repo GitRepo) key() string {
 }
 
 fn (repo GitRepo) cache_delete() ! {
-	mut redis := redisclient.core_get()!
+	mut c:=base.context()!
+    mut redis:=c.redis()!
 	redis.del(repo.addr.cache_key_status())!
 	redis.del(repo.cache_key_path())!
 }
@@ -59,7 +60,8 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 }
 
 fn (repo GitRepo) status_exists() !bool {
-	mut redis := redisclient.core_get()!
+	mut c:=base.context()!
+    mut redis:=c.redis()!
 	mut data := redis.get(repo.addr.cache_key_status()) or { return false }
 	if data.len == 0 {
 		return false
@@ -78,7 +80,8 @@ fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
 }
 
 pub fn (mut repo GitRepo) status() !GitRepoStatus {
-	mut redis := redisclient.core_get()!
+	mut c:=base.context()!
+    mut redis:=c.redis()!
 	mut cache_key := ''
 	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
 		|| repo.addr.branch == '' {

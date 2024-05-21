@@ -7,9 +7,7 @@ import log
 import os
 // import freeflowuniverse.crystallib.clients.redisclient
 
-const (
-	db_path = '${os.dir(@FILE)}/example.sqlite'
-)
+const db_path = '${os.dir(@FILE)}/example.sqlite'
 
 @[table: 'example_structs']
 @[root_struct]

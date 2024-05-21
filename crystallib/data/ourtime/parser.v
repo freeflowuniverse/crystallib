@@ -27,7 +27,7 @@ fn parse(timestr string) !i64 {
 	trimmed := timestr.trim_space()
 	if trimmed == '' {
 		n := now()
-		time_unix := n.unix_time()
+		time_unix := n.unix()
 		return time_unix
 	}
 	mut relative_bool := false
@@ -55,7 +55,7 @@ fn relative_sec(timestr string) !i64 {
 
 	// If input is empty or contains just a 0
 	if full_exp == '' || full_exp.trim(' ') == '0' {
-		time_unix := time.now().unix_time()
+		time_unix := time.now().unix()
 		return time_unix
 	}
 
@@ -102,7 +102,7 @@ fn relative_sec(timestr string) !i64 {
 
 fn get_unix_from_relative(timestr string) !i64 {
 	r := relative_sec(timestr)!
-	time_unix := i64(r) + time.now().unix_time()
+	time_unix := i64(r) + time.now().unix()
 	return time_unix
 }
 
@@ -158,5 +158,5 @@ pub fn get_unix_from_absolute(timestr_ string) !i64 {
 	time_struct := time.parse(full_string) or {
 		return error("could not parse date/time string '${timestr_}': ${err}")
 	}
-	return time_struct.unix_time()
+	return time_struct.unix()
 }
