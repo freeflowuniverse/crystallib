@@ -70,7 +70,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 	} else {
 		return error('Path being parsed must either be a directory or a file.')
 	}
-	codemodel.inflate_types(mut code)
+	// codemodel.inflate_types(mut code)
 	return code
 }
 

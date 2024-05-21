@@ -61,6 +61,7 @@ pub fn (param Param) generate_value() !string {
 	} else if param.typ.symbol == 'int' {
 		return '42'
 	} else {
-		return error('mock values for types other than strings and ints are not yet supported')
+		println('mock values for types other than strings and ints are not yet supported')
 	}	
+	return ''
 }
