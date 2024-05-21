@@ -3,7 +3,7 @@ module base
 
 @[heap]
 pub struct Base {
-	type_name string @[required]
+	configtype string @[required]
 mut:
 	instance string
 	session_ ?&Session

@@ -24,9 +24,8 @@ pub mut:
 pub fn new(instance string, cfg Config) !B2Client[Config] {
 	mut py := python.new(name: 'default')! // a python env with name default
 	mut self := B2Client[Config]{
-		type_name: 'b2client'
 		py: py
-	}
+	}	
 	self.init(instance: instance, action: .new)!
 	self.config_set(cfg)!
 	return self
