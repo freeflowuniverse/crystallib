@@ -68,14 +68,12 @@ pub fn docgen(config DocGenConfig) !OpenRPC {
 }
 
 // fn_to_method turns a codemodel function into a openrpc method description
-fn fn_to_method(function Function) Method {
+pub fn fn_to_method(function Function) Method {
 	$if debug {
 		console.print_debug('Creating openrpc method description for function: ${function.name}')
 	}
 
 	params := params_to_descriptors(function.params)
-	result_schema := jsonschema.typesymbol_to_schema(function.result.typ.symbol)
-
 	// if result name isn't set, set it to
 	result_name := if function.result.name != '' {
 		function.result.name
@@ -83,11 +81,11 @@ fn fn_to_method(function Function) Method {
 		function.result.typ.symbol
 	}
 
-	result := ContentDescriptor{
-		name: result_name
-		schema: result_schema
-		description: function.result.description
-	}
+	// result := ContentDescriptor{
+	// 	name: result_name
+	// 	schema: result_schema
+	// 	description: function.result.description
+	// }
 
 	pascal_name := texttools.name_fix_snake_to_pascal(function.name)
 	function_name := if function.mod != '' {
@@ -95,28 +93,49 @@ fn fn_to_method(function Function) Method {
 	} else {
 		pascal_name
 	}
+	m := Method{
+		name: function_name
+		description: function.description
+		params: params
+		result: result_to_descriptor(function.result)
+	}
 
 	return Method{
 		name: function_name
 		description: function.description
 		params: params
-		result: result
+		result: result_to_descriptor(function.result)
 	}
 }
 
 // get_param_descriptors returns content descriptors generated for a list of params
-pub fn params_to_descriptors(params []codemodel.Param) []ContentDescriptorRef {
+fn params_to_descriptors(params []codemodel.Param) []ContentDescriptorRef {
 	mut descriptors := []ContentDescriptorRef{}
-
 	for param in params {
-		schemaref := jsonschema.typesymbol_to_schema(param.typ.symbol)
-		descriptors << ContentDescriptorRef(ContentDescriptor{
-			name: param.name
-			schema: schemaref
-			description: param.description
-			required: param.required
-		})
+		descriptors << param_to_descriptor(param)
 	}
-
 	return descriptors
+}
+
+
+// get_param_descriptors returns content descriptors generated for a list of params
+fn param_to_descriptor(param codemodel.Param) ContentDescriptorRef {
+	schemaref := jsonschema.param_to_schema(param)
+	return ContentDescriptorRef(ContentDescriptor{
+		name: param.name
+		schema: schemaref
+		description: param.description
+		required: param.required
+	})
+}
+
+
+// get_param_descriptors returns content descriptors generated for a list of params
+pub fn result_to_descriptor(result codemodel.Result) ContentDescriptorRef {
+	schemaref := jsonschema.result_to_schema(result)
+	return ContentDescriptorRef(ContentDescriptor{
+		name: result.name
+		schema: schemaref
+		description: result.description
+	})
 }

@@ -132,7 +132,6 @@ pub fn (function Function) vgen() string {
 			}
 		})
 	}
-
 	if options.len > 0 {
 		params_ << Param{
 			name: 'options'
@@ -190,11 +189,15 @@ pub struct VGenerator {
 
 pub fn (gen VGenerator) generate_struct(struct_ Struct) !string {
 	name := if struct_.generics.len > 0 {
-		println('struct  ${struct_}')
 		'${struct_.name}${vgen_generics(struct_.generics)}'
 	} else {
 		struct_.name
 	}
+
+	prefix := if struct_.is_pub {
+		'pub'
+	} else {''}
+	
 	priv_fields := struct_.fields.filter(!it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))
 	pub_fields := struct_.fields.filter(!it.is_mut && it.is_pub).map(gen.generate_struct_field(it))
 	mut_fields := struct_.fields.filter(it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))

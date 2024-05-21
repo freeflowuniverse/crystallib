@@ -55,6 +55,7 @@ pub fn (schema Schema) vstructs_encode() ![]string {
 // code_type generates a typesymbol for the schema
 pub fn (schema Schema) vtype_encode() !string {
 	mut property_str := ''
+	if schema.typ == 'null' {return ''}
 	if schema.typ == 'object' {
 		if schema.title == '' {
 			return error('Object schemas must define a title.')
@@ -72,6 +73,8 @@ pub fn (schema Schema) vtype_encode() !string {
 		}
 	} else if schema.typ in jsonschema.vtypes.keys() {
 		property_str = jsonschema.vtypes[schema.typ]
+	} else if schema.title != '' {
+		property_str = schema.title
 	} else {
 		return error('unknown type `${schema.typ}` ')
 	}
@@ -160,12 +163,19 @@ pub fn (schema SchemaRef) to_struct_field(name string) !StructField {
 	return error('Schema typ  not supported for code generation')
 }
 
+pub fn (sr SchemaRef) to_code() !Type {
+	return if sr is Reference {
+		sr.to_type() 
+	} else {
+		Type{symbol:(sr as Schema).vtype_encode()!}}
+}
+
 pub fn (ref Reference) to_type_symbol() string {
 	return ref.ref.all_after_last('/')
 }
 
 pub fn (ref Reference) to_type() Type {
 	return Type{
-		symbol: ref.ref
+		symbol: ref.to_type_symbol()
 	}
 }

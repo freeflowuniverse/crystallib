@@ -46,12 +46,12 @@ pub fn test_get_calendar() ! {
 pub fn test_filter_calendar() ! {
 	mut actor := get(name: scheduler.actor_name)!
 
-	calendar_id0 := actor.new_calendar(Calendar{ tag: 'mock_string_RJM' })!
+	calendar_id0 := actor.new_calendar(Calendar{ tag: 'mock_string_JIy' })!
 	calendar_list0 := actor.filter_calendar(
 		filter: CalendarFilter{
-			tag: 'mock_string_RJM'
+			tag: 'mock_string_JIy'
 		}
 	)!
 	assert calendar_list0.len == 1
-	assert calendar_list0[0].tag == 'mock_string_RJM'
+	assert calendar_list0[0].tag == 'mock_string_JIy'
 }

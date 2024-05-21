@@ -23,9 +23,15 @@ pub fn (mut actor Coordinator) delete_story(id string) ! {
 	actor.backend.delete[Story](id)!
 }
 
+pub struct StoryList {
+	items []Story
+}
+
 // lists all of the story objects
-pub fn (mut actor Coordinator) list_story() ![]Story {
-	return actor.backend.list[Story]()!
+pub fn (mut actor Coordinator) list_story() !StoryList {
+	return StoryList{
+		items: actor.backend.list[Story]()!
+	}
 }
 
 struct FilterStoryParams {

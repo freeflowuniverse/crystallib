@@ -1,10 +1,10 @@
 module openrpc
 
-// import freeflowuniverse.crystallib.data.jsonschema
-// import freeflowuniverse.crystallib.core.codemodel { Function, Struct, Sumtype }
+import freeflowuniverse.crystallib.data.jsonschema
+import freeflowuniverse.crystallib.core.codemodel { Function, Struct, Sumtype }
 // import freeflowuniverse.crystallib.core.codeparser
 // import freeflowuniverse.crystallib.ui.console
-// import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.texttools
 
 // // configuration parameters for OpenRPC Document generation.
 // @[params]
@@ -70,7 +70,7 @@ module openrpc
 // // fn_to_method turns a codemodel function into a openrpc method description
 // fn fn_to_method(function Function) Method {
 // 	$if debug {
-// 		console.print_debug('Creating openrpc method description for function: ${function.name}')
+// 		println('Creating openrpc method description for function: ${function.name}')
 // 	}
 
 // 	params := params_to_descriptors(function.params)
@@ -104,24 +104,5 @@ module openrpc
 // 	}
 // }
 
-// // get_param_descriptors returns content descriptors generated for a list of params
-// fn params_to_descriptors(params []codemodel.Param) []ContentDescriptorRef {
-// 	mut descriptors := []ContentDescriptorRef{}
 
-// 	for param in params {
-// 		descriptors << param_to_descriptor(param)
-// 	}
 
-// 	return descriptors
-// }
-
-// // get_param_descriptors returns content descriptors generated for a list of params
-// fn param_to_descriptor(param codemodel.Param) ContentDescriptorRef {
-// 	schemaref := jsonschema.typesymbol_to_schema(param.typ.symbol)
-// 	return ContentDescriptorRef(ContentDescriptor{
-// 		name: param.name
-// 		schema: schemaref
-// 		description: param.description
-// 		required: param.required
-// 	})
-// }

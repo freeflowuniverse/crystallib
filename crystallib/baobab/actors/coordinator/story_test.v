@@ -27,10 +27,10 @@ pub fn testsuite_end() {
 // news the Story with the given object id
 pub fn test_new_story() ! {
 	mut actor := get(name: coordinator.actor_name)!
-	mut story_id := actor.new_story(Story{ name: 'mock_string_DQt' })!
+	mut story_id := actor.new_story(Story{ name: 'mock_string_FNl' })!
 	assert story_id == '1'
 
-	story_id = actor.new_story(Story{ name: 'mock_string_DQt' })!
+	story_id = actor.new_story(Story{ name: 'mock_string_FNl' })!
 	assert story_id == '2'
 }
 
@@ -38,7 +38,7 @@ pub fn test_new_story() ! {
 pub fn test_get_story() ! {
 	mut actor := get(name: coordinator.actor_name)!
 	mut story := Story{
-		name: 'mock_string_tTU'
+		name: 'mock_string_Lgg'
 	}
 	story.id = '${actor.new_story(story)!}'
 	assert story == actor.get_story(story.id)!
@@ -48,12 +48,12 @@ pub fn test_get_story() ! {
 pub fn test_filter_story() ! {
 	mut actor := get(name: coordinator.actor_name)!
 
-	story_id0 := actor.new_story(Story{ tag: 'mock_string_ZPz', name: 'mock_string_AMa' })!
+	story_id0 := actor.new_story(Story{ tag: 'mock_string_PZr', name: 'mock_string_cCE' })!
 	story_list0 := actor.filter_story(
 		filter: StoryFilter{
-			tag: 'mock_string_ZPz'
+			tag: 'mock_string_PZr'
 		}
 	)!
 	assert story_list0.len == 1
-	assert story_list0[0].tag == 'mock_string_ZPz'
+	assert story_list0[0].tag == 'mock_string_PZr'
 }

@@ -20,26 +20,34 @@ mut seed_dir := pathlib.get_dir(path: os.dir(@FILE))!
 mut dir_list := seed_dir.list()!
 
 code := codeparser.parse_v(seed_dir.path, recursive: true)!
-structs := code.map(it as Struct)
+structs := code.filter(it is Struct).map(it as Struct)
 
 for name, objects in actor_object_map {
 	actor_objects := structs.filter(it.name in objects)
-	actor_module := generator.generate_actor_module(name, actor_objects) or {
+	mut actor := generator.generate_actor(name, actor_objects) or {
 		println('Failed to generate actor ${name}\n${err}')
 		continue
 	}
+	
+	actor_module := actor.generate_module() or {
+		println('Failed to generate actor module ${name}\n${err}')
+		continue
+	}
+	
 	actor_module.write_v('${actors_dir}', format: true, overwrite: true) or {
 		println('Failed to generate actor ${name}\n${err}')
 		continue
 	}
 
-	actor := generator.generate_actor(name, actor_objects) or {
-		println('Failed to generate actor ${name}\n${err}')
-		continue
-	}
 
-	openrpc_module := generator.generate_openrpc_module(actor)!
+	// playground := actor.generate_playground() or {
+	// 	println('Failed to generate actor module ${name}\n${err}')
+	// 	continue
+	// }
+	actor.export_playground('${actors_dir}/${name}', '${actors_dir}/${name}/openrpc.json')!
+	actor.export_command('${actors_dir}/${name}')!
 
-	openrpc_path := '${actors_dir}/${name}/openrpc'
-	openrpc_module.write_v(openrpc_path, format: true, document: true)!
+
+	// openrpc_path := '${actors_dir}/${name}/openrpc'
+	// openrpc_module.write_v(openrpc_path, format: true, document: true)!
 }

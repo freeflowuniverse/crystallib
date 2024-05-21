@@ -23,9 +23,15 @@ pub fn (mut actor Scheduler) delete_calendar(id string) ! {
 	actor.backend.delete[Calendar](id)!
 }
 
+pub struct CalendarList {
+	items []Calendar
+}
+
 // lists all of the calendar objects
-pub fn (mut actor Scheduler) list_calendar() ![]Calendar {
-	return actor.backend.list[Calendar]()!
+pub fn (mut actor Scheduler) list_calendar() !CalendarList {
+	return CalendarList{
+		items: actor.backend.list[Calendar]()!
+	}
 }
 
 struct FilterCalendarParams {

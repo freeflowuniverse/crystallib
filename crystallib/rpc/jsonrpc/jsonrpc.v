@@ -124,13 +124,30 @@ pub fn request_params(data string) !string {
 }
 
 pub fn decode_request_id(data string) !string {
-	decoded := json.decode(JsonRpcRequestAny, data)!
+	decoded := json.decode(JsonRpcRequestAny, data) or {return error('oops $err')}
 	return decoded.id
 }
 
 pub fn jsonrpcresponse_decode[D](data string) !JsonRpcResponse[D] {
 	return json.decode(JsonRpcResponse[D], data)!
 }
+
+type Response[D] = JsonRpcResponse[D] | JsonRpcError
+
+pub fn decode_response[D](data string) !Response[D] {
+	raw := json2.raw_decode(data)!
+	if 'error' in raw.as_map() {
+		return json.decode(JsonRpcError, data)!
+	}
+	return json.decode(JsonRpcResponse[D], data)!
+}
+// pub fn decode_response[D](data string) !JsonRpcResponse[D] {
+// 	raw := json2.raw_decode(data)!
+// 	if 'error' in raw.as_map() {
+// 		return json.decode(JsonRpcError, data)!
+// 	}
+// 	return json.decode(JsonRpcResponse[D], data)!
+// }
 
 pub fn jsonrpcerror_decode(data string) !JsonRpcError {
 	return json.decode(JsonRpcError, data)!

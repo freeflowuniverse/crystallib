@@ -23,7 +23,13 @@ pub fn (mut actor Accountant) delete_budget(id string) ! {
 	actor.backend.delete[Budget](id)!
 }
 
+pub struct BudgetList {
+	items []Budget
+}
+
 // lists all of the budget objects
-pub fn (mut actor Accountant) list_budget() ![]Budget {
-	return actor.backend.list[Budget]()!
+pub fn (mut actor Accountant) list_budget() !BudgetList {
+	return BudgetList{
+		items: actor.backend.list[Budget]()!
+	}
 }

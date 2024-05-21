@@ -67,12 +67,7 @@ pub fn (mut backend Indexer) new[T](obj T) !int {
 
 // save the session to redis & mem
 pub fn (mut backend Indexer) set[T](obj T) ! {
-	mut table_name := ''
-	$for attr in T.attributes {
-		if attr.name == 'table' && attr.arg.len > 0 {
-			table_name = attr.arg
-		}
-	}
+	table_name := get_table_name[T]()
 	obj_encoded := json.encode(obj)
 
 	// todo: check table and entry exists

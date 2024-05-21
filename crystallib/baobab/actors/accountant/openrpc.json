@@ -1,0 +1,108 @@
+{
+  "openrpc": "1.0.0",
+  "info": {
+    "title": "Accountant",
+    "version": "1.0.0"
+  },
+  "methods": [
+    {
+      "name": "NewBudget",
+      "description": "news the Budget with the given object id",
+      "params": [
+        {
+          "name": "budget",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Budget"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "GetBudget",
+      "description": "gets the budget with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "$ref": "#\/components\/schemas\/Budget"
+        }
+      }
+    },
+    {
+      "name": "SetBudget",
+      "description": "gets the Budget with the given object id",
+      "params": [
+        {
+          "name": "budget",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Budget"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "name": "DeleteBudget",
+      "description": "deletes the Budget with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "name": "ListBudget",
+      "description": "lists all of the budget objects",
+      "params": [],
+      "result": {
+        "schema": {
+          "title": "BudgetList",
+          "properties": {
+            "items": {
+              "type": "array"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Budget": {
+        "title": "Budget",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "description": "expenses []Expense",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

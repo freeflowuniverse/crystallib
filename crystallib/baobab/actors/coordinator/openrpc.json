@@ -1,0 +1,110 @@
+{
+  "openrpc": "1.0.0",
+  "info": {
+    "title": "Coordinator",
+    "version": "1.0.0"
+  },
+  "methods": [
+    {
+      "name": "NewStory",
+      "description": "news the Story with the given object id",
+      "params": [
+        {
+          "name": "story",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Story"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "name": "GetStory",
+      "description": "gets the story with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "$ref": "#\/components\/schemas\/Story"
+        }
+      }
+    },
+    {
+      "name": "SetStory",
+      "description": "gets the Story with the given object id",
+      "params": [
+        {
+          "name": "story",
+          "schema": {
+            "$ref": "#\/components\/schemas\/Story"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "name": "DeleteStory",
+      "description": "deletes the Story with the given object id",
+      "params": [
+        {
+          "name": "id",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "schema": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "name": "ListStory",
+      "description": "lists all of the story objects",
+      "params": [],
+      "result": {
+        "schema": {
+          "title": "StoryList",
+          "properties": {
+            "items": {
+              "type": "array"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Story": {
+        "title": "Story",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

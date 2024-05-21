@@ -71,6 +71,69 @@ pub mut:
 	has_return  bool
 }
 
+pub fn parse_function(code_ string) !Function {
+	mut code := code_.trim_space()
+	is_pub := code.starts_with('pub ')
+	if is_pub {code = code.trim_string_left('pub ').trim_space()}
+	
+	is_fn := code.starts_with('fn ')
+	if !is_fn {	return error('invalid function format') }
+	code = code.trim_string_left('fn ').trim_space()
+
+	receiver := if code.starts_with('(') {
+		param_str := code.all_after('(').all_before(')').trim_space()
+		code = code.all_after(')').trim_space()
+		parse_param(param_str)!
+	} else {Param{}}
+
+	name := code.all_before('(').trim_space()
+	code = code.trim_string_left(name).trim_space()
+	
+	params_str := code.all_after('(').all_before(')')
+	params := if params_str.trim_space() != '' {
+		params_str_lst := params_str.split(',')
+		params_str_lst.map(parse_param(it)!)
+	} else {[]Param{}}
+	result := parse_result(code.all_after(')').all_before('{').replace(' ', ''))!
+	
+	body := if code.contains('{') {code.all_after('{').all_before_last('}')} else {''}
+	return Function{
+		name: name
+		receiver: receiver
+		params: params
+		result: result
+		body: body
+	}
+}
+
+pub fn parse_param(code_ string) !Param {
+	mut code := code_.trim_space()
+	is_mut := code.starts_with('mut ')
+	if is_mut {code = code.trim_string_left('mut ').trim_space()}
+	split := code.split(' ').filter(it != '')
+	if split.len != 2 { return error('invalid param format: ${code_}')}
+	return Param {
+		name: split[0]
+		typ: Type{symbol:split[1]}
+		mutable: is_mut
+	}
+}
+
+pub fn parse_result(code_ string) !Result {
+	code := code_.replace(' ', '')
+	
+	return Result {
+		result: code_.starts_with('!')
+		optional: code_.starts_with('?')
+		typ: Type{
+			symbol: code.trim('!?')
+			is_optional: code_.starts_with('?')
+			is_result: code_.starts_with('!')
+		}
+	}
+}
+
+
 pub struct Param {
 pub:
 	required    bool
@@ -84,7 +147,7 @@ pub:
 }
 
 pub struct Result {
-pub:
+pub mut:
 	typ         Type
 	description string
 	name        string

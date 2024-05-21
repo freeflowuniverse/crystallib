@@ -2,7 +2,7 @@ module coordinator
 
 import freeflowuniverse.crystallib.baobab.actor
 
-struct Coordinator {
+pub struct Coordinator {
 	actor.Actor
 }
 

@@ -29,7 +29,9 @@ pub fn new(config BackendConfig) !Backend {
 
 pub fn (mut backend Backend) new[T](obj_ T) !string {
 	mut obj := obj_
-	mut db := backend.dbs.get(get_table_name[T]())!
+	mut db := backend.dbs.get(get_table_name[T]()) or {
+		return error('Failed to get database for object <${T.name}>\n${err}')
+	}
 	id := backend.indexer.new[T](obj)!
 
 	$for field in T.fields {
@@ -42,15 +44,21 @@ pub fn (mut backend Backend) new[T](obj_ T) !string {
 	}
 
 	data := encoderhero.encode[T](obj)!
-	db.set('${id}', data)!
+	db.set('${id}', data) or {return error('Failed to set data ${err}')}
 	return '${id}'
 }
 
 pub fn (mut backend Backend) set[T](obj T) ! {
-	mut db := backend.dbs.get(get_table_name[T]())!
-	backend.indexer.set[T](obj)!
+	println('evoked set ${obj}')
+	mut db := backend.dbs.get(get_table_name[T]()) or {
+		return error('Failed to get database for object <${T.name}>\n${err}')
+	}
+	backend.indexer.set[T](obj) or {
+		return error('Failed to set new indices:\n${err}')
+	}
 	data := encoderhero.encode[T](obj)!
 	// TODO: see if data changed
+	println('setting new ${obj}')
 	db.set('${obj.id}', data)!
 }
 

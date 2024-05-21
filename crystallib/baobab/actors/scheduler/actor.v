@@ -2,7 +2,7 @@ module scheduler
 
 import freeflowuniverse.crystallib.baobab.actor
 
-struct Scheduler {
+pub struct Scheduler {
 	actor.Actor
 }
 

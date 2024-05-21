@@ -1,11 +1,11 @@
 module openrpc
 
-import freeflowuniverse.crystallib.core.codemodel {CustomCode, CodeItem, CodeFile, Function, Struct, Result}
+import freeflowuniverse.crystallib.core.codemodel {parse_import, Import, CustomCode, CodeItem, CodeFile, Function, Struct, Result}
 import freeflowuniverse.crystallib.rpc.jsonrpc
 import freeflowuniverse.crystallib.core.texttools
 import rand
 
-pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]Function) !CodeFile {
+pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !CodeFile {
 	name := texttools.name_fix(o.info.title)
 	
 	mut code := []CodeItem{}
@@ -14,11 +14,22 @@ pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]
 
 	// methods := jsonrpc.generate_client_methods(client_struct, o.methods.map(Function{name: it.name}))!
 	// code << methods.map(CodeItem(it))
-	
+
+	mut imports := object_map.values().map(Import {
+		mod: it.mod
+		types: [it.name]
+	})
+
+	imports << [
+		parse_import('freeflowuniverse.crystallib.rpc.jsonrpc')
+		parse_import('json')
+		parse_import('x.json2')
+	]
+
 	return CodeFile {
 		name: 'handler'
 		mod: name
-		imports: []
+		imports: imports
 		items: jsonrpc.generate_handler(
 			methods: method_map.values()
 			receiver: receiver
@@ -34,7 +45,7 @@ pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]
 // const db_dir = '${os.home_dir()}/hero/db'
 // const actor_name = 'scheduler_test_actor'
 
-pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[string]Function) !CodeFile {
+pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !CodeFile {
 	name := texttools.name_fix(o.info.title)
 	
 	handler_name := texttools.name_fix_pascal_to_snake(receiver.name)
@@ -67,8 +78,7 @@ pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[st
 			result: Result{result:true}
 			body: "mut handler := ${receiver.name}Handler {${handler_name}.get(name: actor_name)!}
 		request := new_jsonrpcrequest[${method.params[0].typ.symbol}]('${method.name}', ${get_mock_value(method.params[0].typ.symbol)!})
-		response_json := handler.handle(request.to_json())!
-		panic(response_json)"
+		response_json := handler.handle(request.to_json())!"
 		}
 		handle_tests << method_handle_test
 	}
@@ -82,14 +92,17 @@ pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[st
 	]
 
 	items << handle_tests.map(CodeItem(it))
+
+	mut imports := object_map.values().map(Import {
+		mod: it.mod
+		types: [it.name]
+	})
+	imports << codemodel.parse_import('freeflowuniverse.crystallib.rpc.jsonrpc {new_jsonrpcrequest, jsonrpcresponse_decode, jsonrpcerror_decode}')
+
 	return CodeFile {
 		name: 'handler_test'
 		mod: name
-		imports: [
-			codemodel.parse_import('freeflowuniverse.crystallib.rpc.jsonrpc {new_jsonrpcrequest, jsonrpcresponse_decode, jsonrpcerror_decode}')
-			codemodel.parse_import('freeflowuniverse.crystallib.baobab.actors.scheduler')
-			codemodel.parse_import('freeflowuniverse.crystallib.baobab.seeds.schedule {Calendar}')
-		]
+		imports: imports
 		items: items
 	}
 }

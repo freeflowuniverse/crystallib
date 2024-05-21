@@ -1,6 +1,6 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel {StructField, Import,Param,Struct CodeFile, CustomCode, Function, CodeItem, Type}
+import freeflowuniverse.crystallib.core.codemodel {Result, StructField, Import,Param,Struct CodeFile, CustomCode, Function, CodeItem, Type}
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import os
@@ -26,6 +26,7 @@ pub fn generate_object_code(actor Struct, object Struct) CodeFile {
 			generate_get_method(actor, object),
 			generate_set_method(actor, object),
 			generate_delete_method(actor, object),
+			generate_list_result_struct(actor, object),
 			generate_list_method(actor, object),
 		]
 	)
@@ -180,16 +181,32 @@ fn generate_new_method(actor Struct, object Struct) codemodel.Function {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
+fn generate_list_result_struct(actor Struct, object Struct) codemodel.Struct {
+	object_name := texttools.name_fix(object.name)
+	object_type := object.name
+	return Struct{
+		name:'${object_type}List'
+		is_pub: true 
+		fields: [StructField{name:'items' typ:Type{symbol:'[]${object_type}'}}]
+	}
+}
+
+// generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_list_method(actor Struct, object Struct) codemodel.Function {
 	object_name := texttools.name_fix(object.name)
 	object_type := object.name
+
+	list_struct := Struct{name:'${object_type}List' fields: [StructField{name:'items' typ:Type{symbol:'[]${object_type}'}}]}
 
 	param_getters := generate_param_getters(
 		structure: object
 		prefix: ''
 		only_mutable: false
 	)
-	body := "return actor.backend.list[${object_type}]()!"
+	body := "return ${object_type}List{items:actor.backend.list[${object_type}]()!}"
+	mut result := Result{structure: generate_list_result_struct(actor, object)}
+	result.typ.symbol = result.structure.name
+	result.result = true
 	new_method := codemodel.Function{
 		name: 'list_${object.name.to_lower()}'
 		description: 'lists all of the ${object_name} objects'
@@ -201,10 +218,7 @@ fn generate_list_method(actor Struct, object Struct) codemodel.Function {
 			mutable: true
 		}
 		params: []
-		result: codemodel.Result{
-			typ: Type{symbol:'[]${object_type}'}
-			result: true
-		}
+		result: result
 		body: body
 	}
 	return new_method

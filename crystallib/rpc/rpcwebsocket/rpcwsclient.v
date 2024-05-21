@@ -34,11 +34,11 @@ pub fn (mut w RpcWsClient) run() ! {
 }
 
 pub fn (mut w RpcWsClient) send(message string, timeout int) !string {
-	w.logger.debug('Sending message ${message}')
+	// w.logger.debug('Sending message ${message}')
 	_ := w.client.write_string(message)!
 	select {
 		response := <-w.channel_incoming_messages {
-			w.logger.debug('Received answer ${response}')
+			// w.logger.debug('Received answer ${response}')
 			return response
 		}
 		timeout * time.millisecond {}
@@ -70,5 +70,17 @@ pub fn new_rpcwsclient(address string, logger &log.Logger) !&RpcWsClient {
 	}
 	c.on_message(rpcwsclient.on_message)
 	c.connect()!
+	return &rpcwsclient
+}
+
+pub fn new_client(address string, logger &log.Logger) !&RpcWsClient {
+	mut c := websocket.new_client(address, websocket.ClientOpt{})!
+	mut rpcwsclient := RpcWsClient{
+		client: c
+		channel_incoming_messages: chan string{}
+		logger: unsafe { logger }
+	}
+	c.on_message(rpcwsclient.on_message)
+	c.connect() or {return error('Websocket client failed to connect:\n${err}')}
 	return &rpcwsclient
 }

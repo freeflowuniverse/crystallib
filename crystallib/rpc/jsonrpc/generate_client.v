@@ -1,6 +1,6 @@
 module jsonrpc
 
-import freeflowuniverse.crystallib.core.codemodel {CodeItem, Result, Param, Attribute, Type, StructField, Function, Module, CodeFile, Struct}
+import freeflowuniverse.crystallib.core.codemodel {parse_import,parse_function, CodeItem, Result, Param, Attribute, Type, StructField, Function, Module, CodeFile, Struct}
 import freeflowuniverse.crystallib.core.texttools
 
 pub struct GenerateClientConfig {
@@ -9,7 +9,7 @@ pub struct GenerateClientConfig {
 }
 
 pub fn generate_client(config GenerateClientConfig) Module {
-	factory_file := generate_client_factory(config.name)
+	factory_file := generate_client_factory(config.name) or {panic(err)}
 	return Module{
 		files:[
 			factory_file
@@ -18,10 +18,10 @@ pub fn generate_client(config GenerateClientConfig) Module {
 } 
 
 // generate_client_factory generates a factory code file with factory functions for the client
-pub fn generate_client_factory(name string) CodeFile {
+pub fn generate_client_factory(name string) !CodeFile {
 	mut code := []CodeItem{}
 	code << generate_client_struct(name)
-	code << generate_ws_factory_code(name)
+	code << generate_ws_factory_code(name)!
 	
 	return CodeFile {
 		mod: name
@@ -32,27 +32,28 @@ pub fn generate_client_factory(name string) CodeFile {
 
 pub fn generate_client_struct(name string) Struct {
 	return Struct {
-		is_pub: true
 		name: texttools.name_fix_snake_to_pascal(name)
 		fields: [
 			StructField{
 				name: 'transport'
 				typ: Type{ symbol: 'jsonrpc.IRpcTransportClient'}
-				is_ref: true
+				is_mut: true
 			}
 		]
 	}
 }
 
-pub fn generate_ws_factory_code(name_ string) []CodeItem {
+pub fn generate_ws_factory_code(name_ string) ![]CodeItem {
 	name := texttools.name_fix_snake_to_pascal(name_)
 	ws_factory_param := Struct {
 		name: 'WsClientConfig'
+		is_pub: true
 		attrs: [Attribute{name: 'params'}]
 		fields: [
 			StructField{
 				name: 'address'
 				typ:Type{symbol:'string'}
+				attrs: [Attribute{name:'required'}]
 			},
 			StructField{
 				name: 'logger'
@@ -61,25 +62,15 @@ pub fn generate_ws_factory_code(name_ string) []CodeItem {
 		]
 	}
 
-	ws_factory_function := Function {
-		is_pub: true
-		name: 'new_ws_client'
-		params: [
-			Param{
-				name: 'config'
-				typ: Type{symbol:'WsClientConfig'}
-			}
-		]
-		body: 'mut transport := rpcwebsocket.new_rpcwsclient(config.address, config.logger)!
-	spawn transport.run()
-	return ${name} {
-		transport: transport
-	}'
-		result: Result{
-			result: true
-			typ: Type{symbol: name}
-		}
+	mut ws_factory_function := parse_function('pub fn new_ws_client(config WsClientConfig) !&${name}')!
+	ws_factory_function.body = "mut transport := rpcwebsocket.new_rpcwsclient(config.address, config.logger) or {
+		return error('Failed to create RPC Websocket Client\\n\${err}')
 	}
+	spawn transport.run()
+	c := ${name} {
+		transport: transport
+	}
+	return &c"
 	return [ws_factory_param, ws_factory_function]
 }
 
@@ -104,22 +95,30 @@ pub fn generate_client_method(client_struct Struct, method Function) !Function {
 	}
 
 	return_stmt := if method.result.typ.symbol == '' {
-		'_ := client.transport.send(request.to_json(), 6000)!'
+		'resp_json := client.transport.send(request.to_json(), 6000)!
+	response := jsonrpc.decode_response[string](resp_json)!
+	if response is jsonrpc.JsonRpcError {
+		return response.error
+	}'
 	} else {
-		'response := client.transport.send(request.to_json(), 6000)!
-		return json.decode(${method.result.typ.symbol}, response)!"
-		'
+		'resp_json := client.transport.send(request.to_json(), 6000)!
+		response := jsonrpc.decode_response[${method.result.typ.symbol}](resp_json)!
+		if response is jsonrpc.JsonRpcError {
+			return response.error
+		}
+		return (response as jsonrpc.JsonRpcResponse[${method.result.typ.symbol}]).result'
 	}
 
-	return Function {
+	println('debugzone ${method}')
+	mut func := Function {
 		...method
 		receiver: Param {
 			name: 'client'
 			typ: Type{symbol:client_struct.name}
-		}
-		result: Result {
-			optional: true
+			mutable: true
 		}
 		body: "${request_stmt}\n${return_stmt}"
 	}
+	func.result.result = true
+	return func
 }

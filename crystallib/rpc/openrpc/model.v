@@ -100,6 +100,7 @@ pub mut:
 // The Example Pairing object consists of a set of example params and result.
 // The result is what you can expect from the JSON-RPC service given the exact params.
 pub struct ExamplePairing {
+pub mut:
 	name        ?string       // Name for the example pairing.
 	description ?string       // A verbose explanation of the example pairing.
 	summary     ?string       // Short description for the example pairing.

@@ -2,7 +2,7 @@ module accountant
 
 import freeflowuniverse.crystallib.baobab.actor
 
-struct Accountant {
+pub struct Accountant {
 	actor.Actor
 }
 
