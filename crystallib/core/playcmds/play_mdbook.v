@@ -66,6 +66,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		build_path := p.get_default('build_path', '')!
 		printbook := p.get_default_false('printbook')
 		foldlevel := p.get_int_default('foldlevel', 0)!
+		debug := p.get_default_false('debug')
 
 		buildroot_book := '${buildroot}/${name}'
 		tree.export(dest: buildroot_book, reset: true)!
@@ -85,6 +86,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 			build_path: build_path
 			printbook: printbook
 			foldlevel: foldlevel
+			debug: debug
 		)!
 		action.done = true
 	}

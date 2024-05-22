@@ -33,6 +33,8 @@ pub mut:
 	doctree_path string
 	publish_path string
 	build_path   string
+
+	debug bool
 }
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
@@ -97,7 +99,7 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		books: &books
 	}
 
-	mut summary := book.summary()!
+	mut summary := book.summary(args_.debug)!
 
 	// create the additional collection (is a system collection)
 	addpath := '${book.path_build.path}/src/additional'
