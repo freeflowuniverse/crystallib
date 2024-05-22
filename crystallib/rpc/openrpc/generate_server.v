@@ -17,7 +17,6 @@ import freeflowuniverse.crystallib.core.texttools
 pub fn (o OpenRPC) generate_server_file() !CodeFile {
 	name := texttools.name_fix(o.info.title)
 	mut handle_ws_fn := parse_function('pub fn (mut handler ${name.title()}Handler) handle_ws(client &websocket.Client, message string) string ')!
-	println('debuugzz ${handle_ws_fn}')
 	handle_ws_fn.body = "return handler.handle(message) or { panic(err) }"
 
 	mut run_wsserver_fn := parse_function('pub fn run_wsserver(port int) !')!
@@ -44,7 +43,6 @@ pub fn (o OpenRPC) generate_server_file() !CodeFile {
 pub fn (o OpenRPC) generate_server_test_file() !CodeFile {
 	name := texttools.name_fix(o.info.title)
 	// mut handle_ws_fn := parse_function('pub fn (mut handler ${name.title()}Handler) handle_ws(client &websocket.Client, message string) string ')!
-	// println('debuugzz ${handle_ws_fn}')
 	// handle_ws_fn.body = "return handler.handle(message) or { panic(err) }"
 
 	// mut run_wsserver_fn := parse_function('pub fn run_wsserver(port int) !')!

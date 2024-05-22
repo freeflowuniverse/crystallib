@@ -10,7 +10,7 @@ import os
 
 pub struct Playground {
 	vweb.Context
-	dest pathlib.Path @[vweb_global]
+	build pathlib.Path @[vweb_global]
 }
 
 @[params]
@@ -44,10 +44,14 @@ pub fn export_playground(config PlaygroundConfig) ! {
 	project.export(config.dest)!
 }
 
+const build_path = '${os.dir(@FILE)}/playground'
+
 pub fn new_playground(config PlaygroundConfig) !&Playground {
-	mut pg := Playground{dest: config.dest}
+	build_dir := pathlib.get_dir(path: build_path)!
+	mut pg := Playground{build: build_dir}
 	pg.serve_examples(config.specs)!
-	pg.mount_static_folder_at('${config.dest.path}/static', '/static')
+	pg.mount_static_folder_at('${build_dir.path}/static', '/static')
+	pg.serve_static('/env.js', '${build_dir.path}/env.js')
 	return &pg
 }
 
@@ -86,7 +90,7 @@ fn (mut pg Playground) serve_examples(specs_ []pathlib.Path) ! {
 }
 
 pub fn (mut pg Playground) index() vweb.Result {
-	mut index := pathlib.get_file(path: '${pg.dest.path}/index.html') or {
+	mut index := pathlib.get_file(path: '${pg.build.path}/index.html') or {
 		panic(err)
 	}
 	return pg.html(index.read() or {panic(err)})
