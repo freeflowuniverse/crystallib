@@ -43,7 +43,7 @@ pub fn (self Table) header_markdown() !string {
 	return '| ${out.join(' | ')} |\n'
 }
 
-fn (self Row) markdown() !string {
+fn (mut self Row) markdown() !string {
 	mut out := []string{}
 	for c in self.cells {
 		out << c.markdown()!
@@ -52,7 +52,7 @@ fn (self Row) markdown() !string {
 	return '| ${out.join(' | ')} |\n'
 }
 
-pub fn (self Table) markdown() !string {
+pub fn (mut self Table) markdown() !string {
 	mut out := self.header_markdown()!
 	// TODO: default alignment row, currently if emtpy table doesnt render
 	// TODO: should render and format nicely (so all columns have same width once rendering)
@@ -68,11 +68,11 @@ pub fn (self Table) markdown() !string {
 	return '${out}'
 }
 
-pub fn (self Table) pug() !string {
+pub fn (mut self Table) pug() !string {
 	return error('cannot return pug, not implemented')
 }
 
-pub fn (self Table) html() !string {
+pub fn (mut self Table) html() !string {
 	// TODO: implement html
 	panic('implement')
 }

@@ -68,18 +68,25 @@ pub mut:
 // make sure the macro's are being executed
 pub fn (mut page Page) export(args_ PageExportArgs) !&Doc {
 	mut args := args_
-	// if args.dest == '' {
-	// 	args.dest = page.path.path
-	// }
-	mut doc := markdownparser.new(content: page.doc()!.markdown()!)!
-	page.doc_ = &doc
 
-	println(' ++++ export: ${page.name} -> ${args.dest}')
+	// QUESTION: whay was this done?
+	// mut doc := markdownparser.new(content: page.doc()!.markdown()!)!
+	// page.doc_ = &doc
+
+	//println(' ++++ export: ${page.name} -> ${args.dest}')
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	dirpath := p.parent()!
 	// mut mydoc := page.doc()!
+	println("pageexport ${page.name} 0")
+	println(page.doc_)
 	mut mydoc := page.doc_process_link(dest: dirpath.path)!
+	println("pageexport ${page.name} 1")
+	println(mydoc)
 	p.write(mydoc.markdown()!)!
+	println("pageexport ${page.name} 2")
+	if page.name=="solana"{
+		panic("sss")
+	}
 	return mydoc
 }
 

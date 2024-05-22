@@ -22,17 +22,17 @@ fn (mut self Paragraph) process() !int {
 	return 1
 }
 
-fn (self Paragraph) markdown() !string {
+fn (mut self Paragraph) markdown() !string {
 	mut out := self.DocBase.markdown()!
 	// out += self.content  // the children should have all the content
 	return out
 }
 
-pub fn (self Paragraph) pug() !string {
+pub fn (mut self Paragraph) pug() !string {
 	return error('cannot return pug, not implemented')
 }
 
-fn (self Paragraph) html() !string {
+fn (mut self Paragraph) html() !string {
 	mut out := self.DocBase.html()! // the children should have all the content
 	return out
 }

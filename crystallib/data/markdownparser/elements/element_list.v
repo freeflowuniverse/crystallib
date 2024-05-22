@@ -103,7 +103,7 @@ fn parse_list_level(mut docparent ?&Doc, line_index int, lines []string) !(List,
 	return list, lines.len
 }
 
-pub fn (self List) markdown() !string {
+pub fn (mut self List) markdown() !string {
 	mut h := ''
 	for _ in 0 .. self.indentation * 4 {
 		h += ' '
@@ -126,7 +126,7 @@ pub fn (self List) markdown() !string {
 	return out
 }
 
-fn (self List) ordered_list_markdown(indentation string, order_start int) !string {
+fn (mut self List) ordered_list_markdown(indentation string, order_start int) !string {
 	mut out, mut order := '', order_start
 	for child in self.children {
 		if child is ListItem {
@@ -141,11 +141,11 @@ fn (self List) ordered_list_markdown(indentation string, order_start int) !strin
 	return out
 }
 
-pub fn (self List) pug() !string {
+pub fn (mut self List) pug() !string {
 	return error('cannot return pug, not implemented')
 }
 
-pub fn (self List) html() !string {
+pub fn (mut self List) html() !string {
 	panic('implement')
 	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
 }

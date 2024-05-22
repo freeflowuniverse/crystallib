@@ -29,7 +29,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 
 	mut collection := page.collection()!
 	args.done << page.name
-	println(' ++++ doc: ${collection.name}:${page.name} -> ${args.dest} ')
+	//println(' ++++ doc: ${collection.name}:${page.name} -> ${args.dest} ')
 
 	// find the links, and for each link check if collection is same, is not need to copy
 	for mut element in mydoc.children_recursive() {
@@ -42,7 +42,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 			}
 			pointername := '${site}:${name}'
 			if element.cat == .image {
-				println('POINTER IMAGE: ' + pointername)
+				//println('POINTER IMAGE: ' + pointername)
 				if page.tree.image_exists(pointername) {
 					mut linkimage := page.tree.image_get(pointername)!
 					// println(" ------- image exists: ${pointername}")
@@ -52,10 +52,21 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 					}
 					element.path = 'img'
 					element.filename = linkimage.file_name()
+					println("${element.filename} 1")
 					mut out := element.markdown()!
+
+					if element.filename.contains("solana.png"){
+						println("${element.filename} 2")
+						println(element)
+						println(out)
+						println("${element.filename} 3")
+						//panic("Sdsd")						
+					}					
 					mydoc.content_set(element.id, out)
+					println("${element.filename} 4")
 					element.processed = false
 					element.process()!
+					println("${element.filename} 5")
 				} else {
 					collection.error(
 						path: page.path
@@ -65,20 +76,20 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 				}
 				element.state = .linkprocessed
 			} else if element.cat == .page {
-				println('POINTER PAGE: ' + pointername)
+				//println('POINTER PAGE: ' + pointername)
 				if page.tree.page_exists(pointername) {
 					mut linkpage := page.tree.page_get(pointername)!
 					// this is to remember the pages which are linked
 					if pointername !in mydoc.linked_pages {
 						mydoc.linked_pages << pointername
 					}
-					println(' ------- page exists: ${pointername}')
+					//println(' ------- page exists: ${pointername}')
 					mut collection_linkpage := linkpage.collection()!
-					println('${collection_linkpage.name}   ----   ${collection.name}  ')
+					//println('${collection_linkpage.name}   ----   ${collection.name}  ')
 					if args.dest.len > 0 {
 						if linkpage.name !in args.done {
 							mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
-							println(' ------- COPY TO: ${dest_page_copy}')
+							//println(' ------- COPY TO: ${dest_page_copy}')
 							mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
 							linkdoc := linkpage.doc_process_link(args)!
 							p_linked.write(linkdoc.markdown()!)!
@@ -86,7 +97,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 						args.done << linkpage.name
 					}
 					mut out := '[${element.description}](${linkpage.name}.md)'
-					println(' ------- LINKPAGE SET: ${out}')
+					//println(' ------- LINKPAGE SET: ${out}')
 					mydoc.content_set(element.id, out)
 					element.state = .linkprocessed
 				} else {

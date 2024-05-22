@@ -59,7 +59,7 @@ pub fn (mut self Link) process() !int {
 	return 1
 }
 
-fn (self Link) markdown_include() string {
+fn (mut self Link) markdown_include() string {
 	// println(" ----- LINK MARKDOWN INCLUDE ${self.url} ${self.cat}")
 	pd := self.parent_doc_ or { panic('bug there should always be parent_doc') }
 
@@ -96,7 +96,7 @@ fn (self Link) markdown_include() string {
 	return out
 }
 
-pub fn (self Link) markdown() !string {
+pub fn (mut self Link) markdown() !string {
 	if self.url.contains('header_new') {
 		print_backtrace()
 	}
@@ -132,6 +132,14 @@ pub fn (self Link) markdown() !string {
 		} else {
 			out = '${pre}[${description}](${link_filename}${anchor} ${self.extra})'
 		}
+		if link_filename.contains("solana.png"){
+			println(self)
+			println(link_filename)
+			if self.path.len>0{
+				panic("Sdsd")
+			}
+			
+		}
 	} else if self.cat == LinkType.html {
 		out = '[${description}](${self.url})'
 	} else {
@@ -156,7 +164,7 @@ pub fn (self Link) markdown() !string {
 	return out
 }
 
-pub fn (self Link) html() !string {
+pub fn (mut self Link) html() !string {
 	panic('implement')
 	// TODO: implement	
 	return ''

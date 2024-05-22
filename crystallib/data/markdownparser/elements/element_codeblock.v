@@ -32,7 +32,7 @@ pub fn (mut self Codeblock) process() !int {
 	return 1
 }
 
-pub fn (self Codeblock) markdown() !string {
+pub fn (mut self Codeblock) markdown() !string {
 	mut out := ''
 	out += '```${self.category}\n'
 
@@ -48,12 +48,12 @@ pub fn (self Codeblock) markdown() !string {
 	return out
 }
 
-pub fn (self Codeblock) html() !string {
+pub fn (mut self Codeblock) html() !string {
 	panic('implement')
 	// TODO: implement html
 	return ''
 }
 
-pub fn (self Codeblock) pug() !string {
+pub fn (mut self Codeblock) pug() !string {
 	return error('cannot return pug, not implemented')
 }

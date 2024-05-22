@@ -52,9 +52,9 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		if !os.exists(dest.path_dir()) {
 			os.mkdir_all(dest.path_dir())!
 		}
-		$if debug {
-			console.print_debug(' copy: ${path.path} ${dest.path}')
-		}
+		// $if debug {
+		// 	console.print_debug(' copy: ${path.path} ${dest.path}')
+		// }
 		os.cp_all(path.path, dest.path, true)! // Always overwite if needed
 
 		dest.check()

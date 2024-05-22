@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.smartid
 // import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.core.base
 
 @[heap]
 pub struct DocBase {
@@ -15,11 +14,9 @@ pub mut:
 	content   string
 	path      ?pathlib.Path
 	processed bool
-	// params    paramsparser.Params
 	type_name string
 	changed   bool
-	children  []Element
-	// trailing_lf bool = true // NO LONGER NEEDED !!!!
+	children  []&Element
 }
 
 fn (mut self DocBase) process_base() ! {
@@ -59,10 +56,10 @@ pub mut:
 }
 
 // get all actions from the children
-pub fn (self DocBase) actions(args ActionsGetArgs) []playbook.Action {
-	mut out := []playbook.Action{}
-	for element in self.children {
-		if element is Action {
+pub fn (mut self DocBase) actions(args ActionsGetArgs) []&playbook.Action {
+	mut out := []&playbook.Action{}
+	for mut element in self.children {
+		if mut element is Action {
 			mut found := true
 			if args.actor.len > 0 && args.actor != element.action.actor {
 				found = false
@@ -120,39 +117,39 @@ pub fn (mut self DocBase) defpointers() []&Def {
 	return out
 }
 
-pub fn (self DocBase) treeview() string {
+pub fn (mut self DocBase) treeview() string {
 	mut out := []string{}
 	self.treeview_('', mut out)
 	return out.join_lines()
 }
 
-pub fn (self DocBase) children() []Element {
+pub fn (mut self DocBase) children() []&Element {
 	return self.children
 }
 
 pub fn (mut self DocBase) process_children() !int {
 	mut changes := 0
-	for mut element in self.children {
+	for mut element in mut self.children {
 		changes += element.process()!
 	}
 	return changes
 }
 
-fn (self DocBase) treeview_(prefix string, mut out []string) {
+fn (mut self DocBase) treeview_(prefix string, mut out []string) {
 	mut c := self.content
 	c = c.replace('\n', '\\n')
 	if c.len > 80 {
 		c = c[0..80]
 	}
 	out << '${prefix}- ${self.id} : ${self.type_name:-30}  ${c.len}  \'${c}\''
-	for mut element in self.children() {
+	for mut element in mut self.children() {
 		element.treeview_(prefix + ' ', mut out)
 	}
 }
 
-pub fn (self DocBase) html() !string {
+pub fn (mut self DocBase) html() !string {
 	mut out := ''
-	for mut element in self.children() {
+	for mut element in mut self.children() {
 		out += element.html()!
 	}
 	return out
@@ -160,18 +157,18 @@ pub fn (self DocBase) html() !string {
 
 // example see https://github.com/RelaxedJS/ReLaXed-examples/blob/master/examples/letter/letter.pug
 // is to generate pdf's
-pub fn (self DocBase) pug() !string {
+pub fn (mut self DocBase) pug() !string {
 	mut out := ''
-	for mut element in self.children() {
+	for mut element in mut self.children() {
 		out += element.pug()!
 	}
 	return out
 }
 
 // the markdown which represents how it created the element
-pub fn (self DocBase) markdown() !string {
+pub fn (mut self DocBase) markdown() !string {
 	mut out := ''
-	for mut element in self.children() {
+	for mut element in mut self.children() {
 		out += element.markdown()!
 		// println("+++++++++++${element.markdown()!}+++++++++++")
 		// if element.trailing_lf {
@@ -181,7 +178,7 @@ pub fn (self DocBase) markdown() !string {
 	return out
 }
 
-pub fn (self DocBase) last() !Element {
+pub fn (self DocBase) last() !&Element {
 	if self.children.len == 0 {
 		return error('doc has no children')
 	}
@@ -206,16 +203,16 @@ pub fn (mut self DocBase) content_set(element_id int, c string) {
 	}
 }
 
-pub fn (self DocBase) children_recursive() []Element {
-	mut elements := []Element{}
-	self.children_recursive_(mut elements)
+pub fn (mut self DocBase) children_recursive() []&Element {
+	mut elements := []&Element{}
+	self.children_recursive_( mut elements)
 	return elements
 }
 
-fn (self DocBase) children_recursive_(mut elements []Element) {
-	for element in self.children() {
+fn (mut self DocBase) children_recursive_(mut elements []&Element) {
+	for mut element in self.children() {
 		elements << element
-		element.children_recursive_(mut elements)
+		element.children_recursive_( mut elements)
 	}
 }
 

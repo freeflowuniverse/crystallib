@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.playbook
 pub struct Action {
 	DocBase
 pub mut:
-	action           playbook.Action
+	action           &playbook.Action
 	action_processed bool
 }
 
@@ -25,7 +25,7 @@ pub fn (mut self Action) process() !int {
 	return 1
 }
 
-pub fn (self Action) markdown() !string {
+pub fn (mut self Action) markdown() !string {
 	assert self.processed // needs to be processed before getting the markdown
 	// if content set then we know the action was processed
 	if self.action_processed || self.content != '' {
@@ -35,10 +35,10 @@ pub fn (self Action) markdown() !string {
 	return self.action.heroscript()
 }
 
-pub fn (self Action) html() !string {
+pub fn (mut self Action) html() !string {
 	return error('cannot return html, because there should be no actions left once we get to html')
 }
 
-pub fn (self Action) pug() !string {
+pub fn (mut self Action) pug() !string {
 	return error('cannot return html, because there should be no actions left once we get to html')
 }

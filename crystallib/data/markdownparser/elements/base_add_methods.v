@@ -1,4 +1,5 @@
 module elements
+import freeflowuniverse.crystallib.core.playbook
 
 pub fn (mut base DocBase) paragraph_new(mut docparent ?&Doc, content string) &Paragraph {
 	mut a := Paragraph{
@@ -16,6 +17,7 @@ pub fn (mut base DocBase) action_new(mut docparent ?&Doc, content string) &Actio
 		content: content
 		type_name: 'action'
 		parent_doc_: docparent
+		action:&playbook.Action{}
 	}
 	base.children << a
 	return &a

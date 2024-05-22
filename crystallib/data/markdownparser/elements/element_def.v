@@ -31,7 +31,7 @@ pub fn (mut self Def) process_link() ! {
 	self.processed = true
 }
 
-pub fn (self Def) markdown() !string {
+pub fn (mut self Def) markdown() !string {
 	if !self.processed {
 		// return error('cannot do markdown for ${self} as long as not processed')		
 		return self.content
@@ -40,14 +40,14 @@ pub fn (self Def) markdown() !string {
 	return self.DocBase.markdown() // for children
 }
 
-pub fn (self Def) html() !string {
+pub fn (mut self Def) html() !string {
 	if !self.processed {
 		return error('cannot do markdown for ${self} as long as not processed')
 	}
 	return self.DocBase.html() // for children
 }
 
-pub fn (self Def) pug() !string {
+pub fn (mut self Def) pug() !string {
 	if !self.processed {
 		return error('cannot do markdown for ${self} as long as not processed')
 	}

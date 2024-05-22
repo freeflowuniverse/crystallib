@@ -47,19 +47,19 @@ fn (mut self ListItem) parse() ! {
 	p.process()!
 }
 
-fn (self ListItem) calculate_indentation() int {
+fn (mut self ListItem) calculate_indentation() int {
 	return int(math.ceil(f64(self.depth) / 4.0))
 }
 
-pub fn (self ListItem) markdown() !string {
+pub fn (mut self ListItem) markdown() !string {
 	return self.DocBase.markdown()!
 }
 
-pub fn (self ListItem) pug() !string {
+pub fn (mut self ListItem) pug() !string {
 	return error('cannot return pug, not implemented')
 }
 
-pub fn (self ListItem) html() !string {
+pub fn (mut self ListItem) html() !string {
 	panic('implement')
 	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
 }
