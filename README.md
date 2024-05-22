@@ -1,5 +1,25 @@
 
-# Crystallib
+# Crystallib  / Hero
+
+## Install Hero
+
+hero is our "hero" tool to execute heroscript, deal with git, ...
+
+hero will be installed in
+
+- /usr/local/bin for linux
+- ~/hero/bin for osx
+
+```bash
+curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh > /tmp/hero_install.sh
+bash /tmp/hero_install.sh
+#to debug
+bash -x /tmp/hero_install.sh
+#to use hero make sure you restart your shell or you do (if osx)
+source ~/.zprofile 
+#check how to use, can also do on each of the subcommands
+hero -help
+```
 
 ## Get started with crystallib
 
@@ -39,8 +59,6 @@ export SERVER=65.21.132.119
 ```
 
 
-
-
 ### alternative with manual git checkout & v install
 
 requirements
@@ -74,27 +92,7 @@ cd ~/code/github/freeflowuniverse/crystallib
 bash doc.sh
 ```
 
-## Install Hero
 
-hero is our "hero" tool to execute heroscript, deal with git, ...
-
-hero will be installed in
-
-- /usr/local/bin for linux
-- ~/hero/bin for osx
-
-```bash
-curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh > /tmp/hero_install.sh
-bash /tmp/hero_install.sh
-#to debug
-bash -x /tmp/hero_install.sh
-#maybe you want to copy to your system bin dir
-cp ~/hero/bin/hero /usr/local/bin
-#to use hero make sure you restart your shell or you do (if osx)
-source ~/.zprofile 
-#check how to use, can also do on each of the subcommands
-hero -help
-```
 
 requirements
 
