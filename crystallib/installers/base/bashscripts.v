@@ -1,9 +1,22 @@
 module base
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.texttools
 import os
 
 const scriptspath = os.dir(@FILE) + '/../../../scripts'
+
+
+fn script_write(mybase string, name string, cmd_ string)!{
+	cmd:=texttools.dedent(cmd_)
+	mut out := '${mybase}\n'
+	for line in cmd.split_into_lines(){
+		out+="${line}\n"
+	}
+	mut p := pathlib.get_file(path: '${base.scriptspath}/${name}.sh', create: true)!
+	p.write(out)!
+	os.chmod(p.path, 0o777)!	
+}
 
 pub fn bash_installers_package() !string {
 	l := '
@@ -30,22 +43,29 @@ pub fn bash_installers_package() !string {
 		out += c
 	}
 
-	mut p := pathlib.get_file(path: '${base.scriptspath}/installer_base.sh', create: true)!
-	p.write(out)!
-	os.chmod(p.path, 0o777)!
+	script_write(out,"install_base","
+			echo 'V & BASE INSTALL OK'
+		")!
 
-	out2 := '${out}\nfreeflow_dev_env_install\n\n\n V & CRYSTAL INSTALL OK\n'
+	script_write(out,"installer","
+		freeflow_dev_env_install
+		echo 'V & CRYSTAL INSTALL OK'
+		")!
 
-	mut p2 := pathlib.get_file(path: '${base.scriptspath}/installer.sh', create: true)!
-	p2.write(out2)!
-	os.chmod(p2.path, 0o777)!
+	script_write(out,"build_hero","
+		hero_build
+		echo 'BUILD HERO OK'
+		")!
 
-	out3 := '${out}\nhero_build\n\n\necho HERO, V, CRYSTAL ALL OK\necho WE ARE READY TO HERO...'
+	script_write(out,"install_hero","
+		hero_install
+		echo 'BUILD HERO OK'
+		")!								
 
-	mut p3 := pathlib.get_file(path: '${base.scriptspath}/build_hero.sh', create: true)!
-	p3.write(out3)!
-	os.chmod(p3.path, 0o777)!
+
 
 	mut p4 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
 	return p4.path
+
+
 }

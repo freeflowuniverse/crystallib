@@ -154,27 +154,27 @@ function zinitinit {
 
 }
 
-#!/bin/bash
-function zinittmuxinit {
-	# Specify the name of the tmux session and window
-	tmux_session="zinit"
-	tmux_window="zinit"
-	command_to_execute="zinit init"
-	# Check if tmux is installed
-	if ! command -v tmux &>/dev/null; then
-		echo "tmux is not installed. Please install it before running this script."
-		exit 1
-	fi
-	# Check if the tmux session exists
-	if tmux has-session -t "$tmux_session" &>/dev/null; then
-		# If the session exists, check if the window exists
-		if tmux list-windows -t "$tmux_session" | grep -q "$tmux_window"; then
-			# If the window exists, kill it
-			tmux kill-window -t "$tmux_session:$tmux_window"
-		fi
-	fi
-	# Start a new tmux session with the desired window and execute the command
-	tmux new-session -d -s "$tmux_session" -n "$tmux_window"
-	tmux send-keys -t "$tmux_session:$tmux_window" "$command_to_execute" C-m
-	echo "Started a new tmux session with window '$tmux_window' and executed '$command_to_execute'."
-}
+# #!/bin/bash
+# function zinittmuxinit {
+# 	# Specify the name of the tmux session and window
+# 	tmux_session="zinit"
+# 	tmux_window="zinit"
+# 	command_to_execute="zinit init"
+# 	# Check if tmux is installed
+# 	if ! command -v tmux &>/dev/null; then
+# 		echo "tmux is not installed. Please install it before running this script."
+# 		exit 1
+# 	fi
+# 	# Check if the tmux session exists
+# 	if tmux has-session -t "$tmux_session" &>/dev/null; then
+# 		# If the session exists, check if the window exists
+# 		if tmux list-windows -t "$tmux_session" | grep -q "$tmux_window"; then
+# 			# If the window exists, kill it
+# 			tmux kill-window -t "$tmux_session:$tmux_window"
+# 		fi
+# 	fi
+# 	# Start a new tmux session with the desired window and execute the command
+# 	tmux new-session -d -s "$tmux_session" -n "$tmux_window"
+# 	tmux send-keys -t "$tmux_session:$tmux_window" "$command_to_execute" C-m
+# 	echo "Started a new tmux session with window '$tmux_window' and executed '$command_to_execute'."
+# }

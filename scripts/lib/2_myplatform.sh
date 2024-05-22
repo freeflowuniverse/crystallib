@@ -29,3 +29,26 @@ function myplatform {
 
 }
 
+function is_root {
+    if [ "$(whoami)" != "root" ]; then
+        echo "This script must be run as root or with sudo."
+        exit 1
+    fi
+
+}
+
+# Function to check if systemd is installed
+function is_systemd_installed {
+    [ "$(ps -p 1 -o comm=)" = "systemd" ]
+}
+
+# Function to check if init.d is installed
+function is_initd_installed {
+    [ -d /etc/init.d ]
+}
+
+function is_zinit_installed {
+    [ "$(ps -p 1 -o comm=)" = "zinit" ]
+}
+
+
