@@ -61,6 +61,10 @@ pub fn (mut db DB) get(args_ GetArgs) !string {
 		}else{
 			pathsrc=db.path_get(args.id)!
 		}
+	} else if args.id > 0 {
+		pathsrc = db.path_get(args.id)!
+	} else {
+		return error('either id or key has to be specified')
 	}
 
 	mut data := pathsrc.read()!
@@ -137,7 +141,10 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 				args.id = p3_name.u32()
 			}		
 		}
-	}else{
+	}else if args.id > 0{
+		pathsrc=db.path_get(args.id)!
+	} else {
+		args.id = db.parent.incr()!
 		pathsrc=db.path_get(args.id)!
 	}
 	// println(pathsrc)
@@ -256,6 +263,14 @@ pub fn (mut db DB) keys(prefix_ string) ![]string {
 			res << name
 		}
 	}
+	return res
+}
+
+// get all keys of the db (e.g. per session) can be with a prefix
+pub fn (mut db DB) ids() ![]u32 {
+	//TODO: see get, to fix this one
+	panic("implement")
+	mut res := []u32{}
 	return res
 }
 
