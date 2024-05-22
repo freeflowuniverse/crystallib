@@ -25,7 +25,8 @@ fn test_table_one_row() {
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.header.len == 3
-		assert table.header_markdown()! == '| Column1 | Column2 | Column3 |'
+		assert table.header_markdown()! == '| Column1 | Column2 | Column3 |
+'
 		assert table.alignments == [.left, .left, .left]
 		assert table.rows.len == 1
 
@@ -55,7 +56,8 @@ fn test_table_two_rows() {
 	if table is Table {
 		assert table.num_columns == 3
 		assert table.header.len == 3
-		assert table.header_markdown()! == '| Column1 | Column2 | Column3 |'
+		assert table.header_markdown()! == '| Column1 | Column2 | Column3 |
+'
 		assert table.alignments == [.left, .left, .left]
 		assert table.rows.len == 2
 		// assert table.rows == [

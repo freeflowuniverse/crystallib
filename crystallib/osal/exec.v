@@ -1,7 +1,7 @@
 module osal
 
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import json
 import os
