@@ -35,6 +35,15 @@ jobs:
             sudo apt update
             sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis   
             redis-server --daemonize yes
+            sudo apt install -y build-essential wget autoconf libtool
+            cd /tmp
+            wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+            tar -xvf v0.3.2.tar.gz
+            cd secp256k1-0.3.2/
+            ./autogen.sh
+            ./configure
+            sudo make -j 5
+            sudo make install            
           else
             brew install libgc tmux git rsync curl redis libpq
             brew services start redis

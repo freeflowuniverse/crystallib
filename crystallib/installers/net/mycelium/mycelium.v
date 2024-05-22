@@ -1,7 +1,6 @@
 module mycelium
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools

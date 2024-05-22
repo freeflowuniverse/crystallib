@@ -115,7 +115,7 @@ fn session_run_get(cmd Command) !string {
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
-	//interactive := !cmd.flags.get_bool('script') or { false }
+	// interactive := !cmd.flags.get_bool('script') or { false }
 
 	mut gs := gittools.get()!
 	if url.len > 0 {
