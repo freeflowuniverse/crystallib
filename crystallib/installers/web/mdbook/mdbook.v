@@ -20,6 +20,9 @@ pub fn install(args_ InstallArgs) ! {
 	if res.exit_code == 0 {
 		v := texttools.version(res.output)
 		if v < texttools.version('0.4.40') {
+			// println(texttools.version('0.4.40'))
+			// println(v)
+			// panic("ppp	")
 			args.reset = true
 		}
 	} else {
@@ -49,6 +52,7 @@ pub fn build() ! {
 	if osal.is_linux() {
 		dest_on_os = '/usr/local/bin'
 	}
+	println(" - dest path for mdbooks is on: ${dest_on_os}")
 	mut ok := false
 	cmd := '
 	set +ex
