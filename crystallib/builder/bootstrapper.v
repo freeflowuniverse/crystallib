@@ -26,7 +26,7 @@ pub mut:
 
 fn (mut bs BootStrapper) load() {
 	bs.embedded_files['install_base.sh'] = $embed_file('../../scripts/install_base.sh')
-	bs.embedded_files['installer_hero.sh'] = $embed_file('../../scripts/installer_hero.sh')
+	bs.embedded_files['install_hero.sh'] = $embed_file('../../scripts/install_hero.sh')
 }
 
 // to use do something like: export NODES="195.192.213.3" .
@@ -52,9 +52,9 @@ pub fn (mut bs BootStrapper) run(args_ BootstrapperArgs) ! {
 
 pub fn (mut node Node) upgrade() ! {
 	mut bs := bootstrapper()
-	installer_base_content_ := bs.embedded_files['install_base.sh'] or { panic('bug') }
-	installer_base_content := installer_base_content_.to_string()
-	cmd := '${installer_base_content}\n'
+	install_base_content_ := bs.embedded_files['install_base.sh'] or { panic('bug') }
+	install_base_content := install_base_content_.to_string()
+	cmd := '${install_base_content}\n'
 	node.exec_cmd(
 		cmd: cmd
 		period: 48 * 3600
@@ -66,21 +66,21 @@ pub fn (mut node Node) upgrade() ! {
 pub fn (mut node Node) hero_install() ! {
 	println('install hero')
 	mut bs := bootstrapper()
-	installer_hero_content_ := bs.embedded_files['installer_hero.sh'] or { panic('bug') }
-	installer_hero_content := installer_hero_content_.to_string()
+	install_hero_content_ := bs.embedded_files['install_hero.sh'] or { panic('bug') }
+	install_hero_content := install_hero_content_.to_string()
 	if node.platform == .osx {
 		// we have no choice then to do it interactive
 		myenv := node.environ_get()!
 		homedir := myenv['HOME'] or { return error("can't find HOME in env") }
 		node.exec_silent('mkdir -p ${homedir}/hero/bin')!
-		node.file_write('${homedir}/hero/bin/install.sh', installer_hero_content)!
+		node.file_write('${homedir}/hero/bin/install.sh', install_hero_content)!
 		node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
 		node.exec_interactive('${homedir}/hero/bin/install.sh')!
 	} else if node.platform == .ubuntu {
 		myenv := node.environ_get()!
 		homedir := myenv['HOME'] or { return error("can't find HOME in env") }
 		node.exec_silent('mkdir -p ${homedir}/hero/bin')!
-		node.file_write('${homedir}/hero/bin/install.sh', installer_hero_content)!
+		node.file_write('${homedir}/hero/bin/install.sh', install_hero_content)!
 		node.exec_silent('chmod +x ${homedir}/hero/bin/install.sh')!
 		node.exec_interactive('${homedir}/hero/bin/install.sh')!
 	}
@@ -102,8 +102,8 @@ pub mut:
 
 pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 	mut bs := bootstrapper()
-	installer_base_content_ := bs.embedded_files['install_base.sh'] or { panic('bug') }
-	installer_base_content := installer_base_content_.to_string()
+	install_base_content_ := bs.embedded_files['install_base.sh'] or { panic('bug') }
+	install_base_content := install_base_content_.to_string()
 
 	if args.reset {
 		console.clear()
@@ -125,7 +125,7 @@ pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 	}
 
 	cmd := '
-		${installer_base_content}
+		${install_base_content}
 		
 		rm -f /usr/local/bin/hero
 		freeflow_dev_env_install

@@ -3,6 +3,7 @@ function crystal_deps_install {
 
     if [[ "${OSNAME}" == "ubuntu" ]]; then
         cd /tmp
+        package_install autoconf libtool
         wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
         tar -xvf v0.4.1.tar.gz
         cd secp256k1-0.4.1/

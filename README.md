@@ -84,7 +84,7 @@ hero will be installed in
 - ~/hero/bin for osx
 
 ```bash
-curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh > /tmp/hero_install.sh
+curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh > /tmp/hero_install.sh
 bash /tmp/hero_install.sh
 #to debug
 bash -x /tmp/hero_install.sh

@@ -632,18 +632,12 @@ function v_install {
 
 function crystal_deps_install {
 
-    local marker_file="$DONE_DIR/crystal_deps_install_done"
-
-    if [ -f "$marker_file" ]; then
-        echo "Crystal deps already installed."
-        return
-    fi
-
     if [[ "${OSNAME}" == "ubuntu" ]]; then
         cd /tmp
-        wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
-        tar -xvf v0.3.2.tar.gz
-        cd secp256k1-0.3.2/
+        package_install autoconf libtool
+        wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+        tar -xvf v0.4.1.tar.gz
+        cd secp256k1-0.4.1/
         ./autogen.sh
         ./configure
         sudo make -j 5
@@ -657,13 +651,12 @@ function crystal_deps_install {
         exit 1
     fi
 
-    touch "$marker_file"
 
 }
 
 function crystal_lib_get {
     
-    crystal_deps_install
+    execute_with_marker "crystal_deps_install" crystal_deps_install
 
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/

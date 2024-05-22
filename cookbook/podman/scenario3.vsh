@@ -28,9 +28,9 @@ cont.run('curl -fsSL https://raw.githubusercontent.com/freeflowuniverse/crystall
 	false)!
 cont.run('bash /tmp/install.sh', false)!
 // install hero
-cont.run('curl -fsSL https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh -o installer_hero.sh',
+cont.run('curl -fsSL https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh -o install_hero.sh',
 	false)!
-cont.run('bash -c "redis-server --daemonize yes && bash installer_hero.sh"', false)!
+cont.run('bash -c "redis-server --daemonize yes && bash install_hero.sh"', false)!
 cont.set_entrypoint('redis-server')!
 cont.commit('localhost/myarch')!
 // install rfs

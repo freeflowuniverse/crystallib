@@ -62,7 +62,7 @@ pub fn hero_install(args InstallArgs) ! {
 	cmd := '
 		cd /tmp
 		export TERM=xterm
-		curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh > /tmp/hero_install.sh
+		curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh > /tmp/hero_install.sh
 		bash /tmp/hero_install.sh
 		'
 	osal.execute_stdout(cmd) or { return error('Cannot install hero.\n${err}') }
