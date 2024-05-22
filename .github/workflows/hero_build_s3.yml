@@ -46,8 +46,8 @@ jobs:
             cd secp256k1-0.3.2/
             ./autogen.sh
             ./configure
-            make -j 5
-            make install            
+            sudo make -j 5
+            sudo make install            
           else
             brew install libgc tmux git rsync curl redis libpq
             brew services start redis
