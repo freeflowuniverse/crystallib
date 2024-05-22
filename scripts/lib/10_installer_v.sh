@@ -69,10 +69,9 @@ function v_install {
 }
 
 
-
-
 function hero_install {
-    # Identify current platform
+    redis_start
+
     os_name="$(uname -s)"
     arch_name="$(uname -m)"
 
@@ -88,9 +87,9 @@ function hero_install {
         exit 1
     fi
 
-    set +e
-    [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
-    set -e
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
+    fi
 
     if [ -z "$url" ]; then
         echo "Could not find url to download."

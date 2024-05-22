@@ -28,7 +28,6 @@ function os_update {
         fi
         set +e
         brew install mc redis curl tmux screen htop wget
-        
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
@@ -38,7 +37,7 @@ function os_update {
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
         pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
-        redis-server --daemonize yes
+        
     fi
 }
 

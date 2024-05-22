@@ -1,38 +1,44 @@
 
 
-    function redis_install {
+function redis_start {
+    set +e
+    if redis-cli ping | grep -q "PONG"; then
+        echo "Redis is already running."
+        return
+    fi    
+    set -e
 
-        if [[ "${OSNAME}" == "darwin"* ]]; then
-            brew services start redis
-        elif [[ "${OSNAME}" == "arch"* ]]; then
-            redis-server --daemonize yes
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        brew services start redis
+    elif [[ "${OSNAME}" == "arch"* ]]; then
+        redis-server --daemonize yes
+    else
+
+        # Enable and start Redis service using the appropriate service manager
+        if is_systemd_installed; then
+            echo "Using systemd to manage Redis."
+            systemctl enable redis-server
+            systemctl start redis-server
+        elif is_initd_installed; then
+            echo "Using init.d to manage Redis."
+            update-rc.d redis-server defaults
+            service redis-server start
+            #/etc/init.d/redis-server start                
+        elif is_zinit_installed; then
+            echo "Using zinit to manage Redis."
+            echo 'exec: bash -c "/usr/bin/redis-server"' > /etc/zinit/redis.yaml
+            zinit monitor redis
+            zinit start redis
         else
-
-            # Enable and start Redis service using the appropriate service manager
-            if is_systemd_installed; then
-                echo "Using systemd to manage Redis."
-                systemctl enable redis-server
-                systemctl start redis-server
-            elif is_initd_installed; then
-                echo "Using init.d to manage Redis."
-                update-rc.d redis-server defaults
-                service redis-server start
-                #/etc/init.d/redis-server start                
-            elif is_zinit_installed; then
-                echo "Using zinit to manage Redis."
-                echo 'exec: bash -c "/usr/bin/redis-server"' > /etc/zinit/redis.yaml
-                zinit monitor redis
-                zinit start redis
-            else
-                echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
-                exit 1
-            fi
-
+            echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
+            exit 1
         fi
 
-        redis_test
+    fi
 
-    }
+    redis_test
+
+}
 
 
 function redis_test {
@@ -43,3 +49,4 @@ function redis_test {
         exit 1
     fi
 }
+

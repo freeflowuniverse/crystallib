@@ -6,7 +6,7 @@ import os
 mypath:=base.bash_installers_package()!
 
 
-res := os.execute("bash ${mypath}/installer_base.sh")
+res := os.execute("bash ${mypath}/install_base.sh")
 // println(res)
 if res.exit_code > 0 {
 	// println(cmd)

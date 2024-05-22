@@ -28,6 +28,7 @@ pub fn bash_installers_package() !string {
 		6_reset.sh
 		7_zinit.sh
 		8_osupdate.sh
+		9_redis.sh
 		10_installer_v.sh
 		11_installer_crystallib.sh
 		20_installers.sh
@@ -44,7 +45,7 @@ pub fn bash_installers_package() !string {
 	}
 
 	script_write(out,"install_base","
-			echo 'V & BASE INSTALL OK'
+			echo 'BASE INSTALL OK'
 		")!
 
 	script_write(out,"installer","

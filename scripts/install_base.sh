@@ -98,6 +98,29 @@ function myplatform {
 
 }
 
+function is_root {
+    if [ "$(whoami)" != "root" ]; then
+        echo "This script must be run as root or with sudo."
+        exit 1
+    fi
+
+}
+
+# Function to check if systemd is installed
+function is_systemd_installed {
+    [ "$(ps -p 1 -o comm=)" = "systemd" ]
+}
+
+# Function to check if init.d is installed
+function is_initd_installed {
+    [ -d /etc/init.d ]
+}
+
+function is_zinit_installed {
+    [ "$(ps -p 1 -o comm=)" = "zinit" ]
+}
+
+
 
 function gitcheck {
     # Check if Git email is set
@@ -389,30 +412,30 @@ function zinitinit {
 
 }
 
-#!/bin/bash
-function zinittmuxinit {
-	# Specify the name of the tmux session and window
-	tmux_session="zinit"
-	tmux_window="zinit"
-	command_to_execute="zinit init"
-	# Check if tmux is installed
-	if ! command -v tmux &>/dev/null; then
-		echo "tmux is not installed. Please install it before running this script."
-		exit 1
-	fi
-	# Check if the tmux session exists
-	if tmux has-session -t "$tmux_session" &>/dev/null; then
-		# If the session exists, check if the window exists
-		if tmux list-windows -t "$tmux_session" | grep -q "$tmux_window"; then
-			# If the window exists, kill it
-			tmux kill-window -t "$tmux_session:$tmux_window"
-		fi
-	fi
-	# Start a new tmux session with the desired window and execute the command
-	tmux new-session -d -s "$tmux_session" -n "$tmux_window"
-	tmux send-keys -t "$tmux_session:$tmux_window" "$command_to_execute" C-m
-	echo "Started a new tmux session with window '$tmux_window' and executed '$command_to_execute'."
-}
+# #!/bin/bash
+# function zinittmuxinit {
+# 	# Specify the name of the tmux session and window
+# 	tmux_session="zinit"
+# 	tmux_window="zinit"
+# 	command_to_execute="zinit init"
+# 	# Check if tmux is installed
+# 	if ! command -v tmux &>/dev/null; then
+# 		echo "tmux is not installed. Please install it before running this script."
+# 		exit 1
+# 	fi
+# 	# Check if the tmux session exists
+# 	if tmux has-session -t "$tmux_session" &>/dev/null; then
+# 		# If the session exists, check if the window exists
+# 		if tmux list-windows -t "$tmux_session" | grep -q "$tmux_window"; then
+# 			# If the window exists, kill it
+# 			tmux kill-window -t "$tmux_session:$tmux_window"
+# 		fi
+# 	fi
+# 	# Start a new tmux session with the desired window and execute the command
+# 	tmux new-session -d -s "$tmux_session" -n "$tmux_window"
+# 	tmux send-keys -t "$tmux_session:$tmux_window" "$command_to_execute" C-m
+# 	echo "Started a new tmux session with window '$tmux_window' and executed '$command_to_execute'."
+# }
 
 function os_update {
     echo ' - os update'
@@ -431,8 +454,8 @@ function os_update {
         # apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         # apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release screen sudo binutils wget"
-        /etc/init.d/redis-server start
+        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release sudo binutils wget"
+
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
@@ -442,7 +465,8 @@ function os_update {
             unset NONINTERACTIVE
         fi
         set +e
-        brew services start redis
+        brew install mc redis curl tmux screen htop wget
+        
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
@@ -452,7 +476,59 @@ function os_update {
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
         pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
+        
+    fi
+}
+
+
+
+function redis_start {
+    set +e
+    if redis-cli ping | grep -q "PONG"; then
+        echo "Redis is already running."
+        return
+    fi    
+    set -e
+
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        brew services start redis
+    elif [[ "${OSNAME}" == "arch"* ]]; then
         redis-server --daemonize yes
+    else
+
+        # Enable and start Redis service using the appropriate service manager
+        if is_systemd_installed; then
+            echo "Using systemd to manage Redis."
+            systemctl enable redis-server
+            systemctl start redis-server
+        elif is_initd_installed; then
+            echo "Using init.d to manage Redis."
+            update-rc.d redis-server defaults
+            service redis-server start
+            #/etc/init.d/redis-server start                
+        elif is_zinit_installed; then
+            echo "Using zinit to manage Redis."
+            echo 'exec: bash -c "/usr/bin/redis-server"' > /etc/zinit/redis.yaml
+            zinit monitor redis
+            zinit start redis
+        else
+            echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
+            exit 1
+        fi
+
+    fi
+
+    redis_test
+
+}
+
+
+function redis_test {
+    if redis-cli ping | grep -q "PONG"; then
+        echo "Redis is running and responsive."
+    else
+        echo "Redis is not responding to PING."
+        exit 1
     fi
 }
 
@@ -527,10 +603,9 @@ function v_install {
 }
 
 
-
-
 function hero_install {
-    # Identify current platform
+    redis_start
+
     os_name="$(uname -s)"
     arch_name="$(uname -m)"
 
@@ -546,9 +621,9 @@ function hero_install {
         exit 1
     fi
 
-    set +e
-    [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
-    set -e
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
+    fi
 
     if [ -z "$url" ]; then
         echo "Could not find url to download."
@@ -731,15 +806,10 @@ function hero_build {
 
 }
 
-if [ "$(id -u)" -ne 0 ]; then
-  echo "This script must be run as root."
-  exit 1
-fi
-
 myplatform
 os_update
 sshknownkeysadd
 
 
 
-echo 'V & BASE INSTALL OK'
+echo 'BASE INSTALL OK'
