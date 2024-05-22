@@ -31,6 +31,7 @@ pub fn bash_installers_package() !string {
 		9_redis.sh
 		10_installer_v.sh
 		11_installer_crystallib.sh
+		12_installer_hero.sh
 		20_installers.sh
 	'
 	mut out := ''

@@ -42,6 +42,9 @@ mkdir -p $DIR_BUILD
 mkdir -p $DIR_BIN
 mkdir -p $DIR_SCRIPTS
 
+export DONE_DIR="$HOME/.done"
+mkdir -p "$DONE_DIR"
+
 pathmunge () {
     if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
         if [ "$2" = "after" ] ; then
@@ -466,7 +469,6 @@ function os_update {
         fi
         set +e
         brew install mc redis curl tmux screen htop wget
-        
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
@@ -602,85 +604,41 @@ function v_install {
     fi
 }
 
+function crystal_deps_install {
 
-function hero_install {
-    redis_start
+    local marker_file="$DONE_DIR/crystal_deps_install_done"
 
-    os_name="$(uname -s)"
-    arch_name="$(uname -m)"
+    if [ -f "$marker_file" ]; then
+        echo "Crystal deps already installed."
+        return
+    fi
 
-    # Select the URL based on the platform
-    if [[ "$os_name" == "Linux" && "$arch_name" == "x86_64" ]]; then
-        url="https://f003.backblazeb2.com/file/threefold/linux-i64/hero"
-    elif [[ "$os_name" == "Darwin" && "$arch_name" == "arm64" ]]; then
-        url="https://f003.backblazeb2.com/file/threefold/macos-arm64/hero"
-    # elif [[ "$os_name" == "Darwin" && "$arch_name" == "x86_64" ]]; then
-    #     url="https://f003.backblazeb2.com/file/threefold/macos-i64/hero"
+    if [[ "${OSNAME}" == "ubuntu" ]]; then
+        cd /tmp
+        wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+        tar -xvf v0.3.2.tar.gz
+        cd secp256k1-0.3.2/
+        ./autogen.sh
+        ./configure
+        sudo make -j 5
+        sudo make install   
+    elif [[ "${OSNAME}" == "darwin"* ]]; then
+        brew install secp256k1        
+    elif [[ "${OSNAME}" == "arch"* ]]; then
+        pacman -Su extra/libsecp256k1
     else
-        echo "Unsupported platform."
+        echo "can't find instructions to install secp256k1"
         exit 1
     fi
 
-    if [[ "${OSNAME}" == "darwin"* ]]; then
-        [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
-    fi
+    touch "$marker_file"
 
-    if [ -z "$url" ]; then
-        echo "Could not find url to download."
-        echo $urls
-        exit 1
-    fi
-    zprofile="${HOME}/.zprofile"
-    hero_bin_path="${HOME}/hero/bin"
-    temp_file="$(mktemp)"
-
-    # Check if ~/.zprofile exists
-    if [ -f "$zprofile" ]; then
-        # Read each line and exclude any that modify the PATH with ~/hero/bin
-        while IFS= read -r line; do
-            if [[ ! "$line" =~ $hero_bin_path ]]; then
-                echo "$line" >> "$temp_file"
-            fi
-        done < "$zprofile"
-    else
-        touch "$zprofile"
-    fi
-    # Add ~/hero/bin to the PATH statement
-    echo "export PATH=\$PATH:$hero_bin_path" >> "$temp_file"
-    # Replace the original .zprofile with the modified version
-    mv "$temp_file" "$zprofile"
-    # Ensure the temporary file is removed (in case of script interruption before mv)
-    trap 'rm -f "$temp_file"' EXIT
-
-    # Output the selected URL
-    echo "Download URL for your platform: $url"
-
-    # Download the file
-    curl -o /tmp/downloaded_file -L "$url"
-
-    # Check if file size is greater than 1 MB
-    file_size=$(du -m  /tmp/downloaded_file | cut -f1)
-    if [ "$file_size" -ge 1 ]; then
-        # Create the target directory if it doesn't exist
-        mkdir -p ~/hero/bin
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-            # Move and rename the file
-            mv  /tmp/downloaded_file ~/hero/bin/hero
-            chmod +x ~/hero/bin/hero
-        else
-            mv  /tmp/downloaded_file /usr/local/bin/hero
-            chmod +x /usr/local/bin/hero
-        fi
-
-        echo "Hero installed properly"
-        export PATH=$PATH:$hero_bin_path
-        hero -version
-    else
-        echo "Downloaded file is less than 1 MB. Process aborted."
-        exit 1
-    fi
 }
+
 function crystal_lib_get {
+    
+    crystal_deps_install
+
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/
@@ -769,6 +727,85 @@ function crystal_pull {
     popd 2>&1 >> /dev/null
 }
 
+
+
+function hero_install {
+    redis_start
+
+    os_name="$(uname -s)"
+    arch_name="$(uname -m)"
+
+    # Select the URL based on the platform
+    if [[ "$os_name" == "Linux" && "$arch_name" == "x86_64" ]]; then
+        url="https://f003.backblazeb2.com/file/threefold/linux-i64/hero"
+    elif [[ "$os_name" == "Darwin" && "$arch_name" == "arm64" ]]; then
+        url="https://f003.backblazeb2.com/file/threefold/macos-arm64/hero"
+    # elif [[ "$os_name" == "Darwin" && "$arch_name" == "x86_64" ]]; then
+    #     url="https://f003.backblazeb2.com/file/threefold/macos-i64/hero"
+    else
+        echo "Unsupported platform."
+        exit 1
+    fi
+
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
+    fi
+
+    if [ -z "$url" ]; then
+        echo "Could not find url to download."
+        echo $urls
+        exit 1
+    fi
+    zprofile="${HOME}/.zprofile"
+    hero_bin_path="${HOME}/hero/bin"
+    temp_file="$(mktemp)"
+
+    # Check if ~/.zprofile exists
+    if [ -f "$zprofile" ]; then
+        # Read each line and exclude any that modify the PATH with ~/hero/bin
+        while IFS= read -r line; do
+            if [[ ! "$line" =~ $hero_bin_path ]]; then
+                echo "$line" >> "$temp_file"
+            fi
+        done < "$zprofile"
+    else
+        touch "$zprofile"
+    fi
+    # Add ~/hero/bin to the PATH statement
+    echo "export PATH=\$PATH:$hero_bin_path" >> "$temp_file"
+    # Replace the original .zprofile with the modified version
+    mv "$temp_file" "$zprofile"
+    # Ensure the temporary file is removed (in case of script interruption before mv)
+    trap 'rm -f "$temp_file"' EXIT
+
+    # Output the selected URL
+    echo "Download URL for your platform: $url"
+
+    # Download the file
+    curl -o /tmp/downloaded_file -L "$url"
+
+    # Check if file size is greater than 10 MB
+    file_size=$(du -m  /tmp/downloaded_file | cut -f1)
+    if [ "$file_size" -ge 10 ]; then
+        # Create the target directory if it doesn't exist
+        mkdir -p ~/hero/bin
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # Move and rename the file
+            mv  /tmp/downloaded_file ~/hero/bin/hero
+            chmod +x ~/hero/bin/hero
+        else
+            mv  /tmp/downloaded_file /usr/local/bin/hero
+            chmod +x /usr/local/bin/hero
+        fi
+
+        echo "Hero installed properly"
+        export PATH=$PATH:$hero_bin_path
+        hero -version
+    else
+        echo "Downloaded file is less than 10 MB. Process aborted."
+        exit 1
+    fi
+}
 function freeflow_dev_env_install {
 
     crystal_lib_get

@@ -42,6 +42,9 @@ mkdir -p $DIR_BUILD
 mkdir -p $DIR_BIN
 mkdir -p $DIR_SCRIPTS
 
+export DONE_DIR="$HOME/.done"
+mkdir -p "$DONE_DIR"
+
 pathmunge () {
     if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
         if [ "$2" = "after" ] ; then

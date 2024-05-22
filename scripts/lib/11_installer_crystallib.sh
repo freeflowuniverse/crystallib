@@ -1,5 +1,39 @@
 
+function crystal_deps_install {
+
+    local marker_file="$DONE_DIR/crystal_deps_install_done"
+
+    if [ -f "$marker_file" ]; then
+        echo "Crystal deps already installed."
+        return
+    fi
+
+    if [[ "${OSNAME}" == "ubuntu" ]]; then
+        cd /tmp
+        wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+        tar -xvf v0.3.2.tar.gz
+        cd secp256k1-0.3.2/
+        ./autogen.sh
+        ./configure
+        sudo make -j 5
+        sudo make install   
+    elif [[ "${OSNAME}" == "darwin"* ]]; then
+        brew install secp256k1        
+    elif [[ "${OSNAME}" == "arch"* ]]; then
+        pacman -Su extra/libsecp256k1
+    else
+        echo "can't find instructions to install secp256k1"
+        exit 1
+    fi
+
+    touch "$marker_file"
+
+}
+
 function crystal_lib_get {
+    
+    crystal_deps_install
+
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/

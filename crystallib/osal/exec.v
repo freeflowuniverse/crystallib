@@ -286,7 +286,7 @@ pub fn (mut job Job) process() ! {
 		job.status = .done
 		// result.done = true
 		if p.code > 0 {
-			console.print_stderr(' ########## Process CODE IS > 0')
+			//console.print_stderr(' ########## Process CODE IS > 0')
 			job.exit_code = p.code
 			job.status = .error_exec
 			job.cmd.scriptkeep = true
