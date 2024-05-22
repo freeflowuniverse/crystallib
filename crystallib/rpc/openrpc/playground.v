@@ -31,16 +31,23 @@ pub fn export_playground(config PlaygroundConfig) ! {
 	// css_source := '${os.dir(@FILE)}/templates/css/index.css'
 	// css_dest := '${os.dir(@FILE)}/static/css/index.css'
 	// tw.compile(css_source, css_dest)!
-	mut gs := gittools.get()!
-	mut locator := gs.locator_new('https://github.com/open-rpc/playground')!
-	repo := gs.repo_get(locator: locator, reset: false)!
+	println('getting git')
+	mut gs := gittools.new() or {panic(err)}
+	println('getting locator')
+	mut locator := gs.locator_new('https://github.com/open-rpc/playground') or {panic(err)}
+	println('getting repo')
+	repo := gs.repo_get(locator: locator, reset: false) or {panic(err)}
 	
 	playground_dir := repo.path
 
 	mut project := npm.new_project(playground_dir.path)!
+	println('installing')
 	project.install()
+	println('exporting examples')
 	export_examples(config.specs, '${playground_dir.path}/src')!
+	println('building')
 	project.build()!
+	println('exporting')
 	project.export(config.dest)!
 }
 
