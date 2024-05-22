@@ -34,22 +34,18 @@ jobs:
 
       - name: Generate documentation
         run: |
-          # rm -rf _docs
-          # rm -rf docs
+          rm -rf _docs
+          rm -rf docs
 
-          #cd crystallib
-          bash doc.sh
+          cd crystallib
 
-          # v fmt -w .
-          # v doc -m -f html . -readme -comments -no-timestamp -o ../
+          rm -rf _docs
+          rm -rf docs
 
-          # cd ..
+          v fmt -w .
+          v doc -m -f html . -readme -comments -no-timestamp
 
-          # mv _docs docs
-
-          # if ! [[ ${OSTYPE} == "linux-gnu"* ]]; then
-          #     open docs/index.html
-          # fi
+          mv _docs ../docs
 
       - name: Setup Pages
         uses: actions/configure-pages@v3

@@ -100,7 +100,7 @@ pub fn start() ! {
 		cmd2 = 'sudo -s '
 	}
 
-	cmd2 += 'mycelium --tun-name utun9 --peers tcp://188.40.132.242:9651 "tcp://[2a01:4f8:212:fa6::2]:9651" quic://185.69.166.7:9651 "tcp://[2a02:1802:5e:0:8c9e:7dff:fec9:f0d2]:9651" tcp://65.21.231.58:9651 quic://[2a01:4f9:5a:1042::2]:9651'
+	cmd2 += 'mycelium --peers tcp://188.40.132.242:9651 quic://185.69.166.7:9651 tcp://65.21.231.58:9651 --tun-name utun9'
 
 	s.cmd_send(cmd2)!
 
