@@ -37,7 +37,7 @@ jobs:
           if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
             set -x
             sudo apt update
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis gcc
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis gcc secp256k1
             redis-server --daemonize yes      
           else
             brew install libgc tmux git rsync curl redis libpq
