@@ -36,7 +36,7 @@ fn test_page_get() {
 	// 	build_path: "${dest}/build"		
 	// )!	
 
-	if true {
-		panic('fghjkjhgfghjk')
-	}
+	// if true {
+	// 	panic('fghjkjhgfghjk')
+	// }
 }

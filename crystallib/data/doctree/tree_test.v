@@ -57,9 +57,6 @@ fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 		pages2.delete('errors')
 	}
 	if pages1.len != pages2.len {
-		println(pages1.keys().map(' - ${it}').join_lines())
-		println('compared with:')
-		println(pages2.keys().map(' - ${it}').join_lines())
 		return error('nr of pages does not correspond in both collection')
 	}
 	for name, mut page1 in pages1 {
@@ -67,9 +64,8 @@ fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 
 		page1_doc := page1.doc()!
 
-		page2_doc := page2.doc()!
+		page2_doc := page2.doc()!	
 		mypath := page1_doc.path or { pathlib.Path{} }
-		println(mypath.path)
 		md := page1_doc.markdown()!
 		md2 := page2_doc.markdown()!
 		assert md.trim_space() == md2.trim_space()
@@ -100,7 +96,7 @@ fn test_write_tree() {
 	// write tree2 another time to compare the output of the two
 	mut tree3 := new(name: doctree.tree_name)!
 	tree3.scan(path: '/tmp/tree_write2')!
-
+	tree3.export(dest: '/tmp/tree_write3')!
 	// TODO: can work with hash to check the full dir
 
 	// assert the 1e tree matches the third one

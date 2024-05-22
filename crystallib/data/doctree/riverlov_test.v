@@ -2,7 +2,7 @@ module doctree
 
 import os
 
-const mydata_path = os.dir(@FILE) + '/testdata/collections'
+const mydata_path = os.dir(@FILE) + '/testdata/includetest'
 
 fn test_scan_internal() ! {
 	mut tree := new()!
