@@ -1,7 +1,5 @@
 module texttools
 
-import strconv
-
 pub fn is_int(text string) bool {
 	for cha in text {
 		if cha < 48 || cha > 57 {

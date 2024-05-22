@@ -88,7 +88,7 @@ fn test_unlink() {
 	console.print_stdout('************ TEST_unlink ************')
 	// test with filelink path
 
-	mut source := pathlib.get('${testpath}/test_parent/testfile2.md')
+	mut source := pathlib.get('${testpath}/test_parent/testfile3.md')
 	mut dest_ := '${testpath}/test_unlink.md'
 
 	mut link := source.link(dest_, true) or { panic('error: ${err}') }

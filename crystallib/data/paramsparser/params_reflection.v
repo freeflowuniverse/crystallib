@@ -70,8 +70,6 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 	}
 	mut params := Params{}
 
-	mut mytype := reflection.type_of[T](t)
-
 	// struct_attrs := attrs_get_reflection(mytype)
 
 	$for field in T.fields {
