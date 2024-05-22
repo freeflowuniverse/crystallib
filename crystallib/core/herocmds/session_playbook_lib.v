@@ -101,8 +101,8 @@ fn session_run_get(cmd Command) !string {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
 
-	mut sessionname := cmd.flags.get_string('sessionname') or { '' }
-	mut contextname := cmd.flags.get_string('contextname') or { '' }
+	// mut sessionname := cmd.flags.get_string('sessionname') or { '' }
+	// mut contextname := cmd.flags.get_string('contextname') or { '' }
 
 	mut coderoot := cmd.flags.get_string('coderoot') or { '' }
 	if 'CODEROOT' in os.environ() && coderoot == '' {
@@ -115,7 +115,7 @@ fn session_run_get(cmd Command) !string {
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
-	interactive := !cmd.flags.get_bool('script') or { false }
+	//interactive := !cmd.flags.get_bool('script') or { false }
 
 	mut gs := gittools.get()!
 	if url.len > 0 {

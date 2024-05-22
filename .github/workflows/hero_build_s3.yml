@@ -76,7 +76,8 @@ jobs:
           if [[ "$OSTYPE" == "darwin"* ]]; then
           v -enable-globals -w -cg hero.v
           else
-          v -enable-globals -w -cg -cflags -static -prod -cc gcc hero.v
+          # -prod
+          v -enable-globals -w -cg -cflags -static -cc gcc hero.v
           fi
           chmod +x hero
           mkdir -p ~/upload
