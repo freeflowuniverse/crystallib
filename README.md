@@ -43,6 +43,7 @@ requirements
 
 There are some nice helper scripts which show you how to work remotely
 
+- see [scripts/remote_hero_debug.vsh](scripts/remote_hero_debug.vsh)
 - see [scripts/remote_install_v_hero.vsh](scripts/remote_install_v_hero.vsh)
 - see [scripts/remote_update_compile_hero.vsh](scripts/remote_update_compile_hero.vsh)
 
@@ -50,11 +51,7 @@ There are some nice helper scripts which show you how to work remotely
 export SERVER=65.21.132.119
 #next till do the install, you need v & crystal installed locally
 #this works on empty machine
-~/code/github/freeflowuniverse/crystallib/scripts/remote_install_v_hero.vsh
-
-#this requires V & crystal already has been installed (see previous step)
-#if you want to sync your local crystallib to the remote one and compile hero
-~/code/github/freeflowuniverse/crystallib/scripts/remote_update_compile_hero.vsh
+~/code/github/freeflowuniverse/crystallib/scripts/remote_hero_debug.vsh
 
 ```
 

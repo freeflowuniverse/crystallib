@@ -25,39 +25,10 @@ n.upload(source: "/tmp/hero", dest: '/tmp/hero')!
 
 println("execute installer")
 n.exec(cmd:'
-	set -ex
-	# Ensure the script is run as root
-	if [ "$(whoami)" != "root" ]; then
-	echo "This script must be run as root or with sudo."
-	exit 1
-	fi
 
-	# Check if the system is Ubuntu
-	if ! grep -q "Ubuntu" /etc/os-release; then
-	echo "This script is only for Ubuntu systems."
-	exit 1
-	fi
-
-	# Update package list and install necessary packages
-	DEBIAN_FRONTEND=noninteractive apt-get update -y
-	DEBIAN_FRONTEND=noninteractive apt-get install -y rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release screen sudo binutils wget
-
-	# Enable and start Redis service
-	systemctl enable redis-server
-	systemctl start redis-server
-
-	# Check if Redis is running
-	if systemctl is-active --quiet redis-server; then
-	echo "Redis is running."
-	else
-	echo "Failed to start Redis."
-	exit 1
-	fi
-
-	mkdir -p /root/code/github/freeflowuniverse
-	cd /root/code/github/freeflowuniverse	
-	git clone git@github.com:freeflowuniverse/crystallib.git
-
+	#with hero (will compile hero as well)
+	curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/build_hero.sh > /tmp/build_hero.sh
+	bash /tmp/build_hero.sh
 	',stdout:true)!
 
 
