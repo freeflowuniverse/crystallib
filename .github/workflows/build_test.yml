@@ -28,7 +28,7 @@ jobs:
             sudo make -j 5
             sudo make install            
           else
-            brew install libgc tmux git rsync curl redis libpq
+            brew install libgc tmux git rsync curl redis libpq secp256k1
           fi
           # redis-cli ping
 

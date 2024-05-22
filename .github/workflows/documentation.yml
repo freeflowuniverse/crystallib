@@ -37,7 +37,7 @@ jobs:
           # rm -rf _docs
           # rm -rf docs
 
-          cd crystallib
+          #cd crystallib
           bash doc.sh
 
           # v fmt -w .
