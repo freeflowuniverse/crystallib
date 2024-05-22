@@ -1,4 +1,5 @@
 module gittools
+
 import os
 import freeflowuniverse.crystallib.core.pathlib
 import crypto.md5
@@ -6,12 +7,12 @@ import crypto.md5
 @[params]
 pub struct CodeGetFromUrlArgs {
 pub mut:
-	coderoot string
-	gitstructure_name string = "default"
+	coderoot          string
+	gitstructure_name string = 'default'
 	url               string
-	pull   bool // will pull if this is set
-	reset  bool // this means will pull and reset all changes
-	reload bool // reload the cache
+	pull              bool // will pull if this is set
+	reset             bool // this means will pull and reset all changes
+	reload            bool // reload the cache
 }
 
 // will get repo starting from url, if the repo does not exist, only then will pull .
@@ -35,10 +36,10 @@ pub mut:
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get()!
 	mut name := args.gitstructure_name
-	if args.coderoot.len>0{
-		name=md5.hexhash(args.coderoot)
-		gs = gittools.new(name:name,root:args.coderoot)!	
-	}else{
+	if args.coderoot.len > 0 {
+		name = md5.hexhash(args.coderoot)
+		gs = new(name: name, root: args.coderoot)!
+	} else {
 		gs = get(name: args.gitstructure_name)!
 	}
 	return gs.code_get(url: args.url, pull: args.pull, reset: args.reset, reload: args.reload)
@@ -88,8 +89,8 @@ pub fn git_dir_get(args_ GitDirGetArgs) !string {
 @[params]
 pub struct GitRepoGetArgs {
 pub mut:
-	gitstructure_name string = "default"
-	path     string
+	gitstructure_name string = 'default'
+	path              string
 }
 
 // look for git dir at (.git location), .
@@ -104,7 +105,7 @@ pub mut:
 pub fn git_repo_get(args_ GitRepoGetArgs) !GitRepo {
 	mut args := args_
 	path := git_dir_get(path: args.path)!
-	mut gs := get(name:args.gitstructure_name) or {
+	mut gs := get(name: args.gitstructure_name) or {
 		return error("Could not load gittools for ${args.gitstructure_name}'\n${err}")
 	}
 	return gs.repo_from_path(path)

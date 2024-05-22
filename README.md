@@ -1,5 +1,25 @@
 
-# Crystallib
+# Crystallib  / Hero
+
+## Install Hero
+
+hero is our "hero" tool to execute heroscript, deal with git, ...
+
+hero will be installed in
+
+- /usr/local/bin for linux
+- ~/hero/bin for osx
+
+```bash
+curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh > /tmp/hero_install.sh
+bash /tmp/hero_install.sh
+#to debug
+bash -x /tmp/hero_install.sh
+#to use hero make sure you restart your shell or you do (if osx)
+source ~/.zprofile 
+#check how to use, can also do on each of the subcommands
+hero -help
+```
 
 ## Get started with crystallib
 
@@ -23,6 +43,7 @@ requirements
 
 There are some nice helper scripts which show you how to work remotely
 
+- see [scripts/remote_hero_debug.vsh](scripts/remote_hero_debug.vsh)
 - see [scripts/remote_install_v_hero.vsh](scripts/remote_install_v_hero.vsh)
 - see [scripts/remote_update_compile_hero.vsh](scripts/remote_update_compile_hero.vsh)
 
@@ -30,15 +51,9 @@ There are some nice helper scripts which show you how to work remotely
 export SERVER=65.21.132.119
 #next till do the install, you need v & crystal installed locally
 #this works on empty machine
-~/code/github/freeflowuniverse/crystallib/scripts/remote_install_v_hero.vsh
-
-#this requires V & crystal already has been installed (see previous step)
-#if you want to sync your local crystallib to the remote one and compile hero
-~/code/github/freeflowuniverse/crystallib/scripts/remote_update_compile_hero.vsh
+~/code/github/freeflowuniverse/crystallib/scripts/remote_hero_debug.vsh
 
 ```
-
-
 
 
 ### alternative with manual git checkout & v install
@@ -74,27 +89,7 @@ cd ~/code/github/freeflowuniverse/crystallib
 bash doc.sh
 ```
 
-## Install Hero
 
-hero is our "hero" tool to execute heroscript, deal with git, ...
-
-hero will be installed in
-
-- /usr/local/bin for linux
-- ~/hero/bin for osx
-
-```bash
-curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer_hero.sh > /tmp/hero_install.sh
-bash /tmp/hero_install.sh
-#to debug
-bash -x /tmp/hero_install.sh
-#maybe you want to copy to your system bin dir
-cp ~/hero/bin/hero /usr/local/bin
-#to use hero make sure you restart your shell or you do (if osx)
-source ~/.zprofile 
-#check how to use, can also do on each of the subcommands
-hero -help
-```
 
 requirements
 

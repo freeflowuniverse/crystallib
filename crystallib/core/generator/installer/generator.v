@@ -6,7 +6,7 @@ import json
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.core.texttools
-//import freeflowuniverse.crystallib.core.generator.generic
+// import freeflowuniverse.crystallib.core.generator.generic
 
 @[params]
 pub struct GeneratorArgs {
@@ -134,13 +134,20 @@ pub fn do(args_ GeneratorArgs) ! {
 		}
 
 		// call the generic ones
-		mut args_generic := generic.GeneratorArgs{
-			name: args.name
-			configure_interactive: args.configure_interactive
-			reset: args.reset
-			interactive: args.interactive
-			path: args.path
-			clients: args.clients
+		mut args_generic := generic.GeneratorArgs
+		{
+			name:
+			args.name
+			configure_interactive:
+			args.configure_interactive
+			reset:
+			args.reset
+			interactive:
+			args.interactive
+			path:
+			args.path
+			clients:
+			args.clients
 		}
 		generic.clients_ask(args_generic)!
 		generic.generate(args_generic)!

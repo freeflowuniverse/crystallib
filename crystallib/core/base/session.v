@@ -17,8 +17,8 @@ pub mut:
 	params      paramsparser.Params
 	start       ourtime.OurTime
 	end         ourtime.OurTime
-	context     &Context             @[skip; str: skip]
-	config 		SessionConfig
+	context     &Context            @[skip; str: skip]
+	config      SessionConfig
 }
 
 @[params]
@@ -27,7 +27,7 @@ pub mut:
 	name        string // unique name for session (id), there can be more than 1 session per context
 	start       string // can be e.g. +1h
 	description string
-	params 	    string
+	params      string
 }
 
 // get a session object based on the name /
@@ -41,7 +41,7 @@ pub fn (mut context Context) session_new(args_ SessionConfig) !Session {
 		args.name = ourtime.now().key()
 	}
 
-	if args.start == "" {
+	if args.start == '' {
 		t := ourtime.new(args.start)!
 		args.start = t.str()
 	}
@@ -52,23 +52,23 @@ pub fn (mut context Context) session_new(args_ SessionConfig) !Session {
 
 	config_json := json.encode(args)
 
-	r.set(rkey,config_json)!
+	r.set(rkey, config_json)!
 
 	rkey_latest := 'sessions:config:latest'
-	r.set(rkey_latest,args.name)!
+	r.set(rkey_latest, args.name)!
 
-	return context.session_get(name:args.name)!
+	return context.session_get(name: args.name)!
 }
 
 @[params]
 pub struct ContextSessionGetArgs {
 pub mut:
-	name        string
+	name string
 }
 
 pub fn (mut context Context) session_get(args_ ContextSessionGetArgs) !Session {
 	mut args := args_
-	mut r:=context.redis()!
+	mut r := context.redis()!
 
 	if args.name == '' {
 		rkey_latest := 'sessions:config:latest'
@@ -77,9 +77,9 @@ pub fn (mut context Context) session_get(args_ ContextSessionGetArgs) !Session {
 	rkey := 'sessions:config:${args.name}'
 	mut datajson := r.get(rkey)!
 	if datajson == '' {
-		if args.name == ""{
+		if args.name == '' {
 			return context.session_new()!
-		}else{
+		} else {
 			return error("can't find session with name ${args.name}")
 		}
 	}
@@ -89,8 +89,8 @@ pub fn (mut context Context) session_get(args_ ContextSessionGetArgs) !Session {
 		name: args.name
 		start: t
 		context: &context
-		params:paramsparser.new(config.params)!
-		config:config
+		params: paramsparser.new(config.params)!
+		config: config
 	}
 	return s
 }
@@ -98,12 +98,11 @@ pub fn (mut context Context) session_get(args_ ContextSessionGetArgs) !Session {
 pub fn (mut context Context) session_latest() !Session {
 	mut r := context.redis()!
 	rkey_latest := 'sessions:config:latest'
-	latestname:=r.get(rkey_latest)!
-	if latestname==""{
+	latestname := r.get(rkey_latest)!
+	if latestname == '' {
 		return context.session_new()!
 	}
-	return context.session_get(name:latestname)!
-
+	return context.session_get(name: latestname)!
 }
 
 ///////// LOAD & SAVE
@@ -129,9 +128,9 @@ pub fn (mut self Session) load() ! {
 	mut datajson := r.get(rkey)!
 	if datajson == '' {
 		return error("can't find session with name ${self.name}")
-	}	
+	}
 	self.config = json.decode(SessionConfig, datajson)!
-	self.params=paramsparser.new(self.config.params)!
+	self.params = paramsparser.new(self.config.params)!
 }
 
 // save the params to redis
@@ -141,7 +140,7 @@ pub fn (mut self Session) save() ! {
 	mut r := self.context.redis()!
 	self.config.params = self.params.str()
 	config_json := json.encode(self.config)
-	r.set(rkey,config_json)!
+	r.set(rkey, config_json)!
 }
 
 ////////// REPRESENTATION

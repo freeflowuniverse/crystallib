@@ -38,6 +38,9 @@ function hero_build {
 
 
 myplatform
-os_update
+
+execute_with_marker "os_update" os_update
+
 sshknownkeysadd
+
 

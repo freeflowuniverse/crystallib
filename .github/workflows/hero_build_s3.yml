@@ -38,7 +38,16 @@ jobs:
             set -x
             sudo apt update
             sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis gcc
-            redis-server --daemonize yes      
+            redis-server --daemonize yes
+            sudo apt install -y build-essential wget autoconf libtool
+            cd /tmp
+            wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+            tar -xvf v0.3.2.tar.gz
+            cd secp256k1-0.3.2/
+            ./autogen.sh
+            ./configure
+            sudo make -j 5
+            sudo make install            
           else
             brew install libgc tmux git rsync curl redis libpq
             brew services start redis
@@ -76,7 +85,8 @@ jobs:
           if [[ "$OSTYPE" == "darwin"* ]]; then
           v -enable-globals -w -cg hero.v
           else
-          v -enable-globals -w -cg -cflags -static -prod -cc gcc hero.v
+          # -prod
+          v -enable-globals -w -cg -cflags -static -cc gcc hero.v
           fi
           chmod +x hero
           mkdir -p ~/upload

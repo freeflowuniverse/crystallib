@@ -52,14 +52,14 @@ pub fn (mut site ZolaSite) process() ! {
 
 pub fn (mut site ZolaSite) generate() ! {
 	site.process()!
-	
+
 	// set default home page as the first page added
 	if !site.pages.any(it.homepage) {
 		site.pages[0].homepage = true
 	}
 
 	content_dir := pathlib.get_dir(
-		path:'${site.path_build.path}/content'
+		path: '${site.path_build.path}/content'
 		create: true
 	)!
 
@@ -67,9 +67,8 @@ pub fn (mut site ZolaSite) generate() ! {
 		page.export(content_dir.path)!
 	}
 
-	mut header := site.header or {
-		Header{}
-	}
+	mut header := site.header or { Header{} }
+
 	header.export(content_dir.path)!
 
 	// set default home page as the first page added
@@ -170,8 +169,8 @@ pub fn (mut site ZolaSite) generate() ! {
 	os.chmod(p_build.path, 0o777)!
 
 	osal.exec(cmd: cmd)!
-	mut c:=base.context()!
-	mut r:=c.redis()!
+	mut c := base.context()!
+	mut r := c.redis()!
 	r.set('zola:${site.name}:publish', site.path_publish.path)!
 	r.expire('zola:${site.name}:publish', 3600 * 12)!
 }

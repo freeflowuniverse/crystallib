@@ -8,16 +8,16 @@ import os
 pub struct CollectionGetArgs {
 pub mut:
 	dbpath    string
-	secret      string
-	contextid   u32
+	secret    string
+	contextid u32
 }
 
 // will return the dbcollection for a specific context
 pub fn get(args_ CollectionGetArgs) !DBCollection {
 	mut args := args_
 	mut secret := args.secret
-	if args.dbpath==""{
-		args.dbpath = "${os.home_dir()}/var/dbfs/${args.contextid}"
+	if args.dbpath == '' {
+		args.dbpath = '${os.home_dir()}/var/dbfs/${args.contextid}'
 	}
 	mut p := pathlib.get_dir(create: true, path: args.dbpath)!
 
@@ -33,4 +33,3 @@ pub fn get(args_ CollectionGetArgs) !DBCollection {
 	}
 	return dbcollection
 }
-

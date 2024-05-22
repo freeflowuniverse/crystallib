@@ -46,14 +46,14 @@ pub fn encrypt(data []u8, secret string) []u8 {
 	return destination
 }
 
-//input needs to be base64 encoded
+// input needs to be base64 encoded
 pub fn decrypt_str(data string, secret string) string {
 	if data.len == 0 {
 		return ''
 		// print_backtrace()
 		// panic('data cannot be empty (decrypt aes)')
 	}
-	data_decoded:=base64.decode(data)
+	data_decoded := base64.decode(data)
 	mut d := decrypt(data_decoded, secret)
 	return d.bytestr()
 }

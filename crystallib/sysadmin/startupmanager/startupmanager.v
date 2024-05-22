@@ -26,15 +26,15 @@ pub mut:
 }
 
 pub fn configure(args StartupManagerArgs) ! {
-	mut c:=base.context()!
-mut r:=c.redis()!
+	mut c := base.context()!
+	mut r := c.redis()!
 	mut d := json.encode_pretty(args)
 	r.set('startupmanager', d)!
 }
 
 pub fn get() !StartupManager {
-	mut c:=base.context()!
-mut r:=c.redis()!
+	mut c := base.context()!
+	mut r := c.redis()!
 	exists := r.exists('startupmanager')!
 	if !exists {
 		configure(cat: .screen)!

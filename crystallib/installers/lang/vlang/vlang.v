@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.develop.gittools
-//import freeflowuniverse.crystallib.sysadmin.downloader
+// import freeflowuniverse.crystallib.sysadmin.downloader
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
@@ -36,7 +36,7 @@ pub fn install(args_ InstallArgs) ! {
 	base.develop(reset: args.reset)!
 
 	mut gs := gittools.new(
-		name:'vlang'
+		name: 'vlang'
 		root: '${os.home_dir()}/_code'
 		light: true
 		singlelayer: true

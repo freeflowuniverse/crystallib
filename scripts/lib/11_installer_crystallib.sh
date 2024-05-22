@@ -1,5 +1,32 @@
 
+function crystal_deps_install {
+
+    if [[ "${OSNAME}" == "ubuntu" ]]; then
+        cd /tmp
+        package_install autoconf libtool
+        wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+        tar -xvf v0.4.1.tar.gz
+        cd secp256k1-0.4.1/
+        ./autogen.sh
+        ./configure
+        sudo make -j 5
+        sudo make install   
+    elif [[ "${OSNAME}" == "darwin"* ]]; then
+        brew install secp256k1        
+    elif [[ "${OSNAME}" == "arch"* ]]; then
+        pacman -Su extra/libsecp256k1
+    else
+        echo "can't find instructions to install secp256k1"
+        exit 1
+    fi
+
+
+}
+
 function crystal_lib_get {
+    
+    execute_with_marker "crystal_deps_install" crystal_deps_install
+
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/

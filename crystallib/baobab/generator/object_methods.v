@@ -263,12 +263,14 @@ fn generate_filter_method(actor Struct, object Struct) codemodel.Function {
 			}
 			mutable: true
 		}
-		params: [Param{
-			name: 'filter'
-			typ: Type{
-				symbol: params_type
-			}
-		}]
+		params: [
+			Param{
+				name: 'filter'
+				typ: Type{
+					symbol: params_type
+				}
+			},
+		]
 		result: codemodel.Result{
 			typ: Type{symbol:'[]${object_type}'}
 			result: true

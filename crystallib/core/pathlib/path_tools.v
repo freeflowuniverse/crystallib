@@ -324,11 +324,11 @@ pub fn (mut path Path) empty() ! {
 	if path.cat == .dir {
 		os.mkdir_all(path.path)!
 		path.exist = .yes
-	}else if path.cat == Category.linkfile{
-		mut p2:=path.getlink()!
+	} else if path.cat == Category.linkfile {
+		mut p2 := path.getlink()!
 		p2.empty()!
-	}else{
-		path.write("")!
+	} else {
+		path.write('')!
 	}
 }
 
@@ -356,7 +356,7 @@ pub fn (mut path Path) writeb(content []u8) ! {
 	if path.exists() && path.cat == Category.linkfile {
 		mut pathlinked := path.getlink()!
 		pathlinked.writeb(content)!
-	}	
+	}
 
 	if path.exists() && path.cat != Category.file && path.cat != Category.linkfile {
 		return error('Path must be a file for ${path}')
@@ -383,7 +383,7 @@ pub fn (mut path Path) read() !string {
 }
 
 // read bytes from file
-pub fn (mut path Path) readb() ![]u8{
+pub fn (mut path Path) readb() ![]u8 {
 	path.check()
 	match path.cat {
 		.file, .linkfile {

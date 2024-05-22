@@ -42,13 +42,13 @@ pub fn (e Encoder) export() !string {
 
 // needs to be a struct we are adding
 // parent is the name of the action e.g define.customer:contact
-pub fn (mut e Encoder) add_child[T](val T,parent string) ! {
+pub fn (mut e Encoder) add_child[T](val T, parent string) ! {
 	$if T is $array {
-		mut counter:=0
-		for valitem in val{
-			mut e2:=e.add_child[T](valitem,"${parent}:${counter}")!
+		mut counter := 0
+		for valitem in val {
+			mut e2 := e.add_child[T](valitem, '${parent}:${counter}')!
 		}
-		return	
+		return
 	}
 	mut e2 := Encoder{
 		params: paramsparser.Params{}
@@ -66,10 +66,10 @@ pub fn (mut e Encoder) add_child[T](val T,parent string) ! {
 
 pub fn (mut e Encoder) add_child_list[U](val []U, parent string) ! {
 	for i in 0 .. val.len {
-		mut counter:=0
+		mut counter := 0
 		$if U is $struct {
-			e.add_child(val[i],"${parent}:${counter}")!
-			counter+=1
+			e.add_child(val[i], '${parent}:${counter}')!
+			counter += 1
 		}
 	}
 }
@@ -109,15 +109,19 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	}
 	e.action_names << action_name
 
-	params := paramsparser.encode[T](t,recursive:false)!
-	println('debugzo402 ${params}')
+	params := paramsparser.encode[T](t, recursive: false)!
 	e.params = params
 
 	// encode children structs and array of structs
 	$for field in T.fields {
 		val := t.$(field.name)
-		$if val is $struct && val !is time.Time {
-			// encoding of embedded fields
+		$if val is time.Time {
+			// e.add(val)!
+			panic("time not supported")
+		} $else $if val is ourtime.OurTime {
+			panic("ourtime not supported")
+			// e.add(val)!
+		} $else $if val is $struct {
 			if field.name[0].is_capital() {
 				embedded_params := paramsparser.encode(val, recursive: false)!
 				e.params.params << embedded_params.params

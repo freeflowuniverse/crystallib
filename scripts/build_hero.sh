@@ -42,6 +42,7 @@ mkdir -p $DIR_BUILD
 mkdir -p $DIR_BIN
 mkdir -p $DIR_SCRIPTS
 
+
 pathmunge () {
     if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
         if [ "$2" = "after" ] ; then
@@ -65,6 +66,34 @@ else
 fi
 
 
+
+export DONE_DIR="$HOME/.done"
+mkdir -p "$DONE_DIR"
+
+# Generic function to execute a given function if the marker is older than one day
+function execute_with_marker {
+    local name=$1
+    local func=$2
+    local marker_file="$DONE_DIR/${name}_done"
+
+    # Check if marker file exists and is older than one day
+    if [ -f "$marker_file" ]; then
+        if [ $(find "$marker_file" -mtime +1) ]; then
+            echo "Marker file is older than one day. Removing it."
+            rm "$marker_file"
+        fi
+    fi
+
+    # Execute the function if the marker file does not exist
+    if [ ! -f "$marker_file" ]; then
+        $func
+        if [ $? -eq 0 ]; then
+            touch "$marker_file"
+        fi
+    else
+        echo "${name} setup has already been completed."
+    fi
+}
 
 
 
@@ -97,6 +126,29 @@ function myplatform {
     # fi    
 
 }
+
+function is_root {
+    if [ "$(whoami)" != "root" ]; then
+        echo "This script must be run as root or with sudo."
+        exit 1
+    fi
+
+}
+
+# Function to check if systemd is installed
+function is_systemd_installed {
+    [ "$(ps -p 1 -o comm=)" = "systemd" ]
+}
+
+# Function to check if init.d is installed
+function is_initd_installed {
+    [ -d /etc/init.d ]
+}
+
+function is_zinit_installed {
+    [ "$(ps -p 1 -o comm=)" = "zinit" ]
+}
+
 
 
 function gitcheck {
@@ -389,30 +441,30 @@ function zinitinit {
 
 }
 
-#!/bin/bash
-function zinittmuxinit {
-	# Specify the name of the tmux session and window
-	tmux_session="zinit"
-	tmux_window="zinit"
-	command_to_execute="zinit init"
-	# Check if tmux is installed
-	if ! command -v tmux &>/dev/null; then
-		echo "tmux is not installed. Please install it before running this script."
-		exit 1
-	fi
-	# Check if the tmux session exists
-	if tmux has-session -t "$tmux_session" &>/dev/null; then
-		# If the session exists, check if the window exists
-		if tmux list-windows -t "$tmux_session" | grep -q "$tmux_window"; then
-			# If the window exists, kill it
-			tmux kill-window -t "$tmux_session:$tmux_window"
-		fi
-	fi
-	# Start a new tmux session with the desired window and execute the command
-	tmux new-session -d -s "$tmux_session" -n "$tmux_window"
-	tmux send-keys -t "$tmux_session:$tmux_window" "$command_to_execute" C-m
-	echo "Started a new tmux session with window '$tmux_window' and executed '$command_to_execute'."
-}
+# #!/bin/bash
+# function zinittmuxinit {
+# 	# Specify the name of the tmux session and window
+# 	tmux_session="zinit"
+# 	tmux_window="zinit"
+# 	command_to_execute="zinit init"
+# 	# Check if tmux is installed
+# 	if ! command -v tmux &>/dev/null; then
+# 		echo "tmux is not installed. Please install it before running this script."
+# 		exit 1
+# 	fi
+# 	# Check if the tmux session exists
+# 	if tmux has-session -t "$tmux_session" &>/dev/null; then
+# 		# If the session exists, check if the window exists
+# 		if tmux list-windows -t "$tmux_session" | grep -q "$tmux_window"; then
+# 			# If the window exists, kill it
+# 			tmux kill-window -t "$tmux_session:$tmux_window"
+# 		fi
+# 	fi
+# 	# Start a new tmux session with the desired window and execute the command
+# 	tmux new-session -d -s "$tmux_session" -n "$tmux_window"
+# 	tmux send-keys -t "$tmux_session:$tmux_window" "$command_to_execute" C-m
+# 	echo "Started a new tmux session with window '$tmux_window' and executed '$command_to_execute'."
+# }
 
 function os_update {
     echo ' - os update'
@@ -423,7 +475,7 @@ function os_update {
         export TERM=xterm
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
-        apt update -y
+        #apt update -y
         set +e
         apt-mark hold grub-efi-amd64-signed
         set -e
@@ -431,8 +483,8 @@ function os_update {
         # apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         # apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release screen"
-        /etc/init.d/redis-server start
+        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release sudo binutils wget"
+
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
@@ -442,7 +494,7 @@ function os_update {
             unset NONINTERACTIVE
         fi
         set +e
-        brew services start redis
+        brew install mc redis curl tmux screen htop wget
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
@@ -452,7 +504,59 @@ function os_update {
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
         pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
+        
+    fi
+}
+
+
+
+function redis_start {
+    set +e
+    if redis-cli ping | grep -q "PONG"; then
+        echo "Redis is already running."
+        return
+    fi    
+    set -e
+
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        brew services start redis
+    elif [[ "${OSNAME}" == "arch"* ]]; then
         redis-server --daemonize yes
+    else
+
+        # Enable and start Redis service using the appropriate service manager
+        if is_systemd_installed; then
+            echo "Using systemd to manage Redis."
+            systemctl enable redis-server
+            systemctl start redis-server
+        elif is_initd_installed; then
+            echo "Using init.d to manage Redis."
+            update-rc.d redis-server defaults
+            service redis-server start
+            #/etc/init.d/redis-server start                
+        elif is_zinit_installed; then
+            echo "Using zinit to manage Redis."
+            echo 'exec: bash -c "/usr/bin/redis-server"' > /etc/zinit/redis.yaml
+            zinit monitor redis
+            zinit start redis
+        else
+            echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
+            exit 1
+        fi
+
+    fi
+
+    redis_test
+
+}
+
+
+function redis_test {
+    if redis-cli ping | grep -q "PONG"; then
+        echo "Redis is running and responsive."
+    else
+        echo "Redis is not responding to PING."
+        exit 1
     fi
 }
 
@@ -526,8 +630,34 @@ function v_install {
     fi
 }
 
+function crystal_deps_install {
+
+    if [[ "${OSNAME}" == "ubuntu" ]]; then
+        cd /tmp
+        package_install autoconf libtool
+        wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+        tar -xvf v0.4.1.tar.gz
+        cd secp256k1-0.4.1/
+        ./autogen.sh
+        ./configure
+        sudo make -j 5
+        sudo make install   
+    elif [[ "${OSNAME}" == "darwin"* ]]; then
+        brew install secp256k1        
+    elif [[ "${OSNAME}" == "arch"* ]]; then
+        pacman -Su extra/libsecp256k1
+    else
+        echo "can't find instructions to install secp256k1"
+        exit 1
+    fi
+
+
+}
 
 function crystal_lib_get {
+    
+    execute_with_marker "crystal_deps_install" crystal_deps_install
+
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/
@@ -616,6 +746,85 @@ function crystal_pull {
     popd 2>&1 >> /dev/null
 }
 
+
+
+function hero_install {
+    redis_start
+
+    os_name="$(uname -s)"
+    arch_name="$(uname -m)"
+
+    # Select the URL based on the platform
+    if [[ "$os_name" == "Linux" && "$arch_name" == "x86_64" ]]; then
+        url="https://f003.backblazeb2.com/file/threefold/linux-i64/hero"
+    elif [[ "$os_name" == "Darwin" && "$arch_name" == "arm64" ]]; then
+        url="https://f003.backblazeb2.com/file/threefold/macos-arm64/hero"
+    # elif [[ "$os_name" == "Darwin" && "$arch_name" == "x86_64" ]]; then
+    #     url="https://f003.backblazeb2.com/file/threefold/macos-i64/hero"
+    else
+        echo "Unsupported platform."
+        exit 1
+    fi
+
+    if [[ "${OSNAME}" == "darwin"* ]]; then
+        [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
+    fi
+
+    if [ -z "$url" ]; then
+        echo "Could not find url to download."
+        echo $urls
+        exit 1
+    fi
+    zprofile="${HOME}/.zprofile"
+    hero_bin_path="${HOME}/hero/bin"
+    temp_file="$(mktemp)"
+
+    # Check if ~/.zprofile exists
+    if [ -f "$zprofile" ]; then
+        # Read each line and exclude any that modify the PATH with ~/hero/bin
+        while IFS= read -r line; do
+            if [[ ! "$line" =~ $hero_bin_path ]]; then
+                echo "$line" >> "$temp_file"
+            fi
+        done < "$zprofile"
+    else
+        touch "$zprofile"
+    fi
+    # Add ~/hero/bin to the PATH statement
+    echo "export PATH=\$PATH:$hero_bin_path" >> "$temp_file"
+    # Replace the original .zprofile with the modified version
+    mv "$temp_file" "$zprofile"
+    # Ensure the temporary file is removed (in case of script interruption before mv)
+    trap 'rm -f "$temp_file"' EXIT
+
+    # Output the selected URL
+    echo "Download URL for your platform: $url"
+
+    # Download the file
+    curl -o /tmp/downloaded_file -L "$url"
+
+    # Check if file size is greater than 10 MB
+    file_size=$(du -m  /tmp/downloaded_file | cut -f1)
+    if [ "$file_size" -ge 10 ]; then
+        # Create the target directory if it doesn't exist
+        mkdir -p ~/hero/bin
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # Move and rename the file
+            mv  /tmp/downloaded_file ~/hero/bin/hero
+            chmod +x ~/hero/bin/hero
+        else
+            mv  /tmp/downloaded_file /usr/local/bin/hero
+            chmod +x /usr/local/bin/hero
+        fi
+
+        echo "Hero installed properly"
+        export PATH=$PATH:$hero_bin_path
+        hero -version
+    else
+        echo "Downloaded file is less than 10 MB. Process aborted."
+        exit 1
+    fi
+}
 function freeflow_dev_env_install {
 
     crystal_lib_get
@@ -655,12 +864,13 @@ function hero_build {
 
 
 myplatform
-os_update
+
+execute_with_marker "os_update" os_update
+
 sshknownkeysadd
 
 
+
+
 hero_build
-
-
-echo HERO, V, CRYSTAL ALL OK
-echo WE ARE READY TO HERO...
+echo 'BUILD HERO OK'

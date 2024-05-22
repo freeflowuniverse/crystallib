@@ -50,14 +50,14 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		args.publish_path = '${cfg.path_publish}/${args.name}'
 	}
 
-	mut mycontext:=base.context()!
-	mut r:=mycontext.redis()!
+	mut mycontext := base.context()!
+	mut r := mycontext.redis()!
 	r.set('mdbook:${args.name}:build', args.build_path)!
 	r.set('mdbook:${args.name}:publish', args.publish_path)!
 	r.expire('mdbook:${args.name}:build', 3600 * 12)! // expire after 12h
 	r.expire('mdbook:${args.name}:publish', 3600 * 12)!
 
-	//mut context := base.context()!
+	// mut context := base.context()!
 	mut gs := gittools.get()!
 
 	if args.summary_url.len > 0 {

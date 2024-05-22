@@ -99,12 +99,11 @@ fn C.secp256k1_generate_key(secp &Secp256k1_t) int
 @[params]
 pub struct Secp256NewArgs {
 pub:
-	pubhex  string // public key hex  (eg 03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21)
-	privhex string // private key hex (eg 478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83)
-	pubbase64 string
+	pubhex     string // public key hex  (eg 03310ec949bd4f7fc24f823add1394c78e1e9d70949ccacf094c027faa20d99e21)
+	privhex    string // private key hex (eg 478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83)
+	pubbase64  string
 	privbase64 string
-
-	//key []u8 // is in binary form (not implemented)
+	// key []u8 // is in binary form (not implemented)
 }
 
 // get a Secp256k1 key, can start from an existing key in string hex format (starts with 0x)
@@ -134,8 +133,8 @@ pub fn new(args_ Secp256NewArgs) !Secp256k1 {
 		// same as keyhex (backward compatibility)
 		// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
 		// key is the private key
-		if !(args.privhex.starts_with("0x")){
-			args.privhex="0x${args.privhex}"
+		if !(args.privhex.starts_with('0x')) {
+			args.privhex = '0x${args.privhex}'
 		}
 		load := C.secp256k1_load_private_key(secp.cctx, args.privhex.str)
 		if load > 0 {
@@ -144,30 +143,29 @@ pub fn new(args_ Secp256NewArgs) !Secp256k1 {
 	} else if args.pubhex.len > 0 {
 		// load key from hex like 0x478b45390befc3097e3e6e1a74d78a34a113f4b9ab17deb87e9b48f43893af83
 		// key is the public key, this only allow signature check, shared keys, etc.
-		if !(args.pubhex.starts_with("0x")){
-			args.pubhex="0x${args.pubhex}"
-		}			
+		if !(args.pubhex.starts_with('0x')) {
+			args.pubhex = '0x${args.pubhex}'
+		}
 		load := C.secp256k1_load_public_key(secp.cctx, args.pubhex.str)
 		if load > 0 {
 			return error('invalid public key')
 		}
-	}else if args.privbase64.len > 0 {
-		keybin:=base64.decode(args.privbase64)
-		keyhex:=hex.encode(keybin)
-		keyhex2:="0x${keyhex}"
-		return new(privhex:keyhex2)!
-	}else if args.pubbase64.len > 0 {
-		keybin:=base64.decode(args.pubbase64)
-		keyhex:=hex.encode(keybin)
-		keyhex2:="0x${keyhex}"
-		return new(pubhex:keyhex2)!
-	}else{
-		C.secp256k1_generate_key(secp.cctx)	
+	} else if args.privbase64.len > 0 {
+		keybin := base64.decode(args.privbase64)
+		keyhex := hex.encode(keybin)
+		keyhex2 := '0x${keyhex}'
+		return new(privhex: keyhex2)!
+	} else if args.pubbase64.len > 0 {
+		keybin := base64.decode(args.pubbase64)
+		keyhex := hex.encode(keybin)
+		keyhex2 := '0x${keyhex}'
+		return new(pubhex: keyhex2)!
+	} else {
+		C.secp256k1_generate_key(secp.cctx)
 	}
-		
 
-		// TODO: implement the binary key input
-		// TODO: check format in side and report properly
+	// TODO: implement the binary key input
+	// TODO: check format in side and report properly
 
 	// dumps keys for debugging purpose
 	// secp.keys()	
@@ -222,10 +220,9 @@ pub fn (s Secp256k1) private_key_hex() string {
 
 pub fn (s Secp256k1) private_key_base64() string {
 	key := s.private_key_hex()
-	keybin := hex.decode(key) or {panic("can't decode hex")}
+	keybin := hex.decode(key) or { panic("can't decode hex") }
 	return base64.encode(keybin)
 }
-
 
 // return public key in hex format
 pub fn (s Secp256k1) public_key_hex() string {
@@ -233,10 +230,9 @@ pub fn (s Secp256k1) public_key_hex() string {
 	return unsafe { key.vstring()[2..] }
 }
 
-
 pub fn (s Secp256k1) public_key_base64() string {
 	key := s.public_key_hex()
-	keybin := hex.decode(key) or {panic("can't decode hex")}
+	keybin := hex.decode(key) or { panic("can't decode hex") }
 	return base64.encode(keybin)
 }
 
@@ -274,7 +270,7 @@ pub fn (s Secp256k1) sign_str_hex(data string) string {
 }
 
 pub fn (s Secp256k1) sign_str_base64(data string) string {
-	payload :=  s.sign_data(data.bytes())
+	payload := s.sign_data(data.bytes())
 	return base64.encode(payload)
 }
 
@@ -298,15 +294,14 @@ pub fn (s Secp256k1) verify_data(signature []u8, data []u8) bool {
 }
 
 pub fn (s Secp256k1) verify_str_base64(signature string, input string) bool {
-	signature2:=base64.decode(signature) 
+	signature2 := base64.decode(signature)
 	return s.verify_data(signature2, input.bytes())
 }
 
 pub fn (s Secp256k1) verify_str_hex(signature string, input string) bool {
-	signature2:=hex.decode(signature) or {panic("couldn't decode 64")}
+	signature2 := hex.decode(signature) or { panic("couldn't decode 64") }
 	return s.verify_data(signature2, input.bytes())
 }
-
 
 //
 // sign (schnorr) data

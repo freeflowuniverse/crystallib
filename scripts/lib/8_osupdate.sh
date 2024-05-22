@@ -8,7 +8,7 @@ function os_update {
         export TERM=xterm
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
-        apt update -y
+        #apt update -y
         set +e
         apt-mark hold grub-efi-amd64-signed
         set -e
@@ -16,8 +16,8 @@ function os_update {
         # apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         # apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release screen"
-        /etc/init.d/redis-server start
+        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release sudo binutils wget"
+
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
@@ -27,7 +27,7 @@ function os_update {
             unset NONINTERACTIVE
         fi
         set +e
-        brew services start redis
+        brew install mc redis curl tmux screen htop wget
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
@@ -37,7 +37,7 @@ function os_update {
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
         pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
-        redis-server --daemonize yes
+        
     fi
 }
 

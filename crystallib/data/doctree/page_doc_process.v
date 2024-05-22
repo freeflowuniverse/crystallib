@@ -24,7 +24,7 @@ mut:
 }
 
 fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
-	mut args:=args_
+	mut args := args_
 	mut mydoc := page.doc()!
 
 	mut collection := page.collection()!
@@ -50,9 +50,13 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 						mut dest_image_copy := '${args.dest}/img/${linkimage.file_name()}'
 						linkimage.copy(dest_image_copy)!
 					}
-					element.path = 'img'
-					element.filename = linkimage.file_name()
-					mut out := element.markdown()!
+					mut out := ''
+					if element.extra.trim_space() == '' {
+						out = '![${element.description}](img/${linkimage.file_name()})'
+					} else {
+						out = '![${element.description}](img/${linkimage.file_name()} ${element.extra})'
+					}
+
 					mydoc.content_set(element.id, out)
 					element.processed = false
 					element.process()!

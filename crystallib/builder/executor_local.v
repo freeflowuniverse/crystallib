@@ -1,6 +1,7 @@
 module builder
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.rsync
 // import freeflowuniverse.crystallib.core.pathlib
 import os
 
@@ -73,7 +74,7 @@ pub fn (mut executor ExecutorLocal) info() map[string]string {
 
 // upload from local FS to executor FS
 pub fn (mut executor ExecutorLocal) upload(args SyncArgs) ! {
-	mut rsargs := osal.RsyncArgs{
+	mut rsargs := rsync.RsyncArgs{
 		source: args.source
 		dest: args.dest
 		delete: args.delete
@@ -81,12 +82,12 @@ pub fn (mut executor ExecutorLocal) upload(args SyncArgs) ! {
 		ignore_default: args.ignore_default
 		stdout: args.stdout
 	}
-	osal.rsync(rsargs)!
+	rsync.rsync(rsargs)!
 }
 
 // download from executor FS to local FS
 pub fn (mut executor ExecutorLocal) download(args SyncArgs) ! {
-	mut rsargs := osal.RsyncArgs{
+	mut rsargs := rsync.RsyncArgs{
 		source: args.source
 		dest: args.dest
 		delete: args.delete
@@ -94,7 +95,7 @@ pub fn (mut executor ExecutorLocal) download(args SyncArgs) ! {
 		ignore_default: args.ignore_default
 		stdout: args.stdout
 	}
-	osal.rsync(rsargs)!
+	rsync.rsync(rsargs)!
 }
 
 pub fn (mut executor ExecutorLocal) shell(cmd string) ! {

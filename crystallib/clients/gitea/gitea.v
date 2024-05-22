@@ -46,7 +46,7 @@ pub fn delete(instance string) ! {
 		type_name: 'GiteaClient'
 		connection: &con
 	}
-	
+
 	self.init(instance: instance, action: .delete)!
 }
 

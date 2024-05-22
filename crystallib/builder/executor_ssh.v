@@ -3,6 +3,7 @@ module builder
 import os
 import rand
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.rsync
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.ipaddress
 import freeflowuniverse.crystallib.ui.console
@@ -123,7 +124,7 @@ pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
 	if executor.ipaddr.cat == .ipv6 {
 		addr = '\'${executor.user}@[${executor.ipaddr.addr}]\':${executor.ipaddr.port}'
 	}
-	mut rsargs := osal.RsyncArgs{
+	mut rsargs := rsync.RsyncArgs{
 		source: args.source
 		dest: args.dest
 		delete: args.delete
@@ -132,7 +133,7 @@ pub fn (mut executor ExecutorSSH) download(args SyncArgs) ! {
 		ignore_default: args.ignore_default
 		stdout: args.stdout
 	}
-	osal.rsync(rsargs)!
+	rsync.rsync(rsargs)!
 }
 
 // download from executor FS to local FS
@@ -171,7 +172,7 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 		addr = '\'${executor.user}@[${executor.ipaddr.addr}]\':${executor.ipaddr.port}'
 	}
 
-	mut rsargs := osal.RsyncArgs{
+	mut rsargs := rsync.RsyncArgs{
 		source: args.source
 		dest: args.dest
 		delete: args.delete
@@ -181,7 +182,7 @@ pub fn (mut executor ExecutorSSH) upload(args SyncArgs) ! {
 		stdout: args.stdout
 		fast_rsync: args.fast_rsync
 	}
-	osal.rsync(rsargs)!
+	rsync.rsync(rsargs)!
 }
 
 // get environment variables from the executor
