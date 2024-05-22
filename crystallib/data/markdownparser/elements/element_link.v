@@ -88,7 +88,7 @@ fn (self Link) markdown_include() string {
 		} else {
 			out = '${pre}[${self.description}](${link_filename} ${self.extra})'
 		}
-	} else if self.cat == LinkType.html || self.cat == LinkType.anchor || self.cat == LinkType.data {
+	} else if self.cat == LinkType.html || self.cat == LinkType.anchor || self.cat == LinkType.data || self.cat == LinkType.email {
 		out = '[${self.description}](${self.url})'
 	} else {
 		panic('bug')
@@ -132,7 +132,7 @@ pub fn (self Link) markdown() !string {
 		} else {
 			out = '${pre}[${description}](${link_filename}${anchor} ${self.extra})'
 		}
-	} else if self.cat == LinkType.html {
+	} else if self.cat == LinkType.html || self.cat == LinkType.email{
 		out = '[${description}](${self.url})'
 	} else {
 		panic('bug')
