@@ -25,7 +25,7 @@ pub fn encode[T](val T) !string {
 
 	$if T is $struct {
 		e.encode_struct[T](val)!
-	} $else $if T is []$struct {
+	} $else $if T is $array {
 		e.add_child_list[T](val,"TODO")
 	} $else {
 		return error('can only add elements for struct or array of structs. \n${val}')
@@ -43,7 +43,7 @@ pub fn (e Encoder) export() !string {
 // needs to be a struct we are adding
 // parent is the name of the action e.g define.customer:contact
 pub fn (mut e Encoder) add_child[T](val T,parent string) ! {
-	$if T is []$struct {
+	$if T is $array {
 		mut counter:=0
 		for valitem in val{
 			mut e2:=e.add_child[T](valitem,"${parent}:${counter}")!
@@ -74,6 +74,30 @@ pub fn (mut e Encoder) add_child_list[U](val []U, parent string) ! {
 	}
 }
 
+// needs to be a struct we are adding
+// parent is the name of the action e.g define.customer:contact
+pub fn (mut e Encoder) add[T](val T) ! {
+	// $if T is []$struct {
+	// 	// panic("not implemented")
+	// 	for valitem in val{
+	// 		mut e2:=e.add[T](valitem)!
+	// 	}		
+	// }
+	mut e2 := Encoder{
+		params: paramsparser.Params{}
+		parent: &e
+		action_names: e.action_names.clone() // careful, if not cloned gets mutated later
+	}
+	$if T is $struct && T !is time.Time {
+		e2.params.set('key', '${val}')
+		e2.encode_struct[T](val)!
+		e.children << e2
+	} $else {
+		return error('can only add elements for struct or array of structs. \n${val}')
+	}
+}
+
+
 // now encode the struct
 pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	mut mytype := reflection.type_of[T](t)
@@ -85,7 +109,8 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	}
 	e.action_names << action_name
 
-	params := paramsparser.encode[T](t,recursive=false)!
+	params := paramsparser.encode[T](t,recursive:false)!
+	println('debugzo402 ${params}')
 	e.params = params
 
 	// encode children structs and array of structs

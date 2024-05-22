@@ -15,11 +15,14 @@ pub fn (params Params) decode_struct[T](_ T) !T {
 	mut t := T{}
 	$for field in T.fields {
 		if field.name[0].is_capital() {
+			// embed := params.decode_struct(t.$(field.name))!
 			t.$(field.name) = params.decode_struct(t.$(field.name))!
+			println('debugzo--- ${t}')
 		} else {
 			t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
 		}
 	}
+	println('debugzoo2-- ${t}')
 	return t
 }
 
@@ -42,6 +45,8 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 		return params.get(key)!
 	} $else $if T is int {
 		return params.get_int(key)!
+	} $else $if T is u32 {
+		return params.get_u32(key)!
 	} $else $if T is bool {
 		return params.get_default_true(key)
 	} $else $if T is []string {
@@ -69,6 +74,7 @@ pub struct EncodeArgs {
 }
 
 pub fn encode[T](t T, args EncodeArgs) !Params {
+	println('debugzorr342 ${t}')
 	$if t is $option {
 		// unwrap and encode optionals
 		workaround := t
@@ -90,7 +96,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 			key = field_attrs['alias']
 		}
 
-		$if val is string || val is int || val is bool || val is i64 || val is time.Time {
+		$if val is string || val is int || val is bool || val is i64 || val is u32 || val is time.Time {
 			params.set(key, '${val}')
 		} $else $if field.typ is []string {
 			mut v2 := ''
@@ -117,14 +123,23 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 				value: v2
 			}
 		} $else $if field.typ is $struct {
-			if args.recursive {
-				child_params := encode(val)!
-				params.params << Param{
-					key: field.name
-					value: child_params.export()
+			// TODO: Handle embeds better
+			is_embed := field.name[0].is_capital()
+			if is_embed {
+				$if val is string || val is int || val is bool || val is i64 || val is u32 || val is time.Time {
+					params.set(key, '${val}')
+				}
+			} else {
+				if args.recursive {
+					child_params := encode(val)!
+					params.params << Param{
+						key: field.name
+						value: child_params.export()
+					}
 				}
 			}
 		} $else {
+			println('debugzonikonzo')
 		}
 	}
 	return params

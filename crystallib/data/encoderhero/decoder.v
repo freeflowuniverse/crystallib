@@ -14,7 +14,6 @@ pub fn decode[T](data string) !T {
 	return decode_struct[T](T{}, data)
 }
 
-
 // decode_struct is a generic function that decodes a JSON map into the struct T.
 fn decode_struct[T](_ T, data string) !T {
 	mut typ := T{}

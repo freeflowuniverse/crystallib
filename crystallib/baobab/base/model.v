@@ -2,5 +2,5 @@ module base
 
 pub struct Base {
 pub mut :
-	id string
+	id u32
 }

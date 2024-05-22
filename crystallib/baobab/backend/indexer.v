@@ -28,7 +28,7 @@ pub fn new_indexer(db_path string) !Indexer {
 
 // new creates a new root object entry in the root_objects table,
 // and the table belonging to the type of root object with columns for index fields
-pub fn (mut backend Indexer) new[T](obj T) !int {
+pub fn (mut backend Indexer) new[T](obj T) ! {
 	table_name := get_table_name[T]()
 
 	row := RootObject{
@@ -39,16 +39,21 @@ pub fn (mut backend Indexer) new[T](obj T) !int {
 		insert row into RootObject
 	}!
 
-	id := backend.db.last_id()
+	// id := backend.db.last_id()
 
 	// create table for root object if it doesn't exist
 	backend.create_root_struct_table[T]()!
 
 	obj_encoded := json.encode(obj)
 	// insert root object into its table
-	mut indices := ['id', 'data']
-	mut values := ['${id}', "'${obj_encoded}'"]
+	mut indices := ['data']
+	mut values := ["'${obj_encoded}'"]
 	$for field in T.fields {
+		$if field.name == 'id' {
+			indices << '${field.name}'
+			val := obj.$(field.name)
+			values << "'${val}'"
+		}
 		$if field.typ is string {
 			if field.attrs.contains('index') {
 				indices << '${field.name}'
@@ -62,26 +67,20 @@ pub fn (mut backend Indexer) new[T](obj T) !int {
 		return error('Error inserting object ${obj} into table ${table_name}')
 	}
 
-	return id
+	// return id
 }
 
 // save the session to redis & mem
 pub fn (mut backend Indexer) set[T](obj T) ! {
 	table_name := get_table_name[T]()
 	obj_encoded := json.encode(obj)
-
 	// todo: check table and entry exists
 	backend.db.exec("update ${table_name} set data='${obj_encoded}' where id=${obj.id}")!
 }
 
 // save the session to redis & mem
-pub fn (mut backend Indexer) delete[T](id string) ! {
-	mut table_name := ''
-	$for attr in T.attributes {
-		if attr.name == 'table' && attr.arg.len > 0 {
-			table_name = attr.arg
-		}
-	}
+pub fn (mut backend Indexer) delete[T](id u32) ! {
+	table_name := get_table_name[T]()
 	// todo: check table and entry exists
 	backend.db.exec('delete from ${table_name} where id=${id}')!
 	backend.db.exec('delete from root_objects where id=${id}')!

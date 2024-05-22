@@ -272,6 +272,7 @@ pub fn (p Params) export(args ExportArgs) string {
 			outstr += poststr
 		}
 	}
+	println("eyeyeyey debugzo ${outstr}")
 	return outstr
 }
 
