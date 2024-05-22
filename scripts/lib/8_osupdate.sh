@@ -8,7 +8,7 @@ function os_update {
         export TERM=xterm
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
-        apt update -y
+        #apt update -y
         set +e
         apt-mark hold grub-efi-amd64-signed
         set -e
