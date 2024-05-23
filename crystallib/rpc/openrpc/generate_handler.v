@@ -110,7 +110,7 @@ pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[st
 fn get_mock_value(typ string) !string {
 	if typ == 'string' {
 		return "'mock_string_${rand.string(3)}'"
-	} else if typ == 'int' {
+	} else if typ == 'int' || typ == 'u32' {
 		return '42'
 	} else {
 		return error('mock values for types other than strings and ints are not yet supported')

@@ -58,7 +58,7 @@ pub fn (func Function) generate_call() !string {
 pub fn (param Param) generate_value() !string {
 	if param.typ.symbol == 'string' {
 		return "'mock_string_${rand.string(3)}'"
-	} else if param.typ.symbol == 'int' {
+	} else if param.typ.symbol == 'int' || param.typ.symbol == 'u32'{
 		return '42'
 	} else {
 		println('mock values for types other than strings and ints are not yet supported')
