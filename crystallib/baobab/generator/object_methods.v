@@ -5,6 +5,13 @@ import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import os
 
+const id_param = Param {
+	name: 'id'
+	typ: codemodel.Type{
+		symbol: 'u32'
+	}
+}
+
 pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
 	obj_name := texttools.name_fix(object.structure.name)
 	object_type := object.structure.name
@@ -60,14 +67,7 @@ fn generate_get_method(actor Struct, object BaseObject) codemodel.Function {
 				symbol: actor.name
 			}
 		}
-		params: [
-			Param{
-				name: 'id'
-				typ: codemodel.Type{
-					symbol: 'string'
-				}
-			},
-		]
+		params: [id_param]
 		result: codemodel.Result{
 			typ: Type{symbol:object.structure.name}
 			result: true
@@ -90,7 +90,7 @@ fn generate_set_method(actor Struct, object BaseObject) codemodel.Function {
 	body := "actor.backend.set[${object_type}](${object_name})!"
 	get_method := codemodel.Function{
 		name: 'set_${object.structure.name.to_lower()}'
-		description: 'gets the ${object.structure.name} with the given object id'
+		description: 'updates the ${object.structure.name} with the given object id'
 		receiver: codemodel.Param{
 			mutable: true
 			name: 'actor'
@@ -130,14 +130,7 @@ fn generate_delete_method(actor Struct, object BaseObject) codemodel.Function {
 				symbol: actor.name
 			}
 		}
-		params: [
-			Param{
-				name: 'id'
-				typ: codemodel.Type{
-					symbol: 'string'
-				}
-			},
-		]
+		params: [id_param]
 		result: codemodel.Result{
 			result: true
 		}
@@ -177,7 +170,7 @@ fn generate_new_method(actor Struct, object BaseObject) codemodel.Function {
 		]
 		result: codemodel.Result{
 			result: true
-			typ: Type{symbol:'string'}
+			typ: Type{symbol:'u32'}
 		}
 		body: body
 	}

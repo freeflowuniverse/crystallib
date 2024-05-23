@@ -11,12 +11,7 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 	consts := CustomCode{"const db_dir = '\${os.home_dir()}/hero/db'
 	const actor_name = '${actor.name}_test_actor'"}
 
-	clean_code := "if os.exists('\${db_dir}/\${actor_name}') {
-		os.rmdir_all('\${db_dir}/\${actor_name}')!
-	}
-	if os.exists('\${db_dir}/\${actor_name}.sqlite') {
-		os.rm('\${db_dir}/\${actor_name}.sqlite')!
-	}	"
+	clean_code := "mut actor := get(name: actor_name)!\nactor.backend.reset()!"
 
 	testsuite_begin := Function{
 		name: 'testsuite_begin'
@@ -76,10 +71,10 @@ fn generate_new_method_test(actor Struct, object BaseObject) !codemodel.Function
 
 	body := "mut actor := get(name: actor_name)!
 	mut ${object_name}_id := actor.new_${object_name}(${object_type}{${fields.join(',')}})!
-	assert ${object_name}_id == '1'
+	assert ${object_name}_id == 1
 
 	${object_name}_id = actor.new_${object_name}(${object_type}{${fields.join(',')}})!
-	assert ${object_name}_id == '2'"
+	assert ${object_name}_id == 2"
 	return codemodel.Function{
 		name: 'test_new_${object_name}'
 		description: 'news the ${object_type} with the given object id'
@@ -160,9 +155,9 @@ fn get_required_fields(s Struct) ![]string {
 fn get_mock_value(typ string) !string {
 	if typ == 'string' {
 		return "'mock_string_${rand.string(3)}'"
-	} else if typ == 'int' {
+	} else if typ == 'int' || typ == 'u32' {
 		return '42'
 	} else {
-		return error('mock values for types other than strings and ints are not yet supported')
+		return error('mock values for types other than strings and numbers are not yet supported')
 	}
 }

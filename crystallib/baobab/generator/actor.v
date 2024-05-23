@@ -14,6 +14,7 @@ fn get_children(s Struct, code []CodeItem) []Struct {
 	for structure in structs {
 		if s.fields.any(it.typ.symbol == structure.name) {
 			children << structure
+			children << get_children(structure, code)
 		}
 	}
 	
@@ -23,7 +24,8 @@ fn get_children(s Struct, code []CodeItem) []Struct {
 pub fn generate_actor(name string, object_names []string, code []CodeItem) !Actor {
 	mut objects := []BaseObject{}
 	for s_ in code.filter(it is Struct).map(it as Struct).filter(texttools.name_fix(it.name) in object_names.map(texttools.name_fix(it))) {
-		s := s_ as Struct
+		mut s := s_ as Struct
+		s.mod = 'tftc.baobab.models.${s.mod}'
 		objects << BaseObject{
 			structure: s
 			methods: code.filter(it is Function).map(it as Function).filter(it.receiver.typ.symbol == s.name).map(it as Function)
@@ -112,6 +114,7 @@ pub fn (a Actor) generate_module() !Module {
 
 	// generate code files for each of the objects the actor is responsible for
 	for object in a.objects {
+		println('debugzoo ${object}')
 		files << generate_object_code(actor_struct, object)
 		files << generate_object_test_code(actor_struct, object)!
 	}
