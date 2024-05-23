@@ -22,7 +22,7 @@ pub fn new_file(config CodeFile) CodeFile {
 }
 
 pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
-	filename := '${texttools.name_fix(code.name)}.v'
+	filename := '${options.prefix}${texttools.name_fix(code.name)}.v'
 	mut filepath := pathlib.get('${path}/${filename}')
 
 	if !options.overwrite && filepath.exists() {

@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import os
 
 pub struct Module {
+pub mut:
 	name       string
 	files      []CodeFile
 	misc_files []File

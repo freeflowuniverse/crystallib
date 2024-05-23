@@ -161,7 +161,7 @@ pub struct Type {
 pub mut:
 	is_reference bool   @[str: skip]
 	is_map       bool   @[str: skip]
-	is_array     bool   @[str: skip]
+	is_array     bool   
 	is_mutable   bool   @[str: skip]
 	is_shared    bool   @[str: skip]
 	is_optional  bool   @[str: skip]

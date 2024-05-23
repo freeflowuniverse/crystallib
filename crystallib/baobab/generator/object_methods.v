@@ -5,15 +5,26 @@ import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.texttools
 import os
 
-pub fn generate_object_code(actor Struct, object Struct) CodeFile {
-	obj_name := texttools.name_fix(object.name)
-	object_type := object.name
+pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
+	obj_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
+	
+	mut items := []CodeItem{}
+	items = [generate_new_method(actor, object),
+		generate_get_method(actor, object),
+		generate_set_method(actor, object),
+		generate_delete_method(actor, object),
+		generate_list_result_struct(actor, object),
+		generate_list_method(actor, object)
+	]
+
+	items << generate_object_methods(actor, object)
 	mut file := codemodel.new_file(
 		mod: texttools.name_fix(actor.name)
 		name: obj_name
 		imports: [
 			Import{
-				mod: object.mod
+				mod: object.structure.mod
 				types: [object_type]
 			},
 			Import{
@@ -21,17 +32,10 @@ pub fn generate_object_code(actor Struct, object Struct) CodeFile {
 				types: ['FilterParams']
 			},
 		]
-		items: [
-			generate_new_method(actor, object),
-			generate_get_method(actor, object),
-			generate_set_method(actor, object),
-			generate_delete_method(actor, object),
-			generate_list_result_struct(actor, object),
-			generate_list_method(actor, object),
-		]
+		items: items
 	)
 
-	if object.fields.any(it.attrs.any(it.name == 'index')) {
+	if object.structure.fields.any(it.attrs.any(it.name == 'index')) {
 		// can't filter without indices
 		filter_params := generate_filter_params(actor, object)
 		file.items << filter_params.map(CodeItem(it))
@@ -42,9 +46,9 @@ pub fn generate_object_code(actor Struct, object Struct) CodeFile {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_get_method(actor Struct, object Struct) codemodel.Function {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_get_method(actor Struct, object BaseObject) codemodel.Function {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 
 	get_method := codemodel.Function{
 		name: 'get_${object_name}'
@@ -65,7 +69,7 @@ fn generate_get_method(actor Struct, object Struct) codemodel.Function {
 			},
 		]
 		result: codemodel.Result{
-			typ: Type{symbol:object.name}
+			typ: Type{symbol:object.structure.name}
 			result: true
 		}
 		body: 'return actor.backend.get[${object_type}](id)!'
@@ -74,19 +78,19 @@ fn generate_get_method(actor Struct, object Struct) codemodel.Function {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_set_method(actor Struct, object Struct) codemodel.Function {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_set_method(actor Struct, object BaseObject) codemodel.Function {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
-		structure: object
+		structure: object.structure
 		prefix: ''
 		only_mutable: true
 	)
 	body := "actor.backend.set[${object_type}](${object_name})!"
 	get_method := codemodel.Function{
-		name: 'set_${object.name.to_lower()}'
-		description: 'gets the ${object.name} with the given object id'
+		name: 'set_${object.structure.name.to_lower()}'
+		description: 'gets the ${object.structure.name} with the given object id'
 		receiver: codemodel.Param{
 			mutable: true
 			name: 'actor'
@@ -111,14 +115,14 @@ fn generate_set_method(actor Struct, object Struct) codemodel.Function {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_delete_method(actor Struct, object Struct) codemodel.Function {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_delete_method(actor Struct, object BaseObject) codemodel.Function {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 
 	body := 'actor.backend.delete[${object_type}](id)!'
 	get_method := codemodel.Function{
-		name: 'delete_${object.name.to_lower()}'
-		description: 'deletes the ${object.name} with the given object id'
+		name: 'delete_${object.structure.name.to_lower()}'
+		description: 'deletes the ${object.structure.name} with the given object id'
 		receiver: codemodel.Param{
 			mutable: true
 			name: 'actor'
@@ -143,19 +147,19 @@ fn generate_delete_method(actor Struct, object Struct) codemodel.Function {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_new_method(actor Struct, object Struct) codemodel.Function {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_new_method(actor Struct, object BaseObject) codemodel.Function {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
-		structure: object
+		structure: object.structure
 		prefix: ''
 		only_mutable: false
 	)
 	body := "return actor.backend.new[${object_type}](${object_name})!"
 	new_method := codemodel.Function{
-		name: 'new_${object.name.to_lower()}'
-		description: 'news the ${object.name} with the given object id'
+		name: 'new_${object.structure.name.to_lower()}'
+		description: 'news the ${object.structure.name} with the given object id'
 		receiver: codemodel.Param{
 			name: 'actor'
 			typ: codemodel.Type{
@@ -181,9 +185,9 @@ fn generate_new_method(actor Struct, object Struct) codemodel.Function {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_list_result_struct(actor Struct, object Struct) codemodel.Struct {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_list_result_struct(actor Struct, object BaseObject) codemodel.Struct {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 	return Struct{
 		name:'${object_type}List'
 		is_pub: true 
@@ -192,14 +196,14 @@ fn generate_list_result_struct(actor Struct, object Struct) codemodel.Struct {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_list_method(actor Struct, object Struct) codemodel.Function {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_list_method(actor Struct, object BaseObject) codemodel.Function {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 
 	list_struct := Struct{name:'${object_type}List' fields: [StructField{name:'items' typ:Type{symbol:'[]${object_type}'}}]}
 
 	param_getters := generate_param_getters(
-		structure: object
+		structure: object.structure
 		prefix: ''
 		only_mutable: false
 	)
@@ -208,7 +212,7 @@ fn generate_list_method(actor Struct, object Struct) codemodel.Function {
 	result.typ.symbol = result.structure.name
 	result.result = true
 	new_method := codemodel.Function{
-		name: 'list_${object.name.to_lower()}'
+		name: 'list_${object.structure.name.to_lower()}'
 		description: 'lists all of the ${object_name} objects'
 		receiver: codemodel.Param{
 			name: 'actor'
@@ -224,9 +228,9 @@ fn generate_list_method(actor Struct, object Struct) codemodel.Function {
 	return new_method
 }
 
-fn generate_filter_params(actor Struct, object Struct) []codemodel.Struct {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_filter_params(actor Struct, object BaseObject) []codemodel.Struct {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 
 	return [Struct {
 		name: 'Filter${object_type}Params'
@@ -236,18 +240,18 @@ fn generate_filter_params(actor Struct, object Struct) []codemodel.Struct {
 		]
 	}, Struct {
 		name: '${object_type}Filter'
-		fields: object.fields.filter(it.attrs.any(it.name == 'index'))
+		fields: object.structure.fields.filter(it.attrs.any(it.name == 'index'))
 	}
 	]
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_filter_method(actor Struct, object Struct) codemodel.Function {
-	object_name := texttools.name_fix(object.name)
-	object_type := object.name
+fn generate_filter_method(actor Struct, object BaseObject) codemodel.Function {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
-		structure: object
+		structure: object.structure
 		prefix: ''
 		only_mutable: false
 	)
@@ -277,6 +281,38 @@ fn generate_filter_method(actor Struct, object Struct) codemodel.Function {
 		}
 		body: body
 	}
+}
+
+// generate_object_methods generates CRUD actor methods for a provided structure
+fn generate_object_methods(actor Struct, object BaseObject) []codemodel.Function {
+	object_name := texttools.name_fix(object.structure.name)
+	object_type := object.structure.name
+
+	mut funcs := []Function{}
+	for method in object.methods {
+		mut params := [Param{name:'id' typ:Type{symbol:'u32'}}]
+		params << method.params
+		funcs << Function {
+			name: method.name
+			description: method.description
+			receiver: codemodel.Param{
+				name: 'actor'
+				typ: codemodel.Type{
+					symbol: actor.name
+				}
+				mutable: true
+			}
+			params: params
+			result: method.result
+			body: "obj := actor.backend.get[${method.receiver.typ.symbol}](id)!
+			obj.${method.name}(${method.params.map(it.name).join(',')})
+			actor.backend.set[${method.receiver.typ.symbol}](obj)!
+			"
+		}
+		
+	}
+
+	return funcs
 }
 
 @[params]

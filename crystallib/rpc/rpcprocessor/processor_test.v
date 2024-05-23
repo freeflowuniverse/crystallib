@@ -48,7 +48,6 @@ fn run_rpc_handler() ! {
 			panic('Failed to fetch RPC result from Redis queue: ${err}')
 		}
 		if results.len == 1 {
-			println('debuzgo ${results[0]}')
 			request := jsonrpc.jsonrpcrequest_decode[string](results[0])!
 			response := jsonrpc.new_jsonrpcresponse[string](request.id, request.params)
 			redis_client.lpush(request.id, response.to_json())!

@@ -113,7 +113,6 @@ pub fn generate_client_method(client_struct Struct, method Function) !Function {
 		return (response as jsonrpc.JsonRpcResponse[${method.result.typ.symbol}]).result'
 	}
 
-	println('debugzone ${method}')
 	mut func := Function {
 		...method
 		receiver: Param{

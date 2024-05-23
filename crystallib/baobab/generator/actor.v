@@ -1,65 +1,131 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel {File, Module, Import, Struct,Param, CodeFile, Function, Result, Type}
-import freeflowuniverse.crystallib.core.codeparser
+import freeflowuniverse.crystallib.core.codemodel {File, CodeItem, Module, Import, Struct,Param, CodeFile, Function, Result, Type}
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.codeparser
+import freeflowuniverse.crystallib.data.markdownparser 
+import freeflowuniverse.crystallib.data.markdownparser.elements {Header}
 import freeflowuniverse.crystallib.core.pathlib
 import os
 
-pub fn generate_actor(name string, objects []Struct) !Actor {
-	actor_struct := generate_actor_struct(name)
-	
-	return Actor {
-		name: name
-		objects: objects.map(BaseObject{structure: it})
-		mod: generate_actor_module(name, objects)!
-		methods: generate_actor_methods(actor_struct, objects)!
+fn get_children(s Struct, code []CodeItem) []Struct {
+	structs := code.filter(it is Struct).map(it as Struct)
+	mut children := []Struct{}
+	for structure in structs {
+		if s.fields.any(it.typ.symbol == structure.name) {
+			children << structure
+		}
 	}
+	
+	return children
 }
 
-pub fn generate_actor_methods(actor Struct, objects []Struct) ![]ActorMethod {
+pub fn generate_actor(name string, object_names []string, code []CodeItem) !Actor {
+	mut objects := []BaseObject{}
+	for s_ in code.filter(it is Struct).map(it as Struct).filter(texttools.name_fix(it.name) in object_names.map(texttools.name_fix(it))) {
+		s := s_ as Struct
+		objects << BaseObject{
+			structure: s
+			methods: code.filter(it is Function).map(it as Function).filter(it.receiver.typ.symbol == s.name).map(it as Function)
+			children: get_children(s, code)
+		}
+	}
+	
+	mut actor := Actor {
+		name: name
+		objects: objects
+		// mod: generate_actor_module(name, objects)!
+	}
+	actor.structure = generate_actor_struct(name)
+	actor.methods = actor.generate_methods()!
+	return actor
+}
+
+pub fn (actor Actor) generate_methods() ![]ActorMethod {
 	mut methods := []ActorMethod{}
-	for object in objects {
+	for object in actor.objects {
 	methods << [
 		ActorMethod {
-			name: object.name
-			func: generate_new_method(actor, object)
+			name: object.structure.name
+			func: generate_new_method(actor.structure, object)
 		},
 		ActorMethod {
-			name: object.name
-			func: generate_get_method(actor, object)
+			name: object.structure.name
+			func: generate_get_method(actor.structure, object)
 		},
 		ActorMethod {
-			name: object.name
-			func: generate_set_method(actor, object)
+			name: object.structure.name
+			func: generate_set_method(actor.structure, object)
 		},
 		ActorMethod {
-			name: object.name
-			func: generate_delete_method(actor, object)
+			name: object.structure.name
+			func: generate_delete_method(actor.structure, object)
 		},
 		ActorMethod {
-			name: object.name
-			func: generate_list_method(actor, object)
+			name: object.structure.name
+			func: generate_list_method(actor.structure, object)
 		},
 	]
 	}
 	return methods
 }
 
+pub fn parse_actor(path string) !Actor {
+	code := codeparser.parse_v(path, recursive: true)!
+	mut actor := parse_readme(path)!
+
+	mut methods := []ActorMethod{}
+	for s in code.filter(it is Function).map(it as Function).filter(it.receiver.name == actor.name) {
+		methods << ActorMethod{
+			func: s
+		}
+	}
+	
+	actor.methods = methods
+	actor.structure = generate_actor_struct(actor.name)
+	actor.methods = actor.generate_methods()!
+
+	return actor
+}
+
+pub fn parse_readme(path string) !Actor {
+	readme := markdownparser.new(path:'${path}/README.md')!
+	name_header := readme.children()[1] as Header
+	name := name_header.content
+	return Actor{
+		name: name
+	}
+}
+
 pub fn (a Actor) generate_module() !Module {
 	actor_struct := generate_actor_struct(a.name)
+	
+	readme := File {
+		name: 'README'
+		extension: 'md'
+		content: '# ${a.name}\n${a.description}'
+	}
 	mut files := [
 		generate_factory_file(a.name)
 	]
 	// files << a.generate_model_files()!
 
 	// generate code files for each of the objects the actor is responsible for
-	for object in a.objects.map(it.structure) {
+	for object in a.objects {
 		files << generate_object_code(actor_struct, object)
 		files << generate_object_test_code(actor_struct, object)!
 	}
 
-	openrpc_obj := generator.generate_openrpc(a)
+	return Module {
+		name: a.name
+		files: files
+		misc_files: [readme]
+	}
+}
+
+pub fn (a Actor) generate_openrpc_specification() !File {
+
+	openrpc_obj := a.generate_openrpc()
 	openrpc_json := openrpc_obj.encode()!
 	
 	openrpc_file := File {
@@ -68,14 +134,9 @@ pub fn (a Actor) generate_module() !Module {
 		content: openrpc_json
 	}
 
-	openrpc_files := generate_openrpc_files(a)!
-	files << openrpc_files.map(CodeFile{...it, name: 'openrpc_${it.name}'})
-
-	return Module {
-		name: a.name
-		files: files
-		misc_files: [openrpc_file]
-	}
+	// openrpc_files := generate_openrpc_files(a)!
+	// files << openrpc_files.map(CodeFile{...it, name: 'openrpc_${it.name}'})
+	return openrpc_file
 }
 
 pub fn (a Actor) generate_model_files() ![]CodeFile {
@@ -90,7 +151,7 @@ pub fn (a Actor) generate_model_files() ![]CodeFile {
 	)
 }
 
-pub fn generate_actor_module(name string, objects []Struct) !Module {
+pub fn generate_actor_module(name string, objects []BaseObject) !Module {
 	actor := generate_actor_struct(name)
 	mut files := [generate_factory_file(name)]
 

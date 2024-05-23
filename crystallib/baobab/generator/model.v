@@ -8,8 +8,10 @@ pub struct ActorGenerator {
 }
 
 pub struct Actor {
-pub:
+pub mut:
 	name string
+	description string
+	structure Struct
 	mod Module
 	methods []ActorMethod
 	objects []BaseObject
@@ -22,5 +24,8 @@ pub:
 }
 
 pub struct BaseObject {
+pub:
 	structure Struct
+	methods []Function
+	children []Struct
 }

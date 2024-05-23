@@ -247,4 +247,5 @@ pub struct WriteOptions {
 	format    bool
 	overwrite bool
 	document bool
+	prefix string
 }
