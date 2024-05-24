@@ -31,13 +31,18 @@ pub fn parse_v(path_ string, vparser VParser) ![]CodeItem {
 	}
 
 	path.check()
-	return vparser.parse_vpath(mut path)!
+	mut table := ast.new_table()
+	return vparser.parse_vpath(mut path, mut table)!
 }
 
 // parse_vpath parses the v code files and returns codeitems in a given path
 // can be recursive or not based on the parsers configuration
-fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
+fn (vparser VParser) parse_vpath(mut path pathlib.Path, mut table &ast.Table) ![]CodeItem {
 	mut code := []CodeItem{}
+	// mut table := ast.new_table()
+	// fpref := &pref.Preferences{ // preferences for parsing
+	// 	is_fmt: true
+	// }
 	if path.is_dir() {
 		dir_is_excluded := vparser.exclude_dirs.any(path.path.ends_with(it))
 		if dir_is_excluded {
@@ -49,7 +54,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 			mut flist := path.list(recursive: true)!
 			for mut subdir in flist.paths {
 				if subdir.is_dir() {
-					code << vparser.parse_vpath(mut subdir)!
+					code << vparser.parse_vpath(mut subdir, mut table)!
 				}
 			}
 		}
@@ -57,7 +62,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 		mut fl := path.list(recursive: false)!
 		for mut file in fl.paths {
 			if !file.is_dir() {
-				code << vparser.parse_vpath(mut file)!
+				code << vparser.parse_vpath(mut file, mut table)!
 			}
 		}
 	} else if path.is_file() {
@@ -66,7 +71,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 		if file_is_excluded || !path.path.ends_with('.v') {
 			return code
 		}
-		code << vparser.parse_vfile(path.path)
+		code << vparser.parse_vfile(path.path, mut table)
 	} else {
 		return error('Path being parsed must either be a directory or a file.')
 	}
@@ -75,13 +80,13 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 }
 
 // parse_vfile parses and returns code items from a v code file
-fn (vparser VParser) parse_vfile(path string) []CodeItem {
+fn (vparser VParser) parse_vfile(path string, mut table &ast.Table) []CodeItem {
 	$if debug {
 		console.print_debug('Parsing file `${path}`')
 	}
 	mut code := []CodeItem{}
 
-	mut table := ast.new_table()
+	// mut table := ast.new_table()
 	fpref := &pref.Preferences{ // preferences for parsing
 		is_fmt: true
 	}
@@ -329,8 +334,9 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 
 	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
 	mut fields := vparser.parse_fields(args.struct_decl.fields, args.table)
+	println('before embeds ${args.struct_decl.name}')
 	fields << vparser.parse_embeds(args.struct_decl.embeds, args.table)
-
+	println('oyoyoyoyy ${args.struct_decl.name.all_after_last('.')}-${fields}')
 	return Struct{
 		name: args.struct_decl.name.all_after_last('.')
 		description: comments.join(' ')
@@ -366,6 +372,7 @@ fn (vparser VParser) parse_vsumtype(args VSumTypeArgs) Sumtype {
 fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []StructField {
 	mut fields_ := []StructField{}
 	for field in fields {
+		println('debugzorro ${field.name}')
 		mut anon_struct := Struct{}
 		if table.type_to_str(field.typ).all_after_last('.').starts_with('_VAnon') {
 			anon_struct = vparser.parse_vstruct(
@@ -409,15 +416,18 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 // parse_embeds parses ast.embeds into struct fields
 // TODO: Support requiresive fields
 fn (vparser VParser) parse_embeds(embeds []ast.Embed, table &ast.Table) []StructField {
+	println('debugzo10010 ${embeds}')
 	mut fields := []StructField{}
 	for embed in embeds {
 		$if debug {
 			console.print_debug('Parsing embed: ${table.sym(embed.typ).info}')
 		}
 		embed_info := table.sym(embed.typ).info
+		println('debugzo2202022 ${table.sym(embed.typ).info}')
 		if embed_info is ast.Struct {
 			// embeds: vparser.parse_embeds(embed_info.embeds, table)
 			fields << vparser.parse_fields(embed_info.fields, table)
+			println('debugzorro048 ${fields}')
 		}
 	}
 	return fields
