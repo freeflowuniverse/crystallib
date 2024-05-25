@@ -97,10 +97,12 @@ pub fn (mut site ZolaSite) generate() ! {
 		path: '${site.path_build.path}/tree/src/pages/img'
 	)!
 
-	img_dir.move(
-		dest: '${static_dir.path}/img'
-		delete: true
-	)!
+	if img_dir.exists() {
+		img_dir.move(
+			dest: '${static_dir.path}/img'
+			delete: true
+		)!
+	}
 
 	mut errors_file := pathlib.get_file(
 		path: '${site.path_build.path}/tree/src/pages/errors.md'
