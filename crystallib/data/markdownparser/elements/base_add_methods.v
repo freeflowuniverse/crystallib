@@ -43,16 +43,15 @@ pub fn (mut base DocBase) header_new(mut docparent ?&Doc, content string) &Heade
 	return &a
 }
 
-pub fn (mut base DocBase) list_new(mut docparent ?&Doc, content string) &List {
+pub fn (mut base DocBase) list_new(mut docparent ?&Doc, content string) !&List {
 	mut a := List{
-		content: content
 		type_name: 'list'
 		parent_doc_: docparent
 	}
-
-	// a.list_item_new(docparent, content)
+	a.add_list_item(content)!
 
 	base.children << a
+	
 	return &a
 }
 

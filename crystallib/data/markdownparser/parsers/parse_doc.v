@@ -22,11 +22,10 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		// console.print_header('- line: ${llast.type_name} \'${line}\'')
 
 		if mut llast is elements.List {
-			if elements.line_is_list(line) {
-				llast.content += '\n${line}'
+			if _ := llast.add_list_item(line) {	
 				parser.next()
 				continue
-			}
+			} 
 
 			parser.ensure_last_is_paragraph()!
 			continue
@@ -76,7 +75,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 
 		if mut llast is elements.Paragraph {
 			if elements.line_is_list(line) {
-				doc.list_new(mut &doc, line)
+				doc.list_new(mut &doc, line)!
 				parser.next()
 				continue
 			}

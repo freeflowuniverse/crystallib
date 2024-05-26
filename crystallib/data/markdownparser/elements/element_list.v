@@ -6,9 +6,6 @@ pub struct List {
 pub mut:
 	cat            ListCat
 	interlinespace int // nr of lines in between
-
-	indentation int
-	order_start ?int // the first list item order, if any
 }
 
 pub enum ListCat {
@@ -22,116 +19,83 @@ pub fn (mut self List) process() !int {
 		return 0
 	}
 
-	self.parse()!
 	self.content = ''
 	self.processed = true
 	return 1
 }
 
-fn (mut self List) parse() ! {
-	/*
-		iterate over lines:
-			each line is parsed as a list item
-			if list item conforms to last list settings:
-				append to last list
-			else create new list with list item settings and append to new list
-
-		how does a list item conform to list settings:
-			1- indentation: do they have the same indentation?
-			2- ordering: are they both ordered?
-	*/
-	lines := self.content.trim(' \n').split('\n')
-	mut line_index := 0
-	for line_index < lines.len {
-		list, next_index := parse_list_level(mut self.parent_doc_, line_index, lines)!
-		line_index = next_index
-		self.children << list
+pub fn (mut self List) add_list_item(line string) !&ListItem{
+	if !line_is_list(line){
+		return error('line is not a list item')
 	}
-}
-
-fn parse_list_level(mut docparent ?&Doc, line_index int, lines []string) !(List, int) {
-	mut list := List{
-		type_name: 'list'
-		parent_doc_: docparent
-	}
-	mut line := lines[line_index]
 
 	mut list_item := ListItem{
 		content: line
 		type_name: 'listitem'
-		parent_doc_: docparent
+		parent_doc_: self.parent_doc_
 	}
 	list_item.process()!
 
-	list.indentation = list_item.calculate_indentation()
-	list.order_start = list_item.order
-	list.children << list_item
+	self.determine_list_item_indentation(mut list_item)!
 
-	mut is_group_ordered := list.order_start != none
+	return &list_item
+}
 
-	mut i := line_index + 1
-	for i < lines.len {
-		line = lines[i]
-		mut li := ListItem{
-			content: line
-			type_name: 'listitem'
-			parent_doc_: docparent
+fn (mut self List) determine_list_item_indentation(mut list_item ListItem) !{
+	if self.children.len == 0{
+		list_item.indent = 0
+		self.children << list_item
+		return
+	}
+	
+	for i := self.children.len-1; i>=0; i--{
+		mut parent_li := self.children[i]
+		if mut parent_li is ListItem{
+			if list_item.depth - parent_li.depth < -1{
+				continue
+			}
+			
+			if list_item.depth - parent_li.depth >= -1 && list_item.depth - parent_li.depth < 2{
+				// same indentation
+				list_item.indent = parent_li.indent
+				if parent_order := parent_li.order{
+					list_item.order = parent_order + 1
+				}
+
+				self.children << list_item
+			}else if list_item.depth - parent_li.depth >= 2 && list_item.depth - parent_li.depth < 6{
+				// increase indentation
+				list_item.indent = parent_li.indent + 1
+				self.children << list_item
+			}else{
+				// add content to last list item
+				parent_li.content += ' ${list_item.content}'
+				parent_li.processed = false
+				parent_li.process()!
+			}
+
+			return
 		}
-		li.process()!
-
-		is_li_ordered := li.order != none
-
-		if li.calculate_indentation() > list.indentation {
-			// create a child group
-			child_group, next_index := parse_list_level(mut docparent, i, lines)!
-			i = next_index
-			list.children << child_group
-			continue
-		}
-
-		if li.calculate_indentation() < list.indentation
-			|| (li.calculate_indentation() == list.indentation && is_group_ordered != is_li_ordered) {
-			// current group has ended
-			return list, i
-		}
-
-		// this list item belongs to the current group
-		list.children << li
-		i++
 	}
 
-	return list, lines.len
+	return error('current list item ${list_item.content} has less depth/indentation than first list item')
 }
 
 pub fn (self List) markdown() !string {
-	mut h := ''
-	for _ in 0 .. self.indentation * 4 {
-		h += ' '
-	}
-
-	if order_start := self.order_start {
-		return self.ordered_list_markdown(h, order_start)!
-	}
-
 	mut out := ''
 	for child in self.children {
 		if child is ListItem {
-			out += '${h}- ${child.markdown()!}\n'
-			continue
-		}
+			mut h := ''
+			for _ in 0 .. child.indent * 4 {
+				h += ' '
+			}
 
-		out += child.markdown()!
-	}
+			mut pre := '-'
+			if order := child.order{
+				pre = '${order}.'
+			}
 
-	return out
-}
-
-fn (self List) ordered_list_markdown(indentation string, order_start int) !string {
-	mut out, mut order := '', order_start
-	for child in self.children {
-		if child is ListItem {
-			out += '${indentation}${order}. ${child.markdown()!}\n'
-			order++
+			out += '${h}${pre} ${child.markdown()!}\n'
 			continue
 		}
 
