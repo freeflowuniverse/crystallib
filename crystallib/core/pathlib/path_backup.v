@@ -58,7 +58,7 @@ pub fn (mut path Path) backup_path(args BackupArgs) !Path {
 	// os.mkdir_all('$dest/$rel')!
 
 	for i in 0 .. 1000 {
-		console.print_debug(i)
+		console.print_debug(i.str())
 		path_str := '${dest}/${rel}${path.name_no_ext()}.${path.extension()}.${i}'
 		path_str_next := '${dest}/${rel}${path.name_no_ext()}.${path.extension()}.${i + 1}'
 		mut path_found := Path{

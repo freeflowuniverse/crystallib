@@ -1,5 +1,5 @@
 module texttools
-import freeflowuniverse.crystallib.ui.console
+
 
 enum SplitState {
 	start
@@ -20,7 +20,7 @@ pub fn split_smart(t string, delimiter_ string) []string {
 		delimiter = ',| '
 	}
 	for c in t.trim_space().split('') {
-		// console.print_debug("$c ${st} ${last}")
+
 		if st == .start && '`\'"'.contains(c) {
 			// means we are at start if quoted string
 			st = .string

@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 import os
 
 fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
+	if silent_get(){panic("can't do ask_... when in silent mode")}
 	if args.clear {
 		clear() // clears the screen
 	}
@@ -48,6 +49,7 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
+	if silent_get(){panic("can't do ask_... when in silent mode")}
 	mut args := args_
 	args.items.sort()
 	choice := c.ask_dropdown_internal(args)!
@@ -93,6 +95,7 @@ pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
+	if silent_get(){panic("can't do ask_... when in silent mode")}
 	mut args := args_
 	args.items.sort()
 	res := c.ask_dropdown_internal(
@@ -149,6 +152,7 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) !string {
+	if silent_get(){panic("can't do ask_... when in silent mode")}
 	res := c.ask_dropdown_int(
 		clear: args.clear
 		description: args.description
@@ -161,7 +165,7 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) !string {
 		if args.default.len > 1 {
 			return error('more than 1 default for single choice.\n${args}')
 		}
-		console.print_debug(args)
+		print(args)
 		return args.default[0] or { panic('bug in default args for ask_dropdown_string.\n') }
 	}
 	return args.items[res - 1]

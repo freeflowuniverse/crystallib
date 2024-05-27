@@ -13,6 +13,7 @@ import freeflowuniverse.crystallib.ui.uimodel { QuestionArgs }
 // - minlen: min nr of chars
 //
 pub fn (mut c UIConsole) ask_question(args QuestionArgs) !string {
+	if silent_get(){panic("can't do ask_... when in silent mode")}
 	mut question := args.question
 	if args.clear {
 		clear() // clears the screen

@@ -1,5 +1,4 @@
 module texttools
-import freeflowuniverse.crystallib.ui.console
 
 pub fn indent(text string, prefix string) string {
 	mut res := []string{}
@@ -21,7 +20,7 @@ pub fn dedent(text string) string {
 	text_lines := text.split_into_lines()
 
 	for line2 in text_lines {
-		// console.print_debug("'$line2' $pre")
+
 		if line2.trim_space() == '' {
 			continue
 		}
@@ -36,7 +35,7 @@ pub fn dedent(text string) string {
 	for line2 in text_lines {
 		line2_expanded_tab := line2.replace('\t', '    ') // important to deal with tabs
 		line2_expanded_tab_trimmed := line2.trim_space()
-		// console.print_debug("'$line2' ${line2.len}")
+
 		if line2_expanded_tab_trimmed == '' {
 			res << ''
 		} else {

@@ -136,7 +136,7 @@ pub fn find_common_ancestor(paths_ []string) string {
 		}
 	}
 	paths := paths_.map(os.abs_path(os.real_path(it))) // get the real path (symlinks... resolved)
-	console.print_debug(paths)
+	console.print_debug(paths.str())
 	parts := paths[0].split('/')
 	mut totest_prev := '/'
 	for i in 1 .. parts.len {
@@ -223,7 +223,7 @@ pub fn (mut path Path) move(args MoveArgs) ! {
 // that last dir needs to move 1 up
 pub fn (mut path Path) moveup_single_subdir() ! {
 	mut plist := path.list(recursive: false, ignoredefault: true, dirs_only: true)!
-	console.print_debug(plist)
+	console.print_debug(plist.str())
 	if plist.paths.len != 1 {
 		return error('could not find one subdir in ${path.path} , so cannot move up')
 	}

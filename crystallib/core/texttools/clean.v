@@ -1,6 +1,5 @@
 // make sure that the names are always normalized so its easy to find them back
 module texttools
-import freeflowuniverse.crystallib.ui.console
 
 const ignore_for_name = '\\/[]()?!@#$%^&*<>:;{}|~'
 
@@ -72,17 +71,11 @@ pub fn remove_empty_js_blocks(text string) string {
 	mut block_capture_inside := []string{}
 	mut foundblock := false
 	for l in text.split_into_lines() {
-		// console.print_debug(" --- $l")
 		lt := l.trim_space()
 		if lt.starts_with('```') || lt.starts_with("'''") || lt.starts_with('"""') {
-			// console.print_debug("FOUND")
 			if foundblock {
-				// console.print_debug(";;;")
-				// console.print_debug(block_capture_inside.filter(it.trim_space() != ''))
-				// console.print_debug(";;;")
 				if block_capture_inside.filter(it.trim_space() != '').len > 0 {
 					// now we know the block inside is not empty
-					console.print_debug('not empty')
 					out << block_capture_pre
 					out << block_capture_inside
 					out << l // the last line

@@ -1,7 +1,7 @@
 module regext
 
 import regex
-import freeflowuniverse.crystallib.ui.console
+
 
 // find parts of text which are in form {NAME}
 // .
@@ -14,9 +14,9 @@ import freeflowuniverse.crystallib.ui.console
 pub fn find_simple_vars(txt string) []string {
 	pattern := r'\{(\w+)\}'
 	mut re := regex.regex_opt(pattern) or { panic(err) }
-	// console.print_debug(re.get_query())
+
 	mut words := re.find_all_str(txt)
-	// console.print_debug(words)
+
 	words = words.map(it.trim('{} '))
 	return words
 }
@@ -34,7 +34,7 @@ fn remove_sid(c string) string {
 pub fn find_sid(txt string) []string {
 	pattern := r'sid:[a-zA-Z0-9]{3,5}[\s$]'
 	mut re := regex.regex_opt(pattern) or { panic(err) }
-	// console.print_debug(re.get_query())
+
 	mut words := re.find_all_str(txt)
 	// words = words.map(it.to_lower())
 	words = words.map(remove_sid(it))

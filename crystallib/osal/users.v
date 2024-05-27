@@ -12,7 +12,7 @@ pub mut:
 pub fn user_exists(username string) bool {
 	res := os.execute('id ${username}')
 	if res.exit_code > 0 {
-		console.print_debug(res.exit_code)
+		console.print_debug(res.exit_code.str())
 		// return error("cannot execute id ... code to see if username exist")
 		return false
 	}

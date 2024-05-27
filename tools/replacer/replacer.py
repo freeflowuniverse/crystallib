@@ -3,6 +3,7 @@ import sys
 import re
 
 def process_file(file_path):
+    exit(1) #do not use as is, because this one has been executed already
     with open(file_path, 'r') as file:
         lines = file.readlines()
     

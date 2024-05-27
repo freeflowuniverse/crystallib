@@ -12,6 +12,7 @@ import os
 // - clear bool = true
 //
 pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) !bool {
+	if silent_get(){panic("can't do ask_... when in silent mode")}
 	mut question := args.question
 	if args.clear {
 		clear() // clears the screen

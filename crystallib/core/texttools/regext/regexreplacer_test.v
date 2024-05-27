@@ -2,7 +2,7 @@ module regext
 
 import os
 import freeflowuniverse.crystallib.core.texttools { dedent }
-import freeflowuniverse.crystallib.ui.console
+
 
 fn test_stdtext() {
 	// this is test without much fancyness, just rext replace, no regex, all case sensitive
@@ -85,9 +85,9 @@ fn test_dirreplace() {
 // 	ri.add('^Rtest[ _]1', 'TTT') or { panic(err) }
 // 	mut text_out2 := ri.replace(text) or { panic(err) }
 
-// 	// console.print_debug('!' + dedent(text) + '!')
-// 	// console.print_debug('!' + dedent(text_out) + '!')
-// 	// console.print_debug('!' + dedent(text_out2) + '!')
+
+
+
 
 // 	assert dedent(text_out2).trim('\n') == dedent(text_out).trim('\n')
 // 	// panic('s')
@@ -113,15 +113,15 @@ fn test_dirreplace() {
 // 		panic(err)
 // 	}
 
-// 	console.print_debug(ri.get_regex_queries())
 
-// 	// console.print_debug(ri)
+
+
 
 // 	mut text_out2 := ri.replace(text) or { panic(err) }
 
-// 	// console.print_debug('!' + dedent(text) + '!')
-// 	// console.print_debug('!' + dedent(text_out) + '!')
-// 	console.print_debug('!' + dedent(text_out2) + '!')
+
+
+
 
 // 	assert dedent(text_out2).trim('\n') == dedent(text_out).trim('\n')
 // 	// panic('s')

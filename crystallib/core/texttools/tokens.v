@@ -1,5 +1,5 @@
 module texttools
-import freeflowuniverse.crystallib.ui.console
+
 
 // import regex
 
@@ -46,7 +46,7 @@ pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith 
 			// 	text2 = new_text.trim(' ')
 		}
 		// } else {
-		// 	console.print_debug(' ... $item.matchstring !=  $tofind2')
+
 		// }
 	}
 	return text2
@@ -95,7 +95,7 @@ fn word_skip(text string) bool {
 
 pub fn tokenize(text_ string) TokenizerResult {
 	text := dedent(text_)
-	// console.print_debug(text)
+
 	mut skip := false
 	mut skipline := false
 	mut prev := ''

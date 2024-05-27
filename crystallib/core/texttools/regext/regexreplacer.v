@@ -2,7 +2,7 @@ module regext
 
 import freeflowuniverse.crystallib.core.texttools
 import regex
-import freeflowuniverse.crystallib.ui.console
+
 import os
 
 pub struct ReplaceInstructions {
@@ -126,7 +126,7 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 	}
 	mut line2 := ''
 	mut res := []string{}
-	// console.print_debug('AAA\n$text\nBBB\n')
+
 	if text2.len == 0 {
 		return ''
 	}
@@ -137,31 +137,31 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 	}
 	for line in text2.split_into_lines() {
 		line2 = line
-		// console.print_debug(' >>>> $line')
+
 		// mut tl := tokenize(line)
-		// console.print_debug(tl)
+
 		for mut i in self.instructions {
 			if i.find_str == '' {
-				// console.print_debug('REGEX:' + i.regex.get_query() + ' <-$line')
+
 				all := i.regex.find_all(line)
 				for gi < all.len {
-					// console.print_debug('  >> "${line[all[gi]..all[gi + 1]]}"')
+
 					gi += 2
 				}
 				line2 = i.regex.replace(line2, i.replace_with)
-				// console.print_debug('REPLACE_R:${i.regex.get_query()}:$line:$line2')
+
 			} else {
-				// console.print_debug(tl)
+
 				// line2 = line2.replace(i.find_str, i.replace_with)
 				// line2 = tl.replace(line2, i.find_str, i.replace_with) ?
-				// console.print_debug('REPLACE:$i.find_str -> $line -> $line2')
+
 
 				line2 = line2.replace(i.find_str, i.replace_with)
 			}
 		}
 		res << line2
 	}
-	// console.print_debug('AAA2\n$text2\nBBB2\n')
+
 	mut x := res.join('\n')
 	if !endline {
 		x = x.trim_right('\n')
@@ -213,7 +213,6 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 		// }
 		// done << pathnew
 		if os.is_dir(pathnew) {
-			// console.print_header(' $pathnew")		
 			if item.starts_with('.') {
 				continue
 			}
@@ -226,23 +225,23 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 			ext := os.file_ext(pathnew)[1..].to_lower()
 			if extensions == [] || ext in extensions {
 				// means we match a file
-				// console.print_debug(" . replace: $pathnew ($ext)")
+
 				txtold := os.read_file(pathnew)!
 				txtnew := self.replace(text: txtold, dedent: false)!
 				if txtnew.trim(' \n') == txtold.trim(' \n') {
-					console.print_header(' nothing to do : ${pathnew}')
+					panic("need to move this file to other lib can't use print_header")
 				} else {
-					console.print_header(' replace done  : ${pathnew}')
+					panic("need to move this file to other lib can't use print_header")
 					count++
 					if !dryrun {
 						// now write the file back
 						os.write_file(pathnew, txtnew)!
 					}
-					// console.print_debug("===========")
-					// console.print_debug(txtold)
-					// console.print_debug("===========")
-					// console.print_debug(txtnew)
-					// console.print_debug("===========")
+
+
+
+
+
 				}
 			}
 		}
