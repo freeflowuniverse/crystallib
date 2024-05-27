@@ -2,7 +2,7 @@ module elements
 
 import freeflowuniverse.crystallib.core.texttools
 import os
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Link {

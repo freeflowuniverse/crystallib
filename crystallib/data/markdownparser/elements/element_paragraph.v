@@ -1,5 +1,5 @@
 module elements
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Paragraph {

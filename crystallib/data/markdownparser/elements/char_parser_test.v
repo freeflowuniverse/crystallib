@@ -86,7 +86,7 @@ fn test_charparser_link() {
 	assert p2.children.len == 1
 
 	ln := p2.children[0]
-	console.print_debug(ln)
+	console.print_debug('${ln}')
 	assert ln is Link
 	if ln is Link {
 		assert ln.id == 0
@@ -112,7 +112,7 @@ fn test_charparser_link_error() {
 	ln := p2.children[0]
 	assert ln.children.len == 0
 
-	console.print_debug(ln)
+	console.print_debug('${ln}')
 	assert ln is Link
 	if ln is Link {
 		assert ln.id == 0
@@ -133,7 +133,7 @@ fn test_charparser_link_trailing_spaces() {
 		content: txt
 	}
 	p2.process()!
-	console.print_debug(p2)
+	console.print_debug('${p2}')
 
 	assert p2.children.len == 2
 	assert p2.children[0].markdown()! == '[a](b.md)'
@@ -147,7 +147,7 @@ fn test_charparser_link_ignore_trailing_newlines() {
 		content: txt
 	}
 	p2.process()!
-	console.print_debug(p2)
+	console.print_debug('${p2}')
 
 	assert p2.children.len == 2
 
@@ -167,7 +167,7 @@ sometext
 	}
 
 	p2.process()!
-	console.print_debug(p2)
+	console.print_debug('${p2}')
 
 	assert p2.children.len == 5
 
@@ -198,7 +198,7 @@ sometext'
 	}
 
 	p2.process()!
-	console.print_debug(p2)
+	console.print_debug('${p2}')
 
 	assert p2.children.len == 5
 

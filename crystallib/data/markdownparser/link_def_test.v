@@ -1,7 +1,7 @@
 module markdownparser
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 fn test_empty() {
 	mut mydoc := new(content: '')!

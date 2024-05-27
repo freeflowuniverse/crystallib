@@ -1,7 +1,7 @@
 module elements
 
 import regex
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Table {

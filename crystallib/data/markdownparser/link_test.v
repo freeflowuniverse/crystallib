@@ -73,7 +73,7 @@ fn test_link3() {
 	paragraph := docs.children[0]
 	assert paragraph.children.len == 1
 	link := paragraph.children[0]
-	console.print_debug(link)
+	console.print_debug('${link}')
 	if link is elements.Link {
 		assert link.id == 3
 		assert link.processed == true

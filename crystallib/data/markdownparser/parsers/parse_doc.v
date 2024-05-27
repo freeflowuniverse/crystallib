@@ -1,7 +1,7 @@
 module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES

@@ -1,7 +1,7 @@
 module elements
 
 import os
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 // is a char parser
 
