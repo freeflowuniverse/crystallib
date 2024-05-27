@@ -64,7 +64,7 @@ const textin3 = '
 
 fn test_hexhash() {
 	mut params := parse(paramsparser.textin2)!
-	console.print_debug(params)
+	console.print_debug('${params}')
 	h := params.hexhash()
 	assert h == 'fca5c320391e7a91ec91999b1b3d66bf5cb7658905284c431777ff6d2fa4a4c3'
 }

@@ -34,7 +34,7 @@ const test_child = TestChild{
 const test_struct = TestStruct{
 	name: 'test'
 	nick: 'test_nick'
-	birthday: time.new_time(
+	birthday: time.new(
 		day: 12
 		month: 12
 		year: 2012

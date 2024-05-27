@@ -24,7 +24,7 @@ const textin5 = "
 		```python
 		#even code block in the other block, crazy parsing for sure
 		def test():
-			console.print_debug()
+			print()
 		```
 	'
 	name2:   test
@@ -46,7 +46,7 @@ fn test_export_helper1() {
 	// multiline bool = true //if we will put the multiline strings as multiline in output
 	// indent string
 	o := params.export_helper(maxcolsize: 600) or { panic(err) }
-	console.print_debug(o)
+	// console.print_debug('${o}')
 	assert o.len == 14
 	// console.print_debug(o.len)
 	assert o[o.len - 1].firstline == false
@@ -63,13 +63,7 @@ fn test_export_helper1() {
 fn test_export_helper2() {
 	params := parse(paramsparser.textin5) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	console.print_debug(o)
-	console.print_debug("EXPECT:
-	// mycomment
-	blue red id:a6 name6:aaaaa
-	name4:'a aa' //comment_line2
-	name5:aab //somecomment
-	")
+	
 	assert sha256.hexhash(o.str()) == '0bb7fb65107a69b1a0296dbdd1b0505b178e8bebdb33d2cec307f411b05c6033'
 }
 
@@ -87,7 +81,7 @@ const textin6 = "
 fn test_export_6() {
 	params := parse(paramsparser.textin6) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	console.print_debug(o)
+
 
 	paramsout := params.export()
 
@@ -122,7 +116,7 @@ const textin7 = "
 fn test_export_7() {
 	params := parse(paramsparser.textin7) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	console.print_debug(o)
+	console.print_debug('${o}')
 
 	paramsout := params.export()
 
@@ -164,7 +158,7 @@ const textin8 = "
 fn test_export_8() {
 	params := parse(paramsparser.textin8) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	console.print_debug(o)
+	console.print_debug('${o}')
 
 	paramsout := params.export()
 
@@ -209,7 +203,7 @@ const textin9 = "
 fn test_export_9() {
 	params := parse(paramsparser.textin9) or { panic(err) }
 	o := params.export_helper(oneline: true) or { panic(err) }
-	console.print_debug(o)
+	console.print_debug('${o}')
 
 	console.print_debug("EXPECT:
 	// mycomment
@@ -254,7 +248,7 @@ const textin10 = "
 fn test_export_10() {
 	params := parse(paramsparser.textin10) or { panic(err) }
 	o := params.export_helper(oneline: false, pre: '!!remark.define') or { panic(err) }
-	console.print_debug(o)
+	console.print_debug('${o}')
 
 	paramsout := params.export(oneline: false, pre: '!!remark.define')
 
