@@ -41,7 +41,7 @@ fn test_multiline1() {
 	"
 	text = multiline_to_single(text) or { panic(err) }
 
-
+	required_result := 'id:a1 name:\'need to do something 1\' description:\'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n"yes, this needs to work too"\\n\\n- a\\n- something else\\n- "something\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n\\n```\''
 
 	check_result(required_result, text)
 }

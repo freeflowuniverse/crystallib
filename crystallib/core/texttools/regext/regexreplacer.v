@@ -2,6 +2,7 @@ module regext
 
 import freeflowuniverse.crystallib.core.texttools
 import regex
+import freeflowuniverse.crystallib.ui.console
 
 import os
 
@@ -229,9 +230,11 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 				txtold := os.read_file(pathnew)!
 				txtnew := self.replace(text: txtold, dedent: false)!
 				if txtnew.trim(' \n') == txtold.trim(' \n') {
-					panic("need to move this file to other lib can't use print_header")
+					// panic("need to move this file to other lib can't use print_header")
+					console.print_header(' nothing to do : ${pathnew}')
 				} else {
-					panic("need to move this file to other lib can't use print_header")
+					// panic("need to move this file to other lib can't use print_header")
+					console.print_header(' replace done  : ${pathnew}')
 					count++
 					if !dryrun {
 						// now write the file back
