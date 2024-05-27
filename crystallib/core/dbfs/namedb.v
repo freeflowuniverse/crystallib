@@ -3,7 +3,7 @@ module dbfs
 import json
 import crypto.md5
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct NameDB {

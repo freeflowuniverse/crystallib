@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.clients.redisclient	
 import os
 import json
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct DBCollection {

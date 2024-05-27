@@ -3,7 +3,7 @@ module osal
 import time
 import os
 import math
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 pub enum PMState {
 	init

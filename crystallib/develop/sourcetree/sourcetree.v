@@ -2,7 +2,7 @@ module sourcetree
 
 import freeflowuniverse.crystallib.osal
 import os
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct OpenArgs {

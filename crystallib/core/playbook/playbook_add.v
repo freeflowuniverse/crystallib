@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 enum State {
 	start

@@ -1,5 +1,5 @@
 module sshagent
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 // will see if there is one ssh key in sshagent
 // or if not, if there is 1 ssh key in ${agent.homepath.path}/ if yes will load

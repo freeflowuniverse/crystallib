@@ -1,7 +1,7 @@
 module osal
 
 import os
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 // Returns the enum value that matches the provided string for PlatformType
 
 pub fn platform_enum_from_string(platform string) PlatformType {

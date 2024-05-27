@@ -5,7 +5,7 @@ import os
 import json
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 __global (
 	gsinstances shared map[string]GitStructure

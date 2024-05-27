@@ -2,7 +2,7 @@ module osal
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 // will return temporary path which then can be executed
 fn cmd_to_script_path(cmd Command) !string {

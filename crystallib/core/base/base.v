@@ -10,8 +10,8 @@ mut:
 
 pub fn (mut self Base) session() !&Session {
 	mut mysession := self.session_ or {
-		mut c := context()!
-		mut r := c.redis()!
+		// mut c := context()!
+		// mut r := c.redis()!
 		panic('sdsdsd')
 		// incrkey := 'sessions:base:latest:${self.type_name}:${self.instance}'
 		// latestid:=r.incr(incrkey)!

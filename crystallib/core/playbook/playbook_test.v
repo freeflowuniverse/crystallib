@@ -40,7 +40,7 @@ const text2 = "
 fn test_parse_1() {
 	mut a := new(text: playbook.text1) or { panic(err) }
 
-	console.print_debug(a)
+	console.print_debug('${a}')
 
 	console.print_debug("EXPECTED OUTPUT:
 // comment for the action

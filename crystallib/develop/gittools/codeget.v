@@ -3,7 +3,7 @@ module gittools
 import os
 import freeflowuniverse.crystallib.core.pathlib
 import crypto.md5
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct CodeGetFromUrlArgs {

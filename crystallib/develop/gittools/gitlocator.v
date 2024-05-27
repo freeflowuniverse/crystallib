@@ -3,7 +3,7 @@ module gittools
 // import os
 // import freeflowuniverse.crystallib.osal.sshagent
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 // location of a file, dir or part of file in a GitAddr
 @[heap]

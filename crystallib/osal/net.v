@@ -2,7 +2,7 @@ module osal
 
 import net
 import time
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 
 pub enum PingResult {
 	ok
