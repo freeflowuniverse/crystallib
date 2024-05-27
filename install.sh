@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-cd ~/code/github/freeflowuniverse/crystallib
 SOURCE=${BASH_SOURCE[0]}
 DIR_OF_THIS_SCRIPT="$( dirname "$SOURCE" )"
+cd $DIR_OF_THIS_SCRIPT
+
 ABS_DIR_OF_SCRIPT="$( realpath $DIR_OF_THIS_SCRIPT )"
 mkdir -p ~/.vmodules/freeflowuniverse
 
