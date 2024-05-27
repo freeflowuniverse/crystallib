@@ -16,7 +16,7 @@ pub fn (mut m BizModel) process_macros() ! {
 		if true {
 			c := doc.markdown()!
 			console.print_debug('\n\n\n')
-			console.print_debug(c)
+			console.print_debug('${c}')
 
 			panic('S')
 		}

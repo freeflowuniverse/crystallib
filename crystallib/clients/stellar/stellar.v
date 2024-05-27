@@ -30,7 +30,7 @@ pub fn new(args StellarGetArgs) {
 		// will ask questions if not filled in yet
 		cl.config_interactive()!
 	}
-	console.print_debug(cfg)
+	console.print_debug('${cfg}')
 }
 
 mut py := python.new(name: 'main')! // a python env with name test

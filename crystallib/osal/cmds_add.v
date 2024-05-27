@@ -180,5 +180,5 @@ fn profile_path_add_(profile_path_ string, path2add string, todelete string) ! {
 	}
 	c += '\nexport PATH=\$PATH:${path2add}\n'
 	profile_path.write(c)!
-	// console.print_debug(c)
+	// console.print_debug('${c}')
 }

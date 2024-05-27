@@ -19,7 +19,7 @@ pub fn json_list(r string, clean bool) []string {
 		// 	console.print_debug("SKIP")
 		// 	continue
 		// }		
-		// console.print_debug(c)
+		// console.print_debug('${c}')
 		if c == '{' {
 			open_counter += 1
 		}

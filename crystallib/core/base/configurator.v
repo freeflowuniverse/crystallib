@@ -99,7 +99,7 @@ pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
 		if db.exists(key: self.config_key())! {
 			data := db.get(key: self.config_key())!
 			c := json.decode(T, data)!
-			console.print_debug(c)
+			console.print_debug('${c}')
 			console.print_debug('')
 		} else {
 			return error("Can't find connection with name: ${args.name}")
