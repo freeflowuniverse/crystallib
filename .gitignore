@@ -17,6 +17,6 @@ remote_install_v_hero
 zdb-data
 zdb-index
 .idea/
-
+.venv/
 
 
