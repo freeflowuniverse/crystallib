@@ -97,6 +97,13 @@ pub fn (mut e Encoder) add[T](val T) ! {
 	}
 }
 
+pub fn (mut e Encoder) encode_array[U](val []U) ! {
+	for i in 0 .. val.len {
+		$if U is $struct {
+			e.add(val[i])!
+		}
+	}
+}
 
 // now encode the struct
 pub fn (mut e Encoder) encode_struct[T](t T) ! {

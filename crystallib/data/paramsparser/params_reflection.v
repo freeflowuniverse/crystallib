@@ -17,12 +17,10 @@ pub fn (params Params) decode_struct[T](_ T) !T {
 		if field.name[0].is_capital() {
 			// embed := params.decode_struct(t.$(field.name))!
 			t.$(field.name) = params.decode_struct(t.$(field.name))!
-			println('debugzo--- ${t}')
 		} else {
 			t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
 		}
 	}
-	println('debugzoo2-- ${t}')
 	return t
 }
 
@@ -74,7 +72,6 @@ pub struct EncodeArgs {
 }
 
 pub fn encode[T](t T, args EncodeArgs) !Params {
-	println('debugzorr342 ${t}')
 	$if t is $option {
 		// unwrap and encode optionals
 		workaround := t
@@ -138,9 +135,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 					}
 				}
 			}
-		} $else {
-			println('debugzonikonzo')
-		}
+		} $else {}
 	}
 	return params
 }

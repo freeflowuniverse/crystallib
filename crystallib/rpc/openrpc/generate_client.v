@@ -88,7 +88,6 @@ pub fn (o OpenRPC) generate_client_test_file(methods_map map[string]Function) !C
 		func.body = "client := new_ws_client(address:'ws://127.0.0.1:\${port}')!\n${func_call}"
 		code << func
 	}
-	println('returned codeifile')
 	return CodeFile {
 		name: 'client_test'
 		mod: name
