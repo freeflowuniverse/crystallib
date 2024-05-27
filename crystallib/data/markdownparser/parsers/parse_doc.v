@@ -152,7 +152,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				}
 			}
 			else {
-				console.print_debug(llast)
+				//console.print_debug(llast.str())
 				panic('parser error, means we got element which is not supported')
 			}
 		}

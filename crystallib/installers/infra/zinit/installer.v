@@ -37,7 +37,7 @@ pub fn install(args_ InstallArgs) ! {
 			args.reset = true
 		}
 	} else {
-		console.print_debug(res)
+		console.print_debug(res.str())
 		console.print_debug('reset of error in zinit execute')
 		args.reset = true
 	}

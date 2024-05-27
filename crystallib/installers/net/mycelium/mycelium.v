@@ -62,7 +62,7 @@ pub fn install(args_ InstallArgs) ! {
 
 		mut myceliumfile := dest.file_get('mycelium')! // file in the dest
 
-		console.print_debug(myceliumfile)
+		console.print_debug(myceliumfile.str())
 
 		osal.cmd_add(
 			source: myceliumfile.path

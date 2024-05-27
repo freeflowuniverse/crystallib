@@ -62,7 +62,7 @@ fn cmd_imagedownsize_execute(cmd Command) ! {
 		convertpng: cmd.flags.get_bool('convertpng') or { false }
 	) or {
 		print_backtrace()
-		console.print_debug(err)
+		console.print_stderr(err.str())
 		panic(err)
 	}
 }

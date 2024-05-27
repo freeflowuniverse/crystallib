@@ -55,7 +55,7 @@ pub fn (mut tree Tree) process_defs() ! {
 			mut mypage := collection.pages[name] or { panic('bug') }
 			mut mydoc := mypage.doc()!
 			for mut defitem in mydoc.defpointers() {
-				console.print_debug(defitem)
+				console.print_debug(defitem.str())
 				defname := defitem.nameshort
 				assert defname.len > 0
 				console.print_green('defpointer:${defitem}')

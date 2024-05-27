@@ -62,7 +62,7 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 				return
 			}
 			path_dest := image.path.path_no_ext() + '.jpg'
-			console.print_debug('   - convert to png: ${path_dest}')
+			console.print_debug('   - convert to png: ${path_dest.str()}')
 			cmd := "convert '${image.path.path}' '${path_dest}'"
 			if os.exists(path_dest) {
 				os.rm(path_dest)!
@@ -81,7 +81,7 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	mut p := parent.file_get_new('.done')!
 	mut c := p.read()!
 	if c.contains(image.path.name()) {
-		console.print_debug(image)
+		console.print_debug(image.str())
 		print_backtrace()
 		panic('bug')
 	}

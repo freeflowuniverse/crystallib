@@ -1,20 +1,19 @@
 module secp256k1
 
-import freeflowuniverse.crystallib.ui.console
 import encoding.hex
 import crypto.sha256
 import freeflowuniverse.crystallib.crypt.secp256k1
 
 fn test_check() {
-	console.print_debug('${'[+] initializing libsecp256 vlang wrapper'}')
+	println('${'[+] initializing libsecp256 vlang wrapper'}')
 
 	wendy := secp256k1.new()!
 	webdy_priv_key := wendy.private_key_hex()
 	webdy_pub_key := wendy.public_key_hex()
-	console.print_debug('-------')
-	console.print_debug('Wendy Private: ${webdy_priv_key}')
-	console.print_debug('Wendy Public: ${webdy_pub_key}')
-	console.print_debug('-------')
+	println('-------')
+	println('Wendy Private: ${webdy_priv_key}')
+	println('Wendy Public: ${webdy_pub_key}')
+	println('-------')
 
 	// create 'bob' from a private key, full features will be available
 	bob := secp256k1.new(
@@ -37,19 +36,19 @@ fn test_check() {
 	)!
 
 	shr1 := bob.sharedkeys(alice)
-	console.print_debug('${shr1}')
+	println('${shr1}')
 
 	shr2 := alice.sharedkeys(bob)
-	console.print_debug('${shr2}')
+	println('${shr2}')
 
 	// example in real world, where private key is available and only target public key
 	shr1pub := bob.sharedkeys(alicepub)
-	console.print_debug('${shr1pub}')
+	println('${shr1pub}')
 
 	shr2pub := alice.sharedkeys(bobpub)
-	console.print_debug('${shr2pub}')
+	println('${shr2pub}')
 
-	console.print_debug('-----')
+	println('-----')
 
 	mut message := 'Hello world, this is my awesome message'
 	message += message
@@ -58,27 +57,27 @@ fn test_check() {
 	message += message
 
 	h256 := sha256.hexhash(message)
-	console.print_debug('${h256}')
-	console.print_debug('${h256.len}')
-	console.print_debug('${sha256.sum(message.bytes())}')
+	println('${h256}')
+	println('${h256.len}')
+	println('${sha256.sum(message.bytes())}')
 
 	parsed := hex.decode(h256) or { panic(err) }
-	console.print_debug('${parsed}')
-	console.print_debug('${parsed.len}')
+	println('${parsed}')
+	println('${parsed.len}')
 
 	//
 	// signature (ecdca)
 	//
 	signed := alice.sign_data(message.bytes())
-	console.print_debug('${signed}')
+	println('${signed}')
 
 	signed_hex := alice.sign_data_hex(message.bytes())
-	console.print_debug('${signed_hex}')
-	console.print_debug('${signed_hex.len}')
+	println('${signed_hex}')
+	println('${signed_hex.len}')
 
 	signed_str := alice.sign_str(message)
-	console.print_debug('${signed_str}')
-	console.print_debug('${signed_str.len}')
+	println('${signed_str}')
+	println('${signed_str.len}')
 
 	signed_str_hex := alice.sign_str_hex(message)
 	assert signed_str_hex == '656699dde22d8b89d91070dee4fc8dba136172fb54e6de475024c40e4f8d5111562212c8976b5a4ccd530bdb7f40c5d9bd2cdeeec1473656566fbb9c4576ed8c'
@@ -93,21 +92,21 @@ fn test_check() {
 	// signature (schnorr)
 	//
 	// schnorr_signed := alice.schnorr_sign_data(message.bytes())
-	// console.print_debug('${schnorr_signed}')
+	// println('${schnorr_signed}')
 
 	// schnorr_signed_hex := alice.schnorr_sign_data_hex(message.bytes())
-	// console.print_debug('${schnorr_signed_hex}')
+	// println('${schnorr_signed_hex}')
 
 	// schnorr_signed_str := alice.schnorr_sign_str(message)
-	// console.print_debug('${schnorr_signed_str}')
+	// println('${schnorr_signed_str}')
 
 	// schnorr_signed_str_hex := alice.schnorr_sign_str_hex(message)
-	// console.print_debug('${schnorr_signed_str_hex}')
+	// println('${schnorr_signed_str_hex}')
 
-	// console.print_debug('${alicepub.schnorr_verify_data(schnorr_signed, message.bytes())}')
-	// console.print_debug('${alicepub.schnorr_verify_str(schnorr_signed_str, message)}')
+	// println('${alicepub.schnorr_verify_data(schnorr_signed, message.bytes())}')
+	// println('${alicepub.schnorr_verify_str(schnorr_signed_str, message)}')
 
 	// // should fails, it's not the right signature method (ecdsa / schnorr)
-	// console.print_debug('${alicepub.verify_data(schnorr_signed, message.bytes())}')
-	// console.print_debug('${alicepub.verify_str(schnorr_signed_str, message)}')
+	// println('${alicepub.verify_data(schnorr_signed, message.bytes())}')
+	// println('${alicepub.verify_str(schnorr_signed_str, message)}')
 }

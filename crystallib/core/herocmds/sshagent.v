@@ -110,7 +110,7 @@ fn cmd_sshagent_execute(cmd Command) ! {
 		if !isscript {
 			console.clear()
 		}
-		console.print_debug(agent)
+		console.print_debug(agent.str())
 	} else if cmd.name == 'generate' {
 		agent.generate(name, '')!
 		if load {

@@ -64,7 +64,7 @@ pub fn (mut self ScreensFactory) scan() ! {
 		}
 		self.screens << item
 	}
-	console.print_debug(self)
+	console.print_debug(self.str())
 }
 
 pub struct ScreenAddArgs {
@@ -135,7 +135,7 @@ pub fn (mut self ScreensFactory) start(name string) ! {
 		if s2.pid > 0 {
 			return
 		}
-		console.print_debug(s2)
+		console.print_debug(s2.str())
 		time.sleep(100000)
 	}
 }
