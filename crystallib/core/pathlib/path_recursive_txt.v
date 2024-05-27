@@ -1,5 +1,4 @@
 module pathlib
-import freeflowuniverse.crystallib.ui.console
 
 // get all text for path and underneith (works for dir & file)
 pub fn (mut path Path) recursive_text() ![]string {

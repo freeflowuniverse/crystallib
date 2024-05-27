@@ -1,5 +1,4 @@
 module pathlib
-import freeflowuniverse.crystallib.ui.console
 
 const image_exts = ['jpg', 'jpeg', 'png', 'gif', 'svg']
 

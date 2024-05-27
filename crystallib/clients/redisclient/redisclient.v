@@ -9,7 +9,6 @@ import time
 import freeflowuniverse.crystallib.data.resp
 import os
 import net.unix
-import freeflowuniverse.crystallib.ui.console
 
 __global (
 	redis_connections shared []RedisInternal

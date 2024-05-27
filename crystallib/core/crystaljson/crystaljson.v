@@ -2,7 +2,6 @@ module crystaljson
 
 import x.json2
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 const keep_ascii = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+={}[]"\':;!/>.<,|\\~` '
 

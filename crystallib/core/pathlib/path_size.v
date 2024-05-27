@@ -1,7 +1,6 @@
 module pathlib
 
 import os
-import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut path Path) size_kb() !int {
 	s := path.size()!

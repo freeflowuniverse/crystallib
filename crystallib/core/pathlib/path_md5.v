@@ -4,7 +4,6 @@ import crypto.md5
 import os
 import io
 import encoding.hex
-import freeflowuniverse.crystallib.ui.console
 
 // return in hex format
 pub fn (mut path Path) md5hex() !string {

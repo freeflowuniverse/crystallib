@@ -1,5 +1,4 @@
 module resp
-import freeflowuniverse.crystallib.ui.console
 
 // 	mut r := io.new_buffered_reader(reader: io.make_reader(conn))
 // 	for {

@@ -1,7 +1,6 @@
 module resp
 
 import io
-import freeflowuniverse.crystallib.ui.console
 
 pub struct StringReader {
 	text string

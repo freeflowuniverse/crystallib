@@ -2,7 +2,6 @@ module paramsparser
 
 import freeflowuniverse.crystallib.core.texttools
 import strconv
-import freeflowuniverse.crystallib.ui.console
 
 // Looks for a list of strings in the parameters. If it doesn't exist this function will return an error. Furthermore an error will be returned if the list is not properly formatted
 // Examples of valid lists:

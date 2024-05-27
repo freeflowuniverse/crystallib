@@ -1,7 +1,6 @@
 module redisclient
 
 import freeflowuniverse.crystallib.data.resp
-import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut r Redis) get_response() !resp.RValue {
 	line := r.read_line()!

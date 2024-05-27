@@ -1,5 +1,4 @@
 module paramsparser
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct ParamsFilter {

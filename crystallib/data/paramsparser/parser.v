@@ -1,7 +1,6 @@
 module paramsparser
 
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 enum ParamStatus {
 	start

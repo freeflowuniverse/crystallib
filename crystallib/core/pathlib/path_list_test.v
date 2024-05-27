@@ -25,14 +25,14 @@ fn test_list() {
 	console.print_stdout('************ TEST_list ************')
 	mut test_path_dir := pathlib.get('${testpath}')
 	result := test_path_dir.list(recursive: true) or { panic(err) }
-	console.print_debug(result)
+	console.print_debug('${result}')
 }
 
 fn test_list_dirs() {
 	console.print_stdout('************ TEST_list_dir ************')
 	mut test_path_dir := pathlib.get('${testpath}')
 	result := test_path_dir.list(recursive: true) or { panic(err) }
-	console.print_debug(result)
+	console.print_debug('${result}')
 }
 
 fn test_list_files() {
@@ -47,5 +47,5 @@ fn test_list_links() {
 	console.print_stdout('************ TEST_list_link ************')
 	mut test_path_dir := pathlib.get('${testpath}')
 	result := test_path_dir.list(pathlib.ListArgs{}) or { panic(err) }
-	console.print_debug(result)
+	console.print_debug('${result}')
 }
