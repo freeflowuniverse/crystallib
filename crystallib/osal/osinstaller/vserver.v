@@ -1,6 +1,7 @@
 module vserver
 
 import os
+import freeflowuniverse.crystallib.ui.console
 // import json
 // import maxux.vssh
 
@@ -14,10 +15,10 @@ pub fn new() ServerManager {
 }
 
 fn (s ServerManager) execute(command string) bool {
-	// println(command)
+	// console.print_debug(command)
 
 	r := os.execute(command)
-	// println(r)
+	// console.print_debug(r)
 
 	return true
 }
@@ -33,11 +34,11 @@ pub fn (s ServerManager) raid_stop() !bool {
 	for line in lines {
 		if line.contains('active') {
 			dev := line.split(' ')[0]
-			println('[+] stopping raid device: ${dev}')
+			console.print_debug('[+] stopping raid device: ${dev}')
 
 			r := os.execute('mdadm --stop /dev/${dev}')
 			if r.exit_code != 0 {
-				println(r.output)
+				console.print_debug(r.output)
 			}
 		}
 	}
@@ -69,7 +70,7 @@ pub fn (s ServerManager) disk_erase(disk string) bool {
 	// make it safe via wipefs
 	r := os.execute('wipefs -a /dev/${disk}')
 	if r.exit_code != 0 {
-		println(r.output)
+		console.print_debug(r.output)
 		return false
 	}
 
@@ -116,29 +117,29 @@ pub fn (s ServerManager) disk_main_layout(disk string) !map[string]string {
 	swap := '/dev/' + parts[2]
 	more := '/dev/' + parts[3]
 
-	println('[+] partition map:')
-	println('[+]   /       -> ${root}  [ext2]')
-	println('[+]   /boot   -> ${boot}  [ext4]')
-	println('[+]   [swap]  -> ${swap}  [swap]')
-	println('[+]   [extra] -> ${more}  [btrfs]')
+	console.print_debug('[+] partition map:')
+	console.print_debug('[+]   /       -> ${root}  [ext2]')
+	console.print_debug('[+]   /boot   -> ${boot}  [ext4]')
+	console.print_debug('[+]   [swap]  -> ${swap}  [swap]')
+	console.print_debug('[+]   [extra] -> ${more}  [btrfs]')
 
-	println('[+] creating boot partition')
+	console.print_debug('[+] creating boot partition')
 	s.execute('mkfs.ext2 ${boot}')
 
-	println('[+] creating root partition')
+	console.print_debug('[+] creating root partition')
 	s.execute('mkfs.ext4 ${root}')
 
-	println('[+] creating swap partition')
+	console.print_debug('[+] creating swap partition')
 	s.execute('mkswap ${swap}')
 
-	println('[+] creating storage partition')
+	console.print_debug('[+] creating storage partition')
 	s.execute('mkfs.btrfs -f ${more}')
 
 	return diskmap
 }
 
 pub fn (s ServerManager) disk_create_btrfs(disk string) !bool {
-	println('[+] creating btrfs on disk: /dev/${disk}')
+	console.print_debug('[+] creating btrfs on disk: /dev/${disk}')
 	s.execute('mkfs.btrfs -f /dev/${disk}')
 
 	return true
@@ -146,20 +147,20 @@ pub fn (s ServerManager) disk_create_btrfs(disk string) !bool {
 
 pub fn (s ServerManager) nixos_prepare(diskmap map[string]string) !bool {
 	// mounting
-	// println(diskmap)
+	// console.print_debug(diskmap)
 	root := diskmap['/']
 	boot := diskmap['/boot']
 	more := diskmap['/disk1']
 
 	// mandatory on the host
-	println('[+] creating required user, groups and directories')
+	console.print_debug('[+] creating required user, groups and directories')
 	s.execute('groupadd -g 30000 nixbld')
 	s.execute('useradd -u 30000 -g nixbld -G nixbld nixbld')
 
 	os.mkdir('/nix')!
 	os.mkdir('/mnt/nix')!
 
-	println('[+] mounting target disks')
+	console.print_debug('[+] mounting target disks')
 	// mounting our extra disk for setup nix store
 	s.execute('mount /dev/${more} /nix')
 	s.execute('mount /dev/${root} /mnt/nix')
@@ -171,19 +172,19 @@ pub fn (s ServerManager) nixos_prepare(diskmap map[string]string) !bool {
 }
 
 pub fn (s ServerManager) nixos_install(bootdisk string, sshkey string) !bool {
-	println('[+] installing nix tools on the host')
+	console.print_debug('[+] installing nix tools on the host')
 	os.execute('curl -L https://nixos.org/nix/install | sh')
 	// . /root/.nix-profile/etc/profile.d/nix.sh
 
 	version := '23.11'
-	println('[+] updating channels, using version: ${version}')
+	console.print_debug('[+] updating channels, using version: ${version}')
 	s.execute('/root/.nix-profile/bin/nix-channel --add https://nixos.org/channels/nixos-${version} nixpkgs')
 	s.execute('/root/.nix-profile/bin/nix-channel --update')
 
-	println('[+] installing nixos install tools scripts')
+	console.print_debug('[+] installing nixos install tools scripts')
 	s.execute("/root/.nix-profile/bin/nix-env -f '<nixpkgs>' -iA nixos-install-tools")
 
-	println('[+] generating default configuration')
+	console.print_debug('[+] generating default configuration')
 	s.execute('/root/.nix-profile/bin/nixos-generate-config --root /mnt/nix/')
 
 	// /mnt/nix/etc/nixos/configuration.nix
@@ -209,7 +210,7 @@ pub fn (s ServerManager) nixos_install(bootdisk string, sshkey string) !bool {
 }
 '
 
-	println('[+] applying custom modification to configuration')
+	console.print_debug('[+] applying custom modification to configuration')
 	os.write_file('/mnt/nix/etc/nixos/threefold.nix', config)!
 
 	original := os.read_file('/mnt/nix/etc/nixos/configuration.nix')!
@@ -217,7 +218,7 @@ pub fn (s ServerManager) nixos_install(bootdisk string, sshkey string) !bool {
 
 	os.write_file('/mnt/nix/etc/nixos/configuration.nix', updated)!
 
-	println('[+] committing... installing nixos')
+	console.print_debug('[+] committing... installing nixos')
 
 	// to specify environment variable set by nix, the easier solution
 	// is using a temporary shell script
@@ -235,7 +236,7 @@ pub fn (s ServerManager) nixos_install(bootdisk string, sshkey string) !bool {
 }
 
 pub fn (s ServerManager) nixos_finish() !bool {
-	println('[+] cleaning up, unmounting filesystem')
+	console.print_debug('[+] cleaning up, unmounting filesystem')
 	s.execute('umount -R /mnt/nix')
 	s.execute('umount -R /nix')
 

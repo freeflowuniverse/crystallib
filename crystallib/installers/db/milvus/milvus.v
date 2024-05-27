@@ -32,7 +32,7 @@ pub fn (m Milvus) start() ! {
 
 pub fn (m Milvus) stop() ! {
 	if osal.done_exists('milvus_started') {
-		println('stopping milvus')
+		console.print_debug('stopping milvus')
 		mut t := tmux.new(sessionid: 'milvus')!
 		t.window_delete(name: 'milvus')!
 		osal.done_delete('milvus_started')!

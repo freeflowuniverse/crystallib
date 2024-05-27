@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.crypt.openssl
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.osal { exec }
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct DockerRegistry {
@@ -101,8 +102,8 @@ pub fn (mut e DockerEngine) registry_add(args DockerRegistryArgs) ! {
 
 	// r := conn.get_json_dict(mut prefix: 'errors')!
 	r := conn.get(method: .get)!
-	println('Sdsd')
-	println(r)
+	console.print_debug('Sdsd')
+	console.print_debug(r)
 
 	if true {
 		panic('sdsd')

@@ -29,7 +29,7 @@ pub fn (mut c UIConsole) ask_question(args QuestionArgs) !string {
 	if args.default.len > 0 {
 		question += ' (${args.default}) '
 	}
-	print('${question}: ')
+	console.print_debug('${question}: ')
 	choice := os.get_raw_line().trim(' \n')
 	if choice.trim_space() == '' {
 		return args.default

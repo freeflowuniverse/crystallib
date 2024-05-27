@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.ui.console
 
 enum State {
 	start
@@ -71,7 +72,7 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 			if !line.starts_with('  ') || line_strip == '' || line_strip.starts_with('!') {
 				state = .start
 				// means we found end of action
-				// println("+++${paramsdata.join('\n')}+++")
+				// console.print_debug("+++${paramsdata.join('\n')}+++")
 				action.params = paramsparser.new(paramsdata.join('\n'))!
 				action.params.delete('id')
 				comments = []string{}

@@ -15,7 +15,7 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 	if args.warning.len > 0 {
 		cprintln(foreground: .red, text: args.warning + '\n')
 	}
-	println('\nChoices: ${args.choice_message}\n')
+	console.print_debug('\nChoices: ${args.choice_message}\n')
 	mut items2 := args.items.clone()
 	items2.sort()
 	mut nr := 0
@@ -27,10 +27,10 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 		print_header(' all : *')
 	}
 	if args.default.len > 0 {
-		println('\n - default : ${args.default.join(',')} (press enter to select default)')
+		console.print_debug('\n - default : ${args.default.join(',')} (press enter to select default)')
 	}
-	println('')
-	print(' - Make your choice:')
+	console.print_debug('')
+	console.print_debug(' - Make your choice:')
 	choice := os.get_raw_line().trim(' \n')
 	if choice.trim_space() == '*' {
 		// means we return all
@@ -161,7 +161,7 @@ pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) !string {
 		if args.default.len > 1 {
 			return error('more than 1 default for single choice.\n${args}')
 		}
-		println(args)
+		console.print_debug(args)
 		return args.default[0] or { panic('bug in default args for ask_dropdown_string.\n') }
 	}
 	return args.items[res - 1]

@@ -3,6 +3,7 @@ module herocmds
 import freeflowuniverse.crystallib.conversiontools.imagemagick
 import cli { Command, Flag }
 import os
+import freeflowuniverse.crystallib.ui.console
 
 // const wikipath = os.dir(@FILE) + '/wiki'
 
@@ -61,7 +62,7 @@ fn cmd_imagedownsize_execute(cmd Command) ! {
 		convertpng: cmd.flags.get_bool('convertpng') or { false }
 	) or {
 		print_backtrace()
-		print(err)
+		console.print_debug(err)
 		panic(err)
 	}
 }

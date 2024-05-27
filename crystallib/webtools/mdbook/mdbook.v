@@ -166,7 +166,7 @@ A normal user can ignore these pages, they are just to get links to work.
 		}
 	}
 
-	// println(summary)
+	// console.print_debug(summary)
 
 	path_summary_str := '${book.path_build.path}/src/SUMMARY.md'
 	mut path_summary := pathlib.get_file(path: path_summary_str, create: true)!
@@ -273,7 +273,7 @@ fn (mut book MDBook) summary_image_set() ! {
 		if line.contains('](') && first {
 			folder_first := line.all_after('](').all_before_last(')')
 			folder_first_dir_img := '${book.path_build.path}/src/${folder_first.all_before_last('/')}/img'
-			// println(folder_first_dir_img)
+			// console.print_debug(folder_first_dir_img)
 			// if true{panic("s")}
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!

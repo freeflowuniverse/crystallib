@@ -3,6 +3,7 @@ module zola
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Header {
 	template string
@@ -36,7 +37,7 @@ pub fn (mut site ZolaSite) header_link_add(args Link) ! {
 	mut header := site.header or { return error('header needs to be defined') }
 	header.items << args
 	site.header = header
-	println('site.header: ${site.header}')
+	console.print_debug('site.header: ${site.header}')
 }
 
 pub struct Dropdown {
@@ -61,6 +62,6 @@ extra:
 
 - [Home]("/".md)'
 	mut header_file := pathlib.get_file(path: '${content_dir}/header.md')!
-	println('debugzorty ${header_file}')
+	console.print_debug('debugzorty ${header_file}')
 	header_file.write(content)!
 }

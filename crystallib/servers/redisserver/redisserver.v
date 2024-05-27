@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.data.resp
 import net
 import time
+import freeflowuniverse.crystallib.ui.console
 
 pub struct RedisInstance {
 pub mut:
@@ -153,13 +154,13 @@ fn command_ttl(input resp.RValue, mut srv RedisInstance) resp.RValue {
 // socket management
 //
 pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, value resp.RValue, h []RedisHandler) !bool {
-	println('Inside process')
+	console.print_debug('Inside process')
 
 	command := resp.get_redis_value_by_index(value, 0).to_upper()
 
 	for rh in h {
 		if command == rh.command {
-			println('Process: ${command}')
+			console.print_debug('Process: ${command}')
 			data := rh.handler(value, mut instance)
 			client.write_rval(data)!
 			return true
@@ -167,12 +168,12 @@ pub fn process_input(mut client redisclient.Redis, mut instance RedisInstance, v
 	}
 
 	// debug
-	print('Error: unknown command: ')
+	console.print_debug('Error: unknown command: ')
 	for cmd in resp.get_redis_array(value) {
 		mut cmd_value := resp.get_redis_value(cmd)
-		print('cmd value >> ${cmd_value} ')
+		console.print_debug('cmd value >> ${cmd_value} ')
 	}
-	println('')
+	console.print_debug('')
 
 	err := resp.r_error('Unknown command')
 	client.write_rval(err)!
@@ -238,17 +239,17 @@ pub fn new_client_custom(mut conn net.TcpConn, mut main RedisInstance, h []Redis
 		// }
 		// continue
 		// }
-		println('.... here')
+		console.print_debug('.... here')
 		if value !is resp.RArray {
 			// should not receive anything else than
 			// array with commands and args
-			println('Wrong request from client, rejecting')
+			console.print_debug('Wrong request from client, rejecting')
 			conn.close()!
 			return
 		}
 
 		if resp.get_redis_array(value)[0] !is resp.RBString {
-			println('Wrong request from client, rejecting rbstring')
+			console.print_debug('Wrong request from client, rejecting rbstring')
 			conn.close()!
 			return
 		}

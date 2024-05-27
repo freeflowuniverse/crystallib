@@ -1,6 +1,7 @@
 module jsonrpc
 
 import freeflowuniverse.crystallib.core.codemodel
+import freeflowuniverse.crystallib.ui.console
 
 const receiver = codemodel.Struct{
 	name: 'Tester'
@@ -73,5 +74,5 @@ pub fn test_generate_handler() ! {
 	)!
 
 	v_code := codemodel.vgen(handler_code)
-	println(v_code)
+	console.print_debug(v_code)
 }

@@ -3,6 +3,7 @@ module backend
 import os
 import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.data.encoderhero
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Backend {
 mut:
@@ -65,8 +66,8 @@ pub fn (mut backend Backend) list[T]() ![]T {
 pub fn (mut backend Backend) filter[T, D](filter D, params FilterParams) ![]T {
 	mut db := backend.dbs.get(get_table_name[T]())!
 	ids := backend.indexer.filter[T, D](filter, params)!
-	println('debugzo ${ids}')
+	console.print_debug('debugzo ${ids}')
 	datas := ids.map(db.get('${it}')!)
-	println('debugzo2 ${datas}')
+	console.print_debug('debugzo2 ${datas}')
 	return datas.map(encoderhero.decode[T](it)!)
 }

@@ -1,4 +1,5 @@
 module zola
+import freeflowuniverse.crystallib.ui.console
 
 // adds a news section to the zola site
 fn test_news_add() ! {
@@ -42,7 +43,7 @@ fn test_news_add() ! {
 
 // 	collection := if args.collection != '' {
 // 		_ = site.tree.collection_get(args.collection) or {
-// 			println(err)
+// 			console.print_debug(err)
 // 			return err
 // 		}
 // 		args.collection
@@ -61,7 +62,7 @@ fn test_news_add() ! {
 // 	}
 
 // 	mut page := site.tree.page_get('${pointer}') or {
-// 		println(err)
+// 		console.print_debug(err)
 // 		return err
 // 	}
 
@@ -104,7 +105,7 @@ fn test_news_add() ! {
 // 		article = Article{
 // 			...article
 // 			page: site.tree.page_get('${args.collection}:${page_}') or {
-// 				println(err)
+// 				console.print_debug(err)
 // 				return err
 // 			}
 // 		}
@@ -114,7 +115,7 @@ fn test_news_add() ! {
 // 		article = Article{
 // 			...article
 // 			image: site.tree.image_get('${collection}:${image_}') or {
-// 				println(err)
+// 				console.print_debug(err)
 // 				return err
 // 			}
 // 		}

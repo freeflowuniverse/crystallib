@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
 import freeflowuniverse.crystallib.installers.rclone
+import freeflowuniverse.crystallib.ui.console
 
 // install s3 will return true if it was already installed
 pub fn install() ! {

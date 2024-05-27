@@ -1,6 +1,7 @@
 module paramsparser
 
 import crypto.sha256
+import freeflowuniverse.crystallib.ui.console
 
 const textin5 = "
 	//this is first comment (line1)
@@ -23,7 +24,7 @@ const textin5 = "
 		```python
 		#even code block in the other block, crazy parsing for sure
 		def test():
-			print()
+			console.print_debug()
 		```
 	'
 	name2:   test
@@ -45,11 +46,11 @@ fn test_export_helper1() {
 	// multiline bool = true //if we will put the multiline strings as multiline in output
 	// indent string
 	o := params.export_helper(maxcolsize: 600) or { panic(err) }
-	println(o)
+	console.print_debug(o)
 	assert o.len == 14
-	// println(o.len)
+	// console.print_debug(o.len)
 	assert o[o.len - 1].firstline == false
-	// println(o[o.len - 2])
+	// console.print_debug(o[o.len - 2])
 	assert o[o.len - 2].firstline == false
 	assert o[o.len - 1].key == 'name5'
 	// assert o[o.len - 2].key == 'name6'
@@ -62,8 +63,8 @@ fn test_export_helper1() {
 fn test_export_helper2() {
 	params := parse(paramsparser.textin5) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	println(o)
-	println("EXPECT:
+	console.print_debug(o)
+	console.print_debug("EXPECT:
 	// mycomment
 	blue red id:a6 name6:aaaaa
 	name4:'a aa' //comment_line2
@@ -86,13 +87,13 @@ const textin6 = "
 fn test_export_6() {
 	params := parse(paramsparser.textin6) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	println(o)
+	console.print_debug(o)
 
 	paramsout := params.export()
 
-	println(paramsout)
+	console.print_debug(paramsout)
 
-	println("EXPECT:
+	console.print_debug("EXPECT:
 	// mycomment
 	blue red id:a6 name6:aaaaa
 	name4:'a aa' //comment_line2
@@ -121,11 +122,11 @@ const textin7 = "
 fn test_export_7() {
 	params := parse(paramsparser.textin7) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	println(o)
+	console.print_debug(o)
 
 	paramsout := params.export()
 
-	println("EXPECT:
+	console.print_debug("EXPECT:
 	// mycomment
 	blue red id:a7 name6:aaaaa
 	name4:'
@@ -137,7 +138,7 @@ fn test_export_7() {
 	name5:aab //somecomment
 	")
 
-	println(paramsout)
+	console.print_debug(paramsout)
 
 	assert sha256.hexhash(paramsout) == '0407be8ca3abb9214e3579c40ae1b02297cf05bf50ae687ea6b2b57bb8c5a54e'
 }
@@ -163,13 +164,13 @@ const textin8 = "
 fn test_export_8() {
 	params := parse(paramsparser.textin8) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	println(o)
+	console.print_debug(o)
 
 	paramsout := params.export()
 
-	println(paramsout)
+	console.print_debug(paramsout)
 
-	println("EXPECT:
+	console.print_debug("EXPECT:
 	// mycomment
 	blue red id:a8 name6:aaaaa
 	name4:'
@@ -208,9 +209,9 @@ const textin9 = "
 fn test_export_9() {
 	params := parse(paramsparser.textin9) or { panic(err) }
 	o := params.export_helper(oneline: true) or { panic(err) }
-	println(o)
+	console.print_debug(o)
 
-	println("EXPECT:
+	console.print_debug("EXPECT:
 	// mycomment
 	!!remark.define blue red id:a9 name6:aaaaa
 	name4:'
@@ -227,7 +228,7 @@ fn test_export_9() {
 
 	paramsout := params.export(oneline: true)
 
-	println(paramsout)
+	console.print_debug(paramsout)
 
 	assert sha256.hexhash(paramsout) == '811bef1e55b3b4b1b725e1a7514b092526c8fdef8dddf6ad15f9d1ca49c3eb51'
 }
@@ -253,15 +254,15 @@ const textin10 = "
 fn test_export_10() {
 	params := parse(paramsparser.textin10) or { panic(err) }
 	o := params.export_helper(oneline: false, pre: '!!remark.define') or { panic(err) }
-	println(o)
+	console.print_debug(o)
 
 	paramsout := params.export(oneline: false, pre: '!!remark.define')
 
-	println(paramsout)
+	console.print_debug(paramsout)
 
 	// WE EXPECT
 
-	println("EXPECT:
+	console.print_debug("EXPECT:
 	// mycomment
 	!!remark.define blue red id:a10 name6:aaaaa
 	name4:'

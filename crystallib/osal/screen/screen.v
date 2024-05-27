@@ -27,7 +27,7 @@ pub fn (mut t Screen) is_running() !bool {
 	// 	panic('bug')
 	// }
 	// if res.error.contains('no server running') {
-	// 	// println(" TMUX NOT RUNNING")
+	// 	// console.print_debug(" TMUX NOT RUNNING")
 	// 	return false
 	// }
 	// if res.error.contains('no current client') {
@@ -40,7 +40,7 @@ pub fn (mut t Screen) is_running() !bool {
 }
 
 fn (mut self Screen) kill_() ! {
-	println('kill screen: ${self}')
+	console.print_debug('kill screen: ${self}')
 	if self.pid == 0 || self.pid < 50 {
 		return error("pid was <50 for ${self}, can't kill")
 	}
@@ -93,9 +93,9 @@ fn (mut self Screen) start_() ! {
 		self.cmd = '/bin/bash'
 	}
 	cmd := 'export TERM=xterm-color && screen -dmS ${self.name} ${self.cmd}'
-	println(" startcmd:'${cmd}'")
+	console.print_debug(" startcmd:'${cmd}'")
 	res := os.execute(cmd)
-	// println(res)
+	// console.print_debug(res)
 	if res.exit_code > 1 {
 		return error('could not find screen or other error, make sure screen is installed.\n${res.output}')
 	}

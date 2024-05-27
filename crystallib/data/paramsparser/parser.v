@@ -1,6 +1,7 @@
 module paramsparser
 
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 enum ParamStatus {
 	start
@@ -32,12 +33,12 @@ enum ParamStatus {
 pub fn parse(text string) !Params {
 	mut text2 := texttools.dedent(text)
 	// mut text2 := text
-	// println("****PARSER")
-	// println(text2)
-	// println("****PARSER END")
+	// console.print_debug("****PARSER")
+	// console.print_debug(text2)
+	// console.print_debug("****PARSER END")
 	text2 = text2.replace('"', "'")
 	text2 = texttools.multiline_to_single(text2)!
-	// println("1")
+	// console.print_debug("1")
 	validchars := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,./'
 
 	mut ch := ''
@@ -51,7 +52,7 @@ pub fn parse(text string) !Params {
 
 	for i in 0 .. text2.len {
 		ch = text2[i..i + 1]
-		// println(" - '${ch_prev}${ch}' ${state}")
+		// console.print_debug(" - '${ch_prev}${ch}' ${state}")
 
 		if state == .value_end {
 			if ch == ' ' {

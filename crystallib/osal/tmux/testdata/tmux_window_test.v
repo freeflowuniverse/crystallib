@@ -2,6 +2,7 @@ module tmux
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.tmux
+import freeflowuniverse.crystallib.ui.console
 
 // uses single tmux instance for all tests
 __global (
@@ -52,7 +53,7 @@ fn test_window_new() {
 // 		name: 'TestWindow0'
 // 	}
 
-// 	// println(tmux)
+// 	// console.print_debug(tmux)
 // 	mut window := tmux.window_new(window_args) or {
 // 		panic("Can't create new window: $err")
 // 	}
@@ -60,7 +61,7 @@ fn test_window_new() {
 // 	mut window_dup := tmux.window_new(window_args) or {
 // 		panic("Can't create new window: $err")
 // 	}
-// 	println(node_ssh.exec('tmux ls') or { panic("fail:$err")})
+// 	console.print_debug(node_ssh.exec('tmux ls') or { panic("fail:$err")})
 // 	window.delete() or { panic("Cant delete window") }
-// 	// println(tmux)
+// 	// console.print_debug(tmux)
 // }

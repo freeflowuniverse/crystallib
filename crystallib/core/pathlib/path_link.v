@@ -37,7 +37,7 @@ pub fn (mut path Path) link(linkpath string, delete_exists bool) !Path {
 	} else {
 		origin_path = path_relative(dest_dir, path.path)!
 	}
-	// println("${dest_dir} ::: ${origin_path} ::: ${linkpath}")	
+	// console.print_debug("${dest_dir} ::: ${origin_path} ::: ${linkpath}")	
 
 	msg := 'link to origin (source): ${path.path}  \nthe link:${linkpath} \nlink rel: ${origin_path}'
 	// TODO: figure out why os.symlink doesn't work for linking file into dir

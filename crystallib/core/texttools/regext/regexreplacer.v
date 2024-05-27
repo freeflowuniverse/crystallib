@@ -126,7 +126,7 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 	}
 	mut line2 := ''
 	mut res := []string{}
-	// println('AAA\n$text\nBBB\n')
+	// console.print_debug('AAA\n$text\nBBB\n')
 	if text2.len == 0 {
 		return ''
 	}
@@ -137,31 +137,31 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 	}
 	for line in text2.split_into_lines() {
 		line2 = line
-		// println(' >>>> $line')
+		// console.print_debug(' >>>> $line')
 		// mut tl := tokenize(line)
-		// println(tl)
+		// console.print_debug(tl)
 		for mut i in self.instructions {
 			if i.find_str == '' {
-				// println('REGEX:' + i.regex.get_query() + ' <-$line')
+				// console.print_debug('REGEX:' + i.regex.get_query() + ' <-$line')
 				all := i.regex.find_all(line)
 				for gi < all.len {
-					// println('  >> "${line[all[gi]..all[gi + 1]]}"')
+					// console.print_debug('  >> "${line[all[gi]..all[gi + 1]]}"')
 					gi += 2
 				}
 				line2 = i.regex.replace(line2, i.replace_with)
-				// println('REPLACE_R:${i.regex.get_query()}:$line:$line2')
+				// console.print_debug('REPLACE_R:${i.regex.get_query()}:$line:$line2')
 			} else {
-				// println(tl)
+				// console.print_debug(tl)
 				// line2 = line2.replace(i.find_str, i.replace_with)
 				// line2 = tl.replace(line2, i.find_str, i.replace_with) ?
-				// println('REPLACE:$i.find_str -> $line -> $line2')
+				// console.print_debug('REPLACE:$i.find_str -> $line -> $line2')
 
 				line2 = line2.replace(i.find_str, i.replace_with)
 			}
 		}
 		res << line2
 	}
-	// println('AAA2\n$text2\nBBB2\n')
+	// console.print_debug('AAA2\n$text2\nBBB2\n')
 	mut x := res.join('\n')
 	if !endline {
 		x = x.trim_right('\n')
@@ -226,7 +226,7 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 			ext := os.file_ext(pathnew)[1..].to_lower()
 			if extensions == [] || ext in extensions {
 				// means we match a file
-				// println (" . replace: $pathnew ($ext)")
+				// console.print_debug(" . replace: $pathnew ($ext)")
 				txtold := os.read_file(pathnew)!
 				txtnew := self.replace(text: txtold, dedent: false)!
 				if txtnew.trim(' \n') == txtold.trim(' \n') {
@@ -238,11 +238,11 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 						// now write the file back
 						os.write_file(pathnew, txtnew)!
 					}
-					// println("===========")
-					// println(txtold)
-					// println("===========")
-					// println(txtnew)
-					// println("===========")
+					// console.print_debug("===========")
+					// console.print_debug(txtold)
+					// console.print_debug("===========")
+					// console.print_debug(txtnew)
+					// console.print_debug("===========")
 				}
 			}
 		}

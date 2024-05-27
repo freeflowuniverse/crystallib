@@ -2,6 +2,7 @@ module bizmodel
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 // populate the params for hr
 // !!hr.employee_define
@@ -44,7 +45,7 @@ fn (mut m BizModel) overhead_actions(plbook_ PlayBook) ! {
 				cost2 := cost_ * (1 + indexation) * (1 + indexation) * (1 + indexation) * (1 +
 					indexation) * (1 + indexation) * (1 + indexation) // 6 years, maybe need to look at months
 				cost = '0:${cost},59:${cost2}'
-				// println(cost)
+				// console.print_debug(cost)
 			}
 
 			mut extrap := false

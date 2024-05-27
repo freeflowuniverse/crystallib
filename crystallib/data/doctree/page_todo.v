@@ -162,7 +162,7 @@ module doctree
 // 				mut item_link := paragraph.children[y]
 // 				if mut item_link is Link {
 // 					if item_link.filename == 'threefold_cloud.md' {
-// 						print('${item_link}')
+// 						console.print_debug('${item_link}')
 // 					}
 // 					if item_link.isexternal {
 // 						page.fix_external_link(mut item_link)!

@@ -1,4 +1,5 @@
 module console
+import freeflowuniverse.crystallib.ui.console
 
 // print 2 dimensional array, delimeter is between columns
 pub fn print_array(arr [][]string, delimiter string, sort bool) {
@@ -36,7 +37,7 @@ pub fn print_array(arr [][]string, delimiter string, sort bool) {
 	if sort {
 		res.sort_ignore_case()
 	}
-	// println(res)
+	// console.print_debug(res)
 	print_stdout(res.join_lines())
 }
 

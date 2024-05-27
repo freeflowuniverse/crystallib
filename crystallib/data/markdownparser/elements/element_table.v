@@ -1,6 +1,7 @@
 module elements
 
 import regex
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Table {
@@ -123,7 +124,7 @@ pub fn (mut self Table) parse() ! {
 		columns.delete_last()
 		columns.delete(0)
 
-		// println(columns)
+		// console.print_debug(columns)
 		// panic('panic.\n${self}\n${line}')
 
 		mut row := Row{}

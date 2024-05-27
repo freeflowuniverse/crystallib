@@ -3,6 +3,7 @@ module osal
 import time
 import os
 import math
+import freeflowuniverse.crystallib.ui.console
 
 pub enum PMState {
 	init
@@ -67,7 +68,7 @@ pub fn procesinfo_get_byname(name string) ![]ProcessInfo {
 	mut pm := processmap_get()!
 	mut res := []ProcessInfo{}
 	for pi in pm.processes {
-		// println(pi.cmd)
+		// console.print_debug(pi.cmd)
 		if pi.cmd.contains(name) {
 			if pi.cmd.starts_with('sudo ') {
 				continue
@@ -131,10 +132,10 @@ pub fn process_kill_recursive(args ProcessKillArgs) ! {
 }
 
 fn (pm ProcessMap) children_(mut result []ProcessInfo, pid int) ! {
-	// println("children: $pid")
+	// console.print_debug("children: $pid")
 	for p in pm.processes {
 		if p.ppid == pid {
-			// println("found parent: ${p}")
+			// console.print_debug("found parent: ${p}")
 			if result.filter(it.pid == p.pid).len == 0 {
 				result << p
 				pm.children_(mut result, p.pid)! // find children of the one we found
@@ -176,14 +177,14 @@ fn (mut pm ProcessMap) scan() ! {
 
 	pm.processes = []ProcessInfo{}
 
-	// println("DID SCAN")
+	// console.print_debug("DID SCAN")
 	for line in res.output.split_into_lines() {
 		if !line.contains('PPID') {
 			mut fields := line.fields()
 			if fields.len < 6 {
-				// println(res)
-				// println("SSS")
-				// println(line)
+				// console.print_debug(res)
+				// console.print_debug("SSS")
+				// console.print_debug(line)
 				// panic("ss")
 				continue
 			}
@@ -195,7 +196,7 @@ fn (mut pm ProcessMap) scan() ! {
 			pi.rss = fields[5].int()
 			fields.delete_many(0, 6)
 			pi.cmd = fields.join(' ')
-			// println(pi.cmd)
+			// console.print_debug(pi.cmd)
 			if pi.pid !in pm.pids {
 				pm.processes << pi
 				pm.pids << pi.pid
@@ -206,7 +207,7 @@ fn (mut pm ProcessMap) scan() ! {
 	pm.lastscan = time.now()
 	pm.state = PMState.ok
 
-	// println(pm)
+	// console.print_debug(pm)
 }
 
 pub fn whoami() !string {

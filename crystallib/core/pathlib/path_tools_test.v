@@ -21,7 +21,7 @@ fn testsuite_end() {
 
 fn test_get() {
 	console.print_stdout('************ TEST_Get ************')
-	println(testpath)
+	console.print_debug(testpath)
 	fp := pathlib.get('${testpath}/testfile1')
 	assert fp.cat == pathlib.Category.file
 	console.print_stdout('File Result: ${fp}')
@@ -195,9 +195,9 @@ fn test_copy() {
 // 	lp.link(mut dest_p) or {panic(err)}
 // 	mut get_link := pathlib.get("$testpath/linkdir1")
 // 	assert get_link.exists()
-// 	println("Link path: $get_link.path")
+// 	console.print_debug("Link path: $get_link.path")
 // 	real:= get_link.absolute()
-// 	println("Real path: $real")
+// 	console.print_debug("Real path: $real")
 // }
 
 fn test_find_common_ancestor() {

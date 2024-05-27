@@ -1,6 +1,7 @@
 module markdownparser
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
+import freeflowuniverse.crystallib.ui.console
 
 fn test_link1() {
 	mut docs := new(content: '[Architecture](architecture/architecture.md)')!
@@ -72,7 +73,7 @@ fn test_link3() {
 	paragraph := docs.children[0]
 	assert paragraph.children.len == 1
 	link := paragraph.children[0]
-	println(link)
+	console.print_debug(link)
 	if link is elements.Link {
 		assert link.id == 3
 		assert link.processed == true

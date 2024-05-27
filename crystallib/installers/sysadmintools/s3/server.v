@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.core.texttools
 import json
 import rand
+import freeflowuniverse.crystallib.ui.console
 
 // --fs-root <fs-root>             [default: .]
 // --host <host>                   [default: localhost]
@@ -62,7 +63,7 @@ pub fn new(args_ Config) !Server {
 			args.secret_key = rand.string(12)
 		}
 		data := json.encode(args)
-		println('set config s3')
+		console.print_debug('set config s3')
 		kvs.set(key, data)!
 	}
 	return get(args.name)!

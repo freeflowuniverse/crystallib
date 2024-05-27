@@ -52,7 +52,7 @@ pub fn install(args_ InstallArgs) ! {
 		} else {
 			return error('unsported platform')
 		}
-		println(url)
+		console.print_debug(url)
 		mut dest := osal.download(
 			url: url
 			minsize_kb: 1000
@@ -62,7 +62,7 @@ pub fn install(args_ InstallArgs) ! {
 
 		mut myceliumfile := dest.file_get('mycelium')! // file in the dest
 
-		println(myceliumfile)
+		console.print_debug(myceliumfile)
 
 		osal.cmd_add(
 			source: myceliumfile.path
@@ -82,7 +82,7 @@ pub fn restart() ! {
 }
 
 pub fn start() ! {
-	// println("start")
+	// console.print_debug("start")
 
 	mut scr := screen.new(reset: false)!
 	name := 'mycelium'
@@ -104,9 +104,9 @@ pub fn start() ! {
 
 	s.cmd_send(cmd2)!
 
-	// println(s)
+	// console.print_debug(s)
 
-	// println('send done')
+	// console.print_debug('send done')
 
 	if osal.is_osx() {
 		mut myui := ui.new()!
@@ -149,7 +149,7 @@ pub fn running() !bool {
 	// 	return error("mycelium did not install propertly could not do:'mycelium-cli -c ping'\n${res.output}")
 	// }
 	return true
-	// println(scr)
+	// console.print_debug(scr)
 }
 
 // install mycelium will return true if it was already installed

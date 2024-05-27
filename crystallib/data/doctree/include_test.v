@@ -2,6 +2,7 @@ module doctree
 
 import freeflowuniverse.crystallib.webtools.mdbook
 import os
+import freeflowuniverse.crystallib.ui.console
 
 const collections_path = os.dir(@FILE) + '/testdata/includetest'
 
@@ -14,7 +15,7 @@ fn test_page_get() {
 
 	assert tree.collections.len == 3
 
-	// println(tree.collections.keys())
+	// console.print_debug(tree.collections.keys())
 	assert tree.collections.keys() == ['riverlov', 'server', 'sub2']
 
 	dest := '/tmp/mdbooktest'

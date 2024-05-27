@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.base
 import os
+import freeflowuniverse.crystallib.ui.console
 
 pub fn book_open(name string) ! {
 	mut c := base.context()!
@@ -17,7 +18,7 @@ pub fn book_open(name string) ! {
 		return error("can't find generated book in ${path_publish}, was it generated properly.")
 	}
 	cmd3 := "open '${path_publish}/index.html'"
-	println(cmd3)
+	console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 
@@ -32,6 +33,6 @@ pub fn book_edit(name string) ! {
 	if !os.exists(edit_path) {
 		return error("can't find book edit path in ${edit_path}, was it generated properly.")
 	}
-	println('open: ${edit_path}')
+	console.print_debug('open: ${edit_path}')
 	vscode.open(path: edit_path)!
 }

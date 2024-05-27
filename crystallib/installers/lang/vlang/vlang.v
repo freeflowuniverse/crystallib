@@ -19,7 +19,7 @@ pub fn install(args_ InstallArgs) ! {
 			return error("couldn't parse v-analyzer version.\n${res.output}")
 		}
 		myversion := r[0].all_after_first('V ').all_before(' ').trim_space()
-		println("V version: '${myversion}'")
+		console.print_debug("V version: '${myversion}'")
 		if texttools.version(version) > texttools.version(myversion) {
 			args.reset = true
 		}
@@ -125,7 +125,7 @@ pub fn v_analyzer_install(args_ InstallArgs) ! {
 	}
 
 	// if args.reset == false && osal.done_exists('install_v_analyzer') {
-	// 	println('   v analyzer already installed')
+	// 	console.print_debug('   v analyzer already installed')
 	// 	return
 	// }
 	// console.print_header('install v analyzer')

@@ -14,6 +14,9 @@ def process_file(file_path):
     for line in lines:
         if import_statement in line:
             import_found = True
+            
+        if 'console.' in line:
+            modified = True              
         
         new_line = re.sub(r'\bprint\s*\(\s*', 'console.print_debug(', line)
         new_line = re.sub(r'\bprintln\s*\(\s*', 'console.print_debug(', new_line)
@@ -28,7 +31,6 @@ def process_file(file_path):
             if line.strip().startswith('import ') or line.strip().startswith('module '):
                 insert_index = i + 1
         modified_lines.insert(insert_index, f"{import_statement}\n")
-        modified = True
     
     if modified:
         with open(file_path, 'w') as file:

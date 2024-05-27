@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.clients.redisclient	
 import os
 import json
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct DBCollection {
@@ -152,9 +153,9 @@ pub fn (mut collection DBCollection) list() ![]string {
 pub fn (mut collection DBCollection) prefix(prefix string) ![]string {
 	mut res := []string{}
 	for item in collection.list()! {
-		// println(" ---- $item ($prefix)")
+		// console.print_debug(" ---- $item ($prefix)")
 		if item.trim_space().starts_with(prefix) {
-			// println("888")
+			// console.print_debug("888")
 			res << item
 		}
 	}

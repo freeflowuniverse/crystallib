@@ -1,6 +1,7 @@
 module parsers
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
+import freeflowuniverse.crystallib.ui.console
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT RELIALITIES
@@ -10,7 +11,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 	for {
 		if parser.eof() {
 			// go out of loop if end of file
-			// println('--- end')
+			// console.print_debug('--- end')
 			break
 		}
 
@@ -146,12 +147,12 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		match mut llast {
 			elements.Paragraph {
 				if !parser.next_is_eof() {
-					// println("LFLFLFLFLF")
+					// console.print_debug("LFLFLFLFLF")
 					llast.content += '\n'
 				}
 			}
 			else {
-				println(llast)
+				console.print_debug(llast)
 				panic('parser error, means we got element which is not supported')
 			}
 		}
@@ -159,7 +160,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		parser.next()
 	}
 	mut llast2 := parser.lastitem()!
-	// println("parser lf end:${parser.endlf}")
+	// console.print_debug("parser lf end:${parser.endlf}")
 	if parser.endlf {
 		llast2.content += '\n'
 	}
@@ -171,7 +172,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 	// 		}
 	// 	}
 	// 	else {
-	// 		println(llast2)
+	// 		console.print_debug(llast2)
 	// 		panic('parser error for last of last, means we got element which is not supported')
 	// 	}
 	// }

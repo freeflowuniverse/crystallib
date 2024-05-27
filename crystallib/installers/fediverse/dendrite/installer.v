@@ -3,6 +3,7 @@ module dendrite
 // import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
 // import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.core.pathlib
 
 @[params]

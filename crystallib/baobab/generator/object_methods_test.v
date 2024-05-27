@@ -3,6 +3,7 @@ module generator
 import freeflowuniverse.crystallib.core.codemodel
 import freeflowuniverse.crystallib.core.codeparser
 import os
+import freeflowuniverse.crystallib.ui.console
 
 // // generate_object_methods generates CRUD actor methods for a provided structure
 // pub fn (generator ActorGenerator) generate_object_methods(structure codemodel.Struct) []codemodel.Function {
@@ -42,7 +43,7 @@ pub fn test_generate_get_method() {
 		actor_field: field
 		root_struct: test_struct
 	)
-	println(method.vgen())
+	console.print_debug(method.vgen())
 }
 
 // // generate_object_methods generates CRUD actor methods for a provided structure

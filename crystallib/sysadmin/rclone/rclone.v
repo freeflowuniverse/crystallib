@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.initd
 import freeflowuniverse.crystallib.core.pathlib
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Zinit {
@@ -61,7 +62,7 @@ pub fn new() !Zinit {
 			obj.processes[name] = zp
 		}
 	}
-	// println(obj)
+	// console.print_debug(obj)
 	return obj
 }
 

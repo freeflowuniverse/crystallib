@@ -1,6 +1,7 @@
 module console
 
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 __global (
 	consoles map[string]&UIConsole
@@ -59,6 +60,6 @@ pub fn lf() {
 	if c.prev_lf {
 		return
 	}
-	print('\n')
+	console.print_debug('\n')
 	c.prev_lf = true
 }

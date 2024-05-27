@@ -1,4 +1,5 @@
 module texttools
+import freeflowuniverse.crystallib.ui.console
 
 pub enum MultiLineStatus {
 	start
@@ -26,7 +27,7 @@ pub fn multiline_to_single(text string) !string {
 		mut line2_trimmed := line2.trim_space()
 		// console.print_header(' ${state:-15} $line2_trimmed")	
 		if state == .multiline {
-			// println("MULTI:'$line2'")
+			// console.print_debug("MULTI:'$line2'")
 			if multiline_end_check(line2_trimmed) {
 				// means we are out of multiline
 				res << multiline_end(multiline_first, multiline)
@@ -39,7 +40,7 @@ pub fn multiline_to_single(text string) !string {
 			continue
 		}
 		if state == .comment {
-			// println("COMMENTt:'$line2'")
+			// console.print_debug("COMMENTt:'$line2'")
 			if comment_end_check(line2_trimmed) {
 				// means we are out of multiline
 				res << comment_end(comment)
@@ -85,7 +86,7 @@ pub fn multiline_to_single(text string) !string {
 
 fn multiline_end(multiline_first string, multiline string) string {
 	mut multiline2 := multiline
-	// println("MULTILINE:\n$multiline\n----")
+	// console.print_debug("MULTILINE:\n$multiline\n----")
 	multiline2 = dedent(multiline2)
 	multiline2 = multiline2.replace('\n', '\\\\n')
 	multiline2 = multiline2.replace("'", '"')
@@ -93,7 +94,7 @@ fn multiline_end(multiline_first string, multiline string) string {
 	firstline_content := multiline_first.all_after_first(':').trim_left('" \'')
 	name := multiline_first.all_before(':').trim_space()
 
-	// println( "name:${name:-20} firstline_content:${firstline_content}")
+	// console.print_debug("name:${name:-20} firstline_content:${firstline_content}")
 
 	if firstline_content.trim_space() != '' {
 		multiline2 = "${name}:'${multiline_first}\\n${multiline2}'"
@@ -160,7 +161,7 @@ fn comment_end_check(text string) bool {
 }
 
 fn comment_end(comment []string) string {
-	// println(comment)
+	// console.print_debug(comment)
 	mut out := []string{}
 	for line in comment {
 		out << line.trim(' <->/\n')

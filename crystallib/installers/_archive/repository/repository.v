@@ -11,13 +11,13 @@ pub fn install(repo_url string) ! {
 	// install repository if it was already done will return true
 	console.print_header('package_install install repository: ${repo_owner}/${repo_name}')
 	if !(i.state == .reset) && osal.done_exists('install_${repo_owner}/${repo_name}') {
-		println('    package_install ${repo_owner}/${repo_name} was already done')
+		console.print_debug('    package_install ${repo_owner}/${repo_name} was already done')
 		return
 	}
 
 	// TODO: check if repo exists
 	// if cmd_exists('v') {
-	// 	println('repository was already installed.')
+	// 	console.print_debug('repository was already installed.')
 	// 	return
 	// }
 

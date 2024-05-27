@@ -3,6 +3,7 @@ module components
 import nedpals.vex.ctx
 import nedpals.vex.session
 import nedpals.vex.router
+import freeflowuniverse.crystallib.ui.console
 
 @[table: 'Session']
 @[params]

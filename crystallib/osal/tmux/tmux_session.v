@@ -3,6 +3,7 @@ module tmux
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 struct Session {

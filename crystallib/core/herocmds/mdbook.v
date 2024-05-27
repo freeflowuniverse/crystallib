@@ -75,7 +75,7 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	}
 
 	if name == '' {
-		println('did not find name of book to generate, check in heroscript or specify with --name')
+		console.print_debug('did not find name of book to generate, check in heroscript or specify with --name')
 		mdbook_help(cmd)
 		exit(1)
 	}

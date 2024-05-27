@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import time
 import v.reflection
 import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.ui.console
 
 // Encoder encodes the an `Any` type into HEROSCRIPT representation.
 // It provides parameters in order to change the end result.
@@ -31,7 +32,7 @@ pub fn encode[T](val T) !string {
 		return error('can only add elements for struct or array of structs. \n${val}')
 	}
 
-	println('main: \n${e.children}\n')
+	console.print_debug('main: \n${e.children}\n')
 	return e.export()!
 }
 
@@ -116,7 +117,7 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	// 	if 'alias' in field_attrs {
 	// 		field_name = field_attrs['alias']
 	// 	}
-	// 	println('FIELD: ${field_name} ${field.typ}')
+	// 	console.print_debug('FIELD: ${field_name} ${field.typ}')
 
 	// 	e.encode_value(val, field_name)!
 	// }

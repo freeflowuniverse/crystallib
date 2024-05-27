@@ -2,6 +2,7 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Sheet {
@@ -92,8 +93,8 @@ pub fn (mut s Sheet) group2row(args Group2RowArgs) !&Row {
 		tagstofilter := paramsparser.parse(row.tags)!
 		matched := tagstofilter.filter_match(include: args.include, exclude: args.exclude)!
 		if matched {
-			// println("MMMMMAAAAATCH: \n${args.include} ${row.tags}")
-			// println(row)
+			// console.print_debug("MMMMMAAAAATCH: \n${args.include} ${row.tags}")
+			// console.print_debug(row)
 			// if true{panic("SDSD")}
 			mut x := 0
 			for cell in row.cells {
@@ -157,9 +158,9 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 			mut newval := 0.0
 			for xsub in 0 .. args.period_months {
 				xtot := x * args.period_months + xsub
-				// println("${row.name} $xtot ${row.cells.len}")
+				// console.print_debug("${row.name} $xtot ${row.cells.len}")
 				// if row.cells.len < xtot+1{
-				// 	println(row)
+				// 	console.print_debug(row)
 				// 	panic("too many cells")
 				// }
 				if row.aggregatetype == .sum || row.aggregatetype == .avg {
@@ -177,16 +178,16 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 				}
 			}
 			if row.aggregatetype == .sum || row.aggregatetype == .max || row.aggregatetype == .min {
-				// println("sum/max/min ${row.name} $x ${rnew.cells.len}")
+				// console.print_debug("sum/max/min ${row.name} $x ${rnew.cells.len}")
 				rnew.cells[x].val = newval
 			} else {
 				// avg
-				// println("avg ${row.name} $x ${rnew.cells.len}")
+				// console.print_debug("avg ${row.name} $x ${rnew.cells.len}")
 				rnew.cells[x].val = newval / args.period_months
 			}
 		}
 	}
-	// println("to smaller done")
+	// console.print_debug("to smaller done")
 	return sheet_out
 }
 

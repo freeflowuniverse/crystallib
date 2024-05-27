@@ -3,6 +3,7 @@ module fftools
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.osal.sshagent
 import os
+import freeflowuniverse.crystallib.ui.console
 
 enum FFToolsState {
 	init
@@ -42,7 +43,7 @@ fn vscode_install() ? {
 			}
 		}
 		mut cmd := $tmpl('install_vscode.sh')
-		println(cmd)
+		console.print_debug(cmd)
 
 		n.exec(
 			cmd: cmd
@@ -55,7 +56,7 @@ fn vscode_install() ? {
 	}
 
 	mut cmd := $tmpl('plugins_vscode.sh')
-	println(cmd)
+	console.print_debug(cmd)
 
 	n.exec(
 		cmd: cmd
@@ -100,6 +101,6 @@ pub fn install() ? {
 		vscode_install()?
 		// make sure we have ssh key initialized
 		sshkey_path := sshagent.load_interactive()?
-		println(sshkey_path)
+		console.print_debug(sshkey_path)
 	}
 }

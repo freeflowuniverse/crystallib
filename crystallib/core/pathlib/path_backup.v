@@ -1,6 +1,7 @@
 module pathlib
 
 import os
+import freeflowuniverse.crystallib.ui.console
 // import time
 
 @[params]
@@ -57,7 +58,7 @@ pub fn (mut path Path) backup_path(args BackupArgs) !Path {
 	// os.mkdir_all('$dest/$rel')!
 
 	for i in 0 .. 1000 {
-		println(i)
+		console.print_debug(i)
 		path_str := '${dest}/${rel}${path.name_no_ext()}.${path.extension()}.${i}'
 		path_str_next := '${dest}/${rel}${path.name_no_ext()}.${path.extension()}.${i + 1}'
 		mut path_found := Path{
@@ -79,25 +80,25 @@ pub fn (mut path Path) backup_path(args BackupArgs) !Path {
 		size := path_found.size()!
 
 		if size > 0 {
-			// println("size > 0 ")
+			// console.print_debug("size > 0 ")
 			// this makes sure we only continue if there is no next file, we only need to check size for latest one
 			if !path_found_next.exists() {
 				// means is the last file
-				// println("current: ${path_found}")
-				// println("next: ${path_found_next}")
-				// println(args)
+				// console.print_debug("current: ${path_found}")
+				// console.print_debug("next: ${path_found_next}")
+				// console.print_debug(args)
 				if args.restore || args.overwrite {
-					// println("RESTORE: $path_found")
+					// console.print_debug("RESTORE: $path_found")
 					return path_found
 				}
 				size2 := path_found.size()!
 				if size2 == size {
 					// means we found the last one which is same as the one we are trying to backup
-					// println("*** SIZE EQUAL EXISTS")
+					// console.print_debug("*** SIZE EQUAL EXISTS")
 					path_found.exist = .yes
 					return path_found
 				}
-				// println("nothing")
+				// console.print_debug("nothing")
 			}
 		}
 	}
@@ -106,7 +107,7 @@ pub fn (mut path Path) backup_path(args BackupArgs) !Path {
 
 // create a backup, will maintain the extension
 pub fn (mut path Path) backup(args BackupArgs) !Path {
-	// println(path.path)
+	// console.print_debug(path.path)
 	mut pbackup := path.backup_path(args)!
 	if !pbackup.exists() {
 		os.cp(path.path, pbackup.path)!
@@ -115,8 +116,8 @@ pub fn (mut path Path) backup(args BackupArgs) !Path {
 }
 
 pub fn (mut path Path) restore(args BackupArgs) ! {
-	// println("restore")
-	// println(path.path)
+	// console.print_debug("restore")
+	// console.print_debug(path.path)
 	mut args2 := args
 	args2.restore = true
 	mut prestore := path.backup_path(args2)!

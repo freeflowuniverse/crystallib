@@ -2,6 +2,7 @@ module paramsparser
 
 import freeflowuniverse.crystallib.core.texttools.regext
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 // find parts of text in PARAM values which are of form {NAME}, and replace those .
 // .
@@ -19,7 +20,7 @@ pub fn (mut params Params) replace(args map[string]string) {
 		for i in regext.find_simple_vars(p.value) {
 			i2 := texttools.name_fix(i)
 			if i2 in args {
-				println('${i} -> ${args[i2]}')
+				console.print_debug('${i} -> ${args[i2]}')
 				p.value = p.value.replace('{${i}}', args[i2])
 			}
 		}

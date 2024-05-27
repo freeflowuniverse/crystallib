@@ -207,7 +207,7 @@ pub fn (mut job Job) execute() ! {
 
 	job.cmd.scriptpath = cmd_to_script_path(job.cmd)!
 
-	// println(" - process execute ${process_args[0]}")
+	// console.print_debug(" - process execute ${process_args[0]}")
 	mut p := os.new_process(job.cmd.scriptpath)
 
 	if job.cmd.work_folder.len > 0 {
@@ -217,10 +217,10 @@ pub fn (mut job Job) execute() ! {
 		p.set_environment(job.cmd.environment)
 	}
 	p.set_redirect_stdio()
-	// println("process setargs ${process_args[1..process_args.len]}")
+	// console.print_debug("process setargs ${process_args[1..process_args.len]}")
 	// p.set_args(process_args[1..process_args.len])
 	if job.cmd.stdout {
-		println('')
+		console.print_debug('')
 	}
 	p.run()
 	job.process = p
@@ -240,7 +240,7 @@ pub fn (mut job Job) wait() ! {
 
 	for {
 		job.process()!
-		// println(result)
+		// console.print_debug(result)
 		if job.status == .done {
 			// console.print_stderr("wait done")
 			job.close()!
@@ -252,7 +252,7 @@ pub fn (mut job Job) wait() ! {
 
 // process (read std.err and std.out of process)
 pub fn (mut job Job) process() ! {
-	// $if debug{println(" - job process: $job")}
+	// $if debug{console.print_debug(" - job process: $job")}
 	if job.status == .init {
 		panic('should not be here')
 		// job.execute()!
@@ -298,18 +298,18 @@ pub fn (mut job Job) process() ! {
 fn (mut job Job) read() ! {
 	mut p := job.process or { return error('there is no process on job') }
 
-	// print("READ STDOUT")
+	// console.print_debug("READ STDOUT")
 	out_std := p.pipe_read(.stdout) or { '' }
-	// println(" OK")
+	// console.print_debug(" OK")
 	if out_std.len > 0 {
 		if job.cmd.stdout {
 			console.print_stdout(out_std)
 		}
 		job.output += out_std
 	}
-	// print("READ ERROR")
+	// console.print_debug("READ ERROR")
 	out_error := p.pipe_read(.stderr) or { '' }
-	// println(" OK")
+	// console.print_debug(" OK")
 	if out_error.len > 0 {
 		if job.cmd.stdout {
 			console.print_stderr(out_error)
@@ -321,7 +321,7 @@ fn (mut job Job) read() ! {
 // will wait & close
 pub fn (mut job Job) close() ! {
 	mut p := job.process or { return error('there is no process on job') }
-	// println("CLOSE")
+	// console.print_debug("CLOSE")
 	p.signal_pgkill()
 	p.wait()
 	p.close()
@@ -350,8 +350,8 @@ pub fn (mut job Job) close() ! {
 				error_type: .exec
 			}
 			if job.cmd.stdout {
-				println('Job Error')
-				println(je.msg())
+				console.print_debug('Job Error')
+				console.print_debug(je.msg())
 			}
 			if job.cmd.raise_error {
 				return je
@@ -360,7 +360,7 @@ pub fn (mut job Job) close() ! {
 	}
 
 	if job.exit_code == 0 && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {
-		// println(job.cmd.scriptpath)	
+		// console.print_debug(job.cmd.scriptpath)	
 		os.rm(job.cmd.scriptpath)!
 	}
 	if job.cmd.ignore_error == false && job.cmd.scriptkeep == false && os.exists(job.cmd.scriptpath) {

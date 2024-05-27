@@ -3,6 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.markdownparser.elements { Doc }
 import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.ui.console
 
 pub enum PageStatus {
 	unknown
@@ -74,7 +75,7 @@ pub fn (mut page Page) export(args_ PageExportArgs) !&Doc {
 	mut doc := markdownparser.new(content: page.doc()!.markdown()!)!
 	page.doc_ = &doc
 
-	println(' ++++ export: ${page.name} -> ${args.dest}')
+	console.print_debug(' ++++ export: ${page.name} -> ${args.dest}')
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	dirpath := p.parent()!
 	// mut mydoc := page.doc()!

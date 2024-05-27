@@ -1,6 +1,7 @@
 module osal
 
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct UserArgs {
@@ -11,7 +12,7 @@ pub mut:
 pub fn user_exists(username string) bool {
 	res := os.execute('id ${username}')
 	if res.exit_code > 0 {
-		println(res.exit_code)
+		console.print_debug(res.exit_code)
 		// return error("cannot execute id ... code to see if username exist")
 		return false
 	}

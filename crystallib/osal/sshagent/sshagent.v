@@ -2,6 +2,7 @@ module sshagent
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct SSHAgent {
@@ -97,7 +98,7 @@ pub fn (mut agent SSHAgent) generate(name string, passphrase string) !SSHKey {
 		os.rm(dest)!
 	}
 	cmd := 'ssh-keygen -t ed25519 -f ${dest} -P ${passphrase} -q'
-	// println(cmd)
+	// console.print_debug(cmd)
 	rc := os.execute(cmd)
 	if !(rc.exit_code == 0) {
 		return error('Could not generated sshkey,\n${rc}')

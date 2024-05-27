@@ -3,6 +3,7 @@ module vault
 import freeflowuniverse.crystallib.core.pathlib
 import time
 import os
+import freeflowuniverse.crystallib.ui.console
 
 // represents one directory in which backup was done
 // is like a shelve in a vault
@@ -145,7 +146,7 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) !Item {
 	}
 	newname := item_new.name_nr()
 	mut dest := pathlib.get_no_check('${shelve.path.path}/.vault/${newname}')
-	println('------ ${dest}')
+	console.print_debug('------ ${dest}')
 	path.copy(dest: dest.path)!
 	shelve.items << item_new
 	shelve.changed = true

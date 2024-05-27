@@ -8,6 +8,7 @@ import freeflowuniverse.crystallib.core.texttools
 import cli { Command, Flag }
 import os
 import json
+import freeflowuniverse.crystallib.ui.console
 
 pub fn cmd_configure(mut cmdroot Command) {
 	mut cmd_run := Command{
@@ -83,10 +84,10 @@ fn cmd_configure_execute(cmd Command) ! {
 		mut args := cnfg.get()!
 		if show {
 			cl := mail.get(instance: instance)!
-			println(cl)
+			console.print_debug(cl)
 		} else if test {
 			mut cl := mail.get(instance: instance)!
-			// println(cl)
+			// console.print_debug(cl)
 			mut myui := ui.new()!
 			to := myui.ask_question(
 				question: 'send test mail to'
@@ -100,7 +101,7 @@ fn cmd_configure_execute(cmd Command) ! {
 		// mut kvs := dbfs.new(name: 'config')!
 		// key := '${category}_config_${instance}'
 		// data := kvs.get(key) or { return error('cannot find object with key: ${key}') }
-		// println(data)
+		// console.print_debug(data)
 	}
 	if push.len > 0 {
 		console.print_header(" will push config: ${instance} to '${push}'")

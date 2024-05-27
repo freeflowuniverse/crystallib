@@ -1,6 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 pub enum PointerCat {
 	page
@@ -43,7 +44,7 @@ pub fn pointer_new(txt_ string) !Pointer {
 	} else {
 		p.name = texttools.name_fix_keepext(splitted_colons[0].all_after_last('/'))
 	}
-	// println("pointer new: ${txt} ${nrcolon}\n$p")
+	// console.print_debug("pointer new: ${txt} ${nrcolon}\n$p")
 	splitted := p.name.split('.')
 	if splitted.len == 0 {
 		// no extension so needs to be markdown

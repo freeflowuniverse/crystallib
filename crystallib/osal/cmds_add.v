@@ -2,6 +2,7 @@ module osal
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub struct CmdAddArgs {
 pub mut:
@@ -31,7 +32,7 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	if res.exit_code == 0 {
 		existing_path := res.output.trim_space()
 		if destpath != existing_path {
-			println(' - did find a cmd which is not in path we expect:\n    expected:${destpath}\n    got:${existing_path}')
+			console.print_debug(' - did find a cmd which is not in path we expect:\n    expected:${destpath}\n    got:${existing_path}')
 			if args.reset {
 				os.rm(existing_path)!
 			} else {
@@ -165,7 +166,7 @@ fn profile_paths_get(content string) []string {
 }
 
 fn profile_path_add_(profile_path_ string, path2add string, todelete string) ! {
-	// println(" -- profile path add: ${profile_path_} : ${path2add} : $todelete")
+	// console.print_debug(" -- profile path add: ${profile_path_} : ${path2add} : $todelete")
 	mut profile_path := pathlib.get_file(path: profile_path_, create: true)!
 	mut c := profile_path.read()!
 
@@ -179,5 +180,5 @@ fn profile_path_add_(profile_path_ string, path2add string, todelete string) ! {
 	}
 	c += '\nexport PATH=\$PATH:${path2add}\n'
 	profile_path.write(c)!
-	// println(c)
+	// console.print_debug(c)
 }

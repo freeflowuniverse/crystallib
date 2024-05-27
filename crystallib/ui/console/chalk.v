@@ -1,4 +1,5 @@
 module console
+import freeflowuniverse.crystallib.ui.console
 
 // ORIGINAL CODE COMES FROM https://github.com/etienne-napoleone/chalk/blob/master/chalk.v
 // CREDITS TO https://github.com/etienne-napoleone  (MIT license)
@@ -172,7 +173,7 @@ pub fn cprint(args PrintArgs) {
 	if args.reset_after {
 		out << reset()
 	}
-	print(out.join(''))
+	console.print_debug(out.join(''))
 }
 
 pub fn cprintln(args_ PrintArgs) {

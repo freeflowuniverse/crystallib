@@ -105,7 +105,7 @@ pub fn download(args_ DownloadArgs) !pathlib.Path {
 
 		if dest0.exists() {
 			size0 := dest0.size_kb()!
-			// println(size0)
+			// console.print_debug(size0)
 			if args.minsize_kb > 0 {
 				if size0 < args.minsize_kb {
 					return error('Could not download ${args.url} to ${dest0.path}, size (${size0}) was smaller than ${args.minsize_kb}')

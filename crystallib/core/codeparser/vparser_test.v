@@ -2,6 +2,7 @@ module codeparser
 
 import freeflowuniverse.crystallib.core.codemodel { CodeItem, Function, Struct }
 import os
+import freeflowuniverse.crystallib.ui.console
 
 const testpath = os.dir(@FILE) + '/testdata'
 

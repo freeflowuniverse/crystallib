@@ -3,6 +3,7 @@ module mdbook
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Summary {
@@ -45,7 +46,7 @@ pub fn (mut book MDBook) summary(debug bool) !Summary {
 		}
 		pre := line.all_before('-')
 		level = int(pre.len / ident)
-		// println("${line}  ===  '${pre}'  ${level}")
+		// console.print_debug("${line}  ===  '${pre}'  ${level}")
 		line = line.trim_left(' -')
 
 		// - [Dunia Yetu](dy_intro/dunia_yetu/dunia_yetu.md)

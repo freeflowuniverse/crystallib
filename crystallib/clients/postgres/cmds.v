@@ -4,6 +4,7 @@ import db.pg
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal
 import os
+import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut self PostgresClient) check() ! {
 	mut db := self.db
@@ -97,7 +98,7 @@ pub fn (mut self PostgresClient) backup(args BackupParams) ! {
 			export PGPASSWORD=\'${self.config.password}\'
 			pg_dump -h ${self.config.host} -p ${self.config.port} -U ${self.config.user} --dbname=${args.dbname} --format=c > "${args.dest}/${args.dbname}.bak"
 			'
-		// println(cmd)
+		// console.print_debug(cmd)
 		osal.exec(cmd: cmd, stdout: true)!
 	}
 }

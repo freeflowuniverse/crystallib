@@ -48,7 +48,7 @@ pub fn (h HetznerClient) servers_list() ![]ServerInfo {
 	redis.set(rkey, data)!
 	redis.expire(rkey, 60)! // only cache for 1 minute
 
-	// println(data)
+	// console.print_debug(data)
 
 	srvs := json.decode([]ServerRoot, data) or {
 		return error('could not json deserialize for servers_list\n${data}')
@@ -254,7 +254,7 @@ struct Boot {
 pub fn (h HetznerClient) server_boot(id int) !RescueInfo {
 	data := h.request_get('/boot/${id}')!
 
-	println(data)
+	console.print_debug(data)
 
 	if true {
 		panic('serverboot')

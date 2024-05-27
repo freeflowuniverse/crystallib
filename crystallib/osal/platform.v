@@ -1,6 +1,7 @@
 module osal
 
 import os
+import freeflowuniverse.crystallib.ui.console
 // Returns the enum value that matches the provided string for PlatformType
 
 pub fn platform_enum_from_string(platform string) PlatformType {
@@ -118,7 +119,7 @@ pub fn is_linux() bool {
 }
 
 pub fn is_linux_arm() bool {
-	// println("islinux:${is_linux()} cputype:${cputype()}")
+	// console.print_debug("islinux:${is_linux()} cputype:${cputype()}")
 	return is_linux() && cputype() == .arm
 }
 

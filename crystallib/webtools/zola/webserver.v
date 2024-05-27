@@ -4,6 +4,7 @@ import vweb
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import os
+import freeflowuniverse.crystallib.ui.console
 
 pub struct App {
 	vweb.Context
@@ -40,6 +41,6 @@ pub fn (mut site ZolaSite) serve(params ServeParams) ! {
 	if params.open {
 		osal.exec(cmd: 'open http://localhost:${params.port}')!
 	}
-	println('webserver for zola running.')
+	console.print_debug('webserver for zola running.')
 	for {}
 }

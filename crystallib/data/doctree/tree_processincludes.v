@@ -1,4 +1,5 @@
 module doctree
+import freeflowuniverse.crystallib.ui.console
 
 fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 	mut collection := tree.collection_get(col_name)!
@@ -48,7 +49,7 @@ fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {
 				action_element.content = mydoc2.markdown()!
 				// md2 := mydoc2.markdown()!
 				// if md2.contains('vindo0.png') {
-				// 	println(mydoc2.markdown()!)
+				// 	console.print_debug(mydoc2.markdown()!)
 				// 	panic('vidostop')
 				// }
 			} else {

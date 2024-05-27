@@ -1,6 +1,7 @@
 module identity
 
 import db.sqlite
+import freeflowuniverse.crystallib.ui.console
 
 pub struct IdentityManager {
 mut:
@@ -36,6 +37,6 @@ pub fn (mut auth IdentityManager) get_user(user User) ?User {
 }
 
 pub fn (mut auth IdentityManager) get_users() ![]User {
-	println('getting users')
+	console.print_debug('getting users')
 	return auth.backend.read_users()!
 }

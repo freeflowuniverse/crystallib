@@ -3,6 +3,7 @@ module backend
 import json
 import db.sqlite
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Indexer {
 	db sqlite.DB
@@ -156,7 +157,7 @@ pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]int 
 	}
 	// }
 
-	// println(select_stmt)
+	// console.print_debug(select_stmt)
 	responses := backend.db.exec(select_stmt) or { panic(err) }
 	ids := responses.map(it.vals[0])
 	// objects := responses.map(json.decode(T, it.vals[1]) or { panic(err) })

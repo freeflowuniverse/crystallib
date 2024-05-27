@@ -2,6 +2,7 @@ module playbook
 
 import os
 import crypto.sha256
+import freeflowuniverse.crystallib.ui.console
 
 const testpath = os.dir(@FILE) + '/testdata'
 
@@ -39,9 +40,9 @@ const text2 = "
 fn test_parse_1() {
 	mut a := new(text: playbook.text1) or { panic(err) }
 
-	println(a)
+	console.print_debug(a)
 
-	println("EXPECTED OUTPUT:
+	console.print_debug("EXPECTED OUTPUT:
 // comment for the action
 !!payment.add account:something description:'TF Wallet for TFT' person:fatayera preferred:false
 	name:'TF Wallet' //comment for name
@@ -58,7 +59,7 @@ fn test_hashkey() {
 	mut a := new(text: playbook.text1) or { panic(err) }
 	t := a.hashkey()
 
-	println(t)
+	console.print_debug(t)
 
 	assert t == '773708ca1fa94582ce2ef625932a13a6aa2d46a1'
 }

@@ -6,6 +6,7 @@ import net.websocket
 import freeflowuniverse.crystallib.data.jsonrpc
 import time
 import log
+import freeflowuniverse.crystallib.ui.console
 
 const redis_addr = 'http://127.0.0.1'
 const redis_port = 6380
@@ -43,12 +44,12 @@ fn run_rpc_handler() ! {
 		port: rpcprocessor.redis_port
 	) or { return error('Failed to create Redis client: ${err}') }
 	for {
-		println('tryn')
+		console.print_debug('tryn')
 		results := redis_client.brpop(['echo'], 0) or {
 			panic('Failed to fetch RPC result from Redis queue: ${err}')
 		}
 		if results.len == 1 {
-			println('debuzgo ${results[0]}')
+			console.print_debug('debuzgo ${results[0]}')
 			request := jsonrpc.jsonrpcrequest_decode[string](results[0])!
 			response := jsonrpc.new_jsonrpcresponse[string](request.id, request.params)
 			redis_client.lpush(request.id, response.to_json())!

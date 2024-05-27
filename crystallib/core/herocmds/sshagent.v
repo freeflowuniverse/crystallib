@@ -110,7 +110,7 @@ fn cmd_sshagent_execute(cmd Command) ! {
 		if !isscript {
 			console.clear()
 		}
-		println(agent)
+		console.print_debug(agent)
 	} else if cmd.name == 'generate' {
 		agent.generate(name, '')!
 		if load {
@@ -130,9 +130,9 @@ fn cmd_sshagent_execute(cmd Command) ! {
 		)!
 		agent.add(name, privkey)!
 	} else {
-		// println(1)
+		// console.print_debug(1)
 		return error(cmd.help_message())
-		// println(" Supported commands are: ${gentools.gencmds}")
+		// console.print_debug(" Supported commands are: ${gentools.gencmds}")
 		// return error('unknown subcmd')
 	}
 }

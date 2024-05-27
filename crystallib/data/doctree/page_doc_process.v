@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link }
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut page Page) doc() !&Doc {
 	mut mydoc := page.doc_ or {
@@ -29,12 +30,12 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 
 	mut collection := page.collection()!
 	args.done << page.name
-	println(' ++++ doc: ${collection.name}:${page.name} -> ${args.dest} ')
+	console.print_debug(' ++++ doc: ${collection.name}:${page.name} -> ${args.dest} ')
 
 	// find the links, and for each link check if collection is same, is not need to copy
 	for mut element in mydoc.children_recursive() {
 		if mut element is Link {
-			// println(element)
+			// console.print_debug(element)
 			mut name := texttools.name_fix_keepext(element.filename)
 			mut site := texttools.name_fix(element.site)
 			if site == '' {
@@ -42,10 +43,10 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 			}
 			pointername := '${site}:${name}'
 			if element.cat == .image {
-				println('POINTER IMAGE: ' + pointername)
+				console.print_debug('POINTER IMAGE: ' + pointername)
 				if page.tree.image_exists(pointername) {
 					mut linkimage := page.tree.image_get(pointername)!
-					// println(" ------- image exists: ${pointername}")
+					// console.print_debug(" ------- image exists: ${pointername}")
 					if args.dest.len > 0 {
 						mut dest_image_copy := '${args.dest}/img/${linkimage.file_name()}'
 						linkimage.copy(dest_image_copy)!
@@ -69,20 +70,20 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 				}
 				element.state = .linkprocessed
 			} else if element.cat == .page {
-				println('POINTER PAGE: ' + pointername)
+				console.print_debug('POINTER PAGE: ' + pointername)
 				if page.tree.page_exists(pointername) {
 					mut linkpage := page.tree.page_get(pointername)!
 					// this is to remember the pages which are linked
 					if pointername !in mydoc.linked_pages {
 						mydoc.linked_pages << pointername
 					}
-					println(' ------- page exists: ${pointername}')
+					console.print_debug(' ------- page exists: ${pointername}')
 					mut collection_linkpage := linkpage.collection()!
-					println('${collection_linkpage.name}   ----   ${collection.name}  ')
+					console.print_debug('${collection_linkpage.name}   ----   ${collection.name}  ')
 					if args.dest.len > 0 {
 						if linkpage.name !in args.done {
 							mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
-							println(' ------- COPY TO: ${dest_page_copy}')
+							console.print_debug(' ------- COPY TO: ${dest_page_copy}')
 							mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
 							linkdoc := linkpage.doc_process_link(args)!
 							p_linked.write(linkdoc.markdown()!)!
@@ -90,7 +91,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 						args.done << linkpage.name
 					}
 					mut out := '[${element.description}](${linkpage.name}.md)'
-					println(' ------- LINKPAGE SET: ${out}')
+					console.print_debug(' ------- LINKPAGE SET: ${out}')
 					mydoc.content_set(element.id, out)
 					element.state = .linkprocessed
 				} else {

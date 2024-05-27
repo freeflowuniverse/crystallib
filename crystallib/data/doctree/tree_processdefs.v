@@ -55,7 +55,7 @@ pub fn (mut tree Tree) process_defs() ! {
 			mut mypage := collection.pages[name] or { panic('bug') }
 			mut mydoc := mypage.doc()!
 			for mut defitem in mydoc.defpointers() {
-				println(defitem)
+				console.print_debug(defitem)
 				defname := defitem.nameshort
 				assert defname.len > 0
 				console.print_green('defpointer:${defitem}')
@@ -80,7 +80,7 @@ pub fn (mut tree Tree) process_defs() ! {
 
 	// panic("macro")					
 	// for macro in tree.get_macros(name:"def",actor:"wiki")!{
-	// 	println(macro)
+	// 	console.print_debug(macro)
 	// 	if true{
 	// 		panic("macro")
 	// 	}

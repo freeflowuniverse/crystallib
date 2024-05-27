@@ -25,7 +25,7 @@ pub fn install(args_ InstallArgs) ! {
 	// if  args.uninstall {
 	// 		console.print_header('uninstall podman')
 	// 		uninstall()!
-	// 		println(' - ok')
+	// 		console.print_debug(' - ok')
 	// 	}
 
 	res := os.execute('${osal.profile_path_source_and()} podman -v')
@@ -37,9 +37,9 @@ pub fn install(args_ InstallArgs) ! {
 
 		v := texttools.version(r[0].all_after('version'))
 		if v < texttools.version(version) {
-			// println(v)
-			// println(texttools.version(version))
-			// println(version)
+			// console.print_debug(v)
+			// console.print_debug(texttools.version(version))
+			// console.print_debug(version)
 			// if true{panic("s")}
 			args.reset = true
 		}

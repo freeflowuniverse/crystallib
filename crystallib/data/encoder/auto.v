@@ -1,6 +1,7 @@
 module encoder
 
 import time
+import freeflowuniverse.crystallib.ui.console
 
 // example see https://github.com/vlang/v/blob/master/examples/compiletime/reflection.v
 
@@ -62,9 +63,9 @@ pub fn decode[T](data []u8) !T {
 	// compile-time `for` loop
 	// T.fields gives an array of a field metadata type
 	$for field in T.fields {
-		// println(field.name)
-		// println(typeof(result.$(field.name)).name)
-		// println(result.$(field.name))
+		// console.print_debug(field.name)
+		// console.print_debug(typeof(result.$(field.name)).name)
+		// console.print_debug(result.$(field.name))
 
 		// Primitive types
 		$if field.typ is string {

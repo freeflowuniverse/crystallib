@@ -1,6 +1,7 @@
 module bizmodel
 
 import os
+import freeflowuniverse.crystallib.ui.console
 
 fn test_scan() ! {
 	p1 := '${os.dir(@FILE)}/example/params'
@@ -12,5 +13,5 @@ fn test_scan() ! {
 		mdbook_source: p2
 	)!
 
-	println(bm)
+	console.print_debug(bm)
 }

@@ -60,7 +60,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	mut binpath := dest.file_get('rclone')!
 
-	// println(dest)
+	// console.print_debug(dest)
 
 	osal.cmd_add(
 		cmdname: 'rclone'

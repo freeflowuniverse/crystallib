@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.screen
 import os
 import time
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct ScreensFactory {
@@ -63,7 +64,7 @@ pub fn (mut self ScreensFactory) scan() ! {
 		}
 		self.screens << item
 	}
-	println(self)
+	console.print_debug(self)
 }
 
 pub struct ScreenAddArgs {
@@ -134,7 +135,7 @@ pub fn (mut self ScreensFactory) start(name string) ! {
 		if s2.pid > 0 {
 			return
 		}
-		println(s2)
+		console.print_debug(s2)
 		time.sleep(100000)
 	}
 }

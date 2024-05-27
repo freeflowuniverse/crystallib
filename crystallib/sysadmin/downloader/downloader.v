@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.develop.gittools
 import os
 import json
+import freeflowuniverse.crystallib.ui.console
 
 pub enum DownloadType {
 	unknown
@@ -61,7 +62,7 @@ pub fn getlastname(url string) string {
 // will return DownloadMeta, which is als json serialized in above directory .
 // if dest specified will link to the dest or copy depending param:destlink
 pub fn download(args_ DownloadArgs) !DownloadMeta {
-	// println(" -- DOWNLOAD ${args_.url}\n$args_")
+	// console.print_debug(" -- DOWNLOAD ${args_.url}\n$args_")
 	mut args := args_
 
 	if args.name == '' {
@@ -194,6 +195,6 @@ pub fn download(args_ DownloadArgs) !DownloadMeta {
 			}
 		}
 	}
-	// println(metaobj)
+	// console.print_debug(metaobj)
 	return metaobj
 }

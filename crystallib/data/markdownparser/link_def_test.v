@@ -1,11 +1,12 @@
 module markdownparser
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
+import freeflowuniverse.crystallib.ui.console
 
 fn test_empty() {
 	mut mydoc := new(content: '')!
 
-	// println(mydoc)
+	// console.print_debug(mydoc)
 	assert mydoc.children.len == 1
 
 	paragraph := mydoc.children[0]
@@ -16,14 +17,14 @@ fn test_empty() {
 fn test_empty2() {
 	mut mydoc := new(content: ' ')!
 
-	// println(mydoc)
+	// console.print_debug(mydoc)
 	assert mydoc.children.len == 1
 
 	paragraph := mydoc.children[0]
 	assert paragraph.children.len == 1
 
 	assert paragraph.children[0] is elements.Text
-	// println("TEXT:'${paragraph.children[0].content}'")
+	// console.print_debug("TEXT:'${paragraph.children[0].content}'")
 	assert paragraph.children[0].markdown()! == ' '
 }
 
@@ -79,7 +80,7 @@ fn test_def3() {
 fn test_def4() {
 	mut mydoc := new(content: ' *TEST_DEF')!
 
-	// println(mydoc)
+	// console.print_debug(mydoc)
 	// if true{
 	// 	panic("s")
 	// }
@@ -127,11 +128,11 @@ fn test_def6() {
 
 '
 	)!
-	// println(mydoc.children)
+	// console.print_debug(mydoc.children)
 	assert mydoc.children.len == 5
 
 	paragraph := mydoc.children[2]
-	// println(paragraph.children)
+	// console.print_debug(paragraph.children)
 	assert paragraph.children.len == 5
 
 	assert paragraph.children[3] is elements.Def
@@ -143,7 +144,7 @@ fn test_def6() {
 fn test_def7() {
 	mut mydoc := new(content: '**TEST_DEF*')!
 
-	// println(mydoc)
+	// console.print_debug(mydoc)
 
 	assert mydoc.children.len == 1
 
@@ -157,7 +158,7 @@ fn test_def7() {
 fn test_def8() {
 	mut mydoc := new(content: '**TEST_DEF* ')!
 
-	// println(mydoc)
+	// console.print_debug(mydoc)
 
 	assert mydoc.children.len == 1
 
@@ -165,6 +166,6 @@ fn test_def8() {
 	assert paragraph.children.len == 1
 
 	assert paragraph.children[0] is elements.Text
-	// println("TEXT:'${paragraph.children[0].markdown()!}'")
+	// console.print_debug("TEXT:'${paragraph.children[0].markdown()!}'")
 	assert paragraph.children[0].markdown()! == '**TEST_DEF* '
 }

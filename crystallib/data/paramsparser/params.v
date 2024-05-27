@@ -1,4 +1,5 @@
 module paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Params {
@@ -95,7 +96,7 @@ fn str_normalize(txt_ string) string {
 	txt = txt.replace('\\\\n', '\n')
 	txt = txt.replace("\\'", "'")
 	txt = txt.replace('<<BR>>', '\n')
-	txt = txt.replace('<BR>', '\n') // println(txt)
+	txt = txt.replace('<BR>', '\n') // console.print_debug(txt)
 	return txt.trim_space()
 }
 

@@ -3,6 +3,7 @@ module codemodel
 import os
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub struct WriteCode {
 	destination string
@@ -194,7 +195,7 @@ pub struct VGenerator {
 
 pub fn (gen VGenerator) generate_struct(struct_ Struct) !string {
 	name := if struct_.generics.len > 0 {
-		println('struct  ${struct_}')
+		console.print_debug('struct  ${struct_}')
 		'${struct_.name}${vgen_generics(struct_.generics)}'
 	} else {
 		struct_.name
@@ -207,7 +208,7 @@ pub fn (gen VGenerator) generate_struct(struct_ Struct) !string {
 	mut struct_str := $tmpl('templates/struct/struct.v.template')
 	if gen.format {
 		result := os.execute_opt('echo "${struct_str.replace('$', '\$')}" | v fmt') or {
-			println(struct_str)
+			console.print_debug(struct_str)
 			panic(err)
 		}
 		return result.output

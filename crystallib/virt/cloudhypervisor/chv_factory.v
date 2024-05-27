@@ -18,7 +18,7 @@ pub fn new() !CloudHypervisorFactory {
 // pub fn (mut lf CloudHypervisorFactory) vm_get_all() ![]VM {
 // 	mut vms := []VM{}
 // 	for vm in raw.list()! {
-// 		// println(vm)
+// 		// console.print_debug(vm)
 // 		mut vm2 := VM{
 // 			name: vm.name
 // 			dir: vm.dir
@@ -39,7 +39,7 @@ pub fn new() !CloudHypervisorFactory {
 // 				vm2.status = .stopped
 // 			}
 // 			else {
-// 				println(vm.status)
+// 				console.print_debug(vm.status)
 // 				panic('unknown status')
 // 			}
 // 		}

@@ -1,4 +1,5 @@
 module elements
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Paragraph {
@@ -9,7 +10,7 @@ fn (mut self Paragraph) process() !int {
 	if self.processed {
 		return 0
 	}
-	// println("#####PARAGRAPH:\n${self.content}|END\n\n")
+	// console.print_debug("#####PARAGRAPH:\n${self.content}|END\n\n")
 	self.paragraph_parse()!
 	self.process_base()!
 	self.process_children()!

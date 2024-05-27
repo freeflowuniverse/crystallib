@@ -1,4 +1,5 @@
 module texttools
+import freeflowuniverse.crystallib.ui.console
 
 fn test_clean1() {
 	mut text := "
@@ -39,11 +40,11 @@ fn test_clean1() {
 
 	text2 := remove_double_lines(remove_empty_js_blocks(text))
 
-	println('---')
-	println(text2)
-	println('---')
-	println(result)
-	println('---')
+	console.print_debug('---')
+	console.print_debug(text2)
+	console.print_debug('---')
+	console.print_debug(result)
+	console.print_debug('---')
 
 	assert text2.trim_space() == result.trim_space()
 }

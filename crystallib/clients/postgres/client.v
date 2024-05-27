@@ -3,6 +3,7 @@ module postgres
 import freeflowuniverse.crystallib.core.base
 import db.pg
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 pub struct PostgresClient {
 	play.BaseConfig
@@ -32,7 +33,7 @@ pub fn get(clientargs ClientArgs) !PostgresClient {
 	if args.instance == '' {
 		args.instance = 'default'
 	}
-	// println(args)
+	// console.print_debug(args)
 	mut db := pg.connect(
 		host: args.host
 		user: args.user
@@ -40,7 +41,7 @@ pub fn get(clientargs ClientArgs) !PostgresClient {
 		password: args.password
 		dbname: args.dbname
 	)!
-	// println(postgres_client)
+	// console.print_debug(postgres_client)
 	return PostgresClient{
 		instance: args.instance
 		db: db

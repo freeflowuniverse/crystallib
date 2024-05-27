@@ -2,6 +2,7 @@ module crystaljson
 
 import x.json2
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 const keep_ascii = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+={}[]"\':;!/>.<,|\\~` '
 
@@ -15,20 +16,20 @@ pub fn json_list(r string, clean bool) []string {
 		mut c := ch.ascii_str()
 		// //rough one to debug
 		// if clean && ! keep_ascii.contains(c){
-		// 	println("SKIP")
+		// 	console.print_debug("SKIP")
 		// 	continue
 		// }		
-		// print(c)
+		// console.print_debug(c)
 		if c == '{' {
 			open_counter += 1
 		}
 		if c == '}' {
 			open_counter -= 1
 		}
-		// println(open_counter)
+		// console.print_debug(open_counter)
 		if open_counter > 0 {
 			block << c
-			// println(block.len)
+			// console.print_debug(block.len)
 		}
 		if open_counter == 0 && block.len > 2 {
 			blocks << block.join('') + '}'

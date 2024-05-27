@@ -1,5 +1,6 @@
 @[translated]
 module verasure
+import freeflowuniverse.crystallib.ui.console
 
 #include "@VMODROOT/jerasure-simple.h"
 
@@ -141,11 +142,11 @@ pub fn (mut v Verasure) decode(shards Shards) []u8 {
 pub fn test() {
 	mut e := new(16, 4)
 	shards := e.encode('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer consectetur accumsan augue, at pharetra'.bytes())
-	println(shards)
+	console.print_debug(shards)
 
 	data := e.decode(shards)
-	println(data.len)
-	println(data.bytestr())
+	console.print_debug(data.len)
+	console.print_debug(data.bytestr())
 
 	/*
 	erasure := &Erasure_t(0)

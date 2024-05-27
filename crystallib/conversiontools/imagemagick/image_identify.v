@@ -1,6 +1,7 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 
 fn (mut image Image) identify_verbose() ! {
 	if image.size_y != 0 {
@@ -75,7 +76,7 @@ fn (mut image Image) identify_verbose() ! {
 		}
 	}
 	// if image.transparent {
-	// 	println("   - TRANSPARANT")
+	// 	console.print_debug("   - TRANSPARANT")
 	// }
 }
 
@@ -91,12 +92,12 @@ pub fn (mut image Image) identify() ! {
 	out = out.trim(' \n')
 	splitted := out.split(' ')
 	if splitted.len < 3 {
-		println(out)
+		console.print_debug(out)
 		panic('splitting did not work')
 	}
 	size_str := splitted[2]
 	if !size_str.contains('x') {
-		println(out)
+		console.print_debug(out)
 		panic('error in parsing. ${size_str}')
 	}
 	image.size_x = size_str.split('x')[0].int()

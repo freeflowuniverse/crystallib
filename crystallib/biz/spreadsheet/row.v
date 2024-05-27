@@ -1,6 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Row {
@@ -124,7 +125,7 @@ pub fn (r Row) look_forward_avg(colnr_ int, nrcols_ int) !f64 {
 pub fn (r Row) min() int {
 	mut v := 9999999999999.0
 	for cell in r.cells {
-		// println(cell.val)
+		// console.print_debug(cell.val)
 		if cell.val < v {
 			v = cell.val
 		}

@@ -2,6 +2,7 @@ module stellar
 
 import freeflowuniverse.crystallib.lang.python
 import json
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Person {
 	name      string
@@ -29,7 +30,7 @@ pub fn new(args StellarGetArgs) {
 		// will ask questions if not filled in yet
 		cl.config_interactive()!
 	}
-	println(cfg)
+	console.print_debug(cfg)
 }
 
 mut py := python.new(name: 'main')! // a python env with name test
@@ -38,10 +39,10 @@ py.pip('stellar-sdk')!
 
 cmd := $tmpl('stellar.py')
 // for i in 0..100{
-// 	println(i)
+// 	console.print_debug(i)
 // 	res:=py.exec(cmd:cmd)!
 // }
 res := py.exec(cmd: cmd)!
 
 person := json.decode(Person, res)!
-println(person)
+console.print_debug(person)

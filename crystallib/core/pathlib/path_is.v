@@ -1,4 +1,5 @@
 module pathlib
+import freeflowuniverse.crystallib.ui.console
 
 const image_exts = ['jpg', 'jpeg', 'png', 'gif', 'svg']
 
@@ -40,19 +41,19 @@ pub fn is_image(path string) bool {
 
 pub fn (path Path) is_image() bool {
 	e := path.extension().to_lower()
-	// println("is image: $e")
+	// console.print_debug("is image: $e")
 	return pathlib.image_exts.contains(e)
 }
 
 pub fn (path Path) is_image_jpg_png() bool {
 	e := path.extension().to_lower()
-	// println("is image: $e")
+	// console.print_debug("is image: $e")
 	return pathlib.image_exts_basic.contains(e)
 }
 
 pub fn (path Path) is_link() bool {
 	if path.cat == .unknown {
-		// println(path)
+		// console.print_debug(path)
 		panic('did not check path yet.')
 	}
 	return path.cat == Category.linkfile || path.cat == Category.linkdir

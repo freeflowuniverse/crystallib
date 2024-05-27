@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.installers
 import freeflowuniverse.crystallib.installers.docker
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct BuildArgs {

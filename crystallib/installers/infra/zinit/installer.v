@@ -25,7 +25,7 @@ pub fn install(args_ InstallArgs) ! {
 	version := '0.2.14'
 	// cmd:='${osal.profile_path_source_and()} zinit --version'
 	cmd := 'zinit --version'
-	// println(cmd)
+	// console.print_debug(cmd)
 	res := os.execute(cmd)
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().starts_with('zinit v'))
@@ -33,12 +33,12 @@ pub fn install(args_ InstallArgs) ! {
 			return error("couldn't parse zinit version.\n${res.output}")
 		}
 		if texttools.version(version) > texttools.version(r[0].all_after_first('zinit v')) {
-			println('reset because of -v')
+			console.print_debug('reset because of -v')
 			args.reset = true
 		}
 	} else {
-		println(res)
-		println('reset of error in zinit execute')
+		console.print_debug(res)
+		console.print_debug('reset of error in zinit execute')
 		args.reset = true
 	}
 

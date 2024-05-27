@@ -1,6 +1,7 @@
 module ourtime
 
 import time
+import freeflowuniverse.crystallib.ui.console
 
 pub struct OurTime {
 pub mut:
@@ -128,6 +129,6 @@ pub fn (t OurTime) empty() bool {
 // input string example: "+1w +2d -4h"
 //
 pub fn (mut t OurTime) warp(warp string) ! {
-	println(relative_sec(warp)!)
+	console.print_debug(relative_sec(warp)!)
 	t.unixt += relative_sec(warp)!
 }

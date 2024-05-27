@@ -73,8 +73,8 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 pub fn (mut self DaguClient[Config]) config_interactive() ! {
 	mut myui := ui.new()!
 	console.clear()
-	println('\n## Configure Dagu Client')
-	println('========================\n\n')
+	console.print_debug('\n## Configure Dagu Client')
+	console.print_debug('========================\n\n')
 
 	mut cfg := self.config_get()!
 

@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.develop.gittools
 import os
+import freeflowuniverse.crystallib.ui.console
 
 struct TemplateItem {
 	source string
@@ -69,7 +70,7 @@ pub fn install(args Config) ! {
 	// 		return error("can't find dest in repo: $t")
 	// 	}
 	// 	mut p2:=pathlib.get_file(path:"${dest_dir}/${i.source}",create:true)!
-	// 	println(" - write to source: ${p2.path}")
+	// 	console.print_debug(" - write to source: ${p2.path}")
 	// 	p2.write(c)!
 	// }
 

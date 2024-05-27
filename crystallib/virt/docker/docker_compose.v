@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.data.paramsparser { Params }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal { exec, file_write }
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct DockerComposeRecipe {
@@ -62,8 +63,8 @@ fn (mut b DockerComposeRecipe) render() ! {
 
 pub fn (mut b DockerComposeRecipe) start() ! {
 	b.render()!
-	println(b)
-	println(' start compose file in: ${b.path}')
+	console.print_debug(b)
+	console.print_debug(' start compose file in: ${b.path}')
 	os.mkdir_all(b.path)!
 	file_write('${b.path}/docker-compose.yml', b.content)!
 	for composeitem in b.items {

@@ -2,6 +2,7 @@ module tokens
 
 import json
 import freeflowuniverse.crystallib.httpcache
+import freeflowuniverse.crystallib.ui.console
 
 //
 // Raw JSON struct
@@ -245,7 +246,7 @@ pub fn parse_special(s StatsTFT) map[string]Group {
 		}
 	}
 
-	// println(liquidity)
+	// console.print_debug(liquidity)
 
 	mut group := map[string]Group{}
 
@@ -374,7 +375,7 @@ pub fn load_tokens() ?StatsTFT {
 	urltft := 'https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true'
 	urltfta := 'https://statsdata.threefoldtoken.com/stellar_stats/api/stats?detailed=true&tokencode=TFTA'
 
-	// println("[+] fetching tokens data from redis")
+	// console.print_debug("[+] fetching tokens data from redis")
 	rtft := hc.getex(urltft, 86400)?
 	rtfta := hc.getex(urltfta, 86400)?
 
@@ -406,7 +407,7 @@ pub fn load_tokens() ?StatsTFT {
 pub fn load_account(accid string) ?Account {
 	mut hc := httpcache.newcache()
 
-	// println("[+] fetching account data from redis")
+	// console.print_debug("[+] fetching account data from redis")
 	accurl := account_url(accid)
 	raccount := hc.getex(accurl, 86400)?
 

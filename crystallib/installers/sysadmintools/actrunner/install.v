@@ -54,7 +54,7 @@ pub fn install(args_ InstallArgs) ! {
 		minsize_kb: 15000
 	)!
 
-	// println(dest)
+	// console.print_debug(dest)
 
 	osal.cmd_add(
 		cmdname: 'actrunner'

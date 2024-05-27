@@ -2,6 +2,7 @@ module paramsparser
 
 import time
 import v.reflection
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.data.encoderhero
 // TODO: support more field types
 
@@ -79,7 +80,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 		if 'alias' in field_attrs {
 			key = field_attrs['alias']
 		}
-		println('FIELD: ${key} ${field.typ}')
+		console.print_debug('FIELD: ${key} ${field.typ}')
 
 		$if val is string || val is int || val is bool || val is i64 || val is time.Time {
 			params.set(key, '${val}')
@@ -109,7 +110,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 			}
 		} $else $if field.typ is $struct {
 			if args.recursive {
-				println('argsoz ${args}')
+				console.print_debug('argsoz ${args}')
 				child_params := encode(val)!
 				params.params << Param{
 					key: field.name

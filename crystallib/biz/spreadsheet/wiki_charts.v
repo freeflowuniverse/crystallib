@@ -1,6 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
+import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut s Sheet) wiki_title_chart(args RowGetArgs) string {
 	if args.title.len > 0 {
@@ -62,8 +63,8 @@ pub fn (mut s Sheet) wiki_line_chart(args_ RowGetArgs) !string {
 
 	// header := s.header_get_as_string(args.period_type)!
 	// data := s.data_get_as_string(args)!
-	// println('HERE! ${header}')
-	// println('HERE!! ${data}')
+	// console.print_debug('HERE! ${header}')
+	// console.print_debug('HERE!! ${data}')
 
 	template := "
       ${s.wiki_title_chart(args)}

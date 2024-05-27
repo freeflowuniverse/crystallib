@@ -5,6 +5,7 @@ import os
 import json
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.ui.console
 
 __global (
 	gsinstances shared map[string]GitStructure
@@ -60,7 +61,7 @@ pub mut:
 pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	mut args := args_
 	mut c := base.context()!
-	// println("GET GS:\n$args")
+	// console.print_debug("GET GS:\n$args")
 
 	if args.coderoot.len > 0 {
 		args.name = md5.hexhash(args.coderoot)
@@ -151,7 +152,7 @@ fn cache_delete(name string) ! {
 	mut redis := c.redis()!
 	keys := redis.keys(gitstructure_cache_key(name))!
 	for key in keys {
-		// println(key)
+		// console.print_debug(key)
 		redis.del(key)!
 	}
 }

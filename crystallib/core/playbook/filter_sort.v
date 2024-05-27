@@ -1,6 +1,7 @@
 module playbook
 
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct FilterSortArgs {
@@ -79,9 +80,9 @@ pub fn (mut plbook PlayBook) find(args FindArgs) ![]&Action {
 		items << filter.trim_space()
 	}
 	for action in plbook.actions {
-		// println("${action.actor}:${action.name}:${action.id}")
+		// console.print_debug("${action.actor}:${action.name}:${action.id}")
 		if action.match_items(items) {
-			// println(" OK")
+			// console.print_debug(" OK")
 			if !args.include_done && action.done {
 				continue
 			}

@@ -1,4 +1,5 @@
+import freeflowuniverse.crystallib.ui.console
 fn testfunction1() {
 	key_bob = 'bobs key'
-	println(key_bob)
+	console.print_debug(key_bob)
 }

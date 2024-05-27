@@ -3,6 +3,7 @@ module gittools
 import os
 import freeflowuniverse.crystallib.core.pathlib
 import crypto.md5
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct CodeGetFromUrlArgs {
@@ -48,7 +49,7 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {
 	mut gs := get(name: args.gitstructure_name)!
 	mut locator := gs.locator_new(args.url)!
-	// println(locator)
+	// console.print_debug(locator)
 	mut g := gs.repo_get(locator: locator)!
 	if args.reload {
 		g.load()!

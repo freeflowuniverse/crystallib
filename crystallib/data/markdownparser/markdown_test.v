@@ -2,6 +2,7 @@ module markdownparser
 
 import freeflowuniverse.crystallib.data.paramsparser { Param, Params }
 import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Codeblock, Header, Link, List, Paragraph, Table, Text }
+import freeflowuniverse.crystallib.ui.console
 
 const text = "
 # Farmerbot
@@ -79,7 +80,7 @@ To initialize tmux on a local or [remote node](mysite:page.md), simply build the
 	assert docs.children.len == 9
 	assert docs.children[0] is Paragraph
 	md1 := docs.children[0].markdown()!
-	// println("**${md1}**")
+	// console.print_debug("**${md1}**")
 	assert md1 == '\n    \n'
 	assert docs.children[0] is Paragraph
 	assert docs.children[1] is Header
@@ -131,7 +132,7 @@ some extra text
 			assert row.cells.len == 3
 		}
 	}
-	// println(table1)
+	// console.print_debug(table1)
 
 	assert docs.children[6] is Paragraph
 	paragraph2 := docs.children[6]
@@ -191,7 +192,7 @@ fn test_wiki_code() {
 
 ```v
 for x in list {
-	// println(x)
+	// console.print_debug(x)
 }
 ```
 
@@ -208,7 +209,7 @@ for x in list {
 # This is some header
 '
 	mut docs := new(content: content)!
-	// println(docs.children)
+	// console.print_debug(docs.children)
 	assert docs.children.len == 11
 	assert docs.children[0] is Paragraph
 	assert docs.children[1] is Header
@@ -227,18 +228,18 @@ for x in list {
 	}
 
 	// md1:=codeblock1.markdown()!
-	// println("**${md1}**")
+	// console.print_debug("**${md1}**")
 
 	// cb2:=docs.children[7]
 	// md2:=cb2.markdown()!
-	// println("**${md2}**")
+	// console.print_debug("**${md2}**")
 
 	r := '
 # This is some code
 
 ```v
 for x in list {
-    // println(x)
+    // console.print_debug(x)
 }
 ```
 

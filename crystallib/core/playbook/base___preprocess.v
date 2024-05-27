@@ -1,4 +1,5 @@
 module playbook
+import freeflowuniverse.crystallib.ui.console
 
 // import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.texttools
@@ -11,7 +12,7 @@ module playbook
 // 	session.nrtimes_processed += 1
 
 // 	if session.nrtimes_processed > 20 {
-// 		println(session.heroscript_preprocess)
+// 		console.print_debug(session.heroscript_preprocess)
 // 		panic('recursive behavior pre-process out of bound')
 // 	}
 

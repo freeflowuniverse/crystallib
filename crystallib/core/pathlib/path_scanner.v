@@ -1,6 +1,7 @@
 module pathlib
 
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 type Filter0 = fn (mut Path, mut paramsparser.Params) !bool
 
@@ -22,12 +23,12 @@ pub fn (mut path Path) scan(mut parameters paramsparser.Params, filters []Filter
 }
 
 fn scan_recursive(mut path Path, mut parameters paramsparser.Params, filters []Filter0, executors []Executor0) !paramsparser.Params {
-	// println("recursive: $path")
+	// console.print_debug("recursive: $path")
 	// walk over filters if any of them returns false return and don't process
 	for f in filters {
 		needs_to_be_true := f(mut path, mut parameters) or {
 			msg := 'Cannot filter for ${path.path}\n${error}'
-			// println(msg)
+			// console.print_debug(msg)
 			return error(msg)
 		}
 		if !needs_to_be_true {
@@ -38,7 +39,7 @@ fn scan_recursive(mut path Path, mut parameters paramsparser.Params, filters []F
 		for e in executors {
 			parameters = e(mut path, mut parameters) or {
 				msg := 'Cannot process execution on dir ${path.path}\n${error}'
-				// println(msg)
+				// console.print_debug(msg)
 				return error(msg)
 			}
 		}
@@ -51,7 +52,7 @@ fn scan_recursive(mut path Path, mut parameters paramsparser.Params, filters []F
 			if !p_in.is_dir() {
 				scan_recursive(mut p_in, mut parameters, filters, executors) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${error}'
-					// println(msg)
+					// console.print_debug(msg)
 					return error(msg)
 				}
 			}
@@ -61,7 +62,7 @@ fn scan_recursive(mut path Path, mut parameters paramsparser.Params, filters []F
 			if p_in.is_dir() {
 				scan_recursive(mut p_in, mut parameters, filters, executors) or {
 					msg := 'Cannot process recursive on ${p_in.path}\n${error}'
-					// println(msg)
+					// console.print_debug(msg)
 					return error(msg)
 				}
 			}
@@ -70,7 +71,7 @@ fn scan_recursive(mut path Path, mut parameters paramsparser.Params, filters []F
 		for e in executors {
 			parameters = e(mut path, mut parameters) or {
 				msg := 'Cannot process execution on file ${path.path}\n${error}'
-				// println(msg)
+				// console.print_debug(msg)
 				return error(msg)
 			}
 		}

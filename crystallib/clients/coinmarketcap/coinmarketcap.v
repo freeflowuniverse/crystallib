@@ -6,6 +6,7 @@ import json
 import net.http
 import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
 import crypto.md5
+import freeflowuniverse.crystallib.ui.console
 
 struct CoinMarketConnection {
 mut:
@@ -174,7 +175,7 @@ fn (mut h CoinMarketConnection) get_json(prefix string, data string, query strin
 	*/
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
-		// println("MISS1")
+		// console.print_debug("MISS1")
 		mut req := http.Request{}
 		if query != '' {
 			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data)
@@ -208,7 +209,7 @@ fn (mut h CoinMarketConnection) get_json_str(prefix string, data string, query s
 	*/
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
-		// println("MISS1")
+		// console.print_debug("MISS1")
 		mut req := http.Request{}
 		if query != '' {
 			req = http.new_request(http.Method.get, '${h.url}/${prefix}?${query}', data)

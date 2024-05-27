@@ -4,6 +4,7 @@ module gridproxy
 import json
 import math
 import freeflowuniverse.crystallib.threefold.gridproxy.model { Bill, Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, GridStat, Node, NodeFilter, NodeIterator, NodeStats, Node_, StatFilter, Twin, TwinFilter, TwinIterator }
+import freeflowuniverse.crystallib.ui.console
 
 /*
 all errors returned by the gridproxy API or the client are wrapped in a standard `Error` object with two fields.
@@ -362,7 +363,7 @@ pub fn (mut c GridProxyClient) get_contract_bill(contract_id u64) ![]Bill {
 	if res.data == '' {
 		return error_with_code('empty response', gridproxy.err_invalid_resp)
 	}
-	println(res.data)
+	console.print_debug(res.data)
 	bills := json.decode([]Bill, res.data) or {
 		return error_with_code('error to get jsonstr for billing data, json decode: contract_id id: ${contract_id}, data: ${res.data}',
 			gridproxy.err_json_parse)

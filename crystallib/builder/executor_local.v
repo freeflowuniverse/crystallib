@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.rsync
 // import freeflowuniverse.crystallib.core.pathlib
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct ExecutorLocal {
@@ -22,7 +23,7 @@ pub fn (mut executor ExecutorLocal) exec_interactive(args ExecArgs) ! {
 }
 
 pub fn (mut executor ExecutorLocal) file_write(path string, text string) ! {
-	// println('local write ${path}')
+	// console.print_debug('local write ${path}')
 	return os.write_file(path, text)
 }
 

@@ -22,7 +22,7 @@ pub fn install(args InstallArgs) ! {
 	// install crystallib if it was already done will return true
 	console.print_header('install crystallib')
 	// if  args.reset==false && osal.done_exists('install_crystallib') {
-	// 	println('    crystallib was already installed')
+	// 	console.print_debug('    crystallib was already installed')
 	// 	return
 	// }
 	base.develop()!
@@ -54,7 +54,7 @@ pub fn install(args InstallArgs) ! {
 
 pub fn hero_install(args InstallArgs) ! {
 	if args.reset == false && osal.done_exists('install_hero') {
-		println('    hero already installed')
+		console.print_debug('    hero already installed')
 		return
 	}
 	console.print_header('install hero')
@@ -72,7 +72,7 @@ pub fn hero_install(args InstallArgs) ! {
 
 pub fn hero_compile(args InstallArgs) ! {
 	if args.reset == false && osal.done_exists('compile_hero') {
-		println('    hero already compiled')
+		console.print_debug('    hero already compiled')
 		return
 	}
 	console.print_header('compile hero')
@@ -89,7 +89,7 @@ pub fn hero_compile(args InstallArgs) ! {
 // pub fn update() ! {
 // 	console.print_header('package_install update crystallib')
 // 	if !(i.state == .reset) && osal.done_exists('install_crystaltools') {
-// 		println('    package_install was already done')
+// 		console.print_debug('    package_install was already done')
 // 		return
 // 	}
 // 	osal.execute_silent('cd /tmp && export TERM=xterm && source /root/env.sh && ct_upgrade') or {

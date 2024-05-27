@@ -3,7 +3,7 @@ module console
 import freeflowuniverse.crystallib.core.texttools
 
 pub fn clear() {
-	print('\033[2J')
+	console.print_debug('\033[2J')
 }
 
 pub fn print_header(txt string) {

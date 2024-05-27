@@ -22,7 +22,7 @@ pub fn install(args_ InstallArgs) ! {
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().contains('v0.'))
 		if r.len != 1 {
-			println(r)
+			console.print_debug(r)
 			return error("couldn't parse tfrobot version.\n${res.output}")
 		}
 		if texttools.version(version) > texttools.version(r[0].replace('v', '')) {

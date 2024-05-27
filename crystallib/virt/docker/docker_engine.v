@@ -3,6 +3,7 @@ module docker
 import freeflowuniverse.crystallib.osal { cputype, exec, platform }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.virt.utils
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.installers.swarm
 
 // https://docs.docker.com/reference/
@@ -88,7 +89,7 @@ pub fn (mut e DockerEngine) containers_load() ! {
 		container.networks = utils.parse_networks(fields[9])!
 		container.labels = utils.parse_labels(fields[10])!
 		container.ssh_enabled = utils.contains_ssh_port(container.ports)
-		// println(container)
+		// console.print_debug(container)
 		e.containers << container
 	}
 }
