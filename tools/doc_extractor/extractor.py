@@ -6,6 +6,9 @@ import re
 def format_filename(dirname, filename, existing_filenames, parent_dirs):
     filename = filename.lower().replace(' ', '_')
     dirname = dirname.lower().replace(' ', '_')
+    if dirname == "":
+        dirname = "root"
+    
 
     if filename == "readme.md":
         new_filename = f"{dirname}.md"
@@ -37,28 +40,30 @@ def process_files(source, dest):
     existing_images = set()
 
     for root, _, files in os.walk(source):
+        if any(skip_dir in root.lower() for skip_dir in ["template", "example", "examples","test","testdata"]):
+            continue
+
         parent_dirs = os.path.relpath(root, source).split(os.sep)
         dirname = os.path.relpath(root, source).replace('.', '').replace('/', '_')
         for file in files:
             if file.endswith('.md'):
                 src_file_path = os.path.join(root, file)
                 new_filename = format_filename(dirname, file, existing_filenames, parent_dirs)
-                dest_dir_path = os.path.join(dest, dirname)
                 dest_file_path = os.path.join(dest, new_filename)
-                # os.makedirs(dest_dir_path, exist_ok=True)
 
                 with open(src_file_path, 'r') as f:
                     content = f.read()
 
                 # Find and replace image links
-                content = re.sub(r'!\[.*?\]\((.*?)\)', lambda match: replace_image_link(match, root, dest_dir_path, existing_images, image_extensions), content)
+                content = re.sub(r'!\[.*?\]\((.*?)\)', lambda match: replace_image_link(match, root, dest, existing_images, image_extensions), content)
+
 
                 with open(dest_file_path, 'w') as f:
                     f.write(content)
 
                 print(f"Copied and modified {src_file_path} to {dest_file_path}")
 
-def replace_image_link(match, root, dest_dir_path, existing_images, image_extensions):
+def replace_image_link(match, root, dest, existing_images, image_extensions):
     image_path = match.group(1)
     image_name = os.path.basename(image_path)
     image_ext = os.path.splitext(image_name)[1].lower()
@@ -80,8 +85,8 @@ def replace_image_link(match, root, dest_dir_path, existing_images, image_extens
             parent_level += 1
 
     existing_images.add(new_image_name)
-    new_image_path = os.path.join(dest_dir_path, "img", new_image_name)
-    os.makedirs(os.path.join(dest_dir_path, "img"), exist_ok=True)
+    new_image_path = os.path.join(dest, "img", new_image_name)
+    os.makedirs(os.path.join(dest, "img"), exist_ok=True)
     
     src_image_path = os.path.join(root, image_path)
     if os.path.exists(src_image_path):
