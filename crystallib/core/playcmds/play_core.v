@@ -12,18 +12,11 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'context.configure')! {
 		mut p := action.params
 		mut session := plbook.session
-		// if p.exists('name') || session.context.name == '' {
-		// 	session.context.name = p.get_default('name', 'default')!
-		// }
-		// if p.exists('cid') || session.context.cid == '' {
-		// 	session.context.cid = p.get_default('cid', '000')!
-		// }
+
 		if p.exists('interactive') {
 			session.interactive = p.get_default_false('interactive')
 		}
-		// if p.exists('fsdb_encrypted') {
-		// 	session.context.contextdb.encrypted = p.get_default_false('fsdb_encrypted')
-		// }
+
 		if p.exists('coderoot') {
 			mut coderoot := p.get_path_create('coderoot')!
 			mut gs := gittools.get()!

@@ -19,20 +19,20 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		description: 'path where heroscripts can be found.'
 	})
 
-	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'sessionname'
-		abbrev: 'sn'
-		description: 'name for the session (optional).'
-	})
-	cmd_run.add_flag(Flag{
-		flag: .string
-		required: false
-		name: 'contextname'
-		abbrev: 'cn'
-		description: 'name for the context (optional).'
-	})
+	// cmd_run.add_flag(Flag{
+	// 	flag: .string
+	// 	required: false
+	// 	name: 'sessionname'
+	// 	abbrev: 'sn'
+	// 	description: 'name for the session (optional).'
+	// })
+	// cmd_run.add_flag(Flag{
+	// 	flag: .string
+	// 	required: false
+	// 	name: 'contextname'
+	// 	abbrev: 'cn'
+	// 	description: 'name for the context (optional).'
+	// })
 	cmd_run.add_flag(Flag{
 		flag: .string
 		required: false
@@ -97,7 +97,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 }
 
 // returns the path of the fetched repo
-fn session_run_get(cmd Command) !string {
+fn plbook_code_get(cmd Command) !string {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
 
@@ -131,8 +131,8 @@ fn session_run_get(cmd Command) !string {
 }
 
 // same as session_run_get but will also run the playbook
-fn session_run_do(cmd Command) !(&playbook.PlayBook, string) {
-	path := session_run_get(cmd)!
+fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
+	path := plbook_code_get(cmd)!
 
 	if path.len == 0 {
 		return error(cmd.help_message())
@@ -147,12 +147,12 @@ fn session_run_do(cmd Command) !(&playbook.PlayBook, string) {
 	return &plbook, path
 }
 
-// get the repo, check if we need to do
-fn session_run_edit_sourcecode(cmd Command) !(&playbook.PlayBook, string) {
+
+fn plbook_edit_sourcetree(cmd Command) !(&playbook.PlayBook, string) {
 	edit := cmd.flags.get_bool('edit') or { false }
 	treedo := cmd.flags.get_bool('sourcetree') or { false }
 
-	mut plbook, path := session_run_do(cmd)!
+	mut plbook, path := plbook_run(cmd)!
 
 	if path.len == 0 {
 		return error('path or url needs to be specified')

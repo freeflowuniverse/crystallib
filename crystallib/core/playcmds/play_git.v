@@ -2,6 +2,7 @@ module playcmds
 
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
 
 pub fn play_git(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'gittools.*')! {
@@ -38,7 +39,7 @@ pub fn play_git(mut plbook playbook.PlayBook) ! {
 			msg: action.params.get_default('message', '')!
 			url: url
 		)!
-		println(' ${cmd} ${account}:${repo}')
+		console.print_debug(' ${cmd} ${account}:${repo}')
 		action.done = true
 	}
 }

@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.webtools.zola
 import cli { Command, Flag }
+import freeflowuniverse.crystallib.ui.console
 
 // path string //if location on filessytem, if exists, this has prio on git_url
 // git_url   string // location of where the hero scripts are
@@ -61,7 +62,7 @@ fn cmd_zola_execute(cmd Command) ! {
 	mut path := cmd.flags.get_string('path') or { '' }
 	if path.len > 0 || url.len > 0 {
 		// execute the attached playbook
-		mut plbook, _ := session_run_do(cmd)!
+		mut plbook, _ := plbook_run(cmd)!
 
 		// get name from the book.generate action
 		if name == '' {
@@ -73,7 +74,7 @@ fn cmd_zola_execute(cmd Command) ! {
 	}
 
 	if name == '' {
-		println('did not find name of book to generate, check in heroscript or specify with --name')
+		console.print_debug('did not find name of book to generate, check in heroscript or specify with --name')
 		return error(cmd.help_message())
 	}
 

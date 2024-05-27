@@ -36,5 +36,5 @@ If you do -gr it will pull newest heroscripts from git and overwrite local chang
 }
 
 fn cmd_heroscript_execute(cmd Command) ! {
-	session_run_edit_sourcecode(cmd)!
+	plbook_edit_sourcetree(cmd)!
 }
