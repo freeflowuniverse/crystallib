@@ -46,3 +46,23 @@ pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
 		os.execute('v fmt -w ${file.path}')
 	}
 }
+
+pub fn (file CodeFile) get_function(name string) ?Function {
+	functions := file.items.filter(it is Function).map(it as Function)
+	target_lst := functions.filter(it.name == name)
+
+	if target_lst.len == 0 { return none }
+	if target_lst.len > 1 {panic('This should never happen')}
+	return target_lst[0]
+}
+
+pub fn (mut file CodeFile) set_function(function Function) ! {
+	function_names := file.items.map(if it is Function {it.name} else {''})
+
+	index := function_names.index(function.name)
+	if index == -1 {
+		return error('function not found')
+	}
+	println('debugzoniko ${function}')
+	file.items[index] = function
+}
