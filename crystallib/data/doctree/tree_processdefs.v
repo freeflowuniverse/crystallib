@@ -1,8 +1,8 @@
 module doctree
 
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import os
+// import os
 import freeflowuniverse.crystallib.core.texttools
 
 pub fn (mut tree Tree) process_defs() ! {

@@ -149,7 +149,7 @@ A normal user can ignore these pages, they are just to get links to work.
 				// format $collection:$pagename.md
 				splitted := lpagestr.split(':')
 				assert splitted.len == 2
-				summary.add_page_additional(collectionname, splitted[1])
+				summary.add_page_additional(splitted[0], splitted[1])
 			}
 		}
 	}
