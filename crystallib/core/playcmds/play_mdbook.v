@@ -2,6 +2,7 @@ module playcmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
 import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import os
 
@@ -16,7 +17,8 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 	// check if any actions for doctree, if not then nothing to do here
 	dtactions := plbook.find(filter: 'doctree.')!
 	if dtactions.len == 0 {
-		return error("can't find doctree.add statements, nothing to do")
+		console.print_debug("can't find doctree.add statements, nothing to do")
+		return
 	}
 
 	mut config_actions := plbook.find(filter: 'books:configure')!
