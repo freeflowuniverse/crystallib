@@ -65,7 +65,7 @@ pub fn (mut node Node) exec_retry(args ExecRetryArgs) !string {
 		if run_time > start_time + args.timeout * 1000 {
 			return error('timeout on exec retry for ${args}')
 		}
-		// println(args.cmd)
+		// console.print_debug(args.cmd)
 		r := node.exec(cmd: args.cmd, stdout: args.stdout) or { 'error' }
 		if r != 'error' {
 			return r

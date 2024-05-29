@@ -22,7 +22,7 @@ pub fn (mut gitstructure GitStructure) load() ! {
 	gitstructure.load_recursive(git_path.path, mut done)!
 	for mut repo in gitstructure.repos {
 		repo.status()!
-		// println(repo)
+		// console.print_debug(repo)
 	}
 	gitstructure.loaded = true
 	console.print_debug(' load gitstructure from disk done')
@@ -45,10 +45,10 @@ fn (mut gitstructure GitStructure) reload() ! {
 // 	}
 // 	gitstructure.load_recursive(git_path.path, mut done)!
 // 	for mut repo in gitstructure.repos {		
-// 		// println(" - ${repo.addr}")
+// 		// console.print_debug(" - ${repo.addr}")
 // 		repo.load()!
 // 		// repo.status()!
-// 		println(repo)
+// 		console.print_debug(repo)
 // 	}
 // }
 
@@ -56,7 +56,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // fn repo_refresh(addr GitAddr, path string) {
 // 	repo_load(addr, path) or { panic(err) }
 // 	// console.print_header(' thread done: ${path}')
-// 	// println(" ==== ${addr.name}")
+// 	// console.print_debug(" ==== ${addr.name}")
 // 	// r.load() or {panic(err)}
 // }
 
@@ -70,7 +70,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // 		repo_load(repo.addr,repo.path.path)!
 // 		repo.status()!
 // 	}
-// 	// println(" - wait for threads")
+// 	// console.print_debug(" - wait for threads")
 // 	// time.sleep(time.Duration(time.second)*10)
 // 	// threads.wait()
 // 	// console.print_header(' all repo refresh jobs finished.')

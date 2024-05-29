@@ -4,6 +4,7 @@ import vweb
 import db.sqlite
 import rand
 import json
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Controller {
 	vweb.Context
@@ -12,7 +13,7 @@ pub mut:
 }
 
 pub fn (mut ctrl Controller) before_request() {
-	println(ctrl.req)
+	console.print_debug(ctrl.req)
 }
 
 @[post]

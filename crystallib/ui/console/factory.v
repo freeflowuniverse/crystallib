@@ -4,7 +4,23 @@ import freeflowuniverse.crystallib.core.texttools
 
 __global (
 	consoles map[string]&UIConsole
+	silent bool
 )
+
+pub fn silent_set() {
+	console.silent = true
+}
+
+pub fn silent_unset() {
+	console.silent = false
+}
+
+
+pub fn silent_get() bool {
+	return console.silent
+}
+
+
 
 pub struct UIConsole {
 pub mut:
@@ -59,6 +75,8 @@ pub fn lf() {
 	if c.prev_lf {
 		return
 	}
-	print('\n')
+	if ! console.silent_get(){
+		print('\n')
+	}	
 	c.prev_lf = true
 }

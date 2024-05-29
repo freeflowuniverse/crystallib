@@ -31,7 +31,7 @@ pub fn (mut self SystemdProcess) start() ! {
 	systemctl enable ${self.name}
 	systemctl start ${self.name}
 	'
-	println(cmd)
+	console.print_debug(cmd)
 	_ = osal.execute_silent(cmd)!
 	self.refresh()!
 }

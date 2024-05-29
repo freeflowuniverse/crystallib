@@ -66,7 +66,7 @@ fn test_filter1() ! {
 
 	assert plbook.actions.len == 10
 
-	assert plbook.hashkey() == 'ea9dea6e28bfaf836719e821953e646a155dd9eb'
+	assert plbook.hashkey() == '40d56e554bff1c2ea7e42d41730d3122d0c73196'
 
 	plbook.filtersort(
 		priorities: {

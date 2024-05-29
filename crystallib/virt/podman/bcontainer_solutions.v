@@ -1,6 +1,7 @@
 module podman
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 
 // builder machine based on arch and install vlang
 pub fn (mut e CEngine) builder_create() ! {
@@ -55,6 +56,6 @@ pub fn (mut engine CEngine) builderv_create(args CrystalBuildArgs) ! {
 // 	builder.run(cmd, false)!
 // 	builder.run("/root/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh", false)!
 
-// 	println(mount_path)
+// 	console.print_debug(mount_path)
 
 // }

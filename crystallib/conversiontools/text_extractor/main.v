@@ -2,6 +2,7 @@ module main
 
 import os
 import flag
+import freeflowuniverse.crystallib.ui.console
 
 fn convert_to_text(path string) !os.Result {
 	if !os.exists(path) {
@@ -20,5 +21,5 @@ fn main() {
 	file_path := fp.string('path', `p`, '', 'path where the file exists')
 
 	content := convert_to_text('${file_path}') or { panic(err) }
-	println(content)
+	console.print_debug(content)
 }

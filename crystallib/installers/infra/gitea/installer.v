@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.installers.postgres as postgresinstaller
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub fn install() ! {
 	if osal.platform() != .ubuntu {
@@ -23,7 +24,7 @@ pub fn install() ! {
 
 	version := '1.21.3'
 	url := 'https://github.com/go-gitea/gitea/releases/download/v${version}/gitea-${version}-linux-amd64.xz'
-	println(' download ${url}')
+	console.print_debug(' download ${url}')
 	mut dest := osal.download(
 		url: url
 		minsize_kb: 40000

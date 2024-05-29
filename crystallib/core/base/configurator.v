@@ -1,6 +1,7 @@
 module base
 
 import json
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Configurator[T] {
@@ -98,15 +99,15 @@ pub fn (mut self Configurator[T]) configprint(args PrintArgs) ! {
 		if db.exists(key: self.config_key())! {
 			data := db.get(key: self.config_key())!
 			c := json.decode(T, data)!
-			println(c)
-			println('')
+			console.print_debug('${c}')
+			console.print_debug('')
 		} else {
 			return error("Can't find connection with name: ${args.name}")
 		}
 	} else {
 		panic('implement')
 		// for item in list()! {
-		// 	// println(" ==== $item")
+		// 	// console.print_debug(" ==== $item")
 		// 	configprint(name: item)!
 		// }
 	}

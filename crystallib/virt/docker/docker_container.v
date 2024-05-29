@@ -4,6 +4,7 @@ import time
 import freeflowuniverse.crystallib.osal { exec }
 import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
 import freeflowuniverse.crystallib.virt.utils
+import freeflowuniverse.crystallib.ui.console
 
 // pub enum DockerContainerStatus {
 // 	up
@@ -65,7 +66,7 @@ pub fn (mut container DockerContainer) halt() ! {
 
 // delete docker container
 pub fn (mut container DockerContainer) delete() ! {
-	println(' CONTAINER DELETE: ${container.name}')
+	console.print_debug(' CONTAINER DELETE: ${container.name}')
 
 	exec(cmd: 'docker rm ${container.id} -f', stdout: false)!
 	mut x := 0

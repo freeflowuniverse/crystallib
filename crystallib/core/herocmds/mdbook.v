@@ -63,7 +63,7 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	mut path := cmd.flags.get_string('path') or { '' }
 	if path.len > 0 || url.len > 0 {
 		// execute the attached playbook
-		mut plbook, _ := session_run_do(cmd)!
+		mut plbook, _ := plbook_run(cmd)!
 
 		// get name from the book.generate action
 		if name == '' {
@@ -75,7 +75,7 @@ fn cmd_mdbook_execute(cmd Command) ! {
 	}
 
 	if name == '' {
-		println('did not find name of book to generate, check in heroscript or specify with --name')
+		console.print_debug('did not find name of book to generate, check in heroscript or specify with --name')
 		mdbook_help(cmd)
 		exit(1)
 	}

@@ -3,6 +3,7 @@ module bizmodel
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 // possible parameters for non recurring
 //
@@ -97,10 +98,10 @@ fn (mut m BizModel) revenue_actions(plbook_ PlayBook) ! {
 				descr: 'Monthly Growing revenues.'
 				aggregatetype: .sum
 			)!
-			// println(revenue_time_param)
-			// println(m.sheet.wiki()!)
-			// println(revenue_growth_param)
-			// println(revenue_growth)
+			// console.print_debug(revenue_time_param)
+			// console.print_debug(m.sheet.wiki()!)
+			// console.print_debug(revenue_growth_param)
+			// console.print_debug(revenue_growth)
 			// if true{panic("sdsd")}
 
 			mut cogs_perc := m.sheet.row_new(

@@ -1,4 +1,5 @@
 module sshagent
+// import freeflowuniverse.crystallib.ui.console
 
 // will see if there is one ssh key in sshagent
 // or if not, if there is 1 ssh key in ${agent.homepath.path}/ if yes will load
@@ -41,7 +42,7 @@ module sshagent
 // 			pubkeys << p.path.replace('.pub', '')
 // 		}
 // 	}
-// 	// println(keypaths)
+// 	// console.print_debug(keypaths)
 
 // 	if pubkeys.len == 1 {
 // 		if c.ask_yesno(
@@ -84,7 +85,7 @@ module sshagent
 // 	mut fl := sshdirpath.list()!
 // 	mut sshfiles := fl.paths
 // 	mut keypaths := sshfiles.filter(it.path.ends_with('.pub'))
-// 	// println(keypaths)
+// 	// console.print_debug(keypaths)
 
 // 	if keypaths.len == 1 {
 // 		keycontent := keypaths[0].read()!
@@ -119,7 +120,7 @@ module sshagent
 // 	// osal.execute_interactive("open $url_github_add")?
 
 // 	// if console.ask_yesno(description:"Did you manage to add the github key to this repo ?"){
-// 	// 	println( " - CONGRATS: your sshkey is now loaded.")
+// 	// 	console.print_debug(" - CONGRATS: your sshkey is now loaded.")
 // 	// }
 
 // 	// return keytouse

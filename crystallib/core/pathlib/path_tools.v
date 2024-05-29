@@ -63,9 +63,9 @@ pub fn (mut path Path) expand(dest string) !Path {
 		os.rmdir(dest)!
 
 		res := os.execute(cmd)
-		// println(res)
+		// console.print_debug(res)
 		if res.exit_code > 0 {
-			// println(cmd)
+			// console.print_debug(cmd)
 			return error('Could not expand xz.\n${res}')
 		}
 		return get_file(path: dest, create: false)!
@@ -76,16 +76,16 @@ pub fn (mut path Path) expand(dest string) !Path {
 
 	if path.name().to_lower().ends_with('.tar.gz') || path.name().to_lower().ends_with('.tgz') {
 		cmd := 'tar -xzvf ${path.path} -C ${desto.path}'
-		println(cmd)
+		console.print_debug(cmd)
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('Could not expand.\n${res}')
 		}
 	} else if path.name().to_lower().ends_with('.zip') {
 		cmd := 'unzip  ${path.path} -d ${dest}'
-		// println(cmd)
+		// console.print_debug(cmd)
 		res := os.execute(cmd)
-		// println(res)
+		// console.print_debug(res)
 		if res.exit_code > 0 {
 			return error('Could not expand zip.\n${res}')
 		}
@@ -93,7 +93,7 @@ pub fn (mut path Path) expand(dest string) !Path {
 		cmd := '
 			bunzip2 -f -k ${path.path}
 			'
-		// println(cmd)
+		// console.print_debug(cmd)
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error('Could not expand bz2.\n${res.output}')
@@ -136,7 +136,7 @@ pub fn find_common_ancestor(paths_ []string) string {
 		}
 	}
 	paths := paths_.map(os.abs_path(os.real_path(it))) // get the real path (symlinks... resolved)
-	println(paths)
+	console.print_debug(paths.str())
 	parts := paths[0].split('/')
 	mut totest_prev := '/'
 	for i in 1 .. parts.len {
@@ -223,7 +223,7 @@ pub fn (mut path Path) move(args MoveArgs) ! {
 // that last dir needs to move 1 up
 pub fn (mut path Path) moveup_single_subdir() ! {
 	mut plist := path.list(recursive: false, ignoredefault: true, dirs_only: true)!
-	println(plist)
+	console.print_debug(plist.str())
 	if plist.paths.len != 1 {
 		return error('could not find one subdir in ${path.path} , so cannot move up')
 	}
@@ -300,7 +300,7 @@ pub fn (mut path Path) rm() ! {
 // delete
 pub fn (mut path Path) delete() ! {
 	if path.exists() {
-		// println("exists: $path")
+		// console.print_debug("exists: $path")
 		match path.cat {
 			.file, .linkfile, .linkdir {
 				os.rm(path.path.replace('//', '/'))!
@@ -450,8 +450,8 @@ pub fn path_relative(source_ string, linkpath_ string) !string {
 
 	source_count := source_short.count('/')
 	// link_count := linkpath_short.count('/')
-	// println (" + source_short:$source_short ($source_count)")
-	// println (" + linkpath_short:$linkpath_short ($link_count)")
+	// console.print_debug(" + source_short:$source_short ($source_count)")
+	// console.print_debug(" + linkpath_short:$linkpath_short ($link_count)")
 	mut dest := ''
 
 	if source_short == '' { // source folder is common ancestor
@@ -502,7 +502,7 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 		}
 		if os.exists(tmppath) {
 			for i in 1 .. 200 {
-				// println(i)
+				// console.print_debug(i)
 				tmppath = '${args.tmpdir}/execscripts/{${t}}_${i}.${args.ext}'
 				if !os.exists(tmppath) {
 					break
@@ -525,7 +525,7 @@ pub fn temp_write(args_ TMPWriteArgs) !string {
 // pub fn path_relative(source_ string, dest_ string) !string {
 // 	mut source := source_.trim_right('/')
 // 	mut dest := dest_.replace('//', '/').trim_right('/')
-// 	// println("path relative: '$source' '$dest' ")
+// 	// console.print_debug("path relative: '$source' '$dest' ")
 // 	if source !="" {
 // 		if source.starts_with('/') && !dest.starts_with('/') {
 // 			return error('if source starts with / then dest needs to start with / as well.\n - $source\n - $dest')

@@ -3,6 +3,7 @@ module tmux
 import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.installers.tmux
 import os
+import freeflowuniverse.crystallib.ui.console
 
 const testpath = os.dir(@FILE) + '/testdata'
 
@@ -65,7 +66,7 @@ fn test_windows_get() ! {
 
 // TODO: fix test
 fn test_scan() ! {
-	println('-----Testing scan------')
+	console.print_debug('-----Testing scan------')
 	mut tmux := get_remote('185.69.166.152')!
 	tmux.start()!
 
@@ -96,7 +97,7 @@ fn test_scan() ! {
 
 // //TODO: fix test
 // fn test_scan_add() ! {
-// 	println("-----Testing scan_add------")
+// 	console.print_debug("-----Testing scan_add------")
 
 // 	
 // 	mut tmux := Tmux { node: node_ssh }

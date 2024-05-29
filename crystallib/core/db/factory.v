@@ -4,6 +4,7 @@ import db.sqlite
 import freeflowuniverse.crystallib.core.smartid
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 __global (
 	dbs      shared map[string]DB // key is cidstr__objtype
@@ -37,7 +38,7 @@ pub fn (mut mydb DB) init() ! {
 	mydb.sqlitedb = sqlitedb
 	lock dbs {
 		k := key(mydb.cid, mydb.objtype)
-		// println('init key: ${k}')
+		// console.print_debug('init key: ${k}')
 		dbs[k] = &mydb
 	}
 }
@@ -74,9 +75,9 @@ pub fn create(args_ DBTableCreateArgs) ! {
 			return
 		}
 	}
-	// println('create db & tables: ${k}')
+	// console.print_debug('create db & tables: ${k}')
 	lock dbs {
-		// println('create table for ${args_}')
+		// console.print_debug('create table for ${args_}')
 		mut mydb2 := dbs[k] or { return error('cannot find db with key: ${k} for create 2.') }
 		tables_create(mut mydb2, mut args)!
 	}

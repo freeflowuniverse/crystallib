@@ -1,4 +1,5 @@
 module base
+// import freeflowuniverse.crystallib.ui.console
 
 // is an object which has a configurator, session and config object which is unique for the model
 // T is the Config Object
@@ -80,7 +81,7 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 			if 'secret' in field_attrs {
 				v := c.$(field.name)
 				c.$(field.name) = mycontext.secret_decrypt(v)!
-				// println('FIELD DECRYPTED: ${field.name}')		
+				// console.print_debug('FIELD DECRYPTED: ${field.name}')		
 			}
 		}
 		self.config_ = &c
@@ -99,7 +100,7 @@ pub fn (mut self BaseConfig[T]) config_save() ! {
 		if 'secret' in field_attrs {
 			v := config2.$(field.name)
 			config2.$(field.name) = mycontext.secret_encrypt(v)!
-			// println('FIELD ENCRYPTED: ${field.name}')		
+			// console.print_debug('FIELD ENCRYPTED: ${field.name}')		
 		}
 	}
 	mut configurator := self.configurator()!

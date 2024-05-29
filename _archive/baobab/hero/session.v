@@ -115,7 +115,6 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 		if args.reset {
 			downloadpath.empty()!
 		}
-		println('debugzo: at downloader: ${downloadpath}')
 
 		// if not a dir and not exist we need to download
 		// will link if git
@@ -127,8 +126,6 @@ pub fn (mut session Session) actions_add(args_ ActionsAddArgs) ! {
 		)!
 		actions_path = downloadpath.path
 	}
-
-	println('debugzo: at parser')
 
 	mut ap := playbook.new(path: actions_path)!
 	for a in ap.actions {

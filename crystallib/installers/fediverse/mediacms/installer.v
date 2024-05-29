@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.installers.docker
+import freeflowuniverse.crystallib.ui.console
 
 pub fn install(args Config) ! {
 	checkplatform()!

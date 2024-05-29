@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Doc, Include, Link, Paragraph }
 import freeflowuniverse.crystallib.data.markdownparser
 import os
+import freeflowuniverse.crystallib.ui.console
 
 pub enum PageStatus {
 	unknown
@@ -198,7 +199,7 @@ fn (mut page Page) fix_links() ! {
 				mut item_link := paragraph.children[y]
 				if mut item_link is Link {
 					if item_link.filename == 'threefold_cloud.md' {
-						print('${item_link}')
+						console.print_debug('${item_link}')
 					}
 					if item_link.isexternal {
 						page.fix_external_link(mut item_link)!

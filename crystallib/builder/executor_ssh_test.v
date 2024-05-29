@@ -2,6 +2,7 @@ module builder
 
 import rand
 import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
+import freeflowuniverse.crystallib.ui.console
 
 // Assuming this function runs first (which is the case)
 // This generates ssh keys on local machine to use for
@@ -23,7 +24,7 @@ fn test_exec() {
 		port: 22
 	}
 	res := e.exec('ls  /')!
-	println(res)
+	console.print_debug(res)
 }
 
 fn test_file_operations() {
@@ -56,7 +57,7 @@ fn test_environ_get() {
 		cat: .ipv4
 	}
 	mut env := e.environ_get()!
-	println(env)
+	console.print_debug(env)
 }
 
 // fn test_remote_machine() {
@@ -73,5 +74,5 @@ fn test_environ_get() {
 // 		}
 // 	}
 // 	res := e.exec("ls  /root")!
-// 	println(res)
+// 	console.print_debug(res)
 // }

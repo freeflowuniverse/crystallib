@@ -137,6 +137,6 @@ fn rsync_ipaddr_format(args_ RsyncFormatArgs) (string, string) {
 	if args.ipaddr.len == 0 {
 		panic('ip addr cannot be empty')
 	}
-	// println("- rsync cmd: ${args.user}@${args.ipaddr}:${args.port}")
+	// console.print_debug("- rsync cmd: ${args.user}@${args.ipaddr}:${args.port}")
 	return '-e \'ssh -o StrictHostKeyChecking=no -p ${args.port}\'', '${args.user}@${args.ipaddr}'
 }

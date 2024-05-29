@@ -1,13 +1,11 @@
 module elements
 
-import math
-
 @[heap]
 pub struct ListItem {
 	DocBase
 pub mut:
 	depth int
-	// indent     int
+	indent     int
 	order ?int
 }
 
@@ -45,10 +43,6 @@ fn (mut self ListItem) parse() ! {
 
 	mut p := self.paragraph_new(mut self.parent_doc_, content.all_after_first(prefix).trim_space())
 	p.process()!
-}
-
-fn (self ListItem) calculate_indentation() int {
-	return int(math.ceil(f64(self.depth) / 4.0))
 }
 
 pub fn (self ListItem) markdown() !string {

@@ -64,7 +64,7 @@ pub fn (mut node Node) upgrade() ! {
 }
 
 pub fn (mut node Node) hero_install() ! {
-	println('install hero')
+	console.print_debug('install hero')
 	mut bs := bootstrapper()
 	install_hero_content_ := bs.embedded_files['install_hero.sh'] or { panic('bug') }
 	install_hero_content := install_hero_content_.to_string()
@@ -87,7 +87,7 @@ pub fn (mut node Node) hero_install() ! {
 }
 
 pub fn (mut node Node) dagu_install() ! {
-	println('install dagu')
+	console.print_debug('install dagu')
 	if !osal.cmd_exists('dagu') {
 		_ = bootstrapper()
 		node.exec_silent('curl -L https://raw.githubusercontent.com/yohamta/dagu/main/scripts/downloader.sh | bash')!
@@ -107,9 +107,9 @@ pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 
 	if args.reset {
 		console.clear()
-		println('')
+		console.print_debug('')
 		console.print_stderr('will remove: .vmodules, crystal lib code and ~/hero')
-		println('')
+		console.print_debug('')
 		mut myui := ui.new()!
 		toinstall := myui.ask_yesno(
 			question: 'Ok to reset?'
@@ -136,7 +136,7 @@ pub fn (mut node Node) crystal_install(args CrystalInstallArgs) ! {
 		echo WE ARE READY TO HERO...
 		
 		'
-	println('executing cmd ${cmd}')
+	console.print_debug('executing cmd ${cmd}')
 	node.exec_cmd(cmd: cmd)!
 }
 

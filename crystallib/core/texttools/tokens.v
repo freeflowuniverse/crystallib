@@ -1,5 +1,6 @@
 module texttools
 
+
 // import regex
 
 pub struct TokenizerResult {
@@ -45,7 +46,7 @@ pub fn (mut tr TokenizerResult) replace(text string, tofind string, replacewith 
 			// 	text2 = new_text.trim(' ')
 		}
 		// } else {
-		// 	println(' ... $item.matchstring !=  $tofind2')
+
 		// }
 	}
 	return text2
@@ -94,7 +95,7 @@ fn word_skip(text string) bool {
 
 pub fn tokenize(text_ string) TokenizerResult {
 	text := dedent(text_)
-	// println(text)
+
 	mut skip := false
 	mut skipline := false
 	mut prev := ''

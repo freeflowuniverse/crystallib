@@ -32,7 +32,7 @@ pub fn (h HetznerClient) keys_get() ![]SSHKey {
 	redis.set(rkey, data)!
 	redis.expire(rkey, 120)! // only cache for 1 minute
 
-	// println(data)
+	// console.print_debug(data)
 
 	items := json.decode([]SSHRoot, data) or {
 		return error('could not json deserialize for servers_list\n${data}')

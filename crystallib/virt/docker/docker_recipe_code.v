@@ -1,6 +1,7 @@
 module docker
 
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.core.pathlib
 
 @[params]
@@ -32,9 +33,9 @@ pub fn (mut r DockerBuilderRecipe) add_codeget(args_ CodeGetArgs) ! {
 	}
 
 	// gs.repos_print(filter: '')
-	// println(gr)
+	// console.print_debug(gr)
 	// this will show the exact path of the manual
-	// println(gr.path_content_get())
+	// console.print_debug(gr.path_content_get())
 
 	// mut gitaddr := gs.addr_get_from_url(url: url)!
 

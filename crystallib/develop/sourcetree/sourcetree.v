@@ -2,6 +2,7 @@ module sourcetree
 
 import freeflowuniverse.crystallib.osal
 import os
+// import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct OpenArgs {
@@ -16,6 +17,6 @@ pub fn open(args OpenArgs) ! {
 		return error('Cannot open SourceTree: could not find path ${args.path}')
 	}
 	cmd4 := 'open -a SourceTree ${args.path}'
-	// println(cmd4)
+	// console.print_debug(cmd4)
 	osal.execute_interactive(cmd4)!
 }

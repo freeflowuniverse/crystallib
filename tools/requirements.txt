@@ -1,0 +1,11 @@
+pudb
+IPython
+mypy>=1.9.0
+redis>=5.0.3
+pylance>=0.10.12
+pydantic>=2.7.1
+toml
+msgpack
+colorama
+bs4
+

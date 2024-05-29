@@ -1,4 +1,5 @@
 module gittools
+import freeflowuniverse.crystallib.ui.console
 
 fn test_url1() {
 	mut gs := new(GitStructureConfig{}) or { panic('cannot load') }
@@ -30,7 +31,7 @@ fn test_url1() {
 // 	panic('todo')
 // 	// obj := addr_get_from_url(url) or { panic('${err}') }
 
-// 	println(obj)
+// 	console.print_debug(obj)
 
 // 	// home := os.real_path(os.home_dir())
 
@@ -188,7 +189,7 @@ fn test_url1() {
 // // 	addr := s.addr_get_from_url('https://github.com/freeflowuniverse/crystaltools')
 // // 	mut r := s.repo_get(addr) or { panic('cannot load git $addr.remote_url\n$err\n') }
 
-// // 	println(r.url_get())
+// // 	console.print_debug(r.url_get())
 
 // // 	if ssh_agent_loaded() {
 // // 		assert r.url_get() == 'git@github.com:freeflowuniverse/crystaltools.git'
@@ -216,7 +217,7 @@ fn test_url1() {
 // // 	addr := s.addr_get_from_url('https://github.com/freeflowuniverse/crystaltools')
 // // 	mut r := s.repo_get(addr) or { panic('cannot load git repo:\n$err\n$addr') }
 
-// // 	println(r.changes())
+// // 	console.print_debug(r.changes())
 
 // // 	panic('s')
 // // }

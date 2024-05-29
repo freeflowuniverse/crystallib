@@ -19,7 +19,6 @@ pub fn get_redis_url(url string) !RedisURL {
 }
 
 pub fn core_get(url RedisURL) !Redis {
-	mut connection_exists := false // if any redis connection exists that can be used
 	mut r := new(['${url.address}:${url.port}'])!
 	return r
 }

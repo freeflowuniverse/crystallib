@@ -1,6 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
+import freeflowuniverse.crystallib.ui.console
 
 fn test_sheets() {
 	mut sh := sheet_new() or { panic(err) }
@@ -31,26 +32,26 @@ fn test_sheets() {
 	assert smartrow.cells[10].val == 1000.0
 	assert smartrow.cells[40].val == 2000.0
 
-	println(nrnodes)
+	console.print_debug(nrnodes)
 
-	println(incrementalrow)
+	console.print_debug(incrementalrow)
 
 	mut toincrement := sh.row_new(name: 'incr2', growth: '0:0,60:59')!
 	inc1row := toincrement.recurring(name: 'testrecurring1', delaymonths: 0)!
 	inc2row := toincrement.recurring(name: 'testrecurring2', delaymonths: 3)!
 
-	println(toincrement)
+	console.print_debug(toincrement)
 
 	a1 := toincrement.look_forward_avg(50, 20)!
 	a2 := toincrement.look_forward_avg(12, 12)!
 
-	// println(a1)
-	// println(a2)
+	// console.print_debug(a1)
+	// console.print_debug(a2)
 
 	// if true{panic("sss")}
 
-	println(inc1row)
-	println(inc2row)
+	console.print_debug(inc1row)
+	console.print_debug(inc2row)
 
 	assert inc1row.cells[4].val == 10.0
 	assert inc2row.cells[7].val == 10.0
@@ -93,7 +94,7 @@ fn test_sheets() {
 	res << incrementalrow.action(name: 'aggr1', action: .aggregate, val: 1.0)!
 	assert res.last().cells[3].val == 6.0
 
-	println(res.last())
+	console.print_debug(res.last())
 
 	incrementalrow.delay(3)!
 	assert incrementalrow.cells[6].val == 3
@@ -103,12 +104,12 @@ fn test_sheets() {
 	mut shyear := sh.toyear(name: 'shyear', includefilter: ['cat:nodes'])!
 	mut shq := sh.toquarter(name: 'nrnodesq', includefilter: ['cat:nodes'])!
 
-	println(shyear)
-	println(shq)
+	console.print_debug(shyear)
+	console.print_debug(shq)
 	// r:=shq.json()!
-	// println(r)
+	// console.print_debug(r)
 	wiki := sh.wiki(description: 'is my description.')!
-	println(wiki)
+	console.print_debug(wiki)
 	// panic('test1')
 }
 
@@ -128,12 +129,12 @@ fn test_sheets() {
 
 // 	mut pricetft := sh.row_new(name: 'pricetft', growth: '1:100aed,55:1000eur')!
 
-// println( sh.rows["pricetft"].cells[0])
+// console.print_debug(sh.rows["pricetft"].cells[0])
 // assert sh.rows['pricetft']!.cells[0].val == 25.0
 // assert sh.rows['pricetft']!.cells[60 - 1].val == 900.0
 
 // 	// TODO: we need to create tests for it
 
-// 	println(sh)
+// 	console.print_debug(sh)
 // 	panic('test1')
 // }

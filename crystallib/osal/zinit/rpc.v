@@ -2,6 +2,7 @@ module zinit
 
 import net.unix
 import json
+import freeflowuniverse.crystallib.ui.console
 
 // these need to be all private (non pub)
 
@@ -73,7 +74,7 @@ struct ServiceStatusRaw {
 
 // check if the service is known
 fn (z Client) isloaded(name string) bool {
-	// println (" -- status rpc: '$name'")
+	// console.print_debug(" -- status rpc: '$name'")
 	r := z.list() or { return false }
 	if name !in r {
 		return false
@@ -82,7 +83,7 @@ fn (z Client) isloaded(name string) bool {
 }
 
 fn (z Client) status(name string) !ServiceStatusRaw {
-	// println (" -- status rpc: '$name'")
+	// console.print_debug(" -- status rpc: '$name'")
 	r := z.list()!
 	if name !in r {
 		$if debug {

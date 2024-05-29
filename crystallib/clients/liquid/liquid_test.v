@@ -1,4 +1,5 @@
 module liquid
+import freeflowuniverse.crystallib.ui.console
 
 // liquid doesn't have tft right now so disable the tests for now
 
@@ -11,7 +12,7 @@ fn test_get_tft_usdt_price() {
 
 	// // TFT/USDT price
 	// pair_tft_usdt := l.token_price_usdt()!
-	// println('Market Pid for TFT/USDT pair = ${pair_tft_usdt}')
+	// console.print_debug('Market Pid for TFT/USDT pair = ${pair_tft_usdt}')
 }
 
 fn test_get_tft_btc_price() {
@@ -23,5 +24,5 @@ fn test_get_tft_btc_price() {
 
 	// // TFT/BTC price
 	// pair_tft_btc := l.token_price_btc()!
-	// println('Market Pid for TFT/BTC pair = ${pair_tft_btc}')
+	// console.print_debug('Market Pid for TFT/BTC pair = ${pair_tft_btc}')
 }

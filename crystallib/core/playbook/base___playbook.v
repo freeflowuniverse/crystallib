@@ -1,4 +1,5 @@
 module playbook
+// import freeflowuniverse.crystallib.ui.console
 
 // add playbook heroscript (starting from path, text or git url)
 //```
@@ -55,7 +56,7 @@ module playbook
 // 	if session.processed {
 // 		return
 // 	}
-// 	println('session ${session.name} process')
+// 	console.print_debug('session ${session.name} process')
 // 	session.pre_process()!
 // 	session.plbook.add(text: session.heroscript_preprocess)!
 

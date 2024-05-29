@@ -4,6 +4,7 @@ import os
 import time
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 const iso_path = '/var/vm/alpine-standard-3.19.1-x86_64.iso'
 const hdd_path = '/var/vm/vm_alpine_automated.qcow2'
@@ -71,10 +72,10 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 
 	mut vmdir := pathlib.get_dir(path: '/var/vms/${args.name}', create: true)!
 	hdd_path := '${vmdir.path}/hdd.qcow2'
-	println(' - iso: ${iso_path}')
+	console.print_debug(' - iso: ${iso_path}')
 
 	// Clean up previous QEMU instance
-	println('[+] cleaning previous instance of qemu')
+	console.print_debug('[+] cleaning previous instance of qemu')
 	os.system('killall qemu-system-x86_64')
 	for os.system('pidof qemu-system-x86_64') == 0 {
 		time.sleep(100 * time.millisecond)
@@ -82,7 +83,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 
 	// Check if the ISO file exists
 	if !os.exists(iso_path) {
-		println('ISO file not found: ${iso_path}')
+		console.print_debug('ISO file not found: ${iso_path}')
 		return
 	}
 
@@ -92,7 +93,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 	}
 
 	// Start the virtual machine
-	println('[+] starting virtual machine')
+	console.print_debug('[+] starting virtual machine')
 	osal.exec(
 		cmd: '
         rm -f /tmp/alpine.in
@@ -110,7 +111,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 	// -display none
 	// -daemonize
 
-	println('[+] virtual machine started, waiting for console')
+	console.print_debug('[+] virtual machine started, waiting for console')
 
 	// Interact with the console
 	mut console_input := os.open('/tmp/alpine.in') or { panic(err) }
@@ -124,7 +125,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 		mut line := []u8{len: 1024}
 		read_count := console_output.read(mut line) or { break }
 		line_str := line[..read_count].bytestr()
-		println(line_str)
+		console.print_debug(line_str)
 		// Handle console output and send input
 		if line_str.contains('localhost login:') {
 			console_input.writeln('root')!
@@ -138,7 +139,7 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 			console_input.writeln('')!
 		} else if line_str.contains('manual network configuration? (y/n) [n]') {
 			console_input.writeln('')!
-			println('[+] waiting for network connectivity')
+			console.print_debug('[+] waiting for network connectivity')
 		} else if line_str.contains('New password:') {
 			console_input.writeln('root')!
 		} else if line_str.contains('Retype password:') {
@@ -166,15 +167,15 @@ pub fn (mut self AlpineLoader) start(args_ AlpineLaunchArgs) ! {
 		} else if line_str.contains('Installation is complete.') {
 			console_input.writeln('reboot')!
 		} else if line_str.contains('${bootstrap.hostname} login:') {
-			println('[+] ====================================================================')
-			println('[+] virtual machine configured, up and running, root password: root')
-			println('[+] you can ssh this machine with the local reverse port:')
-			println('[+]')
-			println('[+]     ssh root@localhost -p 2225')
-			println('[+]')
+			console.print_debug('[+] ====================================================================')
+			console.print_debug('[+] virtual machine configured, up and running, root password: root')
+			console.print_debug('[+] you can ssh this machine with the local reverse port:')
+			console.print_debug('[+]')
+			console.print_debug('[+]     ssh root@localhost -p 2225')
+			console.print_debug('[+]')
 			break
 		}
 	}
 
-	println('[+] virtual machine initialized')
+	console.print_debug('[+] virtual machine initialized')
 }

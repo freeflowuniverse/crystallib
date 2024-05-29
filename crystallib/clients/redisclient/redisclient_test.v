@@ -1,5 +1,6 @@
 import freeflowuniverse.crystallib.clients.redisclient
 import time
+import freeflowuniverse.crystallib.ui.console
 // original code see https://github.com/patrickpissurno/vredis/blob/master/vredis_test.v
 // credits see there as well (-:
 
@@ -20,11 +21,11 @@ fn test_set() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	// println('start')
+	// console.print_debug('start')
 	// for _ in 0 .. 10000 {
 	// 	redis.set('test0', '123')!
 	// }
-	println('stop')
+	console.print_debug('stop')
 	redis.set('test0', '456')!
 	res := redis.get('test0')!
 	assert res == '456'
@@ -75,11 +76,11 @@ fn test_queue() {
 	assert res == 'test1'
 	res = q.get(1)!
 	assert res == 'test2'
-	println('start')
+	console.print_debug('start')
 	res = q.get(100) or { '' }
-	println('stop')
+	console.print_debug('stop')
 	assert res == ''
-	println(res)
+	console.print_debug(res)
 }
 
 fn test_scan() {
@@ -87,14 +88,14 @@ fn test_scan() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	println('stop')
+	console.print_debug('stop')
 	redis.set('test3', '12')!
 	redis.set('test4', '34')!
 	redis.set('test5', '56')!
 	redis.set('test6', '78')!
 	redis.set('test7', '9')!
 	cursor, data := redis.scan(0)!
-	println(data)
+	console.print_debug(data)
 	assert cursor == '0'
 }
 
@@ -756,7 +757,7 @@ fn test_rename() {
 	defer {
 		cleanup(mut redis) or { panic(err) }
 	}
-	redis.rename('test64', 'test65') or { println('key not found') }
+	redis.rename('test64', 'test65') or { console.print_debug('key not found') }
 	redis.set('test64', 'will be 65')!
 	redis.rename('test64', 'test65')!
 	r := redis.get('test65') or {

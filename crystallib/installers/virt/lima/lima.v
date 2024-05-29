@@ -20,7 +20,7 @@ pub fn install(args_ InstallArgs) ! {
 	if args.reset || args.uninstall {
 		console.print_header('uninstall lima')
 		uninstall()!
-		println(' - ok')
+		console.print_debug(' - ok')
 		if args.uninstall {
 			return
 		}

@@ -157,8 +157,8 @@ pub fn do(args_ GeneratorArgs) ! {
 		data := json.encode(args)
 		deps_check(args)!
 		platform_check(args)!
-		println('\n## Your arguments, will be saved for next time.')
-		println(args)
+		console.print_debug('\n## Your arguments, will be saved for next time.')
+		console.print_debug(args)
 
 		p_config.write(data)!
 	}

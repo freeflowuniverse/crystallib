@@ -103,8 +103,8 @@ pub fn (mut self Context) redis() !&redisclient.Redis {
 pub fn (mut self Context) save() ! {
 	jsonargs := json.encode_pretty(self.config)
 	mut r := self.redis()!
-	// println("save")
-	// println(jsonargs)	
+	// console.print_debug("save")
+	// console.print_debug(jsonargs)	
 	r.set('context:config', jsonargs)!
 }
 
@@ -112,8 +112,8 @@ pub fn (mut self Context) save() ! {
 pub fn (mut self Context) load() ! {
 	mut r := self.redis()!
 	d := r.get('context:config')!
-	// println("load")
-	// println(d)
+	// console.print_debug("load")
+	// console.print_debug(d)
 	if d.len > 0 {
 		self.config = json.decode(ContextConfig, d)!
 	}

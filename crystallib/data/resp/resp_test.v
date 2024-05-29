@@ -1,7 +1,8 @@
 module resp
+import freeflowuniverse.crystallib.ui.console
 
 fn print_val_to_check(s string) {
-	println(s.replace('\n', '\\\\n').replace('\r', '\\\\r'))
+	console.print_debug(s.replace('\n', '\\\\n').replace('\r', '\\\\r'))
 }
 
 fn val_to_check(s string) string {
@@ -38,7 +39,7 @@ fn test_1() {
 	mut rv := RValue(RError{
 		value: 'my error'
 	})
-	// println(rv.encode()rv.encode().replace("\n","\\n").replace("\r","\\r"))
+	// console.print_debug(rv.encode()rv.encode().replace("\n","\\n").replace("\r","\\r"))
 
 	rv = RValue(RArray{
 		values: [RValue(RError{
@@ -85,7 +86,7 @@ fn test_2() {
 
 fn test_3() {
 	data := encode([r_list_string(['a', 'b']), r_int(10), r_ok()])
-	println(data)
+	console.print_debug(data)
 
 	// panic('s')
 }

@@ -148,7 +148,7 @@ pub fn (mut vm VMOutput) tasks_new(args_ dagu.DAGArgs) &dagu.DAG {
 
 // name is the name of the tasker (dag), which has set of staps we will execute
 pub fn (vm VMOutput) tasks_run(dag &dagu.DAG) ! {
-	// println(dag)
+	// console.print_debug(dag)
 	r := vm.dagu_addr_get()!
 	console.print_debug('connect to dagu on ${vm.name} -> ${r.addr}')
 	mut client := dagu_client.get(instance: 'robot_dagu')!
@@ -172,7 +172,7 @@ pub fn (vm VMOutput) tasks_see(dag &dagu.DAG) ! {
 	r := vm.dagu_addr_get()!
 	// http://[302:1d81:cef8:3049:fbe1:69ba:bd8c:52ec]:8081/dags/holochain_scaffold
 	cmd3 := "open 'http://[${r.addr}]:8081/dags/${dag.name}'"
-	// println(cmd3)
+	// console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 
@@ -180,21 +180,21 @@ pub fn (vm VMOutput) vscode() ! {
 	r := vm.dagu_addr_get()!
 	cmd3 := "open 'http://[${r.addr}]:8080'"
 	// http://[302:1d81:cef8:3049:fbe1:69ba:bd8c:52ec]:8080/?folder=/root/Holochain/hello-world
-	// println(cmd3)
+	// console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 
 pub fn (vm VMOutput) vscode_holochain() ! {
 	r := vm.dagu_addr_get()!
 	cmd3 := "open 'http://[${r.addr}]:8080/?folder=/root/Holochain/hello-world'"
-	// println(cmd3)
+	// console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 
 pub fn (vm VMOutput) vscode_holochain_proxy() ! {
 	r := vm.dagu_addr_get()!
 	cmd3 := "open 'http://[${r.addr}]:8080/proxy/8282/"
-	// println(cmd3)
+	// console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 

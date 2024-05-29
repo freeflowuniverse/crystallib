@@ -7,6 +7,7 @@ import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
 
 // import os
 
@@ -97,7 +98,7 @@ pub fn new(args_ BizModelArgs) !BizModel {
 }
 
 pub fn (mut m BizModel) load() ! {
-	println('BIZMODEL LOAD ${m.params.name}')
+	console.print_debug('BIZMODEL LOAD ${m.params.name}')
 
 	// m.replace_smart_ids()!
 	// mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!

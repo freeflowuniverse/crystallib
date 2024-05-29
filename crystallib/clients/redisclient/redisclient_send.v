@@ -1,13 +1,14 @@
 module redisclient
 
 import freeflowuniverse.crystallib.data.resp
+import freeflowuniverse.crystallib.ui.console
 
 // send list of strings, expect OK back
 pub fn (mut r Redis) send_expect_ok(items []string) ! {
 	r.write_cmds(items)!
 	res := r.get_string()!
 	if res != 'OK' {
-		println("'${res}'")
+		console.print_debug("'${res}'")
 		return error('did not get ok back')
 	}
 }

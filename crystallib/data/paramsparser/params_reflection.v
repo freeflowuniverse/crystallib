@@ -2,6 +2,7 @@ module paramsparser
 
 import time
 import v.reflection
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.data.encoderhero
 // TODO: support more field types
 
@@ -81,8 +82,6 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 	}
 	mut params := Params{}
 
-	mut mytype := reflection.type_of[T](t)
-
 	// struct_attrs := attrs_get_reflection(mytype)
 
 	$for field in T.fields {
@@ -92,6 +91,10 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 		if 'alias' in field_attrs {
 			key = field_attrs['alias']
 		}
+<<<<<<< HEAD
+=======
+		console.print_debug('FIELD: ${key} ${field.typ}')
+>>>>>>> development
 
 		$if val is string || val is int || val is bool || val is i64 || val is u32 || val is time.Time {
 			params.set(key, '${val}')
@@ -120,6 +123,7 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 				value: v2
 			}
 		} $else $if field.typ is $struct {
+<<<<<<< HEAD
 			// TODO: Handle embeds better
 			is_embed := field.name[0].is_capital()
 			if is_embed {
@@ -133,6 +137,14 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 						key: field.name
 						value: child_params.export()
 					}
+=======
+			if args.recursive {
+				console.print_debug('argsoz ${args}')
+				child_params := encode(val)!
+				params.params << Param{
+					key: field.name
+					value: child_params.export()
+>>>>>>> development
 				}
 			}
 		} $else {}

@@ -39,11 +39,11 @@ fn test_clean1() {
 
 	text2 := remove_double_lines(remove_empty_js_blocks(text))
 
-	println('---')
-	println(text2)
-	println('---')
-	println(result)
-	println('---')
+	print('---')
+	print(text2)
+	print('---')
+	print(result)
+	print('---')
 
 	assert text2.trim_space() == result.trim_space()
 }

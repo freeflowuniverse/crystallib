@@ -49,7 +49,7 @@ pub fn new() !Zinit {
 			obj.processes[name] = zp
 		}
 	}
-	// println(obj)
+	// console.print_debug(obj)
 	return obj
 }
 

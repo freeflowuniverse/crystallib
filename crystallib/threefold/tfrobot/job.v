@@ -5,6 +5,7 @@ import arrays
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import json
+import freeflowuniverse.crystallib.ui.console
 
 // VirtualMachine represents the VM info outputted by tfrobot
 pub struct VirtualMachine {
@@ -97,7 +98,7 @@ pub fn (mut j Job) deploy_vms(config VMConfig, quantity int) {
 // 		create: true
 // 	)!
 // 	config := $tmpl('./templates/config.json')
-// 	// println('config file*******\n${config}\n****')
+// 	// console.print_debug('config file*******\n${config}\n****')
 // 	pathlib.template_write(config, jsonfile.path, true)!
 // 	j.
 // 	result := osal.exec(cmd: 'tfrobot deploy -c ${jsonfile.path}', stdout: true)!

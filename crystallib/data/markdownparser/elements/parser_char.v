@@ -1,6 +1,7 @@
 module elements
 
 import os
+// import freeflowuniverse.crystallib.ui.console
 
 // is a char parser
 
@@ -56,7 +57,7 @@ fn (mut parser ParserChar) char(nr int) !string {
 	if c == '“' { // TODO: doesn't seem to be working, it can't because unicode chars are not 1 char, they are more than 1
 		c = '"'
 	}
-	// println(" +++ '${c}' ${c[0]}")
+	// console.print_debug(" +++ '${c}' ${c[0]}")
 	return c
 }
 
@@ -94,7 +95,7 @@ fn (mut parser ParserChar) text_next_is(tofind string, offset int) bool {
 	}
 	text := parser.chars.substr(startpos, startpos + tofind.len).replace('\n', '\\n')
 	didfind := (text == tofind)
-	// print(" -NT${offset}($tofind):'$text':$didfind .. ")
+	// console.print_debug(" -NT${offset}($tofind):'$text':$didfind .. ")
 	return didfind
 }
 
@@ -106,7 +107,7 @@ fn (mut parser ParserChar) text_next_is(tofind string, offset int) bool {
 // 		return false
 // 	}
 // 	text := parser.chars.substr(startpos, startpos + tofind.len).replace("\n","\\n")
-// 	print(" -PT${offset}($tofind):'$text'")
+// 	console.print_debug(" -PT${offset}($tofind):'$text'")
 // 	return text == tofind
 // }
 // FOR NOW NOT USED, IS BETTER TO FORCE EVERYONE TO USE text_next_is

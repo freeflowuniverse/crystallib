@@ -2,9 +2,10 @@ module raw
 
 import os
 import json
+import freeflowuniverse.crystallib.ui.console
 
 pub fn list() ![]VM {
-	// println (" - list vm")
+	// console.print_debug(" - list vm")
 	cmd := 'limactl list --json'
 	res := os.execute(cmd)
 	if res.exit_code > 0 {

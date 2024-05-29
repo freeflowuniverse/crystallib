@@ -1,4 +1,5 @@
 module smartid
+import freeflowuniverse.crystallib.ui.console
 
 fn test_cid() {
 	a := sid_str(100)
@@ -6,7 +7,7 @@ fn test_cid() {
 	cid00 := cid(name: 'test')!
 	assert cid00.circle == 1
 	assert cid00.str() == '1'
-	// println(cid00)
+	// console.print_debug(cid00)
 	for i in 0 .. 100 {
 		cid2 := cid(name: 'test_${i}')!
 	}
@@ -27,8 +28,8 @@ fn test_cid() {
 	// g1 := cid1.gid(oid_str: '1')!
 	// g2 := cid1.gid(oid_str: '2')!
 
-	// // println(g1)
-	// // println(g2)
+	// // console.print_debug(g1)
+	// // console.print_debug(g2)
 
 	// cido := CID{
 	// 	circle: 9999

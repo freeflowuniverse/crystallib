@@ -191,7 +191,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		tree: collection.tree
 		collection_name: collection.name
 	}
-	println(page.key())
+	console.print_debug(page.key())
 	collection.pages[ptr.pointer.name] = &page
 }
 

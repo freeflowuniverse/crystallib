@@ -1,5 +1,6 @@
 module template
+import freeflowuniverse.crystallib.ui.console
 
 pub fn clear() {
-	print('\033[2J')
+	console.print_debug('\033[2J')
 }

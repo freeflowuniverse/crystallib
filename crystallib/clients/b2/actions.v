@@ -43,8 +43,8 @@ pub fn (mut self B2Client[Config]) list_buckets() ![]BucketData {
 	res2=[]
 	for x in res:
     	res2.append({"id":x.id_,"type_":x.type_,"name":x.name})
-	print("==RESULT==")
-	print(json.dumps(list(res2), indent=4))	
+	console.print_debug("==RESULT==")
+	console.print_debug(json.dumps(list(res2), indent=4))	
 	'
 	code = code0 + '\n' + texttools.dedent(code)
 
@@ -204,15 +204,15 @@ pub fn (mut self B2Client[Config]) list_files(args_ ListBucketArgs) ![]BucketFil
 	res = []
 	for file_version, folder_name in bucket.ls(latest_only=True, recursive=True):
 		res.append({"file_name": file_version.file_name, "upload_timestamp": file_version.upload_timestamp})
-	print("==RESULT==")
-	print(json.dumps(list(res), indent=4))	
+	console.print_debug("==RESULT==")
+	console.print_debug(json.dumps(list(res), indent=4))	
 	'
 	code = code0 + '\n' + texttools.dedent(code)
 
 	res := self.py.exec(cmd: code)!
-	println(res)
+	console.print_debug(res)
 	r := json.decode([]BucketFile, res)!
-	println(r)
+	console.print_debug(r)
 	return r
 }
 
@@ -252,5 +252,5 @@ pub fn (mut self B2Client[Config]) sync(args_ SyncArgs) ! {
 	code = code0 + '\n' + texttools.dedent(code)
 
 	res := self.py.exec(cmd: code, stdout: true)!
-	println(res)
+	console.print_debug(res)
 }

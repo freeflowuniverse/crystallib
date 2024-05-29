@@ -2,6 +2,7 @@ module vexecutor
 
 import strings
 import os { Result, fileno }
+import freeflowuniverse.crystallib.ui.console
 
 fn vpopen(path string) voidptr {
 	// *C.FILE {

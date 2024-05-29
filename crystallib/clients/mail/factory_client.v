@@ -60,8 +60,8 @@ pub fn heroplay(args play.PLayBookAddArgs) ! {
 pub fn (mut self MailClient[Config]) config_interactive() ! {
 	mut myui := ui.new()!
 	console.clear()
-	println('\n## Configure Mail Client')
-	println('========================\n\n')
+	console.print_debug('\n## Configure Mail Client')
+	console.print_debug('========================\n\n')
 	mut cfg := self.config()!
 	self.instance = myui.ask_question(
 		question: 'name for mail client'

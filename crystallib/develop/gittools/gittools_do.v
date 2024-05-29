@@ -68,7 +68,7 @@ pub mut:
 //```
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	mut args := args_
-	// println(args)
+	// console.print_debug(args)
 
 	if args.repo == '' && args.account == '' && args.provider == '' && args.filter == '' {
 		curdir := os.getwd()
@@ -111,7 +111,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 
 	if args.url.len > 0 {
 		mut locator := gs.locator_new(args.url)!
-		// println(locator)
+		// console.print_debug(locator)
 		mut g := gs.repo_get(locator: locator)!
 		g.load()!
 		if args.cmd == 'pull' || args.pull {
@@ -175,7 +175,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 		for mut g in repos {
 			g.load()!
 			st := g.status()!
-			// println(st)
+			// console.print_debug(st)
 			need_commit = st.need_commit || need_commit
 			if args.cmd == 'push' && need_commit {
 				need_push = true
@@ -199,7 +199,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			if args.reset {
 				out += ' (changes will be lost!)'
 			}
-			println(out + ' ** \n')
+			console.print_debug(out + ' ** \n')
 			if args.script {
 				ok = true
 			} else {
@@ -226,7 +226,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 				&& args.cmd in 'commit,pull,push'.split(',')
 			need_pull_repo := args.cmd in 'pull,push'.split(',') // always do pull when push and pull
 			need_push_repo := args.cmd in 'push'.split(',') && (st.need_push || need_push)
-			// println(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
+			// console.print_debug(" --- git_do ${g.addr.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
 
 			if need_commit_repo {
 				mut msg := args.msg

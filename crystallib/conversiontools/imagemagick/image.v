@@ -1,6 +1,7 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Image {
 pub mut:
@@ -43,18 +44,18 @@ fn (mut image Image) skip() bool {
 		return true
 	}
 	if image.size_kbyte < 500 {
-		// println("SMALLER  $image.path (size: $image.size_kbyte)")
+		// console.print_debug("SMALLER  $image.path (size: $image.size_kbyte)")
 		return true
 	}
 
 	mut parent := image.path.parent() or { panic('bug') }
 	// here we check that the file was already processed
-	// println(" check .done file: ${parent.path}")
+	// console.print_debug(" check .done file: ${parent.path}")
 	if parent.file_exists('.done') {
-		// println("DONE")
+		// console.print_debug("DONE")
 		mut p := parent.file_get('.done') or { panic('bug') }
 		c := p.read() or { panic('bug') }
-		// println(" image contains: ${path.name()}")
+		// console.print_debug(" image contains: ${path.name()}")
 		if c.contains(image.path.name()) {
 			return true
 		}

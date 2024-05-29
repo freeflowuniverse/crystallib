@@ -1,6 +1,7 @@
 module utils
 
 import time
+import freeflowuniverse.crystallib.ui.console
 
 pub enum ContainerStatus {
 	up
@@ -59,7 +60,7 @@ pub fn parse_ports(s string) ![]string {
 pub fn parse_labels(s string) !map[string]string {
 	mut res := map[string]string{}
 	if s.trim_space().len > 0 {
-		// println(s)
+		// console.print_debug(s)
 		// panic("todo")
 		// TODO: need to do
 	}
@@ -69,7 +70,7 @@ pub fn parse_labels(s string) !map[string]string {
 pub fn parse_networks(s string) ![]string {
 	mut res := []string{}
 	if s.trim_space().len > 0 {
-		// println(s)
+		// console.print_debug(s)
 		// panic("todo networks")
 		// TODO: need to do
 	}
@@ -80,7 +81,7 @@ pub fn parse_mounts(s string) ![]ContainerVolume {
 	mut res := []ContainerVolume{}
 	// TODO: need to do
 	if s.trim_space().len > 0 {
-		// println(s)
+		// console.print_debug(s)
 		// panic("todo mounts")
 		// TODO: need to do
 	}

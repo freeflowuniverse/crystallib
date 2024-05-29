@@ -1,6 +1,7 @@
 module dagu
 
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct DAGArgs {
@@ -84,7 +85,7 @@ pub fn (mut d DAG) step_add(args_ StepArgs) !&Step {
 		s.depends = []string{}
 		for nr in texttools.to_array_int(args.depends) {
 			step_dep := d.step_get(nr)!
-			// println("depend on: ${step_dep.name}")
+			// console.print_debug("depend on: ${step_dep.name}")
 			s.depends << step_dep.name
 		}
 	}

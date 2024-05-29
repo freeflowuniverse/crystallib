@@ -1,6 +1,7 @@
 module jsonrpc
 
 import log
+import freeflowuniverse.crystallib.ui.console
 
 pub interface IRpcTransportClient {
 mut:
@@ -116,15 +117,15 @@ pub fn (mut client IJsonRpcClient) send_json_rpc[T, D](method string, data T, ti
 // 	// mut ws := websocket.new_client('wss://echo.websocket.org:443')?
 // 	// use on_open_ref if you want to send any reference object
 // 	ws.on_open(fn (mut ws websocket.Client) ! {
-// 		println(term.green('ws.on_open websocket connected to the server and ready to send messages...'))
+// 		console.print_debug(term.green('ws.on_open websocket connected to the server and ready to send messages...'))
 // 	})
 // 	// use on_error_ref if you want to send any reference object
 // 	ws.on_error(fn (mut ws websocket.Client, err string) ! {
-// 		println(term.red('ws.on_error error: ${err}'))
+// 		console.print_debug(term.red('ws.on_error error: ${err}'))
 // 	})
 // 	// use on_close_ref if you want to send any reference object
 // 	ws.on_close(fn (mut ws websocket.Client, code int, reason string) ! {
-// 		println(term.green('ws.on_close the connection to the server successfully closed'))
+// 		console.print_debug(term.green('ws.on_close the connection to the server successfully closed'))
 // 	})
 
 // 	ws.connect() or {
@@ -142,7 +143,7 @@ pub fn (mut client IJsonRpcClient) send_json_rpc[T, D](method string, data T, ti
 // 		client.handle_message(msg) or { panic(err) }
 // 	}, &ws)
 
-// 	spawn ws.listen() // or { println(term.red('error on listen $err')) }
+// 	spawn ws.listen() // or { console.print_debug(term.red('error on listen $err')) }
 
 // 	return &client
 // }

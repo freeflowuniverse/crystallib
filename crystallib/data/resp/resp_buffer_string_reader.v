@@ -15,7 +15,7 @@ fn imin(a int, b int) int {
 fn (mut s StringReader) read(mut buf []u8) !int {
 	// console.print_header(' consumer buff len $buf.len ($s.place | ${imin(s.place + buf.len, s.text.len)} | $s.text.len)')
 	if s.place >= s.text.len {
-		// println('NONE')
+		// console.print_debug('NONE')
 		return -1
 	}
 	nrread := copy(mut buf, s.text[s.place..imin(s.place + buf.len, s.text.len)].bytes())

@@ -45,8 +45,8 @@ pub fn heroplay(args play.PLayBookAddArgs) ! {
 pub fn (mut self TFRobot[Config]) config_interactive() ! {
 	mut myui := ui.new()!
 	console.clear()
-	println('\n## Configure tfrobot')
-	println('========================\n\n')
+	console.print_debug('\n## Configure tfrobot')
+	console.print_debug('========================\n\n')
 
 	mut cfg := self.config()!
 

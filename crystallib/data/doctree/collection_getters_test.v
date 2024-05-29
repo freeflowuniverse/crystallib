@@ -2,7 +2,7 @@ module doctree
 
 import os
 
-const testpath = os.dir(@FILE) + '/testdata/collections'
+const testpath = os.dir(@FILE) + '/testdata'
 
 fn test_collection_get() {
 	mut tree := new(name: 'test')!

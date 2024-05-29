@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct ThisRemoteArgs {
@@ -21,7 +22,7 @@ pub fn this_remote_exec(args_ ThisRemoteArgs) !bool {
 		return false // means we need to execute
 	}
 	addr := texttools.to_array(args.nodes)
-	// println(addr)
+	// console.print_debug(addr)
 	mut counter := 0
 	for a in addr {
 		counter += 1
@@ -29,7 +30,7 @@ pub fn this_remote_exec(args_ ThisRemoteArgs) !bool {
 		mut b := new()!
 		if args.sync_from_local {
 			mut n := b.node_new(ipaddr: a, name: name)!
-			// println(n.ipaddr_pub_get()!)
+			// console.print_debug(n.ipaddr_pub_get()!)
 			n.vscript(path: args.script, sync_from_local: args.sync_from_local)!
 		} else {
 			// is a shortcut goes faster if no update
@@ -37,7 +38,7 @@ pub fn this_remote_exec(args_ ThisRemoteArgs) !bool {
 				return error("can't find script ${args.script}")
 			}
 			cmd := 'scp ${args.script} ${a}:/tmp/remote_${name}.vsh'
-			println(cmd)
+			console.print_debug(cmd)
 			r := os.execute(cmd)
 			if r.exit_code > 0 {
 				return error('could not scp: ${cmd}')

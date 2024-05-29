@@ -1,4 +1,5 @@
 module docker
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct PackageArgs {
@@ -83,7 +84,7 @@ pub fn (mut b DockerBuilderRecipe) add_package(args PackageArgs) ! {
 			}
 		}
 	}
-	// println(package)
+	// console.print_debug(package)
 	if package.names.len == 0 {
 		return error('could not find package names.\n ${b}\nARGS:\n${args}')
 	}

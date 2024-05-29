@@ -65,8 +65,8 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 pub fn (mut self B2Client[Config]) config_interactive() ! {
 	mut myui := ui.new()!
 	console.clear()
-	println('\n## Configure B2 Client')
-	println('========================\n\n')
+	console.print_debug('\n## Configure B2 Client')
+	console.print_debug('========================\n\n')
 
 	mut cfg := self.config_get()!
 

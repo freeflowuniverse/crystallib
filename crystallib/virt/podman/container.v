@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.osal { exec }
 import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.virt.utils
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Container {
@@ -230,9 +231,9 @@ pub fn (mut container Container) halt() ! {
 
 // delete podman container
 pub fn (mut container Container) delete() ! {
-	println(' CONTAINER DELETE: ${container.name}')
+	console.print_debug(' CONTAINER DELETE: ${container.name}')
 	cmd := 'podman rm ${container.id} -f'
-	println(cmd)
+	console.print_debug(cmd)
 	exec(cmd: cmd, stdout: false)!
 }
 

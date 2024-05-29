@@ -2,6 +2,7 @@ module swarm
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.ui.console
 
 pub struct SwarmArgs {
 	reset bool
@@ -12,7 +13,7 @@ pub fn install_docker(args SwarmArgs) ! {
 	mut installed := true
 	out2 := osal.execute_silent('docker version') or {
 		installed = false
-		println('ERROR:' + err.msg())
+		console.print_debug('ERROR:' + err.msg())
 		'ERROR:' + err.msg()
 	}
 
@@ -79,7 +80,7 @@ pub fn install_docker(args SwarmArgs) ! {
 			// }
 			'ERROR:' + err.msg()
 		}
-		// println(out)
+		// console.print_debug(out)
 		// if out == "noconnection" {
 		// 	panic("SSSSS")
 		// }else	
@@ -127,6 +128,6 @@ pub fn (mut installer Installer) docker_swarm_install_add(mut args SwarmArgsAdd)
 	installer.install_docker(args2)!
 
 	cmd := 'docker swarm leave && docker swarm join --token  ${token} ${ipaddr}:2377'
-	println(cmd)
+	console.print_debug(cmd)
 	installer.osal.execute_silent(cmd)!
 }

@@ -141,7 +141,7 @@ pub fn check(args InstallArgs) !bool {
 	// r := conn.get_json_dict(prefix: 'dags') or { return false }
 	r := conn.get_json_dict(prefix: 'dags', debug: false)!
 	dags := r['DAGs'] or { return false }
-	// println(dags)
+	// console.print_debug(dags)
 	console.print_debug('Dagu is answering.')
 	return true
 }

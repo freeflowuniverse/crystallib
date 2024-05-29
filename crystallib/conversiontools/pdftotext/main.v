@@ -2,6 +2,7 @@ module main
 
 import os
 import flag
+import freeflowuniverse.crystallib.ui.console
 
 fn convert_to_text(path string, dst string) !os.Result {
 	if !os.exists(path) {
@@ -9,7 +10,7 @@ fn convert_to_text(path string, dst string) !os.Result {
 	}
 	path_clean := path.replace(' ', '\\ ')
 	dst_clean := dst.replace(' ', '\\ ')
-	println('pdftotext ${path_clean} ${dst_clean}')
+	console.print_debug('pdftotext ${path_clean} ${dst_clean}')
 	res := os.execute('pdftotext ${path_clean} ${dst_clean}')
 	return res
 }
@@ -45,7 +46,7 @@ fn main() {
 	for file in files_list {
 		if file.len > 4 && file[file.len - 3..] == 'pdf' {
 			content := read_as_text('${dir_path}/${file}') or {
-				println(err)
+				console.print_debug(err)
 				continue
 			}
 			files[file] = content

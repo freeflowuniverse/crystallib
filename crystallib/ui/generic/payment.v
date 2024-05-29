@@ -1,6 +1,6 @@
 module generic
 
-import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.ui.telegram { UITelegram }
 import freeflowuniverse.crystallib.ui.uimodel
 

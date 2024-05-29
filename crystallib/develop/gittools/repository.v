@@ -75,7 +75,7 @@ fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
 		locator := repo.gs.locator_new(st.remote_url)!
 		repo.addr = locator.addr
 		repo.addr.branch = st.branch
-		// println(repo)
+		// console.print_debug(repo)
 	}
 }
 
@@ -91,12 +91,12 @@ pub fn (mut repo GitRepo) status() !GitRepoStatus {
 		// we can calculate the key
 		cache_key = repo.addr.cache_key_status()
 	}
-	// println("cache_key: $cache_key")
+	// console.print_debug("cache_key: $cache_key")
 	mut data := ''
 	if cache_key.len > 0 {
 		data = redis.get(cache_key)!
 	}
-	// println("data: $data")
+	// console.print_debug("data: $data")
 	if data.len == 0 {
 		repo.load()!
 		data = redis.get(repo.addr.cache_key_status())!
@@ -163,7 +163,7 @@ pub fn (mut repo GitRepo) commit_pull(args_ ActionArgs) ! {
 // pulls remote content in, will fail if there are local changes
 pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	$if debug {
-		println('   - PULL: ${repo.url_get(true)}')
+		console.print_debug('   - PULL: ${repo.url_get(true)}')
 	}
 	// repo.ssh_key_load()!
 	// defer {
@@ -182,7 +182,7 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	// pull can't see the status
 	cmd2 := 'cd ${repo.path.path} && git pull'
 	osal.execute_silent(cmd2) or {
-		println(' GIT PULL FAILED: ${cmd2}')
+		console.print_debug(' GIT PULL FAILED: ${cmd2}')
 		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
 	}
 	repo.load()!
@@ -191,11 +191,11 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 
 pub fn (mut repo GitRepo) rev() !string {
 	// $if debug {
-	// 	println('   - REV: ${repo.url_get(true)}')
+	// 	console.print_debug('   - REV: ${repo.url_get(true)}')
 	// }
 	cmd2 := 'cd ${repo.path.path} && git rev-parse HEAD'
 	res := osal.execute_silent(cmd2) or {
-		println(' GIT REV FAILED: ${cmd2}')
+		console.print_debug(' GIT REV FAILED: ${cmd2}')
 		return error('Cannot rev repo: ${repo.path}. Error was ${err}')
 	}
 	return res.trim_space()
@@ -222,7 +222,7 @@ pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
 			return error('Cannot commit repo: ${repo.path.path}. Error was ${err}')
 		}
 	} else {
-		println('     > no change')
+		console.print_debug('     > no change')
 	}
 	repo.load()!
 }
@@ -247,8 +247,8 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 		echo ""
 		'
 		res := osal.exec(cmd: cmd, raise_error: false)!
-		println(cmd)
-		// println(res)
+		console.print_debug(cmd)
+		// console.print_debug(res)
 		if res.exit_code > 0 {
 			console.print_header(' could not remove changes, will re-clone ${repo.path.path}')
 			repo.path.delete()! // remove path, this will re-clone the full thing
@@ -265,7 +265,7 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 		args.reload = false
 	}
 	$if debug {
-		println('   - PUSH: ${repo.url_get(true)} on ${repo.path.path}')
+		console.print_debug('   - PUSH: ${repo.url_get(true)} on ${repo.path.path}')
 	}
 	// repo.ssh_key_load()!
 	// defer {
@@ -273,7 +273,7 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 	// }
 	st := repo.status()!
 	if st.need_push {
-		println('    - PUSH THE CHANGES')
+		console.print_debug('    - PUSH THE CHANGES')
 		cmd := 'cd ${repo.path.path} && git push'
 		osal.execute_silent(cmd) or {
 			return error('Cannot push repo: ${repo.path.path}. Error was ${err}')
@@ -296,10 +296,10 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 	repo.fetch_all()!
 	cmd := 'cd ${repo.path.path} && git checkout ${branchname}'
 	osal.execute_silent(cmd) or {
-		// println('GIT CHECKOUT FAILED: $cmd_checkout')
+		// console.print_debug('GIT CHECKOUT FAILED: $cmd_checkout')
 		return error('Cannot branch switch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
-	// println(cmd)
+	// console.print_debug(cmd)
 	repo.pull(reload: true)!
 }
 
@@ -310,7 +310,7 @@ pub fn (mut repo GitRepo) fetch_all() ! {
 	// }
 	cmd := 'cd ${repo.path.path} && git fetch --all'
 	osal.execute_silent(cmd) or {
-		// println('GIT FETCH FAILED: $cmd_checkout')
+		// console.print_debug('GIT FETCH FAILED: $cmd_checkout')
 		return error('Cannot fetch repo: ${repo.path.path}. Error was ${err} \n cmd: ${cmd}')
 	}
 	repo.load()!
@@ -320,7 +320,7 @@ pub fn (mut repo GitRepo) fetch_all() ! {
 // deletes git repository
 pub fn (mut repo GitRepo) delete() ! {
 	$if debug {
-		println('   - DELETE: ${repo.url_get(true)}')
+		console.print_debug('   - DELETE: ${repo.url_get(true)}')
 	}
 	if !os.exists(repo.path.path) {
 		return
@@ -369,7 +369,7 @@ pub fn (repo GitRepo) vscode() ! {
 // 	// exists means the key has been loaded
 // 	// nrkeys is how many keys were loaded in sshagent in first place
 // 	// exists, nrkeys := sshagent.key_loaded(repo.addr.name)
-// 	// // println(' >>> $repo.addr.name $nrkeys, $exists')
+// 	// // console.print_debug(' >>> $repo.addr.name $nrkeys, $exists')
 
 // 	// if (!exists) || nrkeys > 0 {
 // 	// 	// means we did not find the key but there were other keys loaded

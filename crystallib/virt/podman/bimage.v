@@ -3,6 +3,7 @@ module podman
 import freeflowuniverse.crystallib.osal { exec }
 import time
 import freeflowuniverse.crystallib.virt.utils
+import freeflowuniverse.crystallib.ui.console
 // TODO: needs to be implemented for buildah, is still code from docker
 
 @[heap]
@@ -129,7 +130,7 @@ pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
 			if args.tag != '' && i.tag != args.tag {
 				continue
 			}
-			println('found image: ${i} -- ${args}')
+			console.print_debug('found image: ${i} -- ${args}')
 			result_digest = i.digest
 			counter += 1
 		}

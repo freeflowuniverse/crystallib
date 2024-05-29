@@ -37,16 +37,16 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	if image.is_png() {
 		if image.size_kbyte > 500 && image.size_x > 2400 {
 			image.size_kbyte = 0
-			println('   - resize 50%: ${image.path.path}')
+			console.print_debug('   - resize 50%: ${image.path.path}')
 			cmd := "convert '${image.path.path}' -resize 50% '${image.path.path}'"
 			osal.execute_silent(cmd) or {
 				return error('could not convert to png --resize 50%.\n${cmd} .\n${error}')
 			}
-			// println(image)
+			// console.print_debug(image)
 			image.init_()!
 		} else if image.size_kbyte > 500 && image.size_x > 1600 {
 			image.size_kbyte = 0
-			println('   - resize 75%: ${image.path.path}')
+			console.print_debug('   - resize 75%: ${image.path.path}')
 			cmd := "convert '${image.path.path}' -resize 75% '${image.path.path}'"
 			osal.execute_silent(cmd) or {
 				return error('could not convert to png --resize 75%.\n${cmd} \n${error}')
@@ -62,7 +62,7 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 				return
 			}
 			path_dest := image.path.path_no_ext() + '.jpg'
-			println('   - convert to png: ${path_dest}')
+			console.print_debug('   - convert to png: ${path_dest.str()}')
 			cmd := "convert '${image.path.path}' '${path_dest}'"
 			if os.exists(path_dest) {
 				os.rm(path_dest)!
@@ -81,7 +81,7 @@ pub fn (mut image Image) downsize(args DownsizeArgsInternal) ! {
 	mut p := parent.file_get_new('.done')!
 	mut c := p.read()!
 	if c.contains(image.path.name()) {
-		print(image)
+		console.print_debug(image.str())
 		print_backtrace()
 		panic('bug')
 	}

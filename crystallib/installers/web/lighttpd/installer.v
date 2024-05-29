@@ -39,7 +39,7 @@ pub fn install(args InstallArgs) ! {
 	// install lighttpd if it was already done will return true
 	console.print_header('package install lighttpd')
 
-	println(' lighttpd installed')
+	console.print_debug(' lighttpd installed')
 
 	osal.done_set('install_lighttpd', 'OK')!
 	return
@@ -78,7 +78,7 @@ pub fn install_configure_default(config WebConfig) ! {
 
 	configuration_set(content: config_file)!
 
-	println(' INSTALL LIGHTTPD OK ON PORT 8000')
+	console.print_debug(' INSTALL LIGHTTPD OK ON PORT 8000')
 }
 
 pub fn configuration_get() !string {

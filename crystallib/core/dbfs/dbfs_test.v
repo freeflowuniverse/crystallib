@@ -2,6 +2,7 @@ module dbfs
 
 import time
 import os
+import freeflowuniverse.crystallib.ui.console
 
 fn test_dbfs() {
 	data_dir := '/tmp/db'
@@ -56,12 +57,12 @@ fn dotest(mut db DB, mut dbcollection DBCollection) ! {
 	assert db.exists(id: id2)!
 	assert db.exists(id: id3)!
 	id3_exsts := db.exists(id: id3 + 1)!
-	println(id3 + 1)
+	console.print_debug(id3 + 1)
 	assert id3_exsts == false
 
 	for i in 3 .. 100 {
 		id4 := db.set(key: 'a${i}', value: 'b${i}')!
-		println('${i} --> ${id4}')
+		console.print_debug('${i} --> ${id4}')
 		assert i == id4
 	}
 	db.delete(key: 'aaa')!

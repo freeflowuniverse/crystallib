@@ -6,6 +6,7 @@ import json
 import net.http
 import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
 import crypto.md5
+import freeflowuniverse.crystallib.ui.console
 
 struct LiquidConnection {
 mut:
@@ -157,7 +158,7 @@ fn (mut h LiquidConnection) post_json(prefix string, postdata string, cache bool
 	if result == '' && authenticated {
 		mut req := http.new_request(http.Method.post, '${h.url}/${prefix}', postdata)
 		req.header = h.header()
-		println(req)
+		console.print_debug(req)
 		response := req.do()!
 		result = response.body
 	}
@@ -189,7 +190,7 @@ fn (mut h LiquidConnection) post_json_str(prefix string, postdata string, cache 
 	if result == '' && authenticated {
 		mut req := http.new_request(http.Method.post, '${h.url}/${prefix}', postdata)
 		req.header = h.header()
-		println(req)
+		console.print_debug(req)
 		response := req.do()!
 		result = response.body
 	}
@@ -215,7 +216,7 @@ fn (mut h LiquidConnection) get_json(prefix string, data string, cache bool) !ma
 	*/
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
-		// println("MISS1")
+		// console.print_debug("MISS1")
 		mut req := http.new_request(http.Method.get, '${h.url}/${prefix}', data)
 		req.header = h.header()
 		res := req.do()!
@@ -244,7 +245,7 @@ fn (mut h LiquidConnection) get_json_str(prefix string, data string, cache bool)
 	*/
 	mut result := h.cache_get(prefix, data, cache)
 	if result == '' {
-		println('MISS1')
+		console.print_debug('MISS1')
 		mut req := http.new_request(http.Method.get, '${h.url}/${prefix}', data)
 		req.header = h.header()
 		res := req.do()!

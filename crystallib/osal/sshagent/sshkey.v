@@ -2,6 +2,7 @@ module sshagent
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct SSHKey {
@@ -71,7 +72,7 @@ pub fn (mut key SSHKey) str() string {
 
 pub fn (mut key SSHKey) load() ! {
 	$if debug {
-		println(" - sshkey load: '${key}'")
+		console.print_debug(" - sshkey load: '${key}'")
 	}
 	if key.name.len == 0 {
 		return error('can only load keys which are on filesystem and as such have a name.')

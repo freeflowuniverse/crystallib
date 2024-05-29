@@ -1,6 +1,7 @@
 import freeflowuniverse.crystallib.conversiontools.imagemagick { image_new }
 import freeflowuniverse.crystallib.core.pathlib
 import os
+import freeflowuniverse.crystallib.ui.console
 
 const testpath = os.dir(@FILE) + '/example'
 
@@ -25,7 +26,7 @@ fn test_image_downsize() {
 	// test correct file renaming
 	assert image.size_kbyte < image_org.size_kbyte
 	assert image.path.name_no_ext() == '${image_org.path.name_no_ext()}_'
-	// println(image.path.name())
+	// console.print_debug(image.path.name())
 
 	// now need to put original file back
 	image_org.path.restore(overwrite: true)!

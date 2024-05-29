@@ -79,7 +79,7 @@ pub fn restart() ! {
 }
 
 pub fn start() ! {
-	// println("start")
+	// console.print_debug("start")
 
 	mut scr := screen.new(reset: false)!
 	name := 'yggdrasil'
@@ -101,9 +101,9 @@ pub fn start() ! {
 
 	s.cmd_send(cmd2)!
 
-	println(s)
+	console.print_debug(s)
 
-	println('send done')
+	console.print_debug('send done')
 
 	if osal.is_osx() {
 		mut myui := ui.new()!

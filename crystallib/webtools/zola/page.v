@@ -134,18 +134,18 @@ fn (p PageFrontMatter) markdown() string {
 	mut lines := front_matter.split_into_lines()
 	for i, mut line in lines {
 		if line.starts_with('date = ') {
-			if p.date.unix_milli() == 0 {
-				line = ''
-				continue
-			}
-			line = 'date = ${p.date.ymmdd()}'
+			line = ''
+			continue
+			// if p.date.unix_milli() == 0 {
+			// }
+			// line = 'date = ${p.date.ymmdd()}'
 		}
 		if line.starts_with('updated = ') {
-			if p.updated.unix_milli() == 0 {
+			// if p.updated.unix_milli() == 0 {
 				line = ''
 				continue
-			}
-			line = 'updated = ${p.updated.ymmdd()}'
+			// }
+			// line = 'updated = ${p.updated.ymmdd()}'
 		} else if line.starts_with('slug = ') {
 			if p.slug == '' {
 				line = ''

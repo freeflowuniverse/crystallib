@@ -136,7 +136,7 @@ pub fn check() !bool {
 
 	// check info returns info about zdb
 	info := db.info()!
-	// println(info)
+	// console.print_debug(info)
 
 	assert info.contains('server_name: 0-db')
 

@@ -33,7 +33,7 @@ pub enum ZProcessStatus {
 
 pub fn (mut zinit Zinit) process_get(name_ string) !ZProcess {
 	name := texttools.name_fix(name_)
-	// println(zinit)
+	// console.print_debug(zinit)
 	return zinit.processes[name] or { return error("cannot find process in zinit:'${name}'") }
 }
 
@@ -93,7 +93,7 @@ pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 	zp.env = args.env.move()
 	zp.after = args.after
 	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
-	// println('debug zprocess path yaml: ${pathyaml}')
+	// console.print_debug('debug zprocess path yaml: ${pathyaml}')
 	pathyaml.write(zp.config_content())!
 	zp.start()!
 	zinit.processes[args.name] = zp
@@ -202,9 +202,9 @@ pub fn (mut zp ZProcess) output_wait(c_ string, timeoutsec int) ! {
 	c := c_.replace('\n', '')
 	for _ in 0 .. 2000 {
 		o := zp.log()!
-		println(o)
+		console.print_debug(o)
 		$if debug {
-			println(" - zinit ${zp.name}: wait for: '${c}'")
+			console.print_debug(" - zinit ${zp.name}: wait for: '${c}'")
 		}
 		// need to replace \n because can be wrapped because of size of pane
 		if o.replace('\n', '').contains(c) {
@@ -262,7 +262,7 @@ pub fn (mut zp ZProcess) status() !ZProcessStatus {
 		}
 		if line.starts_with('state') {
 			st := line.split('state:')[1].trim_space().to_lower()
-			// println(" status string: $st")	
+			// console.print_debug(" status string: $st")	
 			if st.contains('sigkill') {
 				zp.status = .killed
 			} else if st.contains('error') {
@@ -284,7 +284,7 @@ pub fn (mut zp ZProcess) status() !ZProcessStatus {
 	// }else if statusstr.contains("error"){
 	// 	zp.status = .error
 	// }else{
-	// 	println(st)
+	// 	console.print_debug(st)
 	// 	panic("status not implemented yet")
 	// }
 	return zp.status

@@ -1,6 +1,7 @@
 module jsonschema
 
 import freeflowuniverse.crystallib.core.codemodel
+import freeflowuniverse.crystallib.ui.console
 
 fn test_struct_to_schema() {
 	struct_ := codemodel.Struct{
@@ -18,5 +19,5 @@ fn test_struct_to_schema() {
 	}
 
 	schema := struct_to_schema(struct_)
-	println(schema)
+	console.print_debug(schema)
 }

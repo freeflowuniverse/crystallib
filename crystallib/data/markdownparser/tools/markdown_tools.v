@@ -1,4 +1,5 @@
 module markdownparser
+import freeflowuniverse.crystallib.ui.console
 
 pub fn markdown_min_header(text string, minlevel int) string {
 	mut nrhash := 100
@@ -15,7 +16,7 @@ pub fn markdown_min_header(text string, minlevel int) string {
 	}
 
 	// nrhash has now the min header level found
-	// println('minlevel: $minlevel nrhash:$nrhash')
+	// console.print_debug('minlevel: $minlevel nrhash:$nrhash')
 
 	mut addhashstring := ''
 	if minlevel > nrhash {

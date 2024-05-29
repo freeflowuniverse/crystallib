@@ -2,11 +2,13 @@ module playcmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
 import freeflowuniverse.crystallib.data.doctree
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
+import os
 
 pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
-	mut buildroot := ''
-	mut publishroot := ''
+	mut buildroot := '${os.home_dir()}/hero/var/mdbuild'
+	mut publishroot := '${os.home_dir()}/hero/www/info'
 	mut coderoot := ''
 	// mut install := false
 	mut reset := false
@@ -15,6 +17,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 	// check if any actions for doctree, if not then nothing to do here
 	dtactions := plbook.find(filter: 'doctree.')!
 	if dtactions.len == 0 {
+		console.print_debug("can't find doctree.add statements, nothing to do")
 		return
 	}
 
@@ -62,13 +65,13 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		name := p.get('name')!
 		url := p.get('url')!
 		title := p.get_default('title', name)!
-		publish_path := p.get_default('publish_path', '')!
-		build_path := p.get_default('build_path', '')!
+		publish_path := p.get_default('publish_path', '${publishroot}/${name}')!
+		build_path := p.get_default('build_path', '${buildroot}/${name}')!
 		printbook := p.get_default_false('printbook')
 		foldlevel := p.get_int_default('foldlevel', 0)!
+		production := p.get_default_false('production')
 
-		buildroot_book := '${buildroot}/${name}'
-		tree.export(dest: buildroot_book, reset: true)!
+		tree.export(dest: build_path, reset: true)!
 
 		mut mdbooks := mdbook.get()!
 
@@ -77,7 +80,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		cfg.path_publish = publishroot
 
 		mdbooks.generate(
-			doctree_path: buildroot_book
+			doctree_path: build_path
 			name: name
 			title: title
 			summary_url: url
@@ -85,6 +88,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 			build_path: build_path
 			printbook: printbook
 			foldlevel: foldlevel
+			production: production
 		)!
 		action.done = true
 	}

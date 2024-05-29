@@ -54,6 +54,6 @@ pub fn rsync(args_ RsyncArgs) ! {
 	$if debug {
 		console.print_debug('rsync command (osal):\n${cmd}')
 	}
-	// println(cmd)
+	// console.print_debug(cmd)
 	osal.exec(cmd: cmd, stdout: args_.stdout)!
 }

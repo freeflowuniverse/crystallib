@@ -18,14 +18,14 @@ pub fn install(args_ InstallArgs) ! {
 	if args.reset || args.uninstall {
 		console.print_header('uninstall chrome')
 		uninstall()!
-		println(' - ok')
+		console.print_debug(' - ok')
 		if args.uninstall {
 			return
 		}
 	}
 	console.print_header('package_install install chrome')
 	if !args.reset && osal.done_exists('install_chrome') && exists()! {
-		println(' - already installed')
+		console.print_debug(' - already installed')
 		return
 	}
 	mut url := ''
@@ -35,7 +35,7 @@ pub fn install(args_ InstallArgs) ! {
 	} else if osal.platform() == .osx {
 		url = 'https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg'
 	}
-	println(' download ${url}')
+	console.print_debug(' download ${url}')
 	_ = osal.download(
 		url: url
 		minsize_kb: 5000
@@ -54,10 +54,10 @@ pub fn install(args_ InstallArgs) ! {
 	rm -f /tmp/googlechrome.dmg	
 	"
 	osal.exec(cmd: cmd)!
-	println(' - copy done to Application folder.')
+	console.print_debug(' - copy done to Application folder.')
 
 	if exists()! {
-		println(' - exists check ok.')
+		console.print_debug(' - exists check ok.')
 	}
 
 	osal.done_set('install_chrome', 'OK')!

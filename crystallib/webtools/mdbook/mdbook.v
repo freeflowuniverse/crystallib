@@ -33,13 +33,14 @@ pub mut:
 	doctree_path string
 	publish_path string
 	build_path   string
+	production bool
 }
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	console.print_header(' mdbook: ${args_.name}')
-	mut cfg := books.config()!
-
+	mut cfg := books.config()!	
 	mut args := args_
+
 	if args.title == '' {
 		args.title = args.name
 	}
@@ -97,7 +98,7 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 		books: &books
 	}
 
-	mut summary := book.summary()!
+	mut summary := book.summary(args_.production)!
 
 	// create the additional collection (is a system collection)
 	addpath := '${book.path_build.path}/src/additional'
@@ -164,7 +165,6 @@ A normal user can ignore these pages, they are just to get links to work.
 		}
 	}
 
-	// println(summary)
 
 	path_summary_str := '${book.path_build.path}/src/SUMMARY.md'
 	mut path_summary := pathlib.get_file(path: path_summary_str, create: true)!
@@ -233,6 +233,7 @@ pub fn (mut book MDBook) generate() ! {
 
 fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
+	console.print_debug(book.str())
 	mut l := loader()!
 	l.load()!
 	for item in l.embedded_files {
@@ -271,7 +272,7 @@ fn (mut book MDBook) summary_image_set() ! {
 		if line.contains('](') && first {
 			folder_first := line.all_after('](').all_before_last(')')
 			folder_first_dir_img := '${book.path_build.path}/src/${folder_first.all_before_last('/')}/img'
-			// println(folder_first_dir_img)
+			// console.print_debug(folder_first_dir_img)
 			// if true{panic("s")}
 			if os.exists(folder_first_dir_img) {
 				mut image_dir := pathlib.get_dir(path: folder_first_dir_img)!

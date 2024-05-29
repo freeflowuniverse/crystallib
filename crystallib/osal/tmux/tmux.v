@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 // import freeflowuniverse.crystallib.session
 import os
 import time
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Tmux {
@@ -33,7 +34,7 @@ pub fn (mut tmux Tmux) load() ! {
 	if !isrunning {
 		tmux.start()!
 	}
-	// println("SCAN")
+	// console.print_debug("SCAN")
 	tmux.scan()!
 }
 
@@ -71,7 +72,7 @@ pub fn (mut t Tmux) list_print() {
 	// os.log('TMUX - Start listing  ....')
 	for _, session in t.sessions {
 		for _, window in session.windows {
-			println(window)
+			console.print_debug(window)
 		}
 	}
 }
@@ -94,7 +95,7 @@ pub fn (mut t Tmux) is_running() !bool {
 		panic('bug')
 	}
 	if res.error.contains('no server running') {
-		// println(" TMUX NOT RUNNING")
+		// console.print_debug(" TMUX NOT RUNNING")
 		return false
 	}
 	if res.error.contains('no current client') {

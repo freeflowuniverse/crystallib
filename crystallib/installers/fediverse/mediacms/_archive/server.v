@@ -10,6 +10,7 @@ import json
 import rand
 import os
 import time
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct Config {
@@ -82,7 +83,7 @@ pub fn get(name_ string) !Server {
 		// if z.process_exists(processname) {
 		// 	server.process = z.process_get(processname)!
 		// }
-		// // println(" - server get ok")
+		// // console.print_debug(" - server get ok")
 		// server.start()!
 		// return server
 	}
@@ -126,7 +127,7 @@ pub fn (mut server Server) start() ! {
 	// p.output_wait('Starting external listener on :8008', 120)!
 
 	// o := p.log()!
-	// println(o)
+	// console.print_debug(o)
 
 	// server.check()!
 
@@ -182,6 +183,6 @@ pub mut:
 // 		cd ${server.path_config.path}	
 // 		mediacms-create-account --config mediacms.yaml -username ${args.name} -password ${args.passwd} ${admin} -url http://localhost:8008
 // 		'
-// 	println(cmd)
+// 	console.print_debug(cmd)
 // 	job := osal.exec(cmd: cmd)!
 // }
