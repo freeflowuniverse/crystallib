@@ -135,6 +135,11 @@ pub fn typesymbol_to_schema(symbol_ string) SchemaRef {
 				typ: 'string'
 			})
 		}
+		if symbol == 'f32' {
+			return SchemaRef(Schema{
+				typ: 'string'
+			})
+		}
 		if symbol == 'f64' {
 			return SchemaRef(Schema{
 				typ: 'string'

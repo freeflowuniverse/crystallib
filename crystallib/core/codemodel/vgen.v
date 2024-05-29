@@ -235,7 +235,7 @@ pub fn (custom CustomCode) vgen() string {
 pub fn (result Result) vgen() string {
 	result_type := if result.structure.name != '' {
 		result.structure.get_type_symbol()
-	} else {
+	} else if result.typ.symbol == 'void' {''} else {
 		result.typ.symbol
 	}
 	str := if result.result { '!' } else { '' }

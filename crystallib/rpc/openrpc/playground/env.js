@@ -1,1 +1,1 @@
-window._env_ = { ACTORS: '[{"name":"circles","url":"/specs/circles.json"},{"name":"coordinator","url":"/specs/coordinator.json"}]' }
+window._env_ = { ACTORS: '[{"name":"circles","url":"/specs/circles.json"},{"name":"collaboration","url":"/specs/collaboration.json"},{"name":"governance","url":"/specs/governance.json"}]' }

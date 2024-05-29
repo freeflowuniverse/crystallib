@@ -101,6 +101,8 @@ fn (vparser VParser) parse_vfile(path string, mut table &ast.Table) []CodeItem {
 		is_fmt: true
 	}
 	file_ast := parser.parse_file(path, mut table, .parse_comments, fpref)
+	mut file := pathlib.get_file(path: path) or {panic(err)}
+	file_text := file.read() or {panic(err)}
 	mut preceeding_comments := []ast.Comment{}
 
 	for stmt in file_ast.stmts {
@@ -127,6 +129,7 @@ fn (vparser VParser) parse_vfile(path string, mut table &ast.Table) []CodeItem {
 					fn_decl: fn_decl
 					table: table
 					comments: preceeding_comments
+					text: file_text
 				))
 			}
 			preceeding_comments = []ast.Comment{}
@@ -220,6 +223,7 @@ struct VFuncArgs {
 	comments []ast.Comment // v comments that belong to the function
 	fn_decl  ast.FnDecl    // v.ast parsed function declaration
 	table    &ast.Table    // ast table used for getting typesymbols from
+	text string
 }
 
 // parse_vfunc parses function args into function struct
@@ -260,6 +264,20 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		}
 	}
 
+	text_lines := args.text.split('\n')
+	fn_lines := text_lines.filter(it.contains('fn') && it.contains(args.fn_decl.short_name))
+	fn_line := fn_lines[0] or {panic('this should never happen')}
+	line_i := text_lines.index(fn_line)
+	end_i := line_i + text_lines[line_i..].index('}')
+	println('end_i ${text_lines[end_i]}')
+
+	fn_text := text_lines[line_i..end_i+1].join('\n')
+	// mut fn_index := args.text.index(args.fn_decl.short_name) or {panic('this should never happen1')}
+	// text_cropped := args.text[..fn_index] or {panic('this should never happen2')}
+	// fn_start := text_cropped.last_index('fn ') or {panic('this should never happen3 \n-${text_cropped}')}
+	// fn_text := args.text[fn_start..] or {panic('this should never happen4')}
+	fn_parsed := codemodel.parse_function(fn_text) or {panic(err)}
+
 	return Function{
 		name: args.fn_decl.short_name
 		description: fn_comments.join(' ')
@@ -267,6 +285,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		receiver: receiver
 		params: params
 		result: result
+		body: fn_parsed.body
 	}
 }
 
@@ -424,7 +443,6 @@ fn (vparser VParser) parse_vsumtype(args VSumTypeArgs) Sumtype {
 fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []StructField {
 	mut fields_ := []StructField{}
 	for field in fields {
-		println('debugzorro ${field.name}')
 		mut anon_struct := Struct{}
 		if table.type_to_str(field.typ).all_after_last('.').starts_with('_VAnon') {
 			anon_struct = vparser.parse_vstruct(
@@ -468,18 +486,15 @@ fn (vparser VParser) parse_fields(fields []ast.StructField, table &ast.Table) []
 // parse_embeds parses ast.embeds into struct fields
 // TODO: Support requiresive fields
 fn (vparser VParser) parse_embeds(embeds []ast.Embed, table &ast.Table) []StructField {
-	println('debugzo10010 ${embeds}')
 	mut fields := []StructField{}
 	for embed in embeds {
 		$if debug {
 			console.print_debug('Parsing embed: ${table.sym(embed.typ).info}')
 		}
 		embed_info := table.sym(embed.typ).info
-		println('debugzo2202022 ${table.sym(embed.typ).info}')
 		if embed_info is ast.Struct {
 			// embeds: vparser.parse_embeds(embed_info.embeds, table)
 			fields << vparser.parse_fields(embed_info.fields, table)
-			println('debugzorro048 ${fields}')
 		}
 	}
 	return fields
