@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.clients.postgres
 import cli { Command, Flag }
+import freeflowuniverse.crystallib.ui.console
 
 pub fn cmd_postgres(mut cmdroot Command) {
 	mut cmd_run := Command{
@@ -83,7 +84,7 @@ pub fn cmd_postgres(mut cmdroot Command) {
 	cmd_run.add_command(cmd_list)
 	cmdroot.add_command(cmd_run)
 
-	// println(cmdroot.help_message())
+	// console.print_debug(cmdroot.help_message())
 }
 
 fn cmd_postgres_execute(cmd Command) ! {
@@ -91,13 +92,13 @@ fn cmd_postgres_execute(cmd Command) ! {
 	mut cl := postgres.get(instance: name)!
 	rows := cl.exec(cmd.args[0])!
 	for row in rows {
-		println(row)
+		console.print_debug(row)
 	}
 }
 
 fn cmd_postgres_list(cmd Command) ! {
 	mut cl := postgres.get(instance: 'default')!
-	println('## Postgresql Connections:\n')
+	console.print_debug('## Postgresql Connections:\n')
 	items := cl.db_names()!
 	for item in items {
 		console.print_header(' ${item}')
@@ -108,7 +109,7 @@ fn cmd_postgres_check(cmd Command) ! {
 	mut name := cmd.flags.get_string('name') or { 'default' }
 	mut cl := postgres.get(instance: name)!
 	cl.check()!
-	println('DB is answering.')
+	console.print_debug('DB is answering.')
 }
 
 fn cmd_postgres_backupall(cmd Command) ! {
@@ -117,7 +118,7 @@ fn cmd_postgres_backupall(cmd Command) ! {
 	if dest == '' {
 		return error("can't find dest:${dest}")
 	}
-	println(" backup db name:'${name}' dest:'${dest}")
+	console.print_debug(" backup db name:'${name}' dest:'${dest}")
 	mut cl := postgres.get(instance: name)!
 	cl.backup(dest: dest, dbname: name)!
 }
@@ -139,5 +140,5 @@ fn cmd_postgres_print(cmd Command) ! {
 }
 
 fn postgres_help(cmd Command) ! {
-	println(cmd.help_message())
+	console.print_debug(cmd.help_message())
 }

@@ -52,19 +52,15 @@ pub fn (mut site ZolaSite) header_dropdown_add(args Dropdown) ! {
 pub fn (mut header Header) export(content_dir string) ! {
 	// header.Page.export(dest: '${content_dir}/header.md')!
 	mut content := '---
+title: "Header"
+insert_anchor_links: "left"
+template: "partials/header.html"
+extra:
+  logoPath: "images/black_threefold.png"
 ---
-!!flowrift.header
-	logo: ${header.logo}
-'
-	for item in header.items {
-		if item is Link {
-			content += "\n\n!!flowrift.header_item	
-	type:'link'
-	label:${item.label}
-	url: '${item.page}'"
-		}
-	}
 
+- [Home]("/".md)'
 	mut header_file := pathlib.get_file(path: '${content_dir}/header.md')!
+	println('debugzorty ${header_file}')
 	header_file.write(content)!
 }

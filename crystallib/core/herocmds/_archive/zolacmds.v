@@ -41,7 +41,7 @@ The -r will run it, can also do -e or -st to see sourcetree
 }
 
 fn cmd_zola_execute(cmd Command) ! {
-	mut session, path := session_run_do(cmd)!
+	mut session, path := plbook_run(cmd)!
 
 	mut name := cmd.flags.get_string('name') or { '' }
 	reset := cmd.flags.get_bool('gitreset') or { false }
