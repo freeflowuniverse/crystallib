@@ -10,7 +10,7 @@ fn (mut repo GitRepo) load_from_url() ! {
 	if !(repo.path.exists()) {
 		url := repo.addr.url_http_with_branch_get()
 		// console.print_header(' check repo:$url, pull:$args.pull, reset:$args.reset')
-		// println(repo.addr)
+		// console.print_debug(repo.addr)
 		// need to get the status of the repo
 		// console.print_header(' repo $repo.name() check')
 		mut needs_to_be_ssh := false
@@ -28,12 +28,12 @@ fn (mut repo GitRepo) load_from_url() ! {
 		// get the url (http or ssh)
 		mut cmd := ''
 		if needs_to_be_ssh {
-			// println("GIT: PULL USING SSH")
+			// console.print_debug("GIT: PULL USING SSH")
 			// cmd based on ssh
 			cmd = repo.get_clone_cmd(false)
 		} else {
 			// cmd based on http
-			// println("GIT: PULL USING HTTP")
+			// console.print_debug("GIT: PULL USING HTTP")
 			cmd = repo.get_clone_cmd(true)
 		}
 		osal.exec(cmd: cmd, debug: false) or {

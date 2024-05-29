@@ -71,16 +71,13 @@ fn test_simple_list() {
 	assert doc1.children[1] is elements.List
 
 	list := doc1.children[1]
-	assert list.children.len == 1
+	assert list.children.len == 2
 
-	nested_list := list.children[0]
-	assert nested_list.children.len == 2
-
-	list_item1 := nested_list.children[0]
+	list_item1 := list.children[0]
 	assert list_item1 is elements.ListItem
 	assert list_item1.content == '- li1'
 
-	list_item2 := nested_list.children[1]
+	list_item2 := list.children[1]
 	assert list_item2 is elements.ListItem
 	assert list_item2.content == '- li2'
 }
@@ -98,19 +95,17 @@ fn test_nested_list() {
 	assert doc.children[1] is elements.List
 
 	list := doc.children[1]
-	assert list.children.len == 1
-	assert list.children[0] is elements.List
+	assert list.children.len == 3
 
-	nl := list.children[0]
-	assert nl.children.len == 2
-	assert nl.children[0] is elements.ListItem
-	assert nl.children[0].content == '- li1'
-	assert nl.children[1] is elements.List
+	li1 := list.children[0]
+	assert li1 is elements.ListItem
+	assert li1.content == '- li1'
 
-	nl2 := nl.children[1]
-	assert nl2.children.len == 2
-	assert nl2.children[0] is elements.ListItem
-	assert nl2.children[0].content == '  1. li2'
-	assert nl2.children[1] is elements.ListItem
-	assert nl2.children[1].content == '  2. li3'
+	li2 := list.children[1]
+	assert li2 is elements.ListItem
+	assert li2.content == '  1. li2'
+
+	li3 := list.children[2]
+	assert li3 is elements.ListItem
+	assert li3.content == '  2. li3'
 }

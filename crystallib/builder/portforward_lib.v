@@ -2,6 +2,7 @@ module builder
 
 import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.data.ipaddress
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct ForwardArgsToLocal {
@@ -24,7 +25,7 @@ pub fn portforward_to_local(args_ ForwardArgsToLocal) ! {
 	if addr.cat == .ipv6 {
 		cmd = 'ssh -L ${args.local_port}:localhost:${args.remote_port} ${args.user}@${args.address.trim('[]')}'
 	}
-	println(cmd)
+	console.print_debug(cmd)
 	mut scr := screen.new(reset: false)!
 	_ = scr.add(name: args.name, cmd: cmd)!
 }

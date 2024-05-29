@@ -2,6 +2,7 @@ module osal
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.ui.console
 
 // will return temporary path which then can be executed
 fn cmd_to_script_path(cmd Command) !string {
@@ -66,6 +67,6 @@ fn cmd_to_script_path(cmd Command) !string {
 		name: cmd.name
 		ext: extension
 	) or { return error('error: cannot write script to execute: ${err}') }
-	// println(" - scriptpath: ${cmd.scriptpath}")
+	// console.print_debug(" - scriptpath: ${cmd.scriptpath}")
 	return scriptpath
 }

@@ -1,4 +1,5 @@
 module doctree
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Tree {
@@ -63,7 +64,7 @@ pub fn (err NoOrTooManyObjFound) msg() string {
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
 pub fn (tree Tree) page_get(pointerstr string) !&Page {
-	// println("page get:${pointerstr}")
+	// console.print_debug("page get:${pointerstr}")
 	p := pointer_new(pointerstr)!
 	if p.name == '' || p.collection == '' {
 		return ObjNotFound{
@@ -72,7 +73,7 @@ pub fn (tree Tree) page_get(pointerstr string) !&Page {
 			name: p.name
 		}
 	}
-	// println(p)
+	// console.print_debug(p)
 	mut res := []&Page{}
 	for _, collection in tree.collections {
 		if p.collection == collection.name {

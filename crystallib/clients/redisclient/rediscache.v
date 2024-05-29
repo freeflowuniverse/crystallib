@@ -1,4 +1,5 @@
 module redisclient
+import freeflowuniverse.crystallib.ui.console
 
 pub struct RedisCache {
 mut:
@@ -21,11 +22,11 @@ pub fn (mut h RedisCache) get(key string) ?string {
 	}
 	key2 := h.namespace + ':' + key
 	hit := h.redis.get('cache:${key2}') or {
-		println('[-] cache: cache miss, ${key2}')
+		console.print_debug('[-] cache: cache miss, ${key2}')
 		return none
 	}
 
-	println('[+] cache: cache hit: ${key2}')
+	console.print_debug('[+] cache: cache hit: ${key2}')
 	return hit
 }
 
@@ -45,11 +46,11 @@ pub fn (mut h RedisCache) exists(key string) bool {
 
 pub fn (mut h RedisCache) reset() ! {
 	key_check := 'cache:' + h.namespace
-	// println(key_check)
+	// console.print_debug(key_check)
 	keys := h.redis.keys(key_check)!
-	// println(keys)
+	// console.print_debug(keys)
 	for key in keys {
-		// println(key)
+		// console.print_debug(key)
 		h.redis.del(key)!
 	}
 }

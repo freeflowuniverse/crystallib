@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.develop.gittools
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct Config {

@@ -59,7 +59,7 @@ pub fn start(args_ Config) !Server {
 	if !manager.exists(processname)! {
 		server.start()!
 	}
-	// println(" - server get ok")
+	// console.print_debug(" - server get ok")
 
 	return server
 }

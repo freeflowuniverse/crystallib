@@ -2,6 +2,7 @@ module osal
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.dbfs
+import freeflowuniverse.crystallib.ui.console
 
 fn donedb() !&dbfs.DB {
 	mut context := base.context()!
@@ -46,7 +47,7 @@ pub fn done_print() ! {
 	for key in db.keys('')! {
 		output += '\t${key} = ${done_get_str(key)}\n'
 	}
-	println('${output}')
+	console.print_debug('${output}')
 }
 
 pub fn done_reset() ! {

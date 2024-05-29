@@ -20,7 +20,7 @@ pub fn install(args_ InstallArgs) ! {
 	if args.uninstall {
 		console.print_header('uninstall qemu')
 		uninstall()!
-		println(' - ok')
+		console.print_debug(' - ok')
 	}
 
 	res := os.execute('virsh -v')

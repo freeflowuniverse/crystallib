@@ -7,3 +7,5 @@ pydantic>=2.7.1
 toml
 msgpack
 colorama
+bs4
+

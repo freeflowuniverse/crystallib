@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import encoding.base64
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct DB {
@@ -87,7 +88,7 @@ pub mut:
 
 // set the key/value will go to filesystem, is organzed per context and each db has a name
 pub fn (mut db DB) set(args_ SetArgs) !u32 {
-	// println(args_)
+	// console.print_debug(args_)
 	mut args := args_
 	if args.value.len == 0 && args.valueb.len == 0 {
 		return error('specify for value or valueb, now both empty')
@@ -144,7 +145,7 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 		args.id = db.parent.incr()!
 		pathsrc = db.path_get(args.id)!
 	}
-	// println(pathsrc)
+	// console.print_debug(pathsrc)
 	if db.config.encrypted {
 		args.valueb = aes_symmetric.encrypt(args.valueb, db.secret()!)
 		pathsrc.write(base64.encode(args.valueb))!

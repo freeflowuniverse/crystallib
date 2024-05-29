@@ -1,6 +1,7 @@
 module currency
 
 import os
+import freeflowuniverse.crystallib.ui.console
 
 __global (
 	currencies shared map[string]Currency
@@ -13,7 +14,7 @@ fn check() {
 }
 
 pub fn refresh() {
-	println('FETCHCURRENCIES')
+	console.print_debug('FETCHCURRENCIES')
 	defaults_set()
 	env := os.environ()
 	egpval := (1 / 32)

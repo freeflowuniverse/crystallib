@@ -3,6 +3,7 @@ module gen
 import net.http
 import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Struct, Type }
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 pub struct ClientGenerator {
 	api_name      string // name of the api the client is being generated for
@@ -165,8 +166,8 @@ fn (mut gen ClientGenerator) config_interactive_function(client Struct) codemode
 		is_pub: true
 		body: "mut myui := ui.new()!
 	console.clear()
-	println('\n## Configure B2 Client')
-	println('========================\n\n')
+	console.print_debug('\n## Configure B2 Client')
+	console.print_debug('========================\n\n')
 
 	mut cfg := self.config()!
 

@@ -2,6 +2,7 @@ module paramsparser
 
 import freeflowuniverse.crystallib.core.texttools
 import json
+import freeflowuniverse.crystallib.ui.console
 
 const textin = "
 	id:a1 name6:aaaaa
@@ -21,7 +22,7 @@ const textin = "
 		```python
 		#even code block in the other block, crazy parsing for sure
 		def test():
-			print()
+			console.print_debug()
 		```
 		'
 
@@ -63,7 +64,7 @@ const textin3 = '
 
 fn test_hexhash() {
 	mut params := parse(paramsparser.textin2)!
-	println(params)
+	console.print_debug('${params}')
 	h := params.hexhash()
 	assert h == 'fca5c320391e7a91ec91999b1b3d66bf5cb7658905284c431777ff6d2fa4a4c3'
 }
@@ -157,7 +158,7 @@ fn test_url1() {
 // 	d := params.export()
 
 // 	mut out := "
-// 	description:'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n- a\\n- something else\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n    print()\\n```'
+// 	description:'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n- a\\n- something else\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n    console.print_debug()\\n```'
 // 	id:a1
 // 	name:'need to do something 1'
 // 	name10:'this is with space'
@@ -260,7 +261,7 @@ fn test_url1() {
 // fn test_kwargs_add() {
 // 	mut params := parse(textin2) or { panic(err) }
 
-// 	println(params.params)
+// 	console.print_debug(params.params)
 
 // 	assert params.params.len == 10
 
@@ -275,7 +276,7 @@ fn test_url1() {
 // fn test_args_add() {
 // 	mut params := parse('urgency:yes red green') or { panic(err) }
 
-// 	println(params.args)
+// 	console.print_debug(params.args)
 
 // 	assert params.params.len == 1
 // 	assert params.args.len == 2
@@ -289,11 +290,11 @@ fn test_url1() {
 // fn test_merge() {
 // 	mut params := parse('urgency:yes red green') or { panic(err) }
 
-// 	println(params.args)
+// 	console.print_debug(params.args)
 
 // 	params.merge('urgency:green blue') or { panic('s') }
 
-// 	println(params.args)
+// 	console.print_debug(params.args)
 
 // 	assert params.params.len == 1
 // 	assert params.args.len == 3
@@ -303,7 +304,7 @@ fn test_url1() {
 
 // fn test_textin2() {
 // 	params := parse(paramsparser.textin2) or { panic(err) }
-// 	println(params)
+// 	console.print_debug(params)
 // 	assert params == Params{
 // 		params: [
 // 			Param{

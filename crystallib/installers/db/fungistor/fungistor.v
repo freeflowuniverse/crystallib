@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.installers.zinit
+import freeflowuniverse.crystallib.ui.console
 
 pub fn install() ! {
 	rust.install()!

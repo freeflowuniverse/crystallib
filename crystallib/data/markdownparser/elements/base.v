@@ -4,7 +4,8 @@ import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.core.smartid
 // import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.core.base
+// import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.core.base
 
 @[heap]
 pub struct DocBase {
@@ -173,7 +174,7 @@ pub fn (self DocBase) markdown() !string {
 	mut out := ''
 	for mut element in self.children() {
 		out += element.markdown()!
-		// println("+++++++++++${element.markdown()!}+++++++++++")
+		// console.print_debug("+++++++++++${element.markdown()!}+++++++++++")
 		// if element.trailing_lf {
 		// 	out += '\n'
 		// }

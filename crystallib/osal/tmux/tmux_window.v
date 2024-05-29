@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.ourtime
 import time
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 struct Window {
@@ -116,7 +117,7 @@ pub fn (mut s Session) window_get(args_ WindowGetArgs) !&Window {
 }
 
 pub fn (mut s Session) window_delete(args_ WindowGetArgs) ! {
-	// $if debug { println(" - window delete: $args_")}
+	// $if debug { console.print_debug(" - window delete: $args_")}
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
 	if !(s.window_exist(args)) {
@@ -150,12 +151,12 @@ pub fn (mut w Window) create() ! {
 		w.cmd = cmd_new
 	}
 
-	// println(w)
+	// console.print_debug(w)
 
 	if w.active == false {
 		res_opt := "-P -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
 		cmd := 'tmux new-window  ${res_opt} -t ${w.session.name} -n ${w.name} \'/bin/bash -c ${w.cmd}\''
-		println(cmd)
+		console.print_debug(cmd)
 		res := osal.exec(cmd: cmd, stdout: false, name: 'tmux_window_create') or {
 			return error("Can't create new window ${w.name} \n${cmd}\n${err}")
 		}
@@ -219,7 +220,7 @@ pub fn (mut w Window) environment_print() ! {
 // capture the output
 pub fn (mut w Window) output_print() ! {
 	o := w.output()!
-	println(o)
+	console.print_debug(o)
 }
 
 // capture the output
@@ -239,9 +240,9 @@ pub fn (mut w Window) output_wait(c_ string, timeoutsec int) ! {
 	c := c_.replace('\n', '')
 	for i in 0 .. 2000 {
 		o := w.output()!
-		// println(o)
+		// console.print_debug(o)
 		$if debug {
-			println(" - tmux ${w.name}: wait for: '${c}'")
+			console.print_debug(" - tmux ${w.name}: wait for: '${c}'")
 		}
 		// need to replace \n because can be wrapped because of size of pane
 		if o.replace('\n', '').contains(c) {

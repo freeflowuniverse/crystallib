@@ -10,6 +10,7 @@ import json
 import rand
 import os
 import time
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Server {
 pub mut:
@@ -61,7 +62,7 @@ pub fn server_get(name_ string) !Server {
 		if z.process_exists(processname) {
 			server.process = z.process_get(processname)!
 		}
-		// println(" - server get ok")
+		// console.print_debug(" - server get ok")
 		server.start()!
 		return server
 	}
@@ -105,7 +106,7 @@ pub fn (mut server Server) start() ! {
 	// p.output_wait('Starting external listener on :8008', 120)!
 
 	// o := p.log()!
-	// println(o)
+	// console.print_debug(o)
 
 	// server.check()!
 

@@ -19,12 +19,12 @@ pub fn generate() ! {
 	}
 
 	// Example usage of the decoded data
-	println('OpenAPI version: ${api_data.openapi}')
-	println('API title: ${api_data.info.title}')
+	console.print_debug('OpenAPI version: ${api_data.openapi}')
+	console.print_debug('API title: ${api_data.info.title}')
 
 	// Encoding the Openapi struct back into JSON
 	encoded_json := json.encode(api_data)
-	println('Encoded JSON: ${encoded_json}')
+	console.print_debug('Encoded JSON: ${encoded_json}')
 
 	// now the code to generate the rest client needs to follow
 }

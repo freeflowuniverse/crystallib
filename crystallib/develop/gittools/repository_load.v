@@ -13,7 +13,7 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	mut st := GitRepoStatus{}
 
 	cmd := 'cd ${path} && git config --get remote.origin.url'
-	// println(cmd)
+	// console.print_debug(cmd)
 	st.remote_url = osal.execute_silent(cmd) or {
 		return error('Cannot get remote origin url: ${path}. Error was ${err}')
 	}
@@ -24,7 +24,7 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	}
 
 	cmd2 := 'cd ${path} && git rev-parse --abbrev-ref HEAD'
-	// println(cmd2)
+	// console.print_debug(cmd2)
 	st.branch = osal.execute_silent(cmd2) or {
 		return error('Cannot get branch: ${path}. Error was ${err}')
 	}
@@ -67,8 +67,8 @@ fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
 	addr = locator.addr
 	addr.branch = st.branch
 
-	// println(st)
-	// println(addr)
+	// console.print_debug(st)
+	// console.print_debug(addr)
 
 	// $if debug {
 	// 	console.print_header(' loaded repo ${path}     --------')

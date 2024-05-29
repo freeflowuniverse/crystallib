@@ -4,6 +4,7 @@ import net.http
 import db.sqlite
 import rand
 import json
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Client {
 	url string @[required]
@@ -33,7 +34,7 @@ pub fn (c Client) get_user(user User) !User {
 
 @[post]
 pub fn (c Client) get_users() ![]User {
-	println('${c.url}/get_users')
+	console.print_debug('${c.url}/get_users')
 	req := http.new_request(.get, '${c.url}/get_users', '')
 	resp := req.do()!
 	if resp.status_code != 200 {
@@ -43,7 +44,7 @@ pub fn (c Client) get_users() ![]User {
 }
 
 pub fn (c Client) get_groups() ![]Group {
-	println('${c.url}/get_users')
+	console.print_debug('${c.url}/get_users')
 	req := http.new_request(.get, '${c.url}/get_groups', '')
 	resp := req.do()!
 	if resp.status_code != 200 {

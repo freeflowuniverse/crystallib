@@ -4,6 +4,7 @@ import v.embed_file
 import freeflowuniverse.crystallib.installers.web.mdbook as mdbook_installer
 import freeflowuniverse.crystallib.installers.web.imagemagick
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct FileLoader {
@@ -22,7 +23,7 @@ fn (mut loader FileLoader) load() ! {
 
 fn loader() !FileLoader {
 	if 'OFFLINE' !in os.environ() {
-		// println(" - CHECK INSTALLER")
+		// console.print_debug(" - CHECK INSTALLER")
 		mdbook_installer.install()!
 		imagemagick.install()!
 	}

@@ -6,6 +6,7 @@ import net.http
 import freeflowuniverse.crystallib.clients.redisclient { RedisURL }
 import freeflowuniverse.crystallib.core.crystaljson
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 struct GithubConnection {
@@ -132,7 +133,7 @@ fn (mut h GithubConnection) header() http.Header {
 // 	}
 // 	url := '$h.url/api/v1/$prefix'
 // 	mut req := http.new_request(http.Method.post, url, postdata)
-// 	// println(" --- $prefix\n$postdata")
+// 	// console.print_debug(" --- $prefix\n$postdata")
 // 	if prefix.contains('auth') {
 // 		response := http.post_json('$h.url/api/v1/$prefix', postdata) ?
 // 		result = response.body

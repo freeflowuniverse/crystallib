@@ -52,7 +52,7 @@ pub fn (mut node Node) ipaddr_pub_get() !string {
 // }
 // ```
 pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
-	// println(args)
+	// console.print_debug(args)
 	mut args := args_
 	mut cmd := args.cmd
 	mut now_epoch := time.now().unix()
@@ -76,7 +76,7 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 	}
 	if !args.reset && node.done_exists('exec_${hhash}') {
 		if args.period == 0 {
-			println('   - exec cmd:${description} on ${node.name}: was already done, period indefinite.')
+			console.print_debug('   - exec cmd:${description} on ${node.name}: was already done, period indefinite.')
 			return node.done_get('exec_${hhash}') or { '' }
 		}
 		nodedone := node.done_get_str('exec_${hhash}')
@@ -87,8 +87,8 @@ pub fn (mut node Node) exec_cmd(args_ NodeExecCmd) !string {
 		exec_last_time := splitted[0].int()
 		lastoutput := splitted[1]
 		assert exec_last_time > 10000
-		// println(args)
-		// println("   - check exec cmd:$cmd on $node.name: time:$exec_last_time")
+		// console.print_debug(args)
+		// console.print_debug("   - check exec cmd:$cmd on $node.name: time:$exec_last_time")
 		if exec_last_time > now_epoch - args.period {
 			hours := args.period / 3600
 			console.print_header('exec cmd:${description} on ${node.name}: was already done, period ${hours} h')
@@ -133,7 +133,7 @@ pub fn (mut node Node) exec_ok(cmd string) bool {
 		// see if it executes ok, if cmd not found is false
 		return false
 	}
-	// println(e)
+	// console.print_debug(e)
 	return true
 }
 

@@ -1,4 +1,5 @@
 module spreadsheet
+import freeflowuniverse.crystallib.ui.console
 
 fn remove_empty_line(txt string) string {
 	mut out := ''
@@ -133,7 +134,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 	}
 	mut out := ''
 
-	// println(s2.row_get(args.rowname)!)
+	// console.print_debug(s2.row_get(args.rowname)!)
 	mut vals := s2.values_get(args.rowname)!
 	if args.period_type == .year && vals.len != nryears {
 		return error('${err_pre}Vals.len need to be 6, for year.\nhere:\n${vals}')

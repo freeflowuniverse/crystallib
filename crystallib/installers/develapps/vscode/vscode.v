@@ -16,7 +16,7 @@ pub fn install(args_ InstallArgs) ! {
 	// base.install()!
 	console.print_header('install vscode')
 	if !args.reset && osal.done_exists('install_vscode') && osal.cmd_exists('code') {
-		println(' - already installed')
+		console.print_debug(' - already installed')
 		return
 	}
 	mut url := ''
@@ -33,7 +33,7 @@ pub fn install(args_ InstallArgs) ! {
 			url = 'https://code.visualstudio.com/sha/download?build=stable&os=cli-darwin-x64'
 		}
 	}
-	println(' download ${url}')
+	console.print_debug(' download ${url}')
 	_ = osal.download(
 		url: url
 		minsize_kb: 5000
@@ -106,7 +106,7 @@ pub fn extensions_install(args_ ExtensionsInstallArgs) ! {
 	}
 	for item in items {
 		cmd := 'code --install-extension ${item}'
-		println(' - extension install: ${item}')
+		console.print_debug(' - extension install: ${item}')
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			return error("could not install visual studio code extension:'${item}'.\n${res}")

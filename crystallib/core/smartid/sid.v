@@ -1,8 +1,8 @@
 module smartid
 
-import freeflowuniverse.crystallib.clients.redisclient
+// import freeflowuniverse.crystallib.clients.redisclient
 import math
-import freeflowuniverse.crystallib.core.texttools.regext
+// import freeflowuniverse.crystallib.core.texttools.regext
 // import rand
 
 // each part min3 max 6 chars, each char = a...z or 0...9

@@ -32,7 +32,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 
 		v := texttools.version(r[0].all_after('ypervisor v'))
-		// println("version: ${v} ${texttools.version(version)}")
+		// console.print_debug("version: ${v} ${texttools.version(version)}")
 		if v < texttools.version(version) {
 			args.reset = true
 		}

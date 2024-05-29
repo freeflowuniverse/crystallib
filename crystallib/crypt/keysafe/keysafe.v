@@ -6,6 +6,7 @@ import encoding.hex
 import libsodium
 import json
 import os
+import freeflowuniverse.crystallib.ui.console
 
 /*
 * KeysSafe
@@ -51,7 +52,7 @@ pub fn keysafe_get(path0 string, secret string) !KeysSafe {
 	}
 
 	if os.exists(path.absolute()) {
-		println('[+] key file already exists, loading it')
+		console.print_debug('[+] key file already exists, loading it')
 		safe.load()
 	}
 
@@ -98,9 +99,9 @@ pub fn (mut ks KeysSafe) key_import_add(name string, seed []u8) !PrivKey {
 	signkey := libsodium.new_ed25519_signing_key_seed(seed)
 	privkey := libsodium.new_private_key_from_signing_ed25519(signkey)
 
-	// println("===== SEED ====")
-	// println(seed)
-	// println(mnemonic)
+	// console.print_debug("===== SEED ====")
+	// console.print_debug(seed)
+	// console.print_debug(mnemonic)
 
 	pk := PrivKey{
 		name: name
@@ -136,9 +137,9 @@ pub fn (mut ks KeysSafe) key_add(pk PrivKey) ! {
 }
 
 pub fn (mut ks KeysSafe) persist() {
-	println('[+] saving keys to ${ks.path.absolute()}')
+	console.print_debug('[+] saving keys to ${ks.path.absolute()}')
 	serialized := ks.serialize()
-	// println(serialized)
+	// console.print_debug(serialized)
 
 	encrypted := symmetric_encrypt_blocks(serialized.bytes(), ks.secret)
 
@@ -161,7 +162,7 @@ pub fn (mut ks KeysSafe) serialize() string {
 }
 
 pub fn (mut ks KeysSafe) load() {
-	println('[+] loading keys from ${ks.path.absolute()}')
+	console.print_debug('[+] loading keys from ${ks.path.absolute()}')
 
 	mut f := os.open(ks.path.absolute()) or { panic(err) }
 
@@ -187,15 +188,15 @@ pub fn (mut ks KeysSafe) deserialize(input string) {
 
 	// serializing mnemonics only
 	for name, mnemo in pks.keys {
-		println('[+] loading key: ${name}')
+		console.print_debug('[+] loading key: ${name}')
 		seed := internal_key_decode(mnemo) // mnemonic.parse(mnemo)
 
-		// println("==== SEED ====")
-		// println(mnemo)
-		// println(seed)
+		// console.print_debug("==== SEED ====")
+		// console.print_debug(mnemo)
+		// console.print_debug(seed)
 
 		ks.key_import_add(name, seed) or { panic(err) }
 	}
 
-	// println(ks)
+	// console.print_debug(ks)
 }

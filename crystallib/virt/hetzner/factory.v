@@ -3,6 +3,7 @@ module hetzner
 import encoding.base64
 import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.ui.console
 
 // import os
 // import json
@@ -58,7 +59,7 @@ pub fn get(args_ ClientArgsGet) !HetznerClient {
 
 	sl := h.servers_list()!
 
-	// println(sl)
+	// console.print_debug(sl)
 
 	return h
 }

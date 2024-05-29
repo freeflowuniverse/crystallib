@@ -3,6 +3,7 @@ module markdownparser
 import freeflowuniverse.crystallib.data.paramsparser { Param, Params }
 import freeflowuniverse.crystallib.data.markdownparser.elements { Action }
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 fn test_action_empty_params() {
 	mut docs := new(
@@ -10,7 +11,7 @@ fn test_action_empty_params() {
 !!farmerbot_powermanager.poweroff
 '
 	)!
-	// println(docs.children)
+	// console.print_debug(docs.children)
 	assert docs.children.len == 2
 	action := docs.children[1]
 	if action is Action {

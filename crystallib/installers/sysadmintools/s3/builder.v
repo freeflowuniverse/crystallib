@@ -3,6 +3,7 @@ module s3
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct BuildArgs {

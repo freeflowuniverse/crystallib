@@ -37,7 +37,7 @@ pub fn (mut r Redis) get_response() !resp.RValue {
 		buffer := r.read(bulkstring_size) or { panic(err) }
 		// extract final \r\n
 		r.read_line()!
-		// println("readline result:'$buffer.bytestr()'")
+		// console.print_debug("readline result:'$buffer.bytestr()'")
 		return resp.RBString{
 			value: buffer
 		} // TODO: won't support binary (afaik), need to fix?  WHY not (despiegk)?
@@ -109,7 +109,7 @@ pub fn (mut r Redis) get_list_str() ![]string {
 pub fn (mut r Redis) get_string() !string {
 	line := r.read_line()!
 	if line.starts_with('+') {
-		// println("getstring:'${line[1..]}'")
+		// console.print_debug("getstring:'${line[1..]}'")
 		return line[1..]
 	}
 	if line.starts_with('$') {

@@ -92,8 +92,8 @@ pub fn do(args_ GeneratorArgs) ! {
 		mut p_config := pathlib.get_file(path: config_path, create: true)!
 		args.reset = false
 		data := json.encode_pretty(args)
-		println('\n## Your arguments, will be saved for next time.')
-		println(args)
+		console.print_debug('\n## Your arguments, will be saved for next time.')
+		console.print_debug(args)
 		p_config.write(data)!
 	}
 	generate(args)!

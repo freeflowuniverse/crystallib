@@ -4,6 +4,7 @@ import vweb
 import time
 import json
 import log
+import freeflowuniverse.crystallib.ui.console
 
 const agent = 'Email Authentication Controller'
 
@@ -120,7 +121,7 @@ pub fn (mut app Controller) verify() vweb.Result {
 			return app.text(err.msg())
 		}
 		if authenticated {
-			println('heyo yess')
+			console.print_debug('heyo yess')
 			return app.ok('success')
 		}
 		time.sleep(2 * time.second)

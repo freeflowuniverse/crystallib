@@ -20,8 +20,8 @@ pub fn install(args_ InstallArgs) ! {
 	if res.exit_code == 0 {
 		v := texttools.version(res.output)
 		if v < texttools.version('0.4.40') {
-			// println(texttools.version('0.4.40'))
-			// println(v)
+			// console.print_debug(texttools.version('0.4.40'))
+			// console.print_debug(v)
 			// panic("ppp	")
 			args.reset = true
 		}
@@ -52,7 +52,7 @@ pub fn build() ! {
 	if osal.is_linux() {
 		dest_on_os = '/usr/local/bin'
 	}
-	println(" - dest path for mdbooks is on: ${dest_on_os}")
+	console.print_debug(" - dest path for mdbooks is on: ${dest_on_os}")
 	mut ok := false
 	cmd := '
 	set +ex
@@ -75,7 +75,7 @@ pub fn build() ! {
 	'
 	defer {
 		if !ok {
-			println('ERROR IN INSTALL MDBOOK, WILL ABORT')
+			console.print_debug('ERROR IN INSTALL MDBOOK, WILL ABORT')
 			osal.execute_stdout('rm ${os.home_dir()}/.cargo/bin/mdb*') or {}
 			osal.execute_stdout('rm ${dest_on_os}/mdb*') or {}
 		}

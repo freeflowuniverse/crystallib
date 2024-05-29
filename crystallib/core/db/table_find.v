@@ -2,6 +2,7 @@ module db
 
 import strings
 import encoding.base32
+import freeflowuniverse.crystallib.ui.console
 
 // [params]
 // pub struct DBFindArgs {
@@ -16,7 +17,7 @@ import encoding.base32
 // return list of data blocks which then need to be deserialized based on the DBFindArgs
 fn table_find(db DB, args DBFindArgsI) ![][]u8 {
 	sql_statement_find := sql_build_find(db, args)
-	// println('find sql: ${sql_statement_find}')
+	// console.print_debug('find sql: ${sql_statement_find}')
 	mut oids := []int{}
 
 	rows := db.sqlitedb.exec(sql_statement_find)!

@@ -21,7 +21,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 	mut r := if gitstructure.repo_exists(args.locator)! {
 		gitstructure.repo_get_internal(args.locator)!
 	} else {
-		// println("repo does not exist:\n$p\n+++")
+		// console.print_debug("repo does not exist:\n$p\n+++")
 		// if repo doesn't exist, create new repo from address in locator
 		mut r2 := GitRepo{
 			gs: &gitstructure
@@ -32,7 +32,7 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 		if r2.addr.branch != '' {
 			st := r2.status()!
 			mut branchname := st.branch
-			// println( " - branch detected: $branchname, branch on repo obj:'$r2.addr.branch'")
+			// console.print_debug(" - branch detected: $branchname, branch on repo obj:'$r2.addr.branch'")
 			if st.branch != r2.addr.branch && args.pull {
 				console.print_header(' branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.remote_url}')
 				r2.branch_switch(r2.addr.branch)!
@@ -115,16 +115,16 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 	mut args := ReposGetArgs{
 		...args_
 	}
-	// println(args)
+	// console.print_debug(args)
 	gitstructure.check() or { panic(err) }
 	mut res := []GitRepo{}
 	// repos.sort()
-	// println(repos.join("\n"))
+	// console.print_debug(repos.join("\n"))
 	for r in gitstructure.repos {
 		relpath := r.path_relative()
 		if args.filter != '' {
 			if relpath.contains(args.filter) {
-				// println("MATCH: $args.filter")
+				// console.print_debug("MATCH: $args.filter")
 				res << r
 			}
 			continue
@@ -141,7 +141,7 @@ pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) []GitRepo {
 		res << r
 	}
 
-	// println(res)
+	// console.print_debug(res)
 	// if true{panic("s")}
 
 	return res

@@ -3,20 +3,21 @@ module archiver
 // import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.ui.console
 
 fn filter_base(mut path pathlib.Path, mut params paramsparser.Params) !bool {
-	// print(" - check $path.path")
+	// console.print_debug(" - check $path.path")
 	if path.name().starts_with('.') {
-		// println(" FALSE")
+		// console.print_debug(" FALSE")
 		return false
 	} else if path.name().starts_with('_') {
-		// println(" FALSE")
+		// console.print_debug(" FALSE")
 		return false
 	} else if path.name().to_lower().ends_with('.bak') {
-		// println(" FALSE")
+		// console.print_debug(" FALSE")
 		return false
 	}
-	// println(" TRUE")
+	// console.print_debug(" TRUE")
 	return true
 }
 

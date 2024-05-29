@@ -184,7 +184,6 @@ fn (s Secp256k1) keys() {
 // backward compatibility, please use private_key() and public_key() methods
 pub fn (s Secp256k1) export() string {
 	key := C.secp256k1_export(s.cctx)
-	println(key)
 	return unsafe { key.vstring() }
 }
 

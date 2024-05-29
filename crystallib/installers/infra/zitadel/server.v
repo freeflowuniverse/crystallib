@@ -10,6 +10,7 @@ import json
 import rand
 import os
 import time
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct Config {
@@ -88,7 +89,7 @@ pub fn get(name_ string) !Server {
 		if z.process_exists(processname) {
 			server.process = z.process_get(processname)!
 		}
-		// println(" - server get ok")
+		// console.print_debug(" - server get ok")
 		server.start()!
 		return server
 	}
@@ -120,7 +121,7 @@ pub fn (mut server Server) start() ! {
 	console.print_header('start zitadel: ${server.name}')
 	mut db := postgresql.get(server.config.postgresql_name)!
 
-	println(db)
+	console.print_debug(db)
 
 	if server.config.reset {
 		db.db_delete('zitadel')!
@@ -153,11 +154,11 @@ pub fn (mut server Server) start() ! {
 	// p.output_wait("Starting new Web server: tcp:0.0.0.0:3000",120)!
 
 	// o:=p.log()!
-	// println(o)
+	// console.print_debug(o)
 
 	// server.check()!
 
-	// println(" - zitadel start ok.")
+	// console.print_debug(" - zitadel start ok.")
 }
 
 pub fn (mut server Server) restart() ! {

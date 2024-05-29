@@ -45,8 +45,8 @@ pub fn heroplay(args play.PLayBookAddArgs) ! {
 pub fn (mut self StripeClient[Config]) config_interactive() ! {
 	mut myui := ui.new()!
 	console.clear()
-	println('\n## Configure Stripe Client')
-	println('========================\n\n')
+	console.print_debug('\n## Configure Stripe Client')
+	console.print_debug('========================\n\n')
 
 	mut cfg := self.config()!
 

@@ -1,4 +1,5 @@
 module db
+import freeflowuniverse.crystallib.ui.console
 
 fn index_exists(mut db DB, name string) bool {
 	r := db.sqlitedb.exec("
@@ -24,7 +25,7 @@ fn tables_create(mut db DB, mut args DBTableCreateArgs) ! {
 	datatable += 'data BLOB,\n'
 	datatable += 'oid INTEGER PRIMARY KEY'
 	datatable += ');\n'
-	// println(datatable)
+	// console.print_debug(datatable)
 	db.sql_exec_one(datatable)!
 
 	if !(index_exists(mut db, table_name_data(db))) {

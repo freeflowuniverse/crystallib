@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.installers.docker
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 // install mediacms will return true if it was already installed
 pub fn build(myargs Config) ! {

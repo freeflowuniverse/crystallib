@@ -1,4 +1,5 @@
 module spreadsheet
+import freeflowuniverse.crystallib.ui.console
 
 // smartstring is something like 3:2,10:5 means end month 3 we start with 2, it grows to 5 on end month 10
 // the cells out of the mentioned ranges are not filled if they are already set
@@ -31,9 +32,9 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 	mut xlastval := 0.0 // the value at that position
 	mut xlastwidth := 0 // need to know how fast to go up from the xlast to xnew
 	mut xnewval := 0.0
-	// println(r)
+	// console.print_debug(r)
 	for x in 0 .. r.cells.len {
-		// println("$x empty:${r.cells[x].empty} xlastwidth:$xlastwidth xlastval:$xlastval xlast:$xlast")
+		// console.print_debug("$x empty:${r.cells[x].empty} xlastwidth:$xlastwidth xlastval:$xlastval xlast:$xlast")
 		if r.cells[x].empty && !has_previous_value {
 			continue
 		}
@@ -43,7 +44,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			xlast = x
 			xlastval = r.cells[x].val
 			xlastwidth = 0
-			// print(" lastval:$xlastval")
+			// console.print_debug(" lastval:$xlastval")
 			continue // no need to do anything
 		}
 		// if we get here we get an empty after having a non empty before
@@ -54,7 +55,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			// now we need to walk over the inbetween and set the values
 			yincr := (xnewval - xlastval) / xlastwidth
 			mut yy := xlastval
-			// print(" yincr:$yincr")
+			// console.print_debug(" yincr:$yincr")
 			for xx in (xlast + 1) .. x {
 				yy += yincr
 				r.cells[xx].set('${yy}')!
@@ -65,7 +66,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			xnewval = 0.0
 		}
 	}
-	// println("ROW1:$r")
+	// console.print_debug("ROW1:$r")
 
 	// now fill in the last ones
 	xlastval = 0.0
@@ -77,7 +78,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 		r.cells[x].set('${xlastval}')!
 	}
 
-	// println("ROW:$r")
+	// console.print_debug("ROW:$r")
 	// if true{panic("s")}
 }
 

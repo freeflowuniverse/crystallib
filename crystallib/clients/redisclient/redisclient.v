@@ -95,7 +95,7 @@ pub fn get(addr string) !Redis {
 fn (mut r RedisInternal) socket_connect() ! {
 	// print_backtrace()
 	addr := os.expand_tilde_to_home(r.addr)
-	// println(' - REDIS CONNECT: ${addr}')
+	// console.print_debug(' - REDIS CONNECT: ${addr}')
 	if !addr.contains(':') {
 		unix_socket := unix.connect_stream(addr)!
 		tcp_socket := net.tcp_socket_from_handle_raw(unix_socket.sock.Socket.handle)
@@ -110,7 +110,7 @@ fn (mut r RedisInternal) socket_connect() ! {
 
 	r.socket.set_blocking(true)!
 	r.socket.set_read_timeout(1 * time.second)
-	// println("---OK")
+	// console.print_debug("---OK")
 }
 
 fn (mut r RedisInternal) socket_check() ! {

@@ -60,5 +60,5 @@ pub fn check() ! {
 
 	'
 	r := osal.execute_silent(cmd)!
-	println(r)
+	console.print_debug(r)
 }

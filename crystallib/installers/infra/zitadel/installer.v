@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 
 pub fn install() ! {
 	if osal.platform() != .ubuntu {
@@ -21,7 +22,7 @@ pub fn install() ! {
 
 	version := '2.41.4'
 	url := 'https://github.com/zitadel/zitadel/releases/download/v${version}/zitadel-linux-amd64.tar.gz'
-	println(' download ${url}')
+	console.print_debug(' download ${url}')
 	mut dest := osal.download(
 		url: url
 		minsize_kb: 30000

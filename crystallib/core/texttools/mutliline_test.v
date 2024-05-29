@@ -1,5 +1,6 @@
 module texttools
 
+
 fn check_result(tocheck_ string, output string) {
 	mut tocheck := tocheck_
 	tocheck = tocheck.replace('\\n', '\\\\n')
@@ -8,8 +9,8 @@ fn check_result(tocheck_ string, output string) {
 	if tocheck == output.trim_space() {
 		return
 	}
-	println('-------\n${tocheck}')
-	println('-------\n${output.trim_space()}\n-------')
+
+
 	panic('required result not correct.')
 }
 
@@ -34,13 +35,13 @@ fn test_multiline1() {
 			```python
 			#even code block in the other block, crazy parsing for sure
 			def test():
-				print()
+
 			```
 		'
 	"
 	text = multiline_to_single(text) or { panic(err) }
 
-	required_result := 'id:a1 name:\'need to do something 1\' description:\'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n"yes, this needs to work too"\\n\\n- a\\n- something else\\n- "something\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n    print()\\n```\''
+	required_result := 'id:a1 name:\'need to do something 1\' description:\'## markdown works in it\\n\\ndescription can be multiline\\nlets see what happens\\n\\n"yes, this needs to work too"\\n\\n- a\\n- something else\\n- "something\\n\\n### subtitle\\n\\n```python\\n#even code block in the other block, crazy parsing for sure\\ndef test():\\n\\n```\''
 
 	check_result(required_result, text)
 }

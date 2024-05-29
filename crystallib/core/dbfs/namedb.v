@@ -3,6 +3,7 @@ module dbfs
 import json
 import crypto.md5
 import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct NameDB {
@@ -125,14 +126,14 @@ pub fn (mut db NameDB) exists(key string) !bool {
 }
 
 pub fn (mut db NameDB) get_from_id(myid u32) !(string, string) {
-	// println("key get: ${myid}")
+	// console.print_debug("key get: ${myid}")
 	mut mypath := db.dbpath(myid)!
-	// println("path: ${mypath.path}")
+	// console.print_debug("path: ${mypath.path}")
 	_, _, c := namedb_dbid(myid)
-	// println("ids: ${a} ${b} ${c}")
+	// console.print_debug("ids: ${a} ${b} ${c}")
 	content := mypath.read()!
 	mut lines := content.trim_space().split_into_lines()
-	// println(lines)
+	// console.print_debug(lines)
 	if c < lines.len {
 		myline := lines[c] or {
 			return error('out of bounds for: ${mypath.path}. Nrlines:${lines.len}. Line:${c}')
@@ -178,7 +179,7 @@ fn namedb_process_line(path string, line string) (string, string) {
 
 fn (mut db NameDB) dbpath(myid u32) !pathlib.Path {
 	a, b, _ := namedb_dbid(myid)
-	// println("dbpath ids: ${a} ${b} ${c}")
+	// console.print_debug("dbpath ids: ${a} ${b} ${c}")
 	dir_name := a.hex()
 	file_name := b.hex()
 	mut mydatafile := pathlib.get_file(

@@ -71,17 +71,11 @@ pub fn remove_empty_js_blocks(text string) string {
 	mut block_capture_inside := []string{}
 	mut foundblock := false
 	for l in text.split_into_lines() {
-		// println(" --- $l")
 		lt := l.trim_space()
 		if lt.starts_with('```') || lt.starts_with("'''") || lt.starts_with('"""') {
-			// println("FOUND")
 			if foundblock {
-				// println(";;;")
-				// println(block_capture_inside.filter(it.trim_space() != ''))
-				// println(";;;")
 				if block_capture_inside.filter(it.trim_space() != '').len > 0 {
 					// now we know the block inside is not empty
-					println('not empty')
 					out << block_capture_pre
 					out << block_capture_inside
 					out << l // the last line

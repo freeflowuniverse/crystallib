@@ -61,7 +61,7 @@ pub fn (mut site ZSite) generate() ! {
 		return
 	}
 	console.print_header(' site generate: ${site.name} on ${site.path_build.path}')
-	println('bash ${site.path_build.path}/build.sh')
+	console.print_debug('bash ${site.path_build.path}/build.sh')
 	// TODO: should not be the build, it should be the native command without the build script
 	os.execute('bash ${site.path_build.path}/build.sh')
 	os.mv('${site.path_build.path}/public', site.path_publish.path)!

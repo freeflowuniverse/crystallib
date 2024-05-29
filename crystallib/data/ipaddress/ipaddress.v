@@ -3,6 +3,7 @@ module ipaddress
 import os
 import freeflowuniverse.crystallib.osal
 import regex
+import freeflowuniverse.crystallib.ui.console
 
 pub struct IPNetwork {
 	IPAddress
@@ -149,7 +150,7 @@ pub fn (mut ipaddr IPAddress) ping(args_ PingArgs) bool {
 		}
 	}
 	for _ in 0 .. args.retry {
-		println(cmd)
+		console.print_debug(cmd)
 		res := os.execute(cmd)
 		if res.exit_code > 0 {
 			continue

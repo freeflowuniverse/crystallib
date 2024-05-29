@@ -3,6 +3,7 @@ module notifier
 import os.notify
 import os
 import time
+import freeflowuniverse.crystallib.ui.console
 
 pub struct Notifier {
 pub mut:
@@ -20,7 +21,7 @@ pub fn new() !Notifier {
 	for i in 0 .. 1000000 {
 		n.add(fid, .write, .edge_trigger)!
 		events := n.wait(time.Duration(time.second * 100))
-		println(events)
+		console.print_debug(events)
 		time.sleep(time.Duration(time.second * 1))
 	}
 	return Notifier{}

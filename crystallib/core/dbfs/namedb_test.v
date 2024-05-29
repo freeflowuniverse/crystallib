@@ -3,13 +3,14 @@ module dbfs
 import os
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.crypt.secp256k1
+import freeflowuniverse.crystallib.ui.console
 
 fn test_dbname1() {
 	data_dir := '/tmp/namedbtest'
 
 	mut ndb := namedb_new(data_dir)!
 
-	println('delete ${data_dir}')
+	console.print_debug('delete ${data_dir}')
 	os.rmdir_all(data_dir) or {}
 
 	mut test_cases := []string{}
@@ -18,14 +19,14 @@ fn test_dbname1() {
 		privkey := secp256k1.new()!
 		pubkey := privkey.public_key_base64()
 		if i % 1000 == 0 {
-			println(i)
+			console.print_debug(i)
 		}
 		test_cases << pubkey
 	}
 
 	defer {
 		// os.rmdir_all(data_dir) or {}
-		println('rmdir done')
+		console.print_debug('rmdir done')
 	}
 
 	// Register public keys and store their unique IDs
@@ -33,7 +34,7 @@ fn test_dbname1() {
 	mut i := 0
 	for pubkey in test_cases {
 		if i % 1000 == 0 {
-			println('b${i}')
+			console.print_debug('b${i}')
 		}
 		myid := ndb.set(pubkey, '${i}')!
 		ids << myid
@@ -41,7 +42,7 @@ fn test_dbname1() {
 	}
 
 	// Retrieve public keys using their unique IDs
-	println('retrieve starts')
+	console.print_debug('retrieve starts')
 	for i2, myid in ids {
 		retrieved_pubkey, data := ndb.get(myid)!
 		myid_found, data_found := ndb.getdata(retrieved_pubkey)!
@@ -53,7 +54,7 @@ fn test_dbname1() {
 		assert retrieved_pubkey == tc, 'Retrieved pubkey doesn\'t match for ID: ${myid}'
 	}
 
-	println('All tests passed!')
+	console.print_debug('All tests passed!')
 }
 
 fn test_dbname2() {

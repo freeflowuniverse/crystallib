@@ -1,13 +1,14 @@
 import freeflowuniverse.crystallib.conversiontools.imagemagick { image_new }
 import freeflowuniverse.crystallib.core.pathlib
 import os
+import freeflowuniverse.crystallib.ui.console
 
 const testpath = os.dir(@FILE) + '/example'
 
 fn test_identify_verbose() {
 	mut img_path := pathlib.get('${testpath}/small_png.png')
 	mut image := image_new(mut img_path) or { panic('Cannot get new image:\n ${err}') }
-	println('1st ${image}')
+	console.print_debug('1st ${image}')
 	assert image.size_x == 0
 	assert image.size_y == 0
 

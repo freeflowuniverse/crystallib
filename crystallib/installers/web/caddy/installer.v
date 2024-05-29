@@ -42,7 +42,7 @@ pub fn install(args InstallArgs) ! {
 	caddyfile.copy(dest: '/usr/local/bin', delete: true)!
 	caddyfile.chmod(0o770)! // includes read & write & execute
 
-	println(' CADDY INSTALLED')
+	console.print_debug(' CADDY INSTALLED')
 
 	osal.done_set('install_caddy', 'OK')!
 	return

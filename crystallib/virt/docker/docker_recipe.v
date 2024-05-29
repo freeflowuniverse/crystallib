@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.osal { exec, file_write }
 import crypto.md5
 import v.embed_file
 import os
+import freeflowuniverse.crystallib.ui.console
 
 // only 2 supported for now
 pub enum PlatformType {
@@ -154,7 +155,7 @@ fn (mut b DockerBuilderRecipe) check_from_statement() ! {
 	}
 	if fromfound == false {
 		// put automatically alpine or ubuntu in
-		// println(" *** put automatically alpine or ubuntu in")
+		// console.print_debug(" *** put automatically alpine or ubuntu in")
 		if b.platform == .alpine {
 			b.items.prepend(FromItem{ recipe: &b, image: 'alpine', tag: 'latest' })
 		} else {
@@ -255,7 +256,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 		cmdshell += " '/bin/shell.sh'\n"
 	}
 	cmdshell += '\ndocker rm ${b.name} -f > /dev/null 2>&1\n'
-	// println(cmdshell)
+	// console.print_debug(cmdshell)
 
 	mut tohash := dockerfilecontent + b.name + cmdshell + cmd
 	for mut item in b.items {
@@ -271,7 +272,7 @@ pub fn (mut b DockerBuilderRecipe) build(reset bool) ! {
 	if image_exists && reset == false && osal.done_exists('build_${b.name}') {
 		hashlast := osal.done_get('build_${b.name}') or { '' }
 		if hashnew == hashlast {
-			println('\n ** BUILD ALREADY DONE FOR ${b.name.to_upper()}\n')
+			console.print_debug('\n ** BUILD ALREADY DONE FOR ${b.name.to_upper()}\n')
 			return
 		}
 	}

@@ -35,7 +35,7 @@ pub fn (params &Params) get_list(key string) ![]string {
 	// mut i := 0
 	// for i < valuestr.len {
 	// 	if valuestr[i] == 34 || valuestr[i] == 39 { // handle single or double quotes
-	// 		// println("::::${valuestr[i]}")
+	// 		// console.print_debug("::::${valuestr[i]}")
 	// 		quote := valuestr[i..i + 1]
 	// 		j = valuestr.index_after('${quote}', i + 1)
 	// 		if j == -1 {

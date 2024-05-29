@@ -1,6 +1,7 @@
 module main
 
 import freeflowuniverse.crystallib.threefold.griddriver { Client }
+import freeflowuniverse.crystallib.ui.console
 
 fn main() {
 	mut client := Client{
@@ -11,5 +12,5 @@ fn main() {
 
 	res := client.get_zos_version()!
 
-	println(res)
+	console.print_debug(res)
 }

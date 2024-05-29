@@ -2,6 +2,7 @@ module smartid
 
 import freeflowuniverse.crystallib.core.texttools
 import os
+import freeflowuniverse.crystallib.ui.console
 
 __global (
 	ciddb shared map[string]u32
@@ -102,7 +103,7 @@ fn ciddb_load() ! {
 	lock ciddb {
 		if ciddb.keys().len == 0 {
 			ciddb['core'] = 1
-			println(':check disk')
+			console.print_debug(':check disk')
 			if os.exists(dbpath()) {
 				d := os.read_file(dbpath())!
 				for line in d.split_into_lines() {
@@ -135,5 +136,5 @@ fn ciddb_save() ! {
 		os.mkdir_all(dbpathdir())!
 	}
 	os.write_file(dbpath(), out.join_lines())!
-	// println("write: ${out.len}")
+	// console.print_debug("write: ${out.len}")
 }

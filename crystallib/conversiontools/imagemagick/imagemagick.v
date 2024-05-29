@@ -60,43 +60,43 @@ fn installed0() bool {
 const installed1 = installed0()
 
 pub fn installed() bool {
-	// println("imagemagick installed: $imagemagick.installed1")
+	// console.print_debug("imagemagick installed: $imagemagick.installed1")
 	return imagemagick.installed1
 }
 
 fn filter_imagemagic(mut path pathlib.Path, mut params_ paramsparser.Params) !bool {
-	// println(" - check $path.path")
-	// println(" ===== "+path.name_no_ext())
+	// console.print_debug(" - check $path.path")
+	// console.print_debug(" ===== "+path.name_no_ext())
 	if path.name().starts_with('.') {
-		// println(" FALSE")
+		// console.print_debug(" FALSE")
 		return false
 	} else if path.name().starts_with('_') {
-		// println(" FALSE")
+		// console.print_debug(" FALSE")
 		return false
 	} else if path.name_no_ext().ends_with('_') {
-		// println(" FALSE")
+		// console.print_debug(" FALSE")
 		return false
 	} else if path.is_dir() {
 		return true
 	} else if !path.is_file() {
-		// println(" FALSE")
+		// console.print_debug(" FALSE")
 		return false
 	} else if !path.is_image_jpg_png() {
 		return false
 	}
 	mut parent := path.parent()!
 	// here we check that the file was already processed
-	// println(" check .done file: ${parent.path}")
+	// console.print_debug(" check .done file: ${parent.path}")
 	if parent.file_exists('.done') {
-		// println("DONE")
+		// console.print_debug("DONE")
 		mut p := parent.file_get('.done')!
 		c := p.read()!
-		println(' image contains: ${path.name()}')
+		console.print_debug(' image contains: ${path.name()}')
 		if c.contains(path.name()) {
 			return false
 		}
 	}
-	// println(" TRUE")
+	// console.print_debug(" TRUE")
 	return true
 }
 

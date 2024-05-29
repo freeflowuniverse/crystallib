@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.core.texttools
 import os
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct PythonExecArgs {
@@ -37,7 +38,7 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 			return error('error: cannot write script to execute: ${err}')
 		}
 	}
-	// println(" - scriptpath: ${scriptpath}")
+	// console.print_debug(" - scriptpath: ${scriptpath}")
 	os.chmod(scriptpath, 0o777)!
 
 	cmd2 := '
@@ -46,7 +47,7 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 	python3 ${scriptpath}
 	'
 	if args.stdout || debug {
-		println(cmd2)
+		console.print_debug(cmd2)
 	}
 	mut job := osal.Job{}
 	if debug {
@@ -63,7 +64,7 @@ pub fn (py PythonEnv) exec(args PythonExecArgs) !string {
 		return error(msg)
 	}
 
-	// println(job)
+	// console.print_debug(job)
 
 	mut o := []string{}
 	mut start := false

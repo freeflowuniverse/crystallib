@@ -2,6 +2,7 @@ module paramsparser
 
 import freeflowuniverse.crystallib.core.texttools
 import crypto.sha256
+import freeflowuniverse.crystallib.ui.console
 
 struct ParamExportItem {
 mut:
@@ -282,15 +283,15 @@ pub fn importparams(txt string) !Params {
 pub fn (p Params) equal(p2 Params) bool {
 	a := p.export()
 	b := p2.export()
-	// println("----------------\n$a")
-	// println("================\n$b")
-	// println("----------------")
+	// console.print_debug("----------------\n$a")
+	// console.print_debug("================\n$b")
+	// console.print_debug("----------------")
 	return a == b
 }
 
 // returns a unique sha256 in hex, will allways return the same independent of order of params
 pub fn (p Params) hexhash() string {
 	a := p.export(oneline: true, multiline: false)
-	println(a)
+	console.print_debug(a)
 	return sha256.hexhash(a)
 }

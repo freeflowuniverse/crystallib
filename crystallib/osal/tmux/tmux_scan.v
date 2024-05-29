@@ -2,9 +2,10 @@ module tmux
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 
 fn (mut t Tmux) scan_add(line string) !&Window {
-	// println(" -- scan add: $line")
+	// console.print_debug(" -- scan add: $line")
 	if line.count('|') < 4 {
 		return error(@FN + 'expects line with at least 5 params separated by |')
 	}
@@ -36,7 +37,7 @@ fn (mut t Tmux) scan_add(line string) !&Window {
 	}
 
 	if !(s.window_exist(name: window_name, id: wid)) {
-		// println("window not exists")
+		// console.print_debug("window not exists")
 		s.windows << &w
 	} else {
 		w = s.window_get(name: window_name, id: wid)!
@@ -60,7 +61,7 @@ pub fn (mut t Tmux) scan() ! {
 		return error('could not execute list sessions.\n${err}')
 	}
 
-	// println('execlist out for sessions: ${exec_list}')
+	// console.print_debug('execlist out for sessions: ${exec_list}')
 
 	// make sure we have all sessions
 	for line in exec_list.output.split_into_lines() {
@@ -78,13 +79,13 @@ pub fn (mut t Tmux) scan() ! {
 		t.sessions << &s
 	}
 
-	println(t)
+	console.print_debug(t)
 
 	// mut done := map[string]bool{}
 	cmd := "tmux list-panes -a -F '#{session_name}|#{window_name}|#{window_id}|#{pane_active}|#{pane_id}|#{pane_pid}|#{pane_start_command}'"
 	out := osal.execute_silent(cmd) or { return error("Can't execute ${cmd} \n${err}") }
 
-	// $if debug{println('tmux list panes out:\n${out}')}
+	// $if debug{console.print_debug('tmux list panes out:\n${out}')}
 
 	for line in out.split_into_lines() {
 		if line.contains('|') {

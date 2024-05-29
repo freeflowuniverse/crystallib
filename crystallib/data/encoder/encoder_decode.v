@@ -76,7 +76,7 @@ pub fn (mut d Decoder) get_time() time.Time {
 
 pub fn (mut d Decoder) get_ourtime() ourtime.OurTime {
 	return ourtime.OurTime{
-		unix: d.get_i64()
+		unixt: d.get_i64()
 	}
 }
 

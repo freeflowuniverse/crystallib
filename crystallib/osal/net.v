@@ -2,6 +2,7 @@ module osal
 
 import net
 import time
+// import freeflowuniverse.crystallib.ui.console
 
 pub enum PingResult {
 	ok
@@ -80,7 +81,7 @@ pub fn tcp_port_test(args TcpPortTestArgs) bool {
 			time.sleep(100 * time.millisecond)
 			continue
 		}
-		// println(socket)
+		// console.print_debug(socket)
 		return true
 	}
 	return false

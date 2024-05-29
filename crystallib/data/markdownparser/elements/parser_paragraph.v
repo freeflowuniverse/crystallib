@@ -1,6 +1,7 @@
 module elements
 
 import freeflowuniverse.crystallib.core.texttools
+// import freeflowuniverse.crystallib.ui.console
 
 // DO NOT CHANGE THE WAY HOW THIS WORKS, THIS HAS BEEN DONE AS A STATEFUL PARSER BY DESIGN
 // THIS ALLOWS FOR EASY ADOPTIONS TO DIFFERENT REALITIES
@@ -18,7 +19,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 		mut llast := paragraph.children.last()
 		mut char_ := parser.char_current()
 
-		// println("[[[${char_}]]]")
+		// console.print_debug("[[[${char_}]]]")
 
 		// char == '' means end of file
 		if mut llast is Def {
@@ -36,7 +37,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 					continue
 				} else {
 					// means we did find a def, we can stop
-					// println(" -- end def")
+					// console.print_debug(" -- end def")
 					paragraph.text_new(mut paragraph.parent_doc(), char_)
 					parser.next()
 					char_ = ''
@@ -44,9 +45,9 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				}
 			} else if !(texttools.is_upper_text(char_) || char_ == '_') {
 				// this means it wasn't a def, we need to add text
-				// println(' -- no def: ${char_}')
+				// console.print_debug(' -- no def: ${char_}')
 				paragraph.children.pop()
-				// println(' -- no def: ${paragraph.children.last()}')
+				// console.print_debug(' -- no def: ${paragraph.children.last()}')
 				mut llast2 := paragraph.children.last()
 				if mut llast2 is Text {
 					llast2.content += llast.content + char_
@@ -57,7 +58,7 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				char_ = ''
 				continue
 			}
-			// println(" -- def: ${char_}")
+			// console.print_debug(" -- def: ${char_}")
 		}
 
 		if parser.eof() {
@@ -176,5 +177,5 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 		parser.next()
 	}
 	paragraph.remove_empty_children()
-	// println("[[[[[DONE]]]]]")
+	// console.print_debug("[[[[[DONE]]]]]")
 }

@@ -55,8 +55,8 @@ pub fn configure_interactive(mut args Config, mut session base.Session) ! {
 	mut myui := ui.new()!
 
 	console.clear()
-	println('\n## Configure Postgres Client')
-	println('============================\n\n')
+	console.print_debug('\n## Configure Postgres Client')
+	console.print_debug('============================\n\n')
 
 	args.instance = myui.ask_question(
 		question: 'name for postgres client'

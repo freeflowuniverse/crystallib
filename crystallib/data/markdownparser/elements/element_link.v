@@ -2,6 +2,7 @@ module elements
 
 import freeflowuniverse.crystallib.core.texttools
 import os
+// import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Link {
@@ -60,7 +61,7 @@ pub fn (mut self Link) process() !int {
 }
 
 fn (self Link) markdown_include() string {
-	// println(" ----- LINK MARKDOWN INCLUDE ${self.url} ${self.cat}")
+	// console.print_debug(" ----- LINK MARKDOWN INCLUDE ${self.url} ${self.cat}")
 	pd := self.parent_doc_ or { panic('bug there should always be parent_doc') }
 
 	mut link_filename := self.filename
@@ -88,7 +89,7 @@ fn (self Link) markdown_include() string {
 		} else {
 			out = '${pre}[${self.description}](${link_filename} ${self.extra})'
 		}
-	} else if self.cat == LinkType.html || self.cat == LinkType.anchor || self.cat == LinkType.data {
+	} else if self.cat == LinkType.html || self.cat == LinkType.anchor || self.cat == LinkType.data || self.cat == LinkType.email {
 		out = '[${self.description}](${self.url})'
 	} else {
 		panic('bug')
@@ -132,7 +133,7 @@ pub fn (self Link) markdown() !string {
 		} else {
 			out = '${pre}[${description}](${link_filename}${anchor} ${self.extra})'
 		}
-	} else if self.cat == LinkType.html {
+	} else if self.cat == LinkType.html || self.cat == LinkType.email{
 		out = '[${description}](${self.url})'
 	} else {
 		panic('bug')
@@ -202,7 +203,7 @@ fn (mut link Link) parse() {
 	// // parse link description as paragraph
 	// if link.description != '' {
 	// 	link.paragraph_new(mut link.parent_doc(), link.description)
-	// 	println('debugzoni ${link.children()}')
+	// 	console.print_debug('debugzoni ${link.children()}')
 	// }
 
 	if link.url.contains('://') {

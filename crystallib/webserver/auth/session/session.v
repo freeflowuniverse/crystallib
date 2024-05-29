@@ -3,6 +3,7 @@ module session
 import db.sqlite
 import log
 import rand
+import freeflowuniverse.crystallib.ui.console
 
 pub struct SessionAuth {
 mut:
@@ -82,7 +83,7 @@ pub fn sqlite_database_backend(db sqlite.DB) !DatabaseBackend {
 
 // add session id iadds the id of a session to the user's sessions
 fn (mut backend DatabaseBackend) add_session(session Session) {
-	println('adding sesh: ${session}')
+	console.print_debug('adding sesh: ${session}')
 	session_ := Session{
 		session_id: 'sessionid'
 		user_id: 'userid'

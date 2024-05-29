@@ -2,6 +2,7 @@ module vexecutor
 
 import freeflowuniverse.crystallib.core.pathlib
 import os
+import freeflowuniverse.crystallib.ui.console
 
 // TODO make sure each function opens and closes the executor.vsh file, no file should be open across functions
 
@@ -144,11 +145,11 @@ pub fn (mut v_executor VExecutor) compile() ! {
 
 // Executes the file
 pub fn (mut v_executor VExecutor) do() ! {
-	println('v run ${v_executor.execution_file_path.path}')
+	console.print_debug('v run ${v_executor.execution_file_path.path}')
 	result := os.execute('v run ${v_executor.execution_file_path.path}')
-	println('Exit Code: ${result.exit_code}')
+	console.print_debug('Exit Code: ${result.exit_code}')
 	if result.exit_code != 0 {
-		println(result)
+		console.print_debug(result)
 		return error('Failed to run executor file! There are issues with the code.')
 	}
 }
@@ -156,7 +157,7 @@ pub fn (mut v_executor VExecutor) do() ! {
 // prints out all the file paths accessed
 pub fn (mut v_executor VExecutor) info() {
 	for action in v_executor.actions {
-		println('action_path: ${action.path.path}')
+		console.print_debug('action_path: ${action.path.path}')
 	}
 }
 

@@ -4,6 +4,7 @@ module bizmodel
 import freeflowuniverse.crystallib.biz.spreadsheet
 import json
 import sync
+import freeflowuniverse.crystallib.ui.console
 
 // pub struct BizModelBackground {
 // pub mut:
@@ -27,7 +28,7 @@ import sync
 // 	if res != 'OK' {
 // 		return error("could not load the biz model in the thread: '${res}'")
 // 	}
-// 	println('BIZMODEL LOADED')
+// 	console.print_debug('BIZMODEL LOADED')
 // 	return BizModelBackground{
 // 		ourthread: t
 // 	}

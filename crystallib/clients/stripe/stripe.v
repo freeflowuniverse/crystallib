@@ -4,6 +4,7 @@ import net.http
 import x.json2
 import log
 import encoding.base64
+import freeflowuniverse.crystallib.ui.console
 
 const success_status = 'queued'
 
@@ -64,7 +65,7 @@ fn (mut c Client) validate_credentials() ! {
 fn get_value(res json2.Any, key string) string {
 	mp := res.as_map()
 	ret := mp[key] or {
-		println("couldn't parse the key: ${key}")
+		console.print_debug("couldn't parse the key: ${key}")
 		return ''
 	}
 

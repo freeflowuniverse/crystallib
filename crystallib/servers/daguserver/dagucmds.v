@@ -2,6 +2,7 @@ module daguserver
 
 import os
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct CompletionBashOptions {
@@ -122,7 +123,7 @@ pub struct StartOptions {
 // Runs the DAG
 pub fn start(dag_file string, options StartOptions) !string {
 	flags := osal.write_flags[StartOptions](options)
-	println('debugzo: dagu start  ${dag_file} ${flags}')
+	console.print_debug('debugzo: dagu start  ${dag_file} ${flags}')
 	result := os.execute_opt('dagu start  ${dag_file} ${flags}')!
 	return result.output
 }

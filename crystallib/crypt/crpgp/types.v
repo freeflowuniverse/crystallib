@@ -1,4 +1,5 @@
 module crpgp
+import freeflowuniverse.crystallib.ui.console
 
 pub fn new_secret_key_param_builder() !SecretKeyParamsBuilder {
 	builder := C.params_builder_new()
@@ -32,7 +33,7 @@ pub fn (b &SecretKeyParamsBuilder) subkey(subkey SubkeyParams) ! {
 pub fn (b &SecretKeyParamsBuilder) build() !SecretKeyParams {
 	params1 := C.params_builder_build(b.internal)
 	if u64(params1) == 0 {
-		println('failed to build secret key params')
+		console.print_debug('failed to build secret key params')
 		construct_error()!
 		return error('')
 	}

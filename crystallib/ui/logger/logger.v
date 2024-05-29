@@ -1,6 +1,7 @@
 module console
 
 import time
+import freeflowuniverse.crystallib.ui.console
 
 pub enum LogLevel {
 	error
@@ -16,7 +17,7 @@ pub mut:
 
 fn (log Logger) output(msg string, t LogLevel) {
 	if int(log.level) >= int(t) {
-		println(msg)
+		console.print_debug(msg)
 	}
 }
 
@@ -36,7 +37,7 @@ pub fn (log Logger) warning(msg string) {
 }
 
 pub fn (log Logger) success(msg string) {
-	println('${time.now()} | ' + color_fg('SUCCESS', 'green') + '\t| ' +
+	console.print_debug('${time.now()} | ' + color_fg('SUCCESS', 'green') + '\t| ' +
 		color_fg(msg, 'light_green'))
 }
 

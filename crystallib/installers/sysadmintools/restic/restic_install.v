@@ -53,7 +53,7 @@ pub fn install(args_ InstallArgs) ! {
 		expand_file: '/tmp/restic'
 	)!
 
-	// println(dest)
+	// console.print_debug(dest)
 
 	osal.cmd_add(
 		cmdname: 'restic'

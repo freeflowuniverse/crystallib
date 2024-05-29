@@ -36,9 +36,9 @@ pub fn vm_get(configname string, name string) !VMOutput {
 
 pub fn vm_config_get(configname string, name string) !VMConfig {
 	mut config := config_get(configname)!
-	// println(name)
+	// console.print_debug(name)
 	for vm in config.vms {
-		// println(vm)
+		// console.print_debug(vm)
 		if name.starts_with(vm.name) {
 			return vm
 		}

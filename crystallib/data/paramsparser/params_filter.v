@@ -16,9 +16,9 @@ pub fn (params Params) filter_match(myfilter ParamsFilter) !bool {
 		inclok = false
 		for incl in myfilter.include {
 			ok := params.filter_match_item(incl)!
-			// println(params)
-			// println(myfilter)
-			// println(" - filter match: ok:$ok $incl")
+			// console.print_debug(params)
+			// console.print_debug(myfilter)
+			// console.print_debug(" - filter match: ok:$ok $incl")
 			if ok {
 				inclok = true
 				break // not more needed to check includes, we found one

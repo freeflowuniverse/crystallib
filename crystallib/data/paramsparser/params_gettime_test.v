@@ -50,10 +50,10 @@ const testparams = Params{
 
 fn test_get_time() ! {
 	sometime := paramsparser.testparams.get_time('when')!
-	assert sometime.unix == 1670271275
+	assert sometime.unixt == 1670271275
 
 	anothertime := paramsparser.testparams.get_time('date')!
-	assert anothertime.unix == 1670198400
+	assert anothertime.unixt == 1670198400
 }
 
 fn test_get_time_default() ! {

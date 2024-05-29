@@ -115,13 +115,13 @@ pub enum SecretType {
 
 // 	for m in matches {
 // 		m2 := m.to_lower().trim('{}')
-// 		// println("Found match: ${m2}")
+// 		// console.print_debug("Found match: ${m2}")
 // 		vexists := sm.exists(m2)!
 // 		if vexists || m2 in args.defaults {
-// 			// println("Found secret for ${m2}")
+// 			// console.print_debug("Found secret for ${m2}")
 // 			mut mysecret := ''
 // 			if m2 in args.defaults && args.defaults[m2].secret.len > 0 {
-// 				// println("Overwriting secret with default")
+// 				// console.print_debug("Overwriting secret with default")
 // 				mysecret = sm.secret(
 // 					key: m2
 // 					overwrite: args.defaults[m2].secret

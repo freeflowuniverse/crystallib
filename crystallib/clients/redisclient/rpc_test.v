@@ -1,4 +1,5 @@
 import freeflowuniverse.crystallib.clients.redisclient
+import freeflowuniverse.crystallib.ui.console
 
 fn setup() !&redisclient.Redis {
 	mut redis := redisclient.core_get()!
@@ -26,7 +27,7 @@ fn test_rpc() {
 	r.call(cmd: 'test.cmd', data: 'this is my data, normally json', wait: false)!
 	returnqueue := r.process(10000, process_test)!
 	mut res := r.result(10000, returnqueue)!
-	println(res)
+	console.print_debug(res)
 
 	assert res.str().trim_space() == 'test.cmd+++++this is my data, normally json'
 }

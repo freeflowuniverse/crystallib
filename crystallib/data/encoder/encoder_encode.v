@@ -90,7 +90,7 @@ pub fn (mut b Encoder) add_time(data time.Time) {
 }
 
 pub fn (mut b Encoder) add_ourtime(data ourtime.OurTime) {
-	b.add_i64(data.unix)
+	b.add_i64(data.unixt)
 }
 
 pub fn (mut b Encoder) add_list_string(data []string) {

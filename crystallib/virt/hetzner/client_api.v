@@ -1,6 +1,7 @@
 module hetzner
 
 import net.http
+import freeflowuniverse.crystallib.ui.console
 
 pub struct HetznerClient {
 pub mut:
@@ -29,7 +30,7 @@ fn (h HetznerClient) request_get(endpoint string) !string {
 }
 
 fn (h HetznerClient) request_post(endpoint string, data string) !http.Response {
-	println('request post: ${endpoint}\n${data}')
+	console.print_debug('request post: ${endpoint}\n${data}')
 
 	mut r := http.Request{
 		method: .post

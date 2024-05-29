@@ -1,10 +1,11 @@
 module main
+import freeflowuniverse.crystallib.ui.console
 
 pub fn plain_method() {
 }
 
 pub fn method_with_body() {
-	println('Example method evoked.')
+	console.print_debug('Example method evoked.')
 }
 
 // this method has a comment

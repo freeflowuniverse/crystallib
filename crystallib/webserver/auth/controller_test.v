@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.webserver.auth.email
 import toml
 import os
 import json
+import freeflowuniverse.crystallib.ui.console
 
 const server_url = 'http://localhost:8091'
 
@@ -31,7 +32,7 @@ fn configure_controller() !AuthServer {
 fn test_register() {
 	// controller := configure_controller()!
 	// spawn vweb.run(&controller, 8091)
-	println('registering1')
+	console.print_debug('registering1')
 	req := http.new_request(.post, '${auth.server_url}/register', 'test@email.com')
 	resp := req.do()!
 
@@ -45,7 +46,7 @@ fn test_register() {
 fn test_authenticate() {
 	// controller := configure_controller()!
 	// spawn vweb.run(&controller, 8092)
-	println('registering2')
+	console.print_debug('registering2')
 
 	req0 := http.new_request(.post, '${auth.server_url}/register', 'test@email2.com')
 	resp0 := req0.do()!
@@ -61,6 +62,6 @@ fn test_authenticate() {
 		value: registration.tokens.refresh_token
 	)
 	resp1 := req1.do()!
-	println('resp: ${resp1}')
+	console.print_debug('resp: ${resp1}')
 	panic('s ')
 }
