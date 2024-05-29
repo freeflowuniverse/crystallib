@@ -161,3 +161,34 @@ fn test_copy(){
 	assert fl.con.exec_param('select * from block where ino = ?;', '${dir2file1.ino}')!.len == 1
 	assert fl.con.exec_param('select * from extra where ino = ?;', '${dir2file1.ino}')!.len == 1
 }
+
+fn test_get_routes(){
+	mut fl := new('/tmp/fl1.fl')!
+
+	fl.con.exec('insert into route (start, end, url) values (0, 125, "dir:///tmp/store0")')!
+	fl.con.exec('insert into route (start, end, url) values (126, 255, "dir:///tmp/store1")')!
+
+	want := [Route{start: 0, end: 125, url: 'dir:///tmp/store0'}, Route{start: 126, end: 255, url: 'dir:///tmp/store1'}]
+	assert fl.get_routes()! == want
+}
+
+fn test_add_routes(){
+	mut fl := new('/tmp/fl1.fl')!
+
+	routes_to_add := [Route{start: 10, end: 20, url: 'dir:///tmp/store2'}, Route{start: 20, end: 30, url: 'dir:///tmp/store3'}]
+	fl.add_routes(routes_to_add)!
+
+	found_routes := fl.get_routes()!
+	for route in routes_to_add{
+		assert found_routes.contains(route)
+	}
+}
+
+fn test_update_routes(){
+	mut fl := new('/tmp/fl1.fl')!
+
+	updated_routes := [Route{start: 30, end: 40, url: 'dir:///tmp/store4'}, Route{start: 50, end: 60, url: 'dir:///tmp/store6'}, Route{start: 100, end: 255, url: 'dir:///tmp/store7'}]
+	fl.update_routes(updated_routes)!
+
+	assert updated_routes == fl.get_routes()!
+}

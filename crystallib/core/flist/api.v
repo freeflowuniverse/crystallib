@@ -96,9 +96,6 @@ fn (mut f Flist) copy_extras(src_ino u64, dest_ino u64) ! {
 	}
 }
 
-fn (mut f Flist) copy_inode(src Inode, dest Inode) ! {
-}
-
 fn (mut f Flist) get_inode_from_path(path_ string) !Inode {
 	mut path := path_.trim('/')
 
@@ -190,4 +187,28 @@ pub fn (mut f Flist) find(pattern string) ![]Inode {
 	return inodes
 }
 
-// pub fn (mut f Flist) update_routes() !
+// get_routes returns all flist routes
+pub fn (mut f Flist) get_routes() ![]Route{
+	routes := sql f.con {
+		select from Route
+	}!
+	return routes
+}
+
+// update_routes will overwrite the current routes with the new routes
+pub fn (mut f Flist) update_routes(new_routes []Route) !{
+	f.con.exec('delete from route;')!
+
+	f.add_routes(new_routes)!
+}
+
+
+// add_routes adds routes to the route table of the flist
+pub fn (mut f Flist) add_routes(new_routes []Route) !{
+	for route in new_routes{
+		sql f.con{
+			insert route into Route
+		}!
+	}
+}
+

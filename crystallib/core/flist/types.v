@@ -2,7 +2,7 @@ module flist
 
 @[table: 'inode']
 pub struct Inode {
-	ino    u64 @[primary; sql: serial]
+	ino    u64    @[primary; sql: serial]
 	parent u64
 	name   string
 	size   u64
@@ -15,16 +15,24 @@ pub struct Inode {
 }
 
 @[table: 'block']
-pub struct Block{
+pub struct Block {
 pub mut:
 	ino u64
-	id string
+	id  string
 	key string
 }
 
 @[table: 'extra']
-pub struct Extra{
+pub struct Extra {
 pub mut:
-	ino u64
+	ino  u64
 	data string
+}
+
+@[table: 'route']
+pub struct Route {
+pub mut:
+	start u8
+	end   u8
+	url   string
 }
