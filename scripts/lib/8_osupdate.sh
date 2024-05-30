@@ -63,7 +63,7 @@ function paru_install {
     popd /tmp/paru
     rustup default stable
     makepkg -si --noconfirm
-    EOF
+EOF
     
 
     # Go back to the original user

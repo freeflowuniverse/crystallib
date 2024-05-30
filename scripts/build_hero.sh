@@ -503,11 +503,41 @@ function os_update {
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
         pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
-        
+
+        # Check if builduser exists, create if not
+        if ! id -u builduser > /dev/null 2>&1; then
+            sudo useradd -m builduser
+            echo "builduser:$(openssl rand -base64 32 | sha256sum | base64 | head -c 32)" | sudo chpasswd
+            echo 'builduser ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/builduser
+        fi
+
+        if [[ -n "${DEBUG}" ]]; then
+            execute_with_marker "paru_install" paru_install
+        fi
     fi
 }
 
+function paru_install {
+    echo ' - paru install'
+    pushd /tmp
+    sudo pacman -S --needed --noconfirm base-devel git
+    rm -rf paru
+    git clone https://aur.archlinux.org/paru.git
+    sudo chown -R builduser:builduser paru
 
+    # Switch to the regular user to build and install the package
+    sudo -u builduser bash <<EOF
+    popd /tmp/paru
+    rustup default stable
+    makepkg -si --noconfirm
+EOF
+    
+
+    # Go back to the original user
+    popd
+    popd
+
+}
 
 function redis_start {
     set +e
@@ -543,8 +573,9 @@ function redis_start {
             zinit monitor redis
             zinit start redis
         else
-            echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
-            exit 1
+            redis-server --daemonize yes
+            # echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
+            # exit 1
         fi
 
     fi
@@ -626,14 +657,17 @@ function v_install {
 
 
 function v_analyzer_install {
+    if [[ -n "${DEBUG}" ]]; then
+        v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
+    fi  
     # set -x
-    pushd /tmp
-    source ~/.profile
-    rm -f install.sh
-    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
-    v run install.vsh  --no-interaction
-    popd "$@" > /dev/null
-    # set +x
+    # pushd /tmp
+    # source ~/.profile
+    # rm -f install.sh
+    # curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    # v run install.vsh  --no-interaction
+    # popd "$@" > /dev/null
+    # # set +x
 }
 function crystal_deps_install {
 
