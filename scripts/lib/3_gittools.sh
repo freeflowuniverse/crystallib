@@ -18,6 +18,7 @@ function gitcheck {
 
 function sshknownkeysadd {
     mkdir -p ~/.ssh
+    touch ~/.ssh/known_hosts
     if ! grep github.com ~/.ssh/known_hosts > /dev/null
     then
         ssh-keyscan github.com >> ~/.ssh/known_hosts
