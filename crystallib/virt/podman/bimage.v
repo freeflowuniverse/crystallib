@@ -157,3 +157,12 @@ pub fn (mut e CEngine) image_exists(args ImageGetArgs) !bool {
 	}
 	return true
 }
+
+
+// get buildah containers
+pub fn (mut e CEngine) bimages() ![]BAHImage {
+	if e.bcontainers.len == 0 {
+		e.images_load()!
+	}
+	return e.images
+}

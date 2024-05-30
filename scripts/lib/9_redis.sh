@@ -34,8 +34,9 @@ function redis_start {
             zinit monitor redis
             zinit start redis
         else
-            echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
-            exit 1
+            redis-server --daemonize yes
+            # echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
+            # exit 1
         fi
 
     fi
