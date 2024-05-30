@@ -36,7 +36,38 @@ function os_update {
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
         pacman -Su --noconfirm mc git tmux curl htop redis screen net-tools git htop ca-certificates lsb-release screen
-        
+
+        # Check if builduser exists, create if not
+        if ! id -u builduser > /dev/null 2>&1; then
+            sudo useradd -m builduser
+            echo "builduser:$(openssl rand -base64 32 | sha256sum | base64 | head -c 32)" | sudo chpasswd
+            echo 'builduser ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/builduser
+        fi
+
+        if [[ -n "${DEBUG}" ]]; then
+            execute_with_marker "paru_install" paru_install
+        fi
     fi
 }
 
+function paru_install {
+    echo ' - paru install'
+    pushd /tmp
+    sudo pacman -S --needed --noconfirm base-devel git
+    rm -rf paru
+    git clone https://aur.archlinux.org/paru.git
+    sudo chown -R builduser:builduser paru
+
+    # Switch to the regular user to build and install the package
+    sudo -u builduser bash <<EOF
+    popd /tmp/paru
+    rustup default stable
+    makepkg -si --noconfirm
+    EOF
+    
+
+    # Go back to the original user
+    popd
+    popd
+
+}

@@ -61,12 +61,15 @@ function v_install {
 
 
 function v_analyzer_install {
+    if [[ -n "${DEBUG}" ]]; then
+        v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
+    fi  
     # set -x
-    pushd /tmp
-    source ~/.profile
-    rm -f install.sh
-    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
-    v run install.vsh  --no-interaction
-    popd "$@" > /dev/null
-    # set +x
+    # pushd /tmp
+    # source ~/.profile
+    # rm -f install.sh
+    # curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    # v run install.vsh  --no-interaction
+    # popd "$@" > /dev/null
+    # # set +x
 }
