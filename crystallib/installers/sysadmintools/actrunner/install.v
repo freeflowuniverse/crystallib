@@ -13,7 +13,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.2.6'
+	version := '0.2.10'
 
 	res := os.execute('${osal.profile_path_source_and()} actrunner -v')
 	if res.exit_code == 0 {
