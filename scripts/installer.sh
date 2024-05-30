@@ -597,6 +597,7 @@ function redis_test {
 
 
 function v_install {
+    set -ex
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1
@@ -712,6 +713,7 @@ function crystal_lib_pull {
 function crystal_lib_get {
     
     #execute_with_marker "crystal_deps_install" crystal_deps_install
+    execute_with_marker "v_install" v_install
 
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/
@@ -919,6 +921,8 @@ myplatform
 reset
 
 execute_with_marker "os_update" os_update
+
+
 
 redis_start
 

@@ -41,6 +41,7 @@ function crystal_lib_pull {
 function crystal_lib_get {
     
     #execute_with_marker "crystal_deps_install" crystal_deps_install
+    execute_with_marker "v_install" v_install
 
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/

@@ -20,7 +20,7 @@ pub struct CrystalBuildArgs {
 }
 
 // create the base builder, and install crystallib on it
-pub fn (mut engine CEngine) builderv(args CrystalBuildArgs) ! {
+pub fn (mut engine CEngine) builderv(args CrystalBuildArgs) !BContainer {
 	// println(engine.bcontainers()!)
 	// println(engine.bimages()!)
 	if ! engine.image_exists(repo:"localhost/builder")!{
@@ -48,9 +48,10 @@ pub fn (mut engine CEngine) builderv(args CrystalBuildArgs) ! {
 	)!
 
 	// builder.copy('/usr/local/bin/hero', '/var/builder/bin/hero/')!
+	builder.commit('localhost/builderv')!
+	//builder.delete()!
 
-	// builder.commit('localhost/builderv')!
-	// builder.delete()!
+	return builder
 }
 
 // pub fn (mut engine CEngine) hero_build(args HeroBuildArgs) ! {

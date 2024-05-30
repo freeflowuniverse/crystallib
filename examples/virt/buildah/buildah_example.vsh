@@ -17,10 +17,10 @@ mut pm:=podman.new()!
 mut b:=pm.bcontainer_new(name:"test")!
 
 
-// pm.builderv()!
+pm.builderv()!
 
 
 mut b2:=pm.bcontainer_get("builderv")!
-b2.shell()!
+//b2.shell()!
 
 
