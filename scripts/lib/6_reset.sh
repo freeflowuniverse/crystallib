@@ -1,18 +1,18 @@
 
 function reset {
-    if [[ -z "${FULLRESET}" ]]; 
-    then
-        echo
-    else
+    if [[ -n "${FULLRESET}" ]]; then
+        echo " - FULLRESET"
         rm -rf ~/.vmodules
         rm -rf ~/code  
+        rm -rf $DONE_DIR
+        mkdir -p  $DONE_DIR
     fi  
 
-    if [[ -z "${RESET}" ]]; 
-    then
-        echo
-    else
+    if [[ -n "${RESET}" ]]; then
+        echo " - RESET"
         rm -rf ~/.vmodules
+        rm -rf $DONE_DIR
+        mkdir -p  $DONE_DIR        
     fi  
 
 }

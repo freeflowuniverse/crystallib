@@ -475,15 +475,14 @@ function os_update {
         export TERM=xterm
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
-        #apt update -y
+        apt update -y
         set +e
         apt-mark hold grub-efi-amd64-signed
         set -e
-        apt update -y
-        # apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        # apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release sudo binutils wget"
+        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release sudo binutils wget pkg-config"
 
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
@@ -520,15 +519,19 @@ function redis_start {
 
     if [[ "${OSNAME}" == "darwin"* ]]; then
         brew services start redis
-    elif [[ "${OSNAME}" == "arch"* ]]; then
-        redis-server --daemonize yes
+    # elif [[ "${OSNAME}" == "arch"* ]]; then
+    #     redis-server --daemonize yes
     else
-
+        if [[ "${OSNAME}" == "arch"* ]]; then
+            RNAME='redis'
+        else
+            RNAME='redis-server'
+        fi
         # Enable and start Redis service using the appropriate service manager
         if is_systemd_installed; then
             echo "Using systemd to manage Redis."
-            systemctl enable redis-server
-            systemctl start redis-server
+            systemctl enable ${RNAME}
+            systemctl start ${RNAME}
         elif is_initd_installed; then
             echo "Using init.d to manage Redis."
             update-rc.d redis-server defaults
@@ -583,7 +586,7 @@ function v_install {
 	elif [[ ${OSNAME} == "alpine"* ]]; then
 		package_install "make gcc libc-dev gcompat libstdc++"
 	elif [[ ${OSNAME} == "arch" ]]; then
-		package_install "make tcc gcc"
+		package_install "make tcc"
 	else
 		echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
 		exit 1
@@ -614,15 +617,6 @@ function v_install {
         ${DIR_CODE_INT}/v/v symlink
     fi
 
-    ##LETS NOT USE v-analyzer by default
-    # # set -x
-    # pushd /tmp
-    # source ~/.profile
-    # rm -f install.sh
-    # curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
-    # v run install.vsh  --no-interaction
-    # popd "$@" > /dev/null
-    # # set +x
 
     if ! [ -x "$(command -v v)" ]; then
     echo 'vlang is not installed.' >&2
@@ -630,9 +624,20 @@ function v_install {
     fi
 }
 
+
+function v_analyzer_install {
+    # set -x
+    pushd /tmp
+    source ~/.profile
+    rm -f install.sh
+    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    v run install.vsh  --no-interaction
+    popd "$@" > /dev/null
+    # set +x
+}
 function crystal_deps_install {
 
-    if [[ "${OSNAME}" == "ubuntu" ]]; then
+    if [[ "${OSNAME}" == "ubuntu" || "${OSNAME}" == "arch"* ]]; then
         cd /tmp
         package_install autoconf libtool
         wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
@@ -644,14 +649,29 @@ function crystal_deps_install {
         sudo make install   
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         brew install secp256k1        
-    elif [[ "${OSNAME}" == "arch"* ]]; then
-        pacman -Su extra/libsecp256k1
+    # elif [[ "${OSNAME}" == "arch"* ]]; then
+    #     pacman -Su extra/libsecp256k1
     else
         echo "can't find instructions to install secp256k1"
         exit 1
     fi
 
 
+}
+
+function crystal_lib_pull {
+
+    if [[ -z "${DEBUG}" ]]; then
+        exit 0
+    fi
+
+    pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
+    if [[ $(git status -s) ]]; then
+        echo "There are uncommitted changes in the Git repository crystallib."
+        exit 1
+    fi
+    git pull
+    popd 2>&1 >> /dev/null
 }
 
 function crystal_lib_get {
@@ -673,11 +693,6 @@ function crystal_lib_get {
         else
             git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
         fi               
-        if [[ $(git status -s) ]]; then
-            echo "There are uncommitted changes in the Git repository crystallib."
-            exit 1
-        fi
-        git pull
         set +e
         git checkout $CLBRANCH
         set -e
@@ -689,7 +704,7 @@ function crystal_lib_get {
         else
             git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
         fi        
-        
+        crystal_lib_pull
         cd crystallib
         set +e
         git checkout $CLBRANCH
@@ -866,6 +881,8 @@ function hero_build {
 myplatform
 
 execute_with_marker "os_update" os_update
+
+redis_start
 
 sshknownkeysadd
 

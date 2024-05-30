@@ -21,7 +21,7 @@ function v_install {
 	elif [[ ${OSNAME} == "alpine"* ]]; then
 		package_install "make gcc libc-dev gcompat libstdc++"
 	elif [[ ${OSNAME} == "arch" ]]; then
-		package_install "make tcc gcc"
+		package_install "make tcc"
 	else
 		echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
 		exit 1
@@ -52,18 +52,21 @@ function v_install {
         ${DIR_CODE_INT}/v/v symlink
     fi
 
-    ##LETS NOT USE v-analyzer by default
-    # # set -x
-    # pushd /tmp
-    # source ~/.profile
-    # rm -f install.sh
-    # curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
-    # v run install.vsh  --no-interaction
-    # popd "$@" > /dev/null
-    # # set +x
 
     if ! [ -x "$(command -v v)" ]; then
     echo 'vlang is not installed.' >&2
     exit 1
     fi
+}
+
+
+function v_analyzer_install {
+    # set -x
+    pushd /tmp
+    source ~/.profile
+    rm -f install.sh
+    curl -fksSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh > install.vsh
+    v run install.vsh  --no-interaction
+    popd "$@" > /dev/null
+    # set +x
 }
