@@ -3,7 +3,7 @@ module base
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.dbfs
-import freeflowuniverse.crystallib.crypt.secp256k1
+//import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
@@ -14,7 +14,7 @@ import crypto.md5
 @[heap]
 pub struct Context {
 mut:
-	priv_key_     ?&secp256k1.Secp256k1 @[skip; str: skip]
+	//priv_key_     ?&secp256k1.Secp256k1 @[skip; str: skip]
 	params_       ?&paramsparser.Params
 	dbcollection_ ?&dbfs.DBCollection   @[skip; str: skip]
 	redis_        ?&redisclient.Redis   @[skip; str: skip]
@@ -155,36 +155,36 @@ fn (mut self Context) db_config_get() !dbfs.DB {
 
 /////////////PRIVKEY
 
-pub fn (mut self Context) privkey_new() !&secp256k1.Secp256k1 {
-	mypk := secp256k1.new()!
-	return self.privkey_set(mypk.private_key_hex())!
-}
+// pub fn (mut self Context) privkey_new() !&secp256k1.Secp256k1 {
+// 	mypk := secp256k1.new()!
+// 	return self.privkey_set(mypk.private_key_hex())!
+// }
 
-pub fn (mut self Context) privkey_set(keyhex string) !&secp256k1.Secp256k1 {
-	privkeyencr := self.secret_encrypt(keyhex)!
-	self.config.priv_key = privkeyencr
-	// self.save()!
-	return self.privkey()
-}
+// pub fn (mut self Context) privkey_set(keyhex string) !&secp256k1.Secp256k1 {
+// 	privkeyencr := self.secret_encrypt(keyhex)!
+// 	self.config.priv_key = privkeyencr
+// 	// self.save()!
+// 	return self.privkey()
+// }
 
-// get the private key
-pub fn (mut self Context) privkey() !&secp256k1.Secp256k1 {
-	mut mypk := self.priv_key_ or {
-		mut r := self.redis()!
-		mut key := r.get('context:privkey') or { '' }
-		if key == '' {
-			return error("can't find priv key for context:${self.config.id}")
-		}
-		key = self.secret_decrypt(key)!
-		mut mypk := secp256k1.new(
-			privhex: key
-		)!
-		self.priv_key_ = &mypk
-		&mypk
-	}
+// // get the private key
+// pub fn (mut self Context) privkey() !&secp256k1.Secp256k1 {
+// 	mut mypk := self.priv_key_ or {
+// 		mut r := self.redis()!
+// 		mut key := r.get('context:privkey') or { '' }
+// 		if key == '' {
+// 			return error("can't find priv key for context:${self.config.id}")
+// 		}
+// 		key = self.secret_decrypt(key)!
+// 		mut mypk := secp256k1.new(
+// 			privhex: key
+// 		)!
+// 		self.priv_key_ = &mypk
+// 		&mypk
+// 	}
 
-	return mypk
-}
+// 	return mypk
+// }
 
 // will use our secret as configured for the hero to encrypt, uses base64
 pub fn (mut self Context) secret_encrypt(txt string) !string {

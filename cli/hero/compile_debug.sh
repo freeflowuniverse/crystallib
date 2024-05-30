@@ -12,7 +12,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # v -cg -enable-globals -w -cflags -static -cc gcc hero.v
     v -cg -enable-globals -w hero.v
 else
-    v -cg -enable-globals -w -cflags -static -cc gcc hero.v
+    v -cg -enable-globals -w hero.v
+    #v -cg -enable-globals -w -cflags -static -cc gcc hero.v
 fi
 
 
