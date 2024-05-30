@@ -1,6 +1,8 @@
 
 function freeflow_dev_env_install {
 
+    set -ex
+
     crystal_lib_get
 
     if ! [ -x "$(command -v v)" ]; then
@@ -43,8 +45,6 @@ myplatform
 reset
 
 execute_with_marker "os_update" os_update
-
-
 
 redis_start
 
