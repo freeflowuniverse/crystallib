@@ -670,7 +670,7 @@ function v_analyzer_install {
     # # set +x
 }
 function crystal_deps_install {
-
+    set -e
     if [[ "${OSNAME}" == "ubuntu" || "${OSNAME}" == "arch"* ]]; then
         cd /tmp
         package_install autoconf libtool
