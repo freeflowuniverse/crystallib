@@ -1,7 +1,7 @@
 module podman
 
 import freeflowuniverse.crystallib.osal { exec }
-import freeflowuniverse.crystallib.core.texttools
+
 
 @[heap]
 pub struct CEngine {

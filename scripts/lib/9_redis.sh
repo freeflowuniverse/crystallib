@@ -10,15 +10,19 @@ function redis_start {
 
     if [[ "${OSNAME}" == "darwin"* ]]; then
         brew services start redis
-    elif [[ "${OSNAME}" == "arch"* ]]; then
-        redis-server --daemonize yes
+    # elif [[ "${OSNAME}" == "arch"* ]]; then
+    #     redis-server --daemonize yes
     else
-
+        if [[ "${OSNAME}" == "arch"* ]]; then
+            RNAME='redis'
+        else
+            RNAME='redis-server'
+        fi
         # Enable and start Redis service using the appropriate service manager
         if is_systemd_installed; then
             echo "Using systemd to manage Redis."
-            systemctl enable redis-server
-            systemctl start redis-server
+            systemctl enable ${RNAME}
+            systemctl start ${RNAME}
         elif is_initd_installed; then
             echo "Using init.d to manage Redis."
             update-rc.d redis-server defaults
@@ -30,8 +34,9 @@ function redis_start {
             zinit monitor redis
             zinit start redis
         else
-            echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
-            exit 1
+            redis-server --daemonize yes
+            # echo "Neither systemd nor init.d is installed. Cannot manage Redis service."
+            # exit 1
         fi
 
     fi

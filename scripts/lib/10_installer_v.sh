@@ -1,5 +1,6 @@
 
 function v_install {
+    set -ex
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1
@@ -21,7 +22,7 @@ function v_install {
 	elif [[ ${OSNAME} == "alpine"* ]]; then
 		package_install "make gcc libc-dev gcompat libstdc++"
 	elif [[ ${OSNAME} == "arch" ]]; then
-		package_install "make tcc gcc"
+		package_install "make tcc"
 	else
 		echo "ONLY SUPPORT OSX AND LINUX FOR NOW"
 		exit 1
@@ -52,8 +53,19 @@ function v_install {
         ${DIR_CODE_INT}/v/v symlink
     fi
 
-    ##LETS NOT USE v-analyzer by default
-    # # set -x
+
+    if ! [ -x "$(command -v v)" ]; then
+    echo 'vlang is not installed.' >&2
+    exit 1
+    fi
+}
+
+
+function v_analyzer_install {
+    if [[ -n "${DEBUG}" ]]; then
+        v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
+    fi  
+    # set -x
     # pushd /tmp
     # source ~/.profile
     # rm -f install.sh
@@ -61,9 +73,4 @@ function v_install {
     # v run install.vsh  --no-interaction
     # popd "$@" > /dev/null
     # # set +x
-
-    if ! [ -x "$(command -v v)" ]; then
-    echo 'vlang is not installed.' >&2
-    exit 1
-    fi
 }
