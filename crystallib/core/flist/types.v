@@ -2,6 +2,7 @@ module flist
 
 @[table: 'inode']
 pub struct Inode {
+pub mut:
 	ino    u64    @[primary; sql: serial]
 	parent u64
 	name   string
@@ -35,4 +36,11 @@ pub mut:
 	start u8
 	end   u8
 	url   string
+}
+
+@[table: 'tag']
+pub struct Tag {
+pub mut:
+	key   string @[primary]
+	value string
 }

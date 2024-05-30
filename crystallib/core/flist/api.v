@@ -52,18 +52,14 @@ pub fn (mut f Flist) copy(source string, destination string) ! {
 		uid: u32(os.getuid())
 	}
 
-	sql f.con {
-		insert dest_inode into Inode
-	}!
+	f.add_inode(dest_inode)!
 
 	dest_ino := u64(f.con.last_id())
 
 	f.copy_blocks(src_inode.ino, dest_ino)!
-	f.copy_extras(src_inode.ino, dest_ino)!
+	f.copy_extra(src_inode.ino, dest_ino)!
 
-	children := sql f.con {
-		select from Inode where parent == src_inode.ino
-	}!
+	children := f.get_inode_children(src_inode.ino)!
 
 	for child in children {
 		f.copy(os.join_path(source, child.name), os.join_path(dest, child.name))!
@@ -81,56 +77,6 @@ fn (mut f Flist) copy_blocks(src_ino u64, dest_ino u64) ! {
 			insert block into Block
 		}!
 	}
-}
-
-fn (mut f Flist) copy_extras(src_ino u64, dest_ino u64) ! {
-	mut extras := sql f.con {
-		select from Extra where ino == src_ino
-	}!
-
-	for mut extra in extras {
-		extra.ino = dest_ino
-		sql f.con {
-			insert extra into Extra
-		}!
-	}
-}
-
-fn (mut f Flist) get_inode_from_path(path_ string) !Inode {
-	mut path := path_.trim('/')
-
-	items := path.split('/')
-	root_inodes := sql f.con {
-		select from Inode where ino == 1
-	}!
-
-	if root_inodes.len != 1 {
-		return error('invalid flist: failed to get root directory inode')
-	}
-
-	mut inode := root_inodes[0]
-	if path == '' {
-		return inode
-	}
-
-	for item in items {
-		if item == '' {
-			return error('invalid path ${path_}')
-		}
-
-		inodes := sql f.con {
-			select from Inode where name == item && parent == inode.ino
-		}!
-
-		// at most only one entry should match
-		if inodes.len == 0 {
-			return error('file or directory ${item} does not exist in flist')
-		}
-
-		inode = inodes[0]
-	}
-
-	return inode
 }
 
 // delete file or directory from flist. path is relative to flist root directory.
@@ -155,60 +101,112 @@ pub fn (mut f Flist) delete_match(pattern string) ! {
 	}
 }
 
-pub fn (mut f Flist) delete_inode(ino u64) ! {
-	// delete from block table
-	f.con.exec_param('delete from block where ino = ?;', '${ino}')!
+// merge merges two flists together.
+//
+// - copies all routes
+// - copies all inodes with the following restrictions:
+// 	 - no two entries can have the same inode. this can happen by shifting an flists inodes to start after the last inode number of the other flist.
+// 	 - the changed flist should reflect the inode changes on all affected tables (extra and block).
+// 	 - no two files that exist in the same dir can have the same name.
+// 	 - if two files have the same name and have the same blocks, they are identical and won't be copied.
+pub fn merge(source string, destination string) ! {
+	mut f_src := new(path: source)!
+	mut f_dest := new(path: destination)!
 
-	// delete from extra table
-	f.con.exec_param('delete from extra where ino = ?;', '${ino}')!
-
-	// get children if any
-	children := sql f.con {
-		select from Inode where parent == ino
-	}!
-
-	for child in children {
-		f.delete_inode(child.ino)!
+	f_dest.con.exec('BEGIN;')!
+	f_dest.merge_(mut f_src) or {
+		f_dest.con.exec('ROLLBACK;')!
+		return error('faild to merge flists: ${err}')
 	}
-
-	// delete inode
-	f.con.exec_param('delete from inode where ino = ?;', '${ino}')!
+	f_dest.con.exec('COMMIT;')!
 }
 
-// pub fn (mut f Flist) merge() !
+fn (mut f Flist) merge_(mut f_src Flist) ! {
+	src_routes := f_src.get_routes()!
+	f.add_routes(src_routes)!
+
+	dest_last_inode_num := f.get_last_inode_number()!
+	mut next_inode_num := dest_last_inode_num + 1
+	mut src_inodes := f_src.list(true)!
+
+	for mut inode in src_inodes {
+		if inode.ino == 1 && inode.parent == 0 {
+			// this is root inode, not included in merge
+			continue
+		}
+
+		mut src_blocks := f_src.get_inode_blocks(inode.ino)!
+		src_inode_path := f_src.get_inode_path(inode)!
+		// if entry is not a dir and has a match with an entry from destination
+		// then skip
+		if matching_dest_inode := f.get_inode_from_path(src_inode_path) {
+			// two entries exist with the same path: there might be a match,
+			// need to check blocks to make sure
+
+			// need to assign new name to incoming entry
+			for i in 1 .. 100 {
+				new_src_inode_path := '${src_inode_path} (${i})'
+				if _ := f.get_inode_from_path(new_src_inode_path) {
+					continue
+				} else {
+					inode.name = new_src_inode_path
+				}
+			}
+
+			if inode.mode == matching_dest_inode.mode && inode.mode != 16384 {
+				dest_blocks := f.get_inode_blocks(matching_dest_inode.ino)!
+				if do_blocks_match(src_blocks, dest_blocks) {
+					continue
+				}
+			}
+		}
+
+		// get blocks for inode
+		for mut block in src_blocks {
+			block.ino = next_inode_num
+			f.add_block(block)!
+		}
+
+		// get extras for inode
+		if mut extra := f_src.get_extra(inode.ino) {
+			extra.ino = next_inode_num
+			f.add_extra(extra)!
+		}
+
+		inode.ino = next_inode_num
+		f.add_inode(inode)!
+
+		next_inode_num += 1
+	}
+
+	src_tags := f_src.get_tags()!
+	for tag in src_tags{
+		f.add_tag(tag)!
+	}
+}
 
 // find entries that match pattern, it uses the `LIKE` operator;
 // The percent sign (%) matches zero or more characters and the underscore (_) matches exactly one.
 pub fn (mut f Flist) find(pattern string) ![]Inode {
-	inodes := sql f.con {
-		select from Inode where name like pattern
-	}!
-
-	return inodes
-}
-
-// get_routes returns all flist routes
-pub fn (mut f Flist) get_routes() ![]Route{
-	routes := sql f.con {
-		select from Route
-	}!
-	return routes
+	return f.find_inode_with_pattern(pattern)
 }
 
 // update_routes will overwrite the current routes with the new routes
-pub fn (mut f Flist) update_routes(new_routes []Route) !{
-	f.con.exec('delete from route;')!
+pub fn (mut f Flist) update_routes(new_routes []Route) ! {
+	f.delete_all_routes()!
 
 	f.add_routes(new_routes)!
 }
 
-
 // add_routes adds routes to the route table of the flist
-pub fn (mut f Flist) add_routes(new_routes []Route) !{
-	for route in new_routes{
-		sql f.con{
-			insert route into Route
-		}!
+pub fn (mut f Flist) add_routes(new_routes []Route) ! {
+	current_routes := f.get_routes()!
+
+	for route in new_routes {
+		if current_routes.contains(route) {
+			continue
+		}
+
+		f.add_route(route)!
 	}
 }
-

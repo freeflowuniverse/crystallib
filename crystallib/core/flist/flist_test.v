@@ -57,7 +57,7 @@ fn testsuite_end() {
 }
 
 fn test_list() {
-	mut fl := new('/tmp/fl1.fl')!
+	mut fl := new(path: '/tmp/fl1.fl')!
 	input := insert_random_inodes(mut fl)!
 	list := fl.list(true)!
 	assert input == list
@@ -103,7 +103,7 @@ fn insert_random_inodes(mut fl Flist) ![]Inode {
 }
 
 fn test_delete_path() {
-	mut fl := new('/tmp/fl1.fl')!
+	mut fl := new(path: '/tmp/fl1.fl')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (100, 1, "dir", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (101, 100, "file", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into block (ino, id, key) values (101, "asdf", "qwer");')!
@@ -116,8 +116,8 @@ fn test_delete_path() {
 	assert fl.con.exec('select * from extra where ino = 101;')!.len == 0
 }
 
-fn test_find() {
-	mut fl := new('/tmp/fl1.fl')!
+fn test_find(){
+	mut fl := new(path: '/tmp/fl1.fl')!
 
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (100, 1, "dir1", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (101, 1, "dir2", 0, 0, 0, 0, 0, 0, 0)')!
@@ -126,8 +126,8 @@ fn test_find() {
 	assert inodes.len == 2
 }
 
-fn test_delete_match() {
-	mut fl := new('/tmp/fl1.fl')!
+fn test_delete_match(){
+	mut fl := new(path: '/tmp/fl1.fl')!
 
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (102, 1, "dir3", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (103, 1, "dir4", 0, 0, 0, 0, 0, 0, 0)')!
@@ -139,7 +139,7 @@ fn test_delete_match() {
 }
 
 fn test_copy(){
-	mut fl := new('/tmp/fl1.fl')!
+	mut fl := new(path: '/tmp/fl1.fl')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (1, 0, "/", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (104, 1, "dir1", 0, 0, 0, 0, 0, 0, 0)')!
 	fl.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (105, 104, "file1", 0, 0, 0, 0, 0, 0, 0)')!
@@ -163,7 +163,7 @@ fn test_copy(){
 }
 
 fn test_get_routes(){
-	mut fl := new('/tmp/fl1.fl')!
+	mut fl := new(path: '/tmp/fl1.fl')!
 
 	fl.con.exec('insert into route (start, end, url) values (0, 125, "dir:///tmp/store0")')!
 	fl.con.exec('insert into route (start, end, url) values (126, 255, "dir:///tmp/store1")')!
@@ -173,7 +173,7 @@ fn test_get_routes(){
 }
 
 fn test_add_routes(){
-	mut fl := new('/tmp/fl1.fl')!
+	mut fl := new(path: '/tmp/fl1.fl')!
 
 	routes_to_add := [Route{start: 10, end: 20, url: 'dir:///tmp/store2'}, Route{start: 20, end: 30, url: 'dir:///tmp/store3'}]
 	fl.add_routes(routes_to_add)!
@@ -185,7 +185,7 @@ fn test_add_routes(){
 }
 
 fn test_update_routes(){
-	mut fl := new('/tmp/fl1.fl')!
+	mut fl := new(path: '/tmp/fl1.fl')!
 
 	updated_routes := [Route{start: 30, end: 40, url: 'dir:///tmp/store4'}, Route{start: 50, end: 60, url: 'dir:///tmp/store6'}, Route{start: 100, end: 255, url: 'dir:///tmp/store7'}]
 	fl.update_routes(updated_routes)!
