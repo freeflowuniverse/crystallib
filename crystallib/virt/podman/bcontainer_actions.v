@@ -2,6 +2,7 @@ module podman
 
 import json
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct RunArgs {
@@ -58,9 +59,11 @@ pub enum RunTime {
 }
 
 pub fn (mut self BContainer) run(cmd Command) ! {
-	scriptpath := osal.cmd_to_script_path(cmd: cmd_)
-	self.copy(scriptpath, scriptpath)!
-	cmd_str := 'buildah run ${self.id} "${scriptpath} && rm -f ${scriptpath}"'
+	scriptpath := osal.cmd_to_script_path(cmd: cmd.cmd)!
+	self.copy(scriptpath, "/tmp/exec.sh")!
+	console.print_debug("copy ${scriptpath} into container '${self.containername}'")	
+	cmd_str := 'buildah run ${self.id} /tmp/exec.sh'
+	//console.print_debug(cmd_str)
 	osal.exec(
 		name: cmd.name
 		cmd: cmd_str
@@ -109,4 +112,9 @@ pub fn (mut self BContainer) hero_execute(args HeroInstall) ! {
 	panic('implement')
 }
 
-// TODO: add all other relevant possibilities of what can be done on a buildah container
+pub fn (mut self BContainer) shell() ! {	
+	cmd:="buildah run --terminal --env TERM=xterm ${self.id} /bin/bash"
+	console.print_debug(cmd)
+	osal.execute_interactive(cmd)!
+
+}

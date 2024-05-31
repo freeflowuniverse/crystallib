@@ -5,5 +5,7 @@
 
 ```bash
 buildah run --terminal --env TERM=xterm builder /bin/bash
+
+pacman -Su arch-install-scripts
 ```
 

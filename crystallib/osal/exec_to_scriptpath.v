@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.ui.console
 
 // will return temporary path which then can be executed
-fn cmd_to_script_path(cmd Command) !string {
+pub fn cmd_to_script_path(cmd Command) !string {
 	// all will be done over filessytem now
 	mut cmdcontent := texttools.dedent(cmd.cmd)
 	if !cmdcontent.ends_with('\n') {

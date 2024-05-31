@@ -8,43 +8,66 @@ pub fn (mut e CEngine) builder_create() ! {
 	mut builder := e.bcontainer_new(name: 'builder', from: 'scratch')!
 	mount_path := builder.mount_to_path()!
 	osal.exec(
-		cmd: 'pacstrap -c ${mount_path} base bash coreutils curl mc unzip sudo which openssh fuse2 go rust cargo'
+		cmd: 'pacstrap -c ${mount_path} base bash coreutils curl mc unzip sudo which openssh go rust cargo'
 	)!
 	builder.set_entrypoint('redis-server')!
 	builder.commit('localhost/builder')!
 }
 
+// builder machine based on arch and install vlang
+pub fn (mut e CEngine) builderjs_create() ! {
+	mut builder := e.bcontainer_new(name: 'builder', from: 'scratch')!
+	mount_path := builder.mount_to_path()!
+	osal.exec(
+		cmd: 'pacstrap -c ${mount_path} base bash coreutils curl mc unzip sudo which openssh'
+	)!
+	builder.set_entrypoint('redis-server')!
+	builder.commit('localhost/builderjs')!
+}
+
+
 @[params]
 pub struct CrystalBuildArgs {
-	crystal_branch string = 'development_kds'
+	crystal_branch string = 'development'
 }
 
 // create the base builder, and install crystallib on it
-pub fn (mut engine CEngine) builderv_create(args CrystalBuildArgs) ! {
-	mut builder := engine.bcontainer_new(name: 'builderv', from: 'localhost/builder', delete: true)!
+pub fn (mut engine CEngine) builderv_create(args CrystalBuildArgs) !BContainer {
+	// println(engine.bcontainers()!)
+	// println(engine.bimages()!)
+	if ! engine.image_exists(repo:"localhost/builder")!{
+		engine.builder_create() ! 
+	}
 
-	mount_path := builder.mount_to_path()!
+	mut builder := engine.bcontainer_new(name: 'builderv', from: 'localhost/builder', delete: true)!
+	console.print_debug("build V & crystal for ")
+	//mount_path := builder.mount_to_path()!
+	//console.print_debug("mountpath: ${mount_path}")
 	// install v and crystallib
 	builder.run(
 		cmd: '
-			curl -fsSL https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer.sh -o /tmp/install.sh
+			curl -fsSL https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh -o /tmp/install.sh
 			bash /tmp/install.sh
-			redis-server --daemonize yes
-			
-			cd /root/code/github/freeflowuniverse/crystallib
-			git reset --hard
-			git checkout -B ${args.crystal_branch}
-			git fetch --all
-			git reset --hard origin/${args.crystal_branch}
-
-			/root/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
 			'
 	)!
 
-	builder.copy('/usr/local/bin/hero', '/var/builder/bin/hero/')!
+	// builder.run(
+	// 	cmd: '
+	// 		cd /root/code/github/freeflowuniverse/crystallib
+	// 		git reset --hard
+	// 		git checkout -B ${args.crystal_branch}
+	// 		git fetch --all
+	// 		git reset --hard origin/${args.crystal_branch}
 
+	// 		/root/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
+	// 		'
+	// )!	
+
+	// builder.copy('/usr/local/bin/hero', '/var/builder/bin/hero/')!
 	builder.commit('localhost/builderv')!
-	// builder.delete()!
+	//builder.delete()!
+
+	return builder
 }
 
 // pub fn (mut engine CEngine) hero_build(args HeroBuildArgs) ! {
@@ -59,3 +82,32 @@ pub fn (mut engine CEngine) builderv_create(args CrystalBuildArgs) ! {
 // 	console.print_debug(mount_path)
 
 // }
+
+
+
+
+// create the base builder, and install crystallib on it
+pub fn (mut engine CEngine) builder_(args CrystalBuildArgs) !BContainer {
+	// println(engine.bcontainers()!)
+	// println(engine.bimages()!)
+	if ! engine.image_exists(repo:"localhost/builder")!{
+		engine.builder_create() ! 
+	}
+
+	mut builder := engine.bcontainer_new(name: 'builderv', from: 'localhost/builder', delete: true)!
+	console.print_debug("build V & crystal for ")
+	//mount_path := builder.mount_to_path()!
+	//console.print_debug("mountpath: ${mount_path}")
+	// install v and crystallib
+	builder.run(
+		cmd: '
+			
+			'
+	)!
+
+	// builder.copy('/usr/local/bin/hero', '/var/builder/bin/hero/')!
+	builder.commit('localhost/builderv')!
+	//builder.delete()!
+
+	return builder
+}
