@@ -10,7 +10,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     prf="$HOME/.profile"
     [ -f "$prf" ] && source "$prf"
     # v -cg -enable-globals -w -cflags -static -cc gcc hero.v
-    v -cg -enable-globals -w hero.v
+    v -gc none -cg -enable-globals -w hero.v
 else
     v -cg -enable-globals -w hero.v
     #v -cg -enable-globals -w -cflags -static -cc gcc hero.v
