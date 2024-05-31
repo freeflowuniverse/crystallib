@@ -7,26 +7,15 @@ import rand
 
 pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !CodeFile {
 	name := texttools.name_fix(o.info.title)
-	
 	mut code := []CodeItem{}
-	// code << client_struct
-	// code << jsonrpc.generate_ws_factory_code(name)
 
-	// methods := jsonrpc.generate_client_methods(client_struct, o.methods.map(Function{name: it.name}))!
-	// code << methods.map(CodeItem(it))
-
-	mut imports := object_map.values().map(Import {
-		mod: it.mod
-		types: [it.name]
-	})
-
-	imports << [
+	imports := [
 		parse_import('freeflowuniverse.crystallib.rpc.jsonrpc')
 		parse_import('json')
 		parse_import('x.json2')
 	]
 
-	return CodeFile {
+	mut file := CodeFile {
 		name: 'handler'
 		mod: name
 		imports: imports
@@ -35,36 +24,27 @@ pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]
 			receiver: receiver
 		)!
 	}
+
+	for key, object in object_map {
+		file.add_import(mod: object.mod, types: [object.name])!
+	}
+	return file
 }
-
-// import freeflowuniverse.crystallib.rpc.jsonrpc {new_jsonrpcrequest, jsonrpcresponse_decode, jsonrpcerror_decode}
-// import freeflowuniverse.crystallib.baobab.actors.scheduler
-// import freeflowuniverse.crystallib.baobab.seeds.schedule {Calendar}
-// import os
-
-// const db_dir = '${os.home_dir()}/hero/db'
-// const actor_name = 'scheduler_test_actor'
 
 pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[string]Function, object_map map[string]Struct) !CodeFile {
 	name := texttools.name_fix(o.info.title)
 	
 	handler_name := texttools.name_fix_pascal_to_snake(receiver.name)
 
-	consts := CustomCode{"const db_dir = '\${os.home_dir()}/hero/db'
-	const actor_name = '${handler_name}_test_actor'"}
-	clean_code := "if os.exists('\${db_dir}/\${actor_name}') {
-		os.rmdir_all('\${db_dir}/\${actor_name}')!
-	}
-	if os.exists('\${db_dir}/\${actor_name}.sqlite') {
-		os.rm('\${db_dir}/\${actor_name}.sqlite')!
-	}	"
+	consts := CustomCode{"const actor_name = '${handler_name}_test_actor'"}
+	clean_code := "mut actor := get(name: actor_name)!\nactor.backend.reset()!"
 
-	testsuite_begin := Function {
+	testsuite_begin := Function{
 		name: 'testsuite_begin'
 		body: clean_code
 	}
 
-	testsuite_end := Function {
+	testsuite_end := Function{
 		name: 'testsuite_end'
 		body: clean_code
 	}
@@ -93,18 +73,19 @@ pub fn (o OpenRPC) generate_handler_test_file(receiver Struct, method_map map[st
 
 	items << handle_tests.map(CodeItem(it))
 
-	mut imports := object_map.values().map(Import {
-		mod: it.mod
-		types: [it.name]
-	})
-	imports << codemodel.parse_import('freeflowuniverse.crystallib.rpc.jsonrpc {new_jsonrpcrequest, jsonrpcresponse_decode, jsonrpcerror_decode}')
+	imports := codemodel.parse_import('freeflowuniverse.crystallib.rpc.jsonrpc {new_jsonrpcrequest, jsonrpcresponse_decode, jsonrpcerror_decode}')
 
-	return CodeFile {
+	mut file := CodeFile {
 		name: 'handler_test'
 		mod: name
-		imports: imports
+		imports: [imports]
 		items: items
 	}
+
+	for key, object in object_map {
+		file.add_import(mod: object.mod, types: [object.name])!
+	}
+	return file
 }
 
 fn get_mock_value(typ string) !string {

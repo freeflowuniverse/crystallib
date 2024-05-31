@@ -22,7 +22,7 @@ pub fn (o OpenRPC) generate_code(receiver Struct, methods_map map[string]Functio
 	}
 
 	client_file := o.generate_client_file(objects_map)!	
-	client_test_file := o.generate_client_test_file(methods_map)!
+	client_test_file := o.generate_client_test_file(methods_map, objects_map)!
 
 	handler_file := o.generate_handler_file(receiver, methods_map, objects_map)!	
 	handler_test_file := o.generate_handler_test_file(receiver, methods_map, objects_map)!	

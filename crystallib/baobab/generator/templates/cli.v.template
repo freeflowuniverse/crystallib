@@ -1,9 +1,8 @@
-module main
+module @{name}
 
 import os
 import cli { Command }
 import vweb
-import freeflowuniverse.crystallib.baobab.actors.accountant
 import freeflowuniverse.crystallib.rpc.openrpc
 import freeflowuniverse.crystallib.core.pathlib
 
@@ -13,6 +12,12 @@ const (
 )
 
 fn do() ! {
+	mut cmd := new_command()
+	cmd.setup()
+	cmd.parse(os.args)
+}
+
+pub fn new_command() Command {
 	mut cmd := Command{
 		name: '@{name}'
 		description: 'Your @{name} toolset.'
@@ -38,14 +43,11 @@ fn do() ! {
 
 	cmd.add_command(cmd_run)
 	cmd.add_command(cmd_playground)
-	cmd.setup()
-	cmd.parse(os.args)
-
-	
+	return cmd
 }
 
 fn cmd_run_wsserver(cmd Command) ! {
-	accountant.run_wsserver(3000)!
+	// accountant.run_wsserver(3000)!
 }
 
 fn playground(cmd Command) ! {

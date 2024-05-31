@@ -172,6 +172,9 @@ pub fn (param Param) vgen() string {
 	}
 
 	mut vstr := '${param.name} ${sym}'
+	if param.typ.is_reference {
+		vstr = '&${vstr}'
+	}
 	if param.mutable {
 		vstr = 'mut ${vstr}'
 	}
@@ -194,10 +197,6 @@ pub struct VGenerator {
 
 pub fn (gen VGenerator) generate_struct(struct_ Struct) !string {
 	name := if struct_.generics.len > 0 {
-<<<<<<< HEAD
-=======
-		console.print_debug('struct  ${struct_}')
->>>>>>> development
 		'${struct_.name}${vgen_generics(struct_.generics)}'
 	} else {
 		struct_.name
@@ -241,10 +240,15 @@ pub fn (result Result) vgen() string {
 	result_type := if result.structure.name != '' {
 		result.structure.get_type_symbol()
 	} else if result.typ.symbol == 'void' {''} else {
-		result.typ.symbol
+		if result.typ.is_array {
+			'[]${result.typ.symbol}'
+		} else {
+			result.typ.symbol
+		}
 	}
-	str := if result.result { '!' } else { '' }
+	str := if result.result { '!' } else if result.typ.is_result {'!'} else { '' }
 	return '${str}${result_type}'
+
 }
 
 @[params]

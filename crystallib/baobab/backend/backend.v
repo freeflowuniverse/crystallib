@@ -67,11 +67,12 @@ pub fn (mut backend Backend) delete[T](id u32) ! {
 
 pub fn (mut backend Backend) get[T](id u32) !T {
 	mut db := backend.dbs.db_get_create(name: get_table_name[T]())!
-	data := db.get(id: id) or {panic('eee $err')}
+	data := db.get(id: id) or {	
+		return error('Failed to get ${T.name} object with id: ${id}')
+	}
 	if data == '' {
 		return error('Failed to get ${T.name} object with id: ${id}')
 	}
-	println('debugzoeee ${data}')
 	return encoderhero.decode[T](data)!
 }
 
@@ -79,7 +80,13 @@ pub fn (mut backend Backend) list[T]() ![]T {
 	mut db := backend.dbs.db_get_create(name: get_table_name[T]())!
 	ids := db.ids()!
 	datas := ids.map(db.get(id: it)!)
-	return datas.map(encoderhero.decode[T](it)!)
+	mut results := []T{}
+	// TODO: report v compiler bug with stmt below
+	// results = datas.map(encoderhero.decode[T](it)!)
+	for data in datas {
+		results << encoderhero.decode[T](data)!
+	}
+	return results
 }
 
 pub fn (mut backend Backend) filter[T, D](filter D, params FilterParams) ![]T {

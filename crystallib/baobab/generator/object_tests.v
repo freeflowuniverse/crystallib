@@ -24,7 +24,7 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 	}
 
 	actor_name := texttools.name_fix(actor.name)
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 	// TODO: support modules outside of crystal
 
@@ -59,7 +59,7 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_new_method_test(actor Struct, object BaseObject) !codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 	
 	required_fields := object.structure.fields.filter(it.attrs.any(it.name == 'required'))
@@ -85,7 +85,7 @@ fn generate_new_method_test(actor Struct, object BaseObject) !codemodel.Function
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_get_method_test(actor Struct, object BaseObject) !codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 	
 	required_fields := object.structure.fields.filter(it.attrs.any(it.name == 'required'))
@@ -97,7 +97,7 @@ fn generate_get_method_test(actor Struct, object BaseObject) !codemodel.Function
 
 	body := "mut actor := get(name: actor_name)!
 	mut ${object_name} := ${object_type}{${fields.join(',')}}
-	${object_name}.id = '\${actor.new_${object_name}(${object_name})!}'
+	${object_name}.id = actor.new_${object_name}(${object_name})!
 	assert ${object_name} == actor.get_${object_name}(${object_name}.id)!"
 	return codemodel.Function{
 		name: 'test_get_${object_name}'
@@ -109,7 +109,7 @@ fn generate_get_method_test(actor Struct, object BaseObject) !codemodel.Function
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_filter_test(actor Struct, object BaseObject) !codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	index_fields := object.structure.fields.filter(it.attrs.any(it.name == 'index'))

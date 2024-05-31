@@ -120,15 +120,15 @@ pub fn parse_param(code_ string) !Param {
 }
 
 pub fn parse_result(code_ string) !Result {
-	code := code_.replace(' ', '')
+	code := code_.replace(' ', '').trim_space()
 	
 	return Result {
 		result: code_.starts_with('!')
 		optional: code_.starts_with('?')
 		typ: Type{
 			symbol: code.trim('!?')
-			is_optional: code_.starts_with('?')
-			is_result: code_.starts_with('!')
+			is_optional: code.starts_with('?')
+			is_result: code.starts_with('!')
 		}
 	}
 }
@@ -172,22 +172,6 @@ pub mut:
 
 
 
-pub struct Import {
-pub mut:
-	mod   string
-	types []string
-}
-
-pub fn parse_import(code_ string) Import {
-	code := code_.trim_space()
-	types_str := if code.contains(' ') {code.all_after(' ').trim('{}')} else {''}
-	return Import{
-		mod: code.all_before(' ')
-		types: if types_str != '' { 
-			types_str.split(',').map(it.trim_space())
-		} else {[]string{}}
-	}
-}
 
 pub struct File {
 	name string

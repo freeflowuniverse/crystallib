@@ -9,6 +9,7 @@ pub mut:
 	name    string
 	mod     string
 	imports []Import
+	consts []Const
 	items   []CodeItem
 	content string
 }
@@ -19,6 +20,16 @@ pub fn new_file(config CodeFile) CodeFile {
 		mod: texttools.name_fix(config.mod)
 		items: config.items
 	}
+}
+
+pub fn (mut file CodeFile) add_import(import_ Import) ! {
+	for mut i in file.imports {
+		if i.mod == import_.mod {
+			i.add_types(import_.types)
+			return
+		}
+	}
+	file.imports << import_
 }
 
 pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
@@ -37,11 +48,17 @@ pub fn (code CodeFile) write_v(path string, options WriteOptions) ! {
 		vgen(code.items)
 	}
 
+	consts_str := if code.consts.len > 1 {
+		stmts := code.consts.map("${it.name} = ${it.value}")
+		'\nconst(\n${stmts.join('\n')}\n)\n'
+	} else if code.consts.len == 1{ '\nconst ${code.consts[0].name} = ${code.consts[0].value}\n'}
+	else {''}
+
 	mut file := pathlib.get_file(
 		path: filepath.path
 		create: true
 	)!
-	file.write('module ${code.mod}\n${imports_str}\n${code_str}')!
+	file.write('module ${code.mod}\n${imports_str}\n${consts_str}\n${code_str}')!
 	if options.format {
 		os.execute('v fmt -w ${file.path}')
 	}
@@ -63,6 +80,5 @@ pub fn (mut file CodeFile) set_function(function Function) ! {
 	if index == -1 {
 		return error('function not found')
 	}
-	println('debugzoniko ${function}')
 	file.items[index] = function
 }

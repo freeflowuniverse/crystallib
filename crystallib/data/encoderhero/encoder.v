@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import time
 import v.reflection
 import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 
 // Encoder encodes the an `Any` type into HEROSCRIPT representation.
@@ -31,11 +32,6 @@ pub fn encode[T](val T) !string {
 	} $else {
 		return error('can only add elements for struct or array of structs. \n${val}')
 	}
-<<<<<<< HEAD
-=======
-
-	console.print_debug('main: \n${e.children}\n')
->>>>>>> development
 	return e.export()!
 }
 
@@ -116,7 +112,7 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	mut mytype := reflection.type_of[T](t)
 	struct_attrs := attrs_get_reflection(mytype)
 
-	mut action_name := T.name.to_lower().all_after_last('.')
+	mut action_name := texttools.name_fix_pascal_to_snake(T.name.all_after_last('.'))
 	if 'alias' in struct_attrs {
 		action_name = struct_attrs['alias'].to_lower()
 	}
@@ -145,9 +141,7 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 			e.encode_array(val)!
 		}
 	}
-<<<<<<< HEAD
 }
-=======
 	// }
 	// panic(params)
 
@@ -163,10 +157,9 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 
 	// 	e.encode_value(val, field_name)!
 	// }
-}
 
 // encode_value encodes a value
-pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
+// pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
 	// $if val is $option {
 	// 	// unwrap and encode optionals
 	// 	workaround := val
@@ -204,7 +197,7 @@ pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
 	// } $else {
 	// 	return error("can't find field type ${typeof(val)}")
 	// }
-}
+
 
 // fn (e &Encoder) encode_map[T](value T, level int) ! {
 // 	params << json2.curly_open_rune
@@ -492,4 +485,3 @@ pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
 // 	e.encode_newline(level - 1, mut params)!
 // 	params << `]`
 // }
->>>>>>> development

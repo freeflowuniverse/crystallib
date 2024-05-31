@@ -4,7 +4,7 @@ import v.ast
 import v.parser
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.codemodel { CodeFile, Import, CodeItem, Function, Param, Result, Struct, StructField, Sumtype, Type }
+import freeflowuniverse.crystallib.core.codemodel { parse_import,parse_consts, CodeFile, Import, CodeItem, Function, Param, Result, Struct, StructField, Sumtype, Type }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -81,12 +81,18 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path, mut table &ast.Table) ![
 
 // parse_vfile parses and returns code items from a v code file
 pub fn parse_file(path string, vparser VParser) !CodeFile {
-	file_path := pathlib.get_file(path: path)!
+	mut file := pathlib.get_file(path: path)!
 	mut table := ast.new_table()
-	items := vparser.parse_vfile(file_path.path, mut table)
+	items := vparser.parse_vfile(file.path, mut table)
 	return CodeFile {
+		imports: parse_imports(file.read()!)
+		consts: parse_consts(file.read()!)!
 		items: items
 	}
+}
+
+pub fn parse_imports(code string) []Import {
+	return code.split('\n').filter(it.starts_with('import ')).map(parse_import(it))
 }
 
 // parse_vfile parses and returns code items from a v code file
@@ -265,11 +271,10 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 	}
 
 	text_lines := args.text.split('\n')
-	fn_lines := text_lines.filter(it.contains('fn') && it.contains(args.fn_decl.short_name))
+	fn_lines := text_lines.filter(it.contains('fn') && it.contains(' ${args.fn_decl.short_name}('))
 	fn_line := fn_lines[0] or {panic('this should never happen')}
 	line_i := text_lines.index(fn_line)
 	end_i := line_i + text_lines[line_i..].index('}')
-	println('end_i ${text_lines[end_i]}')
 
 	fn_text := text_lines[line_i..end_i+1].join('\n')
 	// mut fn_index := args.text.index(args.fn_decl.short_name) or {panic('this should never happen1')}
@@ -284,7 +289,7 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		mod: args.fn_decl.mod
 		receiver: receiver
 		params: params
-		result: result
+		result: fn_parsed.result
 		body: fn_parsed.body
 	}
 }

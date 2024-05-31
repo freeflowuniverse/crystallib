@@ -6,30 +6,6 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.rpc.openrpc {OpenRPC, Components}
 import freeflowuniverse.crystallib.data.jsonschema {SchemaRef}
 
-// @[params]
-// pub struct GenerateOpenRPCConfig {
-// 	openrpc_path // path of where the openrpc document will be written
-// }
-
-
-// pub fn (actor Actor) generate_openrpc_code() !Module {
-// 	openrpc_spec := actor.generate_openrpc()
-
-// 	client_file := openrpc_obj.generate_client_file(objects_map)!	
-// 	client_test_file := openrpc_obj.generate_client_test_file(methods_map)!
-
-// 	handler_file := openrpc_obj.generate_handler_file(actor_struct, methods_map, objects_map)!	
-// 	handler_test_file := openrpc_obj.generate_handler_test_file(actor_struct, methods_map, objects_map)!	
-
-// 	server_file := openrpc_obj.generate_server_file()!	
-// 	server_test_file := openrpc_obj.generate_server_test_file()!	
-
-// 	actor_module.write_v('${actors_path}', format: true, overwrite: true) or {
-// 		println('Failed to generate actor ${name}\n${err}')
-// 		continue
-// 	}
-// }
-
 pub fn (actor Actor) generate_openrpc_code() !Module {
 	openrpc_obj := actor.generate_openrpc()
 	openrpc_json := openrpc_obj.encode()!
@@ -52,7 +28,7 @@ pub fn (actor Actor) generate_openrpc_code() !Module {
 	actor_struct := generator.generate_actor_struct(actor.name)
 
 	client_file := openrpc_obj.generate_client_file(objects_map)!	
-	client_test_file := openrpc_obj.generate_client_test_file(methods_map)!
+	client_test_file := openrpc_obj.generate_client_test_file(methods_map, objects_map)!
 
 	handler_file := openrpc_obj.generate_handler_file(actor_struct, methods_map, objects_map)!	
 	handler_test_file := openrpc_obj.generate_handler_test_file(actor_struct, methods_map, objects_map)!	
@@ -107,6 +83,9 @@ pub fn (mut a Actor) export_command(path string) ! {
 	cmd_dir := pathlib.get_dir(path:'${path}/command')!
 	mut cli_file := pathlib.get_file(path:'${path}/command/cli.v')!
 	cli_file.write($tmpl('./templates/cli.v.template'))!
+
+	mut cmd_file := pathlib.get_file(path:'${path}/command.v')!
+	cmd_file.write($tmpl('./templates/cli.v.template'))!
 }
 
 // pub fn  function_to_method()

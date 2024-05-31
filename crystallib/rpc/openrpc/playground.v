@@ -50,7 +50,7 @@ const build_path = '${os.dir(@FILE)}/playground'
 pub fn new_playground(config PlaygroundConfig) !&Playground {
 	build_dir := pathlib.get_dir(path: build_path)!
 	mut pg := Playground{build: build_dir}
-	pg.serve_examples(config.specs)!
+	pg.serve_examples(config.specs) or {return error('failed to serve examples:\n${err}')}
 	pg.mount_static_folder_at('${build_dir.path}/static', '/static')
 	
 	mut env_file := pathlib.get_file(path: '${build_dir.path}/env.js')!
@@ -83,7 +83,7 @@ fn encode_env(specs_ []pathlib.Path) !string {
 fn (mut pg Playground) serve_examples(specs_ []pathlib.Path) ! {
 	mut specs := specs_.clone()
 	for mut spec in specs {
-		o := openrpc.decode(spec.read()!)!
+		o := openrpc.decode(spec.read()!) or {return error('Failed to decode OpenRPC Spec ${spec}:\n${err}')}
 		name := texttools.name_fix(o.info.title)
 		pg.serve_static('/specs/${name}.json', spec.path)
 	}

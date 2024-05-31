@@ -13,7 +13,7 @@ const id_param = Param {
 }
 
 pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
-	obj_name := texttools.name_fix(object.structure.name)
+	obj_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 	
 	mut items := []CodeItem{}
@@ -54,7 +54,7 @@ pub fn generate_object_code(actor Struct, object BaseObject) CodeFile {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_get_method(actor Struct, object BaseObject) codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	get_method := codemodel.Function{
@@ -79,7 +79,7 @@ fn generate_get_method(actor Struct, object BaseObject) codemodel.Function {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_set_method(actor Struct, object BaseObject) codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
@@ -89,7 +89,7 @@ fn generate_set_method(actor Struct, object BaseObject) codemodel.Function {
 	)
 	body := "actor.backend.set[${object_type}](${object_name})!"
 	get_method := codemodel.Function{
-		name: 'set_${object.structure.name.to_lower()}'
+		name: 'set_${object_name}'
 		description: 'updates the ${object.structure.name} with the given object id'
 		receiver: codemodel.Param{
 			mutable: true
@@ -116,12 +116,12 @@ fn generate_set_method(actor Struct, object BaseObject) codemodel.Function {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_delete_method(actor Struct, object BaseObject) codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	body := 'actor.backend.delete[${object_type}](id)!'
 	get_method := codemodel.Function{
-		name: 'delete_${object.structure.name.to_lower()}'
+		name: 'delete_${object_name}'
 		description: 'deletes the ${object.structure.name} with the given object id'
 		receiver: codemodel.Param{
 			mutable: true
@@ -141,7 +141,7 @@ fn generate_delete_method(actor Struct, object BaseObject) codemodel.Function {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_new_method(actor Struct, object BaseObject) codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
@@ -151,7 +151,7 @@ fn generate_new_method(actor Struct, object BaseObject) codemodel.Function {
 	)
 	body := "return actor.backend.new[${object_type}](${object_name})!"
 	new_method := codemodel.Function{
-		name: 'new_${object.structure.name.to_lower()}'
+		name: 'new_${object_name}'
 		description: 'news the ${object.structure.name} with the given object id'
 		receiver: codemodel.Param{
 			name: 'actor'
@@ -179,7 +179,7 @@ fn generate_new_method(actor Struct, object BaseObject) codemodel.Function {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_list_result_struct(actor Struct, object BaseObject) codemodel.Struct {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 	return Struct{
 		name:'${object_type}List'
@@ -190,7 +190,7 @@ fn generate_list_result_struct(actor Struct, object BaseObject) codemodel.Struct
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_list_method(actor Struct, object BaseObject) codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	list_struct := Struct{name:'${object_type}List' fields: [StructField{name:'items' typ:Type{symbol:'[]${object_type}'}}]}
@@ -205,7 +205,7 @@ fn generate_list_method(actor Struct, object BaseObject) codemodel.Function {
 	result.typ.symbol = result.structure.name
 	result.result = true
 	new_method := codemodel.Function{
-		name: 'list_${object.structure.name.to_lower()}'
+		name: 'list_${object_name}'
 		description: 'lists all of the ${object_name} objects'
 		receiver: codemodel.Param{
 			name: 'actor'
@@ -222,7 +222,7 @@ fn generate_list_method(actor Struct, object BaseObject) codemodel.Function {
 }
 
 fn generate_filter_params(actor Struct, object BaseObject) []codemodel.Struct {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	return [Struct {
@@ -240,7 +240,7 @@ fn generate_filter_params(actor Struct, object BaseObject) []codemodel.Struct {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_filter_method(actor Struct, object BaseObject) codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	param_getters := generate_param_getters(
@@ -278,7 +278,7 @@ fn generate_filter_method(actor Struct, object BaseObject) codemodel.Function {
 
 // generate_object_methods generates CRUD actor methods for a provided structure
 fn generate_object_methods(actor Struct, object BaseObject) []codemodel.Function {
-	object_name := texttools.name_fix(object.structure.name)
+	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
 	mut funcs := []Function{}

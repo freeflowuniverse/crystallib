@@ -7,6 +7,7 @@ import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements {Header}
 import freeflowuniverse.crystallib.core.pathlib
 import os
+import json
 
 fn get_children(s Struct, code []CodeItem) []Struct {
 	structs := code.filter(it is Struct).map(it as Struct)
@@ -72,21 +73,31 @@ pub fn (actor Actor) generate_methods() ![]ActorMethod {
 	return methods
 }
 
+pub struct ActorConfig {
+pub mut:
+	name string
+}
+
 pub fn parse_actor(path string) !Actor {
 	code := codeparser.parse_v(path, recursive: true)!
-	mut actor := parse_readme(path)!
+	mut config := parse_config('${path}/config.json')!
 
 	mut methods := []ActorMethod{}
-	for s in code.filter(it is Function).map(it as Function).filter(it.receiver.name == actor.name) {
+	for s in code.filter(it is Function).map(it as Function).filter(it.receiver.name == config.name) {
 		methods << ActorMethod{
 			func: s
 		}
 	}
-	
+	mut actor := Actor{}
 	actor.methods = methods
 	actor.structure = generate_actor_struct(actor.name)
-	actor.methods = actor.generate_methods()!
 
+	return actor
+}
+
+pub fn parse_config(path string) !ActorConfig {
+	mut config_file := pathlib.get_file(path:path)!
+	actor := json.decode(ActorConfig, config_file.read()!)!
 	return actor
 }
 
@@ -114,7 +125,6 @@ pub fn (a Actor) generate_module() !Module {
 
 	// generate code files for each of the objects the actor is responsible for
 	for object in a.objects {
-		println('debugzoo ${object}')
 		files << generate_object_code(actor_struct, object)
 		files << generate_object_test_code(actor_struct, object)!
 	}
