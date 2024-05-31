@@ -22,7 +22,7 @@ function hero_install {
     fi
 
     if [[ "${OSNAME}" == "darwin"* ]]; then
-        [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
+        [ -f /usr/local/bin/hero ] && rm /usr/local/bin/hero
     fi
 
     if [ -z "$url" ]; then

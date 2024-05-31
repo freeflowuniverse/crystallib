@@ -15,7 +15,7 @@ function os_update {
         apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release sudo binutils wget pkg-config"
+        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release binutils wget pkg-config"
 
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
@@ -39,9 +39,9 @@ function os_update {
 
         # Check if builduser exists, create if not
         if ! id -u builduser > /dev/null 2>&1; then
-            sudo useradd -m builduser
-            echo "builduser:$(openssl rand -base64 32 | sha256sum | base64 | head -c 32)" | sudo chpasswd
-            echo 'builduser ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/builduser
+            useradd -m builduser
+            echo "builduser:$(openssl rand -base64 32 | sha256sum | base64 | head -c 32)" | chpasswd
+            echo 'builduser ALL=(ALL) NOPASSWD: ALL' | tee /etc/sudoers.d/builduser
         fi
 
         if [[ -n "${DEBUG}" ]]; then
@@ -53,13 +53,13 @@ function os_update {
 function paru_install {
     echo ' - paru install'
     pushd /tmp
-    sudo pacman -S --needed --noconfirm base-devel git
+    pacman -S --needed --noconfirm base-devel git
     rm -rf paru
     git clone https://aur.archlinux.org/paru.git
-    sudo chown -R builduser:builduser paru
+    chown -R builduser:builduser paru
 
     # Switch to the regular user to build and install the package
-    sudo -u builduser bash <<EOF
+    -u builduser bash <<EOF
     popd /tmp/paru
     rustup default stable
     makepkg -si --noconfirm
