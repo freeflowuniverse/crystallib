@@ -503,7 +503,7 @@ function os_update {
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm mc git tmux curl htop redis wget screen net-tools git htop ca-certificates lsb-release screen
+        pacman -Su --noconfirm gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen
 
         # Check if builduser exists, create if not
         if ! id -u builduser > /dev/null 2>&1; then
@@ -597,7 +597,7 @@ function redis_test {
 
 
 function v_install {
-    set -ex
+    set -e
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1
@@ -715,7 +715,6 @@ function crystal_lib_get {
     #execute_with_marker "crystal_deps_install" crystal_deps_install
     execute_with_marker "v_install" v_install
 
-    set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/
     mkdir -p ~/.vmodules/freeflowuniverse/
@@ -801,7 +800,7 @@ function crystal_pull {
 
 
 function hero_install {
-    set -ex
+    set -e
     
     redis_start
 
@@ -881,7 +880,7 @@ function hero_install {
 }
 function freeflow_dev_env_install {
 
-    set -ex
+    set -e
 
     crystal_lib_get
 

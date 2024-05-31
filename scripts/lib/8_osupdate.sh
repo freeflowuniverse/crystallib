@@ -35,7 +35,7 @@ function os_update {
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm mc git tmux curl htop redis wget screen net-tools git htop ca-certificates lsb-release screen
+        pacman -Su --noconfirm gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen
 
         # Check if builduser exists, create if not
         if ! id -u builduser > /dev/null 2>&1; then
