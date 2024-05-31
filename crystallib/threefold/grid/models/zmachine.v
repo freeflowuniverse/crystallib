@@ -127,6 +127,13 @@ pub struct VM {
 	rootfs_size int
 }
 
+pub fn new_vm(name string, env_vars map[string]string) VM {
+    return VM{
+		name: name
+		env_vars: env_vars
+    }
+}
+
 pub fn (vm VM) json_encode() string {
 	mut env_vars := []string{}
 	for k, v in vm.env_vars {

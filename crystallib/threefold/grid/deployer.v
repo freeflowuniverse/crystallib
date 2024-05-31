@@ -56,11 +56,7 @@ pub fn get_mnemonics() !string {
 }
 
 pub fn new_deployer(mnemonics string, chain_network ChainNetwork, mut logger log.Log) !Deployer {
-	mut client := griddriver.Client{
-		mnemonic: mnemonics
-		substrate: grid.substrate_url[chain_network]
-		relay: grid.relay_url[chain_network]
-	}
+	mut client := griddriver.new_client(mnemonics, grid.substrate_url[chain_network], grid.relay_url[chain_network])
 	twin_id := client.get_user_twin()!
 
 	return Deployer{
