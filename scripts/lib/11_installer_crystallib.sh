@@ -1,7 +1,7 @@
 
 function crystal_deps_install {
-
-    if [[ "${OSNAME}" == "ubuntu" ]]; then
+    set -e
+    if [[ "${OSNAME}" == "ubuntu" || "${OSNAME}" == "arch"* ]]; then
         cd /tmp
         package_install autoconf libtool
         wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
@@ -13,8 +13,8 @@ function crystal_deps_install {
         sudo make install   
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         brew install secp256k1        
-    elif [[ "${OSNAME}" == "arch"* ]]; then
-        pacman -Su extra/libsecp256k1
+    # elif [[ "${OSNAME}" == "arch"* ]]; then
+    #     pacman -Su extra/libsecp256k1
     else
         echo "can't find instructions to install secp256k1"
         exit 1
@@ -23,9 +23,25 @@ function crystal_deps_install {
 
 }
 
+function crystal_lib_pull {
+
+    if [[ -z "${DEBUG}" ]]; then
+        exit 0
+    fi
+
+    pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
+    if [[ $(git status -s) ]]; then
+        echo "There are uncommitted changes in the Git repository crystallib."
+        exit 1
+    fi
+    git pull
+    popd 2>&1 >> /dev/null
+}
+
 function crystal_lib_get {
     
-    execute_with_marker "crystal_deps_install" crystal_deps_install
+    #execute_with_marker "crystal_deps_install" crystal_deps_install
+    execute_with_marker "v_install" v_install
 
     set +x
     rm -rf ~/.vmodules/freeflowuniverse/
@@ -42,11 +58,6 @@ function crystal_lib_get {
         else
             git remote set-url origin git@github.com:freeflowuniverse/crystallib.git
         fi               
-        if [[ $(git status -s) ]]; then
-            echo "There are uncommitted changes in the Git repository crystallib."
-            exit 1
-        fi
-        git pull
         set +e
         git checkout $CLBRANCH
         set -e
@@ -58,7 +69,7 @@ function crystal_lib_get {
         else
             git clone --depth 1 --no-single-branch git@github.com:freeflowuniverse/crystallib.git
         fi        
-        
+        crystal_lib_pull
         cd crystallib
         set +e
         git checkout $CLBRANCH

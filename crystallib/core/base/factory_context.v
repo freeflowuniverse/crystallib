@@ -54,9 +54,9 @@ fn context_new(args_ ContextConfigArgs) !&Context {
 		config: args
 	}
 
-	if args_.priv_key_hex.len > 0 {
-		c.privkey_set(args_.priv_key_hex)!
-	}
+	// if args_.priv_key_hex.len > 0 {
+	// 	c.privkey_set(args_.priv_key_hex)!
+	// }
 
 	// c.save()!
 

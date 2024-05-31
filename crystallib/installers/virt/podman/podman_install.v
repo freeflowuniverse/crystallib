@@ -15,7 +15,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	mut version := '5.0.1'
+	mut version := '5.1.0'
 
 	if osal.platform() == .arch {
 		// no idea why this is but the version shown is older
@@ -77,7 +77,7 @@ pub fn install(args_ InstallArgs) ! {
 		osal.execute_interactive(cmd)!
 		console.print_header(' - pkg installed.')
 	} else if osal.platform() in [.alpine, .arch, .ubuntu] {
-		osal.package_install('docker,podman,podman-docker,buildah')!
+		osal.package_install('podman,podman-docker,buildah')!
 		osal.exec(cmd: 'systemctl start podman.socket')!
 
 		// TODO:
