@@ -13,14 +13,13 @@ import os
 console.print_header("BUILDAH Demo.")
 
 mut pm:=podman.new()!
-
-mut b:=pm.bcontainer_new(name:"test")!
-
-
-pm.builderv()!
+//mut b:=pm.bcontainer_new(name:"test")!
 
 
-mut b2:=pm.bcontainer_get("builderv")!
+pm.builderv_create()!
+
+
+//mut b2:=pm.bcontainer_get("builderv")!
 //b2.shell()!
 
 

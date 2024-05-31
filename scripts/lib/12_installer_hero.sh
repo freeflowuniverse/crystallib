@@ -2,6 +2,8 @@
 
 
 function hero_install {
+    set -ex
+    
     redis_start
 
     os_name="$(uname -s)"
