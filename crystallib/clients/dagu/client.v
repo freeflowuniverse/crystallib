@@ -26,8 +26,7 @@ fn (mut cl DaguClient[Config]) set_http_connection() ! {
 
 // Creates a new DAG.
 pub fn (mut client DaguClient[Config]) create_dag(name string) !CreateDagResponse {
-	client.set_http_connection()!
-
+	
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags'

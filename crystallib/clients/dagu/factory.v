@@ -45,6 +45,7 @@ pub fn get(instance string) !DaguClient[Config] {
 		connection: &con
 	}
 	self.init(instance: instance, action: .get)!
+	self.set_http_connection()!
 	return self
 }
 
