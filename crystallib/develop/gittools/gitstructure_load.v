@@ -25,7 +25,7 @@ pub fn (mut gitstructure GitStructure) load() ! {
 		// console.print_debug(repo)
 	}
 	gitstructure.loaded = true
-	console.print_debug(' load gitstructure from disk done')
+	//console.print_debug(' load gitstructure from disk done')
 }
 
 fn (mut gitstructure GitStructure) reload() ! {

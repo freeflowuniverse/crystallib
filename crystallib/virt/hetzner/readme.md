@@ -1,4 +1,4 @@
-# hedzner
+# hetzner
 
-need to create user on https://robot.hetzner.com/preferences/index
+need to create login on https://robot.hetzner.com/preferences/index
 

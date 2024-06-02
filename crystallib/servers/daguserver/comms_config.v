@@ -1,7 +1,7 @@
 module daguserver
 
 @[params]
-pub struct Config {
+pub struct DaguCommunicationConfig {
 pub:
 	log_dir                string // directory path to save logs from standard output
 	history_retention_days int    // history retention days (default: 30)
@@ -31,4 +31,19 @@ pub struct MailOn {
 pub:
 	failure bool
 	success bool
+}
+
+
+
+pub fn (mut self DaguServer[T]) comms_configure(config DaguCommunicationConfig) ! {
+
+	mut homedir := self.config()!.homedir
+
+	config_yaml := $tmpl('./templates/config.yaml')
+	os.write_file('${homedir}/config.yaml', config_yaml)!
+
+	dags_dir := '${homedir}/dags'
+	if !os.exists(dags_dir) {
+		os.mkdir(dags_dir)!
+	}
 }

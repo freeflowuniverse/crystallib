@@ -8,22 +8,12 @@ import time
 
 import os
 
-//interative means will ask for login/passwd
-
 console.print_header("Hetzner login.")
 
+//USE IF YOU WANT TO CONFIGURE THE HETZNER, ONLY DO THIS ONCE
+//hetzner.configure("test")!
 
-// mut session := play.session_new(
-// 	context_name: "test"
-// 	interactive: true
-// )!
-// mut cl:=hetzner.get(session:session)!
-
-//it will ask for login/passwd and store in test context db
-// mut cl:=hetzner.new()!
-
-//can only use get once a new has been done, because that creates an account
-mut cl:=hetzner.get()!
+mut cl:=hetzner.get("test")!
 
 for i in 0..5{
 	println("test cache, first time slow then fast")
@@ -44,8 +34,8 @@ console.print_header("SSH login")
 mut b := builder.new()!
 mut n := b.node_new(ipaddr: serverinfo.server_ip)!
 
-n.crystal_install()!
-n.hero_compile_debug()!
+// n.crystal_install()!
+// n.hero_compile_debug()!
 
 
 // mut ks:=cl.keys_get()!

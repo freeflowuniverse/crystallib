@@ -95,7 +95,7 @@ pub mut:
 
 // Create new images generation given a prompt
 // the amount of images returned is specified by `num_images`
-pub fn (mut f OpenAIFactory) create_image(args ImageCreateArgs) !Images {
+pub fn (mut f OpenAIClient[Config]) create_image(args ImageCreateArgs) !Images {
 	image_size := image_size_str(args.size)
 	response_format := image_resp_type_str(args.format)
 	request := ImageRequest{
@@ -114,7 +114,7 @@ pub fn (mut f OpenAIFactory) create_image(args ImageCreateArgs) !Images {
 // image needs to be in PNG format and transparent or else a mask of the same size needs
 // to be specified to indicate where the image should be in the generated image
 // the amount of images returned is specified by `num_images`
-pub fn (mut f OpenAIFactory) create_edit_image(args ImageEditArgs) !Images {
+pub fn (mut f OpenAIClient[Config]) create_edit_image(args ImageEditArgs) !Images {
 	image_content := os.read_file(args.image_path)!
 	image_file := http.FileData{
 		filename: os.base(args.image_path)
@@ -158,7 +158,7 @@ pub fn (mut f OpenAIFactory) create_edit_image(args ImageEditArgs) !Images {
 // create variations of the given image
 // image needs to be in PNG format
 // the amount of images returned is specified by `num_images`
-pub fn (mut f OpenAIFactory) create_variation_image(args ImageVariationArgs) !Images {
+pub fn (mut f OpenAIClient[Config]) create_variation_image(args ImageVariationArgs) !Images {
 	image_content := os.read_file(args.image_path)!
 	image_file := http.FileData{
 		filename: os.base(args.image_path)

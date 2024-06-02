@@ -3,20 +3,12 @@ module hetzner
 import net.http
 import freeflowuniverse.crystallib.ui.console
 
-pub struct HetznerClient {
-pub mut:
-	instance string
-	user     string
-	pass     string
-	base     string
-	auth     string
-}
 
 // TODO: it would have been better to use the crystallib httpclient
 
-fn (h HetznerClient) request_get(endpoint string) !string {
+fn (mut h HetznerClient[Config]) request_get(endpoint string) !string {
 	mut r := http.Request{
-		url: h.base + endpoint
+		url: h.config()!.baseurl + endpoint
 	}
 
 	r.add_header(http.CommonHeader.authorization, 'Basic ' + h.auth)
@@ -29,13 +21,13 @@ fn (h HetznerClient) request_get(endpoint string) !string {
 	return response.body
 }
 
-fn (h HetznerClient) request_post(endpoint string, data string) !http.Response {
+fn (mut h HetznerClient[Config]) request_post(endpoint string, data string) !http.Response {
 	console.print_debug('request post: ${endpoint}\n${data}')
 
 	mut r := http.Request{
 		method: .post
 		data: data
-		url: h.base + endpoint
+		url: h.config()!.baseurl + endpoint
 	}
 
 	r.add_header(http.CommonHeader.authorization, 'Basic ' + h.auth)

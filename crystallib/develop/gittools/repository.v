@@ -47,7 +47,13 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	if !repo.path.exists() {
 		return error("cannot load from path, doesn't exist for '${repo.path.path}'")
 	}
-
+	
+	mut c := base.context()!
+	mut redis := c.redis()!
+	mut isvalid := redis.get(repo.addr.cache_key_status()+"_") or {""}
+	if isvalid!=""{
+		return repo.status()!
+	}	
 	mut st := repo_load(mut repo.addr, repo.path.path)!
 	repo.status_set(st)!
 
@@ -56,6 +62,8 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 		return error("path conflict, doesn't exist for '${p2.path}' and '${repo.path.path}'")
 	}
 	// console.print_header(' status:\n${st}')
+	redis.set(repo.addr.cache_key_status()+"_","1")!
+	redis.expire(repo.addr.cache_key_status()+"_", 5)! //5 seconds, to not have these double gets
 	return st
 }
 
@@ -163,7 +171,7 @@ pub fn (mut repo GitRepo) commit_pull(args_ ActionArgs) ! {
 // pulls remote content in, will fail if there are local changes
 pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	$if debug {
-		console.print_debug('   - PULL: ${repo.url_get(true)}')
+		console.print_debug('  pull: ${repo.url_get(true)}')
 	}
 	// repo.ssh_key_load()!
 	// defer {

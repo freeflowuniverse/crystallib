@@ -10,13 +10,13 @@ import freeflowuniverse.crystallib.develop.gittools
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.4.5'
+	version := '0.4.6'
 
 	res := os.execute('${osal.profile_path_source_and()} v --version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().starts_with('V'))
 		if r.len != 1 {
-			return error("couldn't parse v-analyzer version.\n${res.output}")
+			return error("couldn't parse v version.\n${res.output}")
 		}
 		myversion := r[0].all_after_first('V ').all_before(' ').trim_space()
 		console.print_debug("V version: '${myversion}'")

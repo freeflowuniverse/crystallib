@@ -21,10 +21,10 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// install crystallib if it was already done will return true
 	console.print_header('install crystallib')
-	// if  args.reset==false && osal.done_exists('install_crystallib') {
-	// 	console.print_debug('    crystallib was already installed')
-	// 	return
-	// }
+	if  args.reset {
+		uninstall()!
+		return 
+	}
 	base.develop()!
 	vlang.install(reset: args.reset)!
 	vlang.v_analyzer_install(reset: args.reset)!
@@ -52,9 +52,24 @@ pub fn install(args InstallArgs) ! {
 	return
 }
 
+//remove hero, crystal, ...
+pub fn uninstall() ! {
+	console.print_debug('uninstall hero & crystallib')
+	cmd := '
+		rm -rf ${os.home_dir()}/hero
+		rm -rf ${os.home_dir()}/_code
+		rm -f /usr/local/bin/hero
+		rm -f /tmp/hero
+		rm -f /tmp/install*
+		rm -f /tmp/build_hero*
+		rm -rf /tmp/execscripts
+		'
+	osal.execute_stdout(cmd) or { return error('Cannot uninstall crystallib/hero.\n${err}') }
+}
+
 pub fn hero_install(args InstallArgs) ! {
 	if args.reset == false && osal.done_exists('install_hero') {
-		console.print_debug('    hero already installed')
+		console.print_debug('hero already installed')
 		return
 	}
 	console.print_header('install hero')

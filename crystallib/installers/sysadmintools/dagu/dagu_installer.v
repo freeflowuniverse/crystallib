@@ -12,17 +12,19 @@ import time
 @[params]
 pub struct InstallArgs {
 pub mut:
+	homedir string
+	passwd   string @[secret] 
+	secret   string @[secret]
+	title    string = 'My Hero DAG'
 	reset   bool
 	start   bool = true
 	restart bool
-	passwd  string
-	secret  string
-	title   string
 }
+
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '1.12.11'
+	version := '1.13.0'
 
 	res := os.execute('${osal.profile_path_source_and()} dagu version')
 	if res.exit_code == 0 {
@@ -87,6 +89,8 @@ pub fn stop(args_ InstallArgs) ! {
 	sm.kill('dagu')!
 }
 
+
+
 pub fn start(args_ InstallArgs) ! {
 	mut args := args_
 
@@ -100,8 +104,14 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('dagu start')
 
-	myconfigpath_ := '${os.home_dir()}/hero/cfg/dagu.yaml'
-	homedir := '${os.home_dir()}/hero/var/dagu'
+	myconfigpath_ := 
+	if args.homedir == ""{
+		args.homedir = '${os.home_dir()}/hero/var/dagu'
+	}
+	if args.configpath == ""{
+		cfg.configpath = '${os.home_dir()}/hero/cfg/dagu.yaml'
+	}
+	
 
 	// FILL IN THE TEMPLATE
 	mut mycode := $tmpl('templates/admin.yaml')
@@ -113,10 +123,21 @@ pub fn start(args_ InstallArgs) ! {
 
 	cmd := 'dagu server --config ${myconfigpath_}'
 
+
+	//TODO: we are not taking host & port into consideration
+	
+	// dags string // location of DAG files (default is /Users/<user>/.dagu/dags)
+	// host string // server host (default is localhost)
+	// port string // server port (default is 8080)
+	//result := os.execute_opt('dagu start-all ${flags}')!
+
 	sm.start(
 		name: 'dagu'
 		cmd: cmd
 	)!
+
+
+	cmd2:='dagu scheduler' //TODO: do we need this
 
 	console.print_debug(cmd)
 

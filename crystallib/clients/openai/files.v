@@ -37,7 +37,7 @@ pub mut:
 }
 
 // upload file to client org, usually used for fine tuning
-pub fn (mut f OpenAIFactory) upload_file(args FileUploadArgs) !File {
+pub fn (mut f OpenAIClient[Config]) upload_file(args FileUploadArgs) !File {
 	file_content := os.read_file(args.filepath)!
 
 	file_data := http.FileData{
@@ -66,25 +66,25 @@ pub fn (mut f OpenAIFactory) upload_file(args FileUploadArgs) !File {
 }
 
 // list all files in client org
-pub fn (mut f OpenAIFactory) list_files() !Files {
+pub fn (mut f OpenAIClient[Config]) list_files() !Files {
 	r := f.connection.get(prefix: 'files')!
 	return json.decode(Files, r)!
 }
 
 // deletes a file
-pub fn (mut f OpenAIFactory) delete_file(file_id string) !DeleteResp {
+pub fn (mut f OpenAIClient[Config]) delete_file(file_id string) !DeleteResp {
 	r := f.connection.delete(prefix: 'files/' + file_id)!
 	return json.decode(DeleteResp, r)!
 }
 
 // returns a single file metadata
-pub fn (mut f OpenAIFactory) get_file(file_id string) !File {
+pub fn (mut f OpenAIClient[Config]) get_file(file_id string) !File {
 	r := f.connection.get(prefix: 'files/' + file_id)!
 	return json.decode(File, r)!
 }
 
 // returns the content of a specific file
-pub fn (mut f OpenAIFactory) get_file_content(file_id string) !string {
+pub fn (mut f OpenAIClient[Config]) get_file_content(file_id string) !string {
 	r := f.connection.get(prefix: 'files/' + file_id + '/content')!
 	return r
 }

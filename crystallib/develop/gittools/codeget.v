@@ -3,7 +3,7 @@ module gittools
 import os
 import freeflowuniverse.crystallib.core.pathlib
 import crypto.md5
-// import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct CodeGetFromUrlArgs {
@@ -37,6 +37,7 @@ pub mut:
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get()!
 	mut name := args.gitstructure_name
+//	console.print_debug(args.str())
 	if args.coderoot.len > 0 {
 		name = md5.hexhash(args.coderoot)
 		gs = new(name: name, root: args.coderoot)!

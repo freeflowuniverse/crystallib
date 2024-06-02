@@ -35,13 +35,29 @@ pub fn cmd_installers(mut cmdroot Command) {
 		description: 'will uninstall in stead of install.'
 	})
 
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'gitpull'
+		abbrev: 'gp'
+		description: 'e.g. in crystallib or other git repo pull changes.'
+	})
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'gitreset'
+		abbrev: 'gr'
+		description: 'e.g. in crystallib or other git repo pull & reset changes.'
+	})
 	cmdroot.add_command(cmd_run)
-	// cmd_run.add_command(caddy_cmd)
 }
 
 fn cmd_installers_execute(cmd Command) ! {
 	mut reset := cmd.flags.get_bool('reset') or { false }
 	mut uninstall := cmd.flags.get_bool('uninstall') or { false }
+	mut gitpull := cmd.flags.get_bool('gitpull') or { false }
+	mut gitreset := cmd.flags.get_bool('gitreset') or { false }
 	mut names := cmd.flags.get_string('names') or { '' }
 
 	if names == '' {
@@ -57,5 +73,5 @@ fn cmd_installers_execute(cmd Command) ! {
 		exit(1)
 	}
 
-	installers.install_multi(reset: reset, names: names, uninstall: uninstall)!
+	installers.install_multi(reset: reset, names: names, uninstall: uninstall,gitpull:gitpull,gitreset:gitreset)!
 }

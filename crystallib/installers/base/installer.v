@@ -1,10 +1,6 @@
 module base
 
 import freeflowuniverse.crystallib.osal
-// import freeflowuniverse.crystallib.builder
-// import freeflowuniverse.crystallib.core.pathlib
-// import freeflowuniverse.crystallib.develop.gittools
-// import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import os
 
@@ -74,12 +70,10 @@ pub fn install(args InstallArgs) ! {
 	} else if pl == .arch {
 		console.print_header(' - Arch prepare')
 		osal.package_refresh()!
-		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis,unzip')!
+		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
-	osal.exec(cmd: 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts', stdout: false)!
-
 	if args.develop {
 		develop()!
 	}
@@ -128,7 +122,7 @@ pub fn develop(args InstallArgs) ! {
 	} else if pl == .alpine {
 		osal.package_install('libpq-dev,make')!
 	} else if pl == .arch {
-		osal.package_install('tcc,make,postgresql-libs')!
+		osal.package_install('gcc,tcc,make,postgresql-libs')!
 	} else {
 		panic('only arch, alpine, ubuntu and osx supported for now')
 	}

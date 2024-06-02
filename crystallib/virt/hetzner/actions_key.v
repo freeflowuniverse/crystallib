@@ -1,11 +1,8 @@
 module hetzner
 
 import json
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.clients.redisclient
-import time
-import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.osal
+
 
 pub struct SSHKey {
 pub mut:
@@ -21,7 +18,7 @@ struct SSHRoot {
 	key SSHKey
 }
 
-pub fn (h HetznerClient) keys_get() ![]SSHKey {
+pub fn (mut h HetznerClient[Config]) keys_get() ![]SSHKey {
 	mut redis := redisclient.core_get()!
 	mut rkey := 'hetzner.api.get.${h.instance}'
 	mut data := redis.get(rkey)!
@@ -42,7 +39,8 @@ pub fn (h HetznerClient) keys_get() ![]SSHKey {
 	return result
 }
 
-pub fn (h HetznerClient) key_set() ! {
+pub fn (mut h HetznerClient[Config]) key_set() ! {
+	panic("implement")
 	// key SSHKey
 
 	// TODO: need to get keys also from ssh agent

@@ -92,7 +92,7 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 }
 
 pub fn (mut self BaseConfig[T]) config_save() ! {
-	mut config2 := *self.config_get()! // dereference so we don't modify the original
+	mut config2 := *self.config()! // dereference so we don't modify the original
 	mut mycontext := context()!
 	// //walk over the properties see where they need to be encrypted, if yes encrypt
 	$for field in T.fields {
