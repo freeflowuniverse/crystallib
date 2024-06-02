@@ -24,8 +24,8 @@ pub fn (mut self List) process() !int {
 	return 1
 }
 
-pub fn (mut self List) add_list_item(line string) !&ListItem{
-	if !line_is_list(line){
+pub fn (mut self List) add_list_item(line string) !&ListItem {
+	if !line_is_list(line) {
 		return error('line is not a list item')
 	}
 
@@ -41,33 +41,34 @@ pub fn (mut self List) add_list_item(line string) !&ListItem{
 	return &list_item
 }
 
-fn (mut self List) determine_list_item_indentation(mut list_item ListItem) !{
-	if self.children.len == 0{
+fn (mut self List) determine_list_item_indentation(mut list_item ListItem) ! {
+	if self.children.len == 0 {
 		list_item.indent = 0
 		self.children << list_item
 		return
 	}
-	
-	for i := self.children.len-1; i>=0; i--{
+
+	for i := self.children.len - 1; i >= 0; i-- {
 		mut parent_li := self.children[i]
-		if mut parent_li is ListItem{
-			if list_item.depth - parent_li.depth < -1{
+		if mut parent_li is ListItem {
+			if list_item.depth - parent_li.depth < -1 {
 				continue
 			}
-			
-			if list_item.depth - parent_li.depth >= -1 && list_item.depth - parent_li.depth < 2{
+
+			if list_item.depth - parent_li.depth >= -1 && list_item.depth - parent_li.depth < 2 {
 				// same indentation
 				list_item.indent = parent_li.indent
-				if parent_order := parent_li.order{
+				if parent_order := parent_li.order {
 					list_item.order = parent_order + 1
 				}
 
 				self.children << list_item
-			}else if list_item.depth - parent_li.depth >= 2 && list_item.depth - parent_li.depth < 6{
+			} else if list_item.depth - parent_li.depth >= 2
+				&& list_item.depth - parent_li.depth < 6 {
 				// increase indentation
 				list_item.indent = parent_li.indent + 1
 				self.children << list_item
-			}else{
+			} else {
 				// add content to last list item
 				parent_li.content += ' ${list_item.content}'
 				parent_li.processed = false
@@ -91,7 +92,7 @@ pub fn (self List) markdown() !string {
 			}
 
 			mut pre := '-'
-			if order := child.order{
+			if order := child.order {
 				pre = '${order}.'
 			}
 

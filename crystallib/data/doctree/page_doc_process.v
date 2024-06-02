@@ -48,7 +48,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 				console.print_debug('POINTER IMAGE: ' + pointername)
 				if page.tree.image_exists(pointername) {
 					mut linkimage := page.tree.image_get(pointername)!
-					if linkimage.collection.name != page.collection_name{
+					if linkimage.collection.name != page.collection_name {
 						collection_path = '../${linkimage.collection.name}'
 					}
 
@@ -56,7 +56,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 					// 	mut dest_image_copy := '${args.dest}/img/${linkimage.file_name()}'
 					// 	linkimage.copy(dest_image_copy)!
 					// }
-					
+
 					mut out := ''
 					if element.extra.trim_space() == '' {
 						out = '![${element.description}](${collection_path}/img/${linkimage.file_name()})'
@@ -79,7 +79,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 				console.print_debug('POINTER PAGE: ' + pointername)
 				if page.tree.page_exists(pointername) {
 					mut linkpage := page.tree.page_get(pointername)!
-					if linkpage.collection_name != page.collection_name{
+					if linkpage.collection_name != page.collection_name {
 						collection_path = '../${linkpage.collection_name}'
 					}
 					// this is to remember the pages which are linked

@@ -3,7 +3,7 @@ module console
 import freeflowuniverse.crystallib.core.texttools
 
 pub fn clear() {
-	if ! console.silent_get() {
+	if !silent_get() {
 		print('\033[2J')
 	}
 }

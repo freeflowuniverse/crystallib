@@ -1,6 +1,5 @@
 module texttools
 
-
 // import regex
 
 pub struct TokenizerResult {

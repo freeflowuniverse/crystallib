@@ -1,4 +1,5 @@
 module db
+
 import freeflowuniverse.crystallib.ui.console
 
 fn index_exists(mut db DB, name string) bool {

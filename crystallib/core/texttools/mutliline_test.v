@@ -1,6 +1,5 @@
 module texttools
 
-
 fn check_result(tocheck_ string, output string) {
 	mut tocheck := tocheck_
 	tocheck = tocheck.replace('\\n', '\\\\n')
@@ -9,7 +8,6 @@ fn check_result(tocheck_ string, output string) {
 	if tocheck == output.trim_space() {
 		return
 	}
-
 
 	panic('required result not correct.')
 }

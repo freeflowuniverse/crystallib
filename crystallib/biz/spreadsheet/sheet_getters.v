@@ -1,4 +1,5 @@
 module spreadsheet
+
 import freeflowuniverse.crystallib.ui.console
 
 fn remove_empty_line(txt string) string {

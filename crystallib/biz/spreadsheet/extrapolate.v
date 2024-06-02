@@ -1,4 +1,5 @@
 module spreadsheet
+
 import freeflowuniverse.crystallib.ui.console
 
 // smartstring is something like 3:2,10:5 means end month 3 we start with 2, it grows to 5 on end month 10

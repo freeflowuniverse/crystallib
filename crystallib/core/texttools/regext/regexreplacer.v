@@ -3,7 +3,6 @@ module regext
 import freeflowuniverse.crystallib.core.texttools
 import regex
 import freeflowuniverse.crystallib.ui.console
-
 import os
 
 pub struct ReplaceInstructions {
@@ -143,19 +142,14 @@ pub fn (mut self ReplaceInstructions) replace(args ReplaceArgs) !string {
 
 		for mut i in self.instructions {
 			if i.find_str == '' {
-
 				all := i.regex.find_all(line)
 				for gi < all.len {
-
 					gi += 2
 				}
 				line2 = i.regex.replace(line2, i.replace_with)
-
 			} else {
-
 				// line2 = line2.replace(i.find_str, i.replace_with)
 				// line2 = tl.replace(line2, i.find_str, i.replace_with) ?
-
 
 				line2 = line2.replace(i.find_str, i.replace_with)
 			}
@@ -240,11 +234,6 @@ fn (mut self ReplaceInstructions) replace_in_dir_recursive(path1 string, extensi
 						// now write the file back
 						os.write_file(pathnew, txtnew)!
 					}
-
-
-
-
-
 				}
 			}
 		}

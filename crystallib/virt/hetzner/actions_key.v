@@ -3,7 +3,6 @@ module hetzner
 import json
 import freeflowuniverse.crystallib.clients.redisclient
 
-
 pub struct SSHKey {
 pub mut:
 	name        string
@@ -40,7 +39,7 @@ pub fn (mut h HetznerClient[Config]) keys_get() ![]SSHKey {
 }
 
 pub fn (mut h HetznerClient[Config]) key_set() ! {
-	panic("implement")
+	panic('implement')
 	// key SSHKey
 
 	// TODO: need to get keys also from ssh agent

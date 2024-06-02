@@ -47,13 +47,13 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	if !repo.path.exists() {
 		return error("cannot load from path, doesn't exist for '${repo.path.path}'")
 	}
-	
+
 	mut c := base.context()!
 	mut redis := c.redis()!
-	mut isvalid := redis.get(repo.addr.cache_key_status()+"_") or {""}
-	if isvalid!=""{
+	mut isvalid := redis.get(repo.addr.cache_key_status() + '_') or { '' }
+	if isvalid != '' {
 		return repo.status()!
-	}	
+	}
 	mut st := repo_load(mut repo.addr, repo.path.path)!
 	repo.status_set(st)!
 
@@ -62,8 +62,8 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 		return error("path conflict, doesn't exist for '${p2.path}' and '${repo.path.path}'")
 	}
 	// console.print_header(' status:\n${st}')
-	redis.set(repo.addr.cache_key_status()+"_","1")!
-	redis.expire(repo.addr.cache_key_status()+"_", 5)! //5 seconds, to not have these double gets
+	redis.set(repo.addr.cache_key_status() + '_', '1')!
+	redis.expire(repo.addr.cache_key_status() + '_', 5)! // 5 seconds, to not have these double gets
 	return st
 }
 

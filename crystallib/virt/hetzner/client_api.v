@@ -3,7 +3,6 @@ module hetzner
 import net.http
 import freeflowuniverse.crystallib.ui.console
 
-
 // TODO: it would have been better to use the crystallib httpclient
 
 fn (mut h HetznerClient[Config]) request_get(endpoint string) !string {

@@ -1,5 +1,7 @@
 module daguserver
 
+import os
+
 @[params]
 pub struct DaguCommunicationConfig {
 pub:
@@ -33,10 +35,7 @@ pub:
 	success bool
 }
 
-
-
 pub fn (mut self DaguServer[T]) comms_configure(config DaguCommunicationConfig) ! {
-
 	mut homedir := self.config()!.homedir
 
 	config_yaml := $tmpl('./templates/config.yaml')

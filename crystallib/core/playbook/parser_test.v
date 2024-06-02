@@ -45,9 +45,10 @@ fn test_parser() {
 	assert a.params.get_default_false('preferred') == false
 }
 
-
 fn test_parser2() {
-	mut pb := new(text: "!!play.run url:'https://git.ourworld.tf/despiegk/cfg/src/branch/main/myit/hetzner.md'") or { panic(err) }
+	mut pb := new(
+		text: "!!play.run url:'https://git.ourworld.tf/despiegk/cfg/src/branch/main/myit/hetzner.md'"
+	) or { panic(err) }
 	mut a := pb.actions[0]
 	assert a.actor == 'play'
 	assert a.name == 'run'

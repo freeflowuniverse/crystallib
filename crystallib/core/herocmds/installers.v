@@ -73,5 +73,11 @@ fn cmd_installers_execute(cmd Command) ! {
 		exit(1)
 	}
 
-	installers.install_multi(reset: reset, names: names, uninstall: uninstall,gitpull:gitpull,gitreset:gitreset)!
+	installers.install_multi(
+		reset: reset
+		names: names
+		uninstall: uninstall
+		gitpull: gitpull
+		gitreset: gitreset
+	)!
 }

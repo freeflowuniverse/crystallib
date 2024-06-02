@@ -52,7 +52,7 @@ pub fn build() ! {
 	if osal.is_linux() {
 		dest_on_os = '/usr/local/bin'
 	}
-	console.print_debug(" - dest path for mdbooks is on: ${dest_on_os}")
+	console.print_debug(' - dest path for mdbooks is on: ${dest_on_os}')
 	mut ok := false
 	cmd := '
 	set +ex

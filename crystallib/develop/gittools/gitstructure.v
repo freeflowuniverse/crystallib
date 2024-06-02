@@ -130,22 +130,22 @@ pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
 	mut args := args_
 	console.print_header('code get url:${args.url} or path:${args.path}')
 	mut myrepo := gs.repo_add(args)!
-	//console.print_debug(args.str())
-	if myrepo.addr.remote_url.len>0{
+	// console.print_debug(args.str())
+	if myrepo.addr.remote_url.len > 0 {
 		console.print_debug('repo url ${myrepo.addr.remote_url}')
-	}else{
+	} else {
 		console.print_debug('repo obj\n${myrepo.addr}')
 	}
-	
+
 	if args.reset {
 		myrepo.remove_changes()!
-	}	
+	}
 	if args.pull || args.reset {
 		myrepo.pull()!
 	}
 
 	mut locator := gs.locator_new(args.url)!
-	//console.print_debug('got locator ${locator}')
+	// console.print_debug('got locator ${locator}')
 
 	s := locator.path_on_fs()!
 	console.print_debug('repo path ${s.path}')

@@ -14,11 +14,10 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 		// cfg.keyname = p.get('keyname')!
 		mut cl := get(instance,
 			openaikey: p.get('openaikey')!
-			description: p.get_default('description','')!
+			description: p.get_default('description', '')!
 		)!
 		cl.config_save()!
 	}
 }
-
 
 //>TODO: this needs to be extended to chats, ...

@@ -19,8 +19,8 @@ pub mut:
 	names     string
 	reset     bool
 	uninstall bool
-	gitpull bool
-	gitreset bool
+	gitpull   bool
+	gitreset  bool
 }
 
 pub fn names(args_ InstallArgs) []string {
@@ -55,11 +55,11 @@ pub fn install_multi(args_ InstallArgs) ! {
 	for item in items {
 		match item {
 			'base' {
-				base.install(reset: args.reset, )!
-			}		
+				base.install(reset: args.reset)!
+			}
 			'develop' {
-				base.install(reset: args.reset, develop:true)!
-			}				
+				base.install(reset: args.reset, develop: true)!
+			}
 			'rust' {
 				rust.install(reset: args.reset)!
 			}
@@ -70,7 +70,11 @@ pub fn install_multi(args_ InstallArgs) ! {
 				vlang.install(reset: args.reset)!
 			}
 			'crystal' {
-				crystallib.install(reset: args.reset,  git_pull:args.gitpull, git_reset:args.gitreset)!
+				crystallib.install(
+					reset: args.reset
+					git_pull: args.gitpull
+					git_reset: args.gitreset
+				)!
 			}
 			'hero' {
 				crystallib.hero_install(reset: args.reset)!

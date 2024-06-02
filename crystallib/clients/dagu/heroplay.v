@@ -1,5 +1,7 @@
 module dagu
+
 import freeflowuniverse.crystallib.core.playbook
+
 pub fn heroplay(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'daguclient.define')! {
 		mut p := action.params

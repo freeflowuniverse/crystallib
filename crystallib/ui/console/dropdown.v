@@ -6,7 +6,9 @@ import freeflowuniverse.crystallib.ui.uimodel { DropDownArgs }
 import os
 
 fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
-	if silent_get(){panic("can't do ask_... when in silent mode")}
+	if silent_get() {
+		panic("can't do ask_... when in silent mode")
+	}
 	if args.clear {
 		clear() // clears the screen
 	}
@@ -16,7 +18,7 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 	if args.warning.len > 0 {
 		cprintln(foreground: .red, text: args.warning + '\n')
 	}
-	console.print_debug('\nChoices: ${args.choice_message}\n')
+	print_debug('\nChoices: ${args.choice_message}\n')
 	mut items2 := args.items.clone()
 	items2.sort()
 	mut nr := 0
@@ -28,10 +30,10 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 		print_header(' all : *')
 	}
 	if args.default.len > 0 {
-		console.print_debug('\n - default : ${args.default.join(',')} (press enter to select default)')
+		print_debug('\n - default : ${args.default.join(',')} (press enter to select default)')
 	}
-	console.print_debug('')
-	console.print_debug(' - Make your choice:')
+	print_debug('')
+	print_debug(' - Make your choice:')
 	choice := os.get_raw_line().trim(' \n')
 	if choice.trim_space() == '*' {
 		// means we return all
@@ -49,7 +51,9 @@ fn (mut c UIConsole) ask_dropdown_internal(args DropDownArgs) !string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
-	if silent_get(){panic("can't do ask_... when in silent mode")}
+	if silent_get() {
+		panic("can't do ask_... when in silent mode")
+	}
 	mut args := args_
 	args.items.sort()
 	choice := c.ask_dropdown_internal(args)!
@@ -95,7 +99,9 @@ pub fn (mut c UIConsole) ask_dropdown_int(args_ DropDownArgs) !int {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
-	if silent_get(){panic("can't do ask_... when in silent mode")}
+	if silent_get() {
+		panic("can't do ask_... when in silent mode")
+	}
 	mut args := args_
 	args.items.sort()
 	res := c.ask_dropdown_internal(
@@ -152,7 +158,9 @@ pub fn (mut c UIConsole) ask_dropdown_multiple(args_ DropDownArgs) ![]string {
 // 	warning     string
 // 	clear       bool = true
 pub fn (mut c UIConsole) ask_dropdown(args DropDownArgs) !string {
-	if silent_get(){panic("can't do ask_... when in silent mode")}
+	if silent_get() {
+		panic("can't do ask_... when in silent mode")
+	}
 	res := c.ask_dropdown_int(
 		clear: args.clear
 		description: args.description
