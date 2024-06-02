@@ -10,9 +10,8 @@ pub fn play_git(mut plbook playbook.PlayBook) ! {
 	}
 }
 
-
 pub fn play_git_action(action playbook.Action) !playbook.Action {
-	//console.print_debug("play git action: ${action}")
+	// console.print_debug("play git action: ${action}")
 	mut p := action.params
 	mut repo := p.get_default('repo', '')!
 	mut account := p.get_default('account', '')!
@@ -35,7 +34,7 @@ pub fn play_git_action(action playbook.Action) !playbook.Action {
 		return error("Could not load gittools on '${coderoot}'\n${err}")
 	}
 
-	gitpath:=gs.do(
+	gitpath := gs.do(
 		cmd: cmd
 		filter: action.params.get_default('filter', '')!
 		repo: repo
@@ -48,8 +47,8 @@ pub fn play_git_action(action playbook.Action) !playbook.Action {
 		url: url
 	)!
 	console.print_debug('play git action: ${cmd} ${account}:${repo} path:${gitpath}')
-	mut action2:=action
-	action2.params.set("path",gitpath)
+	mut action2 := action
+	action2.params.set('path', gitpath)
 	action2.done = true
 	return action2
 }

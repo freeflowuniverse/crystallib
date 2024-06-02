@@ -1,4 +1,5 @@
 module redisclient
+
 import freeflowuniverse.crystallib.ui.console
 
 pub struct RedisCache {

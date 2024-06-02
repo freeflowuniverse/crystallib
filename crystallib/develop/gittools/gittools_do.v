@@ -89,7 +89,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	if args.cmd == 'reload' {
 		console.print_header(' - reload gitstructure ${gs.name()}')
 		gs.reload()!
-		return ""
+		return ''
 	}
 
 	if args.cmd == 'list' {
@@ -99,7 +99,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 			account: args.account
 			provider: args.provider
 		)!
-		return ""
+		return ''
 	}
 
 	mut repos := gs.repos_get(
@@ -151,7 +151,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 				r.sourcetree()!
 			}
 		}
-		return ""
+		return ''
 	}
 
 	if args.cmd in 'pull,push,commit,delete'.split(',') {
@@ -168,7 +168,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 
 		if repos.len == 0 {
 			console.print_header(' - nothing to do.')
-			return ""
+			return ''
 		}
 
 		// check on repos who needs what
@@ -274,7 +274,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 			)!
 		}
 
-		return ""
+		return ''
 	}
 	// end for the commit, pull, push, delete
 

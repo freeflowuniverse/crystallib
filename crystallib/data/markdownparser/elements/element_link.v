@@ -91,7 +91,7 @@ fn (self Link) markdown_include() string {
 		} else {
 			out = '${pre}[${self.description}](${link_filename}${anchor} ${self.extra})'
 		}
-	}else if self.cat == .anchor{
+	} else if self.cat == .anchor {
 		out = '[${self.description}](${anchor})'
 	} else if self.cat == LinkType.html || self.cat == LinkType.data || self.cat == LinkType.email {
 		out = '[${self.description}](${self.url}${anchor})'
@@ -132,15 +132,15 @@ pub fn (self Link) markdown() !string {
 		if self.cat == LinkType.image {
 			pre = '!'
 		}
-		
+
 		if self.extra.trim_space() == '' {
 			out = '${pre}[${description}](${link_filename}${anchor})'
 		} else {
 			out = '${pre}[${description}](${link_filename}${anchor} ${self.extra})'
 		}
-	}else if self.cat == .anchor{
+	} else if self.cat == .anchor {
 		out = '[${self.description}](${anchor})'
-	} else if self.cat == LinkType.html || self.cat == LinkType.email{
+	} else if self.cat == LinkType.html || self.cat == LinkType.email {
 		out = '[${description}](${self.url}${anchor})'
 	} else {
 		panic('bug')

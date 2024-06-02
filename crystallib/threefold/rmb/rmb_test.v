@@ -1,4 +1,5 @@
 module rmb
+
 import freeflowuniverse.crystallib.ui.console
 
 fn test_main() ? {

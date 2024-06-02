@@ -1,4 +1,5 @@
 module base
+
 // import freeflowuniverse.crystallib.ui.console
 
 // is an object which has a configurator, session and config object which is unique for the model

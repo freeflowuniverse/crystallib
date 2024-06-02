@@ -147,7 +147,6 @@ fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
 	return &plbook, path
 }
 
-
 fn plbook_edit_sourcetree(cmd Command) !(&playbook.PlayBook, string) {
 	edit := cmd.flags.get_bool('edit') or { false }
 	treedo := cmd.flags.get_bool('sourcetree') or { false }

@@ -2,7 +2,6 @@ module podman
 
 import freeflowuniverse.crystallib.osal { exec }
 
-
 @[heap]
 pub struct CEngine {
 pub mut:

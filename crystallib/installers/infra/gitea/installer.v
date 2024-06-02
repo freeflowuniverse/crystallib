@@ -41,7 +41,6 @@ pub fn install() ! {
 	console.print_header('gitea installed properly.')
 }
 
-
 pub fn start() ! {
 	if osal.platform() != .ubuntu || osal.platform() != .arch {
 		return error('only support ubuntu and arch for now')

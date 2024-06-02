@@ -21,9 +21,9 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// install crystallib if it was already done will return true
 	console.print_header('install crystallib')
-	if  args.reset {
+	if args.reset {
 		uninstall()!
-		return 
+		return
 	}
 	base.develop()!
 	vlang.install(reset: args.reset)!
@@ -52,7 +52,7 @@ pub fn install(args InstallArgs) ! {
 	return
 }
 
-//remove hero, crystal, ...
+// remove hero, crystal, ...
 pub fn uninstall() ! {
 	console.print_debug('uninstall hero & crystallib')
 	cmd := '

@@ -33,12 +33,12 @@ pub mut:
 	doctree_path string
 	publish_path string
 	build_path   string
-	production bool
+	production   bool
 }
 
 pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	console.print_header(' mdbook: ${args_.name}')
-	mut cfg := books.config()!	
+	mut cfg := books.config()!
 	mut args := args_
 
 	if args.title == '' {
@@ -164,7 +164,6 @@ A normal user can ignore these pages, they are just to get links to work.
 			collection: 'additional'
 		}
 	}
-
 
 	path_summary_str := '${book.path_build.path}/src/SUMMARY.md'
 	mut path_summary := pathlib.get_file(path: path_summary_str, create: true)!

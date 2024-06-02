@@ -1,4 +1,5 @@
 module markdownparser
+
 import freeflowuniverse.crystallib.ui.console
 
 pub fn markdown_min_header(text string, minlevel int) string {

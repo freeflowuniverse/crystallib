@@ -1,4 +1,5 @@
 module smartid
+
 import freeflowuniverse.crystallib.ui.console
 
 fn test_cid() {

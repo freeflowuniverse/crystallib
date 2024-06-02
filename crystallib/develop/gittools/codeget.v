@@ -37,7 +37,7 @@ pub mut:
 pub fn code_get(args CodeGetFromUrlArgs) !string {
 	mut gs := get()!
 	mut name := args.gitstructure_name
-//	console.print_debug(args.str())
+	//	console.print_debug(args.str())
 	if args.coderoot.len > 0 {
 		name = md5.hexhash(args.coderoot)
 		gs = new(name: name, root: args.coderoot)!

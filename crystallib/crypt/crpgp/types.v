@@ -1,4 +1,5 @@
 module crpgp
+
 import freeflowuniverse.crystallib.ui.console
 
 pub fn new_secret_key_param_builder() !SecretKeyParamsBuilder {

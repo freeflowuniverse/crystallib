@@ -1,4 +1,5 @@
 module secrets
+
 import freeflowuniverse.crystallib.ui.console
 
 fn test_check() {

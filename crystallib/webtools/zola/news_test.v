@@ -1,4 +1,5 @@
 module zola
+
 import freeflowuniverse.crystallib.ui.console
 
 // adds a news section to the zola site

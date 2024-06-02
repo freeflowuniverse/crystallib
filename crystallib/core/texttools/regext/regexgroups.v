@@ -2,7 +2,6 @@ module regext
 
 import regex
 
-
 // find parts of text which are in form {NAME}
 // .
 // NAME is as follows: .

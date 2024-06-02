@@ -19,7 +19,7 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 		}
 
 		if p.exists('coderoot') {
-			panic("implement")
+			panic('implement')
 			mut coderoot := p.get_path_create('coderoot')!
 
 			mut gs := gittools.get()!
@@ -29,22 +29,19 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 
 	for action_ in plbook.find(filter: 'play.run')! {
 		console.print_debug('play run:${action_}')
-		mut action:=*action_
-		mut playrunpath:=action.params.get_default("path","")!
-		if playrunpath.len==0{
-			action.name="pull"
-			action2:=play_git_action(action)!
-			playrunpath=action2.params.get_default("path","")!
+		mut action := *action_
+		mut playrunpath := action.params.get_default('path', '')!
+		if playrunpath.len == 0 {
+			action.name = 'pull'
+			action2 := play_git_action(action)!
+			playrunpath = action2.params.get_default('path', '')!
 		}
-		if playrunpath.len==0{
+		if playrunpath.len == 0 {
 			return error("can't run a heroscript didn't find url or path.")
 		}
 		console.print_debug('play run path:${playrunpath}')
 		plbook.add(path: playrunpath)!
-
-
 	}
-
 
 	// for mut action in plbook.find(filter: 'core.coderoot_set')! {
 	// 	mut p := action.params
