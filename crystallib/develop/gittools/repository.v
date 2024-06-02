@@ -185,7 +185,7 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	}
 	st := repo.status()!
 	if st.need_commit {
-		return error('Cannot pull repo: ${repo.path.path}, a commit is needed')
+		return error('Cannot pull repo: ${repo.path.path}, a commit is needed.\n${st}')
 	}
 	// pull can't see the status
 	cmd2 := 'cd ${repo.path.path} && git pull'
