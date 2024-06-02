@@ -1,7 +1,7 @@
 
 function freeflow_dev_env_install {
 
-    set -ex
+    set -e
 
     crystal_lib_get
 

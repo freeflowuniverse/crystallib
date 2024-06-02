@@ -49,7 +49,6 @@ pub fn get(instance string, cfg Config) !DaguClient[Config] {
 }
 
 
-
 pub fn configure(instance_ string)  !{
 
 	mut cfg := Config{}

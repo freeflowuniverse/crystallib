@@ -2,7 +2,7 @@
 
 
 function hero_install {
-    set -ex
+    set -e
     
     redis_start
 

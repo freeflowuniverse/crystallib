@@ -55,5 +55,5 @@ fn executor_new(args_ ExecutorNewArguments) !Executor {
 pub struct ExecArgs {
 pub mut:
 	cmd    string
-	stdout bool
+	stdout bool = true
 }
