@@ -28,7 +28,6 @@ pub fn install(args_ InstallArgs) ! {
 		}
 	} else {
 		args.reset = true
-		if true{panic("sddd")}
 	}
 
 	// install vlang if it was already done will return true

@@ -26,6 +26,7 @@ pub fn install(args InstallArgs) ! {
 		uninstall()!
 		return
 	}
+	//osal.package_refresh()!
 	base.develop()!
 	vlang.install(reset: args.reset)!
 	vlang.v_analyzer_install(reset: args.reset)!
@@ -47,7 +48,7 @@ pub fn install(args InstallArgs) ! {
 	path1p.link('${os.home_dir()}/.vmodules/freeflowuniverse/crystallib', true)!
 	path2p.link('${os.home_dir()}/.vmodules/freeflowuniverse/webcomponents', true)!
 
-	hero_compile()!
+	//hero_compile()!
 
 	osal.done_set('install_crystallib', 'OK')!
 	return

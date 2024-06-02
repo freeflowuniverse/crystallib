@@ -13,6 +13,7 @@ import time
 pub struct InstallArgs {
 pub mut:
 	homedir string
+	configpath string
 	passwd  string @[secret]
 	secret  string @[secret]
 	title   string = 'My Hero DAG'
@@ -101,22 +102,23 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('dagu start')
 
-	myconfigpath_ := if args.homedir == '' {
+	
+	if args.homedir == '' {
 		args.homedir = '${os.home_dir()}/hero/var/dagu'
 	}
 	if args.configpath == '' {
-		cfg.configpath = '${os.home_dir()}/hero/cfg/dagu.yaml'
+		args.configpath = '${os.home_dir()}/hero/cfg/dagu.yaml'
 	}
 
 	// FILL IN THE TEMPLATE
 	mut mycode := $tmpl('templates/admin.yaml')
 
-	mut path := pathlib.get_file(path: myconfigpath_, create: true)!
+	mut path := pathlib.get_file(path: args_.configpath, create: true)!
 	path.write(mycode)!
 
 	mut sm := startupmanager.get()!
 
-	cmd := 'dagu server --config ${myconfigpath_}'
+	cmd := 'dagu server --config ${args_.configpath}'
 
 	// TODO: we are not taking host & port into consideration
 

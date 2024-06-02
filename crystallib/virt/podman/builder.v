@@ -199,7 +199,7 @@ pub fn (mut self Builder) clean() ! {
 		journalctl --vacuum-time=1s	
 
 	'
-	self.run(cmd:cmd,stdout:true)!
+	self.run(cmd:cmd,stdout:false)!
 }
 
 

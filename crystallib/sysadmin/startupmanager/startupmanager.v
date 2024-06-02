@@ -5,6 +5,7 @@ module startupmanager
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.osal.screen
+import freeflowuniverse.crystallib.core.base
 import json
 import os
 import rand

@@ -11,7 +11,12 @@ import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.installers.lang.golang
 import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.lang.crystallib
+import freeflowuniverse.crystallib.installers.lang.nodejs
+import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.installers.web.caddy
+import freeflowuniverse.crystallib.installers.hero.heroweb
+import freeflowuniverse.crystallib.installers.hero.herodev
+import freeflowuniverse.crystallib.installers.sysadmintools.dagu
 
 @[params]
 pub struct InstallArgs {
@@ -38,6 +43,10 @@ pub fn names(args_ InstallArgs) []string {
 		lima
 		podman
 		vscode
+		nodejs
+		heroweb
+		herodev
+		dagu
 		'
 	mut ns := texttools.to_array(names)
 	ns.sort()
@@ -98,6 +107,21 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'vscode' {
 				vscode.install(reset: args.reset)!
 			}
+			'nodejs' {
+				nodejs.install(reset: args.reset)!
+			}		
+			'python' {
+				python.install()!
+			}	
+			'herodev' {
+				herodev.install()!
+			}	
+			'heroweb' {
+				heroweb.install()!
+			}	
+			'dagu' {
+				dagu.install()!
+			}														
 			else {
 				return error('cannot find installer for: ${item}')
 			}
