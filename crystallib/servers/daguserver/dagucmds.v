@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.clients.dagu
 
 pub fn (mut self DaguServer[T]) dag_path(name string) string{
-	return '${homedir}/dags/${texttools.name_fix(name)}.yaml')!
+	return '${homedir}/dags/${texttools.name_fix(name)}.yaml'
 }
 
 
