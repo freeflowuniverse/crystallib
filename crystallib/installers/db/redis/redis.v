@@ -62,6 +62,15 @@ fn (self RedisInstaller) configdo() ! {
 	pathlib.template_write(c, self.configfilepath(), true)!
 }
 
+
+pub fn check() ! {
+	res := os.execute('redis-cli -c ping > /dev/null 2>&1')
+	if res.exit_code == 0 {
+		return
+	}
+	install(start:true)!
+}
+
 pub fn (self RedisInstaller) start() ! {
 	res := os.execute('redis-cli -c ping')
 	if res.exit_code == 0 {
@@ -73,11 +82,7 @@ pub fn (self RedisInstaller) start() ! {
 
 	mut scr := screen.new()!
 
-	mut s := scr.add(name: name, reset: true)!
-
-	cmd2 := 'redis-server ${self.configfilepath()}'
-
-	s.cmd_send(cmd2)!
+	mut s := scr.add(name: name, reset: true,start:true, cmd:'redis-server ${self.configfilepath()}')!
 
 	for _ in 0 .. 100 {
 		mut res2 := os.execute('redis-cli -c ping')
@@ -85,7 +90,7 @@ pub fn (self RedisInstaller) start() ! {
 			console.print_header('redis is running')
 			return
 		}
-		time.sleep(100000)
+		time.sleep(10000)
 	}
 	return error("Redis did not install propertly could not do:'redis-cli -c ping'")
 }

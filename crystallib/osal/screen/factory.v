@@ -44,6 +44,7 @@ pub fn init_screen_object(item_ map[string]string) Screen {
 // loads screen screen, populate the object
 pub fn (mut self ScreensFactory) scan() ! {
 	self.screens = []Screen{}
+	os.execute('screen -wipe  > /dev/null 2>&1') //make sure its all clean
 	res := os.execute('screen -ls')
 	if res.exit_code > 1 {
 		return error('could not find screen or other error, make sure screen is installed.\n${res.output}')
@@ -64,7 +65,7 @@ pub fn (mut self ScreensFactory) scan() ! {
 		}
 		self.screens << item
 	}
-	console.print_debug(self.str())
+	//console.print_debug(self.str())
 }
 
 pub struct ScreenAddArgs {

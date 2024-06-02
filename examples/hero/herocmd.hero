@@ -1,0 +1,8 @@
+#!/usr/bin/env hero
+
+!!play.echo content:'this is just a test'
+
+!!play.echo content:'this is just another test'
+
+
+

@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.develop.gittools
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '0.4.6'
-
+	console.print_header('install vlang (reset: ${args.reset})')
 	res := os.execute('${osal.profile_path_source_and()} v --version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().starts_with('V'))
@@ -21,18 +21,21 @@ pub fn install(args_ InstallArgs) ! {
 		myversion := r[0].all_after_first('V ').all_before(' ').trim_space()
 		console.print_debug("V version: '${myversion}'")
 		if texttools.version(version) > texttools.version(myversion) {
+			// println(texttools.version(version))
+			// println(texttools.version(myversion))
+			// if true{panic("s")}
 			args.reset = true
 		}
 	} else {
 		args.reset = true
+		if true{panic("sddd")}
 	}
 
 	// install vlang if it was already done will return true
 	if args.reset == false {
 		return
 	}
-
-	console.print_header('install vlang')
+	
 	base.develop(reset: args.reset)!
 
 	mut gs := gittools.new(
@@ -91,11 +94,13 @@ pub fn v_analyzer_install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-	install(reset: args.reset)!
 
 	if args.reset == false {
 		console.print_debug('v-analyzer already installed')
+		return
 	}
+
+	install()!
 
 	if args.reset {
 		console.print_header('install v-analyzer')

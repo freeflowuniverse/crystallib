@@ -6,9 +6,9 @@ import freeflowuniverse.crystallib.osal { exec }
 pub struct CEngine {
 pub mut:
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
-	images          []BAHImage
+	images          []Image
 	containers      []Container
-	bcontainers     []BContainer
+	builders     []Builder
 	buildpath       string
 	localonly       bool
 	cache           bool = true
@@ -43,13 +43,15 @@ fn (mut e CEngine) init() ! {
 
 // reload the state from system
 pub fn (mut e CEngine) load() ! {
-	e.bcontainers_load()!
+	e.builders_load()!
 	e.images_load()!
 	e.containers_load()!
 }
 
+
 // reset all images & containers, CAREFUL!
 pub fn (mut e CEngine) reset_all() ! {
+	e.load()!
 	for mut container in e.containers.clone() {
 		container.delete()!
 	}
@@ -58,12 +60,11 @@ pub fn (mut e CEngine) reset_all() ! {
 	}
 	exec(cmd: 'podman rm -a -f', stdout: false)!
 	exec(cmd: 'podman rmi -a -f', stdout: false)!
-	e.bcontainers_delete_all()!
+	e.builders_delete_all()!
 	osal.done_reset()!
 	if osal.platform() == .arch {
 		exec(cmd: 'systemctl status podman.socket', stdout: false)!
 	}
-
 	e.load()!
 }
 
@@ -89,3 +90,4 @@ pub fn (mut e CEngine) get_free_port() ?int {
 	}
 	return range[0]
 }
+

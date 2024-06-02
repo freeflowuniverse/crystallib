@@ -1,54 +1,18 @@
 module podman
-
+import freeflowuniverse.crystallib.virt.utils
 import freeflowuniverse.crystallib.osal { exec }
 import time
-import freeflowuniverse.crystallib.virt.utils
 import freeflowuniverse.crystallib.ui.console
-// TODO: needs to be implemented for buildah, is still code from docker
 
-@[heap]
-pub struct BAHImage {
-pub mut:
-	repo    string
-	id      string
-	id_full string
-	tag     string
-	digest  string
-	size    int // size in MB
-	created time.Time
-	engine  &CEngine  @[skip; str: skip]
-}
-
-// delete podman image
-pub fn (mut image BAHImage) delete(force bool) ! {
-	mut forcestr := ''
-	if force {
-		forcestr = '-f'
-	}
-	exec(cmd: 'podman rmi ${image.id} ${forcestr}', stdout: false)!
-}
-
-// export podman image to tar.gz
-pub fn (mut image BAHImage) export(path string) !string {
-	exec(cmd: 'podman save ${image.id} > ${path}', stdout: false)!
-	return ''
-}
-
-// import podman image back into the local env
-pub fn (mut engine CEngine) load_image(path string) ! {
-	exec(cmd: 'podman load < ${path}', stdout: false)!
-	engine.images_load()!
-}
-
-pub fn (mut e CEngine) images_load() ! {
-	e.images = []BAHImage{}
+fn (mut e CEngine) images_load() ! {
+	e.images = []Image{}
 	mut lines := osal.execute_silent("podman images --format '{{.ID}}||{{.Id}}||{{.Repository}}||{{.Tag}}||{{.Digest}}||{{.Size}}||{{.CreatedAt}}'")!
 	for line in lines.split_into_lines() {
 		fields := line.split('||').map(utils.clear_str)
 		if fields.len != 7 {
 			panic('podman image needs to output 7 parts.\n${fields}')
 		}
-		mut image := BAHImage{
+		mut image := Image{
 			engine: &e
 		}
 		image.id = fields[0]
@@ -62,6 +26,14 @@ pub fn (mut e CEngine) images_load() ! {
 	}
 }
 
+
+// import podman image back into the local env
+pub fn (mut engine CEngine) image_load(path string) ! {
+	exec(cmd: 'podman load < ${path}', stdout: false)!
+	engine.images_load()!
+}
+
+
 @[params]
 pub struct ImageGetArgs {
 pub:
@@ -72,34 +44,6 @@ pub:
 	id_full string
 }
 
-pub struct ImageGetError {
-	Error
-pub:
-	args     ImageGetArgs
-	notfound bool
-	toomany  bool
-}
-
-pub fn (err ImageGetError) msg() string {
-	if err.notfound {
-		return 'Could not find image with args:\n${err.args}'
-	}
-	if err.toomany {
-		return 'Found more than 1 image with args:\n${err.args}'
-	}
-	panic('unknown error for ImageGetError')
-}
-
-pub fn (err ImageGetError) code() int {
-	if err.notfound {
-		return 1
-	}
-	if err.toomany {
-		return 2
-	}
-	panic('unknown error for ImageGetError')
-}
-
 // find image based on repo and optional tag
 // args:
 // 	repo string
@@ -107,7 +51,7 @@ pub fn (err ImageGetError) code() int {
 // 	digest string
 // 	id string
 // id_full
-pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
+pub fn (mut e CEngine) image_get(args ImageGetArgs) !Image {
 	for i in e.images {
 		if args.digest != '' && i.digest == args.digest {
 			return i
@@ -130,7 +74,7 @@ pub fn (mut e CEngine) image_get(args ImageGetArgs) !BAHImage {
 			if args.tag != '' && i.tag != args.tag {
 				continue
 			}
-			console.print_debug('found image: ${i} -- ${args}')
+			console.print_debug('found image for get: ${i} -- ${args}')
 			result_digest = i.digest
 			counter += 1
 		}
@@ -159,9 +103,43 @@ pub fn (mut e CEngine) image_exists(args ImageGetArgs) !bool {
 }
 
 // get buildah containers
-pub fn (mut e CEngine) bimages() ![]BAHImage {
-	if e.bcontainers.len == 0 {
+pub fn (mut e CEngine) images_get() ![]Image {
+	if e.builders.len == 0 {
 		e.images_load()!
 	}
 	return e.images
+}
+
+
+
+
+pub fn (err ImageGetError) msg() string {
+	if err.notfound {
+		return 'Could not find image with args:\n${err.args}'
+	}
+	if err.toomany {
+		return 'Found more than 1 image with args:\n${err.args}'
+	}
+	panic('unknown error for ImageGetError')
+}
+
+pub fn (err ImageGetError) code() int {
+	if err.notfound {
+		return 1
+	}
+	if err.toomany {
+		return 2
+	}
+	panic('unknown error for ImageGetError')
+}
+
+
+
+
+pub struct ImageGetError {
+	Error
+pub:
+	args     ImageGetArgs
+	notfound bool
+	toomany  bool
 }

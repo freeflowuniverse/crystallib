@@ -140,7 +140,7 @@ pub fn running() !bool {
 		return false
 	}
 
-	if !(osal.proces_exists_byname('mycelium')!) {
+	if !(osal.process_exists_byname('mycelium')!) {
 		return false
 	}
 

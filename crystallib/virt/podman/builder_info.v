@@ -1,6 +1,6 @@
 module podman
 
-struct ContainerInfo {
+struct BuilderInfo {
 	type_                    string            @[json: 'Type']
 	from_image               string            @[json: 'FromImage']
 	from_image_id            string            @[json: 'FromImageID']

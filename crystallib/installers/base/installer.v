@@ -13,7 +13,7 @@ pub mut:
 
 // install base will return true if it was already installed
 pub fn install(args InstallArgs) ! {
-	console.print_header('platform prepare')
+	console.print_header('install base (reset: ${args.reset})')
 	pl := osal.platform()
 
 	if args.reset == false && osal.done_exists('platform_prepare') {
@@ -70,7 +70,7 @@ pub fn install(args InstallArgs) ! {
 	} else if pl == .arch {
 		console.print_header(' - Arch prepare')
 		osal.package_refresh()!
-		osal.package_install('git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop')!
+		osal.package_install('ncdu, git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop,arch-install-scripts')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
@@ -100,7 +100,7 @@ pub fn sshkeysinstall(args InstallArgs) ! {
 }
 
 pub fn develop(args InstallArgs) ! {
-	console.print_header('platform prepare')
+	console.print_header('install base develop (reset: ${args.reset})')
 	pl := osal.platform()
 
 	if args.reset == false && osal.done_exists('crystal_development') {

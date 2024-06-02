@@ -61,6 +61,7 @@ pub fn print_stdout(txt string) {
 	}
 	txt2 := trim(texttools.indent(txt, '    '))
 	cprintln(foreground: .light_blue, text: txt2)
+	//print_backtrace()
 	c.reset()
 }
 

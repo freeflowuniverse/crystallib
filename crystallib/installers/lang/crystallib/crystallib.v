@@ -20,8 +20,9 @@ pub mut:
 
 pub fn install(args InstallArgs) ! {
 	// install crystallib if it was already done will return true
-	console.print_header('install crystallib')
+	console.print_header('install crystallib (reset: ${args.reset})')
 	if args.reset {
+		console.print_header('reset crystallib')
 		uninstall()!
 		return
 	}
@@ -50,6 +51,14 @@ pub fn install(args InstallArgs) ! {
 
 	osal.done_set('install_crystallib', 'OK')!
 	return
+}
+
+//check if crystallibs installed and hero, if not do so
+pub fn check() ! {
+	if osal.done_exists('install_crystallib')	{
+		return
+	}
+	install()!
 }
 
 // remove hero, crystal, ...
@@ -87,7 +96,7 @@ pub fn hero_install(args InstallArgs) ! {
 
 pub fn hero_compile(args InstallArgs) ! {
 	if args.reset == false && osal.done_exists('compile_hero') {
-		console.print_debug('    hero already compiled')
+		console.print_debug('hero already compiled')
 		return
 	}
 	console.print_header('compile hero')

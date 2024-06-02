@@ -40,17 +40,17 @@ pub fn (mut t Screen) is_running() !bool {
 }
 
 fn (mut self Screen) kill_() ! {
-	console.print_debug('kill screen: ${self}')
-	if self.pid == 0 || self.pid < 50 {
-		return error("pid was <50 for ${self}, can't kill")
+	//console.print_debug('kill screen: ${self}')
+	if self.pid == 0 || self.pid < 5 {
+		return error("pid was <5 for ${self}, can't kill")
 	}
 	osal.process_kill_recursive(pid: self.pid)!
-	res := os.execute('export TERM=xterm-color && screen -X -S ${self.name} kill')
+	res := os.execute('export TERM=xterm-color && screen -X -S ${self.name} kill > /dev/null 2>&1')
 	if res.exit_code > 1 {
 		return error('could not kill a screen.\n${res.output}')
 	}
 	time.sleep(100 * time.millisecond) // 0.1 sec wait
-	os.execute('screen -wipe')
+	os.execute('screen -wipe  > /dev/null 2>&1')
 	// self.scan()!
 }
 
@@ -93,7 +93,7 @@ fn (mut self Screen) start_() ! {
 		self.cmd = '/bin/bash'
 	}
 	cmd := 'export TERM=xterm-color && screen -dmS ${self.name} ${self.cmd}'
-	console.print_debug(" startcmd:'${cmd}'")
+	//console.print_debug(" startcmd:'${cmd}'")
 	res := os.execute(cmd)
 	// console.print_debug(res)
 	if res.exit_code > 1 {
