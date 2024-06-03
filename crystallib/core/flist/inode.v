@@ -1,5 +1,21 @@
 module flist
 
+@[table: 'inode']
+pub struct Inode {
+pub mut:
+	ino    u64    @[primary; sql: serial]
+	parent u64
+	name   string
+	size   u64
+	uid    u32
+	gid    u32
+	mode   u32
+	rdev   u64
+	ctime  i64
+	mtime  i64
+}
+
+
 fn (mut f Flist) add_inode(inode Inode)!{
 	sql f.con {
 		insert inode into Inode

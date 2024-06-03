@@ -1,5 +1,13 @@
 module flist
 
+@[table: 'route']
+pub struct Route {
+pub mut:
+	start u8
+	end   u8
+	url   string
+}
+
 // get_routes returns all flist routes
 pub fn (mut f Flist) get_routes() ![]Route {
 	routes := sql f.con {

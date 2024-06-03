@@ -42,18 +42,25 @@ fn testsuite_begin() {
 );',
 	]
 	os.create('/tmp/fl1.fl')!
-	mut con := sqlite.connect('/tmp/fl1.fl')!
-	con.journal_mode(sqlite.JournalMode.delete)!
+	os.create('/tmp/fl2.fl')!
+	mut con1 := sqlite.connect('/tmp/fl1.fl')!
+	mut con2 := sqlite.connect('/tmp/fl2.fl')!
+
+	con1.journal_mode(sqlite.JournalMode.delete)!
+	con2.journal_mode(sqlite.JournalMode.delete)!
 
 	for schematic in schema {
-		con.exec(schematic)!
+		con1.exec(schematic)!
+		con2.exec(schematic)!
 	}
 
-	con.close()!
+	con1.close()!
+	con2.close()!
 }
 
 fn testsuite_end() {
 	os.rm('/tmp/fl1.fl')!
+	os.rm('/tmp/fl2.fl')!
 }
 
 fn test_list() {
@@ -191,4 +198,50 @@ fn test_update_routes(){
 	fl.update_routes(updated_routes)!
 
 	assert updated_routes == fl.get_routes()!
+}
+
+fn test_merge(){
+	mut fl1 :=  new(path: '/tmp/fl1.fl')!
+	mut fl2 := new(path: '/tmp/fl2.fl')!
+
+	fl1.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (1, 0, "/", 0, 0, 0, 0, 0, 0, 0)')!
+	fl1.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (104, 1, "file1", 0, 0, 0, 0, 0, 0, 0)')!
+	fl1.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (105, 1, "file2", 0, 0, 0, 0, 0, 0, 0)')!
+	fl1.add_block(Block{ino: 104, id: '1234', key: '1234'})!
+	fl1.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (106, 1, "dir1", 0, 0, 0, 16384, 0, 0, 0)')!
+	fl1.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (107, 106, "file3", 10, 0, 0, 0, 0, 0, 0)')!
+	fl1.add_block(Block{ino: 107, id: '1234', key: '1234'})!
+	fl1.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (108, 106, "file4", 10, 0, 0, 0, 0, 0, 0)')!
+
+	fl2.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (1, 0, "/", 0, 0, 0, 0, 0, 0, 0)')!
+	fl2.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (104, 1, "file1", 0, 0, 0, 0, 0, 0, 0)')!
+	fl2.add_block(Block{ino: 104, id: '5678', key: '5678'})!
+	fl2.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (105, 1, "dir1", 0, 0, 0, 16384, 0, 0, 0)')!
+	fl2.con.exec('insert into inode (ino, parent, name, size, uid, gid, mode, rdev, ctime, mtime) values (106, 105, "file3", 10, 0, 0, 0, 0, 0, 0)')!
+	fl2.add_block(Block{ino: 106, id: '1234', key: '1234'})!
+
+	merge('/tmp/fl2.fl', '/tmp/fl1.fl')!
+
+	list := fl1.list(true)!
+
+	assert list.len == 7
+	assert list.contains(Inode{ino: 1, name: '/'})
+	assert list.contains(Inode{ino: 104, parent: 1, name: 'file1'})
+	assert list.contains(Inode{ino: 105, parent: 1, name: 'file2'})
+	assert list.contains(Inode{ino: 106, parent: 1, name: 'dir1', mode: 16384})
+	assert list.contains(Inode{ino: 107, parent: 106, name: 'file3', size: 10})
+	assert list.contains(Inode{ino: 108, parent: 106, name: 'file4', size: 10})
+	assert list.contains(Inode{ino: 109, parent: 1, name: 'file1 (1)'})
+
+	mut blocks := fl1.get_inode_blocks(104)!
+	assert blocks.len == 1
+	assert blocks[0] == Block{ino: 104, id: '1234', key: '1234'}
+
+	blocks = fl1.get_inode_blocks(107)!
+	assert blocks.len == 1
+	assert blocks[0] == Block{ino: 107, id: '1234', key: '1234'}
+
+	blocks = fl1.get_inode_blocks(109)!
+	assert blocks.len == 1
+	assert blocks[0] == Block{ino: 109, id: '5678', key: '5678'}
 }
