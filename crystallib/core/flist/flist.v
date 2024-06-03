@@ -9,13 +9,13 @@ pub struct Flist {
 	con  sqlite.DB
 }
 
-pub struct FlistGetArgs{
-	path string @[required]
+pub struct FlistGetArgs {
+	path   string @[required]
 	create bool
 }
 
-pub fn new(args FlistGetArgs) !Flist{
-	if args.create{
+pub fn new(args FlistGetArgs) !Flist {
+	if args.create {
 		os.create(args.path)!
 	}
 
@@ -23,8 +23,8 @@ pub fn new(args FlistGetArgs) !Flist{
 	con.journal_mode(sqlite.JournalMode.delete)!
 
 	return Flist{
-		path: args.path,
-		con: con,
+		path: args.path
+		con: con
 	}
 }
 
@@ -154,8 +154,8 @@ fn (mut f Flist) merge_(mut f_src Flist) ! {
 		if matching_dest_inode := f.get_inode_from_path(src_inode_path) {
 			// two entries exist with the same path: there might be a match,
 			// need to check blocks to make sure
-			if inode.mode == matching_dest_inode.mode{
-				if inode.mode == 16384{
+			if inode.mode == matching_dest_inode.mode {
+				if inode.mode == 16384 {
 					// this is a directory, skip it
 					continue
 				}
@@ -178,7 +178,7 @@ fn (mut f Flist) merge_(mut f_src Flist) ! {
 				}
 			}
 
-			if new_name == ''{
+			if new_name == '' {
 				return error('failed to assign new name to entry ${inode.name}')
 			}
 
@@ -204,7 +204,7 @@ fn (mut f Flist) merge_(mut f_src Flist) ! {
 	}
 
 	src_tags := f_src.get_tags()!
-	for tag in src_tags{
+	for tag in src_tags {
 		f.add_tag(tag)!
 	}
 }

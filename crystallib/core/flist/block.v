@@ -8,7 +8,7 @@ pub mut:
 	key string
 }
 
-fn (mut f Flist) add_block(block Block)!{
+fn (mut f Flist) add_block(block Block) ! {
 	sql f.con {
 		insert block into Block
 	}!
@@ -36,7 +36,7 @@ fn (mut f Flist) get_inode_blocks(ino u64) ![]Block {
 	return blocks
 }
 
-fn (mut f Flist) delete_block(ino u64)!{
+fn (mut f Flist) delete_block(ino u64) ! {
 	f.con.exec_param('delete from block where ino = ?;', '${ino}')!
 }
 

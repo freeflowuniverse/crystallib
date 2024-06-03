@@ -15,14 +15,13 @@ pub mut:
 	mtime  i64
 }
 
-
-fn (mut f Flist) add_inode(inode Inode)!{
+fn (mut f Flist) add_inode(inode Inode) ! {
 	sql f.con {
 		insert inode into Inode
 	}!
 }
 
-fn (mut f Flist) get_inode_children(parent u64) ![]Inode{
+fn (mut f Flist) get_inode_children(parent u64) ![]Inode {
 	children := sql f.con {
 		select from Inode where parent == parent
 	}!
@@ -30,7 +29,7 @@ fn (mut f Flist) get_inode_children(parent u64) ![]Inode{
 	return children
 }
 
-fn (mut f Flist) find_inode_with_pattern(pattern string) ![]Inode{
+fn (mut f Flist) find_inode_with_pattern(pattern string) ![]Inode {
 	inodes := sql f.con {
 		select from Inode where name like pattern
 	}!
@@ -130,4 +129,3 @@ fn (mut f Flist) delete_inode(ino u64) ! {
 	// delete inode
 	f.con.exec_param('delete from inode where ino = ?;', '${ino}')!
 }
-
