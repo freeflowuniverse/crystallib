@@ -3,6 +3,7 @@ module podman
 import freeflowuniverse.crystallib.osal
 //import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.installers.lang.crystallib
+import freeflowuniverse.crystallib.core.pathlib
 import os
 import json
 
@@ -139,7 +140,9 @@ pub fn (mut self Builder) run(cmd Command) ! {
 		interactive: cmd.interactive
 		async: cmd.async
 	) or {
-		return error("cannot execute:\n${cmd.cmd}\nerror:\n${err}")
+		mut epath:=pathlib.get_file(path:scriptpath,create:false)!
+		c:=epath.read()!
+		return error("cannot execute:\n${c}\nerror:\n${err}")
 	}
 }
 

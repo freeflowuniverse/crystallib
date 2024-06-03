@@ -113,12 +113,11 @@ pub fn start(args_ InstallArgs) ! {
 	// FILL IN THE TEMPLATE
 	mut mycode := $tmpl('templates/admin.yaml')
 
-	mut path := pathlib.get_file(path: args_.configpath, create: true)!
+	mut path := pathlib.get_file(path: args.configpath, create: true)!
 	path.write(mycode)!
-
 	mut sm := startupmanager.get()!
 
-	cmd := 'dagu server --config ${args_.configpath}'
+	cmd := 'dagu server --config ${args.configpath}'
 
 	// TODO: we are not taking host & port into consideration
 
@@ -151,13 +150,20 @@ pub fn check(args InstallArgs) !bool {
 	mut conn := httpconnection.new(name: 'dagu', url: 'http://localhost:3333/api/v1/')!
 
 	// console.print_debug("curl http://localhost:3333/api/v1/dags --oauth2-bearer ${secret}")
-	conn.default_header.add(.authorization, 'Bearer ${args.secret}')
+	if args.secret.len>0{
+		conn.default_header.add(.authorization, 'Bearer ${args.secret}')
+	}
 	conn.default_header.add(.content_type, 'application/json')
 	console.print_debug('check connection to dagu')
-	// r := conn.get_json_dict(prefix: 'dags') or { return false }
-	r := conn.get_json_dict(prefix: 'dags', debug: false)!
-	dags := r['DAGs'] or { return false }
-	// console.print_debug(dags)
+	r0 := conn.get(prefix: 'dags') or { return false }
+	// if it gets here then is empty but server answers, the below might not work if no dags loaded
+
+	// println(r0)
+	// if true{panic("ssss")}
+	// r := conn.get_json_dict(prefix: 'dags', debug: false) or {return false}
+	// println(r)	
+	// dags := r['DAGs'] or { return false }
+	// // console.print_debug(dags)
 	console.print_debug('Dagu is answering.')
 	return true
 }

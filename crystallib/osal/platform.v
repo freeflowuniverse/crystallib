@@ -134,3 +134,14 @@ pub fn hostname() !string {
 	}
 	return res.output.trim_space()
 }
+
+//e.g. systemd, bash, zinit
+pub fn initname() !string {
+	res := os.execute('ps -p 1 -o comm=')
+	if res.exit_code > 0 {
+		return error("can't get process with pid 1. Error:\n${res.output}")
+	}
+	return res.output.trim_space()
+}
+
+

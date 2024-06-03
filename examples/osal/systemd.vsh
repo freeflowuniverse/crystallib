@@ -1,9 +1,11 @@
-#!/usr/bin/env -S v -w -cg -enable-globals run
+#!/usr/bin/env -S v -w -n -cg -enable-globals run
 
 import freeflowuniverse.crystallib.osal.systemd
 import freeflowuniverse.crystallib.installers.infra.zinit as zinitinstaller
 
 zinitinstaller.install()!
+
+println("zinit installed")
 
 mut systemdfactory := systemd.new()!
 mut systemdprocess := systemdfactory.new(

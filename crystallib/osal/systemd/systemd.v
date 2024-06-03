@@ -8,21 +8,6 @@ import json
 import os
 import freeflowuniverse.crystallib.clients.redisclient
 
-// function systemdinstall {
-//     set -x
-//     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-//         local script_name="$1"
-//         local cmd="$2"
-//         servicefile="
-
-//         spath="/etc/systemd/system/${script_name}.service"
-//         rm -f $spath
-//         echo "$servicefile" > $spath
-//         systemctl daemon-reload
-//         systemctl enable $script_name
-//         systemctl start $script_name
-//     fi
-// }
 
 @[heap]
 pub struct Systemd {
@@ -39,6 +24,16 @@ pub fn new() !Systemd {
 	}
 	systemdobj.load()!
 	return systemdobj
+}
+
+pub fn check() !bool{
+
+	if ! osal.cmd_exists("systemctl"){
+		return false
+	}
+
+	return osal.execute_ok("systemctl status --no-pager")
+
 }
 
 fn (mut systemdobj Systemd) load() ! {

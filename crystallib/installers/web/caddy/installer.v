@@ -4,10 +4,9 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.installers.infra.zinit
 import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.osal.screen
+import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 
 @[params]
@@ -21,6 +20,8 @@ pub fn install(args InstallArgs) ! {
 	// make sure we install base on the node
 	base.install()!
 
+	//TODO: rewrite in line to how we do e.g. DAGU
+
 	if args.reset == false && osal.done_exists('install_caddy') {
 		return
 	}
@@ -32,7 +33,7 @@ pub fn install(args InstallArgs) ! {
 		return error('only support linux for now')
 	}
 	mut dest := osal.download(
-		url: 'https://github.com/caddyserver/caddy/releases/download/v2.7.6/caddy_2.7.6_linux_amd64.tar.gz'
+		url: 'https://github.com/caddyserver/caddy/releases/download/v2.8.4/caddy_2.8.4_linux_amd64.tar.gz'
 		minsize_kb: 10000
 		reset: true
 		expand_dir: '/tmp/caddyserver'
@@ -125,7 +126,7 @@ pub fn configuration_set(args_ ConfigurationArgs) ! {
 @[params]
 pub struct StartArgs {
 pub mut:
-	zinit bool = true
+	zinit bool
 }
 
 // start caddy
@@ -134,29 +135,23 @@ pub fn start(args StartArgs) ! {
 	if !os.exists('/etc/caddy/Caddyfile') {
 		return error("didn't find caddyfile")
 	}
-	if args.zinit {
-		zinit.install()!
-		mut z := zinitmgmt.new()!
-		p := z.process_new(
-			name: 'caddy'
-			cmd: '
-				caddy run --config /etc/caddy/Caddyfile
-				echo CADDY STOPPED
-				/bin/bash'
-		)!
 
-		p.start()!
-	} else {
-		mut scr := screen.new(reset: false)!
-		_ = scr.add(name: 'caddy', cmd: 'caddy run --config /etc/caddy/Caddyfile')!
-	}
+	cmd:= 'caddy run --config /etc/caddy/Caddyfile'
+
+	mut sm := startupmanager.get()!
+
+	sm.start(
+		name: 'caddy'
+		cmd: cmd
+	)!
+
 }
 
 pub fn stop() ! {
 	console.print_header('Caddy Stop')
-	// mut scr:=screen.new(reset:false)!
-	// scr.kill("caddy")!
-	// osal.process_kill_recursive(name:"caddy")! //kills myself
+	mut sm := startupmanager.get()!
+	sm.kill('caddy')!
+
 }
 
 pub fn restart() ! {

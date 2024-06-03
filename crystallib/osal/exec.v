@@ -382,6 +382,17 @@ pub fn execute_interactive(cmd string) ! {
 	exec(cmd: cmd, stdout: true, shell: true)!
 }
 
+
+//executes a cmd, if not error return true
+pub fn execute_ok(cmd string) bool {
+	res := os.execute(cmd)
+	if res.exit_code > 0 {
+		return false
+	}
+	return true
+}
+
+
 pub fn cmd_exists(cmd string) bool {
 	cmd1 := 'which ${cmd}'
 	res := os.execute(cmd1)

@@ -70,7 +70,7 @@ pub fn install(args InstallArgs) ! {
 	} else if pl == .arch {
 		console.print_header(' - Arch prepare')
 		osal.package_refresh()!
-		osal.package_install('ncdu, git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop,arch-install-scripts')!
+		osal.package_install('rsync,ncdu, git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop,arch-install-scripts')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}

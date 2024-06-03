@@ -2,7 +2,7 @@ module podman
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
-
+import os
 
 @[params]
 pub struct GetArgs {
@@ -107,16 +107,28 @@ pub fn (mut e CEngine) builder_herodev(args GetArgs) !Builder {
 pub fn (mut e CEngine) builder_heroweb(args GetArgs) !Builder {
 	console.print_header('buildah builder hero web')
 	name := "builder_heroweb"
-	e.builder_js_python(reset:false)!
+	e.builder_go_rust(reset:false)!
+	e.builder_crystal(reset:false)!
 	if !args.reset && e.builder_exists(name)! {
 		return e.builder_get(name)!
 	}		
-	mut builder := e.builder_new(name: name, from: 'localhost/builder_crystal', delete: true)!
-	builder.hero_execute_cmd("installers -n heroweb")!
-	//builder.clean()!
-	builder.commit('localhost/${name}')!
+	mut builder0 := e.builder_new(name: "builder_heroweb_temp", from: 'localhost/builder_go_rust', delete: true)!
+	builder0.hero_execute_cmd("installers -n heroweb")!
+	builder0.hero_execute_cmd("installers -n heroweb")!
+	mpath:=builder0.mount_to_path()!
+
+	// copy the built binary to host
+	osal.exec(cmd:"
+		mkdir -p  ${os.home_dir()}/hero/var/bin
+		cp ${mpath}/usr/local/bin/* ${os.home_dir()}/hero/var/bin/
+	")!
+
+	builder0.delete()!
+	mut builder2 := e.builder_new(name: name, from: 'localhost/builder_crystal', delete: true)!
+	builder2.copy("${os.home_dir()}/hero/var/bin/","/usr/local/bin/")!
+	builder2.commit('localhost/${name}')!
 	e.load()!
-	return builder
+	return builder2
 }
 
 

@@ -64,21 +64,6 @@ pub fn install(args_ InstallArgs) ! {
 
 	console.print_header('install zinit done')
 
-	start()!
-
-	osal.done_set('install_zinit', 'OK')!
 	return
 }
 
-// start zinit
-pub fn start() ! {
-	start()!
-}
-
-// pub fn stop() ! {
-// }
-
-// pub fn restart() ! {
-// 	stop()!
-// 	start()!
-// }

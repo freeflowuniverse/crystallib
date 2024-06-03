@@ -31,22 +31,22 @@ pub mut:
 pub fn names(args_ InstallArgs) []string {
 	names := '
 		base
-		develop
-		rust
-		golang
-		vlang
-		hero
-		crystal
 		caddy
 		chrome
-		mycelium
-		lima
-		podman
-		vscode
-		nodejs
-		heroweb
-		herodev
+		crystal
 		dagu
+		develop
+		golang
+		hero
+		herodev
+		heroweb
+		lima
+		mycelium
+		nodejs
+		podman
+		rust
+		vlang
+		vscode
 		'
 	mut ns := texttools.to_array(names)
 	ns.sort()
