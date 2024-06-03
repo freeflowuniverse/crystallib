@@ -13,6 +13,7 @@ pub fn (o OpenRPC) generate_handler_file(receiver Struct, method_map map[string]
 		parse_import('freeflowuniverse.crystallib.rpc.jsonrpc')
 		parse_import('json')
 		parse_import('x.json2')
+		parse_import('import freeflowuniverse.crystallib.core.texttools')
 	]
 
 	mut file := CodeFile {

@@ -79,7 +79,7 @@ pub fn (o OpenRPC) generate_client_test_file(methods_map map[string]Function, ob
 	fn_test_factory.body = "mut client := new_ws_client(address:'ws://127.0.0.1:\${port}')!"
 	
 	mut code := []CodeItem{}
-	code << CustomCode{'const port = 3000'}
+	code << CustomCode{'const port = 3100'}
 	code << fn_test_factory
 	for key, method in methods_map {
 		mut func := parse_function('fn test_${method.name}() !')!

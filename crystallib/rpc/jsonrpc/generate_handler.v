@@ -42,6 +42,7 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 
 	handler_struct := codemodel.Struct{
 		name: '${args.receiver.name}Handler'
+		is_pub: true
 		attrs: [codemodel.Attribute{
 			name: 'heap'
 		}]
@@ -57,7 +58,9 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 
 	match_stmts := args.methods.map(method_to_call(it))
 
-	body := "method := jsonrpc.jsonrpcrequest_decode_method(msg)!
+	body := "mut method := jsonrpc.jsonrpcrequest_decode_method(msg)!
+	method = method.trim_string_left('circles.')
+	method = texttools.name_fix_pascal_to_snake(method)
 	match method {
 		${match_stmts.join_lines()}
 		else{
