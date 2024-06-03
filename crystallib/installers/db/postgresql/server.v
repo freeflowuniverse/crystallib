@@ -139,7 +139,7 @@ pub fn (mut server Server) stop() ! {
 	console.print_header('stop postgresql: ${server.name}')
 
 	mut sm := startupmanager.get()!
-	sm.kill('postgres_${server.name}')!
+	sm.stop('postgres_${server.name}')!
 }
 
 // check health, return true if ok

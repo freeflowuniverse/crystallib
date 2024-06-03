@@ -86,7 +86,7 @@ pub fn restart(args_ InstallArgs) ! {
 pub fn stop(args_ InstallArgs) ! {
 	console.print_header('dagu stop')
 	mut sm := startupmanager.get()!
-	sm.kill('dagu')!
+	sm.stop('dagu')!
 }
 
 pub fn start(args_ InstallArgs) ! {

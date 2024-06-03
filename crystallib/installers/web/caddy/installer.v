@@ -150,7 +150,7 @@ pub fn start(args StartArgs) ! {
 pub fn stop() ! {
 	console.print_header('Caddy Stop')
 	mut sm := startupmanager.get()!
-	sm.kill('caddy')!
+	sm.stop('caddy')!
 
 }
 

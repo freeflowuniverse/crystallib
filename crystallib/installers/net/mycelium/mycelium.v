@@ -92,7 +92,7 @@ pub fn stop() ! {
 		start()!
 	}else{
 		mut sm := startupmanager.get()!
-		sm.kill(name)!		
+		sm.stop(name)!		
 	}
 }
 
