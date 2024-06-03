@@ -1,4 +1,4 @@
-module dagu
+module daguserver
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.crypt.secrets
@@ -68,7 +68,7 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 	// configure a client to the local instance
 	// the name will be 'local'
 	daguclient.get('local',
-		url: 'http://localhost:3333/api/v1/'
+		url: 'http://${cfg.host}:${cfg.port}/api/v1/'
 		username: 'admin'
 		password: cfg.passwd
 		apisecret: cfg.secret

@@ -35,7 +35,7 @@ pub:
 	success bool
 }
 
-pub fn (mut self DaguServer[T]) comms_configure(config DaguCommunicationConfig) ! {
+pub fn (mut self DaguServer[Config]) comms_configure(config DaguCommunicationConfig) ! {
 	mut homedir := self.config()!.homedir
 
 	config_yaml := $tmpl('./templates/config.yaml')
