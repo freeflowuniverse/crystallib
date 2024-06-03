@@ -36,7 +36,7 @@ pub fn get(instance string, cfg Config) !DaguClient[Config] {
 
 	mut conn := httpconnection.new(
 		name: 'dagu'
-		url: 'https://api.openai.com/v1/'
+		url: '${cfg.url}'
 	)!
 
 	// conn.default_header.add(.authorization, 'Bearer ${self.config()!.apisecret}')
