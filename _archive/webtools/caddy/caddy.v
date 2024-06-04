@@ -25,10 +25,6 @@ pub fn new(args CaddyArgs) !Caddy {
 	return caddyobj
 }
 
-fn (mut caddyobj Caddy) load() ! {
-	panic("we won't implement this for now, we always generate")
-}
-
 pub fn (mut caddy Caddy) get(name_ string) !Site {
 	name := texttools.name_fix(name_)
 	if site in caddy.sites {

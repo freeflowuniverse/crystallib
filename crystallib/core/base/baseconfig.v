@@ -80,8 +80,11 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 		$for field in T.fields {
 			field_attrs := attrs_get(field.attrs)
 			if 'secret' in field_attrs {
-				v := c.$(field.name)
-				c.$(field.name) = mycontext.secret_decrypt(v)!
+				// QUESTION: is it ok if we only support encryption for string fields
+				$if field is string {
+					v := c.$(field.name)
+					c.$(field.name) = mycontext.secret_decrypt(v)!
+				}
 				// console.print_debug('FIELD DECRYPTED: ${field.name}')		
 			}
 		}
@@ -99,8 +102,11 @@ pub fn (mut self BaseConfig[T]) config_save() ! {
 	$for field in T.fields {
 		field_attrs := attrs_get(field.attrs)
 		if 'secret' in field_attrs {
-			v := config2.$(field.name)
-			config2.$(field.name) = mycontext.secret_encrypt(v)!
+			// QUESTION: is it ok if we only support encryption for string fields
+			$if field is string {
+				v := config2.$(field.name)
+				config2.$(field.name) = mycontext.secret_encrypt(v)!
+			}
 			// console.print_debug('FIELD ENCRYPTED: ${field.name}')		
 		}
 	}
