@@ -29,22 +29,24 @@ pub fn install(args_ InstallArgs) ! {
 
 pub fn build() ! {
 	golang.install()!
-	if osal.platform() != .ubuntu {
-		return error('only support ubuntu for now')
+	mut dest_on_os := '${os.home_dir()}/hero/bin'
+	if osal.is_linux() {
+		dest_on_os = '/usr/local/bin'
 	}
-	console.print_header('build griddriver')
 	path := gittools.code_get(
 		url: 'https://github.com/threefoldtech/web3gw'
 		reset: true
 		pull: true
 	)!
 	cmd := '
+	set -ex
 	cd ${path}
 	cd griddriver
-	./build.sh
+	go env -w CGO_ENABLED="0"
+	go build -o ${path}/griddriver/bin/griddriver
+	echo build ok
+	sudo cp ${path}/griddriver/bin/griddriver ${dest_on_os}/
 	'
-	// check if sudo in ./build.sh will work
-	// https://github.com/threefoldtech/web3gw/blob/development_integration/griddriver/build.sh
 	console.print_header('build griddriver')
 	osal.execute_stdout(cmd)!
 	console.print_header('build griddriver OK')
