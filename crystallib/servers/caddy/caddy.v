@@ -21,7 +21,7 @@ pub fn (mut self Caddy[Config]) reverse_proxy(block SiteBlock) ! {
 pub fn (mut self Caddy[Config]) generate() ! {
 	mut cfg := self.config()!
 	content := cfg.file.export()!
-	mut file := pathlib.get_file(path: '${cfg.path}/Caddyfile')!
+	mut file := pathlib.get_file(path: '${cfg.homedir}/Caddyfile')!
 	file.write(content) or {panic('failed to write ${err}')}
 }
 

@@ -24,7 +24,7 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		url := p.get_default('url', '')!
 		
 		mut cfg := c.config()!
-		cfg.path = path
+		cfg.homedir = path
 		cfg.url = url
 		config_actions[0].done = true
 	}
