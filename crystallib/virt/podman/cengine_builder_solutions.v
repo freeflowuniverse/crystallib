@@ -114,7 +114,7 @@ pub fn (mut e CEngine) builder_heroweb(args GetArgs) !Builder {
 	}		
 	mut builder0 := e.builder_new(name: "builder_heroweb_temp", from: 'localhost/builder_go_rust', delete: true)!
 	builder0.hero_execute_cmd("installers -n heroweb")!
-	builder0.hero_execute_cmd("installers -n heroweb")!
+	//builder0.hero_execute_cmd("installers -n heroweb")!
 	mpath:=builder0.mount_to_path()!
 
 	// copy the built binary to host

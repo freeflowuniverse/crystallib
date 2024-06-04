@@ -12,10 +12,12 @@ name:= 'zinit'
 
 mut sm := startupmanager.get()!
 println(sm.list()!)
-sm.delete(name)!
 sm.start(
 	name: name
 	cmd: cmd
 )!
+
 println(sm.list()!)
 assert sm.exists(name)!
+
+sm.delete(name)!

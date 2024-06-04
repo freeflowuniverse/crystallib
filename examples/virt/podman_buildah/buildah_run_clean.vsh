@@ -11,7 +11,7 @@ import os
 
 mut pm:=podman.new(herocompile:true)!
 
-mut mybuildcontainer := pm.bcontainer_get("builderv")!
+mut mybuildcontainer := pm.builder_get("builderv")!
 
 mybuildcontainer.clean()!
 

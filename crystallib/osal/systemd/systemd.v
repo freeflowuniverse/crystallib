@@ -74,6 +74,9 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 		description: args.description
 		cmd: args.cmd
 		systemd: &systemd
+		info: SystemdProcessInfo{
+			unit: args.name
+		}
 	}
 
 	if args.cmd.contains('\n') {
