@@ -1,15 +1,15 @@
 #!/usr/bin/env -S v -w -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.threefold.grid
+import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import log
 
 fn list_gateways() ! {
 	mut logger := log.Log{
 		level: .debug
 	}
-	mnemonics := grid.get_mnemonics()!
-	mut deployer := grid.new_deployer(mnemonics, .dev, mut logger)!
+	mnemonics := tfgrid.get_mnemonics()!
+	mut deployer := tfgrid.new_deployer(mnemonics, .dev, mut logger)!
 	mut grid_proxy := gridproxy.get(.dev, false)!
 	contracts := grid_proxy.get_gateways(
 		status: 'up'
