@@ -1,0 +1,7 @@
+#!/usr/bin/env hero
+
+!!caddy.configure
+
+!!caddy.reverse_proxy port: 8080 local_port: 8080
+
+!!caddy.generate
