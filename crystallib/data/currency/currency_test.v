@@ -1,4 +1,5 @@
 module currency
+
 import freeflowuniverse.crystallib.ui.console
 
 // pub fn test_amount_get() {

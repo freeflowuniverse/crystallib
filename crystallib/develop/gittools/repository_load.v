@@ -6,9 +6,9 @@ import freeflowuniverse.crystallib.core.base
 import json
 
 fn repo_load(mut addr GitAddr, path string) !GitRepoStatus {
-	$if debug {
-		console.print_debug('load git config on fs: ${path}')
-	}
+	// $if debug {
+	// 	console.print_debug('load git config on fs: ${path}')
+	// }
 
 	mut st := GitRepoStatus{}
 

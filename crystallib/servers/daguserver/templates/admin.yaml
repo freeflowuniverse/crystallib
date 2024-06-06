@@ -1,4 +1,0 @@
-# Basic Auth
-isBasicAuth: true
-basicAuthUsername: "@{username}"
-basicAuthPassword: "@{password}"

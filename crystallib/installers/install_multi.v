@@ -1,6 +1,6 @@
 module installers
 
-// import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.develapps.vscode
 import freeflowuniverse.crystallib.installers.develapps.chrome
 import freeflowuniverse.crystallib.installers.virt.podman
@@ -11,7 +11,12 @@ import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.installers.lang.golang
 import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.lang.crystallib
+import freeflowuniverse.crystallib.installers.lang.nodejs
+import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.installers.web.caddy
+import freeflowuniverse.crystallib.installers.hero.heroweb
+import freeflowuniverse.crystallib.installers.hero.herodev
+import freeflowuniverse.crystallib.installers.sysadmintools.dagu
 
 @[params]
 pub struct InstallArgs {
@@ -19,20 +24,28 @@ pub mut:
 	names     string
 	reset     bool
 	uninstall bool
+	gitpull   bool
+	gitreset  bool
 }
 
 pub fn names(args_ InstallArgs) []string {
 	names := '
-		rust
-		golang
-		vlang
-		hero
-		crystal
+		base
 		caddy
 		chrome
-		mycelium
+		crystal
+		dagu
+		develop
+		golang
+		hero
+		herodev
+		heroweb
 		lima
+		mycelium
+		nodejs
 		podman
+		rust
+		vlang
 		vscode
 		'
 	mut ns := texttools.to_array(names)
@@ -50,6 +63,12 @@ pub fn install_multi(args_ InstallArgs) ! {
 	}
 	for item in items {
 		match item {
+			'base' {
+				base.install(reset: args.reset)!
+			}
+			'develop' {
+				base.install(reset: args.reset, develop: true)!
+			}
 			'rust' {
 				rust.install(reset: args.reset)!
 			}
@@ -60,7 +79,11 @@ pub fn install_multi(args_ InstallArgs) ! {
 				vlang.install(reset: args.reset)!
 			}
 			'crystal' {
-				crystallib.install(reset: args.reset)!
+				crystallib.install(
+					reset: args.reset
+					git_pull: args.gitpull
+					git_reset: args.gitreset
+				)!
 			}
 			'hero' {
 				crystallib.hero_install(reset: args.reset)!
@@ -84,6 +107,21 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'vscode' {
 				vscode.install(reset: args.reset)!
 			}
+			'nodejs' {
+				nodejs.install(reset: args.reset)!
+			}		
+			'python' {
+				python.install()!
+			}	
+			'herodev' {
+				herodev.install()!
+			}	
+			'heroweb' {
+				heroweb.install()!
+			}	
+			'dagu' {
+				dagu.install()!
+			}														
 			else {
 				return error('cannot find installer for: ${item}')
 			}

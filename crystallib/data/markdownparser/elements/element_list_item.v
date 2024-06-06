@@ -4,9 +4,9 @@ module elements
 pub struct ListItem {
 	DocBase
 pub mut:
-	depth int
-	indent     int
-	order ?int
+	depth  int
+	indent int
+	order  ?int
 }
 
 pub fn (mut self ListItem) process() !int {

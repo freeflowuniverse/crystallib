@@ -137,7 +137,7 @@ pub fn running() !bool {
 		return false
 	}
 
-	if !(osal.proces_exists_byname('yggdrasil')!) {
+	if !(osal.process_exists_byname('yggdrasil')!) {
 		return false
 	}
 

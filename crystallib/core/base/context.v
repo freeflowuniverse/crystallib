@@ -3,7 +3,7 @@ module base
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.core.dbfs
-//import freeflowuniverse.crystallib.crypt.secp256k1
+// import freeflowuniverse.crystallib.crypt.secp256k1
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
@@ -14,7 +14,7 @@ import crypto.md5
 @[heap]
 pub struct Context {
 mut:
-	//priv_key_     ?&secp256k1.Secp256k1 @[skip; str: skip]
+	// priv_key_     ?&secp256k1.Secp256k1 @[skip; str: skip]
 	params_       ?&paramsparser.Params
 	dbcollection_ ?&dbfs.DBCollection   @[skip; str: skip]
 	redis_        ?&redisclient.Redis   @[skip; str: skip]

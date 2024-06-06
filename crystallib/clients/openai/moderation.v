@@ -69,7 +69,7 @@ pub mut:
 	results []ModerationResult
 }
 
-pub fn (mut f OpenAIFactory) create_moderation(input string, model ModerationModel) !ModerationResponse {
+pub fn (mut f OpenAIClient[Config]) create_moderation(input string, model ModerationModel) !ModerationResponse {
 	req := ModerationRequest{
 		input: input
 		model: moderation_model_str(model)

@@ -1,119 +1,83 @@
 module hetzner
 
 import encoding.base64
-import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.ui.console
 
-// import os
-// import json
-// import net
-// import time
-// import net.http
-// import maxux.vssh
-
-// struct Boot {
-// 	rescue Rescue
-// }
-
-// struct BootRoot {
-// 	boot Boot
-// }
-
-@[params]
-pub struct ClientArgsGet {
+pub struct HetznerClient[T] {
+	base.BaseConfig[T]
 pub mut:
-	instance string = 'default'
-	session  ?&base.Session
-}
-
-pub fn get(args_ ClientArgsGet) !HetznerClient {
-	mut args := args_
-
-	// get session if specified, otherwise the default
-	mut session := args.session or {
-		mut session2 := play.session_new(
-			interactive: true
-		)!
-		session2
-	}
-
-	mut c := configurator(args.instance, mut session)!
-
-	if !(c.exists()!) {
-		return error("Can't find hetzner configuration for instance:${args.instance}")
-	}
-
-	myconfig := c.get()!
-
-	challenge := myconfig.user + ':' + myconfig.pass
-	auth := base64.encode(challenge.bytes())
-
-	mut h := HetznerClient{
-		instance: args.instance
-		user: myconfig.user
-		pass: myconfig.pass
-		base: myconfig.base
-		auth: auth
-	}
-
-	sl := h.servers_list()!
-
-	// console.print_debug(sl)
-
-	return h
+	auth string
 }
 
 @[params]
-pub struct ClientArgsNew {
+pub struct Config {
 pub mut:
-	instance string = 'default'
-	login    string
-	passwd   string
-	base     string = 'https://robot-ws.your-server.de'
-	session  ?&base.Session
+	login       string
+	passwd      string @[secret]
+	description string
+	baseurl     string = 'https://robot-ws.your-server.de'
+	whitelist   string // comma separated list of servers we whitelist to work on
+}
+
+pub fn get(instance string, cfg Config) !HetznerClient[Config] {
+	mut self := HetznerClient[Config]{}
+
+	if cfg.login.len > 0 {
+		// first the type of the instance, then name of instance, then action
+		self.init('hetznerclient', instance, .set, cfg)!
+	} else {
+		self.init('hetznerclient', instance, .get)!
+	}
+
+	mut cfg2 := self.config()!
+
+	challenge := cfg2.login + ':' + cfg2.passwd
+	self.auth = base64.encode(challenge.bytes())
+
+	sl := self.servers_list()!
+	console.print_debug(sl.str())
+
+	return self
 }
 
 // get a new hetzner client, will create if it doesn't exist or ask for new configuration
-pub fn new(args_ ClientArgsNew) !HetznerClient {
-	mut args := args_
+pub fn configure(instance string) ! {
+	mut cfg := Config{}
+	mut ui := gui.new()!
+	cfg.login = ui.ask_question(
+		question: '\nPlease specify your login for your hetzner environment (instance:${instance}).'
+	)!
+	cfg.passwd = ui.ask_question(
+		question: '\nPlease specify your passwd for your hetzner environment (instance:${instance}).'
+	)!
 
-	// get session if specified, otherwise the default
-	mut session := args.session or {
-		mut session2 := play.session_new(
-			interactive: true
+	get(instance, cfg)!
+}
+
+// run heroscript starting from path, text or giturl
+//```
+// !!hetznerclient.define
+//     name:'default'
+//     description:'ThreeFold Read Write Repo 1
+//     baseurl:'https://robot-ws.your-server.de'
+//     login:'...'
+//     passwd:'...'
+//	   whitelist:'' //comma separated list of servers we whitelist to work on
+//```	
+pub fn heroplay(mut plbook playbook.PlayBook) ! {
+	for mut action in plbook.find(filter: 'hetznerclient.define')! {
+		mut p := action.params
+		instance := p.get_default('instance', 'default')!
+		// cfg.keyname = p.get('keyname')!
+		mut cl := get(instance,
+			login: p.get('login')!
+			passwd: p.get('passwd')!
+			description: p.get_default('description', '')!
+			baseurl: p.get_default('baseurl', '')!
 		)!
-		session2
+		cl.config_save()!
 	}
-
-	if session.interactive {
-		mut ui := gui.new()!
-		if args.login == '' {
-			args.login = ui.ask_question(
-				question: '\nPlease specify your login for your hetzner environment (instance:${args.instance}).'
-			)!
-		}
-		if args.passwd == '' {
-			args.passwd = ui.ask_question(
-				question: '\nPlease specify your passwd for your hetzner environment (instance:${args.instance}).'
-			)!
-		}
-	} else {
-		if args.login == '' || args.passwd == '' {
-			// check config already exists
-			return error('non interactive session need to specifigy login and passwd ')
-		}
-	}
-
-	mut c := configurator(args.instance, mut session)!
-
-	myconfig := HetznerConfig{
-		user: args.login
-		pass: args.passwd
-		base: args.base
-	}
-
-	c.set(myconfig)!
-
-	return get(instance: args.instance, session: session)
 }

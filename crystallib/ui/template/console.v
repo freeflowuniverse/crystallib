@@ -1,4 +1,5 @@
 module template
+
 import freeflowuniverse.crystallib.ui.console
 
 pub fn clear() {

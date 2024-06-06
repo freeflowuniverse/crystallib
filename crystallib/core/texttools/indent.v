@@ -20,7 +20,6 @@ pub fn dedent(text string) string {
 	text_lines := text.split_into_lines()
 
 	for line2 in text_lines {
-
 		if line2.trim_space() == '' {
 			continue
 		}

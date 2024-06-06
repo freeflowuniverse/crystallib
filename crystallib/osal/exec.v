@@ -85,6 +85,7 @@ pub enum RunTime {
 	bash
 	python
 	heroscript
+	herocmd
 	v
 }
 
@@ -154,28 +155,11 @@ pub fn exec(cmd Command) !Job {
 	}
 
 	if cmd.shell {
-		$if debug {
-			console.print_debug('cmd shell: ${cmd.cmd}')
-		}
-		mut process_args := []string{}
-		if cmd.runtime == .bash {
-			// bash -s 'echo ready'
-			process_args = ['/bin/bash', '-s', "'echo **READY**'"]
-		} else if cmd.runtime == .python {
-			process_args = ['/opt/homebrew/bin/python3']
-		} else {
-			panic('bug')
-		}
-
-		if cmd.retry > 0 {
-			job.error += 'cmd retry cannot be > 0 if shell used\n'
-			job.exit_code = 999
-			return JobError{
-				job: job
-				error_type: .args
-			}
-		}
-		os.execvp(process_args[0], process_args[1..process_args.len])!
+		// $if debug {
+		// 	console.print_debug('cmd shell: ${cmd.cmd}')
+		// }
+		scriptpath := cmd_to_script_path(job.cmd)!		
+		os.execvp(scriptpath,[])!
 		return job
 	}
 	if !cmd.async {
@@ -286,7 +270,7 @@ pub fn (mut job Job) process() ! {
 		job.status = .done
 		// result.done = true
 		if p.code > 0 {
-			//console.print_stderr(' ########## Process CODE IS > 0')
+			// console.print_stderr(' ########## Process CODE IS > 0')
 			job.exit_code = p.code
 			job.status = .error_exec
 			job.cmd.scriptkeep = true
@@ -397,6 +381,17 @@ pub fn execute_stdout(cmd string) !string {
 pub fn execute_interactive(cmd string) ! {
 	exec(cmd: cmd, stdout: true, shell: true)!
 }
+
+
+//executes a cmd, if not error return true
+pub fn execute_ok(cmd string) bool {
+	res := os.execute(cmd)
+	if res.exit_code > 0 {
+		return false
+	}
+	return true
+}
+
 
 pub fn cmd_exists(cmd string) bool {
 	cmd1 := 'which ${cmd}'

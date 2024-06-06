@@ -8,6 +8,7 @@ mut sm:=startupmanager.get()!
 sm.start(
     name: 'myscreen'
     cmd: 'htop'
+    description: '...'
 )!
 
 ```

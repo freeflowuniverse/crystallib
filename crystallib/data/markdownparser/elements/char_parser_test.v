@@ -1,4 +1,5 @@
 module elements
+
 import freeflowuniverse.crystallib.ui.console
 
 fn test_charparser1() {

@@ -1,10 +1,11 @@
 module dagu
 
 import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.clients.httpconnection
-import freeflowuniverse.crystallib.ui
+import freeflowuniverse.crystallib.ui as gui
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.clients.httpconnection
+
+// import freeflowuniverse.crystallib.ui.console
 
 pub struct DaguClient[T] {
 	base.BaseConfig[T]
@@ -12,6 +13,7 @@ pub mut:
 	connection &httpconnection.HTTPConnection
 }
 
+@[params]
 pub struct Config {
 pub mut:
 	url       string
@@ -20,68 +22,45 @@ pub mut:
 	apisecret string @[secret]
 }
 
-@[params]
-pub struct DaguClientArgs {
-pub mut:
-	instance string = 'default'
-	config   ?Config
-}
-
-pub fn new(instance string, cfg Config) !DaguClient[Config] {
-	mut con := httpconnection.HTTPConnection{}
+pub fn get(instance string, cfg Config) !DaguClient[Config] {
 	mut self := DaguClient[Config]{
-		type_name: 'DaguClient'
-		connection: &con
+		connection: &httpconnection.HTTPConnection{}
 	}
-	self.init(instance: instance, action: .new)!
-	self.config_set(cfg)!
+
+	if cfg.username.len > 0 {
+		// first the type of the instance, then name of instance, then action
+		self.init('daguclient', instance, .set, cfg)!
+	} else {
+		self.init('daguclient', instance, .get)!
+	}
+
+	mut conn := httpconnection.new(
+		name: 'dagu'
+		url: '${cfg.url}'
+	)!
+
+	// conn.default_header.add(.authorization, 'Bearer ${self.config()!.apisecret}')
+	// req.add_custom_header('x-disable-pagination', 'True') !
+
+	self.connection = conn
 	return self
 }
 
-pub fn get(instance string) !DaguClient[Config] {
-	mut con := httpconnection.HTTPConnection{}
-	mut self := DaguClient[Config]{
-		type_name: 'DaguClient'
-		connection: &con
-	}
-	self.init(instance: instance, action: .get)!
-	return self
-}
+pub fn configure(instance_ string) ! {
+	mut cfg := Config{}
+	mut myui := gui.new()!
 
-pub fn delete(instance string) ! {
-	mut con := httpconnection.HTTPConnection{}
-	mut self := DaguClient[Config]{
-		type_name: 'DaguClient'
-		connection: &con
+	mut instance := instance_
+	if instance == '' {
+		instance = myui.ask_question(
+			question: 'name for Dagu client'
+			default: instance
+		)!
 	}
-	self.init(instance: instance, action: .delete)!
-}
 
-pub fn heroplay(mut plbook playbook.PlayBook) ! {
-	for mut action in plbook.find(filter: 'daguclient.define')! {
-		mut p := action.params
-		instance := p.get_default('instance', 'default')!
-		mut cl := get(instance)!
-		mut cfg := cl.config_get()!
-		cfg.url = p.get('url')!
-		cfg.username = p.get('username')!
-		cfg.password = p.get('password')!
-		cl.config_save()!
-	}
-}
-
-pub fn (mut self DaguClient[Config]) config_interactive() ! {
-	mut myui := ui.new()!
 	console.clear()
 	console.print_debug('\n## Configure Dagu Client')
 	console.print_debug('========================\n\n')
-
-	mut cfg := self.config_get()!
-
-	self.instance = myui.ask_question(
-		question: 'name for Dagu client'
-		default: self.instance
-	)!
 
 	cfg.url = myui.ask_question(
 		question: 'dagu server url e.g. http://localhost:8080'
@@ -107,5 +86,5 @@ pub fn (mut self DaguClient[Config]) config_interactive() ! {
 		minlen: 6
 	)!
 
-	self.config_save()!
+	get(instance, cfg)!
 }

@@ -1,4 +1,5 @@
 module coinmarketcap
+
 import freeflowuniverse.crystallib.ui.console
 
 fn test_get_tft_price() {

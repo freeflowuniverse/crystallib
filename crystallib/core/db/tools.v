@@ -1,4 +1,5 @@
 module db
+
 import freeflowuniverse.crystallib.ui.console
 
 fn table_name_find(db DB) string {

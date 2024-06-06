@@ -13,7 +13,7 @@ import time
 pub struct Config {
 pub mut:
 	name   string = 'default'
-	path   string // /data/postgresql/${name} for linux /hero/var/redis/${args.name} for osx
+	path   string // /data/postgresql/${name} for linux /hero/var/postgresql/${args.name} for osx
 	passwd string @[required]
 }
 
@@ -42,7 +42,7 @@ pub fn start(args_ Config) !Server {
 		if osal.is_linux() {
 			args.path = '/data/postgresql/${args.name}'
 		} else {
-			args.path = '${os.home_dir()}/hero/var/redis/${args.name}'
+			args.path = '${os.home_dir()}/hero/var/postgresql/${args.name}'
 		}
 	}
 	mut server := Server{
@@ -56,7 +56,7 @@ pub fn start(args_ Config) !Server {
 	processname := 'postgres_${args.name}'
 
 	mut manager := startupmanager.get()!
-	if !manager.exists(processname)! {
+	if !manager.exists(processname) {
 		server.start()!
 	}
 	// console.print_debug(" - server get ok")
@@ -139,7 +139,7 @@ pub fn (mut server Server) stop() ! {
 	console.print_header('stop postgresql: ${server.name}')
 
 	mut sm := startupmanager.get()!
-	sm.kill('postgres_${server.name}')!
+	sm.stop('postgres_${server.name}')!
 }
 
 // check health, return true if ok

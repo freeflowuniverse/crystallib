@@ -3,7 +3,7 @@ module console
 import freeflowuniverse.crystallib.core.texttools
 
 pub fn clear() {
-	if ! console.silent_get() {
+	if !silent_get() {
 		print('\033[2J')
 	}
 }
@@ -61,6 +61,7 @@ pub fn print_stdout(txt string) {
 	}
 	txt2 := trim(texttools.indent(txt, '    '))
 	cprintln(foreground: .light_blue, text: txt2)
+	//print_backtrace()
 	c.reset()
 }
 

@@ -308,3 +308,19 @@ fn test_matchhashmap() {
 	assert matchhashmap(mp, 'key3') == 'val1'
 	assert matchhashmap(mp, 'key4') == ''
 }
+
+fn test_url() {
+	text := "url:'https://git.ourworld.tf/despiegk/cfg/src/branch/main/myit/hetzner.md'"
+	params := new(text)!
+
+	myurl := params.get('url')!
+	assert myurl == 'https://git.ourworld.tf/despiegk/cfg/src/branch/main/myit/hetzner.md'
+}
+
+fn test_url2() {
+	text := "url: 'https://git.ourworld.tf/despiegk/cfg/src/branch/main/myit/hetzner.md'"
+	params := new(text)!
+
+	myurl := params.get('url')!
+	assert myurl == 'https://git.ourworld.tf/despiegk/cfg/src/branch/main/myit/hetzner.md'
+}

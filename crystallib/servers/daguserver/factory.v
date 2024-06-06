@@ -1,85 +1,77 @@
 module daguserver
 
+import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.crypt.secrets
+import freeflowuniverse.crystallib.clients.dagu as daguclient
+import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
 import os
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
 
-@[noinit]
-struct DAGU {
-	home string // home directory for dagu
-mut:
-	dags []DAG
+// import freeflowuniverse.crystallib.ui.console
+
+pub struct DaguServer[T] {
+	base.BaseConfig[T]
 }
 
-pub fn new(config_ ?Config) !DAGU {
-	if config := config_ {
-		config_yaml := $tmpl('./templates/config.yaml')
-		os.write_file('${os.home_dir()}/.dagu/config.yaml', config_yaml)!
+@[params]
+pub struct Config {
+pub mut:
+	homedir     string
+	configpath  string
+	passwd      string @[secret]
+	secret      string @[secret]
+	title       string = 'My Hero DAG'
+	description string // optional
+	host        string = 'localhost' // server host (default is localhost)
+	port        int    = 8888 // server port (default is 8888)	
+}
+
+pub fn get(instance string) !DaguServer[Config] {
+	mut self := DaguServer[Config]{}
+	self.init('daguserver', instance, .get)!
+	return self
+}
+
+// set the configuration, will make defaults for passwd & secret
+pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
+	mut cfg := cfg_
+	mut self := DaguServer[Config]{}
+
+	if cfg.title == '' {
+		cfg.title = 'My Hero DAG'
 	}
-	dags_dir := '${os.home_dir()}/.dagu/dags'
-	if !os.exists(dags_dir) {
-		os.mkdir(dags_dir)!
+
+	if cfg.passwd == '' {
+		cfg.passwd = secrets.hex_secret()!
 	}
-	return DAGU{
-		home: '${os.home_dir()}/.dagu/'
+	if cfg.secret == '' {
+		cfg.secret = secrets.openssl_hex_secret()!
 	}
-}
 
-pub fn (mut d DAGU) basic_auth(username string, password string) ! {
-	mut admin_file := pathlib.get_file(path: '${d.home}/admin.yaml', create: true)!
-	admin_file.write($tmpl('./templates/admin.yaml'))!
-}
-
-pub fn (mut d DAGU) new_dag(dag DAG) DAG {
-	d.dags << DAG{
-		...dag
-		path: '${os.home_dir()}/.dagu/dags/${texttools.name_fix(dag.name)}.yaml'
+	if cfg.homedir == '' {
+		cfg.homedir = '${os.home_dir()}/hero/var/dagu'
 	}
-	return dag
-}
 
-pub fn (mut d DAGU) server_bg(options ServerOptions) !string {
-	return server_bg(options)!
-}
-
-pub fn (mut d DAGU) delete_dag(dag string) ! {
-	os.rm('${os.home_dir()}/.dagu/dags/${texttools.name_fix(dag)}.yaml')!
-}
-
-pub fn (d DAGU) start(dag_name string, options StartOptions) !string {
-	filtered := d.dags.filter(it.name == dag_name)
-	if filtered.len == 0 {
-		return error('DAG ${dag_name} not found.')
+	if cfg.configpath == '' {
+		cfg.configpath = '${os.home_dir()}/hero/cfg/dagu.yaml'
 	}
-	dag := filtered[0]
-	dag.write()!
-	return start(dag.path, options)!
-}
 
-pub fn (d DAGU) scheduler(dag_name string) !string {
-	filtered := d.dags.filter(it.name == dag_name)
-	if filtered.len == 0 {
-		return error('DAG ${dag_name} not found.')
-	}
-	dag := filtered[0]
-	dag.write()!
-	return scheduler(dags: dag.path)!
-}
+	daguinstaller.install(
+		start: true
+		homedir: cfg.homedir
+		passwd: cfg.passwd
+		secret: cfg.secret
+		title: cfg.title
+	)!
 
-pub fn (mut d DAGU) delete(dag_name string) ! {
-	index := d.dags.map(it.name).index(dag_name)
-	if index == d.dags.len {
-		return error('DAG ${dag_name} not found.')
-	}
-	d.dags[index].delete()!
-	d.dags.delete(index)
-}
+	self.init('daguserver', instance, .set, cfg)!
 
-pub fn (dag DAG) write() ! {
-	dag_yaml := $tmpl('./templates/dag.yaml')
-	os.write_file(dag.path, dag_yaml)!
-}
-
-pub fn (dag DAG) delete() ! {
-	os.rm(dag.path)!
+	// configure a client to the local instance
+	// the name will be 'local'
+	daguclient.get('local',
+		url: 'http://${cfg.host}:${cfg.port}/api/v1/'
+		username: 'admin'
+		password: cfg.passwd
+		apisecret: cfg.secret
+	)!
+	return self
 }

@@ -1,4 +1,5 @@
 module mnemonic
+
 import freeflowuniverse.crystallib.ui.console
 
 #include "@VMODROOT/vnemonic.h"

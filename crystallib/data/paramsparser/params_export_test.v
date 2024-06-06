@@ -63,7 +63,7 @@ fn test_export_helper1() {
 fn test_export_helper2() {
 	params := parse(paramsparser.textin5) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-	
+
 	assert sha256.hexhash(o.str()) == '0bb7fb65107a69b1a0296dbdd1b0505b178e8bebdb33d2cec307f411b05c6033'
 }
 
@@ -81,7 +81,6 @@ const textin6 = "
 fn test_export_6() {
 	params := parse(paramsparser.textin6) or { panic(err) }
 	o := params.export_helper(maxcolsize: 60) or { panic(err) }
-
 
 	paramsout := params.export()
 

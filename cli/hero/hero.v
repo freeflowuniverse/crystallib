@@ -4,17 +4,38 @@ import os
 import cli { Command }
 import freeflowuniverse.crystallib.core.herocmds
 import freeflowuniverse.crystallib.installers.base as installerbase
+import freeflowuniverse.crystallib.installers.db.redis
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.core.playcmds
+
+fn shebang(path string)!{
+	mut plbook := playbook.new(path: path)!
+	playcmds.run(mut plbook)!
+}
 
 fn do() ! {
+
+	redis.check()!
+
+	if os.args.len == 2{
+		mypath:=os.args[1]
+		if mypath.to_lower().ends_with(".hero"){
+			//hero was called from a file
+			shebang(mypath)!
+			return
+		}
+	}
+
+
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
 		version: '1.0.19'
-		disable_man: true
 	}
+
 
 	mut toinstall:=false
 	if !osal.cmd_exists('mc') || !osal.cmd_exists('redis-cli') {
@@ -55,14 +76,12 @@ fn do() ! {
 	// herocmds.cmd_configure(mut cmd)
 	// herocmds.cmd_postgres(mut cmd)
 	herocmds.cmd_mdbook(mut cmd)
+	herocmds.cmd_caddy(mut cmd)
 	herocmds.cmd_zola(mut cmd)
-	
-
+	herocmds.cmd_juggler(mut cmd)
 
 	cmd.setup()
-	cmd.parse(os.args)
-
-	
+	cmd.parse(os.args)	
 }
 
 fn main() {

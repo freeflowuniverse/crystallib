@@ -1,5 +1,6 @@
 @[translated]
 module verasure
+
 import freeflowuniverse.crystallib.ui.console
 
 #include "@VMODROOT/jerasure-simple.h"

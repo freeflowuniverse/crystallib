@@ -172,7 +172,7 @@ pub fn cprint(args PrintArgs) {
 	if args.reset_after {
 		out << reset()
 	}
-	if ! console.silent_get(){
+	if !silent_get() {
 		print(out.join(''))
 	}
 }

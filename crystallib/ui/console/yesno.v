@@ -12,7 +12,9 @@ import os
 // - clear bool = true
 //
 pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) !bool {
-	if silent_get(){panic("can't do ask_... when in silent mode")}
+	if silent_get() {
+		panic("can't do ask_... when in silent mode")
+	}
 	mut question := args.question
 	if args.clear {
 		clear() // clears the screen
@@ -26,7 +28,7 @@ pub fn (mut c UIConsole) ask_yesno(args YesNoArgs) !bool {
 	if question == '' {
 		question = 'Yes or No, default is Yes.'
 	}
-	console.print_debug('${question} (y/n) : ')
+	print_debug('${question} (y/n) : ')
 	choice := os.get_raw_line().trim(' \n').to_lower()
 	if choice.starts_with('y') {
 		return true

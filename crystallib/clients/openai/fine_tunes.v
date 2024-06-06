@@ -61,7 +61,7 @@ pub mut:
 }
 
 // creates a new fine-tune based on an already uploaded file
-pub fn (mut f OpenAIFactory) create_fine_tune(args FineTuneCreateArgs) !FineTune {
+pub fn (mut f OpenAIClient[Config]) create_fine_tune(args FineTuneCreateArgs) !FineTune {
 	data := json.encode(args)
 	r := f.connection.post_json_str(prefix: 'fine-tunes', data: data)!
 
@@ -69,25 +69,25 @@ pub fn (mut f OpenAIFactory) create_fine_tune(args FineTuneCreateArgs) !FineTune
 }
 
 // returns all fine-tunes in this account
-pub fn (mut f OpenAIFactory) list_fine_tunes() !FineTuneList {
+pub fn (mut f OpenAIClient[Config]) list_fine_tunes() !FineTuneList {
 	r := f.connection.get(prefix: 'fine-tunes')!
 	return json.decode(FineTuneList, r)!
 }
 
 // get a single fine-tune information
-pub fn (mut f OpenAIFactory) get_fine_tune(fine_tune string) !FineTune {
+pub fn (mut f OpenAIClient[Config]) get_fine_tune(fine_tune string) !FineTune {
 	r := f.connection.get(prefix: 'fine-tunes/' + fine_tune)!
 	return json.decode(FineTune, r)!
 }
 
 // cancel a fine-tune that didn't finish yet
-pub fn (mut f OpenAIFactory) cancel_fine_tune(fine_tune string) !FineTune {
+pub fn (mut f OpenAIClient[Config]) cancel_fine_tune(fine_tune string) !FineTune {
 	r := f.connection.post_json_str(prefix: 'fine-tunes/' + fine_tune + '/cancel')!
 	return json.decode(FineTune, r)!
 }
 
 // returns all events for a fine tune in this account
-pub fn (mut f OpenAIFactory) list_fine_tune_events(fine_tune string) !FineTuneEventList {
+pub fn (mut f OpenAIClient[Config]) list_fine_tune_events(fine_tune string) !FineTuneEventList {
 	r := f.connection.get(prefix: 'fine-tunes/' + fine_tune + '/events')!
 	return json.decode(FineTuneEventList, r)!
 }

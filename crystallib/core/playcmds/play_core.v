@@ -2,6 +2,7 @@ module playcmds
 
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
 
 // !!context.configure
 //     name:'test'
@@ -18,10 +19,37 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 		}
 
 		if p.exists('coderoot') {
+			panic('implement')
 			mut coderoot := p.get_path_create('coderoot')!
+
 			mut gs := gittools.get()!
 		}
 		action.done = true
+	}
+
+	for action_ in plbook.find(filter: 'play.*')! {
+
+		if action_.name == "run"{
+			console.print_debug('play run:${action_}')
+			mut action := *action_
+			mut playrunpath := action.params.get_default('path', '')!
+			if playrunpath.len == 0 {
+				action.name = 'pull'
+				action2 := play_git_action(action)!
+				playrunpath = action2.params.get_default('path', '')!
+			}
+			if playrunpath.len == 0 {
+				return error("can't run a heroscript didn't find url or path.")
+			}
+			console.print_debug('play run path:${playrunpath}')
+			plbook.add(path: playrunpath)!
+
+		}
+		if action_.name == "echo"{
+			content := action_.params.get_default('content', 'didn\'t find content')!
+			console.print_header(content)
+
+		}
 	}
 
 	// for mut action in plbook.find(filter: 'core.coderoot_set')! {

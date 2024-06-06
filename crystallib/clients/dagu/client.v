@@ -26,17 +26,15 @@ fn (mut cl DaguClient[Config]) set_http_connection() ! {
 
 // Creates a new DAG.
 pub fn (mut client DaguClient[Config]) create_dag(name string) !CreateDagResponse {
-	client.set_http_connection()!
-
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags'
 		data: json.encode(CreateDag{ action: 'new', value: name })
-	)!
+	) or {return error('Failed to create request: ${err}')}
 
-	result := client.connection.send(request)!
+	result := client.connection.send(request) or {return error('Failed to send request: ${err}')}
 	if !result.is_ok() {
-		err := json.decode(ApiError, result.data)!
+		err := json.decode(ApiError, result.data) or {return error('Failed to decode api error ${err}')}
 		return ApiError{
 			...err
 			code: result.code
@@ -94,7 +92,6 @@ pub struct DagStatus {
 
 // Creates a new DAG.
 pub fn (mut client DaguClient[Config]) list_dags() !ListDagsResponse {
-	client.set_http_connection()!
 	request := httpconnection.new_request(
 		method: .get
 		prefix: 'dags'
@@ -138,7 +135,6 @@ pub struct PostDagActionResponse {
 }
 
 pub fn (mut client DaguClient[Config]) post_dag_action(dag_id string, params PostDagAction) !PostDagActionResponse {
-	client.set_http_connection()!
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags/${dag_id}'
@@ -159,7 +155,6 @@ pub fn (mut client DaguClient[Config]) post_dag_action(dag_id string, params Pos
 }
 
 pub fn (mut client DaguClient[Config]) delete_dag(dag_id string) ! {
-	client.set_http_connection()!
 	request := httpconnection.new_request(
 		method: .delete
 		prefix: 'dags/${dag_id}'

@@ -17,23 +17,7 @@ pub mut:
 	appkey     string @[secret]
 }
 
-pub fn new(instance string, cfg MyConfig) !MyClient[MyConfig]{
-	mut self:=MyClient[MyConfig]{type_name:"myclient"}
-	self.init(instance:instance,action:.new)!
-	self.config_set(cfg)!
-	return self
-}
 
-pub fn get(instance string) !MyClient[MyConfig]{
-	mut self:=MyClient[MyConfig]{type_name:"myclient"}
-	self.init(instance:instance,action:.get)!
-	return self
-}
-
-pub fn delete(instance string) !{
-	mut self:=MyClient[MyConfig]{type_name:"myclient"}
-	self.init(instance:instance,action:.delete)!
-}
 
 //EXAMPLE USAGE
 

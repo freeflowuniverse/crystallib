@@ -4,25 +4,9 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-import json
-import os
-import freeflowuniverse.crystallib.clients.redisclient
 
-// function systemdinstall {
-//     set -x
-//     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-//         local script_name="$1"
-//         local cmd="$2"
-//         servicefile="
+//import freeflowuniverse.crystallib.clients.redisclient
 
-//         spath="/etc/systemd/system/${script_name}.service"
-//         rm -f $spath
-//         echo "$servicefile" > $spath
-//         systemctl daemon-reload
-//         systemctl enable $script_name
-//         systemctl start $script_name
-//     fi
-// }
 
 @[heap]
 pub struct Systemd {
@@ -33,36 +17,36 @@ pub mut:
 }
 
 pub fn new() !Systemd {
-	mut systemdobj := Systemd{
+	mut systemd := Systemd{
 		path: pathlib.get_dir(path: '/etc/systemd/system', create: false)!
 		path_cmd: pathlib.get_dir(path: '/etc/systemd_cmds', create: true)!
 	}
-	systemdobj.load()!
-	return systemdobj
+	systemd.load()!
+	return systemd
 }
 
-fn (mut systemdobj Systemd) load() ! {
-	console.print_header('Systemd load')
-	systemdobj.processes = []&SystemdProcess{}
-	mut redis := redisclient.core_get()!
+//check if systemd is on system, returns True if yes
+pub fn check() !bool{
 
+	if ! osal.cmd_exists("systemctl"){
+		return false
+	}
+
+	return osal.execute_ok("systemctl status --no-pager")
+
+}
+
+fn (mut systemd Systemd) load() ! {
+	console.print_header('Systemd load')
+	systemd.processes = []&SystemdProcess{}
 	for item in process_list()! {
 		mut sdprocess := SystemdProcess{
 			description: item.description
-			systemdobj: &systemdobj
+			systemd: &systemd
 			unit: item.unit
 			info: item
 		}
-		name := sdprocess.unit
-		key := 'systemd:${name}'
-		if redis.exists(key)! {
-			mut sdprocess_redis := systemdobj.get(name)!
-			sdprocess_redis.info = sdprocess.info
-			sdprocess_redis.description = sdprocess.description
-			systemdobj.set(mut sdprocess_redis)!
-		} else {
-			systemdobj.set(mut sdprocess)!
-		}
+		systemd.setinternal(mut sdprocess)!
 	}
 }
 
@@ -73,6 +57,7 @@ pub mut:
 	cmd         string @[required]
 	description string
 	// env       map[string]string
+	start bool = true
 }
 
 //```
@@ -80,84 +65,78 @@ pub mut:
 // cmd       string            @[required]
 // description string @[required]
 //```
-pub fn (mut systemdobj Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
+pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 	mut args := args_
-	if !(args.name.ends_with('.service')) {
-		args.name = '${args.name}.service'
-	}
+	args.name = name_fix(args.name)
 
 	mut sdprocess := SystemdProcess{
 		name: args.name
 		description: args.description
 		cmd: args.cmd
-		systemdobj: &systemdobj
+		systemd: &systemd
+		info: SystemdProcessInfo{
+			unit: args.name
+		}
 	}
 
 	if args.cmd.contains('\n') {
 		// means we can load the special cmd
-		mut pathcmd := systemdobj.path_cmd.file_get(args.name)!
+		mut pathcmd := systemd.path_cmd.file_get('${args.name}_cmd')!
 		pathcmd.write(sdprocess.cmd)!
 		sdprocess.cmd = '/bin/bash -c ${pathcmd.path}'
 	}
 	// sdprocess.env = args.env.move()
 
-	systemdobj.set(mut sdprocess)!
+	systemd.setinternal(mut sdprocess)!
 
-	sdprocess.start()!
+	sdprocess.write()!
 
+	if args.start{
+		sdprocess.start()!
+	}
+	
 	return sdprocess
 }
 
-pub fn (mut systemdobj Systemd) names() []string {
-	r := systemdobj.processes.map(it.name)
+pub fn (mut systemd Systemd) names() []string {
+	r := systemd.processes.map(it.name)
 	return r
 }
 
-pub fn (mut systemdobj Systemd) set(mut sdprocess SystemdProcess) ! {
-	unit_ := texttools.name_fix(sdprocess.info.unit)
+fn (mut systemd Systemd) setinternal(mut sdprocess SystemdProcess) ! {
+	sdprocess.name = name_fix(sdprocess.info.unit)
+	systemd.processes = systemd.processes.filter(it.name != sdprocess.name)
+	systemd.processes << &sdprocess
+}
 
-	if sdprocess.name == '' {
-		sdprocess.name = unit_
-	} else {
-		sdprocess.name = texttools.name_fix(sdprocess.name)
+
+pub fn (mut systemd Systemd) get(name_ string) !&SystemdProcess {
+	name := name_fix(name_)
+	if systemd.processes.len == 0{
+		systemd.load()!
 	}
-	systemdobj.set_internal(mut sdprocess)!
-	systemdobj.set_redis(mut sdprocess)!
-}
-
-fn (mut systemdobj Systemd) set_internal(mut sdprocess SystemdProcess) ! {
-	systemdobj.processes = systemdobj.processes.filter(it.name != sdprocess.name)
-	systemdobj.processes << &sdprocess
-}
-
-fn (mut systemdobj Systemd) set_redis(mut sdprocess SystemdProcess) ! {
-	mut redis := redisclient.core_get()!
-	key := 'systemd:${sdprocess.name}'
-	data := json.encode(sdprocess)
-	redis.set(key, data)!
-}
-
-pub fn (mut systemdobj Systemd) get(name string) !&SystemdProcess {
-	// name := texttools.name_fix(name_)
-	mut redis := redisclient.core_get()!
-	key := 'systemd:${name}'
-	mut sdprocess := SystemdProcess{
-		systemdobj: &systemdobj
-	}
-	if redis.exists(key)! {
-		data := redis.get(key)!
-		sdprocess = json.decode(SystemdProcess, data)!
-		sdprocess.systemdobj = &systemdobj
-		return &sdprocess
+	for item in systemd.processes {
+		if item.name == name {
+			return item
+		}
 	}
 	return error("Can't find systemd process with name ${name}, maybe reload the state with systemd.load()")
 }
 
-pub fn (mut systemdobj Systemd) exists(name string) bool {
-	for item in systemdobj.processes {
+pub fn (mut systemd Systemd) exists(name_ string) bool {
+	name := name_fix(name_)
+	for item in systemd.processes {
 		if item.name == name {
 			return true
 		}
 	}
 	return false
+}
+
+fn name_fix(name_ string)string{
+	mut name:=texttools.name_fix(name_)
+	if name.contains(".service"){
+		name=name.all_before_last(".")
+	}
+	return name
 }

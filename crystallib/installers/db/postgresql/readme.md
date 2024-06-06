@@ -2,13 +2,6 @@
 
 see the clients.postgresql for much more functionality
 
-## see local config
-
-```bash
-#default is the instance name
-hero configure -c postgres -i default -s | jq
-```
-jq is a nice formatter for json
 
 ## use psql
 
@@ -26,7 +19,7 @@ psql -U "root" -h localhost
 
 //e.g. in server configure function
 
-import freeflowuniverse.crystallib.installers.postgresql
+import freeflowuniverse.crystallib.installers.db.postgresql
 mut db := postgresql.get(server.config.postgresql_name)!
 
 // now create the DB

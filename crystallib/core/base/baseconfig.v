@@ -1,5 +1,6 @@
 module base
-// import freeflowuniverse.crystallib.ui.console
+
+import freeflowuniverse.crystallib.ui.console
 
 // is an object which has a configurator, session and config object which is unique for the model
 // T is the Config Object
@@ -79,9 +80,13 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 		$for field in T.fields {
 			field_attrs := attrs_get(field.attrs)
 			if 'secret' in field_attrs {
-				v := c.$(field.name)
-				c.$(field.name) = mycontext.secret_decrypt(v)!
-				// console.print_debug('FIELD DECRYPTED: ${field.name}')		
+				// QUESTION: is it ok if we only support encryption for string fields
+				$if field.typ is string {
+					v := c.$(field.name)
+					c.$(field.name) = mycontext.secret_decrypt(v)!
+					//console.print_debug('FIELD DECRYPTED: ${field} ${field.name}')		
+				}
+				
 			}
 		}
 		self.config_ = &c
@@ -92,14 +97,17 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 }
 
 pub fn (mut self BaseConfig[T]) config_save() ! {
-	mut config2 := *self.config_get()! // dereference so we don't modify the original
+	mut config2 := *self.config()! // dereference so we don't modify the original
 	mut mycontext := context()!
 	// //walk over the properties see where they need to be encrypted, if yes encrypt
 	$for field in T.fields {
 		field_attrs := attrs_get(field.attrs)
 		if 'secret' in field_attrs {
-			v := config2.$(field.name)
-			config2.$(field.name) = mycontext.secret_encrypt(v)!
+			// QUESTION: is it ok if we only support encryption for string fields
+			$if field.typ is string {
+				v := config2.$(field.name)
+				config2.$(field.name) = mycontext.secret_encrypt(v)!
+			}
 			// console.print_debug('FIELD ENCRYPTED: ${field.name}')		
 		}
 	}

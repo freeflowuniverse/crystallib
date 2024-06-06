@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.ui
+import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
@@ -18,6 +19,8 @@ pub mut:
 // install mycelium will return true if it was already installed
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
+
+	console.print_header("install mycelium.")
 
 	version := '0.5.2'
 
@@ -72,43 +75,58 @@ pub fn install(args_ InstallArgs) ! {
 	} else {
 		start()!
 	}
+	console.print_debug("install mycelium ok")
 }
 
 pub fn restart() ! {
-	name := 'mycelium'
-	mut scr := screen.new(reset: false)!
-	scr.kill(name)!
+	stop()!
 	start()!
 }
 
-pub fn start() ! {
-	// console.print_debug("start")
-
-	mut scr := screen.new(reset: false)!
+pub fn stop() ! {
 	name := 'mycelium'
-
-	if scr.exists(name) {
-		console.print_header('mycelium was already running')
-		return
+	console.print_debug("stop ${name}")
+	if osal.is_osx() {
+		mut scr := screen.new(reset: false)!
+		scr.kill(name)!
+		start()!
+	}else{
+		mut sm := startupmanager.get()!
+		sm.stop(name)!		
 	}
+}
 
-	mut s := scr.add(name: name, start: true)!
+pub fn start(args InstallArgs) ! {
+	myinitname:=osal.initname()!
+	if !(myinitname in ["systemd"]){
+		console.print_debug("can't start mycelium because init is '${myinitname}'.")
+		return 
+	}
+	
+	name := 'mycelium'
+	console.print_debug("start ${name} (startupmanger:${myinitname})")
 
-	mut cmd2 := ''
+	mut cmd := ''
 
 	if osal.is_osx() {
-		cmd2 = 'sudo -s '
+		cmd = 'sudo -s '
 	}
 
-	cmd2 += 'mycelium --peers tcp://188.40.132.242:9651 quic://185.69.166.7:9651 tcp://65.21.231.58:9651 --tun-name utun9'
-
-	s.cmd_send(cmd2)!
-
-	// console.print_debug(s)
-
-	// console.print_debug('send done')
+	cmd += 'mycelium --peers tcp://188.40.132.242:9651 quic://185.69.166.7:9651 tcp://65.21.231.58:9651 --tun-name utun9'
 
 	if osal.is_osx() {
+		//do not change, because we need this on osx at least
+
+		mut scr := screen.new(reset: false)!
+
+		if scr.exists(name) {
+			console.print_header('mycelium was already running')
+			return
+		}
+
+		mut s := scr.add(name: name, start: true, reset: args.reset)!
+		s.cmd_send(cmd)!
+
 		mut myui := ui.new()!
 		console.clear()
 
@@ -120,36 +138,48 @@ pub fn start() ! {
 
 		_ = myui.ask_yesno(question: 'Please confirm you understand?')!
 
-		s.attach()! // to allow filling in passwd
+		s.attach()! // to allow filling in passwd		
+
+	}else{
+		mut sm := startupmanager.get()!
+		sm.start(
+			name: name
+			cmd: cmd
+		)!		
+		
+	}
+	
+	console.print_debug("startup manager started")	
+
+	time.sleep(100 * time.millisecond)
+
+	if !check()! {
+		return error('cound not start mycelium')
 	}
 
 	console.print_header('mycelium is running')
 
-	time.sleep(100 * time.millisecond)
-
-	if !running()! {
-		return error('cound not start mycelium')
-	}
 }
 
-pub fn running() !bool {
-	mut scr := screen.new(reset: false)!
-	name := 'mycelium'
-
-	if !scr.exists(name) {
-		return false
+pub fn check() !bool {
+	if osal.is_osx() {
+		mut scr := screen.new(reset: false)!
+		name := 'mycelium'
+		if !scr.exists(name) {
+			return false
+		}
+		return true
 	}
 
-	if !(osal.proces_exists_byname('mycelium')!) {
+	if !(osal.process_exists_byname('mycelium')!) {
 		return false
-	}
+	}	
 
 	// res := os.execute('mycelium -c ping')
 	// if res.exit_code > 0 {
 	// 	return error("mycelium did not install propertly could not do:'mycelium-cli -c ping'\n${res.output}")
 	// }
 	return true
-	// console.print_debug(scr)
 }
 
 // install mycelium will return true if it was already installed
