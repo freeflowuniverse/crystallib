@@ -135,7 +135,7 @@ pub fn hostname() !string {
 	return res.output.trim_space()
 }
 
-//e.g. systemd, bash, zinit
+// e.g. systemd, bash, zinit
 pub fn initname() !string {
 	res := os.execute('ps -p 1 -o comm=')
 	if res.exit_code > 0 {
@@ -143,5 +143,3 @@ pub fn initname() !string {
 	}
 	return res.output.trim_space()
 }
-
-

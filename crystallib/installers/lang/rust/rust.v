@@ -44,11 +44,11 @@ pub fn install(args_ InstallArgs) ! {
 
 	if pl == .ubuntu {
 		osal.package_install('build-essential,openssl,pkg-config,libssl-dev')!
-	} 
-	if pl == .arch {	
+	}
+	if pl == .arch {
 		osal.package_install('rust, cargo, pkg-config, openssl')!
 		return
-	}else{
+	} else {
 		osal.execute_stdout("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y")!
 	}
 

@@ -20,7 +20,7 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	console.print_header("install mycelium.")
+	console.print_header('install mycelium.')
 
 	version := '0.5.2'
 
@@ -75,7 +75,7 @@ pub fn install(args_ InstallArgs) ! {
 	} else {
 		start()!
 	}
-	console.print_debug("install mycelium ok")
+	console.print_debug('install mycelium ok')
 }
 
 pub fn restart() ! {
@@ -85,26 +85,26 @@ pub fn restart() ! {
 
 pub fn stop() ! {
 	name := 'mycelium'
-	console.print_debug("stop ${name}")
+	console.print_debug('stop ${name}')
 	if osal.is_osx() {
 		mut scr := screen.new(reset: false)!
 		scr.kill(name)!
 		start()!
-	}else{
+	} else {
 		mut sm := startupmanager.get()!
-		sm.stop(name)!		
+		sm.stop(name)!
 	}
 }
 
 pub fn start(args InstallArgs) ! {
-	myinitname:=osal.initname()!
-	if !(myinitname in ["systemd"]){
+	myinitname := osal.initname()!
+	if myinitname != 'systemd' {
 		console.print_debug("can't start mycelium because init is '${myinitname}'.")
-		return 
+		return
 	}
-	
+
 	name := 'mycelium'
-	console.print_debug("start ${name} (startupmanger:${myinitname})")
+	console.print_debug('start ${name} (startupmanger:${myinitname})')
 
 	mut cmd := ''
 
@@ -115,7 +115,7 @@ pub fn start(args InstallArgs) ! {
 	cmd += 'mycelium --peers tcp://188.40.132.242:9651 quic://185.69.166.7:9651 tcp://65.21.231.58:9651 --tun-name utun9'
 
 	if osal.is_osx() {
-		//do not change, because we need this on osx at least
+		// do not change, because we need this on osx at least
 
 		mut scr := screen.new(reset: false)!
 
@@ -139,17 +139,15 @@ pub fn start(args InstallArgs) ! {
 		_ = myui.ask_yesno(question: 'Please confirm you understand?')!
 
 		s.attach()! // to allow filling in passwd		
-
-	}else{
+	} else {
 		mut sm := startupmanager.get()!
 		sm.start(
 			name: name
 			cmd: cmd
-		)!		
-		
+		)!
 	}
-	
-	console.print_debug("startup manager started")	
+
+	console.print_debug('startup manager started')
 
 	time.sleep(100 * time.millisecond)
 
@@ -158,7 +156,6 @@ pub fn start(args InstallArgs) ! {
 	}
 
 	console.print_header('mycelium is running')
-
 }
 
 pub fn check() !bool {
@@ -173,7 +170,7 @@ pub fn check() !bool {
 
 	if !(osal.process_exists_byname('mycelium')!) {
 		return false
-	}	
+	}
 
 	// res := os.execute('mycelium -c ping')
 	// if res.exit_code > 0 {

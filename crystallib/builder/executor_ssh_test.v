@@ -9,10 +9,10 @@ import freeflowuniverse.crystallib.ui.console
 // connecting to local host over ssh and test executor
 fn testsuite_begin() {
 	mut e := ExecutorLocal{}
-	e.exec("yes | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''")!
-	e.exec('chmod 0600 ~/.ssh/id_rsa_test && chmod 0644 ~/.ssh/id_rsa_test.pub')!
-	e.exec('cat ~/.ssh/id_rsa_test.pub >> ~/.ssh/authorized_keys')!
-	e.exec('chmod og-wx ~/.ssh/authorized_keys')!
+	e.exec(cmd: "yes | ssh-keygen -t rsa  -f ~/.ssh/id_rsa_test -N ''")!
+	e.exec(cmd: 'chmod 0600 ~/.ssh/id_rsa_test && chmod 0644 ~/.ssh/id_rsa_test.pub')!
+	e.exec(cmd: 'cat ~/.ssh/id_rsa_test.pub >> ~/.ssh/authorized_keys')!
+	e.exec(cmd: 'chmod og-wx ~/.ssh/authorized_keys')!
 }
 
 fn test_exec() {
@@ -23,7 +23,7 @@ fn test_exec() {
 		addr: '127.0.0.1'
 		port: 22
 	}
-	res := e.exec('ls  /')!
+	res := e.exec(cmd: 'ls  /')!
 	console.print_debug(res)
 }
 
@@ -73,6 +73,6 @@ fn test_environ_get() {
 // 			cat: IpAddressType.ipv4
 // 		}
 // 	}
-// 	res := e.exec("ls  /root")!
+// 	res := e.exec(cmd: "ls  /root")!
 // 	console.print_debug(res)
 // }

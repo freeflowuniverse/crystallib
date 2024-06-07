@@ -34,7 +34,7 @@ pub fn install(args_ InstallArgs) ! {
 	if args.reset == false {
 		return
 	}
-	
+
 	base.develop(reset: args.reset)!
 
 	mut gs := gittools.new(
@@ -92,7 +92,6 @@ pub fn v_analyzer_install(args_ InstallArgs) ! {
 	} else {
 		args.reset = true
 	}
-
 
 	if args.reset == false {
 		console.print_debug('v-analyzer already installed')

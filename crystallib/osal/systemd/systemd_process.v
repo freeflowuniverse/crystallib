@@ -14,7 +14,7 @@ pub mut:
 	cmd         string
 	pid         int
 	env         map[string]string
-	systemd  &Systemd           @[skip; str: skip]
+	systemd     &Systemd           @[skip; str: skip]
 	description string
 	info        SystemdProcessInfo
 }
@@ -30,7 +30,6 @@ pub fn (mut self SystemdProcess) write() ! {
 	p.write(servicecontent)!
 }
 
-
 pub fn (mut self SystemdProcess) start() ! {
 	self.write()!
 	cmd := '
@@ -38,7 +37,7 @@ pub fn (mut self SystemdProcess) start() ! {
 	systemctl enable ${self.name}
 	systemctl start ${self.name}
 	'
-	//console.print_debug(cmd)
+	// console.print_debug(cmd)
 	_ = osal.execute_silent(cmd)!
 	self.refresh()!
 }
@@ -56,7 +55,7 @@ pub fn (mut self SystemdProcess) refresh() ! {
 
 pub fn (mut self SystemdProcess) delete() ! {
 	self.stop()!
-	if os.exists(self.servicefile_path()){
+	if os.exists(self.servicefile_path()) {
 		os.rm(self.servicefile_path())!
 	}
 }

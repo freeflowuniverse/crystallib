@@ -6,5 +6,7 @@ pub fn get(j Juggler) !&Juggler {
 	c := caddy.get('')!
 	// c.start()!
 
-	return &Juggler{...j}
+	return &Juggler{
+		...j
+	}
 }

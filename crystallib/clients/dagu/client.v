@@ -30,11 +30,13 @@ pub fn (mut client DaguClient[Config]) create_dag(name string) !CreateDagRespons
 		method: .post
 		prefix: 'dags'
 		data: json.encode(CreateDag{ action: 'new', value: name })
-	) or {return error('Failed to create request: ${err}')}
+	) or { return error('Failed to create request: ${err}') }
 
-	result := client.connection.send(request) or {return error('Failed to send request: ${err}')}
+	result := client.connection.send(request) or { return error('Failed to send request: ${err}') }
 	if !result.is_ok() {
-		err := json.decode(ApiError, result.data) or {return error('Failed to decode api error ${err}')}
+		err := json.decode(ApiError, result.data) or {
+			return error('Failed to decode api error ${err}')
+		}
 		return ApiError{
 			...err
 			code: result.code

@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.core.texttools
 pub struct CaddyFile {
 pub mut:
 	site_blocks []SiteBlock
-	path  pathlib.Path
+	path        pathlib.Path
 }
 
 @[params]

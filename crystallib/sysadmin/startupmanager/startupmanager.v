@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.osal.systemd
 
-
 pub enum StartupManagerType {
 	screen
 	zinit
@@ -23,9 +22,8 @@ pub mut:
 }
 
 pub fn get() !StartupManager {
-
 	mut sm := StartupManager{}
-	if systemd.check()!{
+	if systemd.check()! {
 		sm.cat = .systemd
 	}
 	return sm
@@ -34,9 +32,9 @@ pub fn get() !StartupManager {
 pub struct StartArgs {
 pub mut:
 	description string
-	name  string @[requred]
-	cmd   string
-	reset bool
+	name        string @[requred]
+	cmd         string
+	reset       bool
 	// start  bool = true
 	// attach bool
 }
@@ -52,11 +50,11 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 	match sm.cat {
 		.screen {
 			mut scr := screen.new(reset: false)!
-			console.print_debug("  screen")
+			console.print_debug('  screen')
 			_ = scr.add(name: args.name, cmd: args.cmd, reset: args.reset)!
 		}
 		.systemd {
-			console.print_debug("  systemd")
+			console.print_debug('  systemd')
 			mut systemdfactory := systemd.new()!
 			systemdfactory.new(
 				cmd: args.cmd
@@ -76,28 +74,28 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 	match sm.cat {
 		.screen {
 			mut screen_factory := screen.new(reset: false)!
-			mut scr := screen_factory.get(name) or {return}
+			mut scr := screen_factory.get(name) or { return }
 			scr.cmd_send('^C')!
 			screen_factory.kill(name)!
 		}
 		.systemd {
-			console.print_debug("  systemd")
+			console.print_debug('  systemd')
 			mut systemdfactory := systemd.new()!
 			mut systemdprocess := systemdfactory.get(name)!
 			systemdprocess.stop()!
-		}		
+		}
 		else {
 			panic('to implement, startup manager only support screen for now')
 		}
 	}
 }
 
-//remove from the startup manager
+// remove from the startup manager
 pub fn (mut sm StartupManager) delete(name string) ! {
 	match sm.cat {
 		.screen {
 			mut screen_factory := screen.new(reset: false)!
-			mut scr := screen_factory.get(name) or {return}
+			mut scr := screen_factory.get(name) or { return }
 			scr.cmd_send('^C')!
 			screen_factory.kill(name)!
 		}
@@ -105,14 +103,14 @@ pub fn (mut sm StartupManager) delete(name string) ! {
 			mut systemdfactory := systemd.new()!
 			mut systemdprocess := systemdfactory.get(name)!
 			systemdprocess.delete()!
-		}		
+		}
 		else {
 			panic('to implement, startup manager only support screen & systemd for now')
 		}
 	}
 }
 
-pub fn (mut sm StartupManager) exists(name string) !	bool {
+pub fn (mut sm StartupManager) exists(name string) !bool {
 	match sm.cat {
 		.screen {
 			mut scr := screen.new(reset: false) or { panic("can't get screen") }
@@ -121,33 +119,31 @@ pub fn (mut sm StartupManager) exists(name string) !	bool {
 		.systemd {
 			mut systemdfactory := systemd.new()!
 			return systemdfactory.exists(name)
-		}		
+		}
 		else {
 			panic('to implement. startup manager only support screen & systemd for now')
 		}
 	}
 }
 
-//list all services as known to the startup manager
+// list all services as known to the startup manager
 pub fn (mut sm StartupManager) list() ![]string {
 	match sm.cat {
 		.screen {
 			mut scr := screen.new(reset: false) or { panic("can't get screen") }
-			panic("implement")
+			panic('implement')
 		}
 		.systemd {
 			mut systemdfactory := systemd.new()!
 			return systemdfactory.names()
-		}		
+		}
 		else {
 			panic('to implement. startup manager only support screen & systemd for now')
 		}
 	}
 }
 
-
-
-//THIS IS PROBABLY PART OF OTHER MODULE NOW
+// THIS IS PROBABLY PART OF OTHER MODULE NOW
 
 // pub struct SecretArgs {
 // pub mut:

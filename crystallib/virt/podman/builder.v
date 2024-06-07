@@ -1,7 +1,7 @@
 module podman
 
 import freeflowuniverse.crystallib.osal
-//import freeflowuniverse.crystallib.ui.console
+// import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.installers.lang.crystallib
 import freeflowuniverse.crystallib.core.pathlib
 import os
@@ -28,7 +28,7 @@ pub mut:
 	imagename     string
 	containername string
 	engine        &CEngine @[skip; str: skip]
-	//hero_in_container bool //once the hero has been installed this is on, does it once per session
+	// hero_in_container bool //once the hero has been installed this is on, does it once per session
 	// created         time.Time
 	// ssh_enabled     bool // if yes make sure ssh is enabled to the container
 	// ipaddr          IPAddress
@@ -44,7 +44,6 @@ pub mut:
 	// memsize         int // in MB
 	// command         string
 }
-
 
 @[params]
 pub struct RunArgs {
@@ -102,24 +101,23 @@ pub enum RunTime {
 }
 
 pub fn (mut self Builder) run(cmd Command) ! {
+	mut rt := RunTime.bash
 
-	mut rt:= RunTime.bash
+	scriptpath := osal.cmd_to_script_path(cmd: cmd.cmd, runtime: cmd.runtime)!
 
-	scriptpath := osal.cmd_to_script_path(cmd: cmd.cmd,runtime:cmd.runtime)!
-
-	if cmd.runtime==.heroscript || cmd.runtime==.herocmd{
+	if cmd.runtime == .heroscript || cmd.runtime == .herocmd {
 		self.hero_copy()!
 	}
 
-	script_basename:=os.base(scriptpath)
-	script_path_in_container := "/tmp/${script_basename}"
+	script_basename := os.base(scriptpath)
+	script_path_in_container := '/tmp/${script_basename}'
 
 	self.copy(scriptpath, script_path_in_container)!
-	//console.print_debug("copy ${scriptpath} into container '${self.containername}'")
+	// console.print_debug("copy ${scriptpath} into container '${self.containername}'")
 	cmd_str := 'buildah run ${self.id} ${script_path_in_container}'
 	// console.print_debug(cmd_str)
 
-	if cmd.runtime==.heroscript || cmd.runtime==.herocmd{
+	if cmd.runtime == .heroscript || cmd.runtime == .herocmd {
 		self.hero_copy()!
 	}
 	osal.exec(
@@ -140,43 +138,41 @@ pub fn (mut self Builder) run(cmd Command) ! {
 		interactive: cmd.interactive
 		async: cmd.async
 	) or {
-		mut epath:=pathlib.get_file(path:scriptpath,create:false)!
-		c:=epath.read()!
-		return error("cannot execute:\n${c}\nerror:\n${err}")
+		mut epath := pathlib.get_file(path: scriptpath, create: false)!
+		c := epath.read()!
+		return error('cannot execute:\n${c}\nerror:\n${err}')
 	}
 }
-
 
 pub fn (mut self Builder) copy(src string, dest string) ! {
 	cmd := 'buildah copy ${self.id} ${src} ${dest}'
-	osal.exec(cmd: cmd,stdout:false)!
+	osal.exec(cmd: cmd, stdout: false)!
 }
 
-//copies the hero from host into guest
+// copies the hero from host into guest
 pub fn (mut self Builder) hero_copy() ! {
-	if ! osal.cmd_exists("hero"){
+	if !osal.cmd_exists('hero') {
 		crystallib.hero_compile()!
 	}
-	heropath:=osal.cmd_path("hero")!
-	self.copy(heropath,"/usr/local/bin/hero")!
+	heropath := osal.cmd_path('hero')!
+	self.copy(heropath, '/usr/local/bin/hero')!
 }
 
-//copies the hero from host into guest and then execute the heroscript or commandline
+// copies the hero from host into guest and then execute the heroscript or commandline
 pub fn (mut self Builder) hero_execute_cmd(cmd string) ! {
 	self.hero_copy()!
-	self.run(cmd:cmd,runtime:.herocmd)!
+	self.run(cmd: cmd, runtime: .herocmd)!
 }
 
 pub fn (mut self Builder) hero_execute_script(cmd string) ! {
 	self.hero_copy()!
-	self.run(cmd:cmd,runtime:.heroscript)!
+	self.run(cmd: cmd, runtime: .heroscript)!
 }
 
 pub fn (mut self Builder) shell() ! {
 	cmd := 'buildah run --terminal --env TERM=xterm ${self.id} /bin/bash'
 	osal.execute_interactive(cmd)!
 }
-
 
 pub fn (mut self Builder) clean() ! {
 	cmd := '
@@ -202,11 +198,8 @@ pub fn (mut self Builder) clean() ! {
 		journalctl --vacuum-time=1s	
 
 	'
-	self.run(cmd:cmd,stdout:false)!
+	self.run(cmd: cmd, stdout: false)!
 }
-
-
-
 
 pub fn (mut self Builder) delete() ! {
 	self.engine.builder_delete(self.containername)!

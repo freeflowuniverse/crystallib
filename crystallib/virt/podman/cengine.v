@@ -8,7 +8,7 @@ pub mut:
 	sshkeys_allowed []string // all keys here have access over ssh into the machine, when ssh enabled
 	images          []Image
 	containers      []Container
-	builders     []Builder
+	builders        []Builder
 	buildpath       string
 	localonly       bool
 	cache           bool = true
@@ -47,7 +47,6 @@ pub fn (mut e CEngine) load() ! {
 	e.images_load()!
 	e.containers_load()!
 }
-
 
 // reset all images & containers, CAREFUL!
 pub fn (mut e CEngine) reset_all() ! {
@@ -90,4 +89,3 @@ pub fn (mut e CEngine) get_free_port() ?int {
 	}
 	return range[0]
 }
-

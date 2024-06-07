@@ -1,7 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.installers.web.caddy as caddy_installer
-import cli { Command, Flag }
+import cli { Command }
 import freeflowuniverse.crystallib.ui.console
 
 // path string //if location on filessytem, if exists, this has prio on git_url

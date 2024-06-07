@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.ui.console
 // 		generator.generate_get_method(structure),
 // 		// generator.generate_set_method(structure),
 // 		// generator.generate_delete_method(structure),
-// 		// generator.generate_create_method(structure),
+// 		// generator.generate_get_method(structure),
 // 	]
 // }
 
@@ -43,7 +43,7 @@ pub fn test_generate_get_method() {
 		actor_field: field
 		root_struct: test_struct
 	)
-	console.print_debug(method.vgen())
+	// console.print_debug(method.vgen())
 }
 
 // // generate_object_methods generates CRUD actor methods for a provided structure
@@ -76,7 +76,7 @@ pub fn test_generate_get_method() {
 // }
 
 // // generate_object_methods generates CRUD actor methods for a provided structure
-// pub fn (generator ActorGenerator) generate_create_method(structure codemodel.Struct) codemodel.Function {
+// pub fn (generator ActorGenerator) generate_get_method(structure codemodel.Struct) codemodel.Function {
 // 	params_getter := "id := params.get('id')!"
 // 	field := generator.get_object_field(structure)
 // 	object_getter := 'object := actor.${field.name}[id]'

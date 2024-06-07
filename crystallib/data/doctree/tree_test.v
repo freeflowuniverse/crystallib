@@ -85,18 +85,21 @@ fn test_write_tree() {
 	tree1.scan(
 		path: doctree.collections_path
 	)!
-	os.rmdir_all('/tmp/tree_write')!
-	os.rmdir_all('/tmp/tree_write2')!
+
+	write_dir1 := pathlib.get_dir(path: '/tmp/tree_write1' empty: true)!
+	write_dir2 := pathlib.get_dir(path: '/tmp/tree_write2' empty: true)!
+	write_dir3 := pathlib.get_dir(path: '/tmp/tree_write3' empty: true)!
+	
 	// write tree1 to another dir
-	tree1.export(dest: '/tmp/tree_write')!
+	tree1.export(dest: write_dir1.path)!
 	// create tree2 from the written tree
 	mut tree2 := new(name: doctree.tree_name)!
-	tree2.scan(path: '/tmp/tree_write')!
-	tree2.export(dest: '/tmp/tree_write2')!
+	tree2.scan(path: write_dir1.path)!
+	tree2.export(dest: write_dir2.path)!
 	// write tree2 another time to compare the output of the two
 	mut tree3 := new(name: doctree.tree_name)!
-	tree3.scan(path: '/tmp/tree_write2')!
-	tree3.export(dest: '/tmp/tree_write3')!
+	tree3.scan(path: write_dir2.path)!
+	tree3.export(dest: write_dir3.path)!
 	// TODO: can work with hash to check the full dir
 
 	// assert the 1e tree matches the third one

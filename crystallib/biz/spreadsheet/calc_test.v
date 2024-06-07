@@ -32,15 +32,15 @@ fn test_sheets() {
 	assert smartrow.cells[10].val == 1000.0
 	assert smartrow.cells[40].val == 2000.0
 
-	console.print_debug(nrnodes)
+	console.print_debug('${nrnodes}')
 
-	console.print_debug(incrementalrow)
+	console.print_debug('${incrementalrow}')
 
 	mut toincrement := sh.row_new(name: 'incr2', growth: '0:0,60:59')!
 	inc1row := toincrement.recurring(name: 'testrecurring1', delaymonths: 0)!
 	inc2row := toincrement.recurring(name: 'testrecurring2', delaymonths: 3)!
 
-	console.print_debug(toincrement)
+	console.print_debug('${toincrement}')
 
 	a1 := toincrement.look_forward_avg(50, 20)!
 	a2 := toincrement.look_forward_avg(12, 12)!

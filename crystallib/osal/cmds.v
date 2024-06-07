@@ -185,16 +185,12 @@ fn profile_path_add_(profile_path_ string, path2add string, todelete string) ! {
 	// console.print_debug('${c}')
 }
 
-
-
 // is same as executing which in OS
 // returns path or error
 pub fn cmd_path(cmd string) !string {
 	res := os.execute('which ${cmd}')
 	if res.exit_code == 0 {
 		return res.output.trim_space()
-
 	}
 	return error("can't do find path for cmd: ${cmd}")
 }
-

@@ -24,7 +24,9 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 	mut rows := []elements.Row{}
 	for values in rows_values {
 		rows << elements.Row{
-			cells: values
+			cells: values.map(elements.Paragraph{
+				content: it
+			})
 		}
 	}
 

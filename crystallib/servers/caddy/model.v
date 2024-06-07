@@ -10,7 +10,6 @@ pub mut:
 	description string
 }
 
-
 @[heap]
 pub struct Backend {
 pub mut:
@@ -19,14 +18,13 @@ pub mut:
 	description string // always optional
 }
 
-
 pub struct SiteBlock {
 pub mut:
-	address Address
+	address       Address
 	reverse_proxy []ReverseProxy
 }
 
 pub struct ReverseProxy {
 	path string // path on with the url will be proxied on the domain
-	url string // url that is being reverse proxied
+	url  string // url that is being reverse proxied
 }
