@@ -41,7 +41,7 @@ pub fn (mut self SystemdProcess) write() ! {
 pub fn (mut self SystemdProcess) start() ! {
 	self.write()!
 	cmd := '
-	systemctl daemon-reload 
+	systemctl daemon-reload
 	systemctl enable ${self.name}
 	systemctl start ${self.name}
 	'
@@ -76,4 +76,42 @@ pub fn (mut self SystemdProcess) stop() ! {
 	'
 	_ = osal.execute_silent(cmd)!
 	self.systemd.load()!
+}
+
+enum SystemdStatus {
+    unknown
+    active
+    inactive
+    failed
+    activating
+    deactivating
+}
+
+pub fn (self SystemdProcess) status() !SystemdStatus {
+	cmd := '
+	systemctl daemon-reload
+	systemctl status ${name_fix(self.name)}
+	'
+	response := osal.execute_silent(cmd)!
+	return parse_systemd_process_status(response)
+}
+
+fn parse_systemd_process_status(output string) SystemdStatus {
+    lines := output.split_into_lines()
+    for line in lines {
+        if line.contains('Active: ') {
+            if line.contains('active (running)') {
+                return .active
+            } else if line.contains('inactive (dead)') {
+                return .inactive
+            } else if line.contains('failed') {
+                return .failed
+            } else if line.contains('activating') {
+                return .activating
+            } else if line.contains('deactivating') {
+                return .deactivating
+            }
+        }
+    }
+    return .unknown
 }

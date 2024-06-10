@@ -16,14 +16,16 @@ pub fn play_dagu(mut plbook playbook.PlayBook) ! {
 		username := p.get_default('username', '')!
 		password := p.get_default('password', '')!
 		config_actions[0].done = true
-		_ := daguserver.configure(instance,
+		mut server := daguserver.configure(instance,
 			port: port
 			username: username
 			password: password
 		)!
+		server.start()!
 		dagu.get(instance, url: 'http://localhost:${port}')!
 	} else {
-		_ := daguserver.get('')!
+		mut server := daguserver.get('')!
+		server.start()!
 		dagu.get('')!
 	}
 

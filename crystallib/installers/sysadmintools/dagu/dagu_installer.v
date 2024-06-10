@@ -9,10 +9,11 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
+pub const version = '1.13.0'
+
 @[params]
 pub struct InstallArgs {
 pub mut:
-	homedir    string
 	homedir    string
 	configpath string
 	username   string
@@ -27,18 +28,8 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '1.13.0'
 
-	res := os.execute('${osal.profile_path_source_and()} dagu version')
-	if res.exit_code == 0 {
-		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
-		if r.len != 1 {
-			return error("couldn't parse dagu version.\n${res.output}")
-		}
-		if texttools.version(version) > texttools.version(r[0]) {
-			args.reset = true
-		}
-	} else {
+	if !is_installed(version)! {
 		args.reset = true
 	}
 
@@ -70,27 +61,6 @@ pub fn install(args_ InstallArgs) ! {
 			source: binpath.path
 		)!
 	}
-
-	if args.restart {
-		restart(args)!
-		return
-	}
-
-	if args.start {
-		println('here we start')
-		start(args)!
-	}
-}
-
-pub fn restart(args_ InstallArgs) ! {
-	stop(args_)!
-	start(args_)!
-}
-
-pub fn stop(args_ InstallArgs) ! {
-	console.print_header('dagu stop')
-	mut sm := startupmanager.get()!
-	sm.stop('dagu')!
 }
 
 pub fn start(args_ InstallArgs) ! {
@@ -105,7 +75,6 @@ pub fn start(args_ InstallArgs) ! {
 	}
 
 	console.print_header('dagu start')
-
 
 	if args.homedir == '' {
 		args.homedir = '${os.home_dir()}/hero/var/dagu'
@@ -152,13 +121,29 @@ pub fn start(args_ InstallArgs) ! {
 	return error('dagu did not install propertly, could not call api.')
 }
 
+// checks if a certain version or above is installed
+pub fn is_installed(version string) !bool {
+	res := os.execute('${osal.profile_path_source_and()} dagu version')
+	if res.exit_code == 0 {
+		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
+		if r.len != 1 {
+			return error("couldn't parse dagu version.\n${res.output}")
+		}
+		if texttools.version(version) > texttools.version(r[0]) {
+			return false
+		}
+	} else {
+		return false
+	}
+	return true
+}
+
 pub fn check(args InstallArgs) !bool {
 	// this checks health of dagu
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
 	mut conn := httpconnection.new(name: 'dagu', url: 'http://127.0.0.1:${args.port}/api/v1/')!
 
 	// console.print_debug("curl http://localhost:3333/api/v1/dags --oauth2-bearer ${secret}")
-	if args.secret.len > 0 {
 	if args.secret.len > 0 {
 		conn.default_header.add(.authorization, 'Bearer ${args.secret}')
 	}

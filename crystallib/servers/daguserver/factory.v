@@ -1,6 +1,7 @@
 module daguserver
 
 import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.crypt.secrets
 import freeflowuniverse.crystallib.clients.dagu as daguclient
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
@@ -15,7 +16,7 @@ pub struct DaguServer[T] {
 @[params]
 pub struct Config {
 pub mut:
-	homedir     string
+	homedir     string = '${os.home_dir()}/hero/var/dagu'
 	configpath  string
 	username    string
 	password    string @[secret]
@@ -26,7 +27,8 @@ pub mut:
 	port        int    = 8888 // server port (default is 8888)	
 }
 
-pub fn get(instance string) !DaguServer[Config] {
+pub fn get(instance_ string) !DaguServer[Config] {
+	instance := if instance_ == '' {'default'} else {instance_}
 	mut self := DaguServer[Config]{}
 	self.init('daguserver', instance, .get)!
 	return self
@@ -39,6 +41,10 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 
 	if cfg.title == '' {
 		cfg.title = 'My Hero DAG'
+	}
+
+	if cfg.username == '' {
+		cfg.username = 'admin'
 	}
 
 	if cfg.password == '' {
@@ -56,6 +62,10 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 		cfg.configpath = '${os.home_dir()}/hero/cfg/dagu.yaml'
 	}
 
+	if cfg.port == 0 {
+		cfg.port = 8080
+	}
+
 	daguinstaller.install(
 		start: false
 		homedir: cfg.homedir
@@ -66,6 +76,12 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 	)!
 
 	self.init('daguserver', instance, .set, cfg)!
+
+
+	// FILL IN THE TEMPLATE
+	mut mycode := $tmpl('templates/admin.yaml')
+	mut path := pathlib.get_file(path: cfg.configpath, create: true)!
+	path.write(mycode)!
 
 	// configure a client to the local instance
 	// the name will be 'local'
