@@ -8,8 +8,8 @@ import freeflowuniverse.crystallib.servers.daguserver
 
 pub fn get(j Juggler) !&Juggler {
 	// get so is also installed
-	mut c := caddy.get('juggler')!
-	mut d := daguserver.get('juggler')!
+	mut c := caddy.get(j.name)!
+	mut d := daguserver.get(j.name)!
 	return &Juggler{
 		...j
 	}
@@ -17,10 +17,13 @@ pub fn get(j Juggler) !&Juggler {
 
 pub struct Config {
 mut:
+	name string
 	url      string
 	reset    bool
 	pull     bool
 	coderoot string
+	username string
+	password string
 }
 
 pub fn configure(cfg Config) !&Juggler {
