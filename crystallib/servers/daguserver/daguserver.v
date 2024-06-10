@@ -4,6 +4,7 @@ import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.clients.dagu
+import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
 import freeflowuniverse.crystallib.core.texttools
 
 pub fn (mut self DaguServer[Config]) dag_path(name string) string {
@@ -50,10 +51,16 @@ pub fn (mut self DaguServer[Config]) start(name string) !string {
 	return result.output
 }
 
-pub fn (mut self DaguServer[Config]) server() !string {
-	console.print_debug('dagu server')
-	result := os.execute_opt('dagu server')!
-	return result.output
+pub fn (mut self DaguServer[Config]) server() ! {
+	mut cfg := self.config()!
+	daguinstaller.start(
+		homedir: cfg.homedir
+		configpath: cfg.configpath
+		username: cfg.username
+		password: cfg.password
+		secret: cfg.secret
+		port: cfg.port
+	)!
 }
 
 // Display current status of the DAG
@@ -65,14 +72,19 @@ pub fn (mut self DaguServer[Config]) status(name string) !string {
 }
 
 // Stop the running DAG
-pub fn (mut self DaguServer[Config]) dag_stop(name string) !string {
-	dag_file := self.dag_path(name)
-	result := os.execute_opt('dagu stop ${dag_file}')!
-	return result.output
+pub fn (mut self DaguServer[Config]) stop() ! {
+	daguinstaller.stop()!
 }
 
-pub fn (mut self DaguServer[Config]) delete(name string) ! {
-	self.dag_stop(name)!
-	dag_file := self.dag_path(name)
-	os.rm(dag_file)!
-}
+// // Stop the running DAG
+// pub fn (mut self DaguServer[Config]) dag_stop(name string) !string {
+// 	dag_file := self.dag_path(name)
+// 	result := os.execute_opt('dagu stop ${dag_file}')!
+// 	return result.output
+// }
+
+// pub fn (mut self DaguServer[Config]) delete(name string) ! {
+// 	self.dag_stop(name)!
+// 	dag_file := self.dag_path(name)
+// 	os.rm(dag_file)!
+// }

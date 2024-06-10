@@ -50,19 +50,14 @@ fn cmd_juggler_execute(cmd Command) ! {
 
 	mut repo_path := ''
 	if path.len > 0 || url.len > 0 {
-		repo_path = juggler_code_get(cmd)!
+		mut j := juggler.configure(url: url)!
+		open := cmd.flags.get_bool('open') or { false }
+		if open {
+			j.open()!
+		}
+		j.run(8200)!
 	} else {
 		juggler_help(cmd)
-	}
-
-	mut j := juggler.get(
-		repo_path: repo_path
-		dagu_url: dagu_url
-	)!
-
-	open := cmd.flags.get_bool('open') or { false }
-	if open {
-		j.open()!
 	}
 }
 
@@ -107,3 +102,4 @@ fn juggler_code_get(cmd Command) !string {
 
 	return path
 }
+

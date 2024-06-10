@@ -7,6 +7,7 @@ Type=simple
 ExecStart=${self.cmd}
 WorkingDirectory=/tmp
 Restart=always
+@{envs}
 
 [Install]
 WantedBy=multi-user.target

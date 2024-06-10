@@ -50,11 +50,11 @@ fn (mut systemd Systemd) load() ! {
 @[params]
 pub struct SystemdProcessNewArgs {
 pub mut:
-	name        string @[required]
-	cmd         string @[required]
+	name        string            @[required]
+	cmd         string            @[required]
 	description string
-	// env       map[string]string
-	start bool = true
+	env         map[string]string
+	start       bool = true
 }
 
 //```
@@ -82,7 +82,7 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 		pathcmd.write(sdprocess.cmd)!
 		sdprocess.cmd = '/bin/bash -c ${pathcmd.path}'
 	}
-	// sdprocess.env = args.env.move()
+	sdprocess.env = args.env.move()
 
 	systemd.setinternal(mut sdprocess)!
 

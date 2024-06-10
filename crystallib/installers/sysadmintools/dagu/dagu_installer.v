@@ -13,13 +13,16 @@ import time
 pub struct InstallArgs {
 pub mut:
 	homedir    string
+	homedir    string
 	configpath string
-	passwd     string @[secret]
+	username   string
+	password   string @[secret]
 	secret     string @[secret]
 	title      string = 'My Hero DAG'
 	reset      bool
 	start      bool = true
 	restart    bool
+	port       int = 8888
 }
 
 pub fn install(args_ InstallArgs) ! {
@@ -74,6 +77,7 @@ pub fn install(args_ InstallArgs) ! {
 	}
 
 	if args.start {
+		println('here we start')
 		start(args)!
 	}
 }
@@ -102,6 +106,7 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('dagu start')
 
+
 	if args.homedir == '' {
 		args.homedir = '${os.home_dir()}/hero/var/dagu'
 	}
@@ -116,7 +121,7 @@ pub fn start(args_ InstallArgs) ! {
 	path.write(mycode)!
 	mut sm := startupmanager.get()!
 
-	cmd := 'dagu server --config ${args.configpath}'
+	cmd := 'dagu server --host 0.0.0.0 --config ${args.configpath}'
 
 	// TODO: we are not taking host & port into consideration
 
@@ -128,12 +133,16 @@ pub fn start(args_ InstallArgs) ! {
 	sm.start(
 		name: 'dagu'
 		cmd: cmd
+		env: {
+			'HOME': '/root'
+		}
 	)!
 
 	cmd2 := 'dagu scheduler' // TODO: do we need this
 
 	console.print_debug(cmd)
 
+	// time.sleep(100000000000)
 	for _ in 0 .. 50 {
 		if check(args)! {
 			return
@@ -146,9 +155,10 @@ pub fn start(args_ InstallArgs) ! {
 pub fn check(args InstallArgs) !bool {
 	// this checks health of dagu
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
-	mut conn := httpconnection.new(name: 'dagu', url: 'http://localhost:3333/api/v1/')!
+	mut conn := httpconnection.new(name: 'dagu', url: 'http://127.0.0.1:${args.port}/api/v1/')!
 
 	// console.print_debug("curl http://localhost:3333/api/v1/dags --oauth2-bearer ${secret}")
+	if args.secret.len > 0 {
 	if args.secret.len > 0 {
 		conn.default_header.add(.authorization, 'Bearer ${args.secret}')
 	}

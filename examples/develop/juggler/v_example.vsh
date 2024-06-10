@@ -1,18 +1,16 @@
 #!/usr/bin/env -S v -w -n -enable-globals run
 
 import freeflowuniverse.crystallib.develop.juggler
-
 import veb
 
 mut j := juggler.get(
-	repo_path: '/root/code/git.ourworld.tf/projectmycelium/itenv',
+	repo_path: '/root/code/git.ourworld.tf/projectmycelium/itenv'
 	dagu_url: 'http://65.21.132.119:8888/api/v1/'
 )!
 
-veb.run[juggler.Juggler, juggler.Context](mut j, 8200)
+j.run(8200)!
 
-
-//TODO
+// TODO
 // - automate caddy install/start
 // - create server/caddy which only calls install & can set config file from path or url & restart (see dagu server)
 // - get caddy config from the itenv through (simple driver)

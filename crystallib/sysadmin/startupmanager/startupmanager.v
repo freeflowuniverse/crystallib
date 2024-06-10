@@ -32,9 +32,11 @@ pub fn get() !StartupManager {
 pub struct StartArgs {
 pub mut:
 	description string
-	name        string @[requred]
+	name        string            @[requred]
 	cmd         string
 	reset       bool
+	env         map[string]string
+
 	// start  bool = true
 	// attach bool
 }
@@ -49,6 +51,7 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 	console.print_debug("startupmanager start:${args.name} cmd:'${args.cmd}' reset:${args.reset}")
 	match sm.cat {
 		.screen {
+			println('starting screen')
 			mut scr := screen.new(reset: false)!
 			console.print_debug('  screen')
 			_ = scr.add(name: args.name, cmd: args.cmd, reset: args.reset)!
@@ -61,6 +64,7 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 				name: args.name
 				description: args.description
 				start: true
+				env: args.env
 			)!
 		}
 		else {

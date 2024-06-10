@@ -17,7 +17,8 @@ pub struct Config {
 pub mut:
 	homedir     string
 	configpath  string
-	passwd      string @[secret]
+	username    string
+	password    string @[secret]
 	secret      string @[secret]
 	title       string = 'My Hero DAG'
 	description string // optional
@@ -31,7 +32,7 @@ pub fn get(instance string) !DaguServer[Config] {
 	return self
 }
 
-// set the configuration, will make defaults for passwd & secret
+// set the configuration, will make defaults for password & secret
 pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 	mut cfg := cfg_
 	mut self := DaguServer[Config]{}
@@ -40,8 +41,8 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 		cfg.title = 'My Hero DAG'
 	}
 
-	if cfg.passwd == '' {
-		cfg.passwd = secrets.hex_secret()!
+	if cfg.password == '' {
+		cfg.password = secrets.hex_secret()!
 	}
 	if cfg.secret == '' {
 		cfg.secret = secrets.openssl_hex_secret()!
@@ -56,9 +57,10 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 	}
 
 	daguinstaller.install(
-		start: true
+		start: false
 		homedir: cfg.homedir
-		passwd: cfg.passwd
+		username: cfg.username
+		password: cfg.password
 		secret: cfg.secret
 		title: cfg.title
 	)!
@@ -70,7 +72,7 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 	daguclient.get('local',
 		url: 'http://${cfg.host}:${cfg.port}/api/v1/'
 		username: 'admin'
-		password: cfg.passwd
+		password: cfg.password
 		apisecret: cfg.secret
 	)!
 	return self

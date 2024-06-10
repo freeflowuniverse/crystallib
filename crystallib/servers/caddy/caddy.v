@@ -2,6 +2,7 @@ module caddy
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
 
 // Restart the Caddy
 pub fn (mut self Caddy[Config]) restart() ! {
@@ -19,12 +20,15 @@ pub fn (mut self Caddy[Config]) generate() ! {
 	content := cfg.file.export()!
 	mut file := pathlib.get_file(path: '${cfg.homedir}/Caddyfile')!
 	file.write(content) or { panic('failed to write ${err}') }
+	file.write(content) or { panic('failed to write ${err}') }
 }
 
 pub fn (mut self Caddy[Config]) start() ! {
-	osal.exec(cmd: 'dagu start')!
+	caddyinstaller.start()!
+	// osal.exec(cmd:'caddy start')!
 }
 
 pub fn (mut self Caddy[Config]) stop() ! {
-	osal.exec(cmd: 'dagu stop')!
+	osal.exec(cmd: 'caddy stop')!
 }
+

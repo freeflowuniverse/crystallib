@@ -1,5 +1,5 @@
 host: "::"                          # default: 127.0.0.1
-port: 3333
+port: ${args.port}
 
 # path to the DAGs directory
 dags: ${args.homedir}/dags
@@ -9,8 +9,8 @@ dags: ${args.homedir}/dags
 navbarTitle: ${args.title}                                 # header title for web UI (e.g. "PROD")
 
 isBasicAuth: true
-basicAuthUsername: admin
-basicAuthPassword: ${args.passwd}
+basicAuthUsername: ${args.username}
+basicAuthPassword: ${args.password}
 
 isAuthToken: true                                    # enables API token
 authToken: ${args.secret}

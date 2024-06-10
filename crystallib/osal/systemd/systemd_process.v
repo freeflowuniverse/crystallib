@@ -1,6 +1,7 @@
 module systemd
 
 // import os
+import maps
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
@@ -26,6 +27,13 @@ pub fn (mut self SystemdProcess) servicefile_path() string {
 pub fn (mut self SystemdProcess) write() ! {
 	mut p := pathlib.get_file(path: self.servicefile_path(), create: true)!
 	console.print_header(' systemd write service: ${p.path}')
+
+	envs_lst := maps.to_array[string, string, string](self.env, fn (k string, v string) string {
+		return 'Environment=${k}=${v}'
+	})
+
+	envs := envs_lst.join('\n')
+
 	servicecontent := $tmpl('templates/service.yaml')
 	p.write(servicecontent)!
 }
