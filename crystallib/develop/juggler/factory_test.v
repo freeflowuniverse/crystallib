@@ -11,6 +11,8 @@ import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
 
 const instance_name = 'testinstance'
 
+
+
 pub fn test_get() ! {
 	j := get(name: instance_name)!
 	assert daguinstaller.is_installed(daguinstaller.version)!

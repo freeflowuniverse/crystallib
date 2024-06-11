@@ -34,7 +34,6 @@ pub fn configure(instance string, cfg_ Config) !Caddy[Config] {
 	file.write(cfg.file.export()!)!
 
 	caddyinstaller.install(
-		start: true
 		homedir: cfg.homedir
 		reset: cfg.reset
 	)!
