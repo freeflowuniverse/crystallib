@@ -1,13 +1,13 @@
-module main
+#!/usr/bin/env -S v -w -enable-globals run
 
-import json
 import freeflowuniverse.crystallib.threefold.grid.models
 import freeflowuniverse.crystallib.threefold.grid as tfgrid
+import freeflowuniverse.crystallib.threefold.gridproxy
+import flag
+import rand
+import json
 import log
 import os
-import flag
-import freeflowuniverse.crystallib.threefold.gridproxy
-import rand
 
 fn main() {
 	mut fp := flag.new_flag_parser(os.args)

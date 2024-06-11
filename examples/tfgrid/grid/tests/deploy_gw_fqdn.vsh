@@ -1,8 +1,8 @@
-module main
+#!/usr/bin/env -S v -w -cg -enable-globals run
 
+import freeflowuniverse.crystallib.threefold.grid as tfgrid
+import freeflowuniverse.crystallib.threefold.grid.models
 import log
-import threefoldtech.tfgrid
-import threefoldtech.tfgrid.models
 
 fn main() {
 	mut logger := log.Log{
@@ -22,7 +22,7 @@ fn main() {
 		fqdn: 'domaind.gridtesting.xyz'
 	}
 	wl := gw.to_workload(name: 'mywlname')
-	node_id := u32(11)
+	node_id := u32(14)
 	logger.info('trying to get node ${node_id} public configuration')
 	deployer.get_node_pub_config(node_id) or {
 		logger.error('please select another node: ${err}')

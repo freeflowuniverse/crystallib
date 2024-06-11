@@ -1,8 +1,8 @@
-module main
+#!/usr/bin/env -S v -w -enable-globals run
 
-import json
 import freeflowuniverse.crystallib.threefold.grid.models
 import freeflowuniverse.crystallib.threefold.grid as tfgrid
+import json
 import log
 import os
 
@@ -14,7 +14,7 @@ fn main() {
 	chain_network := tfgrid.ChainNetwork.dev // User your desired network
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_network, mut logger)!
 
-	node_id := u32(27)
+	node_id := u32(14)
 	network_name := 'network1'
 	wg_port := deployer.assign_wg_port(node_id)!
 	mut network := models.Znet{

@@ -1,14 +1,14 @@
 #!/usr/bin/env -S v -w -cg -enable-globals run
 
-import json
 import freeflowuniverse.crystallib.threefold.grid.models
 import freeflowuniverse.crystallib.threefold.grid as tfgrid
-import log
-import os
-import flag
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model {NodeFilter}
 import rand
+import log
+import os
+import flag
+import json
 
 fn get_machine_result(dl models.Deployment) !models.ZmachineResult {
 	for _, w in dl.workloads {
