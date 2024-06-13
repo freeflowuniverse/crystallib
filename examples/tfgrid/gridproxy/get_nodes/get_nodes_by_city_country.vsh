@@ -1,18 +1,25 @@
+#!/usr/bin/env -S v -w -enable-globals run
+
 import freeflowuniverse.crystallib.threefold.gridproxy { TFGridNet }
 import freeflowuniverse.crystallib.threefold.gridproxy.model { Node, NodeFilter }
+import log
 import os
 
 fn main() {
+	mut logger := log.Log{
+		level: .debug
+	}
+
 	// Default value used in intializing the resources
 	mut nodes_filter := NodeFilter{}
 
 	if '--help' in os.args {
 		println('This script to get nodes by city or country or both \n
-		--city 		name of the city  (optional) \n
-		--country 	name of the country (optional) \n
-		--network   one of (dev, test, qa, main)  (optional)(default to `test`) \n
-		--max-count maximum number of nodes to be selected (optional)(default to 0 which means no limit) \n
-		--cache     enable cache  (optional)(default to false')
+		--city		name of the city  (optional) \n
+		--country	name of the country (optional) \n
+		--network	one of (dev, test, qa, main)  (optional) (default to `test`) \n
+		--max-count	maximum number of nodes to be selected (optional) (default to 0 which means no limit) \n
+		--cache		enable cache  (optional) (default to false)')
 		return
 	}
 
@@ -27,8 +34,8 @@ fn main() {
 	}
 
 	mut net := 'test'
-	if '--net' in os.args {
-		index_val := os.args.index('--net')
+	if '--network' in os.args {
+		index_val := os.args.index('--network')
 		net = os.args[index_val + 1]
 	}
 
@@ -63,9 +70,9 @@ fn main() {
 	mut gp_client := gridproxy.get(network, cache)!
 	nodes_iter := gp_client.get_nodes_iterator(nodes_filter) /*
 	or {
-		println("got an error while getting nodes")
-		println("error message : ${err.msg()}")
-		println("error code : ${err.code()}")
+		logger.info('got an error while getting nodes')
+		logger.info('error message : ${err.msg()}')
+		logger.info('error code : ${err.code()}')
 		return
 	}*/
 
@@ -78,7 +85,7 @@ fn main() {
 			}
 		}
 	}
-	println('found ${nodes_by_city_country.len} nodes on ${net.to_upper()} in country: ${nodes_filter.country} and city: ${nodes_filter.city}')
-	println('---------------------------------------')
-	println(nodes_by_city_country)
+	logger.info('found ${nodes_by_city_country.len} nodes on ${net.to_upper()} in country: ${nodes_filter.country} and city: ${nodes_filter.city}')
+	logger.info('---------------------------------------')
+	logger.info('${nodes_by_city_country}')
 }
