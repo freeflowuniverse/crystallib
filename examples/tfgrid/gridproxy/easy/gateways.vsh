@@ -2,21 +2,31 @@
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
+import log
 
 fn get_gateway_nodes_example() ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 	gw_nodes := gp_client.get_gateways(status: 'up')!
-	println(gw_nodes)
+	logger.info('${gw_nodes}')
 }
 
 fn get_gateway_by_id_example(id u64) ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 	// get_gateway_by_id fetchs specific gateway information by node id.
 	node_gateway := gp_client.get_gateway_by_id(id)!
-	println(node_gateway)
+	logger.info('${node_gateway}')
 }
 
 fn get_gateway_iterator_example() ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	// gateway_iterator
@@ -38,10 +48,11 @@ fn get_gateway_iterator_example() ! {
 		}
 	}
 
-	println(iterator_available_gw)
+	logger.info('${iterator_available_gw}')
 }
 
-
-get_gateway_nodes_example()!
-get_gateway_by_id_example(u64(11))!
-get_gateway_iterator_example()!
+fn main() {
+	get_gateway_nodes_example()!
+	get_gateway_by_id_example(u64(11))!
+	get_gateway_iterator_example()!
+}

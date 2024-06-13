@@ -2,8 +2,12 @@
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
+import log
 
 fn get_nodes_example() ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	mut node_filter := model.NodeFilter{}
@@ -13,27 +17,36 @@ fn get_nodes_example() ! {
 	node_filter.free_ips = u64(4)
 
 	nodes := gp_client.get_nodes(node_filter)!
-	println(nodes)
+	logger.info('${nodes}')
 }
 
 fn get_node_by_id_example(node_id u64) ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	node := gp_client.get_node_by_id(node_id)!
 
 	// get node available resources
 	node_available_resources := node.calc_available_resources()
-	println(node_available_resources)
+	logger.info('${node_available_resources}')
 }
 
 fn get_node_stats_by_id(node_id u64) ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	node_stats := gp_client.get_node_stats_by_id(node_id)!
-	println(node_stats)
+	logger.info('${node_stats}')
 }
 
 fn get_nodes_iterator_example() ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	max_page_iteration := u64(5) // set maximum pages to iterate on
@@ -52,10 +65,13 @@ fn get_nodes_iterator_example() ! {
 			break // if the page is empty the next function will return none
 		}
 	}
-	println(iterator_available_node)
+	logger.info('${iterator_available_node}')
 }
 
 fn get_node_by_resources_filter_example() ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	// init gridproxy client on devnet with redis cash
 	mut gp_client := gridproxy.get(.dev, true)!
 
@@ -70,7 +86,7 @@ fn get_node_by_resources_filter_example() ! {
 
 	node_has_resources := gp_client.get_nodes_has_resources(resources)
 	nodes_have_resources := node_has_resources.get_func()!
-	println(nodes_have_resources.len)
+	logger.info('${nodes_have_resources.len}')
 }
 
 fn main() {

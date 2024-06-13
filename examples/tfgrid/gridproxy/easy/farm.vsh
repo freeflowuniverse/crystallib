@@ -2,21 +2,31 @@
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
+import log
 
 fn get_farms_example() ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 	filter := model.FarmFilter{}
 	farms := gp_client.get_farms(filter)!
-	println(farms)
+	logger.info('${farms}')
 }
 
 fn get_farm_by_name_example(farm_name string) ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 	farms := gp_client.get_farms(name: farm_name)!
-	println(farms)
+	logger.info('${farms}')
 }
 
 fn get_farms_iterator_example() ! {
+	mut logger := log.Log{
+		level: .debug
+	}
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	max_page_iteration := u64(2) // set maximum pages to iterate on
@@ -35,9 +45,11 @@ fn get_farms_iterator_example() ! {
 			break // if the page is empty the next function will return none
 		}
 	}
-	println(iterator_available_farms)
+	logger.info('${iterator_available_farms}')
 }
 
-// get_farms_example()!
-get_farm_by_name_example("freefarm")!
-// get_farms_iterator_example()!
+fn main() {
+	get_farms_example()!
+	get_farm_by_name_example("freefarm")!
+	get_farms_iterator_example()!
+}
