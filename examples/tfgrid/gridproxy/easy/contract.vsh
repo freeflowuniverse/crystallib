@@ -1,3 +1,5 @@
+#!/usr/bin/env -S v -w -enable-globals run
+
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
 
@@ -18,7 +20,10 @@ fn get_contract_iterator_example() ! {
 
 	max_page_iteration := u64(2) // set maximum pages to iterate on
 
-	mut contract_iterator := gp_client.get_contracts_iterator(contract_type: 'node')
+	mut filter := model.ContractFilter{
+		contract_type: 'node'
+	}
+	mut contract_iterator := gp_client.get_contracts_iterator(filter)
 	mut contracts := []model.Contract{}
 	for {
 		if contract_iterator.filter.page is u64

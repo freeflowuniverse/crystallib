@@ -1,7 +1,7 @@
 #!/usr/bin/env -S v -w -cg -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.grid.models
-import freeflowuniverse.crystallib.threefold.grid
+import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import json
 import log
 
@@ -11,8 +11,8 @@ fn test_create_and_update_deployment() ! {
 	mut logger := log.Log{
 		level: .debug
 	}
-	mnemonics := grid.get_mnemonics()!
-	mut deployer := grid.new_deployer(mnemonics, .dev, mut logger)!
+	mnemonics := tfgrid.get_mnemonics()!
+	mut deployer := tfgrid.new_deployer(mnemonics, .dev, mut logger)!
 	node_privkey := deployer.client.generate_wg_priv_key()!
 	user_privkey := deployer.client.generate_wg_priv_key()!
 	twin_id := deployer.client.get_user_twin()!
