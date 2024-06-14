@@ -64,7 +64,6 @@ fn cmd_juggler_execute(cmd Command) ! {
 	if open {
 		j.open()!
 	}
-
 }
 
 fn juggler_help(cmd Command) {

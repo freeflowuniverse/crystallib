@@ -28,8 +28,7 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 	}
 
 	for action_ in plbook.find(filter: 'play.*')! {
-
-		if action_.name == "run"{
+		if action_.name == 'run' {
 			console.print_debug('play run:${action_}')
 			mut action := *action_
 			mut playrunpath := action.params.get_default('path', '')!
@@ -43,12 +42,10 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 			}
 			console.print_debug('play run path:${playrunpath}')
 			plbook.add(path: playrunpath)!
-
 		}
-		if action_.name == "echo"{
-			content := action_.params.get_default('content', 'didn\'t find content')!
+		if action_.name == 'echo' {
+			content := action_.params.get_default('content', "didn't find content")!
 			console.print_header(content)
-
 		}
 	}
 

@@ -18,9 +18,7 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	mdbook.install(reset:args.reset)!
-	zola.install(reset:args.reset)!
-	dagu.install(reset:args.reset)!
-
+	mdbook.install(reset: args.reset)!
+	zola.install(reset: args.reset)!
+	dagu.install(reset: args.reset)!
 }
-

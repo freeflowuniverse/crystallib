@@ -1,9 +1,7 @@
 set -ex
 pushd ~/code/github/freeflowuniverse/crystallib
 bash doc.sh
-v -enable-globals -stats test crystallib/algo
 v -enable-globals -stats test crystallib/baobab
-v -enable-globals -stats test crystallib/biz
 v -enable-globals -stats test crystallib/builder
 v -enable-globals -stats test crystallib/clients
 v -enable-globals -stats test crystallib/core

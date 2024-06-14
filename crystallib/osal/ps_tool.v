@@ -64,7 +64,6 @@ pub fn processinfo_get(pid int) !ProcessInfo {
 	return error('Cannot find process with pid: ${pid}, to get process info from.')
 }
 
-
 pub fn processinfo_get_byname(name string) ![]ProcessInfo {
 	mut pm := processmap_get()!
 	mut res := []ProcessInfo{}
@@ -89,14 +88,13 @@ pub fn process_exists_byname(name string) !bool {
 }
 
 pub fn process_exists(pid int) bool {
-	r := os.execute("kill -0 ${pid}")
+	r := os.execute('kill -0 ${pid}')
 	if r.exit_code > 0 {
-		//return error('could not execute kill -0 ${pid}')
+		// return error('could not execute kill -0 ${pid}')
 		return false
 	}
 	return true
 }
-
 
 // return the process and its children
 pub fn processinfo_with_children(pid int) !ProcessMap {
@@ -136,7 +134,7 @@ pub fn process_kill_recursive(args ProcessKillArgs) ! {
 	if args.pid == 0 {
 		return error('need to specify pid or name')
 	}
-	if process_exists(args.pid){
+	if process_exists(args.pid) {
 		pm := processinfo_with_children(args.pid)!
 		for p in pm.processes {
 			os.execute('kill -9 ${p.pid}')

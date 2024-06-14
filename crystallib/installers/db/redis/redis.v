@@ -62,13 +62,12 @@ fn (self RedisInstaller) configdo() ! {
 	pathlib.template_write(c, self.configfilepath(), true)!
 }
 
-
 pub fn check() ! {
 	res := os.execute('redis-cli -c ping > /dev/null 2>&1')
 	if res.exit_code == 0 {
 		return
 	}
-	install(start:true)!
+	install(start: true)!
 }
 
 pub fn (self RedisInstaller) start() ! {
@@ -82,7 +81,12 @@ pub fn (self RedisInstaller) start() ! {
 
 	mut scr := screen.new()!
 
-	mut s := scr.add(name: name, reset: true,start:true, cmd:'redis-server ${self.configfilepath()}')!
+	mut s := scr.add(
+		name: name
+		reset: true
+		start: true
+		cmd: 'redis-server ${self.configfilepath()}'
+	)!
 
 	for _ in 0 .. 100 {
 		mut res2 := os.execute('redis-cli -c ping')

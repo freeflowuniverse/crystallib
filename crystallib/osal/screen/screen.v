@@ -40,7 +40,7 @@ pub fn (mut t Screen) is_running() !bool {
 }
 
 fn (mut self Screen) kill_() ! {
-	//console.print_debug('kill screen: ${self}')
+	// console.print_debug('kill screen: ${self}')
 	if self.pid == 0 || self.pid < 5 {
 		return error("pid was <5 for ${self}, can't kill")
 	}
@@ -93,7 +93,7 @@ fn (mut self Screen) start_() ! {
 		self.cmd = '/bin/bash'
 	}
 	cmd := 'export TERM=xterm-color && screen -dmS ${self.name} ${self.cmd}'
-	//console.print_debug(" startcmd:'${cmd}'")
+	// console.print_debug(" startcmd:'${cmd}'")
 	res := os.execute(cmd)
 	// console.print_debug(res)
 	if res.exit_code > 1 {

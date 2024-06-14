@@ -14,10 +14,9 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	pl := osal.platform()
-	if pl == .arch {	
+	if pl == .arch {
 		osal.package_install('npm')!
-	}else{
-		return error("only support arch for now")		
+	} else {
+		return error('only support arch for now')
 	}
-
 }

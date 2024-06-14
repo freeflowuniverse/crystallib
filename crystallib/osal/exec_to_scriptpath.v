@@ -42,16 +42,15 @@ pub fn cmd_to_script_path(cmd Command) !string {
 			firstlines += 'cd ${cmd.work_folder}\n'
 		}
 		if cmd.runtime == .herocmd {
-			firstlines+="hero " //put hero on the next line, the cmdcontent will be appended then
-			extension = 'hero'		
-		}	
+			firstlines += 'hero ' // put hero on the next line, the cmdcontent will be appended then
+			extension = 'hero'
+		}
 	} else if cmd.runtime == .python {
 		firstlines = '#!/usr/bin/env python3\n\n'
 		extension = 'py'
 	} else if cmd.runtime == .heroscript {
 		firstlines = '#!/usr/bin/env hero\n\n'
 		extension = 'hero'
-	
 	} else if cmd.runtime == .v {
 		firstlines = '#!/usr/bin/env v\n\n'
 		extension = 'vsh'

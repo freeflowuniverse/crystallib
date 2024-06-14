@@ -81,7 +81,7 @@ fn cmd_init_execute(cmd Command) ! {
 	mut git_reset := cmd.flags.get_bool('gitreset') or { false }
 	mut git_pull := cmd.flags.get_bool('gitpull') or { false }
 
-	//console.print_debug(hero.str())
+	// console.print_debug(hero.str())
 
 	if redis {
 		base.install()!

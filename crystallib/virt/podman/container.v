@@ -21,7 +21,7 @@ pub mut:
 	ports           []string
 	networks        []string
 	labels          map[string]string       @[str: skip]
-	image           &Image               @[str: skip]
+	image           &Image                  @[str: skip]
 	engine          &CEngine                @[skip; str: skip]
 	status          utils.ContainerStatus
 	memsize         int // in MB
@@ -75,7 +75,7 @@ pub fn (mut container Container) halt() ! {
 pub fn (mut container Container) delete() ! {
 	console.print_debug('container delete: ${container.name}')
 	cmd := 'podman rm ${container.id} -f'
-	//console.print_debug(cmd)
+	// console.print_debug(cmd)
 	exec(cmd: cmd, stdout: false)!
 }
 
