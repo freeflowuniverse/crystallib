@@ -6,7 +6,11 @@ After=network.target
 Type=simple
 ExecStart=${self.cmd}
 WorkingDirectory=/tmp
+@if self.restart
 Restart=always
+@else
+Restart=no
+@end
 @{envs}
 
 [Install]

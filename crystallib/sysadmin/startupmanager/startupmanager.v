@@ -35,6 +35,7 @@ pub mut:
 	name        string            @[requred]
 	cmd         string
 	reset       bool
+	restart		bool = true// whether the process should be restarted on failure
 	env         map[string]string
 
 	// start  bool = true
@@ -56,6 +57,9 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 			_ = scr.add(name: args.name, cmd: args.cmd, reset: args.reset)!
 		}
 		.systemd {
+			if args.reset {
+				
+			}
 			console.print_debug('  systemd')
 			mut systemdfactory := systemd.new()!
 			systemdfactory.new(
@@ -63,6 +67,7 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 				name: args.name
 				description: args.description
 				start: true
+				restart: args.restart
 				env: args.env
 			)!
 		}
@@ -143,6 +148,21 @@ pub fn (mut sm StartupManager) status(name string) !ProcessStatus {
 				return .unknown
 			}
 			return ProcessStatus.from(systemd_status.str())
+		}
+		else {
+			panic('to implement, startup manager only support screen & systemd for now')
+		}
+	}
+}
+
+// remove from the startup manager
+pub fn (mut sm StartupManager) output(name string) !string {
+	match sm.cat {
+		.screen {
+			panic('implement')
+		}
+		.systemd {
+			return systemd.journalctl(service: name)!
 		}
 		else {
 			panic('to implement, startup manager only support screen & systemd for now')

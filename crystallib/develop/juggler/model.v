@@ -1,134 +1,51 @@
 module juggler
 
+import freeflowuniverse.crystallib.core.pathlib
+import time
+
+pub struct Trigger {
+pub:
+	event Event
+	script Script
+}
+
 pub struct Event {
 pub:
-	ref           string
-	before        string
-	after         string
-	compare_url   string
-	commits       []Commit
-	total_commits int
-	head_commit   Commit
-	repository    Repository
-	pusher        User
-	sender        User
+	repository Repository
+	commit Commit
+	time time.Time
 }
 
-pub struct Commit {
-pub:
-	id           string
-	message      string
-	url          string
-	author       CommitUser
-	committer    CommitUser
-	verification ?string
-	timestamp    string
-	added        ?[]string
-	removed      ?[]string
-	modified     ?[]string
+pub fn (e Event) name() string {
+	return 'git push ${e.repository.full_name()}'
 }
 
-pub struct CommitUser {
+pub struct Script {
 pub:
-	name     string
-	email    string
-	username string
+	identifier string
+	name string
+	url string
+	path pathlib.Path
+	status string
 }
 
-pub struct Repository {
+// a play of a script due to a trigger that occurs
+pub struct Play {
+	Trigger
 pub:
-	id                                int
-	owner                             User
-	name                              string
-	full_name                         string
-	description                       string
-	empty                             bool
-	private                           bool
-	fork                              bool
-	template                          bool
-	parent                            ?string
-	mirror                            bool
-	size                              int
-	language                          string
-	languages_url                     string
-	html_url                          string
-	url                               string
-	link                              string
-	ssh_url                           string
-	clone_url                         string
-	original_url                      string
-	website                           string
-	stars_count                       int
-	forks_count                       int
-	watchers_count                    int
-	open_issues_count                 int
-	open_pr_counter                   int
-	release_counter                   int
-	default_branch                    string
-	archived                          bool
-	created_at                        string
-	updated_at                        string
-	archived_at                       string
-	permissions                       Permissions
-	has_issues                        bool
-	internal_tracker                  InternalTracker
-	has_wiki                          bool
-	has_pull_requests                 bool
-	has_projects                      bool
-	has_releases                      bool
-	has_packages                      bool
-	has_actions                       bool
-	ignore_whitespace_conflicts       bool
-	allow_merge_commits               bool
-	allow_rebase                      bool
-	allow_rebase_explicit             bool
-	allow_squash_merge                bool
-	allow_rebase_update               bool
-	default_delete_branch_after_merge bool
-	default_merge_style               string
-	default_allow_maintainer_edit     bool
-	avatar_url                        string
-	internal                          bool
-	mirror_interval                   string
-	mirror_updated                    string
-	repo_transfer                     ?string
+	status Status // status of the play
+	output string // output of the play
+	start time.Time // time the play started
+	end time.Time // time the play ended
 }
 
-pub struct Permissions {
-pub:
-	admin bool
-	push  bool
-	pull  bool
+pub fn (p Play) duration() time.Duration {
+	return p.end-p.start
 }
 
-pub struct InternalTracker {
-pub:
-	enable_time_tracker                   bool
-	allow_only_contributors_to_track_time bool
-	enable_issue_dependencies             bool
-}
-
-pub struct User {
-pub:
-	id                  int
-	login               string
-	login_name          string
-	full_name           string
-	email               string
-	avatar_url          string
-	language            string
-	is_admin            bool
-	last_login          string
-	created             string
-	restricted          bool
-	active              bool
-	prohibit_login      bool
-	location            string
-	website             string
-	description         string
-	visibility          string
-	followers_count     int
-	following_count     int
-	starred_repos_count int
-	username            string
+pub enum Status {
+	starting
+	running
+	success
+	error
 }

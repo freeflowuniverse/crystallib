@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.develop.juggler
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.core.base
 import cli { Command, Flag }
 import freeflowuniverse.crystallib.ui.console
 import os
@@ -83,14 +84,18 @@ fn juggler_code_get(cmd Command) !string {
 	}
 
 	if coderoot.len > 0 {
-		panic('coderoot >0 not supported yet, not imeplemented.')
+		// //TODO: make sure this is right way
+		// mut session:= base.context_new(
+    	// 	coderoot:coderoot
+		// )!
+		// panic('coderoot len >0 not implemented')
 	}
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	// interactive := !cmd.flags.get_bool('script') or { false }
 
-	mut gs := gittools.get()!
+	mut gs := gittools.get(coderoot: coderoot)!
 	if url.len > 0 {
 		path = gs.code_get(
 			pull: pull

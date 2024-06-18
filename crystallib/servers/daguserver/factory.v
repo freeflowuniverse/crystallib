@@ -86,7 +86,7 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 	// configure a client to the local instance
 	// the name will be 'local'
 	daguclient.get('local',
-		url: 'http://${cfg.host}:${cfg.port}/api/v1/'
+		url: 'http://${cfg.host}:${cfg.port}'
 		username: 'admin'
 		password: cfg.password
 		apisecret: cfg.secret

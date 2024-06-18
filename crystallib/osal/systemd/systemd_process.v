@@ -18,6 +18,7 @@ pub mut:
 	systemd     &Systemd           @[skip; str: skip]
 	description string
 	info        SystemdProcessInfo
+	restart bool = true // whether process will be restarted upon failure
 }
 
 pub fn (mut self SystemdProcess) servicefile_path() string {

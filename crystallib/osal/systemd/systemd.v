@@ -55,6 +55,7 @@ pub mut:
 	description string
 	env         map[string]string
 	start       bool = true
+	restart bool = true
 }
 
 //```
@@ -70,6 +71,7 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 		name: args.name
 		description: args.description
 		cmd: args.cmd
+		restart: args.restart
 		systemd: &systemd
 		info: SystemdProcessInfo{
 			unit: args.name

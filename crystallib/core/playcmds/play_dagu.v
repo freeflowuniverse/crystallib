@@ -3,6 +3,7 @@ module playcmds
 import freeflowuniverse.crystallib.clients.dagu { DAG }
 import freeflowuniverse.crystallib.servers.daguserver
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
 
 // play_dagu plays the dagu play commands
 pub fn play_dagu(mut plbook playbook.PlayBook) ! {
@@ -20,9 +21,18 @@ pub fn play_dagu(mut plbook playbook.PlayBook) ! {
 			port: port
 			username: username
 			password: password
+
 		)!
 		server.start()!
-		dagu.get(instance, url: 'http://localhost:${port}')!
+		console.print_debug('Dagu server is running at http://localhost:${port}')
+		console.print_debug('Username: ${username} password: ${password}')
+		
+		// configure dagu client with server url and api secret
+		server_cfg := server.config()!
+		dagu.get(instance, 
+			url: 'http://localhost:${port}'
+			apisecret: server_cfg.secret
+		)!
 	} else {
 		mut server := daguserver.get('')!
 		server.start()!

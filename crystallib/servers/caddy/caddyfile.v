@@ -34,8 +34,12 @@ pub fn (file CaddyFile) export() !string {
 
 // generates config for site in caddyfile
 pub fn (block SiteBlock) export() string {
-	mut str := block.address.export()
-	return '${str}{\n${block.reverse_proxy.map(it.export()).join('\n')}\n}'
+	mut str := block.addresses.map(it.export()).join(', ')
+	return '${str} {\n${block.reverse_proxy.map(it.export()).join('\n')}\n${block.file_server.map(it.export()).join('\n')}\n}'
+}
+
+pub fn (fs FileServer) export() string {
+	return 'root * ${fs.path}\nfile_server'
 }
 
 pub fn (addr Address) export() string {

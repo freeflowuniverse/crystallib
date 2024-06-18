@@ -4,12 +4,13 @@ module gittools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
+import os
 
 @[heap]
 pub struct GitStructure {
 pub mut:
 	config   GitStructureConfig // configuration settings
-	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
+	rootpath pathlib.Path = pathlib.get('${os.home_dir()}/code') // path to root code directory
 	repos    []&GitRepo // repositories in gitstructure
 	loaded   bool
 }

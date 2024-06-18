@@ -18,8 +18,13 @@ pub mut:
 
 pub struct SiteBlock {
 pub mut:
-	address       Address
+	addresses       []Address
 	reverse_proxy []ReverseProxy
+	file_server []FileServer
+}
+
+pub struct FileServer {
+	path string
 }
 
 pub struct ReverseProxy {

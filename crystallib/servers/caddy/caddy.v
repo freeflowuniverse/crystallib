@@ -3,6 +3,7 @@ module caddy
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
+import freeflowuniverse.crystallib.sysadmin.startupmanager
 
 // Restart the Caddy
 pub fn (mut self Caddy[Config]) restart() ! {
@@ -11,6 +12,11 @@ pub fn (mut self Caddy[Config]) restart() ! {
 }
 
 pub fn (mut self Caddy[Config]) reverse_proxy(block SiteBlock) ! {
+	mut cfg := self.config()!
+	cfg.file.site_blocks << block
+}
+
+pub fn (mut self Caddy[Config]) add_block(block SiteBlock) ! {
 	mut cfg := self.config()!
 	cfg.file.site_blocks << block
 }
@@ -24,11 +30,30 @@ pub fn (mut self Caddy[Config]) generate() ! {
 }
 
 pub fn (mut self Caddy[Config]) start() ! {
-	caddyinstaller.start()!
-	// osal.exec(cmd:'caddy start')!
+	mut cfg := self.config()!
+	console.print_header('caddy start')
+
+	if cfg.homedir == '' {
+		cfg.homedir = '/tmp/caddy'
+	}
+
+	if !os.exists('/etc/caddy/Caddyfile') {
+		return error("didn't find caddyfile")
+	}
+
+	cmd := 'caddy run --config /etc/caddy/Caddyfile'
+
+	mut sm := startupmanager.get()!
+
+	sm.start(
+		name: 'caddy'
+		cmd: cmd
+	)!
 }
 
 pub fn (mut self Caddy[Config]) stop() ! {
-	osal.exec(cmd: 'caddy stop')!
+	console.print_header('caddy stop')
+	mut sm := startupmanager.get()!
+	sm.stop('caddy')!
 }
 
