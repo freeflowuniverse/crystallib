@@ -84,9 +84,8 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 				$if field.typ is string {
 					v := c.$(field.name)
 					c.$(field.name) = mycontext.secret_decrypt(v)!
-					//console.print_debug('FIELD DECRYPTED: ${field} ${field.name}')		
+					// console.print_debug('FIELD DECRYPTED: ${field} ${field.name}')		
 				}
-				
 			}
 		}
 		self.config_ = &c

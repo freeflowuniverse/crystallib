@@ -1,8 +1,7 @@
 module podman
 
 import freeflowuniverse.crystallib.osal
-//import freeflowuniverse.crystallib.ui.console
-
+// import freeflowuniverse.crystallib.ui.console
 import json
 
 fn (mut e CEngine) builders_load() ! {
@@ -15,14 +14,13 @@ fn (mut e CEngine) builders_load() ! {
 	e.builders = r
 }
 
-
 @[params]
 pub struct BuilderNewArgs {
 pub mut:
-	name         string @[required]
-	from         string = 'docker.io/archlinux:latest'
-	//arch_scratch bool // means start from scratch with arch linux
-	delete       bool = true
+	name string @[required]
+	from string = 'docker.io/archlinux:latest'
+	// arch_scratch bool // means start from scratch with arch linux
+	delete bool = true
 }
 
 pub fn (mut e CEngine) builder_new(args_ BuilderNewArgs) !Builder {

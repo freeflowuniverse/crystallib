@@ -11,7 +11,7 @@ pub fn install() ! {
 		osal.package_install('python3')!
 
 		pl := osal.platform()
-		if pl == .arch {	
+		if pl == .arch {
 			osal.package_install('python-pipx,python-pip,sqlite')!
 		}else{
 			return Error("only support arch.")

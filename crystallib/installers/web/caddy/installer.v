@@ -12,20 +12,19 @@ import os
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset bool
-	start bool
-	restart bool
-	stop bool
-	homedir string
+	reset     bool
+	start     bool
+	restart   bool
+	stop      bool
+	homedir   string
 	file_path string // path to caddyfile
-	file_url string // path to caddyfile
+	file_url  string // path to caddyfile
 }
 
 // install caddy will return true if it was already installed
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '2.8.4'
-
 
 	res := os.execute('${osal.profile_path_source_and()} caddy version')
 	if res.exit_code == 0 {
@@ -39,7 +38,6 @@ pub fn install(args_ InstallArgs) ! {
 	} else {
 		args.reset = true
 	}
-
 
 	if args.reset {
 		console.print_header('install caddy')
@@ -173,7 +171,7 @@ pub fn start(args_ InstallArgs) ! {
 		return error("didn't find caddyfile")
 	}
 
-	cmd:= 'caddy run --config /etc/caddy/Caddyfile'
+	cmd := 'caddy run --config /etc/caddy/Caddyfile'
 
 	mut sm := startupmanager.get()!
 
@@ -181,14 +179,12 @@ pub fn start(args_ InstallArgs) ! {
 		name: 'caddy'
 		cmd: cmd
 	)!
-
 }
 
 pub fn stop() ! {
 	console.print_header('Caddy Stop')
 	mut sm := startupmanager.get()!
 	sm.stop('caddy')!
-
 }
 
 pub fn restart(args InstallArgs) ! {

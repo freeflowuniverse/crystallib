@@ -5,8 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 
-//import freeflowuniverse.crystallib.clients.redisclient
-
+// import freeflowuniverse.crystallib.clients.redisclient
 
 @[heap]
 pub struct Systemd {
@@ -25,15 +24,13 @@ pub fn new() !Systemd {
 	return systemd
 }
 
-//check if systemd is on system, returns True if yes
-pub fn check() !bool{
-
-	if ! osal.cmd_exists("systemctl"){
+// check if systemd is on system, returns True if yes
+pub fn check() !bool {
+	if !osal.cmd_exists('systemctl') {
 		return false
 	}
 
-	return osal.execute_ok("systemctl status --no-pager")
-
+	return osal.execute_ok('systemctl status --no-pager')
 }
 
 fn (mut systemd Systemd) load() ! {
@@ -91,10 +88,10 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 
 	sdprocess.write()!
 
-	if args.start{
+	if args.start {
 		sdprocess.start()!
 	}
-	
+
 	return sdprocess
 }
 
@@ -109,10 +106,9 @@ fn (mut systemd Systemd) setinternal(mut sdprocess SystemdProcess) ! {
 	systemd.processes << &sdprocess
 }
 
-
 pub fn (mut systemd Systemd) get(name_ string) !&SystemdProcess {
 	name := name_fix(name_)
-	if systemd.processes.len == 0{
+	if systemd.processes.len == 0 {
 		systemd.load()!
 	}
 	for item in systemd.processes {
@@ -133,10 +129,10 @@ pub fn (mut systemd Systemd) exists(name_ string) bool {
 	return false
 }
 
-fn name_fix(name_ string)string{
-	mut name:=texttools.name_fix(name_)
-	if name.contains(".service"){
-		name=name.all_before_last(".")
+fn name_fix(name_ string) string {
+	mut name := texttools.name_fix(name_)
+	if name.contains('.service') {
+		name = name.all_before_last('.')
 	}
 	return name
 }

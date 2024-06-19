@@ -12,14 +12,14 @@ import time
 @[params]
 pub struct InstallArgs {
 pub mut:
-	homedir string
+	homedir    string
 	configpath string
-	passwd  string @[secret]
-	secret  string @[secret]
-	title   string = 'My Hero DAG'
-	reset   bool
-	start   bool = true
-	restart bool
+	passwd     string @[secret]
+	secret     string @[secret]
+	title      string = 'My Hero DAG'
+	reset      bool
+	start      bool = true
+	restart    bool
 }
 
 pub fn install(args_ InstallArgs) ! {
@@ -102,7 +102,6 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('dagu start')
 
-	
 	if args.homedir == '' {
 		args.homedir = '${os.home_dir()}/hero/var/dagu'
 	}
@@ -150,7 +149,7 @@ pub fn check(args InstallArgs) !bool {
 	mut conn := httpconnection.new(name: 'dagu', url: 'http://localhost:3333/api/v1/')!
 
 	// console.print_debug("curl http://localhost:3333/api/v1/dags --oauth2-bearer ${secret}")
-	if args.secret.len>0{
+	if args.secret.len > 0 {
 		conn.default_header.add(.authorization, 'Bearer ${args.secret}')
 	}
 	conn.default_header.add(.content_type, 'application/json')

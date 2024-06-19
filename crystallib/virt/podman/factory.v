@@ -8,25 +8,25 @@ import freeflowuniverse.crystallib.osal
 @[params]
 pub struct NewArgs {
 pub mut:
-	install bool = true
-	reset   bool
+	install     bool = true
+	reset       bool
 	herocompile bool
 }
 
 pub fn new(args_ NewArgs) !CEngine {
 	mut args := args_
 
-	if ! osal.is_linux(){
-		return error("only linux supported as host for now")
+	if !osal.is_linux() {
+		return error('only linux supported as host for now')
 	}
 
 	if args.install {
-		crystallib.check()! //will check if install, if not will do
+		crystallib.check()! // will check if install, if not will do
 		podmaninstaller.install()!
 	}
-	
-	if args.herocompile{
-		crystallib.hero_compile(reset:true)!
+
+	if args.herocompile {
+		crystallib.hero_compile(reset: true)!
 	}
 
 	mut engine := CEngine{}

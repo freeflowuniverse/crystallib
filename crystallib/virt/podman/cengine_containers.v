@@ -1,11 +1,10 @@
 module podman
 
 import freeflowuniverse.crystallib.osal { exec }
-//import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
+// import freeflowuniverse.crystallib.data.ipaddress { IPAddress }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.virt.utils
-//import freeflowuniverse.crystallib.ui.console
-
+// import freeflowuniverse.crystallib.ui.console
 
 // load all containers, they can be consulted in e.containers
 // see obj: Container as result in e.containers
@@ -61,7 +60,6 @@ pub mut:
 	// tag    string
 	// digest string
 }
-
 
 // get containers from memory
 // params:
@@ -135,9 +133,6 @@ pub fn (mut e CEngine) containers_delete(args ContainerGetArgs) ! {
 	}
 	e.load()!
 }
-
-
-
 
 pub struct ContainerGetError {
 	Error

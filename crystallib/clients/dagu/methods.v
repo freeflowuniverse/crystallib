@@ -15,7 +15,7 @@ pub fn (mut client DaguClient[Config]) new_dag(dag DAG, opts NewDagOptions) !Pos
 			client.delete_dag(dag.name)!
 		}
 	}
-	
+
 	client.create_dag(dag.name)!
 	return client.edit_dag(dag.name, dag)!
 }

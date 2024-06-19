@@ -1,4 +1,5 @@
 module podman
+
 import freeflowuniverse.crystallib.virt.utils
 import freeflowuniverse.crystallib.osal { exec }
 import time
@@ -26,13 +27,11 @@ fn (mut e CEngine) images_load() ! {
 	}
 }
 
-
 // import podman image back into the local env
 pub fn (mut engine CEngine) image_load(path string) ! {
 	exec(cmd: 'podman load < ${path}', stdout: false)!
 	engine.images_load()!
 }
-
 
 @[params]
 pub struct ImageGetArgs {
@@ -110,9 +109,6 @@ pub fn (mut e CEngine) images_get() ![]Image {
 	return e.images
 }
 
-
-
-
 pub fn (err ImageGetError) msg() string {
 	if err.notfound {
 		return 'Could not find image with args:\n${err.args}'
@@ -132,9 +128,6 @@ pub fn (err ImageGetError) code() int {
 	}
 	panic('unknown error for ImageGetError')
 }
-
-
-
 
 pub struct ImageGetError {
 	Error

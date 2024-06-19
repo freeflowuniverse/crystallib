@@ -42,6 +42,7 @@ pub fn (mut image DockerImage) export(path string) !string {
 pub fn (mut image DockerImage) load(path string) ! {
 	exec(cmd: 'docker load < ${path}', stdout: false)!
 }
+
 @[params]
 pub struct ImageGetArgs {
 pub:

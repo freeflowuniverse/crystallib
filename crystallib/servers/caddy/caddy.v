@@ -22,13 +22,13 @@ pub fn (mut self Caddy[Config]) generate() ! {
 	mut cfg := self.config()!
 	content := cfg.file.export()!
 	mut file := pathlib.get_file(path: '${cfg.homedir}/Caddyfile')!
-	file.write(content) or {panic('failed to write ${err}')}
+	file.write(content) or { panic('failed to write ${err}') }
 }
 
 pub fn (mut self Caddy[Config]) start() ! {
-	osal.exec(cmd:'dagu start')!
+	osal.exec(cmd: 'dagu start')!
 }
 
 pub fn (mut self Caddy[Config]) stop() ! {
-	osal.exec(cmd:'dagu stop')!
+	osal.exec(cmd: 'dagu stop')!
 }

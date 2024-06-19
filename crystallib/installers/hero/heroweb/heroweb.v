@@ -9,7 +9,6 @@ import freeflowuniverse.crystallib.installers.web.caddy
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu
 import freeflowuniverse.crystallib.installers.net.mycelium
 
-
 @[params]
 pub struct InstallArgs {
 pub mut:
@@ -20,11 +19,9 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	mdbook.install(reset:args.reset)!
-	zola.install(reset:args.reset)!
-	dagu.install(reset:args.reset)!
-	caddy.install(reset:args.reset)!
-	mycelium.install(reset:args.reset)!
-
+	mdbook.install(reset: args.reset)!
+	zola.install(reset: args.reset)!
+	dagu.install(reset: args.reset)!
+	caddy.install(reset: args.reset)!
+	mycelium.install(reset: args.reset)!
 }
-

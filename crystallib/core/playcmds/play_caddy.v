@@ -1,6 +1,6 @@
 module playcmds
 
-import freeflowuniverse.crystallib.servers.caddy {Address, ReverseProxy, SiteBlock}
+import freeflowuniverse.crystallib.servers.caddy { Address, ReverseProxy }
 import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
@@ -22,7 +22,7 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		mut p := config_actions[0].params
 		path := p.get_default('path', '/etc/caddy')!
 		url := p.get_default('url', '')!
-		
+
 		mut cfg := c.config()!
 		cfg.homedir = path
 		cfg.url = url
@@ -37,17 +37,19 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		local_port := p.get_int_default('local_port', 0)!
 		local_url := p.get_default('local_url', 'http://localhost')!
 		local_path := p.get_default('local_path', '')!
-		
+
 		c.reverse_proxy(
-			address: Address {
+			address: Address{
 				domain: host
 				port: port
 				description: description
-			},
-			reverse_proxy: [ReverseProxy{
-				path: local_path
-				url: local_url
-			}]
+			}
+			reverse_proxy: [
+				ReverseProxy{
+					path: local_path
+					url: local_url
+				},
+			]
 		)!
 		action.done = true
 	}

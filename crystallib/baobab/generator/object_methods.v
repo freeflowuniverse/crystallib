@@ -27,7 +27,7 @@ pub fn (gen ActorGenerator) generate_object_code(params_ GenerateCrudMethods) Co
 			},
 		]
 		items: [
-			gen.generate_create_method(params),
+			gen.generate_get_method(params),
 			gen.generate_read_method(params),
 			gen.generate_update_method(params),
 			gen.generate_delete_method(params),
@@ -53,7 +53,7 @@ pub:
 // generate_object_methods generates CRUD actor methods for a provided structure
 pub fn (generator ActorGenerator) generate_object_methods(params GenerateCrudMethods) []Function {
 	return [
-		generator.generate_create_method(params),
+		generator.generate_get_method(params),
 		generator.generate_read_method(params),
 		generator.generate_update_method(params),
 		generator.generate_delete_method(params),
@@ -157,7 +157,7 @@ fn (generator ActorGenerator) generate_delete_method(params GenerateCrudMethods)
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn (generator ActorGenerator) generate_create_method(params GenerateCrudMethods) Function {
+fn (generator ActorGenerator) generate_get_method(params GenerateCrudMethods) Function {
 	param_getters := generate_param_getters(
 		structure: params.root_struct
 		prefix: ''

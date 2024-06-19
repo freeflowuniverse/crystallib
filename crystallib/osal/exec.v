@@ -158,8 +158,8 @@ pub fn exec(cmd Command) !Job {
 		// $if debug {
 		// 	console.print_debug('cmd shell: ${cmd.cmd}')
 		// }
-		scriptpath := cmd_to_script_path(job.cmd)!		
-		os.execvp(scriptpath,[])!
+		scriptpath := cmd_to_script_path(job.cmd)!
+		os.execvp(scriptpath, [])!
 		return job
 	}
 	if !cmd.async {
@@ -382,8 +382,7 @@ pub fn execute_interactive(cmd string) ! {
 	exec(cmd: cmd, stdout: true, shell: true)!
 }
 
-
-//executes a cmd, if not error return true
+// executes a cmd, if not error return true
 pub fn execute_ok(cmd string) bool {
 	res := os.execute(cmd)
 	if res.exit_code > 0 {
@@ -391,7 +390,6 @@ pub fn execute_ok(cmd string) bool {
 	}
 	return true
 }
-
 
 pub fn cmd_exists(cmd string) bool {
 	cmd1 := 'which ${cmd}'

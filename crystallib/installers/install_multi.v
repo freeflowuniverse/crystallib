@@ -109,19 +109,19 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'nodejs' {
 				nodejs.install(reset: args.reset)!
-			}		
+			}
 			'python' {
 				python.install()!
-			}	
+			}
 			'herodev' {
 				herodev.install()!
-			}	
+			}
 			'heroweb' {
 				heroweb.install()!
-			}	
+			}
 			'dagu' {
 				dagu.install()!
-			}														
+			}
 			else {
 				return error('cannot find installer for: ${item}')
 			}
