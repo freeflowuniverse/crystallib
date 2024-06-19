@@ -1,7 +1,7 @@
 
 # BuildAH & Podman
 
-```v
+```
 #!/usr/bin/env -S v -w -enable-globals run
 
 import freeflowuniverse.crystallib.virt.podman

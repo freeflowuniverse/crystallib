@@ -115,6 +115,8 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 		gsinstances[gitname] = gs
 	}
 
+	//println(gs.config)
+	
 	return gs
 }
 
