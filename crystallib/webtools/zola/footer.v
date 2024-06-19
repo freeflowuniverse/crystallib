@@ -10,6 +10,7 @@ pub mut:
 }
 
 pub struct FooterAddArgs {
+pub:
 	links    []Link
 	template string
 	logo     string

@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct NewDagOptions {
+pub:
 	overwrite bool // whether to overwrite existing dag with same name
 }
 

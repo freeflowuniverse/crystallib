@@ -6,12 +6,14 @@ import freeflowuniverse.crystallib.core.pathlib
 
 pub struct Section {
 	SectionFrontMatter
+pub:
 	name string
-mut:
+pub mut:
 	pages []ZolaPage @[skip; str: skip]
 }
 
 pub struct SectionFrontMatter {
+pub:
 	title               string
 	description         string
 	draft               bool
