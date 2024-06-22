@@ -24,14 +24,16 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 	mut rows := []elements.Row{}
 	for values in rows_values {
 		rows << elements.Row{
-			cells: values.map(elements.Paragraph{
+			cells: values.map(&elements.Paragraph{
 				content: it
 			})
 		}
 	}
-
+  header_items:=['Row Name', 'Description', 'Tags']
 	table := elements.Table{
-		header: ['Row Name', 'Description', 'Tags']
+		header: header_items.map(&elements.Paragraph{
+				content: it
+			})
 		// TODO: need to use the build in mechanism to filter rows
 		rows: rows
 		alignments: [.left, .left, .left]
