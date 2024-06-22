@@ -2,6 +2,10 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
 
+__global (
+	sheets shared map[string]&Sheet
+)
+
 @[params]
 pub struct SheetNewArgs {
 pub mut:
@@ -31,5 +35,24 @@ pub fn sheet_new(args SheetNewArgs) !Sheet {
 		currency: curr2
 		name: args.name
 	}
+	sheet_set(&sh)
 	return sh
+}
+
+
+//get sheet from global
+pub fn sheet_get(name string) !&Sheet {
+	rlock sheets {
+		if name in sheets {
+			return sheets[name]
+		}
+	}
+	return error("cann't find sheet:'${name}' in global sheets")
+}
+
+//remember sheet in global
+pub fn sheet_set(sh &Sheet) {
+	lock sheets {
+		sheets[sh.name] = sh
+	}
 }

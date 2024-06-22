@@ -78,11 +78,5 @@ pub fn (mut tree Tree) process_defs() ! {
 		}
 	}
 
-	// panic("macro")					
-	// for macro in tree.get_macros(name:"def",actor:"wiki")!{
-	// 	console.print_debug(macro)
-	// 	if true{
-	// 		panic("macro")
-	// 	}
-	// }
+
 }
