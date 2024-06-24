@@ -1,3 +1,0 @@
-module openrpc
-
-// pub struct
