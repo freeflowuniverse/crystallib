@@ -20,7 +20,7 @@ pub fn (j &Juggler[Config]) index(mut ctx Context) veb.Result {
 @[POST]
 pub fn (mut j Juggler[Config]) trigger(mut ctx Context) veb.Result {
     data := ctx.req.data
-    event := json.decode(Event, data) or {panic(err)}
+    event := json.decode(GitEvent, data) or {panic(err)}
 
     dag := j.get_dag(event) or {
         return ctx.text('no dag found for repo')
@@ -43,7 +43,7 @@ pub fn (mut j Juggler[Config]) trigger(mut ctx Context) veb.Result {
 }
 
 // get_dag returns the CI/CD DAG for a given repository
-fn (mut j Juggler[Config]) get_dag(e Event) ?DAG {
+fn (mut j Juggler[Config]) get_dag(e GitEvent) ?DAG {
     cfg := j.config() or {panic(err)}
     repo_url := cfg.repo_url
 	path := if repo_url.len > 0 {

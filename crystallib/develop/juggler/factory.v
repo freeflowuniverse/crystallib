@@ -3,6 +3,7 @@ module juggler
 import os
 import freeflowuniverse.crystallib.servers.caddy
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.baobab.actor
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.servers.daguserver
 
@@ -48,6 +49,10 @@ pub fn configure(cfg Config) !&Juggler {
 	)!
 
 	mut j := Juggler {
+		// Actor: actor.new(
+		// 	name: 'admin'
+		// 	secret: 'planetfirst'
+		// )!
 		name: cfg.name
 		url: cfg.url
 		port: cfg.port
@@ -59,33 +64,36 @@ pub fn configure(cfg Config) !&Juggler {
 		config_url: cfg.config_url
 	}
 
-	j.triggers = j.parse_automations(cfg.config_path)!
+	j.triggers = j.parse_triggers(cfg.config_path)!
+	j.scripts = j.load_scripts()!
 	return &j
 }
 
-fn (j Juggler) parse_automations(config_path string) !map[string]Trigger {
+
+fn (mut j Juggler) parse_triggers(config_path string) !map[string]Trigger {
 	mut config_dir := pathlib.get_dir(path: config_path)!
 	list := config_dir.list() or {panic(err)}
 	repo_paths := list.paths.filter(it.path.trim_string_left(config_path).count('/') == 4)
 	
-	mut automations := map[string]Trigger
+	mut triggers := map[string]Trigger
 	for path in repo_paths {
-		relpath := path.path.trim_string_left(config_dir.path)
-		automations[relpath] = Trigger{
-			// name: '${relpath.all_after('/').all_after('/')} git CI/CD'
-			script: j.load_script(path)
-			// description: 'Git webhook CI/CD for ${relpath}'
-			event: Event{
-				repository: Repository{
-					host: relpath.split('/')[0]
-					owner: relpath.split('/')[1]
-					name: relpath.split('/')[2]
-					branch: relpath.split('/')[3]
-				}
+		relpath := path.path.trim_string_left(config_dir.path).trim('/')
+		repo :=  Repository{
+				host: relpath.split('/')[0]
+				owner: relpath.split('/')[1]
+				name: relpath.split('/')[2]
+				branch: relpath.split('/')[3]
 			}
+		git_trigger := Trigger{
+			name: 'git push ${repo.name} [${repo.branch}]'
+			description: 'git push ${repo.name} [${repo.branch}]'
+			repository: repo
+			script_ids: [j.load_script(path)!.name]
 		}
+		println('why not ${git_trigger.id()}')
+		triggers[git_trigger.id()] = git_trigger
 	}
-	return automations
+	return triggers
 }
 
 // get_repo_playbook returns the CI/CD playbook for a given repository
@@ -122,20 +130,25 @@ fn (j Juggler) get_playbook_dir(args Repository) ?pathlib.Path {
 	} else {none}
 }
 
-// get_repo_playbook returns the CI/CD playbook for a given repository
-fn (j Juggler) get_script(args Repository) ?Script {
-	if args.host == '' {panic('this should never happen')}
+// get_script gets the script to be run by an event
+fn (j Juggler) get_script(event Event) ?Script {
+	if event !is GitEvent { panic('implement') }
+
+	git_event := event as GitEvent
+	repo := git_event.repository
+
+	if repo.host == '' {panic('this should never happen')}
 	
-	host := if args.host == 'github.com' {
+	host := if repo.host == 'github.com' {
 		'github'
-	} else {args.host}
+	} else {repo.host}
 	
 	cicd_dir := pathlib.get_dir(path: j.config_path) or { 
 		panic('this should never happen, juggler configuration gone wrong') 
 	}
 	
 	mut repo_cicd_dir := pathlib.get_dir(
-		path: '${cicd_dir.path}/${host}/${args.owner}/${args.name}'
+		path: '${cicd_dir.path}/${host}/${repo.owner}/${repo.name}'
 	) or { panic('this should never happen') }
 	
 	// use default dag if no branch dag specified
@@ -145,7 +158,7 @@ fn (j Juggler) get_script(args Repository) ?Script {
 	
 	// use default dag if no branch dag specified
 	mut branch_dir := pathlib.get_dir(
-		path: '${repo_cicd_dir.path}/${args.branch}'
+		path: '${repo_cicd_dir.path}/${repo.branch}'
 	) or { panic('this should never happen') }
 	
 	// use branch's own playbook if defined, else use the one for the repo

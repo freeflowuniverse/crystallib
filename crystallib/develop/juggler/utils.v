@@ -17,10 +17,10 @@ pub fn get_event(req http.Request) !Event {
 			return error('Unsupported git service.')
 		}
 	}
-	return Event{...event, time: time.now()}
+	return GitEvent{...event, time: time.now()}
 }
 
-pub fn get_gitea_event(data string) !Event {
+pub fn get_gitea_event(data string) !GitEvent {
 	event := json.decode(GiteaEvent, data) or { 
 		return error('failed to decode gitea event') 
 	}
@@ -38,7 +38,7 @@ pub fn get_gitea_event(data string) !Event {
 	}
 
 	commit := event.commits[0]
-	return Event {
+	return GitEvent {
 		commit: Commit {
 			committer: commit.committer.name
 			hash: commit.id
@@ -50,7 +50,7 @@ pub fn get_gitea_event(data string) !Event {
 	}
 }
 
-pub fn get_github_event(data string) !Event {
+pub fn get_github_event(data string) !GitEvent {
 	payload := json.decode(GitHubPayload, data) or { 
 		return error('failed to decode github event') 
 	}
@@ -62,7 +62,7 @@ pub fn get_github_event(data string) !Event {
 		branch: payload.ref.all_after_last('/')
 	}
 
-	return Event {
+	return GitEvent {
 		repository: repo
 		commit: Commit{
 			hash: payload.commits[0].id
