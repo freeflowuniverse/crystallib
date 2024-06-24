@@ -41,6 +41,7 @@ mut:
 }
 
 pub struct PageAddArgs {
+pub:
 	name       string
 	collection string @[required]
 	file       string @[required]

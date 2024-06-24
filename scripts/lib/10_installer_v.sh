@@ -1,6 +1,6 @@
 
 function v_install {
-    set -ex
+    set -e
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1

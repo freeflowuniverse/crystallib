@@ -26,6 +26,17 @@ playcmds.run(mut plbook)!
 
 ```
 
+## execute a heroscript and make executable
+
+```bash
+#!/usr/bin/env hero
+
+!!play.echo content:'this is just a test'
+
+!!play.echo content:'this is just another test'
+```
+
+you can now just execute this script and hero will interprete the content
 
 
 ## parser

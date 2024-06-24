@@ -37,7 +37,7 @@ struct ServerRoot {
 	server ServerInfo
 }
 
-pub fn (h HetznerClient) servers_list() ![]ServerInfo {
+pub fn (mut h HetznerClient[Config]) servers_list() ![]ServerInfo {
 	mut redis := redisclient.core_get()!
 	mut rkey := 'hetzner.api.list.${h.instance}'
 	mut data := redis.get(rkey)!
@@ -66,7 +66,7 @@ pub mut:
 	name string
 }
 
-pub fn (h HetznerClient) server_info_get(args_ ServerGetArgs) !ServerInfo {
+pub fn (mut h HetznerClient[Config]) server_info_get(args_ ServerGetArgs) !ServerInfo {
 	mut args := args_
 
 	args.name = texttools.name_fix(args.name)
@@ -123,7 +123,7 @@ pub mut:
 }
 
 // put server in rescue mode
-pub fn (h HetznerClient) server_rescue(args ServerRescueArgs) !RescueInfo {
+pub fn (mut h HetznerClient[Config]) server_rescue(args ServerRescueArgs) !RescueInfo {
 	mut serverinfo := h.server_info_get(id: args.id, name: args.name)!
 
 	console.print_header('server ${serverinfo.server_name} goes into rescue mode')
@@ -185,7 +185,7 @@ pub mut:
 	wait bool = true
 }
 
-pub fn (h HetznerClient) server_reset(args ServerRebootArgs) !ResetInfo {
+pub fn (mut h HetznerClient[Config]) server_reset(args ServerRebootArgs) !ResetInfo {
 	mut serverinfo := h.server_info_get(id: args.id, name: args.name)!
 
 	console.print_header('server ${serverinfo.server_name} goes for reset')
@@ -251,7 +251,7 @@ struct Boot {
 	rescue RescueInfo
 }
 
-pub fn (h HetznerClient) server_boot(id int) !RescueInfo {
+pub fn (mut h HetznerClient[Config]) server_boot(id int) !RescueInfo {
 	data := h.request_get('/boot/${id}')!
 
 	console.print_debug(data)

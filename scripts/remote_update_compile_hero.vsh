@@ -3,12 +3,10 @@
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.builder
 import os
-mut server:=""
-env := os.environ()
-if 'SERVER' in env {
-	server= env["SERVER"]
-}
 
+const mydir = os.dir(@FILE)
+
+server:= os.environ()["SERVER"] or {""}
 if server==""{
 	println("specify server you want to debug on as e.g. export SERVER=65.21.132.119")
 	exit(1)

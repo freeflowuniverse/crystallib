@@ -54,7 +54,7 @@ pub fn processmap_get() !ProcessMap {
 // 	rss			int
 // }
 //```
-pub fn procesinfo_get(pid int) !ProcessInfo {
+pub fn processinfo_get(pid int) !ProcessInfo {
 	mut pm := processmap_get()!
 	for pi in pm.processes {
 		if pi.pid == pid {
@@ -64,7 +64,7 @@ pub fn procesinfo_get(pid int) !ProcessInfo {
 	return error('Cannot find process with pid: ${pid}, to get process info from.')
 }
 
-pub fn procesinfo_get_byname(name string) ![]ProcessInfo {
+pub fn processinfo_get_byname(name string) ![]ProcessInfo {
 	mut pm := processmap_get()!
 	mut res := []ProcessInfo{}
 	for pi in pm.processes {
@@ -82,14 +82,23 @@ pub fn procesinfo_get_byname(name string) ![]ProcessInfo {
 	return res
 }
 
-pub fn proces_exists_byname(name string) !bool {
-	res := procesinfo_get_byname(name)!
+pub fn process_exists_byname(name string) !bool {
+	res := processinfo_get_byname(name)!
 	return res.len > 0
+}
+
+pub fn process_exists(pid int) bool {
+	r := os.execute('kill -0 ${pid}')
+	if r.exit_code > 0 {
+		// return error('could not execute kill -0 ${pid}')
+		return false
+	}
+	return true
 }
 
 // return the process and its children
 pub fn processinfo_with_children(pid int) !ProcessMap {
-	mut pi := procesinfo_get(pid)!
+	mut pi := processinfo_get(pid)!
 	mut res := processinfo_children(pid)!
 	res.processes << pi
 	return res
@@ -117,7 +126,7 @@ pub mut:
 // kill process and all the ones underneith
 pub fn process_kill_recursive(args ProcessKillArgs) ! {
 	if args.name.len > 0 {
-		for pi in procesinfo_get_byname(args.name)! {
+		for pi in processinfo_get_byname(args.name)! {
 			process_kill_recursive(pid: pi.pid)!
 		}
 		return
@@ -125,9 +134,11 @@ pub fn process_kill_recursive(args ProcessKillArgs) ! {
 	if args.pid == 0 {
 		return error('need to specify pid or name')
 	}
-	pm := processinfo_with_children(args.pid)!
-	for p in pm.processes {
-		os.execute('kill -9 ${p.pid}')
+	if process_exists(args.pid) {
+		pm := processinfo_with_children(args.pid)!
+		for p in pm.processes {
+			os.execute('kill -9 ${p.pid}')
+		}
 	}
 }
 

@@ -51,7 +51,7 @@ pub fn (mut site ZolaSite) people_add(args PeopleAddArgs) ! {
 }
 
 pub struct PersonAddArgs {
-mut:
+pub mut:
 	name       string
 	page       string
 	collection string

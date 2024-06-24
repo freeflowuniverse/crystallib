@@ -9,8 +9,8 @@ function crystal_deps_install {
         cd secp256k1-0.4.1/
         ./autogen.sh
         ./configure
-        sudo make -j 5
-        sudo make install   
+        make -j 5
+        make install   
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         brew install secp256k1        
     # elif [[ "${OSNAME}" == "arch"* ]]; then
@@ -43,7 +43,6 @@ function crystal_lib_get {
     #execute_with_marker "crystal_deps_install" crystal_deps_install
     execute_with_marker "v_install" v_install
 
-    set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/
     mkdir -p ~/.vmodules/freeflowuniverse/

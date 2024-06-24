@@ -15,6 +15,7 @@ pub mut:
 
 @[params]
 pub struct ScreensNewArgs {
+pub:
 	reset bool
 }
 
@@ -44,6 +45,7 @@ pub fn init_screen_object(item_ map[string]string) Screen {
 // loads screen screen, populate the object
 pub fn (mut self ScreensFactory) scan() ! {
 	self.screens = []Screen{}
+	os.execute('screen -wipe  > /dev/null 2>&1') // make sure its all clean
 	res := os.execute('screen -ls')
 	if res.exit_code > 1 {
 		return error('could not find screen or other error, make sure screen is installed.\n${res.output}')
@@ -64,7 +66,7 @@ pub fn (mut self ScreensFactory) scan() ! {
 		}
 		self.screens << item
 	}
-	console.print_debug(self.str())
+	// console.print_debug(self.str())
 }
 
 pub struct ScreenAddArgs {
@@ -99,7 +101,9 @@ pub fn (mut self ScreensFactory) add(args_ ScreenAddArgs) !Screen {
 	if args.start {
 		self.start(args.name)!
 	}
-	mut myscreen := self.get(args.name)!
+	mut myscreen := self.get(args.name) or {
+		return error('couldnt start screen with name ${args.name}, was not found afterwards.\ncmd:${args.cmd}\nScreens found.\n${self.str()}')
+	}
 
 	if args.attach {
 		myscreen.attach()!
@@ -123,15 +127,20 @@ pub fn (mut self ScreensFactory) get(name string) !Screen {
 			return screen
 		}
 	}
-	return error('couldnt find screen with name ${name}')
+	// print_backtrace()
+	return error('couldnt find screen with name ${name}\nScreens found.\n${self.str()}')
 }
 
 pub fn (mut self ScreensFactory) start(name string) ! {
-	mut s := self.get(name)!
+	mut s := self.get(name) or {
+		return error("can't start screen with name:${name}, couldn't find.\nScreens found.\n${self.str()}")
+	}
 	s.start_()!
 	for {
 		self.scan()!
-		mut s2 := self.get(name)!
+		mut s2 := self.get(name) or {
+			return error('couldnt start screen with name ${name}, was not found in screen scan.\ncmd:\n${s.cmd}\nScreens found.\n${self.str()}')
+		}
 		if s2.pid > 0 {
 			return
 		}
@@ -142,7 +151,7 @@ pub fn (mut self ScreensFactory) start(name string) ! {
 
 pub fn (mut self ScreensFactory) kill(name string) ! {
 	if self.exists(name) {
-		mut s := self.get(name)!
+		mut s := self.get(name) or { return }
 		s.kill_()!
 	}
 	self.scan()!

@@ -9,11 +9,15 @@ pub fn install() ! {
 		base.install()!
 		console.print_header('package install python')
 		osal.package_install('python3')!
-		// cmd := '
-		// '
-		// osal.execute_silent(cmd)!
-		osal.done_set('install_python', 'OK')!
+
+		pl := osal.platform()
+		if pl == .arch {
+			osal.package_install('python-pipx,python-pip,sqlite')!
+		} else {
+			return error('only support arch.')
+		}
 	}
+
 	// console.print_header('python already done')
 }
 

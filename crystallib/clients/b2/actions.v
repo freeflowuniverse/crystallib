@@ -212,7 +212,7 @@ pub fn (mut self B2Client[Config]) list_files(args_ ListBucketArgs) ![]BucketFil
 	res := self.py.exec(cmd: code)!
 	console.print_debug(res)
 	r := json.decode([]BucketFile, res)!
-	console.print_debug(r)
+	console.print_debug(r.str())
 	return r
 }
 

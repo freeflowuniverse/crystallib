@@ -81,7 +81,7 @@ pub fn restart(args_ InstallArgs) ! {
 pub fn stop(args_ InstallArgs) ! {
 	console.print_header('zdb stop')
 	mut sm := startupmanager.get()!
-	sm.kill('zdb')!
+	sm.stop('zdb')!
 }
 
 pub fn start(args_ InstallArgs) ! {

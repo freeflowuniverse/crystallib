@@ -1,8 +1,8 @@
 module doctree
 
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import os
+// import os
 import freeflowuniverse.crystallib.core.texttools
 
 pub fn (mut tree Tree) process_defs() ! {
@@ -77,12 +77,4 @@ pub fn (mut tree Tree) process_defs() ! {
 			mydoc.process()!
 		}
 	}
-
-	// panic("macro")					
-	// for macro in tree.get_macros(name:"def",actor:"wiki")!{
-	// 	console.print_debug(macro)
-	// 	if true{
-	// 		panic("macro")
-	// 	}
-	// }
 }

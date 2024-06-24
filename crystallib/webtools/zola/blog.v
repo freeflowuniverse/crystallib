@@ -54,7 +54,7 @@ pub fn (mut site ZolaSite) blog_add(args BlogAddArgs) ! {
 }
 
 pub struct PostAddArgs {
-mut:
+pub mut:
 	name       string
 	page       string
 	collection string

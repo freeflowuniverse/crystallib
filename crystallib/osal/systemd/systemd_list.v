@@ -42,6 +42,7 @@ pub enum SubState {
 	exited // The service has completed its process and exited. For services that do something at startup and then exit (oneshot services), this is a normal state.
 	failed // The service has failed after starting.
 	waiting // The service is waiting for some condition to be met.
+	autorestart
 }
 
 pub fn process_list() ![]SystemdProcessInfo {
@@ -78,6 +79,7 @@ pub fn process_list() ![]SystemdProcessInfo {
 			'exited' { unit.sub_state = .exited }
 			'failed' { unit.sub_state = .failed }
 			'waiting' { unit.sub_state = .waiting }
+			'auto-restart' { unit.sub_state = .autorestart }
 			else { return error("could not find right sub state for systemd:'${item.sub}") }
 		}
 		res << unit

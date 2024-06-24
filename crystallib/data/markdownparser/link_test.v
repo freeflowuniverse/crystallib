@@ -99,7 +99,7 @@ fn test_link3() {
 
 fn test_link4() {
 	mut docs := new(
-		content: '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
+		content: '[Architecture](https://library.threefold.me/info/threefold?ee=dd#/technology/threefold__technology)'
 	)!
 
 	assert docs.children.len == 1
@@ -111,14 +111,15 @@ fn test_link4() {
 		assert link.id == 3
 		assert link.processed == true
 		assert link.type_name == 'link'
-		assert link.markdown()! == '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)'
+		assert link.markdown()! == '[Architecture](https://library.threefold.me/info/threefold?ee=dd#/technology/threefold__technology)'
+		assert link.anchor == '/technology/threefold__technology'
 		assert link.cat == .html
 		assert link.isexternal == true
 		assert link.include == false
 		assert link.newtab == false
 		assert link.moresites == false
 		assert link.description == 'Architecture'
-		assert link.url == 'https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd'
+		assert link.url == 'https://library.threefold.me/info/threefold?ee=dd'
 		assert link.filename == ''
 		assert link.path == ''
 		assert link.site == ''
@@ -127,7 +128,6 @@ fn test_link4() {
 	} else {
 		assert false, 'last paragraph element is not a link: ${link}'
 	}
-	assert '[Architecture](https://library.threefold.me/info/threefold#/technology/threefold__technology?ee=dd)' == link.markdown()!
 }
 
 // TODO add more tests

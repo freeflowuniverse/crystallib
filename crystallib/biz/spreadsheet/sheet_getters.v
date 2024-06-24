@@ -1,6 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.ui.console
+import math
 
 fn remove_empty_line(txt string) string {
 	mut out := ''
@@ -83,29 +84,30 @@ pub fn (mut s Sheet) data_get_as_list(args RowGetArgs) ![]string {
 // return e.g. "'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6'" if year, is for header
 pub fn (mut s Sheet) header_get_as_string(period_type PeriodType) !string {
 	err_pre := "Can't get header for sheet:${s.name}\n"
-	period_type_s := match period_type {
+	nryears := int(s.nrcol / 12)
+	mut out := ''
+	match period_type {
 		.year {
-			"'Y1', 'Y2', 'Y3', 'Y4', 'Y5'"
+			for i in 1 .. (nryears + 1) {
+				out += "'Y${i}', "
+			}
 		}
 		.quarter {
-			mut out := ''
-			for i in 1 .. (6 * 4 + 1) {
-				out += "'Q${i}' "
+			for i in 1 .. (nryears * 4 + 1) {
+				out += "'Q${i}', "
 			}
-			return out
 		}
 		.month {
-			mut out := ''
-			for i in 1 .. (12 * 6 + 1) {
-				out += "'M${i}' "
+			for i in 1 .. (12 * nryears + 1) {
+				out += "'M${i}', "
 			}
-			return out
 		}
 		else {
 			return error('${err_pre}Period type not well specified')
 		}
 	}
-	return period_type_s
+	out = out.trim_space().trim(',').trim_space()
+	return out
 }
 
 // return the values
@@ -141,7 +143,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 		return error('${err_pre}Vals.len need to be 6, for year.\nhere:\n${vals}')
 	}
 	if args.period_type == .quarter && vals.len != nryears * 4 {
-		return error('${err_pre}vals.len need to be 5*4, for quarter.\nhere:\n${vals}')
+		return error('${err_pre}vals.len need to be 6*4, for quarter.\nhere:\n${vals}')
 	}
 	if args.period_type == .month && vals.len != nryears * 12 {
 		return error('${err_pre}vals.len need to be 6*12, for month.\nhere:\n${vals}')
@@ -157,7 +159,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 		if args.unit == .billion {
 			val = val / 1000000000.0
 		}
-		out += ',${val}'
+		out += ',${math.round_sig(val, 1)}'
 	}
 	return out.trim(',')
 }

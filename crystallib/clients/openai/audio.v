@@ -60,17 +60,17 @@ pub mut:
 
 // create transcription from an audio file
 // supported audio formats are mp3, mp4, mpeg, mpga, m4a, wav, or webm
-pub fn (mut f OpenAIFactory) create_transcription(args AudioArgs) !AudioResponse {
+pub fn (mut f OpenAIClient[Config]) create_transcription(args AudioArgs) !AudioResponse {
 	return f.create_audio_request(args, 'audio/transcriptions')
 }
 
 // create translation to english from an audio file
 // supported audio formats are mp3, mp4, mpeg, mpga, m4a, wav, or webm
-pub fn (mut f OpenAIFactory) create_tranlation(args AudioArgs) !AudioResponse {
+pub fn (mut f OpenAIClient[Config]) create_tranlation(args AudioArgs) !AudioResponse {
 	return f.create_audio_request(args, 'audio/translations')
 }
 
-fn (mut f OpenAIFactory) create_audio_request(args AudioArgs, endpoint string) !AudioResponse {
+fn (mut f OpenAIClient[Config]) create_audio_request(args AudioArgs, endpoint string) !AudioResponse {
 	file_content := os.read_file(args.filepath)!
 	ext := os.file_ext(args.filepath)
 	mut file_mime_type := ''

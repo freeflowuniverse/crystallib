@@ -53,13 +53,16 @@ pub fn build() ! {
 		dest_on_os = '/usr/local/bin'
 	}
 	console.print_debug(' - dest path for mdbooks is on: ${dest_on_os}')
+	osal.package_install('pkg-config,openssl')!
 	mut ok := false
 	cmd := '
 	set +ex
 	rm ${os.home_dir()}/.cargo/bin/mdb* 2>&1 >/dev/null
-	rm ${dest_on_os}/mdb* 2>&1 >/dev/null
+	rm ${dest_on_os}/mdb*  > /dev/null 2>&1
+	source ~/.cargo/env > /dev/null 2>&1
+
 	set -ex
-	source ~/.cargo/env
+	
 	cargo install mdbook
 	cargo install mdbook-mermaid
 	cargo install mdbook-echarts
@@ -76,8 +79,8 @@ pub fn build() ! {
 	defer {
 		if !ok {
 			console.print_debug('ERROR IN INSTALL MDBOOK, WILL ABORT')
-			osal.execute_stdout('rm ${os.home_dir()}/.cargo/bin/mdb*') or {}
-			osal.execute_stdout('rm ${dest_on_os}/mdb*') or {}
+			osal.execute_stdout('rm ${os.home_dir()}/.cargo/bin/mdb*  2>&1 >/dev/null') or {}
+			osal.execute_stdout('rm ${dest_on_os}/mdb*  2>&1 >/dev/null') or {}
 		}
 	}
 	osal.execute_stdout(cmd)!

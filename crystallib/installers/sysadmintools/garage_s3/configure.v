@@ -96,7 +96,7 @@ pub fn start(args_ S3Config) ! {
 pub fn stop() ! {
 	console.print_header('garage stop')
 	mut sm := startupmanager.get()!
-	sm.kill('garage')!
+	sm.stop('garage')!
 }
 
 fn check(args S3Config) !bool {

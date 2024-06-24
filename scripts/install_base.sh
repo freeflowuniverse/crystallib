@@ -483,7 +483,7 @@ function os_update {
         apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release sudo binutils wget pkg-config"
+        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release binutils wget pkg-config"
 
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
@@ -503,13 +503,13 @@ function os_update {
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm mc git tmux curl htop redis wget screen net-tools git htop ca-certificates lsb-release screen
+        pacman -Su --noconfirm arch-install-scripts gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen
 
         # Check if builduser exists, create if not
         if ! id -u builduser > /dev/null 2>&1; then
-            sudo useradd -m builduser
-            echo "builduser:$(openssl rand -base64 32 | sha256sum | base64 | head -c 32)" | sudo chpasswd
-            echo 'builduser ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/builduser
+            useradd -m builduser
+            echo "builduser:$(openssl rand -base64 32 | sha256sum | base64 | head -c 32)" | chpasswd
+            echo 'builduser ALL=(ALL) NOPASSWD: ALL' | tee /etc/sudoers.d/builduser
         fi
 
         if [[ -n "${DEBUG}" ]]; then
@@ -521,13 +521,13 @@ function os_update {
 function paru_install {
     echo ' - paru install'
     pushd /tmp
-    sudo pacman -S --needed --noconfirm base-devel git
+    pacman -S --needed --noconfirm base-devel git
     rm -rf paru
     git clone https://aur.archlinux.org/paru.git
-    sudo chown -R builduser:builduser paru
+    chown -R builduser:builduser paru
 
     # Switch to the regular user to build and install the package
-    sudo -u builduser bash <<EOF
+    -u builduser bash <<EOF
     popd /tmp/paru
     rustup default stable
     makepkg -si --noconfirm
@@ -597,7 +597,7 @@ function redis_test {
 
 
 function v_install {
-    set -ex
+    set -e
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1
@@ -681,8 +681,8 @@ function crystal_deps_install {
         cd secp256k1-0.4.1/
         ./autogen.sh
         ./configure
-        sudo make -j 5
-        sudo make install   
+        make -j 5
+        make install   
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         brew install secp256k1        
     # elif [[ "${OSNAME}" == "arch"* ]]; then
@@ -715,7 +715,6 @@ function crystal_lib_get {
     #execute_with_marker "crystal_deps_install" crystal_deps_install
     execute_with_marker "v_install" v_install
 
-    set +x
     rm -rf ~/.vmodules/freeflowuniverse/
     rm -rf ~/.vmodules/threefoldtech/
     mkdir -p ~/.vmodules/freeflowuniverse/
@@ -801,6 +800,8 @@ function crystal_pull {
 
 
 function hero_install {
+    set -e
+    
     redis_start
 
     os_name="$(uname -s)"
@@ -819,7 +820,7 @@ function hero_install {
     fi
 
     if [[ "${OSNAME}" == "darwin"* ]]; then
-        [ -f /usr/local/bin/hero ] && sudo rm /usr/local/bin/hero
+        [ -f /usr/local/bin/hero ] && rm /usr/local/bin/hero
     fi
 
     if [ -z "$url" ]; then
@@ -879,7 +880,7 @@ function hero_install {
 }
 function freeflow_dev_env_install {
 
-    set -ex
+    set -e
 
     crystal_lib_get
 

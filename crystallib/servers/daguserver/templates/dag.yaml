@@ -1,0 +1,90 @@
+name: @{dag.name}
+description: @{dag.description}
+schedule: @{dag.schedule}
+group: @{dag.group}
+tags: @{dag.tags}
+@if env := dag.env
+env:
+  @for key, val in env
+  - @{key}: @{val}
+  @end
+@end
+logDir: @{dag.log_dir}
+restartWaitSec: @{dag.restart_wait_sec}
+histRetentionDays: @{dag.hist_retention_days}
+delaySec: @{dag.delay_sec}
+maxActiveRuns: @{dag.max_active_runs}
+params: @{dag.params}
+@if preconditions := dag.preconditions
+preconditions:
+  @for precondition in preconditions
+  - condition: @{precondition.condition}
+    expected: @{precondition.expected}
+  @end
+@end
+  @if mail_on := dag.mail_on
+mailOn:
+  failure: @{mail_on.failure}
+  success: @{mail_on.success}
+  @end
+MaxCleanUpTimeSec: @{dag.max_cleanup_time_sec}
+@if handler_on := dag.handler_on
+handlerOn:
+  success:
+    command: @{handler_on.success}
+  failure:
+    command: @{handler_on.failure}
+  cancel:
+    command: @{handler_on.cancel}
+  exit:
+    command: @{handler_on.exit}
+@end
+steps:
+  @for step in dag.steps
+  - name: @{step.name}
+    description: @{step.description}
+    dir: @{step.dir}
+    command: @{step.command}
+    stdout: @{step.stdout}
+    @if output := step.output
+    output: @{output}
+    @end
+    @if script := step.script
+    script: |
+      @{script}
+    @end
+    signalOnStop: @{step.signal_on_stop}
+    @if mail_on := step.mail_on
+    mailOn:
+      failure: @{mail_on.failure}
+      success: @{mail_on.success}
+    @end
+    @if continue_on := step.continue_on
+    continueOn:
+      failure: @{continue_on.failure}
+      skipped: @{continue_on.skipped}
+    @end
+    @if retry_policy := step.retry_policy
+    retryPolicy:
+      limit: @{retry_policy.limit}
+      intervalSec: @{retry_policy.interval_sec}
+    @end
+    @if repeat_policy := step.repeat_policy
+    repeatPolicy:
+      repeat: @{repeat_policy.repeat}
+      intervalSec: @{repeat_policy.interval_sec}
+    @end
+    @if step.preconditions.len>0
+    preconditions:
+      @for precondition in step.preconditions
+      - condition: 
+        expected: @{precondition}
+      @end
+    @end
+    @if step.depends.len>0
+    depends:
+      @for depend in step.depends
+      -  @{depend}
+      @end
+    @end
+  @end

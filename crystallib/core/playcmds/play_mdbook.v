@@ -16,10 +16,10 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 
 	// check if any actions for doctree, if not then nothing to do here
 	dtactions := plbook.find(filter: 'doctree.')!
-	if dtactions.len == 0 {
-		console.print_debug("can't find doctree.add statements, nothing to do")
-		return
-	}
+	// if dtactions.len == 0 {
+	// 	console.print_debug("can't find doctree.add statements, nothing to do")
+	// 	return
+	// }
 
 	mut config_actions := plbook.find(filter: 'books:configure')!
 

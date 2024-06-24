@@ -2,7 +2,7 @@ host: "::"                          # default: 127.0.0.1
 port: 3333
 
 # path to the DAGs directory
-dags: ${homedir}/dags
+dags: ${args.homedir}/dags
 
 # Web UI Color & Title
 # navbarColor: <ui header color>                               # header color for web UI (e.g. "#ff0000")
@@ -16,10 +16,10 @@ isAuthToken: true                                    # enables API token
 authToken: ${args.secret}
 
 # Base Config
-baseConfig: ${homedir}/config.yaml
+baseConfig: ${args.homedir}/config.yaml
 
 # Working Directory
-# workDir: ${homedir}/working                        # default: DAG location
+# workDir: ${args.homedir}/working                        # default: DAG location
 
 # SSL Configuration
 # tls:

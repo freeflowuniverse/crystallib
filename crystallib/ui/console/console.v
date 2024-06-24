@@ -30,7 +30,11 @@ pub fn print_item(txt string) {
 	c.reset()
 }
 
-pub fn print_debug(txt string) {
+pub interface IPrintable {}
+
+pub fn print_debug(i IPrintable) {
+	// to print anything
+	txt := '${i}'.trim_string_left("console.IPrintable('").trim_string_right("')")
 	mut c := get()
 	if c.prev_title || c.prev_item {
 		lf()
@@ -61,6 +65,7 @@ pub fn print_stdout(txt string) {
 	}
 	txt2 := trim(texttools.indent(txt, '    '))
 	cprintln(foreground: .light_blue, text: txt2)
+	// print_backtrace()
 	c.reset()
 }
 

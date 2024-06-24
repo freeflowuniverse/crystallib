@@ -3,7 +3,7 @@ module doctree
 import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link }
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
+// import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut page Page) doc() !&Doc {
@@ -42,20 +42,26 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 				site = collection.name
 			}
 			pointername := '${site}:${name}'
+
+			mut collection_path := '.'
 			if element.cat == .image {
 				console.print_debug('POINTER IMAGE: ' + pointername)
 				if page.tree.image_exists(pointername) {
 					mut linkimage := page.tree.image_get(pointername)!
-					// console.print_debug(" ------- image exists: ${pointername}")
-					if args.dest.len > 0 {
-						mut dest_image_copy := '${args.dest}/img/${linkimage.file_name()}'
-						linkimage.copy(dest_image_copy)!
+					if linkimage.collection.name != page.collection_name {
+						collection_path = '../${linkimage.collection.name}'
 					}
+
+					// if args.dest.len > 0 {
+					// 	mut dest_image_copy := '${args.dest}/img/${linkimage.file_name()}'
+					// 	linkimage.copy(dest_image_copy)!
+					// }
+
 					mut out := ''
 					if element.extra.trim_space() == '' {
-						out = '![${element.description}](img/${linkimage.file_name()})'
+						out = '![${element.description}](${collection_path}/img/${linkimage.file_name()})'
 					} else {
-						out = '![${element.description}](img/${linkimage.file_name()} ${element.extra})'
+						out = '![${element.description}](${collection_path}/img/${linkimage.file_name()} ${element.extra})'
 					}
 
 					mydoc.content_set(element.id, out)
@@ -73,6 +79,9 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 				console.print_debug('POINTER PAGE: ' + pointername)
 				if page.tree.page_exists(pointername) {
 					mut linkpage := page.tree.page_get(pointername)!
+					if linkpage.collection_name != page.collection_name {
+						collection_path = '../${linkpage.collection_name}'
+					}
 					// this is to remember the pages which are linked
 					if pointername !in mydoc.linked_pages {
 						mydoc.linked_pages << pointername
@@ -80,20 +89,22 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 					console.print_debug(' ------- page exists: ${pointername}')
 					mut collection_linkpage := linkpage.collection()!
 					console.print_debug('${collection_linkpage.name}   ----   ${collection.name}  ')
-					if args.dest.len > 0 {
-						if linkpage.name !in args.done {
-							mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
-							console.print_debug(' ------- COPY TO: ${dest_page_copy}')
-							mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
-							linkdoc := linkpage.doc_process_link(args)!
-							p_linked.write(linkdoc.markdown()!)!
-						}
-						args.done << linkpage.name
-					}
-					mut out := '[${element.description}](${linkpage.name}.md)'
+					// if args.dest.len > 0 {
+					// 	if linkpage.name !in args.done {
+					// 		mut dest_page_copy := '${args.dest}/${linkpage.name}.md'
+					// 		console.print_debug(' ------- COPY TO: ${dest_page_copy}')
+					// 		mut p_linked := pathlib.get_file(path: dest_page_copy, create: true)!
+					// 		linkdoc := linkpage.doc_process_link(args)!
+					// 		p_linked.write(linkdoc.markdown()!)!
+					// 	}
+					// 	args.done << linkpage.name
+					// }
+					mut out := '[${element.description}](${collection_path}/${linkpage.name}.md)'
 					console.print_debug(' ------- LINKPAGE SET: ${out}')
 					mydoc.content_set(element.id, out)
 					element.state = .linkprocessed
+					element.processed = false
+					element.process()!
 				} else {
 					collection.error(
 						path: page.path

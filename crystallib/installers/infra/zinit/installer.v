@@ -62,23 +62,9 @@ pub fn install(args_ InstallArgs) ! {
 		source: dest.path
 	)!
 
+	osal.dir_ensure('/etc/zinit')!
+
 	console.print_header('install zinit done')
 
-	start()!
-
-	osal.done_set('install_zinit', 'OK')!
 	return
 }
-
-// start zinit
-pub fn start() ! {
-	start()!
-}
-
-// pub fn stop() ! {
-// }
-
-// pub fn restart() ! {
-// 	stop()!
-// 	start()!
-// }

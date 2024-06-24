@@ -66,7 +66,7 @@ pub mut:
 // script   bool = true // run non interactive
 // reset    bool = true // means we will lose changes (only relevant for clone, pull)
 //```
-pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
+pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	mut args := args_
 	// console.print_debug(args)
 
@@ -89,7 +89,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 	if args.cmd == 'reload' {
 		console.print_header(' - reload gitstructure ${gs.name()}')
 		gs.reload()!
-		return
+		return ''
 	}
 
 	if args.cmd == 'list' {
@@ -99,7 +99,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			account: args.account
 			provider: args.provider
 		)!
-		return
+		return ''
 	}
 
 	mut repos := gs.repos_get(
@@ -131,7 +131,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			g.remove_changes()!
 		}
 		if args.cmd == 'pull' || args.cmd == 'clone' || args.cmd == 'push' {
-			return
+			return g.addr.path()!.path
 		}
 		repos = [g]
 	}
@@ -151,7 +151,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 				r.sourcetree()!
 			}
 		}
-		return
+		return ''
 	}
 
 	if args.cmd in 'pull,push,commit,delete'.split(',') {
@@ -168,7 +168,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 
 		if repos.len == 0 {
 			console.print_header(' - nothing to do.')
-			return
+			return ''
 		}
 
 		// check on repos who needs what
@@ -274,7 +274,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) ! {
 			)!
 		}
 
-		return
+		return ''
 	}
 	// end for the commit, pull, push, delete
 

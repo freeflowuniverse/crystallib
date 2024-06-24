@@ -137,9 +137,13 @@ pub fn (r Row) min() int {
 pub fn (row Row) filter(args_ RowGetArgs) !bool {
 	mut ok := false
 	mut args := args_
-	// QUESTION: This was implemented because some macros use the rowname param instead of namefilter, ok?
-	if args_.namefilter.len == 0 && args_.rowname != '' {
-		args.namefilter = [args_.rowname]
+
+	if args_.namefilter.len == 0 && args.rowname != '' {
+		args.namefilter = [args.rowname]
+	}
+
+	if args.namefilter.len == 0 && args.includefilter.len == 0 && args.excludefilter.len == 0 {
+		return true
 	}
 
 	if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {

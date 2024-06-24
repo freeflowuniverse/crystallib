@@ -77,6 +77,7 @@ fn (self Link) markdown_include() string {
 		}
 	}
 
+	anchor := if self.anchor != '' { '#${self.anchor}' } else { '' }
 	mut out := ''
 	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image
 		|| self.cat == LinkType.code {
@@ -84,14 +85,16 @@ fn (self Link) markdown_include() string {
 		if self.cat == LinkType.image {
 			pre = '!'
 		}
+
 		if self.extra.trim_space() == '' {
-			out = '${pre}[${self.description}](${link_filename})'
+			out = '${pre}[${self.description}](${link_filename}${anchor})'
 		} else {
-			out = '${pre}[${self.description}](${link_filename} ${self.extra})'
+			out = '${pre}[${self.description}](${link_filename}${anchor} ${self.extra})'
 		}
-	} else if self.cat == LinkType.html || self.cat == LinkType.anchor || self.cat == LinkType.data
-		|| self.cat == LinkType.email {
-		out = '[${self.description}](${self.url})'
+	} else if self.cat == .anchor {
+		out = '[${self.description}](${anchor})'
+	} else if self.cat == LinkType.html || self.cat == LinkType.data || self.cat == LinkType.email {
+		out = '[${self.description}](${self.url}${anchor})'
 	} else {
 		panic('bug')
 	}
@@ -116,6 +119,7 @@ pub fn (self Link) markdown() !string {
 
 	mut link_filename := self.filename
 
+	anchor := if self.anchor != '' { '#${self.anchor}' } else { '' }
 	mut out := ''
 	if self.cat == LinkType.page || self.cat == LinkType.file || self.cat == LinkType.image {
 		if self.filename.contains(':') {
@@ -128,14 +132,16 @@ pub fn (self Link) markdown() !string {
 		if self.cat == LinkType.image {
 			pre = '!'
 		}
-		anchor := if self.anchor != '' { '#${self.anchor}' } else { '' }
+
 		if self.extra.trim_space() == '' {
 			out = '${pre}[${description}](${link_filename}${anchor})'
 		} else {
 			out = '${pre}[${description}](${link_filename}${anchor} ${self.extra})'
 		}
+	} else if self.cat == .anchor {
+		out = '[${self.description}](${anchor})'
 	} else if self.cat == LinkType.html || self.cat == LinkType.email {
-		out = '[${description}](${self.url})'
+		out = '[${description}](${self.url}${anchor})'
 	} else {
 		panic('bug')
 	}
@@ -195,7 +201,7 @@ fn (mut link Link) parse() {
 	link.url = link.content.all_after('](').all_before(')').trim_space()
 	if link.url.contains('#') {
 		link.anchor = link.url.all_after('#')
-		// link.url = link.url.all_before('#')
+		link.url = link.url.all_before('#')
 	} else {
 		// TODO: this is temproary fix for non anchor links not working
 		// link.url = '${link.url}#'
@@ -224,7 +230,7 @@ fn (mut link Link) parse() {
 		return
 	}
 
-	if link.url.starts_with('#') {
+	if link.url == '' && link.anchor != '' {
 		link.cat = LinkType.anchor
 		return
 	}
