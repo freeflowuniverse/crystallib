@@ -82,8 +82,8 @@ pub fn (self Table) html() !string {
 pub fn (mut self Table) parse() ! {
 	rows := self.content.split_into_lines()
 
-	if rows.len < 1 {
-		msg := 'table needs to have 1 row at least.\n${self}'
+	if rows.len < 2 {
+		msg := 'table needs to have 2 rows at least.\n${self}'
 		panic(msg)
 		return error(msg)
 	}
