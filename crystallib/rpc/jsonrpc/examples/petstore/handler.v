@@ -3,7 +3,7 @@ module main
 import freeflowuniverse.crystallib.data.rpcwebsocket
 import freeflowuniverse.crystallib.data.jsonrpc
 import log
-import jsonß
+import json
 
 @[heap]
 pub struct PetstoreJsonRpcHandler {
@@ -17,7 +17,7 @@ pub fn (mut handler PetstoreJsonRpcHandler) handle(msg string) !string {
 		'get_pet' {
 			return jsonrpc.call[string, Pet](msg, handler.petstore.get_pet)!
 		}
-		else{
+		else {
 			return error('method ${method} not handled')
 		}
 	}
