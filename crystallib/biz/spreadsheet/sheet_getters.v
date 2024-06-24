@@ -84,14 +84,13 @@ pub fn (mut s Sheet) data_get_as_list(args RowGetArgs) ![]string {
 // return e.g. "'Y1', 'Y2', 'Y3', 'Y4', 'Y5', 'Y6'" if year, is for header
 pub fn (mut s Sheet) header_get_as_string(period_type PeriodType) !string {
 	err_pre := "Can't get header for sheet:${s.name}\n"
-	nryears:=int(s.nrcol/12)
-	mut out:=""
+	nryears := int(s.nrcol / 12)
+	mut out := ''
 	match period_type {
 		.year {
 			for i in 1 .. (nryears + 1) {
 				out += "'Y${i}', "
 			}
-	
 		}
 		.quarter {
 			for i in 1 .. (nryears * 4 + 1) {
@@ -106,9 +105,8 @@ pub fn (mut s Sheet) header_get_as_string(period_type PeriodType) !string {
 		else {
 			return error('${err_pre}Period type not well specified')
 		}
-		
 	}
-	out=out.trim_space().trim(",").trim_space()
+	out = out.trim_space().trim(',').trim_space()
 	return out
 }
 
@@ -120,8 +118,6 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 	nryears := 5
 	err_pre := "Can't get data for sheet:${s.name} row:${args.rowname}.\n"
 	mut s2 := s
-
-
 
 	if args.period_type == .year {
 		s2 = s.toyear(
@@ -163,7 +159,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 		if args.unit == .billion {
 			val = val / 1000000000.0
 		}
-		out += ',${math.round_sig(val,1)}'
+		out += ',${math.round_sig(val, 1)}'
 	}
 	return out.trim(',')
 }

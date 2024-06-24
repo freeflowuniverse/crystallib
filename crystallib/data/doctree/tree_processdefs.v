@@ -77,6 +77,4 @@ pub fn (mut tree Tree) process_defs() ! {
 			mydoc.process()!
 		}
 	}
-
-
 }

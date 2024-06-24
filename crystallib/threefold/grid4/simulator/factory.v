@@ -13,13 +13,12 @@ __global (
 	tfgridsimulators shared map[string]&Simulator
 )
 
-
 pub struct Simulator {
 pub mut:
-	name string
-	sheet     &spreadsheet.Sheet
-	params    SimulatorArgs
-	nodes map[string]&cloudslices.Node
+	name   string
+	sheet  &spreadsheet.Sheet
+	params SimulatorArgs
+	nodes  map[string]&cloudslices.Node
 }
 
 @[params]
@@ -40,9 +39,9 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 	mut args := args_
 
 	// mut cs := currency.new()
-	mut sh := spreadsheet.sheet_new(name:"tfgridsim_${args.name}")!
+	mut sh := spreadsheet.sheet_new(name: 'tfgridsim_${args.name}')!
 	mut sim := Simulator{
-		name:args.name
+		name: args.name
 		sheet: &sh
 		params: args
 		// currencies: cs
@@ -79,8 +78,7 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 	return sim
 }
 
-
-//get sheet from global
+// get sheet from global
 pub fn simulator_get(name string) !&Simulator {
 	rlock tfgridsimulators {
 		if name in tfgridsimulators {
@@ -90,24 +88,19 @@ pub fn simulator_get(name string) !&Simulator {
 	return error("cann't find tfgrid simulator:'${name}' in global tfgridsimulators")
 }
 
-//remember sheet in global
+// remember sheet in global
 pub fn simulator_set(sim Simulator) {
 	lock tfgridsimulators {
 		tfgridsimulators[sim.name] = &sim
 	}
 	spreadsheet.sheet_set(sim.sheet)
-
 }
 
-
-
-//load the mdbook content from path or git
+// load the mdbook content from path or git
 pub fn (mut self Simulator) load() ! {
 	console.print_debug('SIMULATOR LOAD ${self.params.name}')
 
 	mut plbook := playbook.new(path: self.params.path)!
 
 	self.play(mut plbook)!
-
 }
-

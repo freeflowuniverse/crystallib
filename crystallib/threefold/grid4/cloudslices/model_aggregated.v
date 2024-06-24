@@ -6,7 +6,7 @@ pub struct NodeTotal {
 pub mut:
 	id           int
 	name         string
-	cost        f64
+	cost         f64
 	deliverytime time.Time
 	description  string
 	cpu_brand    string
@@ -32,23 +32,23 @@ pub mut:
 
 pub fn (n Node) node_total() NodeTotal {
 	mut total := NodeTotal{
-		id: n.id,
-		name: n.name,
-		cost: n.cost,
-		deliverytime: n.deliverytime,
-		description: n.description,
-		cpu_brand: n.cpu_brand,
-		cpu_version: n.cpu_version,
-		inca_reward: n.inca_reward,
-		image: n.image,
-		mem: n.mem,
-		hdd: n.hdd,
-		ssd: n.ssd,
-		url: n.url,
-		reputation: n.reputation,
-		uptime: n.uptime,
-		continent: n.continent,
-		country: n.country,
+		id: n.id
+		name: n.name
+		cost: n.cost
+		deliverytime: n.deliverytime
+		description: n.description
+		cpu_brand: n.cpu_brand
+		cpu_version: n.cpu_version
+		inca_reward: n.inca_reward
+		image: n.image
+		mem: n.mem
+		hdd: n.hdd
+		ssd: n.ssd
+		url: n.url
+		reputation: n.reputation
+		uptime: n.uptime
+		continent: n.continent
+		country: n.country
 	}
 	for box in n.cloudbox {
 		total.storage_gb += box.storage_gb * f64(box.amount)

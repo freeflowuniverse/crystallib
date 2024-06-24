@@ -86,10 +86,10 @@ fn test_write_tree() {
 		path: doctree.collections_path
 	)!
 
-	write_dir1 := pathlib.get_dir(path: '/tmp/tree_write1' empty: true)!
-	write_dir2 := pathlib.get_dir(path: '/tmp/tree_write2' empty: true)!
-	write_dir3 := pathlib.get_dir(path: '/tmp/tree_write3' empty: true)!
-	
+	write_dir1 := pathlib.get_dir(path: '/tmp/tree_write1', empty: true)!
+	write_dir2 := pathlib.get_dir(path: '/tmp/tree_write2', empty: true)!
+	write_dir3 := pathlib.get_dir(path: '/tmp/tree_write3', empty: true)!
+
 	// write tree1 to another dir
 	tree1.export(dest: write_dir1.path)!
 	// create tree2 from the written tree

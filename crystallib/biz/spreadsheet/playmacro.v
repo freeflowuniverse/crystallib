@@ -5,13 +5,12 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 
 pub fn playmacro(action Action) !string {
-
 	console.print_green('playmacro: ${action}')
 
-
-
-	sheet_name := action.params.get('sheetname') or {return error("can't find sheetname from sheet.chart macro.")}
-	mut sh:= sheet_get(sheet_name)!	
+	sheet_name := action.params.get('sheetname') or {
+		return error("can't find sheetname from sheet.chart macro.")
+	}
+	mut sh := sheet_get(sheet_name)!
 
 	println(sh)
 
@@ -19,7 +18,6 @@ pub fn playmacro(action Action) !string {
 		'graph_title_row', 'wiki_row_overview']
 
 	if action.name in supported_actions {
-
 		// rowname       string   // if specified then its one name
 		// namefilter    []string // only include the exact names as secified for the rows
 		// includefilter []string // to use with tags filter e.g. ['location:belgium_*'] //would match all words starting with belgium
@@ -34,7 +32,7 @@ pub fn playmacro(action Action) !string {
 		// rowname_show  bool = true // show the name of the row
 		// description   string	
 
-		mut p:=action.params	
+		mut p := action.params
 
 		rowname := p.get_default('rowname', '')!
 		namefilter := p.get_list_default('namefilter', [])!
@@ -45,20 +43,20 @@ pub fn playmacro(action Action) !string {
 		title := p.get_default('title', '')!
 		unit := p.get_default('unit', 'normal')!
 		unit_e := match unit {
-			'thousand' { spreadsheet.UnitType.thousand }
-			'million' { spreadsheet.UnitType.million }
-			'billion' { spreadsheet.UnitType.billion }
-			else { spreadsheet.UnitType.normal }
+			'thousand' { UnitType.thousand }
+			'million' { UnitType.million }
+			'billion' { UnitType.billion }
+			else { UnitType.normal }
 		}
 		period_type := p.get_default('period_type', 'year')!
 		if period_type !in ['year', 'month', 'quarter'] {
 			return error('period type needs to be in year,month,quarter')
 		}
 		period_type_e := match period_type {
-			'year' { spreadsheet.PeriodType.year }
-			'month' { spreadsheet.PeriodType.month }
-			'quarter' { spreadsheet.PeriodType.quarter }
-			else { spreadsheet.PeriodType.error }
+			'year' { PeriodType.year }
+			'month' { PeriodType.month }
+			'quarter' { PeriodType.quarter }
+			else { PeriodType.error }
 		}
 		if period_type_e == .error {
 			return error('period type needs to be in year,month,quarter')
@@ -66,7 +64,7 @@ pub fn playmacro(action Action) !string {
 
 		rowname_show := p.get_default_true('rowname_show')
 
-		args := spreadsheet.RowGetArgs{
+		args := RowGetArgs{
 			rowname: rowname
 			namefilter: namefilter
 			includefilter: includefilter
@@ -79,7 +77,7 @@ pub fn playmacro(action Action) !string {
 			rowname_show: rowname_show
 		}
 
-		mut content:=""
+		mut content := ''
 
 		match action.name {
 			// which action is associated with wiki() method
@@ -108,9 +106,7 @@ pub fn playmacro(action Action) !string {
 
 		content += '\n<BR>'
 		return content
-		
 	}
 
-	return ""
-
-}	
+	return ''
+}

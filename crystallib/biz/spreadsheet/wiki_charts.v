@@ -29,13 +29,15 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 			})
 		}
 	}
-  println(rows_values)
-  if true{panic("sss")}
-  header_items:=['Row Name', 'Description', 'Tags']
+	println(rows_values)
+	if true {
+		panic('sss')
+	}
+	header_items := ['Row Name', 'Description', 'Tags']
 	table := elements.Table{
 		header: header_items.map(&elements.Paragraph{
-				content: it
-			})
+			content: it
+		})
 		// TODO: need to use the build in mechanism to filter rows
 		rows: rows
 		alignments: [.left, .left, .left]

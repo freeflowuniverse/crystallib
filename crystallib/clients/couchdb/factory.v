@@ -14,9 +14,9 @@ pub mut:
 @[params]
 pub struct Config {
 pub mut:
-	url       string
-	username  string
-	password  string
+	url      string
+	username string
+	password string
 }
 
 pub fn get(instance string, cfg Config) !CouchDBClient[Config] {
@@ -36,7 +36,7 @@ pub fn get(instance string, cfg Config) !CouchDBClient[Config] {
 		url: '${cfg.url}'
 	)!
 
-	//TODO: ...
+	// TODO: ...
 	// conn.default_header.add(.authorization, 'Bearer ${self.config()!.apisecret}')
 	// req.add_custom_header('x-disable-pagination', 'True') !
 
@@ -44,4 +44,4 @@ pub fn get(instance string, cfg Config) !CouchDBClient[Config] {
 	return self
 }
 
-//TODO: implement play... for configuraton
+// TODO: implement play... for configuraton

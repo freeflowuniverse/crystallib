@@ -9,7 +9,7 @@ pub mut:
 	tags          string
 	descr         string
 	subgroup      string
-	aggregatetype RowAggregateType = .sum	
+	aggregatetype RowAggregateType = .sum
 }
 
 pub fn (mut r Row) copy(args_ RowCopyArgs) !&Row {
@@ -29,10 +29,10 @@ pub fn (mut r Row) copy(args_ RowCopyArgs) !&Row {
 		row_result = *r3
 		for x in 0 .. r.sheet.nrcol {
 			row_result.cells[x].empty = false
-			row_result.cells[x].val = r.cells[x].val 
+			row_result.cells[x].val = r.cells[x].val
 		}
-	}else{
-		return error("name need to be specified:\n${args_}")
+	} else {
+		return error('name need to be specified:\n${args_}')
 	}
 	return &row_result
 }
