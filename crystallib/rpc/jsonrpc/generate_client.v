@@ -1,6 +1,6 @@
 module jsonrpc
 
-import freeflowuniverse.crystallib.core.codemodel {parse_import,parse_function, CodeItem, Result, Param, Attribute, Type, StructField, Function, Module, CodeFile, Struct}
+import freeflowuniverse.crystallib.core.codemodel { Attribute, CodeFile, CodeItem, Function, Module, Param, Struct, StructField, Type, parse_function }
 import freeflowuniverse.crystallib.core.texttools
 
 pub struct GenerateClientConfig {
@@ -9,7 +9,7 @@ pub struct GenerateClientConfig {
 }
 
 pub fn generate_client(config GenerateClientConfig) Module {
-	factory_file := generate_client_factory(config.name) or {panic(err)}
+	factory_file := generate_client_factory(config.name) or { panic(err) }
 	return Module{
 		files: [
 			factory_file,
@@ -22,8 +22,8 @@ pub fn generate_client_factory(name string) !CodeFile {
 	mut code := []CodeItem{}
 	code << generate_client_struct(name)
 	code << generate_ws_factory_code(name)!
-	
-	return CodeFile {
+
+	return CodeFile{
 		mod: name
 		imports: []
 		items: code
@@ -31,29 +31,37 @@ pub fn generate_client_factory(name string) !CodeFile {
 }
 
 pub fn generate_client_struct(name string) Struct {
-	return Struct {
+	return Struct{
 		name: texttools.name_fix_snake_to_pascal(name)
 		fields: [
 			StructField{
 				name: 'transport'
-				typ: Type{ symbol: 'jsonrpc.IRpcTransportClient'}
+				typ: Type{
+					symbol: 'jsonrpc.IRpcTransportClient'
+				}
 				is_mut: true
-			}
+			},
 		]
 	}
 }
 
 pub fn generate_ws_factory_code(name_ string) ![]CodeItem {
 	name := texttools.name_fix_snake_to_pascal(name_)
-	ws_factory_param := Struct {
+	ws_factory_param := Struct{
 		name: 'WsClientConfig'
 		is_pub: true
-		attrs: [Attribute{name: 'params'}]
+		attrs: [Attribute{
+			name: 'params'
+		}]
 		fields: [
 			StructField{
 				name: 'address'
-				typ:Type{symbol:'string'}
-				attrs: [Attribute{name:'required'}]
+				typ: Type{
+					symbol: 'string'
+				}
+				attrs: [Attribute{
+					name: 'required'
+				}]
 			},
 			StructField{
 				name: 'logger'
@@ -113,11 +121,13 @@ pub fn generate_client_method(client_struct Struct, method Function) !Function {
 		return (response as jsonrpc.JsonRpcResponse[${method.result.typ.symbol}]).result'
 	}
 
-	mut func := Function {
+	mut func := Function{
 		...method
 		receiver: Param{
 			name: 'client'
-			typ: Type{symbol:client_struct.name}
+			typ: Type{
+				symbol: client_struct.name
+			}
 			mutable: true
 		}
 		body: '${request_stmt}\n${return_stmt}'

@@ -3,7 +3,7 @@ module parser
 import freeflowuniverse.crystallib.core.pathlib
 
 pub fn parse(source_dir string) Actor {
-	source := pathlib.get_dir(path:source_dir)!
+	source := pathlib.get_dir(path: source_dir)!
 
 	mut source_list := source.list()
 
@@ -16,7 +16,6 @@ pub fn parse(source_dir string) Actor {
 			continue
 		}
 		methods << parse_methods()
-		
 	}
 	code := codeparser.parse_v(seed_dir.path, recursive: true)!
 }

@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.baobab.base
 
 pub struct Story {
 pub mut:
-	id string
+	id   string
 	name string @[required]
-	tag string @[index]
+	tag  string @[index]
 }

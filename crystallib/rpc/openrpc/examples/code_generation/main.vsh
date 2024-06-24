@@ -1,8 +1,8 @@
+import os
+import json
 
-const (
-  doc_path = '${os.dir(@FILE)}/openrpc.json'
-  gen_path = '${os.dir(@FILE)}/gen'
-)
+const doc_path = '${os.dir(@FILE)}/openrpc.json'
+const gen_path = '${os.dir(@FILE)}/gen'
 
 // decode openrpc document into object
 mut doc_file := pathlib.get_file(path: doc_path)!
@@ -15,13 +15,10 @@ handler_code := object.generate_handler()
 server_code := object.generate_server()
 client_code := object.generate_client()
 
-// write code 
+// write code
 gen_dir := pathlib.get_dir(
-  path: gen_path
-  reset: true
+	path: gen_path
+	reset: true
 )!
 
 model_code.write_file()
-handler_code := object.generate_handler()
-server_code := object.generate_server()
-client_code := object.generate_client()

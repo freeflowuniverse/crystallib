@@ -1,4 +1,5 @@
 module main
+
 import freeflowuniverse.crystallib.ui.console
 
 pub fn plain_method() {

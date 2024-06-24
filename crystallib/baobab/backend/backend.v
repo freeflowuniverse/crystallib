@@ -43,7 +43,7 @@ pub fn (mut backend Backend) new[T](obj_ T) !u32 {
 	// 	}
 	// }
 	data := encoderhero.encode[T](obj)!
-	obj.id = db.set(value: data) or {return error('Failed to set data ${err}')}
+	obj.id = db.set(value: data) or { return error('Failed to set data ${err}') }
 	return db.set(id: obj.id, value: encoderhero.encode[T](obj)!)
 }
 
@@ -51,9 +51,7 @@ pub fn (mut backend Backend) set[T](obj T) ! {
 	mut db := backend.dbs.db_get_create(name: get_table_name[T]()) or {
 		return error('Failed to get database for object <${T.name}>\n${err}')
 	}
-	backend.indexer.set[T](obj) or {
-		return error('Failed to set new indices:\n${err}')
-	}
+	backend.indexer.set[T](obj) or { return error('Failed to set new indices:\n${err}') }
 	data := encoderhero.encode[T](obj)!
 	// TODO: see if data changed
 	db.set(value: data)!
@@ -61,15 +59,13 @@ pub fn (mut backend Backend) set[T](obj T) ! {
 
 pub fn (mut backend Backend) delete[T](id u32) ! {
 	backend.indexer.delete[T](id)!
-	mut db := backend.dbs.db_get_create(name:get_table_name[T]())!
+	mut db := backend.dbs.db_get_create(name: get_table_name[T]())!
 	db.delete(id: id)!
 }
 
 pub fn (mut backend Backend) get[T](id u32) !T {
 	mut db := backend.dbs.db_get_create(name: get_table_name[T]())!
-	data := db.get(id: id) or {	
-		return error('Failed to get ${T.name} object with id: ${id}')
-	}
+	data := db.get(id: id) or { return error('Failed to get ${T.name} object with id: ${id}') }
 	if data == '' {
 		return error('Failed to get ${T.name} object with id: ${id}')
 	}

@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.texttools
 pub struct Decoder[T] {
 pub mut:
 	object T
-	data string
+	data   string
 }
 
 pub fn decode[T](data string) !T {
@@ -18,7 +18,7 @@ pub fn decode[T](data string) !T {
 fn decode_struct[T](_ T, data string) !T {
 	mut typ := T{}
 
-	$if T is $struct  {
+	$if T is $struct {
 		obj_name := texttools.name_fix_pascal_to_snake(T.name.all_after_last('.'))
 		action_name := 'define.${obj_name}'
 		actions_split := data.split('!!')
@@ -26,15 +26,16 @@ fn decode_struct[T](_ T, data string) !T {
 
 		mut action_str := ''
 		// action_str := '!!define.${obj_name}'
-		if actions.len == 0 {return T{}}
-		else {
+		if actions.len == 0 {
+			return T{}
+		} else {
 			action_str = actions[0]
 			params_str := action_str.trim_string_left(action_name)
 			params := paramsparser.parse(params_str)!
 			typ = params.decode[T]()!
 		}
 		// panic('debuggge ${t_}\n${actions[0]}')
-		
+
 		// return t_
 		$for field in T.fields {
 			// $if fiel
@@ -63,10 +64,10 @@ fn decode_struct[T](_ T, data string) !T {
 pub fn decode_array[T](_ []T, data string) ![]T {
 	mut arr := []T{}
 	// for i in 0 .. val.len {
-		value := T{}
-		$if T is $struct {
-			arr << decode_struct(value, data)!
-		}
+	value := T{}
+	$if T is $struct {
+		arr << decode_struct(value, data)!
+	}
 	// }
 	return arr
 }

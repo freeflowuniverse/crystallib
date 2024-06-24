@@ -12,7 +12,5 @@ pub struct Petstore {
 
 pub fn (mut handler Petstore) get_pet(name string) !Pet {
 	println('called ${name}')
-	return handler.pets[name] or {
-		return error('Pet `${name}` not found')
-	}
+	return handler.pets[name] or { return error('Pet `${name}` not found') }
 }

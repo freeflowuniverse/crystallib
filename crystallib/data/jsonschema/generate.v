@@ -1,6 +1,6 @@
 module jsonschema
 
-import freeflowuniverse.crystallib.core.codemodel {Struct, Param, Result, Type}
+import freeflowuniverse.crystallib.core.codemodel { Param, Result, Struct, Type }
 
 // struct_to_schema generates a json schema or reference from a struct model
 pub fn sumtype_to_schema(sumtype codemodel.Sumtype) SchemaRef {
@@ -20,7 +20,7 @@ pub fn sumtype_to_schema(sumtype codemodel.Sumtype) SchemaRef {
 }
 
 // struct_to_schema generates a json schema or reference from a struct model
-pub fn struct_to_schema(struct_ codemodel.Struct) SchemaRef {
+pub fn struct_to_schema(struct_ Struct) SchemaRef {
 	mut properties := map[string]SchemaRef{}
 	for field in struct_.fields {
 		mut property_schema := SchemaRef(Schema{})
@@ -53,12 +53,16 @@ pub fn struct_to_schema(struct_ codemodel.Struct) SchemaRef {
 }
 
 pub fn param_to_schema(param Param) SchemaRef {
-	if param.struct_ != Struct{} {return struct_to_schema(param.struct_)}
+	if param.struct_ != Struct{} {
+		return struct_to_schema(param.struct_)
+	}
 	return typesymbol_to_schema(param.typ.symbol)
 }
 
 pub fn result_to_schema(result Result) SchemaRef {
-	if result.structure != Struct{} {return struct_to_schema(result.structure)}
+	if result.structure != Struct{} {
+		return struct_to_schema(result.structure)
+	}
 	return typesymbol_to_schema(result.typ.symbol)
 }
 

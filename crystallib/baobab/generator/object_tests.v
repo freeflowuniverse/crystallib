@@ -11,7 +11,7 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 	consts := CustomCode{"const db_dir = '\${os.home_dir()}/hero/db'
 	const actor_name = '${actor.name}_test_actor'"}
 
-	clean_code := "mut actor := get(name: actor_name)!\nactor.backend.reset()!"
+	clean_code := 'mut actor := get(name: actor_name)!\nactor.backend.reset()!'
 
 	testsuite_begin := Function{
 		name: 'testsuite_begin'
@@ -44,8 +44,8 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 			consts,
 			testsuite_begin,
 			testsuite_end,
-			generate_new_method_test(actor, object)!, 
-			generate_get_method_test(actor, object)!, 
+			generate_new_method_test(actor, object)!,
+			generate_get_method_test(actor, object)!,
 		]
 	}
 
@@ -58,10 +58,10 @@ pub fn generate_object_test_code(actor Struct, object BaseObject) !CodeFile {
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_new_method_test(actor Struct, object BaseObject) !codemodel.Function {
+fn generate_new_method_test(actor Struct, object BaseObject) !Function {
 	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
-	
+
 	required_fields := object.structure.fields.filter(it.attrs.any(it.name == 'required'))
 	mut fields := []string{}
 	for field in required_fields {
@@ -69,25 +69,27 @@ fn generate_new_method_test(actor Struct, object BaseObject) !codemodel.Function
 		fields << field_decl
 	}
 
-	body := "mut actor := get(name: actor_name)!
+	body := 'mut actor := get(name: actor_name)!
 	mut ${object_name}_id := actor.new_${object_name}(${object_type}{${fields.join(',')}})!
 	assert ${object_name}_id == 1
 
 	${object_name}_id = actor.new_${object_name}(${object_type}{${fields.join(',')}})!
-	assert ${object_name}_id == 2"
-	return codemodel.Function{
+	assert ${object_name}_id == 2'
+	return Function{
 		name: 'test_new_${object_name}'
 		description: 'news the ${object_type} with the given object id'
-		result: codemodel.Result{result: true}
+		result: codemodel.Result{
+			result: true
+		}
 		body: body
 	}
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_get_method_test(actor Struct, object BaseObject) !codemodel.Function {
+fn generate_get_method_test(actor Struct, object BaseObject) !Function {
 	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
-	
+
 	required_fields := object.structure.fields.filter(it.attrs.any(it.name == 'required'))
 	mut fields := []string{}
 	for field in required_fields {
@@ -95,20 +97,22 @@ fn generate_get_method_test(actor Struct, object BaseObject) !codemodel.Function
 		fields << field_decl
 	}
 
-	body := "mut actor := get(name: actor_name)!
+	body := 'mut actor := get(name: actor_name)!
 	mut ${object_name} := ${object_type}{${fields.join(',')}}
 	${object_name}.id = actor.new_${object_name}(${object_name})!
-	assert ${object_name} == actor.get_${object_name}(${object_name}.id)!"
-	return codemodel.Function{
+	assert ${object_name} == actor.get_${object_name}(${object_name}.id)!'
+	return Function{
 		name: 'test_get_${object_name}'
 		description: 'news the ${object_type} with the given object id'
-		result: codemodel.Result{result: true}
+		result: codemodel.Result{
+			result: true
+		}
 		body: body
 	}
 }
 
 // generate_object_methods generates CRUD actor methods for a provided structure
-fn generate_filter_test(actor Struct, object BaseObject) !codemodel.Function {
+fn generate_filter_test(actor Struct, object BaseObject) !Function {
 	object_name := texttools.name_fix_pascal_to_snake(object.structure.name)
 	object_type := object.structure.name
 
@@ -123,22 +127,24 @@ fn generate_filter_test(actor Struct, object BaseObject) !codemodel.Function {
 		index_field := '${field.name}: ${val}' // index field assignment line
 		mut fields := [index_field]
 		fields << get_required_fields(object.structure)!
-		index_tests << "${object_name}_id${i} := actor.new_${object_name}(${object_type}{${fields.join(',')}})!
+		index_tests << '${object_name}_id${i} := actor.new_${object_name}(${object_type}{${fields.join(',')}})!
 		${object_name}_list${i} := actor.filter_${object_name}(
 			filter: ${object_type}Filter{${index_field}}
 		)!
 		assert ${object_name}_list${i}.len == 1
 		assert ${object_name}_list${i}[0].${field.name} == ${val}
-		"
+		'
 	}
 
 	body := 'mut actor := get(name: actor_name)!
 	\n${index_tests.join('\n\n')}'
 
-	return codemodel.Function{
+	return Function{
 		name: 'test_filter_${object_name}'
 		description: 'news the ${object_type} with the given object id'
-		result: codemodel.Result{result: true}
+		result: codemodel.Result{
+			result: true
+		}
 		body: body
 	}
 }

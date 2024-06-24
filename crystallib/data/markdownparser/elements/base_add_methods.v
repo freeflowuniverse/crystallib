@@ -51,7 +51,7 @@ pub fn (mut base DocBase) list_new(mut docparent ?&Doc, content string) !&List {
 	a.add_list_item(content)!
 
 	base.children << a
-	
+
 	return &a
 }
 

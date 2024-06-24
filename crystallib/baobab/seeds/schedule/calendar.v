@@ -6,5 +6,5 @@ pub struct Calendar {
 	base.Base
 pub mut:
 	calendar_name string
-	tag string @[index]
+	tag           string @[index]
 }

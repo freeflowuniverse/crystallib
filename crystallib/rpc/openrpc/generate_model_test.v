@@ -2,17 +2,17 @@ module openrpc
 
 import os
 import json
-import freeflowuniverse.crystallib.core.codemodel {Alias, Struct, CodeItem, Attribute}
+import freeflowuniverse.crystallib.core.codemodel { Alias, Struct }
 import freeflowuniverse.crystallib.core.pathlib
 
 const doc_path = '${os.dir(@FILE)}/testdata/openrpc.json'
 
 fn test_generate_model() ! {
-	mut doc_file := pathlib.get_file(path: doc_path)!
+	mut doc_file := pathlib.get_file(path: openrpc.doc_path)!
 	content := doc_file.read()!
 	object := decode(content)!
 	model := object.generate_model()!
-	
+
 	assert model.len == 3
 	assert model[0] is Alias
 	pet_id := model[0] as Alias
@@ -40,7 +40,7 @@ fn test_generate_model() ! {
 	assert pet_struct.fields[2].name == 'tag'
 	assert pet_struct.fields[2].typ.symbol == 'string'
 	assert pet_struct.fields[2].attrs.len == 0
-	
+
 	assert model[2] is Alias
 	pets_alias := model[2] as Alias
 	assert pets_alias.name == 'Pets'

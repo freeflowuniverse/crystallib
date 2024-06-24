@@ -23,14 +23,14 @@ pub struct CrystalBuildArgs {
 pub fn (mut engine CEngine) builderv(args CrystalBuildArgs) !BContainer {
 	// println(engine.bcontainers()!)
 	// println(engine.bimages()!)
-	if ! engine.image_exists(repo:"localhost/builder")!{
-		engine.builder_create() ! 
+	if !engine.image_exists(repo: 'localhost/builder')! {
+		engine.builder_create()!
 	}
 
 	mut builder := engine.bcontainer_new(name: 'builderv', from: 'localhost/builder', delete: true)!
-	console.print_debug("build V & crystal for ")
-	//mount_path := builder.mount_to_path()!
-	//console.print_debug("mountpath: ${mount_path}")
+	console.print_debug('build V & crystal for ')
+	// mount_path := builder.mount_to_path()!
+	// console.print_debug("mountpath: ${mount_path}")
 	// install v and crystallib
 	builder.run(
 		cmd: '
@@ -49,7 +49,7 @@ pub fn (mut engine CEngine) builderv(args CrystalBuildArgs) !BContainer {
 
 	// builder.copy('/usr/local/bin/hero', '/var/builder/bin/hero/')!
 	builder.commit('localhost/builderv')!
-	//builder.delete()!
+	// builder.delete()!
 
 	return builder
 }

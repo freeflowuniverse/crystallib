@@ -117,7 +117,6 @@ fn params_to_descriptors(params []codemodel.Param) []ContentDescriptorRef {
 	return descriptors
 }
 
-
 // get_param_descriptors returns content descriptors generated for a list of params
 fn param_to_descriptor(param codemodel.Param) ContentDescriptorRef {
 	schemaref := jsonschema.param_to_schema(param)
@@ -129,12 +128,17 @@ fn param_to_descriptor(param codemodel.Param) ContentDescriptorRef {
 	})
 }
 
-
 // get_param_descriptors returns content descriptors generated for a list of params
 pub fn result_to_descriptor(result codemodel.Result) ContentDescriptorRef {
 	schemaref := jsonschema.result_to_schema(result)
 
-	name := if result.name != '' {result.name} else if result.typ.symbol != '' { result.typ.symbol } else {'null'}
+	name := if result.name != '' {
+		result.name
+	} else if result.typ.symbol != '' {
+		result.typ.symbol
+	} else {
+		'null'
+	}
 	return ContentDescriptorRef(ContentDescriptor{
 		name: name
 		schema: schemaref

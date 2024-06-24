@@ -13,7 +13,7 @@ pub mut:
 	ignoredefault bool = true // ignore files starting with . and _
 	include_links bool // wether to include links in list
 	dirs_only     bool
-	files_only     bool
+	files_only    bool
 }
 
 // the result of pathlist
@@ -76,7 +76,7 @@ mut:
 	recursive     bool = true
 	ignoredefault bool = true // ignore files starting with . and _
 	dirs_only     bool
-	files_only     bool
+	files_only    bool
 	include_links bool
 }
 
@@ -119,7 +119,7 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 				mut rec_list := new_path.list_internal(args)!
 				all_list << rec_list
 			} else {
-				if !args.files_only{
+				if !args.files_only {
 					all_list << new_path
 				}
 				continue

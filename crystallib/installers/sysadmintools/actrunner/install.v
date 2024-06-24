@@ -61,6 +61,5 @@ pub fn install(args_ InstallArgs) ! {
 		source: dest.path
 	)!
 
-
 	return
 }

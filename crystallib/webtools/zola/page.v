@@ -142,8 +142,8 @@ fn (p PageFrontMatter) markdown() string {
 		}
 		if line.starts_with('updated = ') {
 			// if p.updated.unix_milli() == 0 {
-				line = ''
-				continue
+			line = ''
+			continue
 			// }
 			// line = 'updated = ${p.updated.ymmdd()}'
 		} else if line.starts_with('slug = ') {

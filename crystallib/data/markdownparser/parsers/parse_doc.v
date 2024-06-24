@@ -23,10 +23,10 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 		// console.print_header('- line: ${llast.type_name} \'${line}\'')
 
 		if mut llast is elements.List {
-			if _ := llast.add_list_item(line) {	
+			if _ := llast.add_list_item(line) {
 				parser.next()
 				continue
-			} 
+			}
 
 			parser.ensure_last_is_paragraph()!
 			continue
@@ -152,7 +152,7 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 				}
 			}
 			else {
-				//console.print_debug(llast.str())
+				// console.print_debug(llast.str())
 				panic('parser error, means we got element which is not supported')
 			}
 		}

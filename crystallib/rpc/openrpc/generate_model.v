@@ -1,13 +1,13 @@
 module openrpc
 
-import freeflowuniverse.crystallib.core.codemodel {Struct, CodeItem, Attribute}
-import freeflowuniverse.crystallib.data.jsonschema { Schema, Reference, SchemaRef }
+import freeflowuniverse.crystallib.core.codemodel { CodeItem }
+import freeflowuniverse.crystallib.data.jsonschema { Schema }
 import freeflowuniverse.crystallib.core.texttools
 
 // generate_structs geenrates struct codes for schemas defined in an openrpc document
-pub fn (o OpenRPC) generate_model() ![]codemodel.CodeItem {
-	components := o.components or {return []codemodel.CodeItem{}}
-	mut structs := []codemodel.CodeItem{}
+pub fn (o OpenRPC) generate_model() ![]CodeItem {
+	components := o.components or { return []CodeItem{} }
+	mut structs := []CodeItem{}
 	for key, schema_ in components.schemas {
 		if schema_ is Schema {
 			mut schema := schema_
@@ -19,7 +19,8 @@ pub fn (o OpenRPC) generate_model() ![]codemodel.CodeItem {
 	}
 	return structs
 }
-// // 
+
+// //
 // pub fn (s Schema) to_struct() codemodel.Struct {
 // 	mut attributes := []Attribute{}
 // 	if c.depracated {

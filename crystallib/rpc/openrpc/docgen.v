@@ -1,7 +1,7 @@
 module openrpc
 
 import freeflowuniverse.crystallib.data.jsonschema
-import freeflowuniverse.crystallib.core.codemodel { Function, Struct, Sumtype }
+import freeflowuniverse.crystallib.core.codemodel
 // import freeflowuniverse.crystallib.core.codeparser
 // import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
@@ -103,6 +103,3 @@ import freeflowuniverse.crystallib.core.texttools
 // 		result: result
 // 	}
 // }
-
-
-

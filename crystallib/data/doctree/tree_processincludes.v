@@ -1,4 +1,5 @@
 module doctree
+
 import freeflowuniverse.crystallib.ui.console
 
 fn (tree Tree) process_page_includes(mut page Page, col_name string) ! {

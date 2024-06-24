@@ -28,7 +28,7 @@ pub fn encode[T](val T) !string {
 	$if T is $struct {
 		e.encode_struct[T](val)!
 	} $else $if T is $array {
-		e.add_child_list[T](val,"TODO")
+		e.add_child_list[T](val, 'TODO')
 	} $else {
 		return error('can only add elements for struct or array of structs. \n${val}')
 	}
@@ -126,9 +126,9 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 		val := t.$(field.name)
 		$if val is time.Time {
 			// e.add(val)!
-			panic("time not supported")
+			panic('time not supported')
 		} $else $if val is ourtime.OurTime {
-			panic("ourtime not supported")
+			panic('ourtime not supported')
 			// e.add(val)!
 		} $else $if val is $struct {
 			if field.name[0].is_capital() {
@@ -142,62 +142,62 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 		}
 	}
 }
-	// }
-	// panic(params)
 
-	// $for field in T.fields {
-	// 	val := val0.$(field.name)
+// }
+// panic(params)
 
-	// 	field_attrs := attrs_get(field.attrs)
-	// 	mut field_name := field.name
-	// 	if 'alias' in field_attrs {
-	// 		field_name = field_attrs['alias']
-	// 	}
-	// 	console.print_debug('FIELD: ${field_name} ${field.typ}')
+// $for field in T.fields {
+// 	val := val0.$(field.name)
 
-	// 	e.encode_value(val, field_name)!
-	// }
+// 	field_attrs := attrs_get(field.attrs)
+// 	mut field_name := field.name
+// 	if 'alias' in field_attrs {
+// 		field_name = field_attrs['alias']
+// 	}
+// 	console.print_debug('FIELD: ${field_name} ${field.typ}')
+
+// 	e.encode_value(val, field_name)!
+// }
 
 // encode_value encodes a value
 // pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
-	// $if val is $option {
-	// 	// unwrap and encode optionals
-	// 	workaround := val
-	// 	if workaround != none {
-	// 		e.encode_value(val, key)!
-	// 	}
-	// }
+// $if val is $option {
+// 	// unwrap and encode optionals
+// 	workaround := val
+// 	if workaround != none {
+// 		e.encode_value(val, key)!
+// 	}
+// }
 
-	//  $else $if T is string || T is int || T is bool || T is i64 || T is time.Time{
-	// 	e.params.set(key, '${val}')
-	// } $else $if T is []string {
-	// 	mut v2 := ''
-	// 	for i in val {
-	// 		if i.contains(' ') {
-	// 			v2 += "\"${i}\","
-	// 		} else {
-	// 			v2 += '${i},'
-	// 		}
-	// 	}
-	// 	v2 = v2.trim(',')
-	// 	e.params.set(key, '${v2}')
-	// } $else $if T is []int {
-	// 	mut v2 := ''
-	// 	for i in val {
-	// 		v2 += '${i},'
-	// 	}
-	// 	v2 = v2.trim(',')
-	// 	e.params.set(key, v2.str())
-	// }
-	// $else $if field.typ $enum {
-	// 	e.params.set( field.name,v2.str())
-	// }
-	// $else $if T is $struct{
-	// 	e.add(val)!
-	// } $else {
-	// 	return error("can't find field type ${typeof(val)}")
-	// }
-
+//  $else $if T is string || T is int || T is bool || T is i64 || T is time.Time{
+// 	e.params.set(key, '${val}')
+// } $else $if T is []string {
+// 	mut v2 := ''
+// 	for i in val {
+// 		if i.contains(' ') {
+// 			v2 += "\"${i}\","
+// 		} else {
+// 			v2 += '${i},'
+// 		}
+// 	}
+// 	v2 = v2.trim(',')
+// 	e.params.set(key, '${v2}')
+// } $else $if T is []int {
+// 	mut v2 := ''
+// 	for i in val {
+// 		v2 += '${i},'
+// 	}
+// 	v2 = v2.trim(',')
+// 	e.params.set(key, v2.str())
+// }
+// $else $if field.typ $enum {
+// 	e.params.set( field.name,v2.str())
+// }
+// $else $if T is $struct{
+// 	e.add(val)!
+// } $else {
+// 	return error("can't find field type ${typeof(val)}")
+// }
 
 // fn (e &Encoder) encode_map[T](value T, level int) ! {
 // 	params << json2.curly_open_rune

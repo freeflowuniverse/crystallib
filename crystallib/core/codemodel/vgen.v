@@ -204,8 +204,10 @@ pub fn (gen VGenerator) generate_struct(struct_ Struct) !string {
 
 	prefix := if struct_.is_pub {
 		'pub'
-	} else {''}
-	
+	} else {
+		''
+	}
+
 	priv_fields := struct_.fields.filter(!it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))
 	pub_fields := struct_.fields.filter(!it.is_mut && it.is_pub).map(gen.generate_struct_field(it))
 	mut_fields := struct_.fields.filter(it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))
@@ -239,22 +241,29 @@ pub fn (custom CustomCode) vgen() string {
 pub fn (result Result) vgen() string {
 	result_type := if result.structure.name != '' {
 		result.structure.get_type_symbol()
-	} else if result.typ.symbol == 'void' {''} else {
+	} else if result.typ.symbol == 'void' {
+		''
+	} else {
 		if result.typ.is_array {
 			'[]${result.typ.symbol}'
 		} else {
 			result.typ.symbol
 		}
 	}
-	str := if result.result { '!' } else if result.typ.is_result {'!'} else { '' }
+	str := if result.result {
+		'!'
+	} else if result.typ.is_result {
+		'!'
+	} else {
+		''
+	}
 	return '${str}${result_type}'
-
 }
 
 @[params]
 pub struct WriteOptions {
 	format    bool
 	overwrite bool
-	document bool
-	prefix string
+	document  bool
+	prefix    string
 }

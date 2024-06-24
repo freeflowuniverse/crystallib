@@ -1,6 +1,5 @@
 module texttools
 
-
 pub enum MultiLineStatus {
 	start
 	multiline
@@ -26,7 +25,6 @@ pub fn multiline_to_single(text string) !string {
 		line2 = line2.replace('\t', '    ')
 		mut line2_trimmed := line2.trim_space()
 		if state == .multiline {
-
 			if multiline_end_check(line2_trimmed) {
 				// means we are out of multiline
 				res << multiline_end(multiline_first, multiline)
@@ -39,7 +37,6 @@ pub fn multiline_to_single(text string) !string {
 			continue
 		}
 		if state == .comment {
-
 			if comment_end_check(line2_trimmed) {
 				// means we are out of multiline
 				res << comment_end(comment)
@@ -91,8 +88,6 @@ fn multiline_end(multiline_first string, multiline string) string {
 
 	firstline_content := multiline_first.all_after_first(':').trim_left('" \'')
 	name := multiline_first.all_before(':').trim_space()
-
-
 
 	if firstline_content.trim_space() != '' {
 		multiline2 = "${name}:'${multiline_first}\\n${multiline2}'"
@@ -159,7 +154,6 @@ fn comment_end_check(text string) bool {
 }
 
 fn comment_end(comment []string) string {
-
 	mut out := []string{}
 	for line in comment {
 		out << line.trim(' <->/\n')

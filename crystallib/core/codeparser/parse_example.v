@@ -1,11 +1,12 @@
 module codeparser
+
 // import freeflowuniverse.crystallib.core.codemodel {Example}
 // import freeflowuniverse.crystallib.rpc.openrpc {ExamplePairing}
 
 // pub fn parse_example_pairing(text_ string) !ExamplePairing {
 // 	if !text_.contains('Example:') { return error('no example found fitting format') }
 // 	mut text := text_.all_after('Example:').trim_space()
-	
+
 // 	mut pairing := ExamplePairing{}
 
 // 	if text.contains('assert') {

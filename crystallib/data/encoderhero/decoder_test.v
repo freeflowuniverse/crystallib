@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.core.texttools
 
 struct TestStruct {
-	id int
+	id   int
 	name string
 }
 
@@ -14,26 +14,29 @@ const full_script = '!!define.test_struct id: 42 name: testobject'
 const invalid_script = '!!define.another_struct'
 
 fn test_decode_simple() ! {
-	mut object := decode[TestStruct](blank_script)!
+	mut object := decode[TestStruct](encoderhero.blank_script)!
 	assert object == TestStruct{}
 
-	object = decode[TestStruct](full_script)!
-	assert object == TestStruct{id: 42, name: 'testobject'}
-	
-	object = decode[TestStruct](invalid_script) or {
+	object = decode[TestStruct](encoderhero.full_script)!
+	assert object == TestStruct{
+		id: 42
+		name: 'testobject'
+	}
+
+	object = decode[TestStruct](encoderhero.invalid_script) or {
 		assert true
 		TestStruct{}
 	}
 }
 
 struct ChildStruct {
-	text string
+	text   string
 	number int
 }
 
 struct ComplexStruct {
-	id int
-	name string
+	id    int
+	name  string
 	child ChildStruct
 }
 
@@ -44,18 +47,20 @@ const full_complex = '!!define.complex_struct id: 42 name: testobject
 '
 
 fn test_decode_complex() ! {
-	mut object := decode[ComplexStruct](blank_complex)!
+	mut object := decode[ComplexStruct](encoderhero.blank_complex)!
 	assert object == ComplexStruct{}
 
-	object = decode[ComplexStruct](partial_complex)!
-	assert object == ComplexStruct{id: 42, name: 'testcomplex'}
-	
-	object = decode[ComplexStruct](full_complex) or {
+	object = decode[ComplexStruct](encoderhero.partial_complex)!
+	assert object == ComplexStruct{
+		id: 42
+		name: 'testcomplex'
+	}
+
+	object = decode[ComplexStruct](encoderhero.full_complex) or {
 		assert true
 		ComplexStruct{}
 	}
 }
-
 
 pub struct Base {
 	id int
@@ -69,8 +74,8 @@ pub struct Remark {
 pub struct Person {
 	Base
 mut:
-	name string
-	age  ?int
+	name     string
+	age      ?int
 	birthday time.Time
 	deathday time.Time
 	car      Car
@@ -102,36 +107,35 @@ const person_heroscript = "
 "
 
 const person = Person{
-		id: 1
-		name: 'Bob'
-		age: 21
-		birthday: time.new_time(
-			day: 12
-			month: 12
-			year: 2012
-		)
-		car: Car{
-			name: "Bob's car"
-			year: 2014
-		}
-		profiles: [
-			Profile{
-				platform: 'Github'
-				url: 'github.com/example'
-			},
-		]
+	id: 1
+	name: 'Bob'
+	age: 21
+	birthday: time.new_time(
+		day: 12
+		month: 12
+		year: 2012
+	)
+	car: Car{
+		name: "Bob's car"
+		year: 2014
 	}
+	profiles: [
+		Profile{
+			platform: 'Github'
+			url: 'github.com/example'
+		},
+	]
+}
 
 fn test_decode() ! {
 	mut object := decode[Person]('')!
 	assert object == Person{}
 
-	object = decode[Person](person_heroscript)!
-	assert object == person
-	
+	object = decode[Person](encoderhero.person_heroscript)!
+	assert object == encoderhero.person
+
 	// object = decode[ComplexStruct](full_complex) or {
 	// 	assert true
 	// 	ComplexStruct{}
 	// }
-	
 }

@@ -91,7 +91,8 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 		if 'alias' in field_attrs {
 			key = field_attrs['alias']
 		}
-		$if val is string || val is int || val is bool || val is i64 || val is u32 || val is time.Time {
+		$if val is string || val is int || val is bool || val is i64 || val is u32
+			|| val is time.Time {
 			params.set(key, '${val}')
 		} $else $if field.typ is []string {
 			mut v2 := ''
@@ -121,7 +122,8 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 			// TODO: Handle embeds better
 			is_embed := field.name[0].is_capital()
 			if is_embed {
-				$if val is string || val is int || val is bool || val is i64 || val is u32 || val is time.Time {
+				$if val is string || val is int || val is bool || val is i64 || val is u32
+					|| val is time.Time {
 					params.set(key, '${val}')
 				}
 			} else {
@@ -133,7 +135,8 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 					}
 				}
 			}
-		} $else {}
+		} $else {
+		}
 	}
 	return params
 }

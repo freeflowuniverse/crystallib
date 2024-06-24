@@ -4,7 +4,7 @@ import v.ast
 import v.parser
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.codemodel { parse_import,parse_consts, CodeFile, Import, CodeItem, Function, Param, Result, Struct, StructField, Sumtype, Type }
+import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -37,7 +37,7 @@ pub fn parse_v(path_ string, vparser VParser) ![]CodeItem {
 
 // parse_vpath parses the v code files and returns codeitems in a given path
 // can be recursive or not based on the parsers configuration
-fn (vparser VParser) parse_vpath(mut path pathlib.Path, mut table &ast.Table) ![]CodeItem {
+fn (vparser VParser) parse_vpath(mut path pathlib.Path, mut table ast.Table) ![]CodeItem {
 	mut code := []CodeItem{}
 	// mut table := ast.new_table()
 	// fpref := &pref.Preferences{ // preferences for parsing
@@ -84,7 +84,7 @@ pub fn parse_file(path string, vparser VParser) !CodeFile {
 	mut file := pathlib.get_file(path: path)!
 	mut table := ast.new_table()
 	items := vparser.parse_vfile(file.path, mut table)
-	return CodeFile {
+	return CodeFile{
 		imports: parse_imports(file.read()!)
 		consts: parse_consts(file.read()!)!
 		items: items
@@ -96,7 +96,7 @@ pub fn parse_imports(code string) []Import {
 }
 
 // parse_vfile parses and returns code items from a v code file
-fn (vparser VParser) parse_vfile(path string, mut table &ast.Table) []CodeItem {
+fn (vparser VParser) parse_vfile(path string, mut table ast.Table) []CodeItem {
 	$if debug {
 		console.print_debug('Parsing file `${path}`')
 	}
@@ -107,8 +107,8 @@ fn (vparser VParser) parse_vfile(path string, mut table &ast.Table) []CodeItem {
 		is_fmt: true
 	}
 	file_ast := parser.parse_file(path, mut table, .parse_comments, fpref)
-	mut file := pathlib.get_file(path: path) or {panic(err)}
-	file_text := file.read() or {panic(err)}
+	mut file := pathlib.get_file(path: path) or { panic(err) }
+	file_text := file.read() or { panic(err) }
 	mut preceeding_comments := []ast.Comment{}
 
 	for stmt in file_ast.stmts {
@@ -229,7 +229,7 @@ struct VFuncArgs {
 	comments []ast.Comment // v comments that belong to the function
 	fn_decl  ast.FnDecl    // v.ast parsed function declaration
 	table    &ast.Table    // ast table used for getting typesymbols from
-	text string
+	text     string
 }
 
 // parse_vfunc parses function args into function struct
@@ -272,16 +272,16 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 
 	text_lines := args.text.split('\n')
 	fn_lines := text_lines.filter(it.contains('fn') && it.contains(' ${args.fn_decl.short_name}('))
-	fn_line := fn_lines[0] or {panic('this should never happen')}
+	fn_line := fn_lines[0] or { panic('this should never happen') }
 	line_i := text_lines.index(fn_line)
 	end_i := line_i + text_lines[line_i..].index('}')
 
-	fn_text := text_lines[line_i..end_i+1].join('\n')
+	fn_text := text_lines[line_i..end_i + 1].join('\n')
 	// mut fn_index := args.text.index(args.fn_decl.short_name) or {panic('this should never happen1')}
 	// text_cropped := args.text[..fn_index] or {panic('this should never happen2')}
 	// fn_start := text_cropped.last_index('fn ') or {panic('this should never happen3 \n-${text_cropped}')}
 	// fn_text := args.text[fn_start..] or {panic('this should never happen4')}
-	fn_parsed := codemodel.parse_function(fn_text) or {panic(err)}
+	fn_parsed := codemodel.parse_function(fn_text) or { panic(err) }
 
 	return Function{
 		name: args.fn_decl.short_name

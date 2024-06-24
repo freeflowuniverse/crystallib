@@ -51,12 +51,19 @@ pub fn (func Function) generate_call(params GenerateCallParams) !string {
 	if func.result.typ.symbol != '' {
 		call = 'result := '
 	}
-	call += if params.receiver != '' {'${params.receiver}.${func.name}'} else if func.receiver.name != '' {'${func.receiver.name}.${func.name}'
-	} else {func.name}
+	call += if params.receiver != '' {
+		'${params.receiver}.${func.name}'
+	} else if func.receiver.name != '' {
+		'${func.receiver.name}.${func.name}'
+	} else {
+		func.name
+	}
 
 	call += if func.params.len != 0 {
-		"(${func.params.map(it.generate_value()!).join(',')})"
-	} else {'()'}
+		'(${func.params.map(it.generate_value()!).join(',')})'
+	} else {
+		'()'
+	}
 
 	if func.result.result {
 		call += '!'
@@ -66,18 +73,17 @@ pub fn (func Function) generate_call(params GenerateCallParams) !string {
 
 @[params]
 pub struct GenerateValueParams {
-
 }
 
 pub fn (param Param) generate_value() !string {
 	if param.typ.symbol == 'string' {
 		return "'mock_string_${rand.string(3)}'"
-	} else if param.typ.symbol == 'int' || param.typ.symbol == 'u32'{
+	} else if param.typ.symbol == 'int' || param.typ.symbol == 'u32' {
 		return '42'
 	} else if param.typ.symbol[0].is_capital() {
 		return '${param.typ.symbol}{}'
 	} else {
 		println('mock values for types other than strings and ints are not yet supported')
-	}	
+	}
 	return ''
 }

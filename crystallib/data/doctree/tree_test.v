@@ -64,7 +64,7 @@ fn match_pages(mut pages1 map[string]&Page, mut pages2 map[string]&Page) ! {
 
 		page1_doc := page1.doc()!
 
-		page2_doc := page2.doc()!	
+		page2_doc := page2.doc()!
 		mypath := page1_doc.path or { pathlib.Path{} }
 		md := page1_doc.markdown()!
 		md2 := page2_doc.markdown()!

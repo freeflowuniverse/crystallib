@@ -10,7 +10,7 @@ mut:
 	transport &jsonrpc.IRpcTransportClient
 }
 
-pub struct Pet{}
+pub struct Pet {}
 
 pub fn (mut client PetstoreJsonRpcClient) get_pet(name string) !Pet {
 	request := jsonrpc.new_jsonrpcrequest[string]('get_pet', name)
@@ -21,14 +21,14 @@ pub fn (mut client PetstoreJsonRpcClient) get_pet(name string) !Pet {
 @[params]
 pub struct ClientConfig {
 	address string
-	logger log.Logger
+	logger  log.Logger
 }
 
 // rpcwebsocket.RpcWsClient
 pub fn new_petstore_json_rpc_ws_client(config ClientConfig) !PetstoreJsonRpcClient {
 	mut transport := rpcwebsocket.new_rpcwsclient(config.address, config.logger)!
 	spawn transport.run()
-	return PetstoreJsonRpcClient {
+	return PetstoreJsonRpcClient{
 		transport: transport
 	}
 }

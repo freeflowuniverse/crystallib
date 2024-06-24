@@ -6,16 +6,15 @@ import os
 
 const scriptspath = os.dir(@FILE) + '/../../../scripts'
 
-
-fn script_write(mybase string, name string, cmd_ string)!{
-	cmd:=texttools.dedent(cmd_)
+fn script_write(mybase string, name string, cmd_ string) ! {
+	cmd := texttools.dedent(cmd_)
 	mut out := '${mybase}\n'
-	for line in cmd.split_into_lines(){
-		out+="${line}\n"
+	for line in cmd.split_into_lines() {
+		out += '${line}\n'
 	}
 	mut p := pathlib.get_file(path: '${base.scriptspath}/${name}.sh', create: true)!
 	p.write(out)!
-	os.chmod(p.path, 0o777)!	
+	os.chmod(p.path, 0o777)!
 }
 
 pub fn bash_installers_package() !string {
@@ -45,29 +44,25 @@ pub fn bash_installers_package() !string {
 		out += c
 	}
 
-	script_write(out,"install_base","
+	script_write(out, 'install_base', "
 			echo 'BASE INSTALL OK'
 		")!
 
-	script_write(out,"installer","
+	script_write(out, 'installer', "
 		freeflow_dev_env_install
 		echo 'V & CRYSTAL INSTALL OK'
 		")!
 
-	script_write(out,"build_hero","
+	script_write(out, 'build_hero', "
 		hero_build
 		echo 'BUILD HERO OK'
 		")!
 
-	script_write(out,"install_hero","
+	script_write(out, 'install_hero', "
 		hero_install
 		echo 'BUILD HERO OK'
-		")!								
-
-
+		")!
 
 	mut p4 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
 	return p4.path
-
-
 }

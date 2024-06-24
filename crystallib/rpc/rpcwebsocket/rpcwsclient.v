@@ -81,6 +81,6 @@ pub fn new_client(address string, logger &log.Logger) !&RpcWsClient {
 		logger: unsafe { logger }
 	}
 	c.on_message(rpcwsclient.on_message)
-	c.connect() or {return error('Websocket client failed to connect:\n${err}')}
+	c.connect() or { return error('Websocket client failed to connect:\n${err}') }
 	return &rpcwsclient
 }

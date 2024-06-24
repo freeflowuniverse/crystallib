@@ -1,4 +1,5 @@
 module jsonschema
+
 import freeflowuniverse.crystallib.ui.console
 
 fn test_encode_simple() ! {

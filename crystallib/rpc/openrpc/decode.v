@@ -7,21 +7,28 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.jsonschema { Reference, decode_schemaref }
 
 pub fn decode(data string) !OpenRPC {
-	mut object := json.decode(OpenRPC, data) or {return error('Failed to decode json\n${err}')}
+	mut object := json.decode(OpenRPC, data) or { return error('Failed to decode json\n${err}') }
 	data_map := json2.raw_decode(data)!.as_map()
 	if 'components' in data_map {
-		object.components = decode_components(data_map) or {return error('Failed to decode components\n${err}')}
+		object.components = decode_components(data_map) or {
+			return error('Failed to decode components\n${err}')
+		}
 	}
-
 
 	for i, method in data_map['methods'].arr() {
 		method_map := method.as_map()
 		params_arr := method_map['params'].arr()
 		result := if 'result' in method_map {
 			method_map['result']
-		} else {''}
-		object.methods[i].params = params_arr.map(decode_content_descriptor_ref(it.as_map()) or {return error('Failed to decode params\n${err}')})
-		object.methods[i].result = decode_content_descriptor_ref(result.as_map()) or {return error('Failed to decode result\n${err}')}
+		} else {
+			''
+		}
+		object.methods[i].params = params_arr.map(decode_content_descriptor_ref(it.as_map()) or {
+			return error('Failed to decode params\n${err}')
+		})
+		object.methods[i].result = decode_content_descriptor_ref(result.as_map()) or {
+			return error('Failed to decode result\n${err}')
+		}
 	}
 	// object.methods = decode_method(data_map['methods'].as_array)!
 	return object

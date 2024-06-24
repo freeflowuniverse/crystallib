@@ -55,7 +55,9 @@ pub fn (schema Schema) vstructs_encode() ![]string {
 // code_type generates a typesymbol for the schema
 pub fn (schema Schema) vtype_encode() !string {
 	mut property_str := ''
-	if schema.typ == 'null' {return ''}
+	if schema.typ == 'null' {
+		return ''
+	}
 	if schema.typ == 'object' {
 		if schema.title == '' {
 			return error('Object schemas must define a title.')
@@ -165,9 +167,12 @@ pub fn (schema SchemaRef) to_struct_field(name string) !StructField {
 
 pub fn (sr SchemaRef) to_code() !Type {
 	return if sr is Reference {
-		sr.to_type() 
+		sr.to_type()
 	} else {
-		Type{symbol:(sr as Schema).vtype_encode()!}}
+		Type{
+			symbol: (sr as Schema).vtype_encode()!
+		}
+	}
 }
 
 pub fn (ref Reference) to_type_symbol() string {

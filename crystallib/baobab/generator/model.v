@@ -1,6 +1,6 @@
 module generator
 
-import freeflowuniverse.crystallib.core.codemodel {Struct, Module, Function}
+import freeflowuniverse.crystallib.core.codemodel { Function, Module, Struct }
 import os
 
 pub struct ActorGenerator {
@@ -9,12 +9,12 @@ pub struct ActorGenerator {
 
 pub struct Actor {
 pub mut:
-	name string
+	name        string
 	description string
-	structure Struct
-	mod Module
-	methods []ActorMethod
-	objects []BaseObject
+	structure   Struct
+	mod         Module
+	methods     []ActorMethod
+	objects     []BaseObject
 }
 
 pub struct ActorMethod {
@@ -26,6 +26,6 @@ pub:
 pub struct BaseObject {
 pub:
 	structure Struct
-	methods []Function
-	children []Struct
+	methods   []Function
+	children  []Struct
 }

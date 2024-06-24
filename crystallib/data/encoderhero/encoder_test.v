@@ -5,7 +5,7 @@ import time
 import v.reflection
 
 struct Base {
-	id int
+	id      int
 	remarks []Remark
 }
 
@@ -16,8 +16,8 @@ struct Remark {
 struct Person {
 	Base
 mut:
-	name string
-	age  ?int = 20
+	name     string
+	age      ?int = 20
 	birthday time.Time
 	deathday ?time.Time
 	car      Car
@@ -49,27 +49,27 @@ const person_heroscript = "
 "
 
 const person = Person{
-		id: 1
-		name: 'Bob'
-		age: 21
-		birthday: time.new_time(
-			day: 12
-			month: 12
-			year: 2012
-		)
-		car: Car{
-			name: "Bob's car"
-			year: 2014
-		}
-		profiles: [
-			Profile{
-				platform: 'Github'
-				url: 'github.com/example'
-			},
-		]
+	id: 1
+	name: 'Bob'
+	age: 21
+	birthday: time.new_time(
+		day: 12
+		month: 12
+		year: 2012
+	)
+	car: Car{
+		name: "Bob's car"
+		year: 2014
 	}
+	profiles: [
+		Profile{
+			platform: 'Github'
+			url: 'github.com/example'
+		},
+	]
+}
 
 fn test_encode() ! {
-	person_script := encode[Person](person)!
+	person_script := encode[Person](encoderhero.person)!
 	assert person_script.trim_space() == encoderhero.person_heroscript.trim_space()
 }

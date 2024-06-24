@@ -5,7 +5,6 @@ module codeparser
 // assert some_function('input_string') == 'output_string'
 // "
 
-
 // // "examples": [
 // //         {
 // //           "name": "getPetExample",

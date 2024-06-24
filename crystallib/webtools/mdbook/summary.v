@@ -12,7 +12,7 @@ pub mut:
 	errors      []SummaryItem // means we found errors, so we need to add to summary
 	addpages    []SummaryItem // means we found pages as links, so we need to add them to the summary
 	collections []string
-	production bool
+	production  bool
 }
 
 pub struct SummaryItem {
@@ -28,7 +28,9 @@ pub fn (mut book MDBook) summary(production bool) !Summary {
 	if !os.exists(book.args.summary_path) {
 		panic("summary file doesn't exist")
 	}
-	mut summary := Summary{production:production}
+	mut summary := Summary{
+		production: production
+	}
 	mut summary_path := pathlib.get_file(path: book.args.summary_path, create: false)!
 	c := summary_path.read()!
 
@@ -168,14 +170,13 @@ pub fn (mut self Summary) str() string {
 		out << '${pre}- [${item.description}](${item.collection}/${item.pagename})'
 	}
 
-	if self.production{
+	if self.production {
 		return out.join_lines()
 	}
 
 	if self.errors.len > 0 || self.addpages.len > 0 {
 		out << '- [_](additional/additional.md)'
 	}
-
 
 	if self.errors.len > 0 {
 		out << '  - [errors](additional/errors.md)'
@@ -187,7 +188,7 @@ pub fn (mut self Summary) str() string {
 			out << '${pre}- [${item.description}](${item.collection}/${item.pagename})'
 		}
 	}
-	
+
 	if self.addpages.len > 0 {
 		out << '  - [unlisted_pages](additional/pages.md)'
 		for item in self.addpages {

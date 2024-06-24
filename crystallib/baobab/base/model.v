@@ -1,6 +1,6 @@
 module base
 
 pub struct Base {
-pub mut :
+pub mut:
 	id u32
 }
