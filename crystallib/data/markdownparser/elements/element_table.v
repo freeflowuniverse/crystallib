@@ -80,13 +80,16 @@ pub fn (self Table) html() !string {
 
 // get all relevant info out of table
 pub fn (mut self Table) parse() ! {
+
 	rows := self.content.split_into_lines()
 
-	if rows.len < 3 {
-		return error('table needs to have 3 rows at least.\n${self}')
+	if rows.len < 1 {
+		msg:='table needs to have 1 row at least.\n${self}'
+		panic(msg)
+		return error(msg)
 	}
 
-	re_header_row := regex.regex_opt('^:?-+:?$') or { return error("regex doesn't work") }
+	re_header_row := regex.regex_opt('^:?-+:?$') or { return error("regex doesn't work for table parsing") }
 
 	mut header := rows[0].trim_space().split('|').map(it.trim(' \t'))
 	header.delete_last()

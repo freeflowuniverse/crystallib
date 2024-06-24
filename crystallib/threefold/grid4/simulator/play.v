@@ -75,7 +75,7 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 				tags: 'nrnodes_new'
 				descr: '"new nodes we add per month for node type ${node_name}'
 				extrapolate: true
-				aggregatetype:.sum
+				aggregatetype:.avg
 			)!
 
 			mut investment_nodes := new_nodes_per_month.copy(

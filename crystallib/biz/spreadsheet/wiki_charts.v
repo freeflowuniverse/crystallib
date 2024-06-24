@@ -29,6 +29,8 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 			})
 		}
 	}
+  println(rows_values)
+  if true{panic("sss")}
   header_items:=['Row Name', 'Description', 'Tags']
 	table := elements.Table{
 		header: header_items.map(&elements.Paragraph{
@@ -150,7 +152,7 @@ pub fn (mut s Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
 	}
 
 	if header.len != data.len {
-		return error('data and header lengths must match')
+		return error('data and header lengths must match.\n${header}\n${data}')
 	}
 
 	mut data_lines := []string{}

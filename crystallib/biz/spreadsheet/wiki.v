@@ -15,6 +15,7 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 
 	mut sheet := s.filter(args)! // this will do the filtering and if needed make smaller
 
+
 	mut out := ''
 	if args.title.len > 0 {
 		out = '## ${args.title}\n\n'
@@ -71,6 +72,8 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 		wiki2 := wiki_items.join('')
 		out += wiki2 + '\n'
 	}
+
+
 
 	return out
 }
