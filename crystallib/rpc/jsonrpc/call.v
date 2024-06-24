@@ -1,6 +1,7 @@
 module jsonrpc
 
 import json
+import freeflowuniverse.crystallib.ui.console
 import x.json2
 
 // performs jsonrpc call on provided method
@@ -62,7 +63,7 @@ pub fn invoke[D](msg string, method fn () !D) !string {
 
 pub fn notify[T](params_json string, method fn (T) !) {
 	params := json2.decode[T](params_json) or { return }
-	method(params) or { println(err) }
+	method(params) or { console.print_debug(err) }
 }
 
 // TODO

@@ -2,12 +2,13 @@ module main
 
 import freeflowuniverse.crystallib.data.rpcwebsocket
 import freeflowuniverse.crystallib.data.jsonrpc
+import freeflowuniverse.crystallib.ui.console
 import log
 import net.websocket
 import json
 
 pub fn main() {
-	println('Running websocket example\n')
+	console.print_debug('Running websocket example\n')
 	websocket_example()!
 }
 

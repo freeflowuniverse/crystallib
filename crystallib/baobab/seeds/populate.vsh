@@ -24,17 +24,17 @@ structs := code.filter(it is Struct).map(it as Struct)
 for name, objects in actor_object_map {
 	actor_objects := structs.filter(it.name in objects)
 	mut actor := generator.generate_actor(name, actor_objects) or {
-		println('Failed to generate actor ${name}\n${err}')
+		console.print_debug('Failed to generate actor ${name}\n${err}')
 		continue
 	}
 
 	actor_module := actor.generate_module() or {
-		println('Failed to generate actor module ${name}\n${err}')
+		onsole.print_debug('Failed to generate actor module ${name}\n${err}')
 		continue
 	}
 
 	actor_module.write_v('${actors_dir}', format: true, overwrite: true) or {
-		println('Failed to generate actor ${name}\n${err}')
+		console.print_debug('Failed to generate actor ${name}\n${err}')
 		continue
 	}
 

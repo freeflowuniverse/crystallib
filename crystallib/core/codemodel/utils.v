@@ -1,5 +1,6 @@
 module codemodel
 
+import freeflowuniverse.crystallib.ui.console
 import rand
 
 pub struct GetStruct {
@@ -83,7 +84,7 @@ pub fn (param Param) generate_value() !string {
 	} else if param.typ.symbol[0].is_capital() {
 		return '${param.typ.symbol}{}'
 	} else {
-		println('mock values for types other than strings and ints are not yet supported')
+		console.print_debug('mock values for types other than strings and ints are not yet supported')
 	}
 	return ''
 }

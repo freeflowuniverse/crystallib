@@ -9,6 +9,7 @@ import vweb
 import log
 import eventbus
 import rand
+import freeflowuniverse.crystallib.ui.console
 
 const eb = eventbus.new[string]()
 
@@ -107,7 +108,7 @@ pub fn new_api() API {
 }
 
 fn on_foo(mut receiver API, e &EventMetadata, sender voidptr) {
-	println('on_foo :: ' + e.message)
+	console.print_debug('on_foo :: ' + e.message)
 }
 
 // pub fn (mut ui RPCProcessorUI) handler() vweb.Result {
@@ -148,7 +149,7 @@ fn (mut p RPCProcessor) handler(client &websocket.Client, message string) string
 	mut q_response := p.redis_client.queue_get(id)
 	p.logger.info('Awaiting response to RPC `${id}` in queue.')
 	response := q_response.get(1000) or { panic(err) }
-	println('message: ${response}')
+	console.print_debug('message: ${response}')
 	return response
 }
 

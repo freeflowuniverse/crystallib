@@ -43,7 +43,6 @@ fn run_rpc_handler() ! {
 		port: rpcprocessor.redis_port
 	) or { return error('Failed to create Redis client: ${err}') }
 	for {
-		println('tryn')
 		results := redis_client.brpop(['echo'], 0) or {
 			panic('Failed to fetch RPC result from Redis queue: ${err}')
 		}
