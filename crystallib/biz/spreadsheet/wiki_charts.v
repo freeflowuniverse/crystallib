@@ -29,7 +29,7 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 			})
 		}
 	}
-	println(rows_values)
+	console.print_debug(rows_values)
 	if true {
 		panic('sss')
 	}

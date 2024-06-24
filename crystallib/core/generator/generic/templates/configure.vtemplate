@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import json
-import freeflowuniverse.crystallib.data.fskvs
+import freeflowuniverse.crystallib.core.dbfs
 @if args.configure_interactive
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
@@ -31,7 +31,7 @@ fn configure_init(reset bool,mut args Config) ! {
 	args.name = texttools.name_fix(args.name)
 
 	key := '${args.name}_config_??{args.name}'
-	mut kvs := fskvs.new(name: 'config')!
+	mut kvs := dbfs.new(name: 'config')!
 	if reset || !kvs.exists(key) {
 		data := json.encode_pretty(args)
 		kvs.set(key, data)!

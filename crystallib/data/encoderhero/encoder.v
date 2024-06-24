@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 import time
 import v.reflection
 import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 
 // Encoder encodes the an `Any` type into HEROSCRIPT representation.
@@ -26,13 +27,11 @@ pub fn encode[T](val T) !string {
 
 	$if T is $struct {
 		e.encode_struct[T](val)!
-	} $else $if T.typ is $array {
+	} $else $if T is $array {
 		e.add_child_list[T](val, 'TODO')
 	} $else {
 		return error('can only add elements for struct or array of structs. \n${val}')
 	}
-
-	console.print_debug('main: \n${e.children}\n')
 	return e.export()!
 }
 
@@ -56,7 +55,7 @@ pub fn (mut e Encoder) add_child[T](val T, parent string) ! {
 	mut e2 := Encoder{
 		params: paramsparser.Params{}
 		parent: &e
-		action_names: e.action_names
+		action_names: e.action_names.clone() // careful, if not cloned gets mutated later
 	}
 	$if T is $struct {
 		e2.params.set('key', parent)
@@ -77,12 +76,43 @@ pub fn (mut e Encoder) add_child_list[U](val []U, parent string) ! {
 	}
 }
 
+// needs to be a struct we are adding
+// parent is the name of the action e.g define.customer:contact
+pub fn (mut e Encoder) add[T](val T) ! {
+	// $if T is []$struct {
+	// 	// panic("not implemented")
+	// 	for valitem in val{
+	// 		mut e2:=e.add[T](valitem)!
+	// 	}		
+	// }
+	mut e2 := Encoder{
+		params: paramsparser.Params{}
+		parent: &e
+		action_names: e.action_names.clone() // careful, if not cloned gets mutated later
+	}
+	$if T is $struct && T !is time.Time {
+		e2.params.set('key', '${val}')
+		e2.encode_struct[T](val)!
+		e.children << e2
+	} $else {
+		return error('can only add elements for struct or array of structs. \n${val}')
+	}
+}
+
+pub fn (mut e Encoder) encode_array[U](val []U) ! {
+	for i in 0 .. val.len {
+		$if U is $struct {
+			e.add(val[i])!
+		}
+	}
+}
+
 // now encode the struct
 pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	mut mytype := reflection.type_of[T](t)
 	struct_attrs := attrs_get_reflection(mytype)
 
-	mut action_name := T.name.to_lower().all_after_last('.')
+	mut action_name := texttools.name_fix_pascal_to_snake(T.name.all_after_last('.'))
 	if 'alias' in struct_attrs {
 		action_name = struct_attrs['alias'].to_lower()
 	}
@@ -90,6 +120,8 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 
 	params := paramsparser.encode[T](t, recursive: false)!
 	e.params = params
+
+	// encode children structs and array of structs
 	$for field in T.fields {
 		val := t.$(field.name)
 		$if val is time.Time {
@@ -99,70 +131,73 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 			panic('ourtime not supported')
 			// e.add(val)!
 		} $else $if val is $struct {
-			e.add_child(val)!
+			if field.name[0].is_capital() {
+				embedded_params := paramsparser.encode(val, recursive: false)!
+				e.params.params << embedded_params.params
+			} else {
+				e.add(val)!
+			}
 		} $else $if val is $array {
 			e.encode_array(val)!
-		} $else {
-			return error("can't encode to hero.\n${t}")
 		}
 	}
-	// }
-	// panic(params)
-
-	// $for field in T.fields {
-	// 	val := val0.$(field.name)
-
-	// 	field_attrs := attrs_get(field.attrs)
-	// 	mut field_name := field.name
-	// 	if 'alias' in field_attrs {
-	// 		field_name = field_attrs['alias']
-	// 	}
-	// 	console.print_debug('FIELD: ${field_name} ${field.typ}')
-
-	// 	e.encode_value(val, field_name)!
-	// }
 }
+
+// }
+// panic(params)
+
+// $for field in T.fields {
+// 	val := val0.$(field.name)
+
+// 	field_attrs := attrs_get(field.attrs)
+// 	mut field_name := field.name
+// 	if 'alias' in field_attrs {
+// 		field_name = field_attrs['alias']
+// 	}
+// 	console.print_debug('FIELD: ${field_name} ${field.typ}')
+
+// 	e.encode_value(val, field_name)!
+// }
 
 // encode_value encodes a value
-pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
-	// $if val is $option {
-	// 	// unwrap and encode optionals
-	// 	workaround := val
-	// 	if workaround != none {
-	// 		e.encode_value(val, key)!
-	// 	}
-	// }
+// pub fn (mut e Encoder) encode_value[T](val T, key string) ! {
+// $if val is $option {
+// 	// unwrap and encode optionals
+// 	workaround := val
+// 	if workaround != none {
+// 		e.encode_value(val, key)!
+// 	}
+// }
 
-	//  $else $if T is string || T is int || T is bool || T is i64 || T is time.Time{
-	// 	e.params.set(key, '${val}')
-	// } $else $if T is []string {
-	// 	mut v2 := ''
-	// 	for i in val {
-	// 		if i.contains(' ') {
-	// 			v2 += "\"${i}\","
-	// 		} else {
-	// 			v2 += '${i},'
-	// 		}
-	// 	}
-	// 	v2 = v2.trim(',')
-	// 	e.params.set(key, '${v2}')
-	// } $else $if T is []int {
-	// 	mut v2 := ''
-	// 	for i in val {
-	// 		v2 += '${i},'
-	// 	}
-	// 	v2 = v2.trim(',')
-	// 	e.params.set(key, v2.str())
-	// }
-	// $else $if field.typ $enum {
-	// 	e.params.set( field.name,v2.str())
-	// }
-	// $else $if T is $struct{
-	// 	e.add(val)!
-	// } $else {
-	// 	return error("can't find field type ${typeof(val)}")
-	// }
-}
+//  $else $if T is string || T is int || T is bool || T is i64 || T is time.Time{
+// 	e.params.set(key, '${val}')
+// } $else $if T is []string {
+// 	mut v2 := ''
+// 	for i in val {
+// 		if i.contains(' ') {
+// 			v2 += "\"${i}\","
+// 		} else {
+// 			v2 += '${i},'
+// 		}
+// 	}
+// 	v2 = v2.trim(',')
+// 	e.params.set(key, '${v2}')
+// } $else $if T is []int {
+// 	mut v2 := ''
+// 	for i in val {
+// 		v2 += '${i},'
+// 	}
+// 	v2 = v2.trim(',')
+// 	e.params.set(key, v2.str())
+// }
+// $else $if field.typ $enum {
+// 	e.params.set( field.name,v2.str())
+// }
+// $else $if T is $struct{
+// 	e.add(val)!
+// } $else {
+// 	return error("can't find field type ${typeof(val)}")
+// }
 
 // fn (e &Encoder) encode_map[T](value T, level int) ! {
 // 	params << json2.curly_open_rune

@@ -12,7 +12,7 @@ pub fn playmacro(action Action) !string {
 	}
 	mut sh := sheet_get(sheet_name)!
 
-	println(sh)
+	console.print_debug(sh)
 
 	supported_actions := ['sheet_wiki', 'graph_pie_row', 'graph_line_row', 'graph_bar_row',
 		'graph_title_row', 'wiki_row_overview']

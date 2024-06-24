@@ -4,7 +4,7 @@ import v.ast
 import v.parser
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.codemodel { CodeItem, Function, Param, Result, Struct, StructField, Sumtype, Type }
+import freeflowuniverse.crystallib.core.codemodel { CodeFile, CodeItem, Function, Import, Param, Result, Struct, StructField, Sumtype, Type, parse_consts, parse_import }
 import v.pref
 
 // VParser holds configuration of parsing
@@ -31,13 +31,18 @@ pub fn parse_v(path_ string, vparser VParser) ![]CodeItem {
 	}
 
 	path.check()
-	return vparser.parse_vpath(mut path)!
+	mut table := ast.new_table()
+	return vparser.parse_vpath(mut path, mut table)!
 }
 
 // parse_vpath parses the v code files and returns codeitems in a given path
 // can be recursive or not based on the parsers configuration
-fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
+fn (vparser VParser) parse_vpath(mut path pathlib.Path, mut table ast.Table) ![]CodeItem {
 	mut code := []CodeItem{}
+	// mut table := ast.new_table()
+	// fpref := &pref.Preferences{ // preferences for parsing
+	// 	is_fmt: true
+	// }
 	if path.is_dir() {
 		dir_is_excluded := vparser.exclude_dirs.any(path.path.ends_with(it))
 		if dir_is_excluded {
@@ -49,7 +54,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 			mut flist := path.list(recursive: true)!
 			for mut subdir in flist.paths {
 				if subdir.is_dir() {
-					code << vparser.parse_vpath(mut subdir)!
+					code << vparser.parse_vpath(mut subdir, mut table)!
 				}
 			}
 		}
@@ -57,7 +62,7 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 		mut fl := path.list(recursive: false)!
 		for mut file in fl.paths {
 			if !file.is_dir() {
-				code << vparser.parse_vpath(mut file)!
+				code << vparser.parse_vpath(mut file, mut table)!
 			}
 		}
 	} else if path.is_file() {
@@ -66,26 +71,44 @@ fn (vparser VParser) parse_vpath(mut path pathlib.Path) ![]CodeItem {
 		if file_is_excluded || !path.path.ends_with('.v') {
 			return code
 		}
-		code << vparser.parse_vfile(path.path)
+		code << vparser.parse_vfile(path.path, mut table)
 	} else {
 		return error('Path being parsed must either be a directory or a file.')
 	}
-	codemodel.inflate_types(mut code)
+	// codemodel.inflate_types(mut code)
 	return code
 }
 
 // parse_vfile parses and returns code items from a v code file
-fn (vparser VParser) parse_vfile(path string) []CodeItem {
+pub fn parse_file(path string, vparser VParser) !CodeFile {
+	mut file := pathlib.get_file(path: path)!
+	mut table := ast.new_table()
+	items := vparser.parse_vfile(file.path, mut table)
+	return CodeFile{
+		imports: parse_imports(file.read()!)
+		consts: parse_consts(file.read()!)!
+		items: items
+	}
+}
+
+pub fn parse_imports(code string) []Import {
+	return code.split('\n').filter(it.starts_with('import ')).map(parse_import(it))
+}
+
+// parse_vfile parses and returns code items from a v code file
+fn (vparser VParser) parse_vfile(path string, mut table ast.Table) []CodeItem {
 	$if debug {
 		console.print_debug('Parsing file `${path}`')
 	}
 	mut code := []CodeItem{}
 
-	mut table := ast.new_table()
+	// mut table := ast.new_table()
 	fpref := &pref.Preferences{ // preferences for parsing
 		is_fmt: true
 	}
 	file_ast := parser.parse_file(path, mut table, .parse_comments, fpref)
+	mut file := pathlib.get_file(path: path) or { panic(err) }
+	file_text := file.read() or { panic(err) }
 	mut preceeding_comments := []ast.Comment{}
 
 	for stmt in file_ast.stmts {
@@ -112,6 +135,7 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 					fn_decl: fn_decl
 					table: table
 					comments: preceeding_comments
+					text: file_text
 				))
 			}
 			preceeding_comments = []ast.Comment{}
@@ -158,11 +182,54 @@ fn (vparser VParser) parse_vfile(path string) []CodeItem {
 	return code
 }
 
+// parse_vfile parses and returns code items from a v code file
+pub fn parse_module(path_ string, vparser VParser) ![]CodeFile {
+	mut path := pathlib.get(path_)
+	if !path.exists() {
+		return error('Path `${path.path}` doesn\'t exist.')
+	}
+
+	mut table := ast.new_table()
+	mut code := []CodeFile{}
+	// fpref := &pref.Preferences{ // preferences for parsing
+	// 	is_fmt: true
+	// }
+	if path.is_dir() {
+		dir_is_excluded := vparser.exclude_dirs.any(path.path.ends_with(it))
+		if dir_is_excluded {
+			return code
+		}
+
+		if vparser.recursive {
+			return error('recursive module parsing not yet supported')
+		}
+
+		mut fl := path.list(recursive: false)!
+		for mut file in fl.paths {
+			if !file.is_dir() {
+				code << parse_file(file.path, vparser)!
+			}
+		}
+	} else if path.is_file() {
+		file_is_excluded := vparser.exclude_files.any(path.path.ends_with(it))
+		// todo: use pathlib list regex param to filter non-v files
+		if file_is_excluded || !path.path.ends_with('.v') {
+			return code
+		}
+		code << parse_file(path.path, vparser)!
+	} else {
+		return error('Path being parsed must either be a directory or a file.')
+	}
+	// codemodel.inflate_types(mut code)
+	return code
+}
+
 @[params]
 struct VFuncArgs {
 	comments []ast.Comment // v comments that belong to the function
 	fn_decl  ast.FnDecl    // v.ast parsed function declaration
 	table    &ast.Table    // ast table used for getting typesymbols from
+	text     string
 }
 
 // parse_vfunc parses function args into function struct
@@ -203,13 +270,27 @@ pub fn (vparser VParser) parse_vfunc(args VFuncArgs) Function {
 		}
 	}
 
+	text_lines := args.text.split('\n')
+	fn_lines := text_lines.filter(it.contains('fn') && it.contains(' ${args.fn_decl.short_name}('))
+	fn_line := fn_lines[0] or { panic('this should never happen') }
+	line_i := text_lines.index(fn_line)
+	end_i := line_i + text_lines[line_i..].index('}')
+
+	fn_text := text_lines[line_i..end_i + 1].join('\n')
+	// mut fn_index := args.text.index(args.fn_decl.short_name) or {panic('this should never happen1')}
+	// text_cropped := args.text[..fn_index] or {panic('this should never happen2')}
+	// fn_start := text_cropped.last_index('fn ') or {panic('this should never happen3 \n-${text_cropped}')}
+	// fn_text := args.text[fn_start..] or {panic('this should never happen4')}
+	fn_parsed := codemodel.parse_function(fn_text) or { panic(err) }
+
 	return Function{
 		name: args.fn_decl.short_name
 		description: fn_comments.join(' ')
 		mod: args.fn_decl.mod
 		receiver: receiver
 		params: params
-		result: result
+		result: fn_parsed.result
+		body: fn_parsed.body
 	}
 }
 
@@ -330,7 +411,6 @@ fn (vparser VParser) parse_vstruct(args VStructArgs) Struct {
 	comments := args.comments.map(it.text.trim_string_left('\u0001').trim_space())
 	mut fields := vparser.parse_fields(args.struct_decl.fields, args.table)
 	fields << vparser.parse_embeds(args.struct_decl.embeds, args.table)
-
 	return Struct{
 		name: args.struct_decl.name.all_after_last('.')
 		description: comments.join(' ')

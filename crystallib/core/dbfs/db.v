@@ -61,6 +61,10 @@ pub fn (mut db DB) get(args_ GetArgs) !string {
 		} else {
 			pathsrc = db.path_get(args.id)!
 		}
+	} else if args.id > 0 {
+		pathsrc = db.path_get(args.id)!
+	} else {
+		return error('either id or key has to be specified')
 	}
 
 	mut data := pathsrc.read()!
@@ -135,7 +139,10 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 				args.id = p3_name.u32()
 			}
 		}
+	} else if args.id > 0 {
+		pathsrc = db.path_get(args.id)!
 	} else {
+		args.id = db.parent.incr()!
 		pathsrc = db.path_get(args.id)!
 	}
 	// console.print_debug(pathsrc)
@@ -240,7 +247,9 @@ pub fn (mut db DB) destroy() ! {
 // get all keys of the db (e.g. per session) can be with a prefix
 pub fn (mut db DB) keys(prefix_ string) ![]string {
 	// TODO: see get, to fix this one
-	panic('implement')
+	mut files := db.path.list()!
+
+	panic('implement ${files}')
 	prefix := texttools.name_fix(prefix_)
 	mut r := db.path.list(recursive: false)!
 	mut res := []string{}
@@ -249,6 +258,17 @@ pub fn (mut db DB) keys(prefix_ string) ![]string {
 		if prefix == '' || name.starts_with(prefix) {
 			res << name
 		}
+	}
+	return res
+}
+
+// get all keys of the db (e.g. per session) can be with a prefix
+pub fn (mut db DB) ids() ![]u32 {
+	// TODO: see get, to fix this one
+	mut files := db.path.list(files_only: true)!
+	mut res := []u32{}
+	for file in files.paths {
+		res << u32(file.name().int())
 	}
 	return res
 }

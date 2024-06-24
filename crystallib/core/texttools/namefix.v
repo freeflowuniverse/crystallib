@@ -96,6 +96,17 @@ pub fn name_fix_pascal(name string) string {
 	return name_fix_dot_notation_to_pascal(name_)
 }
 
+pub fn name_fix_pascal_to_snake(name string) string {
+	mut fixed := ''
+	for i, c in name {
+		if c.is_capital() && i != 0 {
+			fixed += '_'
+		}
+		fixed += c.ascii_str()
+	}
+	return fixed.to_lower()
+}
+
 pub fn name_fix_dot_notation_to_snake_case(name string) string {
 	return name.replace('.', '_')
 }

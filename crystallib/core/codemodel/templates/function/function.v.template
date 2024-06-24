@@ -1,4 +1,6 @@
+@if function.description != '' 
 // @{function.description}
-pub fn @receiver @{function.name}(@{params}) @function.result.vgen() {
+@endif
+pub fn @receiver @{function.name}(@{params}) @{function.result.vgen()} {
 	@{function.body.trim_space().replace('\t', '')}
 }
