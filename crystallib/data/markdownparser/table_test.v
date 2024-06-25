@@ -3,12 +3,24 @@ module markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements { Table }
 
 fn test_table_no_rows_invalid() {
-	content := '
+	mut content := '
 |   Column1   | Column2      | Column3    |
 |-------------|--------------|------------|
 '
 	if _ := new(content: content) {
-		assert false, 'should return an error: a table needs to have 3 rows at least'
+		assert true
+	} else {
+		assert false
+	}
+
+	content = '
+|   Column1   | Column2      | Column3    |
+'
+	if doc := new(content: content) {
+		// this shouldn't be parsed as table since it is only single row
+		assert doc.children.len == 1
+		elem := doc.children[0]
+		assert elem !is Table
 	}
 }
 

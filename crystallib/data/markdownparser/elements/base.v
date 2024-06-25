@@ -182,6 +182,14 @@ pub fn (self DocBase) markdown() !string {
 	return out
 }
 
+pub fn (self DocBase) first() !Element {
+	if self.children.len == 0 {
+		return error('doc has no children')
+	}
+	mut l := self.children.first()
+	return l
+}
+
 pub fn (self DocBase) last() !Element {
 	if self.children.len == 0 {
 		return error('doc has no children')

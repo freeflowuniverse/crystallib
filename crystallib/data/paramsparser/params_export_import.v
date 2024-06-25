@@ -48,6 +48,10 @@ fn (item ParamExportItem) getval() string {
 		}
 		val = "'${val}'"
 	}
+	if val == '' {
+		// so empty strings are written as empty quotes
+		val = "''"
+	}
 	return val
 }
 
