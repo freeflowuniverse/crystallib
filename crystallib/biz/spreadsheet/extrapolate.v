@@ -2,11 +2,12 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.ui.console
 
-// smartstring is something like 3:2,10:5 means end month 3 we start with 2, it grows to 5 on end month 10
-// the cells out of the mentioned ranges are not filled if they are already set
-// the cells which are empty at start of row will become 0
-// the cells which are empty at the back will just be same value as the last one
-// currencies can be used e.g. 3:10usd,20:30aed (so we can even mix)
+// smartstring is something like 3:2,10:5 means end month 3 we start with 2, it grows to 5 on end month 10 .
+// the cells out of the mentioned ranges are not filled if they are already set .
+// the cells which are empty at start of row will become 0 .
+// the cells which are empty at the back will just be same value as the last one .
+// currencies can be used e.g. 3:10usd,20:30aed (so we can even mix) .
+// first cell is 1, the start is 0 (month 0) .
 // if the smartstr, is empty then will use existing values in the row to extra/intra polate, the empty values will be filled in
 pub fn (mut r Row) extrapolate(smartstr string) ! {
 	// put the values in the row

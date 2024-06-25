@@ -18,7 +18,7 @@ pub fn book_open(name string) ! {
 		return error("can't find generated book in ${path_publish}, was it generated properly.")
 	}
 	cmd3 := "open '${path_publish}/index.html'"
-	console.print_debug(cmd3)
+	//console.print_debug(cmd3)
 	osal.exec(cmd: cmd3)!
 }
 
@@ -33,6 +33,6 @@ pub fn book_edit(name string) ! {
 	if !os.exists(edit_path) {
 		return error("can't find book edit path in ${edit_path}, was it generated properly.")
 	}
-	console.print_debug('open: ${edit_path}')
+	//console.print_debug('open: ${edit_path}')
 	vscode.open(path: edit_path)!
 }

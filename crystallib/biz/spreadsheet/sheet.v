@@ -120,8 +120,9 @@ pub mut:
 // internal function used by to year and by to quarter
 fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 	mut args := args_
-	if args.name == '' {
-		args.name = s.name + '_year'
+	mut sheetname := args.name
+	if sheetname == '' {
+		sheetname = s.name + '_year'
 	}
 	//console.print_debug("to smaller for sheet: ${s.name} rows:${s.rows.len}")
 	nrcol_new := int(s.nrcol / args.period_months)
@@ -131,7 +132,7 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 		panic('is bug, can only be 4 or 12')
 	}
 	mut sheet_out := sheet_new(
-		name: args.name
+		name: sheetname
 		nrcol: nrcol_new
 		visualize_cur: s.params.visualize_cur
 		curr: s.currency.name

@@ -15,7 +15,7 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 
 
 pub fn playmacro(action playbook.Action) !string {
-	println(" ----- ${action.actor}")
+	//println(" ----- ${action.actor}")
 	if action.actor == "sheet"{
 		return spreadsheet.playmacro(action)!
 	}

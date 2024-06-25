@@ -138,7 +138,7 @@ pub fn (row Row) filter(args_ RowGetArgs) !bool {
 	mut ok := false
 	mut args := args_
 
-	if args_.namefilter.len == 0 && args.rowname != '' {
+	if args.namefilter.len == 0 && args.rowname != '' {
 		args.namefilter = [args.rowname]
 	}
 
@@ -146,7 +146,6 @@ pub fn (row Row) filter(args_ RowGetArgs) !bool {
 		return true
 	}
 	
-
 	if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
 		if args.includefilter.len > 0 || args.excludefilter.len > 0 {
 			tagstofilter := paramsparser.parse(row.tags)!

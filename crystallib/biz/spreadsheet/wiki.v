@@ -1,7 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.core.texttools
-
+import freeflowuniverse.crystallib.ui.console
 // format a sheet properly in wiki format
 pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 	mut args := args_
@@ -13,6 +13,7 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 		else { panic('bug') }
 	}
 
+	//console.print_debug("wiki with args:${args}")
 	mut sheet := s.filter(args)! // this will do the filtering and if needed make smaller
 
 
@@ -33,7 +34,7 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 	header := sheet.header()!
 
 	// get the width of name and optionally description
-	names_width := sheet.rows_names_width_max()
+	mut names_width := sheet.rows_names_width_max()
 
 	mut header_wiki_items := []string{}
 	mut header_wiki_items2 := []string{}
@@ -59,8 +60,17 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 
 	for _, mut row in sheet.rows {
 		mut wiki_items := []string{}
+		mut rowname:=row.name
+		if row.description.len>0{
+			names_width= sheet.rows_description_width_max()
+
+			rowname = row.description
+		}
 		if args.rowname_show && names_width > 0 {
-			wiki_items << texttools.expand('|${row.name}', names_width + 1, ' ')
+			if names_width>60{
+				names_width=60
+			}			
+			wiki_items << texttools.expand('|${rowname}', names_width + 1, ' ')
 		}
 		for x in 0 .. sheet.nrcol {
 			colmaxval := colmax[x]
