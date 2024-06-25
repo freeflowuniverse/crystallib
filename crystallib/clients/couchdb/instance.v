@@ -60,6 +60,28 @@ pub mut:
 	w u64
 }
 
+pub struct DocInfo {
+	id                string       @[json: '_id']
+	rev               string       @[json: '_rev']
+	deleted           ?bool        @[json: '_deleted']
+	attachments       ?Attachments @[json: '_attachments']
+	conflicts         ?[]string    @[json: '_conflicts']
+	deleted_conflicts ?[]string    @[json: '_deleted_conflicts']
+	local_seq         ?string      @[json: '_local_seq']
+	revs_info         ?[]RevInfo   @[json: '_revs_info']
+	revisions         ?[]string    @[json: '_revisions']
+}
+
+pub struct RevInfo {
+pub mut:
+	rev    string
+	status string
+}
+
+type Attachments = map[string]Attachment
+type ID = string
+type Rev = string
+
 pub fn (mut cl CouchDBInstance) get_db() !DB {
 	res := cl.connection.send(method: .get, prefix: cl.name)!
 	if !res.is_ok() {
@@ -70,32 +92,68 @@ pub fn (mut cl CouchDBInstance) get_db() !DB {
 	return db
 }
 
-pub fn (mut cl CouchDBInstance) get_document[T](doc_id string) !T {
-	res := cl.connection.send(method: .get, prefix: '${cl.name}/${doc_id}')!
+pub fn (mut cl CouchDBInstance) get_document[T](doc_id ID, params GetDocumentQueryParams) !(T, DocInfo) {
+	res := cl.connection.send(method: .get, prefix: '${cl.name}/${doc_id}?${params.encode()}')!
 	if !res.is_ok() {
 		return error('failed to get document: (${res.code}) ${res.data}')
 	}
 
 	doc := json.decode(T, res.data)!
-	return doc
+	doc_info := json.decode(DocInfo, res.data)!
+	return doc, doc_info
 }
 
-pub fn (mut cl CouchDBInstance) create_docuemnt[T](doc T) ! {
+pub fn (mut cl CouchDBInstance) create_document[T](doc T) !(ID, Rev) {
 	res := cl.connection.send(method: .post, prefix: cl.name, data: json.encode(doc))!
 	if !res.is_ok() {
 		return error('failed to create document: (${res.code}) ${res.data}')
 	}
+
+	mp := json.decode(map[string]string, res.data)!
+	mut id := ''
+	if _id := mp['id'] {
+		id = _id
+	}
+
+	mut rev := ''
+	if _rev := mp['rev'] {
+		rev = _rev
+	}
+
+	return id, rev
 }
 
-pub fn (mut cl CouchDBInstance) create_or_update_document[T](doc_id string, doc T) ! {
-	res := cl.connection.send(method: .put, prefix: '${cl.name}/${doc_id}', data: json.encode(doc))!
+pub fn (mut cl CouchDBInstance) create_or_update_document[T](doc_id ID, rev ?Rev, doc T) !(ID, Rev) {
+	mut query := ''
+	if _rev := rev {
+		query = 'rev=${_rev}'
+	}
+
+	res := cl.connection.send(
+		method: .put
+		prefix: '${cl.name}/${doc_id}?${query}'
+		data: json.encode(doc)
+	)!
 	if !res.is_ok() {
 		return error('failed to create/update document: (${res.code}) ${res.data}')
 	}
+
+	mp := json.decode(map[string]string, res.data)!
+	mut id := ''
+	if _id := mp['id'] {
+		id = _id
+	}
+
+	mut new_rev := ''
+	if _rev := mp['rev'] {
+		new_rev = _rev
+	}
+
+	return id, new_rev
 }
 
-pub fn (mut cl CouchDBInstance) delete(doc_id string) ! {
-	res := cl.connection.send(method: .delete, prefix: '${cl.name}/${doc_id}')!
+pub fn (mut cl CouchDBInstance) delete_document(doc_id ID, rev Rev) ! {
+	res := cl.connection.send(method: .delete, prefix: '${cl.name}/${doc_id}?rev=${rev}')!
 	if !res.is_ok() {
 		return error('failed to delete document: (${res.code}) ${res.data}')
 	}
