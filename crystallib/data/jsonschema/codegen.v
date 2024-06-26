@@ -1,6 +1,6 @@
 module jsonschema
 
-import freeflowuniverse.crystallib.core.codemodel { Struct, StructField }
+import freeflowuniverse.crystallib.core.codemodel { Alias, Attribute, CodeItem, Struct, StructField, Type }
 
 const vtypes = {
 	'integer': 'int'
@@ -55,6 +55,9 @@ pub fn (schema Schema) vstructs_encode() ![]string {
 // code_type generates a typesymbol for the schema
 pub fn (schema Schema) vtype_encode() !string {
 	mut property_str := ''
+	if schema.typ == 'null' {
+		return ''
+	}
 	if schema.typ == 'object' {
 		if schema.title == '' {
 			return error('Object schemas must define a title.')
@@ -72,18 +75,61 @@ pub fn (schema Schema) vtype_encode() !string {
 		}
 	} else if schema.typ in jsonschema.vtypes.keys() {
 		property_str = jsonschema.vtypes[schema.typ]
+	} else if schema.title != '' {
+		property_str = schema.title
 	} else {
 		return error('unknown type `${schema.typ}` ')
 	}
 	return property_str
 }
 
-pub fn (schema Schema) to_struct() Struct {
-	mut fields := []StructField{}
-	for key, val in schema.properties {
-		if val is Schema {
-			fields << val.to_struct_field(key)
+pub fn (schema Schema) to_code() !CodeItem {
+	if schema.typ == 'object' {
+		return CodeItem(schema.to_struct()!)
+	}
+	if schema.typ in jsonschema.vtypes {
+		return Alias{
+			name: schema.title
+			typ: Type{
+				symbol: jsonschema.vtypes[schema.typ]
+			}
 		}
+	}
+	if schema.typ == 'array' {
+		if schema.items is SchemaRef {
+			if schema.items is Schema {
+				items_schema := schema.items as Schema
+				return Alias{
+					name: schema.title
+					typ: Type{
+						symbol: '[]${items_schema.typ}'
+					}
+				}
+			} else if schema.items is Reference {
+				items_ref := schema.items as Reference
+				return Alias{
+					name: schema.title
+					typ: Type{
+						symbol: '[]${items_ref.to_type_symbol()}'
+					}
+				}
+			}
+		}
+	}
+	return error('Schema typ ${schema.typ} not supported for code generation')
+}
+
+pub fn (schema Schema) to_struct() !Struct {
+	mut fields := []StructField{}
+
+	for key, val in schema.properties {
+		mut field := val.to_struct_field(key)!
+		if field.name in schema.required {
+			field.attrs << Attribute{
+				name: 'required'
+			}
+		}
+		fields << field
 	}
 
 	return Struct{
@@ -93,10 +139,48 @@ pub fn (schema Schema) to_struct() Struct {
 	}
 }
 
-pub fn (schema Schema) to_struct_field(name string) StructField {
-	return StructField{
-		name: name
-		structure: schema.to_struct()
-		description: schema.description
+pub fn (schema SchemaRef) to_struct_field(name string) !StructField {
+	if schema is Reference {
+		return StructField{
+			name: name
+			typ: Type{
+				symbol: schema.to_type_symbol()
+			}
+		}
+	} else if schema is Schema {
+		mut field := StructField{
+			name: name
+			description: schema.description
+		}
+		if schema.typ == 'object' {
+			// then is anonymous struct
+			field.anon_struct = schema.to_struct()!
+			return field
+		} else if schema.typ in jsonschema.vtypes {
+			field.typ.symbol = jsonschema.vtypes[schema.typ]
+			return field
+		}
+		return error('Schema typ ${schema.typ} not supported for code generation')
+	}
+	return error('Schema typ  not supported for code generation')
+}
+
+pub fn (sr SchemaRef) to_code() !Type {
+	return if sr is Reference {
+		sr.to_type()
+	} else {
+		Type{
+			symbol: (sr as Schema).vtype_encode()!
+		}
+	}
+}
+
+pub fn (ref Reference) to_type_symbol() string {
+	return ref.ref.all_after_last('/')
+}
+
+pub fn (ref Reference) to_type() Type {
+	return Type{
+		symbol: ref.to_type_symbol()
 	}
 }

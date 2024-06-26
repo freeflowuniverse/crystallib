@@ -6,7 +6,7 @@ pub type SchemaRef = Reference | Schema
 
 pub struct Reference {
 pub:
-	ref string @[json: '\$ref'; required]
+	ref string @[json: '\$ref']
 }
 
 type Number = int

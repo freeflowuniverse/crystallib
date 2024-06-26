@@ -61,7 +61,8 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 			}
 
 			site_.template_add(url: url, path: path)!
-		} else if action.name == 'content_add' {
+		} 
+		else if action.name == 'content_add' {
 			console.print_debug('website.content_add')
 			mut p := action.params
 			url := p.get_default('url', '')!
@@ -70,8 +71,8 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 				return error("can't find website for content_add, should have been defined before with !!website.define")
 			}
 
-			site_.content_add(url: url, path: path)!
-		} else if action.name == 'doctree_add' {
+			site_.content_add(url: url, path: path)!}
+		else if action.name == 'doctree_add' {
 			console.print_debug('website.doctree_add')
 			mut p := action.params
 			url := p.get_default('url', '')!
@@ -213,6 +214,22 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 			}
 
 			site_.page_add(name: name, collection: collection, file: file, homepage: homepage)!
+
+			// }else if  action.name=="pull"{
+			// 	mut site_:=ws.site or { return error("can't find website for pull, should have been defined before with !!website.define")}
+			// 	site_.pull()!
+		} else if action.name == 'section_add' {
+			console.print_debug('website.section_add')
+			// mut p := action.params
+			// name := p.get_default('name', '')!
+			// // collection := p.get_default('collection', '')!
+			// // file := p.get_default('file', '')!
+			// // homepage := p.get_default_false('homepage')
+			// mut site_ := ws.site or {
+			// 	return error("can't find website for doctree_add, should have been defined before with !!website.define")
+			// }
+
+			// site_.add_section(name: name)!
 
 			// }else if  action.name=="pull"{
 			// 	mut site_:=ws.site or { return error("can't find website for pull, should have been defined before with !!website.define")}

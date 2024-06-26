@@ -145,7 +145,7 @@ A normal user can ignore these pages, they are just to get links to work.
 			mut lpages := collection_dir_path.file_get('.linkedpages')!
 			lpagescontent := lpages.read()!
 			for lpagestr in lpagescontent.split_into_lines().filter(it.trim_space() != '') {
-				console.print_green('find linked page: ${lpagestr}')
+				//console.print_green('find linked page: ${lpagestr}')
 				// format $collection:$pagename.md
 				splitted := lpagestr.split(':')
 				assert splitted.len == 2
@@ -212,7 +212,7 @@ pub fn (mut book MDBook) error(args ErrorArgs) {
 pub fn (mut book MDBook) open() ! {
 	console.print_header('open book: ${book.name}')
 	cmd := 'open \'${book.path_publish.path}/index.html\''
-	console.print_debug(cmd)
+	//console.print_debug(cmd)
 	// cmd:='bash ${book.path_build.path}/develop.sh'
 	osal.exec(cmd: cmd)!
 }
@@ -232,12 +232,12 @@ pub fn (mut book MDBook) generate() ! {
 
 fn (mut book MDBook) template_install() ! {
 	// get embedded files to the mdbook dir
-	console.print_debug(book.str())
+	//console.print_debug(book.str())
 	mut l := loader()!
 	l.load()!
 	for item in l.embedded_files {
 		dpath := '${book.path_build.path}/${item.path.all_after_first('/')}'
-		console.print_debug(' embed: ${dpath}')
+		//console.print_debug(' embed: ${dpath}')
 		mut dpatho := pathlib.get_file(path: dpath, create: true)!
 		dpatho.write(item.to_string())!
 	}

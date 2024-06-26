@@ -24,14 +24,16 @@ pub fn (mut s_ Sheet) wiki_row_overview(args RowGetArgs) !string {
 	mut rows := []elements.Row{}
 	for values in rows_values {
 		rows << elements.Row{
-			cells: values.map(elements.Paragraph{
+			cells: values.map(&elements.Paragraph{
 				content: it
 			})
 		}
 	}
-
+  header_items:=['Row Name', 'Description', 'Tags']
 	table := elements.Table{
-		header: ['Row Name', 'Description', 'Tags']
+		header: header_items.map(&elements.Paragraph{
+				content: it
+			})
 		// TODO: need to use the build in mechanism to filter rows
 		rows: rows
 		alignments: [.left, .left, .left]
@@ -148,7 +150,7 @@ pub fn (mut s Sheet) wiki_pie_chart(args_ RowGetArgs) !string {
 	}
 
 	if header.len != data.len {
-		return error('data and header lengths must match')
+		return error('data and header lengths must match.\n${header}\n${data}')
 	}
 
 	mut data_lines := []string{}

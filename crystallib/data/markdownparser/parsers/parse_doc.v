@@ -118,12 +118,14 @@ pub fn parse_doc(mut doc elements.Doc) ! {
 			}
 
 			if trimmed_line.starts_with('|') && trimmed_line.ends_with('|') {
-				trimmed_next := parser.line_next().trim_space()
-				// single row doesn't make a table
-				if trimmed_next.starts_with('|') && trimmed_next.ends_with('|') {
-					doc.table_new(mut &doc, '${line}')
-					parser.next()
-					continue
+				if !parser.next_is_eof() {
+					trimmed_next := parser.line_next().trim_space()
+					// single row doesn't make a table
+					if trimmed_next.starts_with('|') && trimmed_next.ends_with('|') {
+						doc.table_new(mut &doc, '${line}')
+						parser.next()
+						continue
+					}
 				}
 			}
 

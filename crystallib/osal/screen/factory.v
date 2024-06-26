@@ -15,6 +15,7 @@ pub mut:
 
 @[params]
 pub struct ScreensNewArgs {
+pub:
 	reset bool
 }
 

@@ -1,7 +1,6 @@
 module herocmds
 
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console

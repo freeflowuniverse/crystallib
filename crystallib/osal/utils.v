@@ -39,5 +39,5 @@ pub fn get_logger() log.Logger {
 			else { .info }
 		}
 	)
-	return log.Logger(logger)
+	return logger
 }

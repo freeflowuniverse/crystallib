@@ -1,7 +1,5 @@
 module caddy
 
-import freeflowuniverse.crystallib.core.pathlib
-
 @[heap]
 pub struct Address {
 pub mut:
@@ -25,6 +23,7 @@ pub mut:
 }
 
 pub struct ReverseProxy {
+pub:
 	path string // path on with the url will be proxied on the domain
 	url  string // url that is being reverse proxied
 }

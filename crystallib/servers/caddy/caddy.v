@@ -1,11 +1,7 @@
 module caddy
 
-import os
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.clients.dagu
-import freeflowuniverse.crystallib.core.texttools
 
 // Restart the Caddy
 pub fn (mut self Caddy[Config]) restart() ! {

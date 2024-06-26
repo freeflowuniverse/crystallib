@@ -8,6 +8,7 @@ import json
 
 // Juggler is a Continuous Integration Juggler that listens for triggers from gitea repositories.
 pub struct Juggler {
+pub:
 	repo_path string // local path to the itenv repository defining dag's per repos
 	dagu_url  string // url of the dagu server the ci/cd will be triggered at
 }

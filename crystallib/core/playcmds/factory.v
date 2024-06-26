@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.clients.b2
+import freeflowuniverse.crystallib.threefold.grid4.simulator
 
 pub fn run(mut plbook playbook.PlayBook) ! {
 	play_core(mut plbook)!
@@ -14,6 +15,7 @@ pub fn run(mut plbook playbook.PlayBook) ! {
 	play_caddy(mut plbook)!
 	hetzner.heroplay(mut plbook)!
 	b2.heroplay(mut plbook)!
+	simulator.play(mut plbook)!
 
 	// plbook.empty_check()!
 

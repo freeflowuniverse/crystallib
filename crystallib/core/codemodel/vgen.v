@@ -135,7 +135,6 @@ pub fn (function Function) vgen() string {
 			}
 		})
 	}
-
 	if options.len > 0 {
 		params_ << Param{
 			name: 'options'
@@ -173,6 +172,9 @@ pub fn (param Param) vgen() string {
 	}
 
 	mut vstr := '${param.name} ${sym}'
+	if param.typ.is_reference {
+		vstr = '&${vstr}'
+	}
 	if param.mutable {
 		vstr = 'mut ${vstr}'
 	}
@@ -195,11 +197,17 @@ pub struct VGenerator {
 
 pub fn (gen VGenerator) generate_struct(struct_ Struct) !string {
 	name := if struct_.generics.len > 0 {
-		console.print_debug('struct  ${struct_}')
 		'${struct_.name}${vgen_generics(struct_.generics)}'
 	} else {
 		struct_.name
 	}
+
+	prefix := if struct_.is_pub {
+		'pub'
+	} else {
+		''
+	}
+
 	priv_fields := struct_.fields.filter(!it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))
 	pub_fields := struct_.fields.filter(!it.is_mut && it.is_pub).map(gen.generate_struct_field(it))
 	mut_fields := struct_.fields.filter(it.is_mut && !it.is_pub).map(gen.generate_struct_field(it))
@@ -233,10 +241,22 @@ pub fn (custom CustomCode) vgen() string {
 pub fn (result Result) vgen() string {
 	result_type := if result.structure.name != '' {
 		result.structure.get_type_symbol()
+	} else if result.typ.symbol == 'void' {
+		''
 	} else {
-		result.typ.symbol
+		if result.typ.is_array {
+			'[]${result.typ.symbol}'
+		} else {
+			result.typ.symbol
+		}
 	}
-	str := if result.result { '!' } else { '' }
+	str := if result.result {
+		'!'
+	} else if result.typ.is_result {
+		'!'
+	} else {
+		''
+	}
 	return '${str}${result_type}'
 }
 
@@ -244,11 +264,6 @@ pub fn (result Result) vgen() string {
 pub struct WriteOptions {
 	format    bool
 	overwrite bool
-}
-
-pub fn (mod Module) write_v(path string, options WriteOptions) ! {
-	dir := pathlib.get_dir(path: path, create: true, empty: options.overwrite)!
-	for codefile in mod.files {
-		codefile.write_v(dir.path, options)!
-	}
+	document  bool
+	prefix    string
 }

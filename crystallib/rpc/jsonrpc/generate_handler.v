@@ -1,10 +1,10 @@
 module jsonrpc
 
-import freeflowuniverse.crystallib.core.codemodel
+import freeflowuniverse.crystallib.core.codemodel { Struct }
 
 pub struct HandlerArgs {
 	stateful bool
-	receiver codemodel.Struct
+	receiver Struct
 	methods  []codemodel.Function
 }
 
@@ -36,12 +36,15 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 		return error('multiple method parameters for jsonrpc calls are not supported yet.')
 	}
 
-	if args.methods.any(it.params.len == 0 && it.result.typ.symbol == '') {
+	if args.methods.any(it.params.len == 0
+		&& (it.result.typ.symbol == '' && it.result.structure.name == ''))
+	{
 		return error('cannot generate handler for method without any parameters and return')
 	}
 
-	handler_struct := codemodel.Struct{
+	handler_struct := Struct{
 		name: '${args.receiver.name}Handler'
+		is_pub: true
 		attrs: [codemodel.Attribute{
 			name: 'heap'
 		}]
@@ -57,7 +60,9 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 
 	match_stmts := args.methods.map(method_to_call(it))
 
-	body := "method := jsonrpc.jsonrpcrequest_decode_method(msg)!
+	body := "mut method := jsonrpc.jsonrpcrequest_decode_method(msg)!
+	method = method.trim_string_left('circles.')
+	method = texttools.name_fix_pascal_to_snake(method)
 	match method {
 		${match_stmts.join_lines()}
 		else{
@@ -87,7 +92,7 @@ pub fn generate_handler(args HandlerArgs) ![]codemodel.CodeItem {
 			typ: codemodel.Type{
 				symbol: 'string'
 			}
-			optional: true
+			result: true
 		}
 		body: body
 	}
@@ -98,8 +103,9 @@ fn method_to_call(method codemodel.Function) string {
 	mut stmt := "'${method.name}' { "
 	if method.params.len == 0 {
 		stmt += 'return jsonrpc.invoke[${method.result.typ.symbol}]'
+		return '${stmt}(msg, handler.state.${method.name})! }'
 	} else if method.result.typ.symbol == '' {
-		stmt += 'jsonrpc.notify[${method.params[0].typ.symbol}]'
+		stmt += 'return jsonrpc.call_void[${method.params[0].typ.symbol}]'
 	} else {
 		stmt += 'return jsonrpc.call[${method.params[0].typ.symbol}, ${method.result.typ.symbol}]'
 	}

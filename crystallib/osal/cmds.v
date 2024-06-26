@@ -27,7 +27,7 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 	mut sourcepath := pathlib.get_file(path: args.source, create: false)!
 	mut destpath := '${dest}/${args.cmdname}'
 
-	println(destpath)
+	console.print_debug(destpath)
 
 	// check if there is other file
 	res := os.execute('which ${args.cmdname}')

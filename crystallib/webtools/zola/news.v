@@ -53,7 +53,7 @@ fn (mut site ZolaSite) news_add(args NewsAddArgs) ! {
 }
 
 pub struct ArticleAddArgs {
-mut:
+pub mut:
 	name       string
 	collection string @[required]
 	file       string @[required]

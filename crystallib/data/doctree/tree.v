@@ -1,7 +1,5 @@
 module doctree
 
-import freeflowuniverse.crystallib.ui.console
-
 @[heap]
 pub struct Tree {
 pub:

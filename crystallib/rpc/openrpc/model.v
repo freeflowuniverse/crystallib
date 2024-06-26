@@ -18,6 +18,7 @@ pub mut:
 // The object provides metadata about the API.
 // The metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.
 pub struct Info {
+pub:
 	title            string   @[required] // The title of the application.
 	description      ?string // A verbose description of the application.
 	terms_of_service ?string  @[json: termsOfService] // A URL to the Terms of Service for the API. MUST be in the format of a URL.
@@ -43,6 +44,7 @@ pub struct License {
 // TODO: make variables field optional bug fixed: https://github.com/vlang/v/issues/18000
 // TODO: server name is required but not for version 1.0.0
 pub struct Server {
+pub:
 	name        string // A name to be used as the cannonical name for the server.
 	url         RuntimeExpression         @[required] // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenRPC document is being served. Server Variables are passed into the Runtime Expression to produce a server URL.
 	summary     ?string // A short summary of what the server is.
@@ -60,7 +62,7 @@ pub struct ServerVariable {
 // Describes the interface for the given method name. The method name is used as the method field of the JSON-RPC body. It therefore MUST be unique.
 // TODO: make result optional once issue is solved: https://github.com/vlang/v/issues/18001
 pub struct Method {
-pub:
+pub mut:
 	name            string                 @[required] // The cannonical name for the method. The name MUST be unique within the methods array.
 	tags            ?[]TagRef // A list of tags for API documentation control. Tags can be used for logical grouping of methods by resources or any other qualifier.
 	summary         ?string   // A short summary of what the method does.
@@ -100,6 +102,7 @@ pub mut:
 // The Example Pairing object consists of a set of example params and result.
 // The result is what you can expect from the JSON-RPC service given the exact params.
 pub struct ExamplePairing {
+pub mut:
 	name        ?string       // Name for the example pairing.
 	description ?string       // A verbose explanation of the example pairing.
 	summary     ?string       // Short description for the example pairing.
@@ -158,7 +161,7 @@ pub struct Error {
 // All objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.
 // All the fixed fields declared above are objects that MUST use keys that match the regular expression: ^[a-zA-Z0-9\.\-_]+$
 pub struct Components {
-mut:
+pub mut:
 	content_descriptors     map[string]ContentDescriptorRef @[json: contentDescriptors] // An object to hold reusable Content Descriptor Objects.
 	schemas                 map[string]SchemaRef // An object to hold reusable Schema Objects.
 	examples                map[string]Example   // An object to hold reusable Example Objects.

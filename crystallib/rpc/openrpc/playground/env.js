@@ -1,0 +1,1 @@
+window._env_ = { ACTORS: '[{"name":"baobab","url":"/specs/baobab.json"},{"name":"circles","url":"/specs/circles.json"},{"name":"collaboration","url":"/specs/collaboration.json"},{"name":"governance","url":"/specs/governance.json"}]' }

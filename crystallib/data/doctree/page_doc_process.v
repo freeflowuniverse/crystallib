@@ -30,7 +30,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 
 	mut collection := page.collection()!
 	args.done << page.name
-	console.print_debug(' ++++ doc: ${collection.name}:${page.name} -> ${args.dest} ')
+	//console.print_debug(' ++++ doc: ${collection.name}:${page.name} -> ${args.dest} ')
 
 	// find the links, and for each link check if collection is same, is not need to copy
 	for mut element in mydoc.children_recursive() {
@@ -76,7 +76,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 				}
 				element.state = .linkprocessed
 			} else if element.cat == .page {
-				console.print_debug('POINTER PAGE: ' + pointername)
+				//console.print_debug('POINTER PAGE: ' + pointername)
 				if page.tree.page_exists(pointername) {
 					mut linkpage := page.tree.page_get(pointername)!
 					if linkpage.collection_name != page.collection_name {
@@ -100,7 +100,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 					// 	args.done << linkpage.name
 					// }
 					mut out := '[${element.description}](${collection_path}/${linkpage.name}.md)'
-					console.print_debug(' ------- LINKPAGE SET: ${out}')
+					//console.print_debug(' ------- LINKPAGE SET: ${out}')
 					mydoc.content_set(element.id, out)
 					element.state = .linkprocessed
 					element.processed = false

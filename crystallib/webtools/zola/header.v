@@ -1,7 +1,5 @@
 module zola
 
-import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 
@@ -15,6 +13,7 @@ pub mut:
 type HeaderItem = Dropdown | Link
 
 pub struct HeaderAddArgs {
+pub:
 	items    []HeaderItem
 	template string
 	logo     string
@@ -28,6 +27,7 @@ pub fn (mut site ZolaSite) header_add(args HeaderAddArgs) ! {
 }
 
 pub struct Link {
+pub:
 	label   string
 	page    string
 	new_tab bool

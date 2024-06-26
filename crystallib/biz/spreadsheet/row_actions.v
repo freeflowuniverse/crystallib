@@ -32,6 +32,7 @@ pub mut:
 //
 // '''
 // name string							optional: if not used then row will be modified itself
+// action        RowAction
 // val f64								optional: if we want to e.g. multiply every cell with same val
 // rows []Row							optional: a row if we want to add each val of item of row, can be more than 1
 // tags string 							how to recognize a row (selection)
@@ -39,6 +40,20 @@ pub mut:
 // delaymonths int //how many months should we delay the output
 // descr   string
 // subgroup string
+// '''
+// row action is
+// '''
+// 	add // add rows
+// 	substract
+// 	divide
+// 	multiply
+// 	aggregate
+// 	difference
+// 	roundint
+// 	max
+// 	min
+// 	reverse //+1 becomes -1
+// 	forwardavg // try to find 12 forward looking cells and do avg where we are
 // '''
 //
 pub fn (mut r Row) action(args_ RowActionArgs) !&Row {

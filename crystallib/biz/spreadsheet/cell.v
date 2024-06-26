@@ -2,9 +2,6 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
 
-pub struct NoVal {}
-
-// type CellVal = currency.Amount | int | f64 | string | NoVal
 
 pub struct Cell {
 pub mut:
@@ -35,23 +32,6 @@ pub fn (mut c Cell) add(v f64) {
 }
 
 pub fn (mut c Cell) repr() string {
-	// match val {
-	// 	currency.Amount {
-	// 		valout=val.repr()!
-	// 	}
-	// 	int {
-	// 		valout="$val"
-	// 	}
-	// 	f64 {
-	// 		valout="$val"
-	// 	}
-	// 	string {
-	// 		valout="$val"
-	// 	}	
-	// 	NoVal {
-	// 		valout=""
-	// 	}				
-	// }
 	if c.empty {
 		return '-'
 	}

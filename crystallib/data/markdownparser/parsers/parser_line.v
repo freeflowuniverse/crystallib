@@ -55,6 +55,9 @@ fn (mut parser Parser) line(nr int) !string {
 	if parser.eof() {
 		return error('end of file')
 	}
+	if nr >= parser.lines.len {
+		return error('accessing line out of range')
+	}
 	return parser.lines[nr]
 }
 

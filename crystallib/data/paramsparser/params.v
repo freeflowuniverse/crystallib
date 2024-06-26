@@ -137,7 +137,7 @@ pub fn (p Params) heroscript() string {
 		presort: ['id', 'cid', 'oid', 'name']
 		postsort: ['mtime', 'ctime', 'time']
 		indent: '    '
-		maxcolsize: 120
+		maxcolsize: 30
 		multiline: true
 	)
 	return out

@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.core.pathlib
 import cli { Command, Flag }
 import os
 import crypto.md5
-import freeflowuniverse.crystallib.ui.console
 
 pub fn cmd_git(mut cmdroot Command) {
 	mut cmd_run := Command{

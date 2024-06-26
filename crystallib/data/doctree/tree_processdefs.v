@@ -77,12 +77,4 @@ pub fn (mut tree Tree) process_defs() ! {
 			mydoc.process()!
 		}
 	}
-
-	// panic("macro")					
-	// for macro in tree.get_macros(name:"def",actor:"wiki")!{
-	// 	console.print_debug(macro)
-	// 	if true{
-	// 		panic("macro")
-	// 	}
-	// }
 }

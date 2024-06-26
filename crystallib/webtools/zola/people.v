@@ -1,8 +1,6 @@
 module zola
 
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.core.texttools
 
 // People section for Zola site
 pub struct People {
@@ -51,7 +49,7 @@ pub fn (mut site ZolaSite) people_add(args PeopleAddArgs) ! {
 }
 
 pub struct PersonAddArgs {
-mut:
+pub mut:
 	name       string
 	page       string
 	collection string

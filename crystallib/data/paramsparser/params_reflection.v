@@ -2,7 +2,6 @@ module paramsparser
 
 import time
 import v.reflection
-import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.data.encoderhero
 // TODO: support more field types
 
@@ -15,7 +14,12 @@ pub fn (params Params) decode[T]() !T {
 pub fn (params Params) decode_struct[T](_ T) !T {
 	mut t := T{}
 	$for field in T.fields {
-		t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
+		if field.name[0].is_capital() {
+			// embed := params.decode_struct(t.$(field.name))!
+			t.$(field.name) = params.decode_struct(t.$(field.name))!
+		} else {
+			t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
+		}
 	}
 	return t
 }
@@ -39,6 +43,8 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 		return params.get(key)!
 	} $else $if T is int {
 		return params.get_int(key)!
+	} $else $if T is u32 {
+		return params.get_u32(key)!
 	} $else $if T is bool {
 		return params.get_default_true(key)
 	} $else $if T is []string {
@@ -47,6 +53,10 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 		return params.get_list_int(key)!
 	} $else $if T is time.Time {
 		time_str := params.get(key)!
+		// todo: 'handle other null times'
+		if time_str == '0000-00-00 00:00:00' {
+			return time.Time{}
+		}
 		return time.parse(time_str)!
 	} $else $if T is $struct {
 		child_params := params.get_params(key)!
@@ -80,9 +90,8 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 		if 'alias' in field_attrs {
 			key = field_attrs['alias']
 		}
-		console.print_debug('FIELD: ${key} ${field.typ}')
-
-		$if val is string || val is int || val is bool || val is i64 || val is time.Time {
+		$if val is string || val is int || val is bool || val is i64 || val is u32
+			|| val is time.Time {
 			params.set(key, '${val}')
 		} $else $if field.typ is []string {
 			mut v2 := ''
@@ -109,12 +118,20 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 				value: v2
 			}
 		} $else $if field.typ is $struct {
-			if args.recursive {
-				console.print_debug('argsoz ${args}')
-				child_params := encode(val)!
-				params.params << Param{
-					key: field.name
-					value: child_params.export()
+			// TODO: Handle embeds better
+			is_embed := field.name[0].is_capital()
+			if is_embed {
+				$if val is string || val is int || val is bool || val is i64 || val is u32
+					|| val is time.Time {
+					params.set(key, '${val}')
+				}
+			} else {
+				if args.recursive {
+					child_params := encode(val)!
+					params.params << Param{
+						key: field.name
+						value: child_params.export()
+					}
 				}
 			}
 		} $else {

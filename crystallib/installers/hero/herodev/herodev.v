@@ -1,12 +1,8 @@
 module herodev
 
-import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.installers.web.mdbook
 import freeflowuniverse.crystallib.installers.web.zola
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu
-import os
 
 @[params]
 pub struct InstallArgs {

@@ -1,0 +1,25 @@
+module @{module}
+
+import freeflowuniverse.crystallib.data.rpcwebsocket
+import freeflowuniverse.crystallib.data.jsonrpc
+import log
+import json
+
+pub struct @{name}OpenRpcClient {
+mut:
+	transport &jsonrpc.IRpcTransportClient
+}
+
+@[params]
+pub struct ClientConfig {
+	address string
+	logger log.Logger
+}
+
+pub fn new_ws_client(config ClientConfig) !PetstoreOpenRpcClient {
+	mut transport := rpcwebsocket.new_rpcwsclient(config.address, config.logger)!
+	spawn transport.run()
+	return PetstoreJsonRpcClient {
+		transport: transport
+	}
+}

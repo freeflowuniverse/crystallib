@@ -6,7 +6,7 @@
 @end
 ]
 @end
-struct @{name} {
+@{prefix} struct @{name} {
 @for embed in struct_.embeds
     @{embed.get_type_symbol()}
 @end
