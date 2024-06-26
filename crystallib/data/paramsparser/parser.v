@@ -51,7 +51,7 @@ pub fn parse(text string) !Params {
 
 	for i in 0 .. text2.len {
 		ch = text2[i..i + 1]
-		// console.print_debug(" - '${ch_prev}${ch}' ${state}")
+		// println(" - '${ch_prev}${ch}' ${state}")
 
 		if state == .value_end {
 			if ch == ' ' {
@@ -65,6 +65,8 @@ pub fn parse(text string) !Params {
 					value = '${value.all_before_last(',')},"${last_item}"'
 				}
 				state = .value_wait
+			} else if ch == '\n' && list{
+				list = false
 			} else {
 				state = .start
 				result.set_with_comment(key, value, comment)
@@ -146,6 +148,7 @@ pub fn parse(text string) !Params {
 		if state == .value {
 			if ch == ' ' {
 				state = .value_end
+				list = false
 			} else {
 				value += ch
 			}
@@ -211,7 +214,6 @@ pub fn parse(text string) !Params {
 			result.set_arg_with_comment(key, comment)
 		}
 	}
-
 	return result
 }
 
