@@ -6,6 +6,9 @@ import veb
 mut j := juggler.configure(
 	config_path: '/root/code/git.ourworld.tf/projectmycelium/itenv'
 	config_url: 'https://git.ourworld.tf/projectmycelium/itenv'
+	username: 'admin'
+	password: ''
+	reset: true
 )!
 
 spawn j.run(8000)
