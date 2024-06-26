@@ -51,6 +51,10 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 		return params.get_list(key)!
 	} $else $if T is []int {
 		return params.get_list_int(key)!
+	} $else $if T is []u32 {
+		lst := params.get_list_u32(key)!
+		println('interdecode ${params}\n==${lst}\n==')
+		return lst
 	} $else $if T is time.Time {
 		time_str := params.get(key)!
 		// todo: 'handle other null times'
@@ -108,6 +112,16 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 				value: v2
 			}
 		} $else $if field.typ is []int {
+			mut v2 := ''
+			for i in val {
+				v2 += '${i},'
+			}
+			v2 = v2.trim(',')
+			params.params << Param{
+				key: field.name
+				value: v2
+			}
+		} $else $if field.typ is []u32 {
 			mut v2 := ''
 			for i in val {
 				v2 += '${i},'

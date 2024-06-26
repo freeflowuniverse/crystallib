@@ -49,10 +49,12 @@ fn decode_struct[T](_ T, data string) !T {
 					}
 				}
 			} $else $if field.is_array {
-				mut data_fmt := data.replace(action_str, '')
-				data_fmt = data.replace('define.${obj_name}', 'define')
-				arr := decode_array(typ.$(field.name), data_fmt)!
-				typ.$(field.name) = arr
+				if is_struct_array(typ.$(field.name))! {
+					mut data_fmt := data.replace(action_str, '')
+					data_fmt = data.replace('define.${obj_name}', 'define')
+					arr := decode_array(typ.$(field.name), data_fmt)!
+					typ.$(field.name) = arr
+				}
 			}
 		}
 	} $else {
@@ -60,6 +62,14 @@ fn decode_struct[T](_ T, data string) !T {
 	}
 	return typ
 }
+
+pub fn is_struct_array[U](_ []U) !bool {
+	$if U is $struct {
+		return true
+	}
+	return false
+}
+
 
 pub fn decode_array[T](_ []T, data string) ![]T {
 	mut arr := []T{}
