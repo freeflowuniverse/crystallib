@@ -3,7 +3,8 @@ module juggler
 import time
 
 pub struct Repository {
-pub:
+pub mut:
+	id u32
 	owner string @[required]
 	name string @[required]
 	host string @[required]

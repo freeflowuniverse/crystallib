@@ -6,35 +6,38 @@ import time
 
 pub struct Trigger {
 	GitTrigger
-pub:
+pub mut:
+	id u32
 	name string
 	description string
-	event_id string
-	script_ids []string // the ids of scripts that the trigger triggers
+	object_id u32
+	script_ids []u32 // the ids of scripts that the trigger triggers
 }
 
 pub struct GitTrigger {
-	repository Repository
+	// repository Repository
 	action GitAction
 }
 
-pub fn (t GitTrigger) is_triggered(e Event) bool {
-	// if e is GitEvent {
-		if e.repository.owner != t.repository.owner || e.repository.name != t.repository.name {
-			return false
-		}
-
-		if e.action != t.action {
-			return false
-		}
-
-		if t.repository.branch != 'default' && e.repository.branch == t.repository.branch {
-			return true
-		}
-		if t.repository.branch == 'default' {
-			return true
-		}
-	// } 
-	return false
+pub fn (mut j Juggler) is_triggered(trigger Trigger, event Event) bool {
+	if trigger.object_id != event.object_id {
+		return false
+	}
+	if trigger.action != event.action {
+		return false
+	}
+	return true
 }
 
+pub fn (mut j Juggler) new_trigger(t_ Trigger) !u32 {
+	mut t := t_
+	// if t.script_ids.map(texttools.name_fix(it))
+
+	println('debugzoni creating trigger ${t}')
+	return j.backend.new[Trigger](t)!
+}
+
+pub fn (mut j Juggler) new_repository(repo_ Repository) !u32 {
+	mut repo := repo_
+	return j.backend.new[Repository](repo)!
+}

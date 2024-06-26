@@ -110,22 +110,38 @@ pub fn (j Juggler) load_scripts() !map[string]Script {
 	return scripts
 }
 
-pub fn (j Juggler) get_triggers(e Event) []Trigger {
-	return j.triggers.values().filter(it.is_triggered(e))
+pub fn (mut j Juggler) get_triggers(e Event) ![]Trigger {
+	triggers := j.backend.list[Trigger]()!
+	println("debugzo123 ${triggers}")
+	return triggers.filter(j.is_triggered(it, e))
 }
 
 
-pub fn (j Juggler) get_scripts(t Trigger) []Script {
-	mut scripts := []Script{}
-	for id, script in j.scripts {
-		if id in t.script_ids {
-			scripts << script
+pub fn (mut j Juggler) get_scripts(t Trigger) ![]Script {
+	scripts := j.backend.list[Script]()!
+	mut triggered_scripts := []Script{}
+	for _, script in scripts {
+		if script.id in t.script_ids {
+			triggered_scripts << script
 		}
 	}
-	return scripts
+	return triggered_scripts
 }
 
-pub fn (j Juggler) load_script(path pathlib.Path) !Script {
+// pub fn (mut j Juggler) get_script_from_path(path_ pathlib.Path) !Script {
+// 	scripts := j.backend.list[Script]()!
+// 	script_lst := scripts.filter(it.path.path == path_.path) 
+
+// 	println('debugzoni ${script_lst}')
+// 	if script_lst.len < 1 {
+// 		return error('no script found for path')
+// 	}
+
+// 	return script_lst[0]
+// }
+
+pub fn (j Juggler) load_script(path_ pathlib.Path) !Script {
+	mut path := pathlib.get(path_.path)
 	mut readme_file := pathlib.get_file(path: '${path.path}/README.md')!
 	
 	relpath := path.path.trim_string_left(j.config_path)
@@ -143,15 +159,65 @@ pub fn (j Juggler) load_script(path pathlib.Path) !Script {
 		paragraph.children[0].content.trim_space()
 	} else {''}
 
+	mut paths := path.list()!.paths.clone()
+
+	mut category := ScriptCategory.hero
+	if paths.any(it.extension() == 'bash' || it.extension() == 'sh') {
+		category = ScriptCategory.shell
+	} else if paths.any(it.extension() == 'v' || it.extension() == 'vsh') {
+		ScriptCategory.vlang
+	}
+
 	return Script {
 		name: name
-		category: .git_cicd
+		category: category
 		description: description
 		url: '${j.config_url}/${relpath}'
-		path: path
+		path: path.path
 	}
 }
 
+pub fn (mut j Juggler) new_script_from_path(path_ pathlib.Path) !u32 {
+	mut path := pathlib.get(path_.path)
+	mut readme_file := pathlib.get_file(path: '${path.path}/README.md')!
+	
+	relpath := path.path.trim_string_left(j.config_path)
+	name := if readme_file.exists() {
+		readme_doc := markdownparser.new(path:readme_file.path)!
+		readme_doc.header_name()!
+	} else {
+		relpath.all_after('/').all_after('/')
+	}
+
+	description := if readme_file.exists() {
+		readme_doc := markdownparser.new(path:readme_file.path)!
+		paragraph := readme_doc.children[2]
+		// TODO: more defensive
+		paragraph.children[0].content.trim_space()
+	} else {''}
+
+	mut paths := path.list()!.paths.clone()
+
+	mut category := ScriptCategory.hero
+	if paths.any(it.extension() == 'bash' || it.extension() == 'sh') {
+		category = ScriptCategory.shell
+	} else if paths.any(it.extension() == 'v' || it.extension() == 'vsh') {
+		ScriptCategory.vlang
+	}
+
+	script := Script {
+		name: name
+		category: category
+		description: description
+		url: '${j.config_url}/${relpath}'
+		path: path.path
+	}
+
+	return j.backend.new[Script](script)!
+}
+
 pub enum ScriptCategory {
-	git_cicd
+	hero
+	vlang
+	shell
 }

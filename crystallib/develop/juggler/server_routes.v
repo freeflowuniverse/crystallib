@@ -36,9 +36,12 @@ pub fn (j &Juggler) triggers(mut ctx Context) veb.Result {
 }
 
 // This is how endpoints are defined in veb. This is the index route
-pub fn (j &Juggler) activity(mut ctx Context) veb.Result {
+pub fn (mut j Juggler) activity(mut ctx Context) veb.Result {
 	// println('debugzo1 ${j.plays}')
 	// println('debugzo2 ${j.scripts}')
+	plays := j.backend.list[Play]() or {
+		return ctx.server_error('Unable to list plays ${err}')
+	}
 	return ctx.html($tmpl('./templates/activity.html'))
 }
 
@@ -53,22 +56,19 @@ pub fn (j &Juggler) activity(mut ctx Context) veb.Result {
 @[POST]
 pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 	// get and register event
-	event := get_event(ctx.req) or {
+	event := j.get_event(ctx.req) or {
 		return ctx.request_error('error $err') 
 	}
 
 	event_id := j.backend.new[Event](event) or {panic('this shouldnt happen ${err}')}
 	j.events[event_id.str()] = event
-	triggers := j.get_triggers(event)
-	println('debugzo3 ${triggers}')
+	triggers := j.get_triggers(event) or {panic('this hopefully wont happen')}
 
 	if triggers.len == 0 {
 		return ctx.text('No triggers set for event.')
 	}
 
-	scripts := j.get_scripts(triggers[0])
-
-	println('debugzo4 ${scripts}')
+	scripts := j.get_scripts(triggers[0]) or {panic('hopefully doesnt happen')}
 
 	if scripts.len == 0 {
 		return ctx.text('No scripts set for event trigger.')
@@ -88,7 +88,7 @@ pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 	mut sm := startupmanager.get() or {panic('failed to get sm ${err}')}
 	sm.start(
 		name: 'juggler_play${play_id}'
-		cmd: 'hero run -cr ${os.home_dir()}/code -p ${script.path.path}'
+		cmd: 'hero run -cr ${os.home_dir()}/code -p ${script.path}'
 		restart: false
 	) or {panic('failed to start sm ${err}')}
 
@@ -150,7 +150,7 @@ pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
 	script_dir := script.path
 	
 	mut sm := startupmanager.get() or {panic('failed to get sm ${err}')}	
-	mut output := sm.output('juggler${play.id}') or {panic('failed to get sm output ${err}')} 
+	mut output := sm.output('juggler_play${play.id}') or {panic('failed to get sm output ${err}')} 
 	output = output.replace('\n','</br>')
 
 	return ctx.html($tmpl('./templates/play.html'))

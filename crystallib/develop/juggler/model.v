@@ -9,12 +9,13 @@ pub enum GitAction {
 	commit
 }
 
-pub fn (t GitTrigger) id() string {
-	return '${t.action}_${t.repository.full_name()}'
-}
-
 pub struct Event {
-	GitEvent
+pub mut:
+	id u32
+	object_id u32
+	commit Commit
+	time time.Time
+	action GitAction
 }
 
 pub struct GitEvent {
@@ -26,19 +27,9 @@ pub mut:
 	action GitAction
 }
 
-pub fn (e Event) id() string {
-	// if e is GitEvent {
-		id := '${e.repository.host}${e.commit.hash}'.replace('.', '_')
-		println('debugzouno ${e}')
-		return id
-	// } else {
-	// 	panic('implement')
-	// }
-}
-
 pub fn (e Event) name() string {
 	// if e is GitEvent {
-	return 'git push ${e.commit.hash} to ${e.repository.full_name()}'
+	return 'git push to'
 	// } else {
 	// 	panic('implement')
 	// }
@@ -52,14 +43,13 @@ pub fn (e Event) category() string {
 	// }
 }
 
-pub fn (event Event) card() string {
-	// if event is GitEvent {
+pub fn (mut j Juggler) event_card(event_id u32) !string {
+	event := j.backend.get[Event](event_id)!
+	repo := j.backend.get[Repository](event.object_id)!
+	return event.card(repo)
+}
+pub fn (event Event) card(repository Repository) string {
 	return $tmpl('./templates/event_card.html')
-	// } else {
-	// 	println(event)
-	// 	return ''
-	// 	// panic('implement')
-	// }
 }
 
 pub fn (play Play) row() string {
@@ -81,11 +71,12 @@ pub fn (e GitEvent) name() string {
 }
 
 pub struct Script {
-pub:
+pub mut:
+	id u32
 	name string
 	description string
 	url string
-	path pathlib.Path
+	path string
 	status string
 	category ScriptCategory
 }

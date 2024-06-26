@@ -5,13 +5,13 @@ import json
 import net.http
 
 // get repository returns the Repository which belongs to the webhook being evented
-pub fn get_event(req http.Request) !Event {
+pub fn (mut j Juggler) get_event(req http.Request) !Event {
 	mut event := match git_service(req)! {
 		.gitea {
-			get_gitea_event(req.data)!
+			j.get_gitea_event(req.data)!
 		}
 		.github {
-			get_github_event(req.data)!
+			j.get_github_event(req.data)!
 		} 
 		else {
 			return error('Unsupported git service.')
@@ -21,7 +21,7 @@ pub fn get_event(req http.Request) !Event {
 	return event
 }
 
-pub fn get_gitea_event(data string) !Event {
+pub fn (mut j Juggler) get_gitea_event(data string) !Event {
 	event := json.decode(GiteaEvent, data) or { 
 		return error('failed to decode gitea event') 
 	}
@@ -38,6 +38,16 @@ pub fn get_gitea_event(data string) !Event {
 		branch: event.ref.all_after_last('/')
 	}
 
+	repos := j.backend.list[Repository]()!
+	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host && it.branch == repo.branch)
+	if repo_lst.len < 1 {
+		return error('repo ${repo} not found in repos ${repos}')
+	}
+	repo_id := repo_lst[0].id
+
+	if event.commits.len == 0 {
+		return error('event contains no commits')
+	}
 	commit := event.commits[0]
 	return Event {
 		commit: Commit {
@@ -47,11 +57,11 @@ pub fn get_gitea_event(data string) !Event {
 			time: time.parse_iso8601(commit.timestamp)!
 			url:commit.url
 		}
-		repository: repo
+		object_id: repo_id
 	}
 }
 
-pub fn get_github_event(data string) !Event {
+pub fn (mut j Juggler) get_github_event(data string) !Event {
 	payload := json.decode(GitHubPayload, data) or { 
 		return error('failed to decode github event') 
 	}
@@ -62,9 +72,16 @@ pub fn get_github_event(data string) !Event {
 		host: 'github.com'
 		branch: payload.ref.all_after_last('/')
 	}
+	
+	repos := j.backend.list[Repository]()!
+	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host && it.branch == repo.branch)
+	if repo_lst.len < 1 {
+		return error('repo ${repo} not found in repos ${repos}')
+	}
+	repo_id := repo_lst[0].id
 
 	return Event {
-		repository: repo
+		object_id: repo_id
 		commit: Commit{
 			hash: payload.commits[0].id
 			url: payload.commits[0].url

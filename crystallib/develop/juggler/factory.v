@@ -64,6 +64,10 @@ pub fn configure(cfg Config) !&Juggler {
 		config_url: cfg.config_url
 	}
 
+	if cfg.reset {
+		j.backend.reset()!
+	}
+
 	j.triggers = j.parse_triggers(cfg.config_path)!
 	j.scripts = j.load_scripts()!
 	return &j
@@ -78,20 +82,24 @@ fn (mut j Juggler) parse_triggers(config_path string) !map[string]Trigger {
 	mut triggers := map[string]Trigger
 	for path in repo_paths {
 		relpath := path.path.trim_string_left(config_dir.path).trim('/')
-		repo :=  Repository{
-				host: relpath.split('/')[0]
-				owner: relpath.split('/')[1]
-				name: relpath.split('/')[2]
-				branch: relpath.split('/')[3]
-			}
+		mut repo :=  Repository{
+			host: relpath.split('/')[0]
+			owner: relpath.split('/')[1]
+			name: relpath.split('/')[2]
+			branch: relpath.split('/')[3]
+		}
+		if repo.host == 'github' {
+			repo.host = 'github.com'
+		}
+		script_id := j.new_script_from_path(path)!
+		repo_id := j.new_repository(repo)!
 		git_trigger := Trigger{
 			name: 'git push ${repo.name} [${repo.branch}]'
 			description: 'git push ${repo.name} [${repo.branch}]'
-			repository: repo
-			script_ids: [j.load_script(path)!.name]
+			object_id: repo_id
+			script_ids: [script_id]
 		}
-		println('why not ${git_trigger.id()}')
-		triggers[git_trigger.id()] = git_trigger
+		j.new_trigger(git_trigger)!
 	}
 	return triggers
 }
@@ -131,11 +139,10 @@ fn (j Juggler) get_playbook_dir(args Repository) ?pathlib.Path {
 }
 
 // get_script gets the script to be run by an event
-fn (j Juggler) get_script(event Event) ?Script {
+fn (mut j Juggler) get_script(event Event) ?Script {
 	// if event !is GitEvent { panic('implement') }
 
-	git_event := event 
-	repo := git_event.repository
+	repo := j.backend.get[Repository](event.object_id) or {panic('this hopefully doesnt happen')}
 
 	if repo.host == '' {panic('this should never happen')}
 	
@@ -163,9 +170,9 @@ fn (j Juggler) get_script(event Event) ?Script {
 	
 	// use branch's own playbook if defined, else use the one for the repo
 	return if branch_dir.exists() {
-		Script{path:branch_dir}
+		Script{path:branch_dir.path}
 	} else if default_dir.exists() {
-		Script{path:default_dir}
+		Script{path:default_dir.path}
 	} else {none}
 }
 
