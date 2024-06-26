@@ -1,7 +1,5 @@
 module caddy
 
-import freeflowuniverse.crystallib.core.pathlib
-
 @[heap]
 pub struct Address {
 pub mut:

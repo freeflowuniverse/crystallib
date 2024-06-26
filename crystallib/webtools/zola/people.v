@@ -1,8 +1,6 @@
 module zola
 
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.core.texttools
 
 // People section for Zola site
 pub struct People {

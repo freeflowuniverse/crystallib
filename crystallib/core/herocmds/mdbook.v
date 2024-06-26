@@ -1,7 +1,6 @@
 module herocmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
-import freeflowuniverse.crystallib.installers.web.mdbook as mdbook_installer
 import cli { Command, Flag }
 import freeflowuniverse.crystallib.ui.console
 

@@ -2,7 +2,6 @@ module ipaddress
 
 import os
 import freeflowuniverse.crystallib.osal
-import regex
 import freeflowuniverse.crystallib.ui.console
 
 pub struct IPNetwork {

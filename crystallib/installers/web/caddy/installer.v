@@ -1,10 +1,8 @@
 module caddy
 
-import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.osal.zinit as zinitmgmt
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os

@@ -2,7 +2,6 @@ module herocmds
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.builder
-import freeflowuniverse.crystallib.installers.base
 import cli { Command, Flag }
 
 pub fn cmd_bootstrap(mut cmdroot Command) {

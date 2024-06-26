@@ -1,6 +1,5 @@
 module zola
 
-import freeflowuniverse.crystallib.clients.redisclient
 import freeflowuniverse.crystallib.webtools.tailwind
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal

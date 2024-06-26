@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.base
 import os
-import freeflowuniverse.crystallib.ui.console
 
 pub fn book_open(name string) ! {
 	mut c := base.context()!

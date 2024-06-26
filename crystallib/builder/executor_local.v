@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.rsync
 // import freeflowuniverse.crystallib.core.pathlib
 import os
-import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct ExecutorLocal {

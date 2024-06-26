@@ -1,8 +1,6 @@
 module builder
 
-import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.ipaddress
-// import freeflowuniverse.crystallib.ui.console
 
 // get node connection to local machine
 pub fn (mut bldr BuilderFactory) node_local() !&Node {

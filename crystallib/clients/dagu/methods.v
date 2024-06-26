@@ -1,7 +1,6 @@
 module dagu
 
 import json
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct NewDagOptions {

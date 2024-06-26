@@ -1,8 +1,6 @@
 module simulator
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 import freeflowuniverse.crystallib.biz.spreadsheet
 
