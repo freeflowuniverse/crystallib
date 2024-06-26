@@ -222,12 +222,12 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 			)!
 
 
-	mut investment_usd := self.sheet.group2row(
-		name: 'investment_usd'
-		tags: 'total'
-		include: ['node_investment']
-		descr: 'investment in USD from all nodes per month'
-	)!
+	// mut investment_usd := self.sheet.group2row(
+	// 	name: 'investment_usd'
+	// 	tags: 'total'
+	// 	include: ['node_investment']
+	// 	descr: 'investment in USD from all nodes per month'
+	// )!
 
 	simulator_set(self)
 
