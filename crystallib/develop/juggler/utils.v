@@ -6,7 +6,7 @@ import net.http
 
 // get repository returns the Repository which belongs to the webhook being evented
 pub fn get_event(req http.Request) !Event {
-	event := match git_service(req)! {
+	mut event := match git_service(req)! {
 		.gitea {
 			get_gitea_event(req.data)!
 		}
@@ -17,10 +17,11 @@ pub fn get_event(req http.Request) !Event {
 			return error('Unsupported git service.')
 		}
 	}
-	return GitEvent{...event, time: time.now()}
+	event.time = time.now()
+	return event
 }
 
-pub fn get_gitea_event(data string) !GitEvent {
+pub fn get_gitea_event(data string) !Event {
 	event := json.decode(GiteaEvent, data) or { 
 		return error('failed to decode gitea event') 
 	}
@@ -38,7 +39,7 @@ pub fn get_gitea_event(data string) !GitEvent {
 	}
 
 	commit := event.commits[0]
-	return GitEvent {
+	return Event {
 		commit: Commit {
 			committer: commit.committer.name
 			hash: commit.id
@@ -50,7 +51,7 @@ pub fn get_gitea_event(data string) !GitEvent {
 	}
 }
 
-pub fn get_github_event(data string) !GitEvent {
+pub fn get_github_event(data string) !Event {
 	payload := json.decode(GitHubPayload, data) or { 
 		return error('failed to decode github event') 
 	}
@@ -62,7 +63,7 @@ pub fn get_github_event(data string) !GitEvent {
 		branch: payload.ref.all_after_last('/')
 	}
 
-	return GitEvent {
+	return Event {
 		repository: repo
 		commit: Commit{
 			hash: payload.commits[0].id

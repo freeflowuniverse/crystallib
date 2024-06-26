@@ -9,29 +9,17 @@ pub enum GitAction {
 	commit
 }
 
-pub struct GitTrigger {
-	repository Repository
-	action GitAction
-}
-
-pub fn (t GitTrigger) is_triggered(e Event) bool {
-	println('debugzohere ${t}')
-	if e is GitEvent {
-		if e.repository == t.repository && e.action == t.action {
-			return true
-		}
-	} 
-	return false
-}
-
 pub fn (t GitTrigger) id() string {
 	return '${t.action}_${t.repository.full_name()}'
 }
 
-pub type Event = GitEvent | CustomEvent
+pub struct Event {
+	GitEvent
+}
 
 pub struct GitEvent {
-pub:
+pub mut:
+	id u32
 	repository Repository
 	commit Commit
 	time time.Time
@@ -39,39 +27,39 @@ pub:
 }
 
 pub fn (e Event) id() string {
-	if e is GitEvent {
+	// if e is GitEvent {
 		id := '${e.repository.host}${e.commit.hash}'.replace('.', '_')
 		println('debugzouno ${e}')
 		return id
-	} else {
-		panic('implement')
-	}
+	// } else {
+	// 	panic('implement')
+	// }
 }
 
 pub fn (e Event) name() string {
-	if e is GitEvent {
-		return 'git push ${e.commit.hash} to ${e.repository.full_name()}'
-	} else {
-		panic('implement')
-	}
+	// if e is GitEvent {
+	return 'git push ${e.commit.hash} to ${e.repository.full_name()}'
+	// } else {
+	// 	panic('implement')
+	// }
 }
 
 pub fn (e Event) category() string {
-	if e is GitEvent {
-		return e.category()
-	} else {
-		panic('implement')
-	}
+	// if e is GitEvent {
+	return e.category()
+	// } else {
+	// 	panic('implement')
+	// }
 }
 
 pub fn (event Event) card() string {
-	if event is GitEvent {
-		return $tmpl('./templates/event_card.html')
-	} else {
-		println(event)
-		return ''
-		// panic('implement')
-	}
+	// if event is GitEvent {
+	return $tmpl('./templates/event_card.html')
+	// } else {
+	// 	println(event)
+	// 	return ''
+	// 	// panic('implement')
+	// }
 }
 
 pub fn (play Play) row() string {
@@ -108,15 +96,16 @@ pub fn (s Script) id() string {
 }
 
 pub fn (play Play) id() string {
-	return '${texttools.name_fix(play.event_id)}_${texttools.name_fix(play.script_id)}'
+	return '${play.event_id}_${texttools.name_fix(play.script_id)}'
 }
 
 // a play of a script due to a trigger that occurs
 pub struct Play {
-pub:
-	id string
+pub mut:
+	id u32
 	script_id string // id of script that is played
-	event_id string // id of event that triggered the play
+	event_id u32 // id of event that triggered the play
+	// event Event
 	trigger_id string
 	status Status // status of the play
 	output string // output of the play

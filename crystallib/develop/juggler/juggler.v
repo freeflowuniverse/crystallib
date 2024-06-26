@@ -22,7 +22,7 @@ import freeflowuniverse.crystallib.baobab.actor
 
 // Juggler is a Continuous Integration Juggler that listens for triggers from gitea repositories.
 pub struct Juggler {
-	// actor.Actor
+	actor.Actor
 	veb.StaticHandler
 	veb.Middleware[Context]
 pub:

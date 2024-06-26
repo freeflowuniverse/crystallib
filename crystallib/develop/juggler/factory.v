@@ -49,10 +49,10 @@ pub fn configure(cfg Config) !&Juggler {
 	)!
 
 	mut j := Juggler {
-		// Actor: actor.new(
-		// 	name: 'admin'
-		// 	secret: 'planetfirst'
-		// )!
+		Actor: actor.new(
+			name: 'admin'
+			secret: 'planetfirst'
+		)!
 		name: cfg.name
 		url: cfg.url
 		port: cfg.port
@@ -132,9 +132,9 @@ fn (j Juggler) get_playbook_dir(args Repository) ?pathlib.Path {
 
 // get_script gets the script to be run by an event
 fn (j Juggler) get_script(event Event) ?Script {
-	if event !is GitEvent { panic('implement') }
+	// if event !is GitEvent { panic('implement') }
 
-	git_event := event as GitEvent
+	git_event := event 
 	repo := git_event.repository
 
 	if repo.host == '' {panic('this should never happen')}
