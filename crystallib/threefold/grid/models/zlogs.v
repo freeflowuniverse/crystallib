@@ -3,6 +3,7 @@ module models
 import json
 
 pub struct ZLogs {
+pub:
 	zmachine string // zmachine name to stream logs of
 	output   string // the `target` location to stream the logs to, it must be a redis or web-socket url
 }

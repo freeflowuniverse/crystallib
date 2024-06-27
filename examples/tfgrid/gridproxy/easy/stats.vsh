@@ -4,9 +4,8 @@ import freeflowuniverse.crystallib.threefold.gridproxy
 import log
 
 fn get_online_grid_stats_example() ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	grid_online_stats := gp_client.get_stats(status: .online)!
@@ -14,9 +13,8 @@ fn get_online_grid_stats_example() ! {
 }
 
 fn get_all_grid_stats_example() ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	grid_all_stats := gp_client.get_stats(status: .all)!

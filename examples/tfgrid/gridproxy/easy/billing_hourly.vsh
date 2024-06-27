@@ -4,9 +4,8 @@ import freeflowuniverse.crystallib.threefold.gridproxy
 import log
 
 fn get_contract_billing(contract_id u64) ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut grid_proxy := gridproxy.get(.dev, false)!
 	bills := grid_proxy.get_contract_hourly_bill(contract_id)!
 	logger.info('${bills}')

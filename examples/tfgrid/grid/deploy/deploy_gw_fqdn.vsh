@@ -5,9 +5,8 @@ import freeflowuniverse.crystallib.threefold.grid.models
 import log
 
 fn main() {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 
 	mnemonics := tfgrid.get_mnemonics() or {
 		logger.error(err.str())

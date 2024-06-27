@@ -6,9 +6,8 @@ import log
 import os
 
 fn main() {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 
 	// Default value used in intializing the resources
 	mut nodes_filter := NodeFilter{}

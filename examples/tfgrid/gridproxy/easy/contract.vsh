@@ -5,9 +5,8 @@ import freeflowuniverse.crystallib.threefold.gridproxy.model
 import log
 
 fn get_contracts_example() ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	mut filter := model.ContractFilter{}
@@ -20,9 +19,8 @@ fn get_contracts_example() ! {
 }
 
 fn get_contract_iterator_example() ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	max_page_iteration := u64(2) // set maximum pages to iterate on

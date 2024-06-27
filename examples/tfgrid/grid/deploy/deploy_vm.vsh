@@ -7,9 +7,8 @@ import log
 import os
 
 fn main() {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mnemonics := os.getenv('MNEMONICS')
 	chain_network := tfgrid.ChainNetwork.dev // User your desired network
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_network, mut logger)!

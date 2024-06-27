@@ -4,9 +4,8 @@ import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import log
 
 fn test_cancel_contracts(contracts_ids []u64) ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mnemonics := tfgrid.get_mnemonics()!
 	mut deployer := tfgrid.new_deployer(mnemonics, .dev, mut logger)!
 	for cont_id in contracts_ids {

@@ -4,9 +4,8 @@ import freeflowuniverse.crystallib.threefold.gridproxy
 import log
 
 fn main() {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.test, true)!
 	farms := gp_client.get_farms()!
 	// println(farms)

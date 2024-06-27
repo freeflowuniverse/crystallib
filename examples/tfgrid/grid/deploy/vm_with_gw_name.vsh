@@ -91,9 +91,8 @@ memory := fp.int('ram', `r`, 4, 'Machine memory provisioning in GB. Defaults to 
 disk := fp.int('disk', `d`, 5, 'Machine Disk space provisioning in GB. Defaults to 5')
 public_ip := fp.bool('public_ip', `i`, false, 'True to allow public ip v4')
 
-mut logger := log.Log{
-	level: .debug
-}
+mut logger := &log.Log{}
+logger.set_level(.debug)
 
 chain_net_enum := get_chain_network(chain_network)!
 mut deployer := tfgrid.new_deployer(mnemonics, chain_net_enum, mut logger)!

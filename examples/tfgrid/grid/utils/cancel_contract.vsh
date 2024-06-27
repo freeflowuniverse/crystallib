@@ -4,9 +4,8 @@ import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import log
 
 fn test_cancel_contract(contract_id u64) ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mnemonics := tfgrid.get_mnemonics()!
 	chain_network := tfgrid.ChainNetwork.dev // User your desired network
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_network, mut logger)!

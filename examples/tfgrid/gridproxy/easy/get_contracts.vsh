@@ -6,9 +6,8 @@ import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import log
 
 fn test_get_contracts() ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mnemonics := tfgrid.get_mnemonics()!
 	mut deployer := tfgrid.new_deployer(mnemonics, .dev, mut logger)!
 	mut grid_proxy := gridproxy.get(.dev, false)!

@@ -3,6 +3,7 @@ module models
 import json
 
 pub struct PublicIP {
+pub:
 	v4 bool
 	v6 bool
 }

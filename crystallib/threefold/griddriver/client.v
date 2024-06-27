@@ -1,6 +1,7 @@
 module griddriver
 
 pub struct Client {
+pub:
 	mnemonic  string
 	substrate string
 	relay     string

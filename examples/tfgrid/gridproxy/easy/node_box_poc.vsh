@@ -13,9 +13,8 @@ pub mut:
 }
 
 fn main() {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.main, true)!
 
 	mut node_filter := model.NodeFilter{}

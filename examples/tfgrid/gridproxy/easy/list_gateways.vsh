@@ -4,9 +4,8 @@ import freeflowuniverse.crystallib.threefold.gridproxy
 import log
 
 fn list_gateways() ! {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut grid_proxy := gridproxy.get(.dev, false)!
 	contracts := grid_proxy.get_gateways(
 		status: 'up'
