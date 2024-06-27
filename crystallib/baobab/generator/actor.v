@@ -146,7 +146,7 @@ pub fn (a Actor) generate_openrpc_specification() !File {
 		content: openrpc_json
 	}
 
-	// openrpc_files := generate_openrpc_files(a)!
+	//sshrpc_files(a)!
 	// files << openrpc_files.map(CodeFile{...it, name: 'openrpc_${it.name}'})
 	return openrpc_file
 }

@@ -2,7 +2,6 @@ module gittools
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
 
 // the factory for getting the gitstructure
 // git is checked uderneith $/code

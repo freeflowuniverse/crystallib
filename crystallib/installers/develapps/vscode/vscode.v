@@ -1,7 +1,6 @@
 module vscode
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.ui.console
 import os
 

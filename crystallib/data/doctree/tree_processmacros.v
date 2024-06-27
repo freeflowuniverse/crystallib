@@ -1,13 +1,9 @@
 module doctree
 
 import freeflowuniverse.crystallib.data.markdownparser.elements { Action }
-import freeflowuniverse.crystallib.data.markdownparser
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playmacros
-import os
 
 @[params]
 pub struct MacroGetArgs {

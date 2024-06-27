@@ -1,7 +1,6 @@
 module builder
 
 import time
-import freeflowuniverse.crystallib.ui.console
 
 // 	exec(cmd string) !string
 // 	exec_silent(cmd string) !string

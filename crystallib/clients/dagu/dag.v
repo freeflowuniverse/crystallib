@@ -1,7 +1,6 @@
 module dagu
 
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 @[params]
 pub struct DAGArgs {

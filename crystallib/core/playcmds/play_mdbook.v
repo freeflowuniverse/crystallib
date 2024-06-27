@@ -2,7 +2,6 @@ module playcmds
 
 import freeflowuniverse.crystallib.webtools.mdbook
 import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import os
 

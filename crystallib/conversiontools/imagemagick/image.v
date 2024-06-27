@@ -1,7 +1,6 @@
 module imagemagick
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
 
 pub struct Image {
 pub mut:
