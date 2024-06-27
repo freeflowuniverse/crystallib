@@ -134,12 +134,13 @@ fn (p PageFrontMatter) markdown() string {
 	front_matter := toml.encode(p)
 	mut lines := front_matter.split_into_lines()
 	for i, mut line in lines {
-		if line.starts_with('date = ') {
-			line = ''
-			continue
-			// if p.date.unix_milli() == 0 {
-			// }
-			// line = 'date = ${p.date.ymmdd()}'
+		line = line.trim_space()
+		if line.starts_with('date =') {
+			if p.date.unix() <= 1 {
+				line = ''
+				continue
+			}
+			line = 'date = ${p.date.ymmdd()}'
 		}
 		if line.starts_with('updated = ') {
 			// if p.updated.unix_milli() == 0 {

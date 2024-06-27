@@ -1,10 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.servers.caddy { Address, ReverseProxy }
-import freeflowuniverse.crystallib.data.doctree
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
-import os
 
 pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 	mut coderoot := ''

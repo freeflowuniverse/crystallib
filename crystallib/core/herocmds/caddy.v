@@ -1,6 +1,5 @@
 module herocmds
 
-import freeflowuniverse.crystallib.installers.web.caddy as caddy_installer
 import cli { Command }
 import freeflowuniverse.crystallib.ui.console
 

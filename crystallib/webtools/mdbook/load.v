@@ -4,7 +4,6 @@ import v.embed_file
 import freeflowuniverse.crystallib.installers.web.mdbook as mdbook_installer
 import freeflowuniverse.crystallib.installers.web.imagemagick
 import os
-import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct FileLoader {

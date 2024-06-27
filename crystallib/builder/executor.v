@@ -1,7 +1,6 @@
 module builder
 
 import freeflowuniverse.crystallib.data.ipaddress
-import freeflowuniverse.crystallib.ui.console
 
 type Executor = ExecutorLocal | ExecutorSSH
 

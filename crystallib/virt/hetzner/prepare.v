@@ -1,7 +1,5 @@
 module hetzner
 
-import freeflowuniverse.crystallib.ui.console
-
 // TODO: couldn't get ssh lib to work
 
 // pub fn (h HetznerClient) server_prepare(name string) !bool {

@@ -11,8 +11,8 @@ pub fn playmacro(action Action) !string {
 	}
 	mut sh := sheet_get(sheet_name)!
 
-	sheet_name := action.params.get('sheetname') or {return error("can't find sheetname from sheet.chart macro.")}
-	mut sh:= sheet_get(sheet_name)!	
+	// sheet_name := action.params.get('sheetname') or {return error("can't find sheetname from sheet.chart macro.")}
+	// mut sh:= sheet_get(sheet_name)!	
 	//console.print_debug(sh)
 
 	supported_actions := ['sheet_wiki', 'graph_pie_row', 'graph_line_row', 'graph_bar_row',

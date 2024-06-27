@@ -1,7 +1,5 @@
 module rsync
 
-import freeflowuniverse.crystallib.core.pathlib
-
 pub struct RsyncD {
 pub mut:
 	configpath  string = '/etc/rsyncd.conf'

@@ -1,8 +1,6 @@
 module simulator
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 import freeflowuniverse.crystallib.biz.spreadsheet
 
@@ -222,12 +220,12 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 			)!
 
 
-	mut investment_usd := self.sheet.group2row(
-		name: 'investment_usd'
-		tags: 'total'
-		include: ['node_investment']
-		descr: 'investment in USD from all nodes per month'
-	)!
+	// mut investment_usd := self.sheet.group2row(
+	// 	name: 'investment_usd'
+	// 	tags: 'total'
+	// 	include: ['node_investment']
+	// 	descr: 'investment in USD from all nodes per month'
+	// )!
 
 	simulator_set(self)
 

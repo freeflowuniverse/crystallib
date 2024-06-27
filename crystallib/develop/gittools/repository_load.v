@@ -1,6 +1,5 @@
 module gittools
 
-import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.base
 import json
