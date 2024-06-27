@@ -1,15 +1,19 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.biz.spreadsheet
-import freeflowuniverse.crystallib.core.smartid
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 
-// import os
+__global (
+	bizmodels shared map[string]&BizModel
+)
+
+
 
 pub struct BizModel {
 pub mut:
@@ -18,36 +22,35 @@ pub mut:
 	employees map[string]&Employee
 }
 
+
 @[params]
 pub struct BizModelArgs {
 pub mut:
-	name          string = 'default' // name of bizmodel
+	name          string = 'default' // name of simulation
 	path          string
 	git_url       string
 	git_reset     bool
-	git_root      string
 	git_pull      bool
 	mdbook_source string
-	mdbook_name   string // if empty will be same as name of bizmodel
+	mdbook_name   string // if empty will be same as name of simulation
 	mdbook_path   string
 	mdbook_dest   string // if empty is /tmp/mdbooks/$name
-	cid           smartid.CID
 }
 
 pub fn new(args_ BizModelArgs) !BizModel {
 	mut args := args_
 
 	// mut cs := currency.new()
-	mut sh := spreadsheet.sheet_new()!
-	mut bm := BizModel{
-		sheet: sh
+	mut sh := spreadsheet.sheet_new(name: 'bizmodel_${args.name}')!
+	mut bizmodel := BizModel{
+		name: args.name
+		sheet: &sh
 		params: args
 		// currencies: cs
 	}
-	bm.load()!
 
 	if args.name == '' {
-		return error('bizmodel needs to have a name')
+		return error('simulation needs to have a name')
 	}
 
 	args.name = texttools.name_fix(args.name)
@@ -56,15 +59,8 @@ pub fn new(args_ BizModelArgs) !BizModel {
 		args.mdbook_name = args.name
 	}
 
-	// tree_name := 'bizmodel_${args.name}'
-	// mut tree := doctree.new(name: tree_name)!
-
-	// mp := macroprocessor_new(args_.name)
-	// tree.macroprocessor_add(mp)!
-
 	if args.git_url.len > 0 {
 		args.path = gittools.code_get(
-			coderoot: args.git_root
 			url: args.git_url
 			pull: args.git_pull
 			reset: args.git_reset
@@ -72,73 +68,35 @@ pub fn new(args_ BizModelArgs) !BizModel {
 		)!
 	}
 
-	// tree.scan(
-	// 	name: 'crystal_manual'
-	// 	git_url: 'https://github.com/freeflowuniverse/crystallib/tree/development/manual/biz' // TODO: needs to be come development
-	// 	heal: false
-	// 	cid: args.cid
-	// )!
+	simulator_set(bizmodel)
+	bizmodel.load()!
 
-	// tree.scan(
-	// 	name: tree_name
-	// 	path: args.path
-	// 	heal: true
-	// 	cid: args.cid
-	// )!
-
-	// mut book := doctree.book_generate(
-	// 	path: args.mdbook_path
-	// 	name: args.mdbook_name
-	// 	tree: tree
-	// 	dest: args.mdbook_dest
-	// )!
-
-	// return *book
-	return bm
+	return bizmodel
 }
 
-pub fn (mut m BizModel) load() ! {
-	console.print_debug('BIZMODEL LOAD ${m.params.name}')
+// get sheet from global
+pub fn simulator_get(name string) !&BizModel {
+	rlock bizmodels {
+		if name in bizmodels {
+			return bizmodels[name]
+		}
+	}
+	return error("cann't find tfgrid simulator:'${name}' in global bizmodels")
+}
 
-	// m.replace_smart_ids()!
-	// mut tree := doctree.new(name: 'bizmodel_${m.params.name}')!
-	// tree.scan(path: m.params.path)!
-	// mut actions_playbooks := playbook.PlayBook{}
-	// for playbook in tree.playbooks.values() {
-	// 	for page in playbook.pages.values() {
-	// 		if d := page.doc {
-	// 			actions_playbooks.actions << d.actions()
-	// 		}
-	// 	}
-	// }
+// remember sheet in global
+pub fn simulator_set(bizmodel BizModel) {
+	lock bizmodels {
+		bizmodels[bizmodel.name] = &bizmodel
+	}
+	spreadsheet.sheet_set(bizmodel.sheet)
+}
 
-	mut plbook := playbook.new(path: m.params.path)!
+// load the mdbook content from path or git
+pub fn (mut self BizModel) load() ! {
+	console.print_debug('SIMULATOR LOAD ${self.params.name}')
 
-	// ap := playbook.parse(path: m.params.path, defaultcircle: 'bizmodel_${m.params.name}')!
-	m.revenue_actions(plbook)!
-	m.hr_actions(plbook)!
-	m.funding_actions(plbook)!
-	m.overhead_actions(plbook)!
+	mut plbook := playbook.new(path: self.params.path)!
 
-	// tr.scan(
-	// 	path: wikipath
-	// 	heal: false
-	// )!
-
-	// QUESTION: why was this here?
-	// m.sheet.group2row(
-	// 	name: 'company_result'
-	// 	include: ['pl']
-	// 	tags: 'netresult'
-	// 	descr: 'Net Company Result.'
-	// )!
-
-	// mut company_result := m.sheet.row_get('company_result')!
-	// mut cashflow := company_result.recurring(
-	// 	name: 'Cashflow'
-	// 	tags: 'cashflow'
-	// 	descr: 'Cashflow of company.'
-	// )!
-
-	m.process_macros()!
+	self.play(mut plbook)!
 }
