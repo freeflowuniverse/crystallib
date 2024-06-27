@@ -15,7 +15,7 @@ mut book := bizmodel.new(
 	name: 'example'
 	mdbook_name: 'biz_book'
 	mdbook_path: wikipath
-	mdbook_dest: os.dir(@FILE) + '/dest'
+	mdbook_dest: '/tmp/dest'
 	path: wikipath
 )!
 
