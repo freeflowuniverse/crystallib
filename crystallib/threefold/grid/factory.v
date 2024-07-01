@@ -31,10 +31,11 @@ pub fn heroplay(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'tfgridclient.define')! {
 		mut p := action.params
 		instance := p.get_default('instance', 'default')!
-		mut cl := get(instance,
-			mnemonics: p.get('mnemonics')!
-			network: p.get('network')!
-		)!
+		mut cl := get(instance)!
+		mut cfg := cl.config_get()!
+		cfg.mnemonics = p.get('mnemonics')!
+		cfg.network = p.get('network')!
+		cl.config_save()!
 	}
 }
 
@@ -59,10 +60,9 @@ pub fn (mut self TFGridClient[Config]) config_interactive() ! {
 		default: cfg.mnemonics
 	)!
 
-	envs := ['main', 'qa', 'test', 'dev']
 	cfg.network = myui.ask_dropdown(
 		question: 'choose environment'
-		items: envs
+		items: grid.envs.values()
 	)!
 
 	self.config_save()!
