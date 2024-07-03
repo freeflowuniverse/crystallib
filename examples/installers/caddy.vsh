@@ -2,7 +2,7 @@
 
 
 // import freeflowuniverse.crystallib.installers.mdbook
-import freeflowuniverse.crystallib.installers.caddy
+import freeflowuniverse.crystallib.installers.web.caddy
 
 // shortcut to install the base
 

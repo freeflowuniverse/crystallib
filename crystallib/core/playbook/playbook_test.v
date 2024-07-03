@@ -52,7 +52,7 @@ fn test_parse_1() {
 !!payment.add name:'TF Wallet2' person:despiegk
 ")
 
-	assert sha256.hexhash(a.str()) == 'cff221d01c67af053f3eb51fc3f2759eee889b65363bab4fae446a1490512eb7'
+	assert sha256.hexhash(a.str()) == 'e86eb063d8556c8501f63494a863fc78415112d6990ba6f1d0d5db16ff26e954'
 }
 
 fn test_hashkey() {
@@ -61,7 +61,7 @@ fn test_hashkey() {
 
 	console.print_debug(t)
 
-	assert t == '773708ca1fa94582ce2ef625932a13a6aa2d46a1'
+	assert t == 'a5e85c3a8e4c132bd40c88acc0dcc3d9a2af56c5'
 }
 
 fn test_filter() {

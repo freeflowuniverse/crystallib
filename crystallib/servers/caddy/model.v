@@ -1,34 +1,35 @@
 module caddy
 
 @[heap]
-pub struct Address {
+pub struct CaddyFile {
 pub mut:
-	domain      string // e.g. www.ourworld.tf
-	port        int = 443 // if not filled in then 443
-	description string
-}
-
-@[heap]
-pub struct Backend {
-pub mut:
-	addr        string = 'localhost'
-	port        int    = 8000
-	description string // always optional
+	site_blocks []SiteBlock
+	path        string = '/etc/caddy/Caddyfile'
 }
 
 pub struct SiteBlock {
 pub mut:
-	addresses       []Address
-	reverse_proxy []ReverseProxy
-	file_server []FileServer
+	addresses  []Address
+	directives []Directive
 }
 
-pub struct FileServer {
-	path string
+pub struct Address {
+pub mut:
+	domain      string // e.g. www.ourworld.tf
+	port        int = 443 // default port 443
+	description string
 }
 
-pub struct ReverseProxy {
-pub:
-	path string // path on with the url will be proxied on the domain
-	url  string // url that is being reverse proxied
+pub struct Directive {
+pub mut:
+	name          string
+	args          []string
+	matchers      []Matcher
+	subdirectives []Directive
+}
+
+pub struct Matcher {
+pub mut:
+	name string
+	args []string
 }

@@ -1,7 +1,7 @@
 module main
 
 import vweb
-import freeflowuniverse.crystallib.installers.caddy as caddyinstaller
+import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
 import freeflowuniverse.crystallib.webserver.auth
 import os
 

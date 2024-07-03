@@ -1,19 +1,29 @@
 module caddy
 
-import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.sysadmin.startupmanager
+import os
 
 // Restart the Caddy
 pub fn (mut self Caddy[Config]) restart() ! {
-	self.start()!
 	self.stop()!
+	self.start()!
 }
 
-pub fn (mut self Caddy[Config]) reverse_proxy(block SiteBlock) ! {
+pub fn (mut self Caddy[Config]) reverse_proxy(address Address, args ReverseProxy) ! {
 	mut cfg := self.config()!
-	cfg.file.site_blocks << block
+	cfg.file.reverse_proxy(address, args)!
+}
+
+pub fn (mut self Caddy[Config]) file_server(addresses []Address, args FileServer) ! {
+	mut cfg := self.config()!
+	cfg.file.file_server(addresses, args)!
+}
+
+pub fn (mut self Caddy[Config]) add_block(block SiteBlock) ! {
+	mut cfg := self.config()!
+	cfg.file.add_site_block(block)
 }
 
 pub fn (mut self Caddy[Config]) add_block(block SiteBlock) ! {
@@ -41,7 +51,7 @@ pub fn (mut self Caddy[Config]) start() ! {
 		return error("didn't find caddyfile")
 	}
 
-	cmd := 'caddy run --config /etc/caddy/Caddyfile'
+	cmd := 'caddy run --config ${cfg.homedir}/Caddyfile'
 
 	mut sm := startupmanager.get()!
 

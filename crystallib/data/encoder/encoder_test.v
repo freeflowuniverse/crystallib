@@ -17,13 +17,13 @@ fn test_string() {
 
 fn test_int() {
 	mut e := new()
-	e.add_int(math.min_i32)
-	e.add_int(math.max_i32)
+	e.add_int(min_i32)
+	e.add_int(max_i32)
 	assert e.data == [u8(0x00), 0x00, 0x00, 0x80, 0xff, 0xff, 0xff, 0x7f]
 
 	mut d := decoder_new(e.data)
-	assert d.get_int() == math.min_i32
-	assert d.get_int() == math.max_i32
+	assert d.get_int() == min_i32
+	assert d.get_int() == max_i32
 }
 
 fn test_bytes() {
@@ -39,47 +39,47 @@ fn test_bytes() {
 
 fn test_u8() {
 	mut e := new()
-	e.add_u8(math.min_u8)
-	e.add_u8(math.max_u8)
+	e.add_u8(min_u8)
+	e.add_u8(max_u8)
 	assert e.data == [u8(0x00), 0xff]
 
 	mut d := decoder_new(e.data)
-	assert d.get_u8() == math.min_u8
-	assert d.get_u8() == math.max_u8
+	assert d.get_u8() == min_u8
+	assert d.get_u8() == max_u8
 }
 
 fn test_u16() {
 	mut e := new()
-	e.add_u16(math.min_u16)
-	e.add_u16(math.max_u16)
+	e.add_u16(min_u16)
+	e.add_u16(max_u16)
 	assert e.data == [u8(0x00), 0x00, 0xff, 0xff]
 
 	mut d := decoder_new(e.data)
-	assert d.get_u16() == math.min_u16
-	assert d.get_u16() == math.max_u16
+	assert d.get_u16() == min_u16
+	assert d.get_u16() == max_u16
 }
 
 fn test_u32() {
 	mut e := new()
-	e.add_u32(math.min_u32)
-	e.add_u32(math.max_u32)
+	e.add_u32(min_u32)
+	e.add_u32(max_u32)
 	assert e.data == [u8(0x00), 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff]
 
 	mut d := decoder_new(e.data)
-	assert d.get_u32() == math.min_u32
-	assert d.get_u32() == math.max_u32
+	assert d.get_u32() == min_u32
+	assert d.get_u32() == max_u32
 }
 
 fn test_u64() {
 	mut e := new()
-	e.add_u64(math.min_u64)
-	e.add_u64(math.max_u64)
+	e.add_u64(min_u64)
+	e.add_u64(max_u64)
 	assert e.data == [u8(0x00), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff,
 		0xff, 0xff, 0xff, 0xff]
 
 	mut d := decoder_new(e.data)
-	assert d.get_u64() == math.min_u64
-	assert d.get_u64() == math.max_u64
+	assert d.get_u64() == min_u64
+	assert d.get_u64() == max_u64
 }
 
 fn test_time() {

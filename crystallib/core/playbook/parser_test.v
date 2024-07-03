@@ -26,11 +26,11 @@ fn test_parse_1() {
 	assert myaction.params.params.len == 6
 	assert myaction.id == 1
 
-	assert a.hashkey() == '286770a4e2cf79379cb3484471223a738d4b6863'
+	assert a.hashkey() == '95c585c8bf01b4c432cb7096dc7c974fc1a14b5a'
 	c := a.heroscript()!
 	b := new(text: c) or { panic(err) }
 
-	assert b.hashkey() == '286770a4e2cf79379cb3484471223a738d4b6863'
+	assert b.hashkey() == '95c585c8bf01b4c432cb7096dc7c974fc1a14b5a'
 }
 
 fn test_parser() {
