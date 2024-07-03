@@ -22,7 +22,6 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 
 		mut cfg := c.config()!
 		cfg.homedir = path
-		cfg.url = url
 		config_actions[0].done = true
 	}
 
@@ -36,17 +35,15 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		local_path := p.get_default('local_path', '')!
 
 		c.reverse_proxy(
-			address: Address{
+			Address{
 				domain: host
 				port: port
 				description: description
-			}
-			reverse_proxy: [
-				ReverseProxy{
-					path: local_path
-					url: local_url
-				},
-			]
+			},
+			ReverseProxy{
+				path: local_path
+				url: local_url
+			},
 		)!
 		action.done = true
 	}
