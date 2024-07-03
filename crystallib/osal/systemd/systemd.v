@@ -55,7 +55,7 @@ pub mut:
 	description string
 	env         map[string]string
 	start       bool = true
-	restart bool = true
+	restart     bool = true
 }
 
 //```

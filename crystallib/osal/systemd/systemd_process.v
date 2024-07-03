@@ -18,7 +18,7 @@ pub mut:
 	systemd     &Systemd           @[skip; str: skip]
 	description string
 	info        SystemdProcessInfo
-	restart bool = true // whether process will be restarted upon failure
+	restart     bool = true // whether process will be restarted upon failure
 }
 
 pub fn (mut self SystemdProcess) servicefile_path() string {
@@ -80,39 +80,48 @@ pub fn (mut self SystemdProcess) stop() ! {
 }
 
 enum SystemdStatus {
-    unknown
-    active
-    inactive
-    failed
-    activating
-    deactivating
+	unknown
+	active
+	inactive
+	failed
+	activating
+	deactivating
 }
 
 pub fn (self SystemdProcess) status() !SystemdStatus {
+	// exit with 3 is converted to exit with 0
 	cmd := '
 	systemctl daemon-reload
-	systemctl status ${name_fix(self.name)}
+	systemctl status --no-pager --lines=0 ${name_fix(self.name)}
 	'
-	response := osal.execute_silent(cmd)!
-	return parse_systemd_process_status(response)
+	job := osal.exec(cmd: cmd, stdout: false) or {
+		if err.code() == 3 {
+			if err is osal.JobError {
+				return parse_systemd_process_status(err.job.output)
+			}
+		}
+		return error('Failed to run command to get status ${err}')
+	}
+
+	return parse_systemd_process_status(job.output)
 }
 
 fn parse_systemd_process_status(output string) SystemdStatus {
-    lines := output.split_into_lines()
-    for line in lines {
-        if line.contains('Active: ') {
-            if line.contains('active (running)') {
-                return .active
-            } else if line.contains('inactive (dead)') {
-                return .inactive
-            } else if line.contains('failed') {
-                return .failed
-            } else if line.contains('activating') {
-                return .activating
-            } else if line.contains('deactivating') {
-                return .deactivating
-            }
-        }
-    }
-    return .unknown
+	lines := output.split_into_lines()
+	for line in lines {
+		if line.contains('Active: ') {
+			if line.contains('active (running)') {
+				return .active
+			} else if line.contains('inactive (dead)') {
+				return .inactive
+			} else if line.contains('failed') {
+				return .failed
+			} else if line.contains('activating') {
+				return .activating
+			} else if line.contains('deactivating') {
+				return .deactivating
+			}
+		}
+	}
+	return .unknown
 }

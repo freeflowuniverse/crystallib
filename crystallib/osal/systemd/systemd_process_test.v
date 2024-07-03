@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.ui.console
 import os
 
 pub fn testsuite_begin() ! {
-	mut systemdfactory := systemd.new()!
+	mut systemdfactory := new()!
 	mut process := systemdfactory.new(
 		cmd: 'redis-server'
 		name: 'testservice'
@@ -19,7 +19,7 @@ pub fn testsuite_begin() ! {
 }
 
 pub fn testsuite_end() ! {
-	mut systemdfactory := systemd.new()!
+	mut systemdfactory := new()!
 	mut process := systemdfactory.new(
 		cmd: 'redis-server'
 		name: 'testservice'
@@ -30,7 +30,7 @@ pub fn testsuite_end() ! {
 }
 
 pub fn test_systemd_process_status() ! {
-	mut systemdfactory := systemd.new()!
+	mut systemdfactory := new()!
 	mut process := systemdfactory.new(
 		cmd: 'redis-server'
 		name: 'testservice'
@@ -55,7 +55,7 @@ pub fn test_parse_systemd_process_status() ! {
 
 Jun 10 12:51:24 myhost1 systemd[1]: testservice.service: Scheduled restart job, restart counter is at 1.
 Jun 10 12:51:24 myhost1 systemd[1]: Started testservice.'
-    
-    status := parse_systemd_process_status(output)
+
+	status := parse_systemd_process_status(output)
 	assert status == .active
 }
