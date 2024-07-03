@@ -3,7 +3,6 @@ module backend
 import json
 import db.sqlite
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 pub struct Indexer {
 	db sqlite.DB
