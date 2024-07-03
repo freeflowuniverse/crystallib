@@ -80,6 +80,7 @@ pub mut:
 
 @[params]
 pub struct DeploymentArgs {
+pub:
 	version               ?u32
 	twin_id               u32
 	contract_id           u64

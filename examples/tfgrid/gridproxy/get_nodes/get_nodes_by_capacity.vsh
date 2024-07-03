@@ -1,20 +1,26 @@
+#!/usr/bin/env -S v -w -enable-globals run
+
 import freeflowuniverse.crystallib.threefold.gridproxy { TFGridNet }
 import freeflowuniverse.crystallib.threefold.gridproxy.model { Node, ResourceFilter }
+import log
 import os
 
 fn main() {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
+
 	// Default value used in intializing the resources
 	mut resources_filter := ResourceFilter{}
 
 	if '--help' in os.args {
 		println('This script to get nodes by available resources \n
-		--sru 		nodes selected should have a minumum value of free sru in GB (ssd resource unit) equal to this  (optional) \n
-		--hru 		nodes selected should have a minumum value of free hru in GB (hd resource unit) equal to this  (optional) \n
-		--mru   	nodes selected should have a minumum value of free mru in GB (memory resource unit) equal to this (optional) \n
-		--ips 		nodes selected should have a minumum value of ips (ips in the farm of the node) equal to this  (optional)\n
-		--network   one of (dev, test, qa, main)  (optional)(default to `test`) \n
-		--max-count maximum number of nodes to be selected (optional)(default to 0 which means no limit) \n
-		--cache     enable cache  (optional)(default to false')
+		--sru		nodes selected should have a minumum value of free sru in GB (ssd resource unit) equal to this (optional) \n
+		--hru		nodes selected should have a minumum value of free hru in GB (hd resource unit) equal to this (optional) \n
+		--mru		nodes selected should have a minumum value of free mru in GB (memory resource unit) equal to this (optional) \n
+		--ips		nodes selected should have a minumum value of ips (ips in the farm of the node) equal to this (optional) \n
+		--network	one of (dev, test, qa, main) (optional) (default to `test`) \n
+		--max-count	maximum number of nodes to be selected (optional) (default to 0 which means no limit) \n
+		--cache		enable cache (optional) (default to false')
 		return
 	}
 
@@ -39,8 +45,8 @@ fn main() {
 	}
 
 	mut net := 'test'
-	if '--net' in os.args {
-		index_val := os.args.index('--net')
+	if '--network' in os.args {
+		index_val := os.args.index('--network')
 		net = os.args[index_val + 1]
 	}
 
@@ -92,10 +98,10 @@ fn main() {
 			}
 		}
 	}
-	println('found ${nodes_with_min_resources.len} nodes on ${net.to_upper()} network with following min resources:\n${resources_filter}')
+	logger.info('found ${nodes_with_min_resources.len} nodes on ${net.to_upper()} network with following min resources:\n${resources_filter}')
 	if max_count > 0 {
-		println('Note: a limit of getting at most ${max_count} nodes was set')
+		logger.info('Note: a limit of getting at most ${max_count} nodes was set')
 	}
-	println('---------------------------------------')
-	println(nodes_with_min_resources)
+	logger.info('---------------------------------------')
+	logger.info('${nodes_with_min_resources}')
 }

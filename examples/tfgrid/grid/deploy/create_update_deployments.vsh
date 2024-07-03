@@ -1,18 +1,17 @@
-module main
+#!/usr/bin/env -S v -w -cg -enable-globals run
 
-import json
 import freeflowuniverse.crystallib.threefold.grid.models
+import freeflowuniverse.crystallib.threefold.grid as tfgrid
+import json
 import log
-import freeflowuniverse.crystallib.threefold.grid
 
 const pubkey = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTwULSsUubOq3VPWL6cdrDvexDmjfznGydFPyaNcn7gAL9lRxwFbCDPMj7MbhNSpxxHV2+/iJPQOTVJu4oc1N7bPP3gBCnF51rPrhTpGCt5pBbTzeyNweanhedkKDsCO2mIEh/92Od5Hg512dX4j7Zw6ipRWYSaepapfyoRnNSriW/s3DH/uewezVtL5EuypMdfNngV/u2KZYWoeiwhrY/yEUykQVUwDysW/xUJNP5o+KSTAvNSJatr3FbuCFuCjBSvageOLHePTeUwu6qjqe+Xs4piF1ByO/6cOJ8bt5Vcx0bAtI8/MPApplUU/JWevsPNApvnA/ntffI+u8DCwgP'
 
 fn test_create_and_update_deployment() ! {
-	mut logger := log.Log{
-		level: .debug
-	}
-	mnemonics := grid.get_mnemonics()!
-	mut deployer := grid.new_deployer(mnemonics, .dev, mut logger)!
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
+	mnemonics := tfgrid.get_mnemonics()!
+	mut deployer := tfgrid.new_deployer(mnemonics, .dev, mut logger)!
 	node_privkey := deployer.client.generate_wg_priv_key()!
 	user_privkey := deployer.client.generate_wg_priv_key()!
 	twin_id := deployer.client.get_user_twin()!

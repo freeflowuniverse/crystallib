@@ -1,20 +1,27 @@
 #!/usr/bin/env -S v -w -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
+import log
 
 fn get_online_grid_stats_example() ! {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	grid_online_stats := gp_client.get_stats(status: .online)!
-	println(grid_online_stats)
+	logger.info('${grid_online_stats}')
 }
 
 fn get_all_grid_stats_example() ! {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	grid_all_stats := gp_client.get_stats(status: .all)!
-	println(grid_all_stats)
+	logger.info('${grid_all_stats}')
 }
 
-get_online_grid_stats_example()!
-get_all_grid_stats_example()!
+fn main() {
+	get_online_grid_stats_example()!
+	get_all_grid_stats_example()!
+}

@@ -2,12 +2,7 @@
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
-
-mut gp_client := gridproxy.get(.main, true)!
-
-mut node_filter := model.NodeFilter{}
-
-node_filter.status = 'up'
+import log
 
 pub struct CloudBox{
 pub mut:
@@ -17,22 +12,26 @@ pub mut:
 	ssd_mb u32
 }
 
-nodes := gp_client.get_nodes(node_filter)!
-for node in nodes{
+fn main() {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
+	mut gp_client := gridproxy.get(.main, true)!
 
-	println(node)
+	mut node_filter := model.NodeFilter{}
+	node_filter.status = 'up'
 
-	println(node.capacity.total_resources.hru.to_gigabytes())
+	nodes := gp_client.get_nodes(node_filter)!
+	for node in nodes{
+		println(node)
+		logger.info('${node}')
+		logger.info('${node.capacity.total_resources.hru.to_gigabytes()}')
 
+		node_available_resources := node.calc_available_resources()
+		logger.info('${node_available_resources}')
 
+		node_stats := gp_client.get_node_stats_by_id(node.node_id)!
+		logger.info('${node_stats}')
 
-
-	// node_available_resources := node.calc_available_resources()
-	// println(node_available_resources)
-
-	// node_stats := gp_client.get_node_stats_by_id(node.node_id)!
-	// println(node_stats)
-
-	if true{panic("s")}
-
+		if true{panic("s")}
+	}
 }

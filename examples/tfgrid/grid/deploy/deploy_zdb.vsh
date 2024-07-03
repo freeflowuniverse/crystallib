@@ -1,13 +1,12 @@
-module main
+#!/usr/bin/env -S v -w -enable-globals run
 
+import freeflowuniverse.crystallib.threefold.grid.models
+import freeflowuniverse.crystallib.threefold.grid as tfgrid
 import log
-import threefoldtech.tfgrid
-import threefoldtech.tfgrid.models
 
 fn main() {
-	mut logger := log.Log{
-		level: .debug
-	}
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 
 	mnemonics := tfgrid.get_mnemonics() or {
 		logger.error(err.str())
@@ -40,6 +39,7 @@ fn main() {
 		signature_requirement: signature_requirement
 	)
 
-	node_contract_id := deployer.deploy(33, mut deployment, '', 0)!
+	node_id := u32(14)
+	node_contract_id := deployer.deploy(node_id, mut deployment, '', 0)!
 	logger.info('node contract created with id ${node_contract_id}')
 }
