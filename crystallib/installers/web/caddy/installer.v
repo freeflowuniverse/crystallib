@@ -17,6 +17,8 @@ pub mut:
 	homedir   string
 	file_path string // path to caddyfile
 	file_url  string // path to caddyfile
+	xcaddy bool // wether to install caddy with xcaddy
+	plugins []string // list of plugins to build caddy with
 }
 
 // install caddy will return true if it was already installed
@@ -24,46 +26,17 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '2.8.4'
 
-	res := os.execute('${osal.profile_path_source_and()} caddy version')
-	if res.exit_code == 0 {
-		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
-		if r.len != 1 {
-			return error("couldn't parse dagu version.\n${res.output}")
-		}
-		if texttools.version(version) > texttools.version(r[0]) {
-			args.reset = true
-		}
-	} else {
-		args.reset = true
-	}
+	installed := is_installed(version)!
 
-	if args.reset {
+	if args.reset || !installed {
 		console.print_header('install caddy')
-
-		mut url := ''
-		if osal.is_linux_arm() {
-			url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_linux_arm64.tar.gz'
-		} else if osal.is_linux_intel() {
-			url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_linux_amd64.tar.gz'
-		} else if osal.is_osx_arm() {
-			url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_darwin_arm64.tar.gz'
-		} else if osal.is_osx_intel() {
-			url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_darwin_amd64.tar.gz'
+		if args.xcaddy || args.plugins.len > 0 {
+			install_caddy_with_xcaddy(args.plugins)!
 		} else {
-			return error('unsported platform')
+			install_caddy_from_release()!
 		}
-
-		mut dest := osal.download(
-			url: url
-			minsize_kb: 10000
-			expand_dir: '/tmp/caddyserver'
-		)!
-
-		mut binpath := dest.file_get('caddy')!
-		osal.cmd_add(
-			cmdname: 'caddy'
-			source: binpath.path
-		)!
+	} else if args.plugins.any(!plugin_is_installed(it)!) {
+		install_caddy_with_xcaddy(args.plugins)!		
 	}
 
 	if args.restart {
@@ -74,6 +47,122 @@ pub fn install(args_ InstallArgs) ! {
 	if args.start {
 		start(args)!
 	}
+}
+
+pub fn is_installed(version string) !bool {
+	res := os.execute('${osal.profile_path_source_and()} caddy version')
+	if res.exit_code == 0 {
+		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
+		if r.len != 1 {
+			return error("couldn't parse dagu version.\n${res.output}")
+		}
+		if texttools.version(version) > texttools.version(r[0]) {
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+pub fn install_caddy_from_release() !{
+	version := '2.8.4'
+	mut url := ''
+	if osal.is_linux_arm() {
+		url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_linux_arm64.tar.gz'
+	} else if osal.is_linux_intel() {
+		url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_linux_amd64.tar.gz'
+	} else if osal.is_osx_arm() {
+		url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_darwin_arm64.tar.gz'
+	} else if osal.is_osx_intel() {
+		url = 'https://github.com/caddyserver/caddy/releases/download/v${version}/caddy_${version}_darwin_amd64.tar.gz'
+	} else {
+		return error('unsported platform')
+	}
+
+	mut dest := osal.download(
+		url: url
+		minsize_kb: 10000
+		expand_dir: '/tmp/caddyserver'
+	)!
+
+	mut binpath := dest.file_get('caddy')!
+	osal.cmd_add(
+		cmdname: 'caddy'
+		source: binpath.path
+	)!
+}
+
+pub fn plugin_is_installed(plugin_ string) !bool {
+	plugin := plugin_.trim_space()
+	result := osal.exec(cmd: 'caddy list-modules --packages')!
+	
+	mut lines := result.output.split('\n')
+	
+	mut standardard_packages := []string{}
+	mut nonstandardard_packages := []string{}
+
+	mut standard := true
+	for mut line in lines {
+		line = line.trim_space()
+		if line == '' {continue}
+		if line.starts_with('Standard modules') {
+			standard = false
+			continue
+		}
+		package := line.all_after(' ')
+		if standard {
+			standardard_packages << package
+		} else {
+			nonstandardard_packages << package
+		}
+	}
+
+	return plugin in standardard_packages || plugin in nonstandardard_packages
+}
+
+pub fn install_caddy_with_xcaddy(plugins []string) !{
+	xcaddy_version := '0.4.2'
+	caddy_version := '2.8.4'
+
+	console.print_header('Installing xcaddy')
+	mut url := ''
+	if osal.is_linux_arm() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_linux_arm64.tar.gz'
+	} else if osal.is_linux_intel() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_linux_amd64.tar.gz'
+	} else if osal.is_osx_arm() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_mac_arm64.tar.gz'
+	} else if osal.is_osx_intel() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_mac_amd64.tar.gz'
+	} else {
+		return error('unsported platform')
+	}
+	
+	mut dest := osal.download(
+		url: url
+		minsize_kb: 1000
+		expand_dir: '/tmp/xcaddy_dir'
+	)!
+
+	mut binpath := dest.file_get('xcaddy')!
+	osal.cmd_add(
+		cmdname: 'xcaddy'
+		source: binpath.path
+	)!
+
+	console.print_header('Installing Caddy with xcaddy')
+
+	plugins_str := plugins.map('--with ${it}').join(' ')
+
+	// Define the xcaddy command to build Caddy with plugins
+	path := '/tmp/caddyserver/caddy'
+	cmd := 'xcaddy build v${caddy_version} ${plugins_str} --output ${path}'
+	osal.exec(cmd: cmd)!
+	osal.cmd_add(
+		cmdname: 'caddy'
+		source: path
+		reset: true
+	)!
 }
 
 @[params]
