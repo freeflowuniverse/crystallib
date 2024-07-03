@@ -1,5 +1,6 @@
 module osal
 
+import freeflowuniverse.crystallib.core.pathlib
 import os
 
 @[params]
@@ -58,4 +59,21 @@ pub fn env_get(key string) !string {
 // Returns the requested environment variable if it exists or returns the provided default value if it does not
 pub fn env_get_default(key string, def string) string {
 	return os.environ()[key] or { return def }
+}
+
+pub fn load_env_file(file_path string) ! {
+    mut file := pathlib.get_file(path: file_path)!
+	content := file.read()!
+    lines := content.split_into_lines()
+    for line in lines {
+        if line.len == 0 || line[0] == `#` {
+            continue
+        }
+        parts := line.split('=')
+        if parts.len == 2 {
+            key := parts[0].trim_space()
+            value := parts[1].trim_space()
+            os.setenv(key, value, true)
+        }
+    }
 }
