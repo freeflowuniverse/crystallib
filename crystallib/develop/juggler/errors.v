@@ -5,7 +5,7 @@ import veb
 pub struct JugglerError {}
 
 fn invalid_event(data string) string {
-	return('The event data received is invalid. Received: ${data}')
+	return 'The event data received is invalid. Received: ${data}'
 }
 
 pub fn (mut ctx Context) error(err JugglerError) veb.Result {

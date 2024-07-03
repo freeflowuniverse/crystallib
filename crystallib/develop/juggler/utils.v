@@ -12,7 +12,7 @@ pub fn (mut j Juggler) get_event(req http.Request) !Event {
 		}
 		.github {
 			j.get_github_event(req.data)!
-		} 
+		}
 		else {
 			return error('Unsupported git service.')
 		}
@@ -22,9 +22,7 @@ pub fn (mut j Juggler) get_event(req http.Request) !Event {
 }
 
 pub fn (mut j Juggler) get_gitea_event(data string) !Event {
-	event := json.decode(GiteaEvent, data) or { 
-		return error('failed to decode gitea event') 
-	}
+	event := json.decode(GiteaEvent, data) or { return error('failed to decode gitea event') }
 
 	name_split := event.repository.full_name.split('/')
 	if name_split.len != 2 {
@@ -39,7 +37,8 @@ pub fn (mut j Juggler) get_gitea_event(data string) !Event {
 	}
 
 	repos := j.backend.list[Repository]()!
-	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host && it.branch == repo.branch)
+	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host
+		&& it.branch == repo.branch)
 	if repo_lst.len < 1 {
 		return error('repo ${repo} not found in repos ${repos}')
 	}
@@ -49,22 +48,20 @@ pub fn (mut j Juggler) get_gitea_event(data string) !Event {
 		return error('event contains no commits')
 	}
 	commit := event.commits[0]
-	return Event {
-		commit: Commit {
+	return Event{
+		commit: Commit{
 			committer: commit.committer.name
 			hash: commit.id
 			message: commit.message
 			time: time.parse_iso8601(commit.timestamp)!
-			url:commit.url
+			url: commit.url
 		}
 		object_id: repo_id
 	}
 }
 
 pub fn (mut j Juggler) get_github_event(data string) !Event {
-	payload := json.decode(GitHubPayload, data) or { 
-		return error('failed to decode github event') 
-	}
+	payload := json.decode(GitHubPayload, data) or { return error('failed to decode github event') }
 
 	repo := Repository{
 		owner: payload.repository.owner.name
@@ -72,15 +69,16 @@ pub fn (mut j Juggler) get_github_event(data string) !Event {
 		host: 'github.com'
 		branch: payload.ref.all_after_last('/')
 	}
-	
+
 	repos := j.backend.list[Repository]()!
-	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host && it.branch == repo.branch)
+	repo_lst := repos.filter(it.owner == repo.owner && it.name == repo.name && it.host == repo.host
+		&& it.branch == repo.branch)
 	if repo_lst.len < 1 {
 		return error('repo ${repo} not found in repos ${repos}')
 	}
 	repo_id := repo_lst[0].id
 
-	return Event {
+	return Event{
 		object_id: repo_id
 		commit: Commit{
 			hash: payload.commits[0].id
@@ -105,5 +103,4 @@ pub fn git_service(req http.Request) !GitService {
 		return .github
 	}
 	return .gitea
-
 }

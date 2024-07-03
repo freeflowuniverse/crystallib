@@ -1,6 +1,5 @@
 module juggler
 
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import time
 
@@ -11,20 +10,21 @@ pub enum GitAction {
 
 pub struct Event {
 pub mut:
-	id u32
+	id        u32
+	subject   string
 	object_id u32
-	commit Commit
-	time time.Time
-	action GitAction
+	commit    Commit
+	time      time.Time
+	action    GitAction
 }
 
 pub struct GitEvent {
 pub mut:
-	id u32
+	id         u32
 	repository Repository
-	commit Commit
-	time time.Time
-	action GitAction
+	commit     Commit
+	time       time.Time
+	action     GitAction
 }
 
 pub fn (e Event) name() string {
@@ -43,18 +43,25 @@ pub fn (e Event) category() string {
 	// }
 }
 
-pub fn (mut j Juggler) event_card(event_id u32) !string {
-	event := j.backend.get[Event](event_id)!
+pub fn (mut j Juggler) event_card(event Event) !string {
 	repo := j.backend.get[Repository](event.object_id)!
 	return event.card(repo)
 }
+
 pub fn (event Event) card(repository Repository) string {
 	return $tmpl('./templates/event_card.html')
 }
 
-pub fn (play Play) row() string {
+pub fn (mut j Juggler) row(play Play) string {
+	script := j.backend.get[Script](play.script_id) or { panic(err) }
+	event := j.backend.get[Event](play.event_id) or { panic(err) }
+	status_color := match play.status {
+		.starting { 'yellow-500' }
+		.success { 'emerald-500' }
+		.running { 'amber-500' }
+		.error { 'red-500' }
+	}
 	return $tmpl('./templates/play_row.html')
-	
 }
 
 pub fn (e GitEvent) category() string {
@@ -72,40 +79,38 @@ pub fn (e GitEvent) name() string {
 
 pub struct Script {
 pub mut:
-	id u32
-	name string
+	id          u32
+	name        string
 	description string
-	url string
-	path string
-	status string
-	category ScriptCategory
+	url         string
+	path        string
+	status      string
+	category    ScriptCategory
 }
 
 pub fn (s Script) id() string {
-	println('iding script ${s}')
 	return s.name.replace('.', '_')
 }
 
-pub fn (play Play) id() string {
-	return '${play.event_id}_${texttools.name_fix(play.script_id)}'
-}
+// pub fn (play Play) id() string {
+// 	return '${play.event_id}_${texttools.name_fix(play.script_id)}'
+// }
 
 // a play of a script due to a trigger that occurs
 pub struct Play {
 pub mut:
-	id u32
-	script_id string // id of script that is played
-	event_id u32 // id of event that triggered the play
-	// event Event
-	trigger_id string
-	status Status // status of the play
-	output string // output of the play
-	start time.Time // time the play started
-	end time.Time // time the play ended
+	id         u32
+	script_id  u32 // id of script that is played
+	event_id   u32 // id of event that triggered the play
+	trigger_id u32
+	status     Status    // status of the play
+	output     string    // output of the play
+	start      time.Time // time the play started
+	end        time.Time // time the play ended
 }
 
 pub fn (p Play) duration() time.Duration {
-	return p.end-p.start
+	return p.end - p.start
 }
 
 pub enum Status {

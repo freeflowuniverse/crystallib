@@ -12,10 +12,10 @@ pub struct Juggler[T] {
 pub struct Config {
 pub mut:
 	repo_url string
-	host string = 'localhost' @[required]
-	port int = 8888 @[required]
-	// dagu_urls []string = ['http://localhost:8200'] 
-	dagu_url string = 'http://localhost:8200' 
+	host     string = 'localhost' @[required]
+	port     int    = 8888    @[required]
+	// dagu_urls []string = ['http://localhost:8200']
+	dagu_url string = 'http://localhost:8200'
 }
 
 pub struct JugglerGetArgs {
@@ -40,4 +40,3 @@ pub fn configure(instance string, cfg_ Config) !Juggler[Config] {
 	self.init('juggler', instance, .set, cfg)!
 	return self
 }
-

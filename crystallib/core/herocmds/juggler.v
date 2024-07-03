@@ -2,7 +2,6 @@ module herocmds
 
 import freeflowuniverse.crystallib.develop.juggler
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.core.base
 import cli { Command, Flag }
 import freeflowuniverse.crystallib.ui.console
 import os
@@ -34,11 +33,18 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 	cmd_run_add_flags(mut cmd_juggler)
 
 	cmd_juggler.add_flag(Flag{
-		flag: .bool
+		flag: .int
 		required: false
-		name: 'open'
-		abbrev: 'o'
+		name: 'port'
+		abbrev: ''
 		description: 'will open the juggler user interface.'
+	})
+	cmd_juggler.add_flag(Flag{
+		flag: .string
+		required: true
+		name: 'secret'
+		abbrev: 's'
+		description: 'password for juggler.'
 	})
 
 	cmdroot.add_command(cmd_juggler)
@@ -46,16 +52,16 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 
 fn cmd_juggler_execute(cmd Command) ! {
 	mut url := cmd.flags.get_string('url') or { '' }
-	mut path := cmd.flags.get_string('path') or { '' }
-	mut dagu_url := cmd.flags.get_string('dagu') or { '' }
+	mut port := cmd.flags.get_int('port') or { 8200 }
+	mut secret := cmd.flags.get_string('secret') or { 'abc' }
+	mut reset := cmd.flags.get_bool('reset') or { false }
 
-	mut repo_path := ''
-	if path.len > 0 || url.len > 0 {
-		mut j := juggler.configure(url: url)!
-		open := cmd.flags.get_bool('open') or { false }
-		if open {
-			j.open()!
-		}
+	if url.len > 0 {
+		mut j := juggler.configure(
+			url: url
+			password: secret
+			reset: reset
+		)!
 		j.run(8200)!
 	} else {
 		juggler_help(cmd)

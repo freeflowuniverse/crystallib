@@ -1,17 +1,13 @@
 module juggler
 
-import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.texttools
-import time
-
 pub struct Trigger {
 	GitTrigger
 pub mut:
-	id u32
-	name string
+	id          u32
+	name        string
 	description string
-	object_id u32
-	script_ids []u32 // the ids of scripts that the trigger triggers
+	object_id   u32
+	script_ids  []u32 // the ids of scripts that the trigger triggers
 }
 
 pub struct GitTrigger {
@@ -31,9 +27,6 @@ pub fn (mut j Juggler) is_triggered(trigger Trigger, event Event) bool {
 
 pub fn (mut j Juggler) new_trigger(t_ Trigger) !u32 {
 	mut t := t_
-	// if t.script_ids.map(texttools.name_fix(it))
-
-	println('debugzoni creating trigger ${t}')
 	return j.backend.new[Trigger](t)!
 }
 
