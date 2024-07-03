@@ -144,17 +144,20 @@ pub fn (mut j Juggler) load_script_from_path(path_ pathlib.Path) !u32 {
 	}
 
 	mut paths := path.list()!.paths.clone()
+	mut category := ScriptCategory.@none
 
 	if paths.any(it.extension() == 'md' || it.extension() == 'hero') {
-	mut category := ScriptCategory.hero
+		category = ScriptCategory.hero
+	}
 	if paths.any(it.extension() == 'bash' || it.extension() == 'sh') {
-		if category is .hero {
+		if category == .hero {
 			category = ScriptCategory.hybrid
 		} else {
 			category = ScriptCategory.shell
 		}
+	}
 	if paths.any(it.extension() == 'v' || it.extension() == 'vsh') {
-		if category is .hero {
+		if category == .hero {
 			category = ScriptCategory.hybrid
 		} else {
 			category = ScriptCategory.vlang

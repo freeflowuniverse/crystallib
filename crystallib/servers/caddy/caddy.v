@@ -26,11 +26,6 @@ pub fn (mut self Caddy[Config]) add_block(block SiteBlock) ! {
 	cfg.file.add_site_block(block)
 }
 
-pub fn (mut self Caddy[Config]) add_block(block SiteBlock) ! {
-	mut cfg := self.config()!
-	cfg.file.site_blocks << block
-}
-
 pub fn (mut self Caddy[Config]) generate() ! {
 	mut cfg := self.config()!
 	content := cfg.file.export()!

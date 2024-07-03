@@ -1,6 +1,7 @@
 module juggler
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.osal
