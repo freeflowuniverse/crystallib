@@ -2,13 +2,6 @@ module caddy
 
 import freeflowuniverse.crystallib.core.pathlib
 
-@[heap]
-pub struct CaddyFile {
-pub mut:
-	site_blocks []SiteBlock
-	path        pathlib.Path
-}
-
 @[params]
 pub struct CaddyArgs {
 pub mut:
@@ -18,47 +11,72 @@ pub mut:
 
 pub fn new(args CaddyArgs) !CaddyFile {
 	mut file := CaddyFile{
-		path: pathlib.get_file(path: '${args.path}/Caddyfile', create: true)!
+		path: '${args.path}/Caddyfile'
 	}
 	return file
 }
 
-pub fn (mut file CaddyFile) reverse_proxy(block SiteBlock) ! {
-	file.site_blocks << block
+pub struct ReverseProxy {
+pub:
+	path string // path on which the url will be proxied on the domain
+	url  string // url that is being reverse proxied
 }
 
-pub fn (file CaddyFile) export() !string {
-	content := file.site_blocks.map(it.export()).join('\n')
-	return content
+// Functions for common directives
+pub fn (mut file CaddyFile) reverse_proxy(address Address, reverse_proxy ReverseProxy) ! {
+	mut block := SiteBlock{
+		addresses: [address]
+	}
+	directive := Directive{
+		name: 'reverse_proxy'
+		args: [reverse_proxy.path, reverse_proxy.url]
+	}
+	block.directives << directive
+	file.add_site_block(block)
 }
 
-// generates config for site in caddyfile
-pub fn (block SiteBlock) export() string {
-	mut str := block.address.export()
-	return '${str}{\n${block.reverse_proxy.map(it.export()).join('\n')}\n}'
+pub struct FileServer {
+pub:
+	path string
 }
 
-pub fn (addr Address) export() string {
-	mut str := ''
-	if addr.description != '' {
-		str = '${addr.description}\n'
+pub fn (mut file CaddyFile) file_server(addresses []Address, file_server FileServer) ! {
+	mut block := SiteBlock{
+		addresses: addresses
 	}
-
-	if addr.domain != '' {
-		str += '${addr.domain}'
+	directive := Directive{
+		name: 'root'
+		args: ['*', file_server.path]
 	}
-
-	if addr.port != 0 {
-		str += ':${addr.port}'
+	block.directives << directive
+	block.directives << Directive{
+		name: 'file_server'
+		args: []
 	}
-	return str
+	file.add_site_block(block)
 }
 
-pub fn (proxy ReverseProxy) export() string {
-	mut str := 'reverse_proxy'
-	if proxy.path != '' {
-		str += ' ${proxy.path}'
+// Add a site block in a smart manner
+pub fn (mut file CaddyFile) add_site_block(new_block SiteBlock) {
+	for mut block in file.site_blocks {
+		if block.addresses.len == 0 && new_block.addresses.len == 0 {
+			for directive in new_block.directives {
+				if !block.directives.any(it.name == directive.name && it.args == directive.args) {
+					block.directives << directive
+				}
+			}
+			return
+		}
+		if block.addresses.any(it.domain == new_block.addresses[0].domain) {
+			// Add directives to the existing block, avoiding duplicates
+			for directive in new_block.directives {
+				if !block.directives.any(it.name == directive.name && it.args == directive.args) {
+					block.directives << directive
+				}
+			}
+			return
+		}
 	}
-	str += ' ${proxy.url}'
-	return str
+	// Add new block if no existing block matches the domain
+	file.site_blocks << new_block
 }
