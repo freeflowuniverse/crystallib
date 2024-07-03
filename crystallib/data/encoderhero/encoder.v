@@ -38,7 +38,6 @@ pub fn encode[T](val T) !string {
 // export exports an encoder into encoded heroscript
 pub fn (e Encoder) export() !string {
 	mut script := e.params.export(pre: '!!define.${e.action_names.join('.')}')
-	println("intermittent2 ${script}")
 	script += e.children.map(it.export()!).join('\n')
 	return script
 }
@@ -121,7 +120,6 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 
 	params := paramsparser.encode[T](t, recursive: false)!
 	e.params = params
-	println('intermittent ${e.params}')
 
 	// encode children structs and array of structs
 	$for field in T.fields {
