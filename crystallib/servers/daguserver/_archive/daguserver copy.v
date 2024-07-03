@@ -53,7 +53,6 @@ pub fn (mut self DaguServer[Config]) start(name string) !string {
 
 pub fn (mut self DaguServer[Config]) server() ! {
 	mut cfg := self.config()!
-	println('debugzoniko ${cfg}')
 	daguinstaller.start(
 		homedir: cfg.homedir
 		configpath: cfg.configpath
