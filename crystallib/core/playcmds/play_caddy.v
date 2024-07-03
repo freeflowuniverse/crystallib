@@ -2,31 +2,27 @@ module playcmds
 
 import freeflowuniverse.crystallib.servers.caddy { Address, ReverseProxy }
 import freeflowuniverse.crystallib.core.playbook
+import os
 
 pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 	mut coderoot := ''
-	// mut install := false
 	mut reset := false
 	mut pull := false
 
 	mut config_actions := plbook.find(filter: 'caddy.configure')!
 
-	mut c := caddy.get('')!
-
 	mut public_ip := ''
 
+	mut c := caddy.get('')!
 	if config_actions.len > 1 {
 		return error('can only have 1 config action for books')
 	} else if config_actions.len == 1 {
 		mut p := config_actions[0].params
 		path := p.get_default('path', '/etc/caddy')!
 		url := p.get_default('url', '')!
-
-		mut cfg := c.config()!
-		cfg.homedir = path
-		cfg.url = url
-		config_actions[0].done = true
 		public_ip = p.get_default('public_ip', '')!
+		c = caddy.configure('', homedir: path)!
+		config_actions[0].done = true
 	}
 
 	for mut action in plbook.find(filter: 'caddy.reverse_proxy')! {
@@ -39,17 +35,15 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		local_path := p.get_default('local_path', '')!
 
 		c.reverse_proxy(
-			addresses: [Address{
+			Address{
 				domain: host
 				port: port
 				description: description
-			}]
-			reverse_proxy: [
-				ReverseProxy{
-					path: local_path
-					url: local_url
-				},
-			]
+			}
+			caddy.ReverseProxy{
+				path: local_path
+				url: local_url
+			}
 		)!
 		action.done = true
 	}
@@ -68,9 +62,9 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 			path = '${os.home_dir()}${path.trim_string_left('~')}'
 		}
 
-		mut addresses := []caddy.Address
+		mut addresses := []caddy.Address{}
 		if url != '' {
-			addresses << Address {
+			addresses << caddy.Address {
 				domain: url.all_before_last(':')
 				port: url.all_after_last(':').int()
 			}
@@ -79,17 +73,17 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		prefix := if https { 'https'} else {'http'}
 
 		if serve_public_ip {
-			addresses << Address {
+			addresses << caddy.Address {
 				domain: '${prefix}://${public_ip}'
 				port: port
 			}
 		}
 
-		c.add_block(
-			addresses: addresses
-			file_server: [caddy.FileServer {
+		c.file_server(
+			addresses,
+			caddy.FileServer {
 				path: path
-			}]
+			}
 		)!
 		action.done = true
 	}
