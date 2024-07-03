@@ -1,13 +1,13 @@
 #!/usr/bin/env -S v -w -n -enable-globals run
 
+
 import freeflowuniverse.crystallib.develop.juggler
 import veb
 
 mut j := juggler.configure(
-	config_path: '/root/code/git.ourworld.tf/projectmycelium/itenv'
-	config_url: 'https://git.ourworld.tf/projectmycelium/itenv'
-	username: 'admin'
-	password: ''
+	url: 'https://git.ourworld.tf/projectmycelium/itenv'
+	username: os.getenv('JUGGLER_USERNAME')
+	password: os.getenv('JUGGLER_PASSWORD')
 	reset: true
 )!
 
