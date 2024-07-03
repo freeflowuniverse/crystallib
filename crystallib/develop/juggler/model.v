@@ -6,6 +6,7 @@ import time
 pub enum GitAction {
 	push
 	commit
+	manual
 }
 
 pub struct Event {

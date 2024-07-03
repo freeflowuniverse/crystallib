@@ -126,6 +126,52 @@ pub fn (mut j Juggler) script(mut ctx Context, id string) veb.Result {
 	return ctx.html($tmpl('./templates/script.html'))
 }
 
+@['/script/:id/play']
+pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
+	mut script := j.backend.get[Script](id.u32()) or {
+		return ctx.server_error('script with id <${id}> not found')
+	}
+
+	trigger_id := j.backend.new[Trigger](Trigger{
+		name: 'Custom push'
+		description: 'Trigger to customly play event'
+		script_ids: [id.u32()]
+	}) or {
+		return ctx.server_error('Failed to create trigger')	
+	}
+
+	event_id := j.backend.new[Event](Event{
+		subject: 'admin'
+		object_id: id.u32()
+		action: .manual
+		time: time.now()
+	}) or {
+		return ctx.server_error('Failed to create event')	
+	}
+
+	play := Play{
+		event_id: event_id
+		script_id: id.u32()
+		start: time.now()
+		trigger_id: trigger_id
+		status: .starting
+	}
+
+	play_id := j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
+
+	mut sm := startupmanager.get() or { panic('failed to get sm ${err}') }
+	sm.start(
+		name: 'juggler_play${play_id}'
+		cmd: 'hero run -cr ${os.home_dir()}/code -p ${script.path}'
+		env: {
+			'HOME': os.home_dir()
+		}
+		restart: false
+	) or { panic('failed to start sm ${err}') }
+	
+	return j.play(mut ctx, '${play_id}')	
+}
+
 // // @['/play2/:identifier']
 // // pub fn (mut j Juggler) play2(mut ctx Context, identifier string) veb.Result {
 // // 	play := j.plays[identifier]
@@ -178,8 +224,24 @@ pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
 		return ctx.server_error('event with id <${play.event_id}> not found')
 	}
 
+	event_subject := if event.commit.committer != '' {event.commit.committer} else {event.subject}
+	event_object_name := if event.commit.hash.len > 0 {event.commit.hash[event.commit.hash.len-7..]} else {'undefined'}
+	event_action := match event.action {
+		.manual {
+			'manually triggered'
+		} else {
+			'pushed'
+		}
+	}
+
 	repository := j.backend.get[Repository](event.object_id) or {
-		return ctx.server_error('repo with id <${event.object_id}> not found')
+		Repository{
+			name:''
+			owner:'null'
+			host:'null'
+			branch:'null'
+		}
+		// return ctx.server_error('repo with id <${event.object_id}> not found')
 	}
 
 	script_dir := script.path
@@ -201,7 +263,6 @@ pub fn (j &Juggler) login_post(mut ctx Context) veb.Result {
 	data := http.parse_form(ctx.req.data)
 	username := data['username']
 	password := data['password']
-
 	if !(username == 'admin' && password == j.password) {
 		return j.login(mut ctx)
 	}
