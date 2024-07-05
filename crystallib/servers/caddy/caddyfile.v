@@ -56,18 +56,27 @@ pub fn (mut file CaddyFile) file_server(addresses []Address, file_server FileSer
 	file.add_site_block(block)
 }
 
+[params]
+pub struct AddSiteBlockArgs {
+	overwrite bool
+}
+
 // Add a site block in a smart manner
-pub fn (mut file CaddyFile) add_site_block(new_block SiteBlock) {
+pub fn (mut file CaddyFile) add_site_block(new_block SiteBlock, args AddSiteBlockArgs) {
 	for mut block in file.site_blocks {
-		if block.addresses.len == 0 && new_block.addresses.len == 0 {
-			for directive in new_block.directives {
-				if !block.directives.any(it.name == directive.name && it.args == directive.args) {
-					block.directives << directive
+		if new_block.addresses.len == 0 {
+			if block.addresses.len == 0 {
+				// for directive in new_block.directives {
+				// 	if !block.directives.any(it.name == directive.name && it.args == directive.args) {
+				// 		block.directives << directive
+				// 	}
+				// }
+				if !args.overwrite {
+					return
 				}
 			}
-			return
 		}
-		if block.addresses.any(it.domain == new_block.addresses[0].domain) {
+		else if block.addresses.any(it.domain == new_block.addresses[0].domain) {
 			// Add directives to the existing block, avoiding duplicates
 			for directive in new_block.directives {
 				if !block.directives.any(it.name == directive.name && it.args == directive.args) {

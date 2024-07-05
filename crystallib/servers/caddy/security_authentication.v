@@ -1,6 +1,30 @@
 module caddy
 
-pub fn authentication_portal(config AuthenticationPortal) AuthenticationPortal {
+import os
+import freeflowuniverse.crystallib.core.pathlib
+
+pub fn authentication_portal(config AuthenticationPortal) !AuthenticationPortal {
+	mut file := pathlib.get_file(
+		path: '${os.home_dir()}/.local/caddy/ui/custom/login.template',
+		create: true
+	)!
+
+	file.write('<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirect to OAuth2</title>
+</head>
+<body>  
+  <script>
+    // Redirect to oauth2/generic
+    window.location.replace("/oauth2/generic");
+  </script>
+</body>
+</html>
+')!
+	
 	return AuthenticationPortal{
 		name: config.name
 		crypto: Crypto{
@@ -8,13 +32,7 @@ pub fn authentication_portal(config AuthenticationPortal) AuthenticationPortal {
 		}
 		enable_identity_providers: ['generic']
 		cookie_domain: config.cookie_domain
-		ui_links: [
-			UILink{
-				label: 'My Identity'
-				url: '/whoami'
-				icon: 'las la-user'
-			},
-		]
+		
 	}
 }
 
