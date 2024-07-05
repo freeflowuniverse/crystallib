@@ -9,6 +9,7 @@ pub struct CouchDBClient[T] {
 	base.BaseConfig[T]
 pub mut:
 	connection &httpconnection.HTTPConnection
+	username   string
 }
 
 @[params]
@@ -16,12 +17,13 @@ pub struct Config {
 pub mut:
 	url      string
 	username string
-	password string
+	password string @[secret]
 }
 
 pub fn get(instance string, cfg Config) !CouchDBClient[Config] {
 	mut self := CouchDBClient[Config]{
 		connection: &httpconnection.HTTPConnection{}
+		username: cfg.username
 	}
 
 	if cfg.username.len > 0 {
@@ -33,11 +35,11 @@ pub fn get(instance string, cfg Config) !CouchDBClient[Config] {
 
 	mut conn := httpconnection.new(
 		name: 'CouchDB'
-		url: '${cfg.url}'
+		url: 'http://${cfg.url}'
 	)!
 
 	// TODO: ...
-	// conn.default_header.add(.authorization, 'Bearer ${self.config()!.apisecret}')
+	conn.basic_auth(cfg.username, cfg.password)
 	// req.add_custom_header('x-disable-pagination', 'True') !
 
 	self.connection = conn
