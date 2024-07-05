@@ -25,7 +25,7 @@ pub fn encode[T](obj T) ![]u8 {
 		} $else $if field.typ is u64 {
 			d.add_u64(u64(obj.$(field.name)))
 		} $else $if field.typ is time.Time {
-			d.add_time(time.new_time(obj.$(field.name)))
+			d.add_time(time.new(obj.$(field.name)))
 			// Arrays of primitive types
 		} $else $if field.typ is []string {
 			// d.add_list_string(obj.$(field.name)) why error??

@@ -1,5 +1,7 @@
 module caddy
 
+import os
+
 pub fn (s Security) export() SiteBlock {
 	mut site_block := SiteBlock{}
 
@@ -152,8 +154,8 @@ pub fn (authentication AuthenticationPortal) to_directive() Directive {
 		name: 'ui'
 		subdirectives: [
 			Directive{
-				name: 'links'
-				subdirectives: authentication.ui_links.map(it.to_directive())
+				name: 'template'
+				args: ['login', '${os.home_dir()}/.local/caddy/ui/custom/login.template']
 			},
 		]
 	}

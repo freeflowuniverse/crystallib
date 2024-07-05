@@ -4,7 +4,7 @@ import os
 import freeflowuniverse.crystallib.threefold.grid.models
 
 pub fn (mut c Client) sign_deployment(hash string) !string {
-	res := os.execute("griddriver sign  --substrate \"${c.substrate}\" --mnemonics \"${c.mnemonic}\"  --hash \"${hash}\"")
+	res := os.execute("griddriver sign --substrate \"${c.substrate}\" --mnemonics \"${c.mnemonic}\" --hash \"${hash}\"")
 	if res.exit_code != 0 {
 		return error(res.output)
 	}

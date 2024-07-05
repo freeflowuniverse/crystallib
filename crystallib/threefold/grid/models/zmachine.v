@@ -118,6 +118,7 @@ pub fn (z Zmachine) to_workload(args WorkloadArgs) Workload {
 
 // VM struct used to deploy machine in a high level manner
 pub struct VM {
+pub:
 	name        string = 'myvm'
 	flist       string = 'https://hub.grid.tf/tf-official-apps/base:latest.flist'
 	entrypoint  string = '/sbin/zinit init'

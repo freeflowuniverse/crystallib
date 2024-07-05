@@ -18,7 +18,8 @@ pub struct Version {
 }
 
 pub fn (mut c Client) get_zos_version(dst u32) !Version {
-	res := c.rmb_call(dst, 'zos.system.version', '')!
+	data := json.encode('')
+	res := c.rmb_call(dst, 'zos.system.version', data)!
 	ver := json2.decode[Version](res)!
 	return ver
 }

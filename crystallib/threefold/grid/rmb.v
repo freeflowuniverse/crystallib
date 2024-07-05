@@ -31,7 +31,8 @@ pub fn (mut d Deployer) rmb_deployment_delete(dst u32, data string) !string {
 
 pub fn (mut d Deployer) get_node_pub_config(node_id u32) !models.PublicConfig {
 	node_twin := d.client.get_node_twin(node_id)!
-	res := d.client.rmb_call(node_twin, 'zos.network.public_config_get', '')!
+	data := json.encode('')
+	res := d.client.rmb_call(node_twin, 'zos.network.public_config_get', data)!
 	public_config := json.decode(models.PublicConfig, res)!
 	return public_config
 }

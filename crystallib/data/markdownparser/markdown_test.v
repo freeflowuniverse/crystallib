@@ -182,7 +182,8 @@ fn test_wiki_action() {
 	}
 	r := '# This is an action
 
-!!farmerbot.nodemanager_define id:1 has_public_config:1 has_public_ip:yes twinid:20'
+!!farmerbot.nodemanager_define id:1 has_public_config:1 has_public_ip:yes
+        twinid:20'
 	assert r.trim_space() == docs.markdown()!.trim_space()
 }
 
@@ -246,7 +247,8 @@ for x in list {
 # This is an action in a piece of code
 
 ```
-!!farmerbot.nodemanager_define id:1 has_public_config:1 has_public_ip:yes twinid:20
+!!farmerbot.nodemanager_define id:1 has_public_config:1 has_public_ip:yes
+        twinid:20
 
 ```
 

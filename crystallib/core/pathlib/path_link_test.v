@@ -26,6 +26,7 @@ fn test_link() {
 
 	assert source1.exists()
 	assert source2.exists()
+	assert source3.exists()
 
 	// link to a parent
 	mut link11 := source3.link('${testpath}/test_parent/uplink', true) or {

@@ -1,5 +1,7 @@
 module caddy
 
+import net.urllib
+
 @[heap]
 pub struct CaddyFile {
 pub mut:
@@ -15,8 +17,7 @@ pub mut:
 
 pub struct Address {
 pub mut:
-	domain      string // e.g. www.ourworld.tf
-	port        int = 443 // default port 443
+	url urllib.URL
 	description string
 }
 

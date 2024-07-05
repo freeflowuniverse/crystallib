@@ -225,7 +225,7 @@ pub fn (f &ContractFilter) to_map() map[string]string {
 		}
 	}
 	if f.contract_type != '' {
-		m['contract_type'] = f.contract_type
+		m['type'] = f.contract_type
 	}
 	if f.state != '' {
 		m['state'] = f.state

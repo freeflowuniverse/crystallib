@@ -3,6 +3,7 @@ module playcmds
 import freeflowuniverse.crystallib.servers.caddy { Address, ReverseProxy }
 import freeflowuniverse.crystallib.core.playbook
 import os
+import net.urllib
 
 pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 	mut coderoot := ''
@@ -27,17 +28,23 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 
 	for mut action in plbook.find(filter: 'caddy.reverse_proxy')! {
 		mut p := action.params
-		host := p.get_default('host', '')!
-		port := p.get_int_default('port', 0)!
+		mut url := p.get_default('url', '')!
 		description := p.get_default('description', '')!
 		local_port := p.get_int_default('local_port', 0)!
 		local_url := p.get_default('local_url', 'http://localhost')!
 		local_path := p.get_default('local_path', '')!
 
+		if url == '' {
+			return error('url cannot be empty')
+		}
+
+		if !url.contains('://') {
+			url = 'http://${url}'
+		}
+
 		c.reverse_proxy(
 			Address{
-				domain: host
-				port: port
+				url: urllib.parse(url)!
 				description: description
 			}
 			caddy.ReverseProxy{
@@ -51,7 +58,7 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'caddy.serve_folder')! {
 		mut p := action.params
 		
-		url := p.get_default('url', '')!
+		mut urls := p.get_list_default('urls', []string{})!
 		serve_public_ip := p.get_default_true('public_ip')
 		https := p.get_default_false('https')
 		port := p.get_int_default('port', 8000)!
@@ -63,21 +70,25 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		}
 
 		mut addresses := []caddy.Address{}
-		if url != '' {
+		
+		if urls.len == 0 {
+			return error('url cannot be empty')
+		} 
+
+		for mut url in urls {
+			if url.starts_with(':') {
+				url = '${public_ip}${url}'
+			}
+			if !url.contains('://') {
+				url = 'http://${url}'
+			}
 			addresses << caddy.Address {
-				domain: url.all_before_last(':')
-				port: url.all_after_last(':').int()
+				url: urllib.parse(url)!
 			}
 		}
+		
 
 		prefix := if https { 'https'} else {'http'}
-
-		if serve_public_ip {
-			addresses << caddy.Address {
-				domain: '${prefix}://${public_ip}'
-				port: port
-			}
-		}
 
 		c.file_server(
 			addresses,

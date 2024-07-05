@@ -2,21 +2,28 @@
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model
+import log
 
 fn get_all_twins_example() ! {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 	all_twin := gp_client.get_twins(model.TwinFilter{})!
-	println(all_twin)
+	logger.info('${all_twin}')
 }
 
 fn get_twins_with_filter_example() ! {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	twin := gp_client.get_twins(twin_id: u64(800))!
-	println(twin)
+	logger.info('${twin}')
 }
 
 fn get_twin_iterator_example() ! {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
 	mut gp_client := gridproxy.get(.dev, true)!
 
 	max_page_iteration := u64(5) // set maximum pages to iterate on
@@ -35,7 +42,7 @@ fn get_twin_iterator_example() ! {
 			break // if the page is empty the next function will return none
 		}
 	}
-	println(iterator_twins)
+	logger.info('${iterator_twins}')
 }
 
 fn main() {

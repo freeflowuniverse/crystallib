@@ -157,6 +157,7 @@ type WorkloadDataResult = GatewayProxyResult
 
 @[params]
 pub struct WorkloadArgs {
+pub:
 	version     ?u32
 	name        string
 	description ?string
