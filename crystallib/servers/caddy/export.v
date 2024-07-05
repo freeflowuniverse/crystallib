@@ -78,12 +78,8 @@ pub fn (addr Address) export(indent_level int) string {
 		str = '${indent}${addr.description}\n'
 	}
 
-	if addr.domain != '' {
-		str += '${indent}${addr.domain}'
-	}
-
-	if addr.port != 0 {
-		str += ':${addr.port}'
+	if addr.url.str() != '' {
+		str += '${indent}${addr.url.str()}'
 	}
 	return str
 }

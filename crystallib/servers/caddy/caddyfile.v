@@ -1,6 +1,5 @@
 module caddy
 
-import freeflowuniverse.crystallib.core.pathlib
 
 @[params]
 pub struct CaddyArgs {
@@ -56,6 +55,7 @@ pub fn (mut file CaddyFile) file_server(addresses []Address, file_server FileSer
 	file.add_site_block(block)
 }
 
+
 [params]
 pub struct AddSiteBlockArgs {
 	overwrite bool
@@ -63,29 +63,48 @@ pub struct AddSiteBlockArgs {
 
 // Add a site block in a smart manner
 pub fn (mut file CaddyFile) add_site_block(new_block SiteBlock, args AddSiteBlockArgs) {
+	
+
+	// if new_block.addresses.any(it == file.site_blocks.map(it.addresses))
+
 	for mut block in file.site_blocks {
-		if new_block.addresses.len == 0 {
-			if block.addresses.len == 0 {
-				// for directive in new_block.directives {
-				// 	if !block.directives.any(it.name == directive.name && it.args == directive.args) {
-				// 		block.directives << directive
-				// 	}
-				// }
-				if !args.overwrite {
-					return
-				}
-			}
+		
+		block_urls := block.addresses.map(it.url.str().trim_space())
+		new_block_urls := new_block.addresses.map(it.url.str().trim_space())
+		if new_block_urls.any(it in block_urls) {
+			return
 		}
-		else if block.addresses.any(it.domain == new_block.addresses[0].domain) {
-			// Add directives to the existing block, avoiding duplicates
-			for directive in new_block.directives {
-				if !block.directives.any(it.name == directive.name && it.args == directive.args) {
-					block.directives << directive
-				}
-			}
+
+		if block_urls.len == 0 && new_block_urls.len == 0 {
 			return
 		}
 	}
+	
 	// Add new block if no existing block matches the domain
 	file.site_blocks << new_block
+	// 	if new_block.addresses.len == 0 {
+	// 		if block.addresses.len == 0 {
+	// 			// for directive in new_block.directives {
+	// 			// 	if !block.directives.any(it.name == directive.name && it.args == directive.args) {
+	// 			// 		block.directives << directive
+	// 			// 	}
+	// 			// }
+	// 			if !args.overwrite {
+	// 				return
+	// 			}
+	// 		}
+	// 	}
+	// 	else if block.addresses.any(it.domain == new_block.addresses[0].domain) {
+	// 		// Add directives to the existing block, avoiding duplicates
+	// 		if !args.overwrite {
+	// 				return
+	// 			}
+	// 		// for directive in new_block.directives {
+	// 		// 	if !block.directives.any(it.name == directive.name && it.args == directive.args) {
+	// 		// 		block.directives << directive
+	// 		// 	}
+	// 		// }
+	// 		// return
+	// 	}
+	// }
 }

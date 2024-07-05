@@ -30,18 +30,17 @@ fn load_caddyfile(path string) !CaddyFile {
 			address_line := trimmed_line.all_before('{').trim_space()
 			if address_line.len > 0 {
 				mut parts := address_line.split(',')
+				
 				for mut part in parts {
 					part = part.trim_space()
-					if !part.starts_with('http') {
-						part = 'http://${part}'
+					part_ := if !part.contains('://') {
+						'http://${part}'
+					} else {
+						'${part}'
 					}
-					url := urllib.parse(part)!
-					mut host_parts := url.host.split(':')
-					domain := host_parts[0]
-					port := if host_parts.len > 1 { host_parts[1].int() } else { 0 }
+					url := urllib.parse(part_)!
 					current_site_block.addresses << Address{
-						domain: domain
-						port: port
+						url: url
 					}
 				}
 			}
