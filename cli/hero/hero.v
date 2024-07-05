@@ -76,6 +76,7 @@ fn do() ! {
 	// herocmds.cmd_configure(mut cmd)
 	// herocmds.cmd_postgres(mut cmd)
 	herocmds.cmd_mdbook(mut cmd)
+	herocmds.cmd_luadns(mut cmd)
 	herocmds.cmd_caddy(mut cmd)
 	herocmds.cmd_zola(mut cmd)
 	herocmds.cmd_juggler(mut cmd)
