@@ -1,7 +1,5 @@
 module luadns
 
-import freeflowuniverse.crystallib.core.pathlib
-
 struct ARecord {
 mut:
     name string
