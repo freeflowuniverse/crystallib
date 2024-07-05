@@ -12,3 +12,4 @@ pub fn journalctl(args JournalArgs) !string {
 	response := osal.execute_silent(cmd) or { return err }
 	return response
 }
+

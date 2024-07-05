@@ -169,7 +169,7 @@ pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 		restart: false
 	) or { panic('failed to start sm ${err}') }
 	
-	return j.play(mut ctx, '${play_id}')	
+	return ctx.redirect('/play/${play_id}')	
 }
 
 // // @['/play2/:identifier']

@@ -52,7 +52,7 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 
 fn cmd_juggler_execute(cmd Command) ! {
 	mut url := cmd.flags.get_string('url') or { '' }
-	mut port := cmd.flags.get_int('port') or { 8200 }
+	mut port := cmd.flags.get_int('port') or { 8000 }
 	mut secret := cmd.flags.get_string('secret') or { 'abc' }
 	mut reset := cmd.flags.get_bool('reset') or { false }
 
@@ -62,7 +62,7 @@ fn cmd_juggler_execute(cmd Command) ! {
 			password: secret
 			reset: reset
 		)!
-		j.run(8200)!
+		j.run(port)!
 	} else {
 		juggler_help(cmd)
 	}

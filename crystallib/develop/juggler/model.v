@@ -50,6 +50,11 @@ pub fn (mut j Juggler) event_card(event Event) !string {
 }
 
 pub fn (event Event) card(repository Repository) string {
+	event_receiver := repository.full_name()
+	event_action := 'Push'
+		event_sub_1 := if event.commit.hash.len > 0 {
+		event.commit.hash[event.commit.hash.len-7..]
+	} else {''}
 	return $tmpl('./templates/event_card.html')
 }
 

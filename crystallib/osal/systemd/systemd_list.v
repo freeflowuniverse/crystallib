@@ -37,6 +37,7 @@ pub enum ActiveState {
 
 // This provides more detailed information about the unit's state, often referred to as the "sub-state". This can vary significantly between different types of units (services, sockets, timers, etc.)
 pub enum SubState {
+	unknown
 	start
 	running // The service is currently running.
 	exited // The service has completed its process and exited. For services that do something at startup and then exit (oneshot services), this is a normal state.
@@ -84,7 +85,7 @@ pub fn process_list() ![]SystemdProcessInfo {
 			'waiting' { unit.sub_state = .waiting }
 			'dead' { unit.sub_state = .dead }
 			'auto-restart' { unit.sub_state = .autorestart }
-			else { return error("could not find right sub state for systemd:'${item.sub}") }
+			else { unit.sub_state = .unknown }
 		}
 		res << unit
 	}
