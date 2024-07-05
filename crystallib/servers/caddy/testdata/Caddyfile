@@ -1,0 +1,40 @@
+{
+    https_port 443
+    order authenticate before respond
+    order authorize before basicauth
+    security {
+        oauth identity provider generic {
+            realm generic
+            driver generic
+            domain_name git.ourworld.tf
+            client_id test_client_id
+            client_secret test_client_secret
+            scopes email profile
+            base_auth_url https://git.ourworld.tf/login/oauth/authorize
+            metadata_url https://git.ourworld.tf/.well-known/openid-configuration
+        }
+        authentication portal myportal {
+            crypto default token lifetime 3600
+            crypto key sign-verify somekey
+            enable identity provider generic
+            cookie domain ourworld.tf
+            ui {
+                links {
+                     "My Identity" "/whoami" icon "las la-user"
+                }
+            }
+            transform user {
+                match realm gitea
+                match email gitea
+                action add role role admin
+            }
+        }
+        authorization policy mypolicy {
+            set auth url https://auth.projectinca.xyz/oauth2/generic
+            crypto key verify env.JWT_SHARED_KEY
+            allow roles authp/admin authp/user
+            validate bearer header
+            inject headers with claims
+        }
+    }
+}

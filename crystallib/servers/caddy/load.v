@@ -4,75 +4,114 @@ import os
 import freeflowuniverse.crystallib.core.pathlib
 import net.urllib
 
-// Function to load Caddyfile into the data structure
-pub fn load_caddyfile(path string) !CaddyFile {
+fn load_caddyfile(path string) !CaddyFile {
 	mut caddyfile := CaddyFile{
 		path: path
 	}
-
 	mut file := pathlib.get_file(path: path, create: true)!
 	content := file.read()!
 	lines := content.split('\n')
 
-	mut site_block := SiteBlock{}
-	mut current_matchers := []Matcher{}
+	mut site_blocks := []SiteBlock{}
+	mut current_site_block := SiteBlock{}
 	mut in_site_block := false
-	for line in lines {
-		trimmed_line := line.trim_space()
+	mut i := 0
+
+	for i < lines.len {
+		trimmed_line := lines[i].trim_space()
 		if trimmed_line.starts_with('#') || trimmed_line.len == 0 {
+			i++
 			continue // Ignore comments and empty lines
 		}
 
-		if trimmed_line.contains('{') {
+		if !in_site_block && trimmed_line.contains('{') {
+			// Start of a new site block
 			in_site_block = true
 			address_line := trimmed_line.all_before('{').trim_space()
 			if address_line.len > 0 {
-				// This is an address line
 				mut parts := address_line.split(',')
+				
 				for mut part in parts {
 					part = part.trim_space()
-					if !part.starts_with('http') {
-						part = 'http://${part}'
+					part_ := if !part.contains('://') {
+						'http://${part}'
+					} else {
+						'${part}'
 					}
-					url := urllib.parse(part)!
-					mut host_parts := url.host.split(':')
-					domain := host_parts[0]
-					port := if host_parts.len > 1 { host_parts[1].int() } else { 0 }
-					site_block.addresses << Address{
-						domain: domain
-						port: port
+					url := urllib.parse(part_)!
+					current_site_block.addresses << Address{
+						url: url
 					}
 				}
 			}
-			continue
-		}
-
-		if trimmed_line.contains('}') {
-			caddyfile.site_blocks << site_block
-			site_block = SiteBlock{}
-			in_site_block = false
-			current_matchers.clear()
+			i++
 			continue
 		}
 
 		if in_site_block {
-			// This is a directive line within a site block
-			mut parts := trimmed_line.split(' ')
-			directive_name := parts[0]
-			directive_args := parts[1..]
-			directive := Directive{
-				name: directive_name
-				args: directive_args
-				matchers: current_matchers.clone()
+			if trimmed_line.contains('}') {
+				site_blocks << current_site_block
+				current_site_block = SiteBlock{}
+				in_site_block = false
+				i++
+				continue
 			}
-			site_block.directives << directive
+
+			if trimmed_line.len > 0 {
+				directive, new_index := load_directive(lines, i)
+				i = new_index
+				current_site_block.directives << directive
+				continue
+			}
 		}
+		i++
 	}
 
-	if in_site_block {
-		// Add the last site block if the file doesn't end with a closing brace
-		caddyfile.site_blocks << site_block
-	}
-
+	caddyfile.site_blocks = site_blocks
 	return caddyfile
+}
+
+fn load_directive(lines []string, index int) (Directive, int) {
+	mut directive := Directive{}
+	mut brace_count := 0
+	mut i := index
+
+	for i < lines.len {
+		trimmed_line := lines[i].trim_space()
+		println('trimmed_line ${trimmed_line} - ${directive}')
+
+		if trimmed_line.starts_with('#') || trimmed_line.len == 0 {
+			i++
+			continue // Ignore comments and empty lines
+		}
+		
+		if trimmed_line == '}' {
+			return directive, i
+		}
+
+		if directive.name != '' {
+			subdirective, new_index := load_directive(lines, i)
+			println('debugzor- dir: ${directive.name} -- subdir: ${subdirective.name}')
+			directive.subdirectives << subdirective
+			i = new_index + 1
+			continue
+		}
+
+		mut parts := trimmed_line.split(' ')
+		directive.name = parts[0]
+		directive.args = parts[1..]
+		if trimmed_line.contains('{') {
+			
+			subdirective, new_index := load_directive(lines, i)
+			println('debugzor- dir: ${directive.name} -- subdir: ${subdirective.name}')
+			directive.subdirectives << subdirective
+			i = new_index + 1
+			continue
+		} else {
+			return directive, i + 1
+		}
+
+	}
+
+	return directive, i
 }

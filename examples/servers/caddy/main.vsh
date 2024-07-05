@@ -22,12 +22,12 @@ fn start_webserver() {
 }
 
 // Generate the Security configuration
-fn generate_security_config() caddy.Security {
+fn generate_security_config() !caddy.Security {
 
 	mut authentication := caddy.authentication_portal(
 		name: 'myportal'
 		cookie_domain: 'ourworld.tf'
-	)
+	)!
 
 	authentication.assign_email_role('timur@incubaid.com', 'admin')
 
@@ -60,7 +60,7 @@ fn do() ! {
 	spawn start_webserver()
 
 	// Generate the security configuration
-	security_config := generate_security_config()
+	security_config := generate_security_config()!
 
 	mut caddyfile := caddy.CaddyFile{
 		path: '${os.dir(@FILE)}/Caddyfile'
