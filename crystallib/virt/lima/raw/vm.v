@@ -25,6 +25,7 @@ pub fn list() ![]VM {
 	return vms
 }
 
+@[heap]
 pub struct VM {
 pub mut:
 	name            string
