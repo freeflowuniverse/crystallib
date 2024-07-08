@@ -1,6 +1,6 @@
 module playcmds
 
-import freeflowuniverse.crystallib.servers.caddy { Address, ReverseProxy }
+import freeflowuniverse.crystallib.servers.caddy { CaddyFile }
 import freeflowuniverse.crystallib.core.playbook
 import os
 import net.urllib
@@ -26,81 +26,63 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 		config_actions[0].done = true
 	}
 
-	for mut action in plbook.find(filter: 'caddy.reverse_proxy')! {
+	mut caddyfile := CaddyFile {}
+	for mut action in plbook.find(filter: 'caddy.add_reverse_proxy')! {
 		mut p := action.params
-		mut url := p.get_default('url', '')!
-		description := p.get_default('description', '')!
-		local_port := p.get_int_default('local_port', 0)!
-		local_url := p.get_default('local_url', 'http://localhost')!
-		local_path := p.get_default('local_path', '')!
+		mut from := p.get_default('from', '')!
+		mut to := p.get_default('to', '')!
 
-		if url == '' {
-			return error('url cannot be empty')
+		if from == '' || to == '' {
+			return error('from & to cannot be empty')
 		}
 
-		if !url.contains('://') {
-			url = 'http://${url}'
-		}
-
-		c.reverse_proxy(
-			Address{
-				url: urllib.parse(url)!
-				description: description
-			}
-			caddy.ReverseProxy{
-				path: local_path
-				url: local_url
-			}
+		caddyfile.add_reverse_proxy(
+			from: from
+			to: to
 		)!
 		action.done = true
 	}
 
-	for mut action in plbook.find(filter: 'caddy.serve_folder')! {
+	for mut action in plbook.find(filter: 'caddy.add_file_server')! {
 		mut p := action.params
-		
-		mut urls := p.get_list_default('urls', []string{})!
-		serve_public_ip := p.get_default_true('public_ip')
-		https := p.get_default_false('https')
-		port := p.get_int_default('port', 8000)!
-		mut path := p.get_default('path', '')!
-		description := p.get_default('description', '')!
+		mut domain := p.get_default('domain', '')!
+		mut root := p.get_default('root', '')!
 
-		if path.starts_with('~') { 
-			path = '${os.home_dir()}${path.trim_string_left('~')}'
+		if root.starts_with('~') { 
+			root = '${os.home_dir()}${root.trim_string_left('~')}'
 		}
 
-		mut addresses := []caddy.Address{}
-		
-		if urls.len == 0 {
-			return error('url cannot be empty')
-		} 
-
-		for mut url in urls {
-			if url.starts_with(':') {
-				url = '${public_ip}${url}'
-			}
-			if !url.contains('://') {
-				url = 'http://${url}'
-			}
-			addresses << caddy.Address {
-				url: urllib.parse(url)!
-			}
+		if domain == '' || root == '' {
+			return error('domain & root cannot be empty')
 		}
-		
 
-		prefix := if https { 'https'} else {'http'}
+		caddyfile.add_file_server(
+			domain: domain
+			root: root
+		)!
+		action.done = true
+	}
 
-		c.file_server(
-			addresses,
-			caddy.FileServer {
-				path: path
-			}
+	for mut action in plbook.find(filter: 'caddy.add_basic_auth')! {
+		mut p := action.params
+		mut domain := p.get_default('domain', '')!
+		mut username := p.get_default('username', '')!
+		mut password := p.get_default('password', '')!
+
+		if domain == '' || username == '' || password == '' {
+			return error('domain & root cannot be empty')
+		}
+
+		caddyfile.add_basic_auth(
+			domain: domain
+			username: username
+			password: password
 		)!
 		action.done = true
 	}
 
 	for mut action in plbook.find(filter: 'caddy.generate')! {
-		c.generate()!
+		c.set_caddyfile(caddyfile)!
 		action.done = true
 	}
 

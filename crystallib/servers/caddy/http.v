@@ -70,9 +70,9 @@ pub fn (mut http HTTP) add_file_server(args FileServer) ! {
 	}
 }
 
-pub fn (mut http HTTP) add_basic_auth(domain string, username string, password string) ! {
+pub fn (mut http HTTP) add_basic_auth(args BasicAuth) ! {
 	for key, mut server in http.servers {
-		server.add_basic_auth(domain, username, password)
+		server.add_basic_auth(args.domain, args.username, args.password)
 	}
 }
 

@@ -20,9 +20,11 @@ pub fn (mut self Caddy[Config]) start() ! {
 		cfg.homedir = '/tmp/caddy'
 	}
 
-	if !os.exists('/etc/caddy/Caddyfile') {
+	if !os.exists('${cfg.homedir}/Caddyfile') {
 		return error("didn't find caddyfile")
 	}
+
+	cfg.file.export('${cfg.homedir}/Caddyfile')!
 
 	cmd := 'caddy run --config ${cfg.homedir}/Caddyfile'
 
@@ -38,4 +40,9 @@ pub fn (mut self Caddy[Config]) stop() ! {
 	console.print_header('caddy stop')
 	mut sm := startupmanager.get()!
 	sm.stop('caddy')!
+}
+
+pub fn (mut self Caddy[Config]) set_caddyfile(file CaddyFile) ! {
+	mut cfg := self.config()!
+	cfg.file = file
 }

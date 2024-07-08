@@ -26,6 +26,17 @@ pub fn (mut file CaddyFile) add_file_server(args FileServer) ! {
 	file.apps.http.add_file_server(args)!
 }
 
+pub struct BasicAuth {
+pub:
+	domain string
+	username string
+	password string
+}
+
+pub fn (mut file CaddyFile) add_basic_auth(args BasicAuth) ! {
+	file.apps.http.add_basic_auth(args)!
+}
+
 pub fn (mut file CaddyFile) add_oauth(config security.OAuthConfig) ! {
 	file.apps.security.add_oauth(config)!
 }
