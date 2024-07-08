@@ -1,110 +1,85 @@
 module caddy
 
-
-@[params]
-pub struct CaddyArgs {
-pub mut:
-	reset bool   = true
-	path  string = '/etc/caddy'
-}
-
-pub fn new(args CaddyArgs) !CaddyFile {
-	mut file := CaddyFile{
-		path: '${args.path}/Caddyfile'
-	}
-	return file
-}
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.servers.caddy.security
+import freeflowuniverse.crystallib.osal
+import json
 
 pub struct ReverseProxy {
 pub:
-	path string // path on which the url will be proxied on the domain
-	url  string // url that is being reverse proxied
+	from string // path on which the url will be proxied on the domain
+	to  string // url that is being reverse proxied
 }
 
 // Functions for common directives
-pub fn (mut file CaddyFile) reverse_proxy(address Address, reverse_proxy ReverseProxy) ! {
-	mut block := SiteBlock{
-		addresses: [address]
-	}
-	directive := Directive{
-		name: 'reverse_proxy'
-		args: [reverse_proxy.path, reverse_proxy.url]
-	}
-	block.directives << directive
-	file.add_site_block(block)
+pub fn (mut file CaddyFile) add_reverse_proxy(args ReverseProxy) ! {
 }
 
 pub struct FileServer {
 pub:
+	domain string // path on which the url will be proxied on the domain
+	root  string // url that is being reverse proxied
+}
+
+
+pub fn (mut file CaddyFile) add_file_server(args FileServer) ! {
+	file.apps.http.add_file_server(args)!
+}
+
+pub struct BasicAuth {
+pub:
+	domain string
+	username string
+	password string
+}
+
+pub fn (mut file CaddyFile) add_basic_auth(args BasicAuth) ! {
+	file.apps.http.add_basic_auth(args)!
+}
+
+pub fn (mut file CaddyFile) add_oauth(config security.OAuthConfig) ! {
+	file.apps.security.add_oauth(config)!
+}
+
+pub fn (mut file CaddyFile) add_role(name string, emails []string) ! {
+	file.apps.security.add_role(name, emails)!
+}
+
+pub fn (file CaddyFile) export(path string) ! {
+	// Load the existing file and merge it with the current instance
+	
+	mut existing_file := pathlib.get_file(path:path)!
+	caddyfile_json := existing_file.read()!
+	json_decoded := json.decode(CaddyFile, caddyfile_json) or {panic(err)}
+
+	// merged_file := merge_caddyfiles(existing_file, file)
+
+	// content := merged_file.site_blocks.map(it.export(0)).join('\n')
+
+	content :=json.encode(file)
+
+	validate(text: content) or { return error('Caddyfile is not valid\n${err}') }
+	mut json_file := pathlib.get_file(path: path)!
+	json_file.write(content)!
+}
+
+pub struct ValidateArgs {
+	text string
 	path string
 }
 
-pub fn (mut file CaddyFile) file_server(addresses []Address, file_server FileServer) ! {
-	mut block := SiteBlock{
-		addresses: addresses
+pub fn validate(args ValidateArgs) ! {
+	if args.text != '' && args.path != '' {
+		return error('either text or path is required to validate caddyfile, cant be both')
 	}
-	directive := Directive{
-		name: 'root'
-		args: ['*', file_server.path]
-	}
-	block.directives << directive
-	block.directives << Directive{
-		name: 'file_server'
-		args: []
-	}
-	file.add_site_block(block)
-}
-
-
-[params]
-pub struct AddSiteBlockArgs {
-	overwrite bool
-}
-
-// Add a site block in a smart manner
-pub fn (mut file CaddyFile) add_site_block(new_block SiteBlock, args AddSiteBlockArgs) {
-	
-
-	// if new_block.addresses.any(it == file.site_blocks.map(it.addresses))
-
-	for mut block in file.site_blocks {
-		
-		block_urls := block.addresses.map(it.url.str().trim_space())
-		new_block_urls := new_block.addresses.map(it.url.str().trim_space())
-		if new_block_urls.any(it in block_urls) {
-			return
+	if args.text != '' {
+		job := osal.exec(
+			cmd: "echo '${args.text.trim_space()}' | caddy validate --adapter caddyfile --config -"
+		)!
+		if job.exit_code != 0 || !job.output.trim_space().ends_with('Valid configuration') {
+			return error(job.output)
 		}
-
-		if block_urls.len == 0 && new_block_urls.len == 0 {
-			return
-		}
+		return
 	}
-	
-	// Add new block if no existing block matches the domain
-	file.site_blocks << new_block
-	// 	if new_block.addresses.len == 0 {
-	// 		if block.addresses.len == 0 {
-	// 			// for directive in new_block.directives {
-	// 			// 	if !block.directives.any(it.name == directive.name && it.args == directive.args) {
-	// 			// 		block.directives << directive
-	// 			// 	}
-	// 			// }
-	// 			if !args.overwrite {
-	// 				return
-	// 			}
-	// 		}
-	// 	}
-	// 	else if block.addresses.any(it.domain == new_block.addresses[0].domain) {
-	// 		// Add directives to the existing block, avoiding duplicates
-	// 		if !args.overwrite {
-	// 				return
-	// 			}
-	// 		// for directive in new_block.directives {
-	// 		// 	if !block.directives.any(it.name == directive.name && it.args == directive.args) {
-	// 		// 		block.directives << directive
-	// 		// 	}
-	// 		// }
-	// 		// return
-	// 	}
-	// }
+	return error('either text or path is required to validate caddyfile')
 }
