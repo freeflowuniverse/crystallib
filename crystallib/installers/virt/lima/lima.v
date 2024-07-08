@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.installers.virt.qemu
 import os
 
 @[params]
@@ -15,7 +16,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.21.0'
+	version := '0.22.0'
 
 	if args.reset || args.uninstall {
 		console.print_header('uninstall lima')
@@ -50,6 +51,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	if args.reset {
 		console.print_header('install lima')
+		qemu.install()!
 		mut url := ''
 		mut dest_on_os := '${os.home_dir()}/hero'
 		if osal.is_linux_arm() {

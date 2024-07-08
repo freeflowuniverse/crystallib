@@ -42,6 +42,7 @@ pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 	mut alpine := $tmpl('templates/alpine.yaml')
 	mut arch := $tmpl('templates/arch.yaml')
 	mut ubuntu := $tmpl('templates/ubuntu.yaml')
+	mut ubuntucloud := $tmpl('templates/ubuntucloud.yaml')
 
 	match args.template {
 		.ubuntu {
@@ -53,6 +54,9 @@ pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 		.alpine {
 			pathlib.template_write(alpine, ymlfile.path, true)!
 		}
+		.ubuntucloud {
+			pathlib.template_write(ubuntucloud, ymlfile.path, true)!
+		}		
 	}
 
 	memory2 := args.memory / 1000
