@@ -87,7 +87,8 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 	}
 
 	for mut action in plbook.find(filter: 'caddy.start')! {
-		c.restart()!
+		c.start()!
 		action.done = true
 	}
+	c.reload()!
 }

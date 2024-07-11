@@ -8,7 +8,6 @@ pub struct CaddyFile {
 pub mut:
 	apps Apps
 	// site_blocks []SiteBlock
-	path        string = '/etc/caddy/Caddyfile'
 }
 
 // pub struct SiteBlock {
@@ -121,6 +120,6 @@ struct LogSampling {
 
 struct Apps {
 mut:
-	security security.Security
+	// security security.Security
 	http HTTP
 }
