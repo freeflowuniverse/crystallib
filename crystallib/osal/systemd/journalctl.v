@@ -3,6 +3,7 @@ module systemd
 import freeflowuniverse.crystallib.osal
 
 pub struct JournalArgs {
+pub:
 	service string // name of service for which logs will be retrieved
 	limit   int = 100 // number of last log lines to be shown
 }

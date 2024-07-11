@@ -5,13 +5,14 @@ import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.data.encoderhero
 
 pub struct Backend {
-mut:
+pub mut:
 	indexer Indexer
 	dbs     dbfs.DBCollection
 }
 
 @[params]
 pub struct BackendConfig {
+pub:
 	name   string
 	secret string
 }
