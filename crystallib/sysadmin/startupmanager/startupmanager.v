@@ -96,6 +96,24 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 	}
 }
 
+// kill the process by name
+pub fn (mut sm StartupManager) restart(name string) ! {
+	match sm.cat {
+		.screen {
+			panic('implement')
+		}
+		.systemd {
+			console.print_debug('  systemd')
+			mut systemdfactory := systemd.new()!
+			mut systemdprocess := systemdfactory.get(name)!
+			systemdprocess.restart()!
+		}
+		else {
+			panic('to implement, startup manager only support screen for now')
+		}
+	}
+}
+
 // remove from the startup manager
 pub fn (mut sm StartupManager) delete(name string) ! {
 	match sm.cat {

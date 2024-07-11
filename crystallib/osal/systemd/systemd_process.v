@@ -79,6 +79,15 @@ pub fn (mut self SystemdProcess) stop() ! {
 	self.systemd.load()!
 }
 
+pub fn (mut self SystemdProcess) restart() ! {
+	cmd := '
+	systemctl daemon-reload
+	systemctl restart ${self.name}
+	'
+	_ = osal.execute_silent(cmd)!
+	self.systemd.load()!
+}
+
 enum SystemdStatus {
 	unknown
 	active
