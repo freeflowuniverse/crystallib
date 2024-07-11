@@ -30,9 +30,6 @@ pub fn (mut j Juggler[Config]) trigger(mut ctx Context) veb.Result {
 		url: cfg.dagu_url
 	) or { panic(err) }
 
-	dagu_client.new_dag(dag, overwrite: true) or { return ctx.text('error creating dag ${err}') }
-
-	dagu_client.start_dag(dag.name) or { panic('Failed to start dag:\n${err}') }
 	return ctx.text('DAG "${dag.name}" started')
 }
 
@@ -82,9 +79,4 @@ fn (mut j Juggler[Config]) get_dag(e GitEvent) ?DAG {
 	}
 	dag_json := dag_file.read() or { panic('this should never happen') }
 	return json.decode(DAG, dag_json) or { panic('failed to decode ${err}') }
-}
-
-pub fn (j Juggler[Config]) open() ! {
-	cmd := 'open ${j.dagu_url}'
-	osal.exec(cmd: cmd)!
 }

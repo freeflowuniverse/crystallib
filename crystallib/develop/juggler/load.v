@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.baobab.actor
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.servers.daguserver
 
 fn (mut j Juggler) load(config_path string) ! {
 	mut config_dir := pathlib.get_dir(path: config_path)!

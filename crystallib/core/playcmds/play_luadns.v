@@ -13,7 +13,7 @@ pub fn play_luadns(mut plbook playbook.PlayBook) ! {
 	mut pull := false
 
 
-	for mut action in plbook.find(filter: 'luadns:set_domain')! {
+	for mut action in plbook.find(filter: 'luadns.set_domain')! {
 		mut p := action.params
 		url := p.get_default('url', '')!
 

@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.develop.juggler
 import freeflowuniverse.crystallib.develop.gittools
 import cli { Command, Flag }
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.base
 import os
 
 // path string //if location on filessytem, if exists, this has prio on git_url
@@ -42,8 +43,15 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 	cmd_juggler.add_flag(Flag{
 		flag: .string
 		required: true
-		name: 'secret'
-		abbrev: 's'
+		name: 'username'
+		abbrev: 'n'
+		description: 'username for juggler.'
+	})
+	cmd_juggler.add_flag(Flag{
+		flag: .string
+		required: true
+		name: 'password'
+		abbrev: 'p'
 		description: 'password for juggler.'
 	})
 
@@ -53,16 +61,18 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 fn cmd_juggler_execute(cmd Command) ! {
 	mut url := cmd.flags.get_string('url') or { '' }
 	mut port := cmd.flags.get_int('port') or { 8000 }
-	mut secret := cmd.flags.get_string('secret') or { 'abc' }
+	mut username := cmd.flags.get_string('username') or { 'abc' }
+	mut password := cmd.flags.get_string('password') or { 'abc' }
 	mut reset := cmd.flags.get_bool('reset') or { false }
 
 	if url.len > 0 {
 		mut j := juggler.configure(
 			url: url
-			password: secret
-			reset: reset
+			username: username
+			password: password
+			reset: true
 		)!
-		j.run(port)!
+		j.run(8000)!
 	} else {
 		juggler_help(cmd)
 	}
@@ -90,12 +100,10 @@ fn juggler_code_get(cmd Command) !string {
 	}
 
 	if coderoot.len > 0 {
-		// //TODO: make sure this is right way
-		// mut session:= base.context_new(
-    	// 	coderoot:coderoot
-		// )!
-		// panic('coderoot len >0 not implemented')
+		base.context_new(coderoot: coderoot)!
+		// panic('coderoot >0 not supported yet, not imeplemented.')
 	}
+
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }

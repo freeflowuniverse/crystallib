@@ -54,35 +54,34 @@ pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 		return ctx.text('No triggers set for event.')
 	}
 
-	scripts := j.get_scripts(triggers[0]) or { panic('hopefully doesnt happen') }
+	trigger := triggers[0]
 
-	if scripts.len == 0 {
+	// scripts := j.get_scripts(triggers[0]) or { panic('hopefully doesnt happen') }
+
+	if trigger.script_ids.len == 0 {
 		return ctx.text('No scripts set for event trigger.')
 	}
 
-	for script in scripts {
-		play := Play{
+	mut response := 'Successfully triggered the plays:'
+	for script_id in trigger.script_ids {
+		mut play := Play{
 			event_id: event_id
-			script_id: script.id
+			script_id: script_id
 			start: time.now()
 			trigger_id: triggers[0].id
 			output: 'job.output'
 			status: .starting
 		}
-		play_id := j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
+		play.id = j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
 
-		mut sm := startupmanager.get() or { panic('failed to get sm ${err}') }
-		sm.start(
-			name: 'juggler_play${play_id}'
-			cmd: 'hero run -cr ${os.home_dir()}/code -p ${script.path}'
-			env: {
-				'HOME': os.home_dir()
-			}
-			restart: false
-		) or { panic('failed to start sm ${err}') }
+		j.run_play(play) or {
+			ctx.server_error('failed to run play ${play.id}')
+		}
+		response += '\n- Play ${play.id}: https://juggler.protocol.me/play/${play.id}'
 	}
 
-	return ctx.text('DAG "dag.name}" started')
+
+	return ctx.text(response)
 }
 
 @['/script/:id']
@@ -128,10 +127,6 @@ pub fn (mut j Juggler) script(mut ctx Context, id string) veb.Result {
 
 @['/script/:id/play']
 pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
-	mut script := j.backend.get[Script](id.u32()) or {
-		return ctx.server_error('script with id <${id}> not found')
-	}
-
 	trigger_id := j.backend.new[Trigger](Trigger{
 		name: 'Custom push'
 		description: 'Trigger to customly play event'
@@ -149,7 +144,7 @@ pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 		return ctx.server_error('Failed to create event')	
 	}
 
-	play := Play{
+	mut play := Play{
 		event_id: event_id
 		script_id: id.u32()
 		start: time.now()
@@ -157,19 +152,37 @@ pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 		status: .starting
 	}
 
-	play_id := j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
+	play.id = j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
 
+	j.run_play(play) or {
+		ctx.server_error('failed to run play ${play.id}')
+	}
+	
+	return ctx.redirect('/play/${play.id}')	
+}
+
+pub fn (mut j Juggler) run_play(play Play) ! {
+	mut script := j.backend.get[Script](play.script_id) or {
+		return error('script with id <${play.script_id}> not found')
+	}
+	
+	command := match script.category {
+		.hero { 'hero run -cr ${os.home_dir()}/code -p ${script.path}' }
+		.shell {'/bin/bash -c \'for script in ${script.path}/*.sh; do bash "\$script"; done\''}
+		.hybrid {
+			'hero run -cr ${os.home_dir()}/code -p ${script.path}\nfor script in ${script.path}/*.sh; do bash "\$script"; done'
+		}
+		else {panic('implement')}
+	} 
 	mut sm := startupmanager.get() or { panic('failed to get sm ${err}') }
 	sm.start(
-		name: 'juggler_play${play_id}'
-		cmd: 'hero run -cr ${os.home_dir()}/code -p ${script.path}'
+		name: 'juggler_play${play.id}'
+		cmd: command
 		env: {
 			'HOME': os.home_dir()
 		}
 		restart: false
 	) or { panic('failed to start sm ${err}') }
-	
-	return ctx.redirect('/play/${play_id}')	
 }
 
 // // @['/play2/:identifier']

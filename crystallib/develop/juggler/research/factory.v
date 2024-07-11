@@ -15,7 +15,6 @@ pub mut:
 	host     string = 'localhost' @[required]
 	port     int    = 8888    @[required]
 	// dagu_urls []string = ['http://localhost:8200']
-	dagu_url string = 'http://localhost:8200'
 }
 
 pub struct JugglerGetArgs {

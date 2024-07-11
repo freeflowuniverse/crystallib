@@ -5,15 +5,12 @@ import time
 import freeflowuniverse.crystallib.servers.caddy
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.servers.daguserver
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
 import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
 
 const instance_name = 'testinstance'
 
 pub fn test_get() ! {
 	j := get(name: juggler.instance_name)!
-	assert daguinstaller.is_installed(daguinstaller.version)!
 	assert caddyinstaller.is_installed(caddyinstaller.version)!
 }
 

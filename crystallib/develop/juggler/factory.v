@@ -5,12 +5,10 @@ import freeflowuniverse.crystallib.servers.caddy
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.baobab.actor
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.servers.daguserver
 
 pub fn get(j Juggler) !&Juggler {
 	// get so is also installed
 	mut c := caddy.get(j.name)!
-	mut d := daguserver.get(j.name)!
 	return &Juggler{
 		...j
 	}
@@ -38,13 +36,6 @@ pub fn configure(cfg Config) !&Juggler {
 
 	// start caddyserver
 	mut c := caddy.configure('juggler')!
-
-	// start caddyserver
-	mut d := daguserver.configure('juggler',
-		username: 'admin'
-		password: cfg.password
-		port: 8888
-	)!
 
 	mut j := Juggler{
 		Actor: actor.new(
