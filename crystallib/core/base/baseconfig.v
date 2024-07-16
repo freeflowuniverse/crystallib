@@ -1,5 +1,6 @@
 module base
 
+import json
 // import freeflowuniverse.crystallib.ui.console
 
 // is an object which has a configurator, session and config object which is unique for the model
@@ -38,7 +39,7 @@ pub fn (mut self BaseConfig[T]) configurator() !&Configurator[T] {
 			instance: self.instance
 		)!
 		self.configurator_ = c
-		c
+		self.configurator_ or { panic('s') }
 	}
 
 	return &configurator
@@ -51,11 +52,11 @@ pub fn (mut self BaseConfig[T]) config_set(myconfig T) ! {
 }
 
 pub fn (mut self BaseConfig[T]) config_new() !&T {
-	mut config := self.config_ or {
+	config := self.config_ or {
 		mut configurator := self.configurator()!
 		mut c := configurator.new()!
 		self.config_ = &c
-		&c
+		self.config_ or { panic('s') }
 	}
 
 	self.config_save()!
@@ -76,7 +77,14 @@ pub fn (mut self BaseConfig[T]) config_get() !&T {
 			mut mycfg := self.config_new()!
 			return mycfg
 		}
-		mut c := configurator.get()!
+
+		mut db := mycontext.db_config_get()!
+		if !db.exists(key: configurator.config_key())! {
+			return error("can't find configuration with name: ${configurator.config_key()} in context:'${mycontext.config.name}'")
+		}
+		data := db.get(key: configurator.config_key())!
+
+		mut c := json.decode(T, data)!
 		$for field in T.fields {
 			field_attrs := attrs_get(field.attrs)
 			if 'secret' in field_attrs {
