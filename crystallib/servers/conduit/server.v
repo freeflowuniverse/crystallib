@@ -51,7 +51,7 @@ pub fn (mut server Server[Config]) restart() ! {
 	server.start()!
 }
 
-pub fn (mut server Server[Config]) status() startupmanager.ProcessStatus {
+pub fn (mut server Server[Config]) status() !startupmanager.ProcessStatus {
 	mut sm := startupmanager.get()!
 	return sm.status(server.process_name()) or {return .unknown}
 }
