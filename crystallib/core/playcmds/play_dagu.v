@@ -7,6 +7,11 @@ import freeflowuniverse.crystallib.ui.console
 
 // play_dagu plays the dagu play commands
 pub fn play_dagu(mut plbook playbook.PlayBook) ! {
+	dagu_actions := plbook.find(filter: 'dagu.configure')!
+	if dagu_actions.len == 0 {
+		return
+	}
+	
 	mut config_actions := plbook.find(filter: 'dagu.configure')!
 	mut d := if config_actions.len > 1 {
 		return error('can only have 1 config action for dagu')
