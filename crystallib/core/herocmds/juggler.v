@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.develop.juggler
 import freeflowuniverse.crystallib.develop.gittools
 import cli { Command, Flag }
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.base
 import os
 
 // path string //if location on filessytem, if exists, this has prio on git_url
@@ -33,11 +34,25 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 	cmd_run_add_flags(mut cmd_juggler)
 
 	cmd_juggler.add_flag(Flag{
-		flag: .bool
+		flag: .int
 		required: false
-		name: 'open'
-		abbrev: 'o'
+		name: 'port'
+		abbrev: ''
 		description: 'will open the juggler user interface.'
+	})
+	cmd_juggler.add_flag(Flag{
+		flag: .string
+		required: true
+		name: 'username'
+		abbrev: 'n'
+		description: 'username for juggler.'
+	})
+	cmd_juggler.add_flag(Flag{
+		flag: .string
+		required: true
+		name: 'password'
+		abbrev: 'p'
+		description: 'password for juggler.'
 	})
 
 	cmdroot.add_command(cmd_juggler)
@@ -45,24 +60,21 @@ If you do -gr it will pull newest book content from git and overwrite local chan
 
 fn cmd_juggler_execute(cmd Command) ! {
 	mut url := cmd.flags.get_string('url') or { '' }
-	mut path := cmd.flags.get_string('path') or { '' }
-	mut dagu_url := cmd.flags.get_string('dagu') or { '' }
+	mut port := cmd.flags.get_int('port') or { 8000 }
+	mut username := cmd.flags.get_string('username') or { 'abc' }
+	mut password := cmd.flags.get_string('password') or { 'abc' }
+	mut reset := cmd.flags.get_bool('reset') or { false }
 
-	mut repo_path := ''
-	if path.len > 0 || url.len > 0 {
-		repo_path = juggler_code_get(cmd)!
+	if url.len > 0 {
+		mut j := juggler.configure(
+			url: url
+			username: username
+			password: password
+			reset: true
+		)!
+		j.run(8000)!
 	} else {
 		juggler_help(cmd)
-	}
-
-	mut j := juggler.get(
-		repo_path: repo_path
-		dagu_url: dagu_url
-	)!
-
-	open := cmd.flags.get_bool('open') or { false }
-	if open {
-		j.open()!
 	}
 }
 
@@ -88,14 +100,16 @@ fn juggler_code_get(cmd Command) !string {
 	}
 
 	if coderoot.len > 0 {
-		panic('coderoot >0 not supported yet, not imeplemented.')
+		base.context_new(coderoot: coderoot)!
+		// panic('coderoot >0 not supported yet, not imeplemented.')
 	}
+
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	// interactive := !cmd.flags.get_bool('script') or { false }
 
-	mut gs := gittools.get()!
+	mut gs := gittools.get(coderoot: coderoot)!
 	if url.len > 0 {
 		path = gs.code_get(
 			pull: pull
@@ -107,3 +121,4 @@ fn juggler_code_get(cmd Command) !string {
 
 	return path
 }
+

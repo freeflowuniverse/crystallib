@@ -1,0 +1,27 @@
+host: "::"                          # default: 127.0.0.1
+port: ${cfg.port}
+
+# path to the DAGs directory
+dags: ${cfg.homedir}/dags
+
+# Web UI Color & Title
+# navbarColor: <ui header color>                               # header color for web UI (e.g. "#ff0000")
+navbarTitle: ${cfg.title}                                 # header title for web UI (e.g. "PROD")
+
+isBasicAuth: true
+basicAuthUsername: ${cfg.username}
+basicAuthPassword: ${cfg.password}
+
+isAuthToken: true                                    # enables API token
+authToken: ${cfg.secret}
+
+# Base Config
+baseConfig: ${cfg.homedir}/config.yaml
+
+# Working Directory
+# workDir: ${cfg.homedir}/working                        # default: DAG location
+
+# SSL Configuration
+# tls:
+#     certFile: <path to SSL certificate file>
+#     keyFile: <path to SSL key file>

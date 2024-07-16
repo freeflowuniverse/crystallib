@@ -1,78 +1,54 @@
 module daguserver
 
 import os
-import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.clients.dagu
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.sysadmin.startupmanager
+
 
 pub fn (mut self DaguServer[Config]) dag_path(name string) string {
 	return '${os.home_dir()}/dags/${texttools.name_fix(name)}.yaml'
 }
 
-// register a new dag
-pub fn (mut self DaguServer[Config]) new(dag dagu.DAG) ! {
-	dag_yaml := $tmpl('./templates/dag.yaml')
-	dag_file := self.dag_path(dag.name)
-	os.write_file(dag_file, dag_yaml)!
+pub fn (mut self DaguServer[Config]) is_running() !bool {
+	mut sm := startupmanager.get()!
+	if sm.status('dagu_${self.instance}')! == .active {
+		return true
+	}
+	return false
 }
 
-// pub fn (mut self DaguServer[Config]) url() string {
-// 	return '${dagu_s.host}:${dagu_s.port}/api/v1'
-// }
+pub fn (mut self DaguServer[Config]) start() ! {
+	mut cfg := self.config()!
 
-// Dry-runs specified DAG, what are the options? QUESTION:
-pub fn (mut self DaguServer[Config]) dryrun(name string, options string) !string {
-	panic('implement')
-	dag_file := self.dag_path(name)
-	result := os.execute_opt('dagu dry  ${dag_file} ')!
-	return result.output
-}
 
-// Restart the DAG
-pub fn (mut self DaguServer[Config]) restart(name string) !string {
-	dag_file := self.dag_path(name)
-	result := os.execute_opt('dagu restart ${dag_file}')!
-	return result.output
-}
+	mut sm := startupmanager.get()!
 
-// Retry the DAG execution
-pub fn (mut self DaguServer[Config]) retry(request_id string, name string) !string {
-	dag_file := self.dag_path(name)
-	result := os.execute_opt('dag retry --req ${request_id} ${dag_file}')!
-	return result.output
-}
+	// TODO: we are not taking host into consideration (port is in configpath)
+	cmd := 'dagu server --host 0.0.0.0 --config ${cfg.configpath}'
 
-pub fn (mut self DaguServer[Config]) start(name string) !string {
-	dag_file := self.dag_path(name)
-	console.print_debug('dag start  ${dag_file}')
-	result := os.execute_opt('dagu start  ${dag_file} ')!
-	return result.output
-}
-
-pub fn (mut self DaguServer[Config]) server() !string {
-	console.print_debug('dagu server')
-	result := os.execute_opt('dagu server')!
-	return result.output
+	sm.start(
+		name: 'dagu_${self.instance}'
+		cmd: cmd
+		env: {
+			'HOME': '/root'
+		}
+	)!
 }
 
 // Display current status of the DAG
-pub fn (mut self DaguServer[Config]) status(name string) !string {
-	dag_file := self.dag_path(name)
-	result := os.execute_opt('dagu status ${dag_file}')!
-	// TODO: is this a good result, shouldn't this be an enum?
-	return result.output
+pub fn (mut self DaguServer[Config]) status() !startupmanager.ProcessStatus {
+	mut sm := startupmanager.get()!
+	return sm.status('dagu_${self.instance}')!
 }
 
-// Stop the running DAG
-pub fn (mut self DaguServer[Config]) dag_stop(name string) !string {
-	dag_file := self.dag_path(name)
-	result := os.execute_opt('dagu stop ${dag_file}')!
-	return result.output
+pub fn (mut self DaguServer[Config]) restart() ! {
+	self.stop()!
+	self.start()!
 }
 
-pub fn (mut self DaguServer[Config]) delete(name string) ! {
-	self.dag_stop(name)!
-	dag_file := self.dag_path(name)
-	os.rm(dag_file)!
+pub fn (mut self DaguServer[Config]) stop() ! {
+	console.print_header('dagu stop')
+	mut sm := startupmanager.get()!
+	sm.stop('dagu_${self.instance}')!
 }

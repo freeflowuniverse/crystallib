@@ -50,11 +50,12 @@ fn (mut systemd Systemd) load() ! {
 @[params]
 pub struct SystemdProcessNewArgs {
 pub mut:
-	name        string @[required]
-	cmd         string @[required]
+	name        string            @[required]
+	cmd         string            @[required]
 	description string
-	// env       map[string]string
-	start bool = true
+	env         map[string]string
+	start       bool = true
+	restart     bool = true
 }
 
 //```
@@ -70,6 +71,7 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 		name: args.name
 		description: args.description
 		cmd: args.cmd
+		restart: args.restart
 		systemd: &systemd
 		info: SystemdProcessInfo{
 			unit: args.name
@@ -78,11 +80,12 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 
 	if args.cmd.contains('\n') {
 		// means we can load the special cmd
-		mut pathcmd := systemd.path_cmd.file_get('${args.name}_cmd')!
+		mut pathcmd := systemd.path_cmd.file_get_new('${args.name}_cmd')!
 		pathcmd.write(sdprocess.cmd)!
+		pathcmd.chmod(0o750)!
 		sdprocess.cmd = '/bin/bash -c ${pathcmd.path}'
 	}
-	// sdprocess.env = args.env.move()
+	sdprocess.env = args.env.move()
 
 	systemd.setinternal(mut sdprocess)!
 

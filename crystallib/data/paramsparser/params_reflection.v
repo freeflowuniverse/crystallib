@@ -14,11 +14,15 @@ pub fn (params Params) decode[T]() !T {
 pub fn (params Params) decode_struct[T](_ T) !T {
 	mut t := T{}
 	$for field in T.fields {
-		if field.name[0].is_capital() {
-			// embed := params.decode_struct(t.$(field.name))!
-			t.$(field.name) = params.decode_struct(t.$(field.name))!
-		} else {
-			t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
+		$if field.is_enum {
+			t.$(field.name) = params.get_int(field.name) or {0}
+		} $else {
+			if field.name[0].is_capital() {
+				// embed := params.decode_struct(t.$(field.name))!
+				t.$(field.name) = params.decode_struct(t.$(field.name))!
+			} else {
+				t.$(field.name) = params.decode_value(t.$(field.name), field.name)!
+			}
 		}
 	}
 	return t
@@ -51,6 +55,9 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 		return params.get_list(key)!
 	} $else $if T is []int {
 		return params.get_list_int(key)!
+	} $else $if T is []u32 {
+		lst := params.get_list_u32(key)!
+		return lst
 	} $else $if T is time.Time {
 		time_str := params.get(key)!
 		// todo: 'handle other null times'
@@ -68,6 +75,7 @@ pub fn (params Params) decode_value[T](_ T, key string) !T {
 
 @[params]
 pub struct EncodeArgs {
+pub:
 	recursive bool = true
 }
 
@@ -93,6 +101,8 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 		$if val is string || val is int || val is bool || val is i64 || val is u32
 			|| val is time.Time {
 			params.set(key, '${val}')
+		} $else $if field.is_enum {
+			params.set(key, '${int(val)}')
 		} $else $if field.typ is []string {
 			mut v2 := ''
 			for i in val {
@@ -108,6 +118,16 @@ pub fn encode[T](t T, args EncodeArgs) !Params {
 				value: v2
 			}
 		} $else $if field.typ is []int {
+			mut v2 := ''
+			for i in val {
+				v2 += '${i},'
+			}
+			v2 = v2.trim(',')
+			params.params << Param{
+				key: field.name
+				value: v2
+			}
+		} $else $if field.typ is []u32 {
 			mut v2 := ''
 			for i in val {
 				v2 += '${i},'

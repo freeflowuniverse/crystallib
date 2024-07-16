@@ -1,6 +1,7 @@
 module herocmds
 
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
@@ -109,14 +110,16 @@ fn plbook_code_get(cmd Command) !string {
 	}
 
 	if coderoot.len > 0 {
-		panic('coderoot >0 not supported yet, not imeplemented.')
+		base.context_new(coderoot: coderoot)!
+		
+		// panic('coderoot >0 not supported yet, not imeplemented.')
 	}
 
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	// interactive := !cmd.flags.get_bool('script') or { false }
 
-	mut gs := gittools.get()!
+	mut gs := gittools.get(coderoot: coderoot)!
 	if url.len > 0 {
 		path = gs.code_get(
 			pull: pull

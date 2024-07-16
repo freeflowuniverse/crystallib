@@ -1,6 +1,7 @@
 module caddy
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.servers.caddy.security
@@ -12,6 +13,12 @@ pub fn (mut self Caddy[Config]) restart() ! {
 	self.start()!
 }
 
+// Restart the Caddy
+pub fn (mut self Caddy[Config]) reload() ! {
+	mut cfg := self.config()!
+	osal.exec(cmd: 'caddy --config ${cfg.homedir}/Caddyfile.json reload')!
+}
+
 pub fn (mut self Caddy[Config]) start() ! {
 	mut cfg := self.config()!
 	console.print_header('caddy start')
@@ -20,13 +27,13 @@ pub fn (mut self Caddy[Config]) start() ! {
 		cfg.homedir = '/tmp/caddy'
 	}
 
-	if !os.exists('${cfg.homedir}/Caddyfile') {
-		return error("didn't find caddyfile")
-	}
+	// if !os.exists('${cfg.homedir}/Caddyfile.json') {
+	// 	return error("didn't find caddyfile")
+	// }
 
-	cfg.file.export('${cfg.homedir}/Caddyfile')!
+	cfg.file.export('${cfg.homedir}/Caddyfile.json')!
 
-	cmd := 'caddy run --config ${cfg.homedir}/Caddyfile'
+	cmd := 'caddy run --config ${cfg.homedir}/Caddyfile.json'
 
 	mut sm := startupmanager.get()!
 
@@ -45,4 +52,17 @@ pub fn (mut self Caddy[Config]) stop() ! {
 pub fn (mut self Caddy[Config]) set_caddyfile(file CaddyFile) ! {
 	mut cfg := self.config()!
 	cfg.file = file
+}
+
+[params]
+pub struct HashPasswordParams {
+	algorithm string = 'bcrypt'
+}
+
+pub fn hash_password(plaintext string, params HashPasswordParams) !string {
+	if plaintext == '' {
+		return error('plaintext cannot be empty')
+	}
+	result := osal.exec(cmd:'caddy hash-password -p ${plaintext}')!
+	return result.output.trim_space()
 }

@@ -33,28 +33,32 @@ pub fn print_item(txt string) {
 pub interface IPrintable {}
 
 pub fn print_debug(i IPrintable) {
-	// to print anything
-	txt := '${i}'.trim_string_left("console.IPrintable('").trim_string_right("')")
-	mut c := get()
-	if c.prev_title || c.prev_item {
-		lf()
+	$if debug {
+		// to print anything
+		txt := '${i}'.trim_string_left("console.IPrintable('").trim_string_right("')")
+		mut c := get()
+		if c.prev_title || c.prev_item {
+			lf()
+		}
+		txt2 := trim(texttools.indent(txt, '    '))
+		cprintln(foreground: .light_gray, text: txt2)
+		c.reset()
 	}
-	txt2 := trim(texttools.indent(txt, '    '))
-	cprintln(foreground: .light_gray, text: txt2)
-	c.reset()
 }
 
 pub fn print_debug_title(title string, txt string) {
-	print_header(title)
-	lf()
-	mut c := get()
-	if c.prev_title || c.prev_item {
+	$if debug {
+		print_header(title)
+		lf()
+		mut c := get()
+		if c.prev_title || c.prev_item {
+			lf()
+		}
+		txt2 := trim(texttools.indent(txt, '    '))
+		cprintln(foreground: .light_gray, text: txt2)
+		c.reset()
 		lf()
 	}
-	txt2 := trim(texttools.indent(txt, '    '))
-	cprintln(foreground: .light_gray, text: txt2)
-	c.reset()
-	lf()
 }
 
 pub fn print_stdout(txt string) {

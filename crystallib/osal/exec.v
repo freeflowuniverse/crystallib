@@ -10,7 +10,7 @@ import time
 
 pub struct JobError {
 	Error
-mut:
+pub mut:
 	job        Job
 	error_type ErrorType
 }
