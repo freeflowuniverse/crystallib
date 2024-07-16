@@ -2,7 +2,7 @@ module caddy
 
 pub struct HTTP {
 mut:
-	servers map[string]Server
+	servers map[string]Server @[omitempty; skip]
 }
 
 pub struct Server {
@@ -14,7 +14,7 @@ mut:
 
 pub struct Route {
 mut:
-	@match ?[]Match
+	@match []Match @[omitempty; skip]
 	handle []Handle
 	terminal bool = true
 
@@ -23,17 +23,17 @@ mut:
 pub struct Match {
 mut:
 	host []string
-	path ?[]string
+	path []string @[omitempty; skip]
 }
 
 pub struct Handle {
 mut:
 	handler string
-	routes ?[]Route
+	routes []Route @[omitempty; skip]
 	providers Providers @[omitempty]
-	root ?string
-	hide ?[]string
-	upstreams ?[]map[string]string
+	root string @[omitempty; skip]
+	hide []string @[omitempty; skip]
+	upstreams []map[string]string @[omitempty; skip]
 }
 
 pub struct Providers {
@@ -116,7 +116,7 @@ pub fn (mut http HTTP) add_basic_auth(args BasicAuth) ! {
 
 pub fn (mut server Server) add_basic_auth(domain string, username string, password string) ! {
 		for mut route in server.routes {
-			if route.@match or {return}.any(domain in it.host) {
+			if route.@match.any(domain in it.host) {
 				route.add_basic_auth(username, password)!
 			}
 		}
@@ -128,7 +128,7 @@ pub fn (mut route Route) add_basic_auth(username string, password string) ! {
 	for mut handle in route.handle {
 		if handle.handler == 'subroute' {
 			found = true
-			mut routes := handle.routes or {continue}.clone()
+			mut routes := handle.routes.clone()
 			for mut r in routes {
 				mut inserted := false
 				for i, h in r.handle {

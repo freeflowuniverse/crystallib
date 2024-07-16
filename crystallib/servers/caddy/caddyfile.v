@@ -131,8 +131,8 @@ pub fn merge_servers(server1 Server, server2 Server) Server {
 	
 	for route2 in server2.routes {
 		// only add routes for hosts that have not been defined
-		route2_hosts := arrays.flatten[string](route2.@match or {[]Match}.map(it.host.map(it)))
-		routes_hosts := arrays.flatten[string](routes.map(arrays.flatten[string](it.@match or {[]Match}.map(it.host.map(it)))))
+		route2_hosts := arrays.flatten[string](route2.@match.map(it.host.map(it)))
+		routes_hosts := arrays.flatten[string](routes.map(arrays.flatten[string](it.@match.map(it.host.map(it)))))
 		if !route2_hosts.any(it in routes_hosts) {
 			routes << route2
 		}
