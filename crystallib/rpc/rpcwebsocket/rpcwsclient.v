@@ -1,6 +1,6 @@
 module rpcwebsocket
 
-import freeflowuniverse.crystallib.data.jsonrpc
+import freeflowuniverse.crystallib.rpc.jsonrpc
 import log
 import net.websocket { Client, Message }
 import time

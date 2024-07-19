@@ -158,22 +158,23 @@ pub fn (mut site ZolaSite) generate() ! {
 	css_source := '${site.path_build.path}/css/index.css'
 	css_dest := '${site.path_build.path}/static/css/index.css'
 	tw.compile(css_source, css_dest)!
+}
 
+pub fn build(source_path string, build_path string) ! {
 	mut cmd := '        #!/usr/bin/env bash		
 		set -e
 		${osal.profile_path_source()}
-		zola -r ${site.path_build.path} build -f -o ${site.path_publish.path}
+		zola -r ${source_path} build -f -o ${build_path}
 		'
 	cmd = texttools.dedent(cmd)
-	mut p_build := pathlib.get_file(path: '${site.path_build.path}/build.sh', create: true)!
+	mut p_build := pathlib.get_file(path: '${build_path}/build.sh', create: true)!
 	p_build.write(cmd)!
 	os.chmod(p_build.path, 0o777)!
-
 	osal.exec(cmd: cmd)!
-	mut c := base.context()!
-	mut r := c.redis()!
-	r.set('zola:${site.name}:publish', site.path_publish.path)!
-	r.expire('zola:${site.name}:publish', 3600 * 12)!
+	// mut c := base.context()!
+	// mut r := c.redis()!
+	// r.set('zola:${site.name}:publish', site.path_publish.path)!
+	// r.expire('zola:${site.name}:publish', 3600 * 12)!
 }
 
 fn (mut site ZolaSite) template_install() ! {
