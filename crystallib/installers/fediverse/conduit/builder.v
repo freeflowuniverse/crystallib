@@ -1,10 +1,10 @@
 module conduit
 
 import freeflowuniverse.crystallib.installers.base
-import freeflowuniverse.crystallib.installers.rust
+import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.installers
+import freeflowuniverse.crystallib.installers.db.postgresql
 import freeflowuniverse.crystallib.ui.console
 
 const url = 'https://github.com/matrix-org/conduit'
