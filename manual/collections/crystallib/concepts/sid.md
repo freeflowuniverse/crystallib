@@ -5,15 +5,14 @@
   - smart id, is 3 to 6 letters, 0...z
 - the rid,cid and id are all smart id's
 - sid's are unique per circle
-- sid's are remembered in redis, so we know for sure that they are unique
-- sid's can be converted to int very easily
+- sid's can be converted to int easily
 
 ## gid = Global ID
 
 Identifies an object in unique way on global level, normally not needed in heroscript, because heroscript most often executes in context of a circle
 
 - gid = rid.cid.oid
-  - rid = region id (regional internet on which circle is defined)
+  - rid = region id (regional identifier on which circle is defined), often not used today
   - cid = circle id
   - id = object id
 - each of above id's are smart id's
@@ -40,7 +39,7 @@ The following are valid representations
 ```golang
 pub struct SmartId {
 pub mut:
-	rid 		     string //regional internet id
+	rid 		     string //regional id
 	cid          string //link to circle
 	id          string //content id
 }

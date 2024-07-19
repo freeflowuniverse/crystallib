@@ -56,7 +56,7 @@ pub fn start(args_ Config) !Server {
 	processname := 'postgres_${args.name}'
 
 	mut manager := startupmanager.get()!
-	if !manager.exists(processname) {
+	if !manager.exists(processname)! {
 		server.start()!
 	}
 	// console.print_debug(" - server get ok")
