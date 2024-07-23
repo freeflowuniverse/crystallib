@@ -6,6 +6,7 @@ echo "Starting Seahorse installation..."
 apt update
 apt upgrade -y
 apt install -y curl
+apt install -y pkg-config build-essential libudev-dev
 
 # Function to check if a command exists
 command_exists() {
@@ -36,13 +37,15 @@ get_latest_github_release() {
 
 # Install/Update Rust
 install_or_update_rust() {
+    local latest_version=$(get_latest_github_release "rust-lang/rust")
+    echo "Rust latest version is $latest_version" 
+
     if ! command_exists rustc; then
         echo "Installing Rust..."
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         source $HOME/.cargo/env
     else
         local current_version=$(rustc --version | awk '{print $2}')
-        local latest_version=$(get_latest_github_release "rust-lang/rust")
         
         # Remove the 'rust-' prefix from the version string
         latest_version=${latest_version#rust-}
@@ -74,12 +77,13 @@ install_or_update_solana() {
     
     # Remove the 'v' prefix from the version string if present
     latest_version=${latest_version#v}
+    echo "Solana latest version is $latest_version" 
 
     if ! command_exists solana; then
+        echo "Solana is not installed"
         echo "Installing Solana version $latest_version..."
         sh -c "$(curl -sSfL https://release.solana.com/v$latest_version/install)"
-        export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
-        echo 'export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"' >> ~/.bashrc
+        # echo 'export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"' >> ~/.bashrc
         echo "Solana $latest_version has been installed."
     else
         local current_version=$(solana --version | awk '{print $2}')
@@ -87,8 +91,7 @@ install_or_update_solana() {
         if [ "$current_version" != "$latest_version" ]; then
             echo "Updating Solana from version $current_version to $latest_version..."
             sh -c "$(curl -sSfL https://release.solana.com/v$latest_version/install)"
-            export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
-            echo 'export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"' >> ~/.bashrc
+            # echo 'export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"' >> ~/.bashrc
             updated_version=$(solana --version | awk '{print $2}')
             echo "Solana updated to version $updated_version"
         else
@@ -103,31 +106,23 @@ get_latest_node_version() {
 }
 
 # Install or update Node.js and npm
-install_or_update_node() {
+install_or_update_node_js_npm() {
     local latest_version=$(get_latest_node_version)
+    echo "Node.js latest version is $latest_version" 
 
     if ! command_exists node; then
         echo "Installing Node.js version $latest_version..."
-        curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
-        sudo apt-get install -y nodejs
+        curl -fsSL https://deb.nodesource.com/setup_current.x | bash -
+        apt-get install -y nodejs
     else
         local current_version=$(node -v | cut -d 'v' -f 2)
         if [ "$current_version" != "$latest_version" ]; then
             echo "Updating Node.js from version $current_version to $latest_version..."
-            curl -fsSL https://deb.nodesource.com/setup_current.x | sudo -E bash -
-            sudo apt-get install -y nodejs
+            curl -fsSL https://deb.nodesource.com/setup_current.x | bash -
+            apt-get install -y nodejs
         else
             echo "Node.js is already at the latest version ($current_version)."
         fi
-    fi
-
-    # Verify Node.js and npm installation
-    if command_exists node && command_exists npm; then
-        echo "Node.js version: $(node -v)"
-        echo "npm version: $(npm -v)"
-    else
-        echo "Error: Node.js and npm installation failed."
-        exit 1
     fi
 }
 
@@ -138,12 +133,14 @@ get_latest_yarn_version() {
 
 # Install or update Yarn
 install_or_update_yarn() {
+    local latest_version=$(get_latest_yarn_version)
+    echo "Yarn latest version is $latest_version" 
+
     if ! command_exists yarn; then
         echo "Installing Yarn..."
         npm install -g yarn
     else
         local current_version=$(yarn --version)
-        local latest_version=$(get_latest_yarn_version)
         
         if [ "$current_version" != "$latest_version" ]; then
             echo "Updating Yarn from $current_version to $latest_version..."
@@ -161,20 +158,24 @@ get_latest_anchor_version() {
 
 # Install or update Anchor
 install_or_update_anchor() {
+    local latest_version=$(get_latest_anchor_version)
+    echo "Anchor latest version is $latest_version" 
+
     if ! command_exists anchor; then
         echo "Installing Anchor..."
         cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
         avm install latest
         avm use latest
+        # echo 'export PATH="$PATH:$HOME/.avm/bin"' >> ~/.bashrc
     else
         local current_version=$(anchor --version | awk '{print $2}')
-        local latest_version=$(get_latest_anchor_version)
         
         if [ "$current_version" != "$latest_version" ]; then
             echo "Updating Anchor from $current_version to $latest_version..."
             avm update
             avm install latest
             avm use latest
+            # echo 'export PATH="$PATH:$HOME/.avm/bin"' >> ~/.bashrc
         else
             echo "Anchor is already up to date (version $current_version)"
         fi
@@ -193,12 +194,14 @@ get_current_seahorse_version() {
 
 # Install or update Seahorse
 install_or_update_seahorse() {
+    local latest_version=$(get_latest_seahorse_version)
+    echo "Seahorse latest version is $latest_version" 
+
     if ! command_exists seahorse; then
         echo "Installing Seahorse..."
         cargo install seahorse-lang
     else
         local current_version=$(get_current_seahorse_version)
-        local latest_version=$(get_latest_seahorse_version)
         
         if [ "$current_version" != "$latest_version" ]; then
             echo "Updating Seahorse from $current_version to $latest_version..."
@@ -214,24 +217,51 @@ install_or_update_rust
 install_rustfmc
 install_or_update_solana
 install_or_update_node_js_npm
-# install_or_update_yarn
-# install_or_update_anchor
-# install_or_update_seahorse
+install_or_update_yarn
+install_or_update_anchor
+install_or_update_seahorse
 
-source ~/.bashrc
+# source $HOME/.bashrc # for solana and anchor
+
+check_install() {
+    local command="$1"
+    local success_message="$2"
+    local failure_message="$3"
+
+    # ANSI color codes
+    local GREEN='\033[0;32m'
+    local RED='\033[0;31m'
+    local NC='\033[0m' # No Color
+
+    # Run the command and capture its output
+    local output
+    output=$(eval "$command" 2>&1)
+    local exit_code=$?
+
+    if [ $exit_code -eq 0 ]; then
+        if [ -n "$output" ]; then
+            echo -e "${GREEN}${success_message}${NC} ${output}"
+        else
+            echo -e "${GREEN}${success_message}${NC}"
+        fi
+    else
+        echo -e "${RED}${failure_message}${NC}"
+    fi
+
+    return $exit_code
+}
 
 # Verify installations
 echo ""
 echo "---------- Verify Installations ----------"
-rustc --version
-rustfmt --version
-solana --version
-node --version
-npm --version
-# yarn --version
-# anchor --version
-# seahorse -V
+check_install "rustc --version" "[+] rustc is installed" "[-] rustc is not installed"
+check_install "rustfmt --version" "[+] rustfmt is installed" "[-] rustfmt is not installed"
+check_install "solana --version" "[+] solana is installed" "[-] solana is not installed"
+check_install "node --version" "[+] node is installed" "[-] node is not installed"
+check_install "npm --version" "[+] npm is installed" "[-] npm is not installed"
+check_install "yarn --version" "[+] yarn is installed" "[-] yarn is not installed"
+check_install "anchor --version" "[+] anchor is installed" "[-] anchor is not installed"
+check_install "seahorse -V" "[+] seahorse is installed" "[-] seahorse is not installed"
 echo "------------------------------------------"
 echo ""
-
-echo "Installation and update complete. Please restart your terminal or run 'source ~/.bashrc' to update your PATH."
+echo "Installation and update complete."
