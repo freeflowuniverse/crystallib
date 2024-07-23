@@ -160,7 +160,7 @@ fn main() {
 		logger.info('Mycelium is running on local machine.')
 	}
 
-	remote_mycelium_ip := '405:e3fc:c4e:4004:ff0f:6a49:7a54:7850'
+	remote_mycelium_ip := machine_res.mycelium_ip
 	logger.info('Mycelium IP: ${remote_mycelium_ip}')
 
 	// Ping remote mycelium ip
