@@ -129,6 +129,7 @@ fn main() {
 	logger.info('zmachine result: ${machine_res}')
 
 	// Add a small delay after deployment to ensure the VM is fully up and running before attempting to connect
+	logger.info('Wait for 30 seconds to ensure the VM is fully up...')
 	time.sleep(30 * time.second) // Wait for 30 seconds
 
 
@@ -327,7 +328,7 @@ fn execute_remote_script(mycelium_ip string, script_name string) bool {
 
     // Construct the SSH and SCP commands
     scp_command := 'scp -6 -o StrictHostKeyChecking=no ${script_path} root@${scp_ip}:${remote_script_path}'
-    ssh_command := 'ssh -6 -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${ssh_ip}'
+    ssh_command := 'ssh -6 -o ConnectTimeout=10 -o StrictHostKeyChecking=no -tt root@${ssh_ip}'
 
     // Copy the script to the remote machine
     logger.info('Copying script to remote machine: ${scp_command}')
@@ -348,9 +349,12 @@ fn execute_remote_script(mycelium_ip string, script_name string) bool {
     logger.info('Script found on remote machine: ${remote_script_path}')
 
     // Now execute the script on the remote machine and stream the output
-    run_script_command := '${ssh_command} "bash -l ${remote_script_path}"'
+	log_file := '/tmp/output.log'
+	run_script_command := '${ssh_command} "bash -l ${remote_script_path} | tee ${log_file}"'
     logger.info('Executing remote script: ${run_script_command}')
+	logger.info('Follow remote script execution: ${ssh_command} "tail -f ${log_file}"')
 	run_result := os.execute(run_script_command)
+	logger.info('See full output log file: ${ssh_command} "cat ${log_file}"')
     if run_result.exit_code == 0 {
         logger.info('Remote script execution completed successfully')
         return true
