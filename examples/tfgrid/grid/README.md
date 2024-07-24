@@ -7,7 +7,7 @@ To be able to run examples you need to install updated version of `griddriver`.
 Create some `griddriver_install.vsh` file containing following code:
 
 ```vlang
-#!/usr/bin/env -S v -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.installers.tfgrid.griddriver as griddriverinstaller
 

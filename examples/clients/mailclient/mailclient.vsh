@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 import freeflowuniverse.crystallib.clients.mail
 
 mut cl:=mail.get(instance:"ashrafmail")!

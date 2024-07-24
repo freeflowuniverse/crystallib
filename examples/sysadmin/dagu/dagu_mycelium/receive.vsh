@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -enable-globals
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import encoding.base64
 import freeflowuniverse.crystallib.clients.mycelium

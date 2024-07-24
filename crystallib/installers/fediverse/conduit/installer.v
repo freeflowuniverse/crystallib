@@ -1,4 +1,4 @@
-module dendrite
+module conduit
 
 // import freeflowuniverse.crystallib.installers.zinit as zinitinstaller
 // import freeflowuniverse.crystallib.installers.base
@@ -10,6 +10,7 @@ import freeflowuniverse.crystallib.ui.console
 pub struct InstallArgs {
 pub mut:
 	reset bool
+	version string
 }
 
 pub fn install(args InstallArgs) ! {
@@ -17,14 +18,14 @@ pub fn install(args InstallArgs) ! {
 		return error('only support ubuntu for now')
 	}
 
-	if osal.done_exists('dendrite_install') {
-		console.print_header('dendrite binaraies already installed')
+	if osal.done_exists('conduit_install') {
+		console.print_header('conduit binaraies already installed')
 		return
 	}
 
 	build()!
 
-	osal.done_set('dendrite_install', 'OK')!
+	osal.done_set('conduit_install', 'OK')!
 
-	console.print_header('dendrite installed properly.')
+	console.print_header('conduit installed properly.')
 }

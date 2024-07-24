@@ -13,18 +13,18 @@ const jwt_secret = jwt.create_secret()
 
 // This is how endpoints are defined in veb. This is the index route
 pub fn (j &Juggler) index(mut ctx Context) veb.Result {
-	return ctx.html($tmpl('./templates/home.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/home.html'))
 }
 
 pub fn (mut j Juggler) scripts(mut ctx Context) veb.Result {
 	scripts := j.backend.list[Script]() or { panic('this should never happen ${error}') }
-	return ctx.html($tmpl('./templates/scripts.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/scripts.html'))
 }
 
 // This is how endpoints are defined in veb. This is the index route
 pub fn (mut j Juggler) triggers(mut ctx Context) veb.Result {
 	triggers := j.backend.list[Trigger]() or { panic('this shouldnt happen') }
-	return ctx.html($tmpl('./templates/triggers.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/triggers.html'))
 }
 
 // This is how endpoints are defined in veb. This is the index route
@@ -32,12 +32,12 @@ pub fn (mut j Juggler) activity(mut ctx Context) veb.Result {
 	j.update_plays() or { return ctx.server_error('Failed to update play statuses') }
 	plays := j.backend.list[Play]() or { return ctx.server_error('Unable to list plays ${err}') }.reverse()
 	events := j.backend.list[Event]() or { return ctx.server_error('Unable to list plays ${err}') }
-	return ctx.html($tmpl('./templates/activity.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/activity.html'))
 }
 
 // // This is how endpoints are defined in veb. This is the index route
 // pub fn (j &Juggler) settings(mut ctx Context) veb.Result {
-// 	return ctx.html($tmpl('./templates/settings.html'))
+// 	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/settings.html'))
 // }
 
 // This is how endpoints are defined in veb. This is the index route
@@ -122,7 +122,7 @@ pub fn (mut j Juggler) script(mut ctx Context, id string) veb.Result {
 	}
 
 	success_rate_str := '${math.round_sig(success_rate * 100, 1)}%'
-	return ctx.html($tmpl('./templates/script.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/script.html'))
 }
 
 @['/script/:id/play']
@@ -197,7 +197,7 @@ pub fn (mut j Juggler) run_play(play Play) ! {
 // // 	latest_play := play_logs[play_logs.len-1].trigger.commit.time.relative_short()
 
 // // 	success_rate_str := '${math.round_sig(success_rate*100, 1)}%'
-// // 	return ctx.html($tmpl('./templates/play.html'))
+// // 	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/play.html'))
 // // }
 
 @['/play/:id']
@@ -262,11 +262,11 @@ pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
 	mut output := sm.output('juggler_play${play.id}') or { panic('failed to get sm output ${err}') }
 	output = output.replace('\n', '</br>')
 
-	return ctx.html($tmpl('./templates/play.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/play.html'))
 }
 
 pub fn (j &Juggler) login(mut ctx Context) veb.Result {
-	return ctx.html($tmpl('./templates/login.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/login.html'))
 }
 
 pub struct LoginForm {}
@@ -290,12 +290,12 @@ pub fn (j &Juggler) login_post(mut ctx Context) veb.Result {
 
 @['/scripts/create']
 pub fn (j &Juggler) scripts_create(mut ctx Context) veb.Result {
-	return ctx.html($tmpl('./templates/scripts_create.html'))
+	return ctx.html($tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/scripts_create.html'))
 }
 
 @['/scripts/create']
 pub fn (mut j Juggler) trigger_row(trigger Trigger) string {
 	mut scripts := j.backend.list[Script]() or { return '' }
 	scripts = scripts.filter(it.id in trigger.script_ids)
-	return $tmpl('./templates/trigger_row.html')
+	return $tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/trigger_row.html')
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -n -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 import freeflowuniverse.crystallib.clients.b2
 import os
 
