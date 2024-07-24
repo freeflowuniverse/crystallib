@@ -11,6 +11,7 @@ pub struct VMNewArgs {
 pub mut:
 	name            string = 'default'
 	template        TemplateName
+	platform		PlatformType
 	cpus            int = 8
 	memory          i64 = 2000 // in MB
 	disk            i64 = 20000 // in MB
@@ -22,9 +23,16 @@ pub mut:
 
 pub enum TemplateName {
 	ubuntu
+	ubuntucloud
 	alpine
 	arch
 }
+
+pub enum PlatformType {
+	aarch64
+	x86_64
+}
+
 
 // valid template names: .alpine,.arch .
 pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
@@ -61,11 +69,18 @@ pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 
 	memory2 := args.memory / 1000
 
-	cmd := 'limactl create --name=${args.name} --arch aarch64 --cpus=${args.cpus} --memory=${memory2} ${ymlfile.path}'
+	mut myarch:="aarch64"
+	if args.platform==.x86_64{
+		myarch="x86_64"
+	}
+
+	cmd := 'limactl create --name=${args.name} --arch=${myarch}  --cpus=${args.cpus} --memory=${memory2} ${ymlfile.path}'
+	console.print_debug('LIMA create:\n${cmd}')
 	osal.exec(cmd: cmd, stdout: true)!
 
 	if args.start {
 		cmd2 := 'limactl start ${args.name}'
+		console.print_debug('LIMA start:\n${cmd}')
 		osal.exec(cmd: cmd2, stdout: true)!
 	}
 

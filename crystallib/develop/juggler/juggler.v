@@ -1,80 +1,168 @@
 module juggler
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.sysadmin.startupmanager
+import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.clients.dagu { DAG }
 import veb
-import json
+import freeflowuniverse.crystallib.baobab.actor
 
 // Juggler is a Continuous Integration Juggler that listens for triggers from gitea repositories.
 pub struct Juggler {
+	actor.Actor
+	veb.StaticHandler
+	veb.Middleware[Context]
 pub:
-	repo_path string // local path to the itenv repository defining dag's per repos
-	dagu_url  string // url of the dagu server the ci/cd will be triggered at
+	name        string
+	host        string
+	port        int
+	username    string
+	password    string
+	secret      string
+	config_path string
+	url         string
+	repo_path   string // local path to the itenv repository defining dag's per repos
 }
 
-pub struct Context {
-	veb.Context
-}
+// get_repo_playbook returns the CI/CD playbook for a given repository
+fn (j Juggler) get_repo_playbook(args Repository) ?playbook.PlayBook {
+	if args.host == '' {
+		panic('this should never happen')
+	}
 
-// This is how endpoints are defined in veb. This is the index route
-pub fn (j &Juggler) index(mut ctx Context) veb.Result {
-	return ctx.text('Hello V!')
-}
+	host := if args.host == 'github.com' {
+		'github'
+	} else {
+		args.host
+	}
 
-// This is how endpoints are defined in veb. This is the index route
-@[POST]
-pub fn (j &Juggler) trigger(mut ctx Context) veb.Result {
-	data := ctx.req.data
-	event := json.decode(Event, data) or { panic(err) }
+	cicd_dir := pathlib.get_dir(path: j.config_path) or {
+		panic('this should never happen, juggler configuration gone wrong')
+	}
 
-	dag := j.get_dag(event) or { return ctx.text('no dag found for repo') }
-
-	mut dagu_client := dagu.get('default',
-		url: j.dagu_url
-	) or { panic(err) }
-
-	dagu_client.new_dag(dag, overwrite: true) or { return ctx.text('error creating dag ${err}') }
-
-	dagu_client.start_dag(dag.name) or { panic('Failed to start dag:\n${err}') }
-	return ctx.text('DAG "${dag.name}" started')
-}
-
-// get_dag returns the CI/CD DAG for a given repository
-fn (j Juggler) get_dag(e Event) ?DAG {
-	cicd_dir := pathlib.get_dir(path: j.repo_path) or { panic('this should never happen') }
 	mut repo_cicd_dir := pathlib.get_dir(
-		path: '${cicd_dir.path}/git.ourworld.tf/${e.repository.full_name}'
+		path: '${cicd_dir.path}/${host}/${args.owner}/${args.name}'
 	) or { panic('this should never happen') }
 
 	if !repo_cicd_dir.exists() {
 		return none
 	}
 
-	// QUESTION: DAG PER ORGANIZATION?
-
 	// use default dag if no branch dag specified
-	branch_name := e.ref.all_after_last('/')
-	mut branch_dag := pathlib.get_file(
-		path: '${repo_cicd_dir.path}/${branch_name}/dag.json'
+	mut branch_dir := pathlib.get_dir(
+		path: '${repo_cicd_dir.path}/${args.branch}'
 	) or { panic('this should never happen') }
 
-	mut dag_file := if branch_dag.exists() {
-		branch_dag
+	// use branch's own playbook if defined, else use the one for the repo
+	pb := if branch_dir.exists() {
+		playbook.new(path: branch_dir.path) or { panic('this should never happen') }
 	} else {
-		pathlib.get_file(
-			path: '${repo_cicd_dir.path}/dag.json'
-		) or { panic('this should never happen') }
+		playbook.new(path: repo_cicd_dir.path) or { panic('this should never happen') }
 	}
 
-	if !dag_file.exists() {
-		return none
-	}
-	dag_json := dag_file.read() or { panic('this should never happen') }
-	return json.decode(DAG, dag_json) or { panic('failed to decode ${err}') }
+	return pb
 }
 
-pub fn (j Juggler) open() ! {
-	cmd := 'open ${j.dagu_url}'
-	osal.exec(cmd: cmd)!
+pub fn (j Juggler) info() string {
+	mut str := '=============== Juggler ===============\n\n'
+	str += 'User Interface:\n- url: http://${j.host}:${j.port}\n- status: running\n'
+	str += '\nWebhook:\n- enpoint: ${j.host}:${j.port}/trigger\n- secret: ${j.secret}\n'
+	str += '\n======================================='
+	return str
+}
+
+pub fn (mut j Juggler) get_triggers(e Event) ![]Trigger {
+	triggers := j.backend.list[Trigger]()!
+	return triggers.filter(j.is_triggered(it, e))
+}
+
+pub fn (mut j Juggler) get_scripts(t Trigger) ![]Script {
+	scripts := j.backend.list[Script]()!
+	mut triggered_scripts := []Script{}
+	for _, script in scripts {
+		if script.id in t.script_ids {
+			triggered_scripts << script
+		}
+	}
+	return triggered_scripts
+}
+
+pub enum ScriptCategory {
+	@none
+	hero
+	vlang
+	shell
+	hybrid
+}
+
+// get_script gets the script to be run by an event
+fn (mut j Juggler) get_script(event Event) ?Script {
+	// if event !is GitEvent { panic('implement') }
+
+	repo := j.backend.get[Repository](event.object_id) or { panic('this hopefully doesnt happen') }
+
+	if repo.host == '' {
+		panic('this should never happen')
+	}
+
+	host := if repo.host == 'github.com' {
+		'github'
+	} else {
+		repo.host
+	}
+
+	cicd_dir := pathlib.get_dir(path: j.config_path) or {
+		panic('this should never happen, juggler configuration gone wrong')
+	}
+
+	mut repo_cicd_dir := pathlib.get_dir(
+		path: '${cicd_dir.path}/${host}/${repo.owner}/${repo.name}'
+	) or { panic('this should never happen') }
+
+	// use default dag if no branch dag specified
+	mut default_dir := pathlib.get_dir(
+		path: '${repo_cicd_dir.path}/default'
+	) or { panic('this should never happen') }
+
+	// use default dag if no branch dag specified
+	mut branch_dir := pathlib.get_dir(
+		path: '${repo_cicd_dir.path}/${repo.branch}'
+	) or { panic('this should never happen') }
+
+	// use branch's own playbook if defined, else use the one for the repo
+	return if branch_dir.exists() {
+		Script{
+			path: branch_dir.path
+		}
+	} else if default_dir.exists() {
+		Script{
+			path: default_dir.path
+		}
+	} else {
+		none
+	}
+}
+
+pub fn (mut j Juggler) update_plays() ! {
+	plays := j.backend.list[Play]()!
+	mut sm := startupmanager.get()!
+
+	for mut play in plays.filter(it.status == .running || it.status == .starting) {
+		sm_status := sm.status('juggler_play${play.id}') or {
+			panic('failed to get sm status ${err}')
+		}
+		play.status = match sm_status {
+			.activating { Status.running }
+			.active { Status.running }
+			.deactivating { Status.running }
+			.failed { Status.error }
+			.inactive { Status.success }
+			.unknown { Status.error }
+		}
+		if play.status == .error || play.status == .success {
+			// sm.ended()
+		}
+		j.backend.set[Play](play) or { panic(err) }
+	}
 }

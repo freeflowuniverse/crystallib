@@ -79,6 +79,9 @@ pub fn (self RedisInstaller) start() ! {
 	self.configdo()!
 	name := 'redis_${self.name}'
 
+	//remove all redis in memory
+	osal.process_kill_recursive(name:"redis-server")!
+
 	mut scr := screen.new()!
 
 	mut s := scr.add(

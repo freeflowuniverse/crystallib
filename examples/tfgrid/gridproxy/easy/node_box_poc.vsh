@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model

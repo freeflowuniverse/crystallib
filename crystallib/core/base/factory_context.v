@@ -29,7 +29,7 @@ pub mut:
 // secret      string
 // priv_key_hex string //hex representation of private key
 // ```
-fn context_new(args_ ContextConfigArgs) !&Context {
+pub fn context_new(args_ ContextConfigArgs) !&Context {
 	mut args := ContextConfig{
 		id: args_.id
 		name: args_.name

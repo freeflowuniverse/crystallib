@@ -70,7 +70,7 @@ pub fn locator_new(gsconfig_ GitStructureConfig, url string) !GitLocator {
 				path = parts2[0]
 				anker = parts2[1]
 			} else {
-				return error("url badly formatted have more than 1 x '#' in ${url}")
+				return error("git: url badly formatted have more than 1 x '#' in ${url}")
 			}
 		}
 	}
@@ -80,7 +80,7 @@ pub fn locator_new(gsconfig_ GitStructureConfig, url string) !GitLocator {
 		parts[2] = parts[2].replace('.git', '')
 	}
 	if parts.len < 3 {
-		return error("url badly formatted, not enough parts in '${urllower}' \nparts:\n${parts}")
+		return error("git:url badly formatted, not enough parts in '${urllower}' \nparts:\n${parts}")
 	}
 
 	provider := parts[0]

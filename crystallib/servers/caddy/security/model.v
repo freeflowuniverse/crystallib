@@ -220,7 +220,7 @@ pub mut:
 
 pub struct Config {
 pub mut:
-    credentials           map[string][]GenericCredential
+    credentials           map[string][]GenericCredential @[skip; omitempty]
     authentication_portals []AuthenticationPortal
     authorization_policies []AuthorizationPolicy
     messaging              MessagingConfig

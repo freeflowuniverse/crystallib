@@ -5,9 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import crypto.md5
-import regex
 import os
-import encoding.base64
 
 @[params]
 pub struct SecretArgs {

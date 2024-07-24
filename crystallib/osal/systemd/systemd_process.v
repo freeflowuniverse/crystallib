@@ -1,6 +1,7 @@
 module systemd
 
 // import os
+import maps
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
@@ -17,6 +18,7 @@ pub mut:
 	systemd     &Systemd           @[skip; str: skip]
 	description string
 	info        SystemdProcessInfo
+	restart     bool = true // whether process will be restarted upon failure
 }
 
 pub fn (mut self SystemdProcess) servicefile_path() string {
@@ -26,6 +28,13 @@ pub fn (mut self SystemdProcess) servicefile_path() string {
 pub fn (mut self SystemdProcess) write() ! {
 	mut p := pathlib.get_file(path: self.servicefile_path(), create: true)!
 	console.print_header(' systemd write service: ${p.path}')
+
+	envs_lst := maps.to_array[string, string, string](self.env, fn (k string, v string) string {
+		return 'Environment=${k}=${v}'
+	})
+
+	envs := envs_lst.join('\n')
+
 	servicecontent := $tmpl('templates/service.yaml')
 	p.write(servicecontent)!
 }
@@ -33,7 +42,7 @@ pub fn (mut self SystemdProcess) write() ! {
 pub fn (mut self SystemdProcess) start() ! {
 	self.write()!
 	cmd := '
-	systemctl daemon-reload 
+	systemctl daemon-reload
 	systemctl enable ${self.name}
 	systemctl start ${self.name}
 	'
@@ -68,4 +77,60 @@ pub fn (mut self SystemdProcess) stop() ! {
 	'
 	_ = osal.execute_silent(cmd)!
 	self.systemd.load()!
+}
+
+pub fn (mut self SystemdProcess) restart() ! {
+	cmd := '
+	systemctl daemon-reload
+	systemctl restart ${self.name}
+	'
+	_ = osal.execute_silent(cmd)!
+	self.systemd.load()!
+}
+
+enum SystemdStatus {
+	unknown
+	active
+	inactive
+	failed
+	activating
+	deactivating
+}
+
+pub fn (self SystemdProcess) status() !SystemdStatus {
+	// exit with 3 is converted to exit with 0
+	cmd := '
+	systemctl daemon-reload
+	systemctl status --no-pager --lines=0 ${name_fix(self.name)}
+	'
+	job := osal.exec(cmd: cmd, stdout: false) or {
+		if err.code() == 3 {
+			if err is osal.JobError {
+				return parse_systemd_process_status(err.job.output)
+			}
+		}
+		return error('Failed to run command to get status ${err}')
+	}
+
+	return parse_systemd_process_status(job.output)
+}
+
+fn parse_systemd_process_status(output string) SystemdStatus {
+	lines := output.split_into_lines()
+	for line in lines {
+		if line.contains('Active: ') {
+			if line.contains('active (running)') {
+				return .active
+			} else if line.contains('inactive (dead)') {
+				return .inactive
+			} else if line.contains('failed') {
+				return .failed
+			} else if line.contains('activating') {
+				return .activating
+			} else if line.contains('deactivating') {
+				return .deactivating
+			}
+		}
+	}
+	return .unknown
 }

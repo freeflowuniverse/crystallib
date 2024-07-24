@@ -4,12 +4,13 @@ module gittools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
+import os
 
 @[heap]
 pub struct GitStructure {
 pub mut:
 	config   GitStructureConfig // configuration settings
-	rootpath pathlib.Path = pathlib.get('~/code') // path to root code directory
+	rootpath pathlib.Path = pathlib.get('${os.home_dir()}/code') // path to root code directory
 	repos    []&GitRepo // repositories in gitstructure
 	loaded   bool
 }
@@ -65,7 +66,7 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 
 // add repository to gitstructure
 pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
-	// console.print_debug('repo_add:${args}')
+	//console.print_debug('repo_add:${args}')
 	if args.path.len > 0 {
 		mut repo := gs.repo_from_path(args.path)!
 		gs.repo_add_(&repo)!

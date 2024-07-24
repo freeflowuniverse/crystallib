@@ -4,6 +4,10 @@ images:
   arch: "aarch64"
   digest: "sha256:78d35a2f551d281912ee7e5202660d94d713aa1b5de86a17e261328cc2f093d4"
 
+cpus: max
+memory: "4GiB"
+disk: "50GiB"
+
 containerd:
   system: false
   user: false
@@ -13,6 +17,7 @@ mounts:
   writable: true
 - location: "/tmp/lima"
   writable: true
+
 mountType: "virtiofs"
 
 provision:

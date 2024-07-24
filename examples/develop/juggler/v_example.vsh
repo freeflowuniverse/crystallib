@@ -1,15 +1,25 @@
-#!/usr/bin/env -S v -w -n -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
+import os
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.develop.juggler
-
 import veb
 
-mut j := juggler.get()!
+osal.load_env_file('${os.dir(@FILE)}/.env')!
 
-veb.run[juggler.Juggler, juggler.Context](mut j, 8200)
+mut j := juggler.configure(
+	url: 'https://git.ourworld.tf/projectmycelium/itenv'
+	username: os.getenv('JUGGLER_USERNAME')
+	password: os.getenv('JUGGLER_PASSWORD')
+	reset: true
+)!
 
+spawn j.run(8000)
+println(j.info())
 
-//TODO
+for{}
+
+// TODO
 // - automate caddy install/start
 // - create server/caddy which only calls install & can set config file from path or url & restart (see dagu server)
 // - get caddy config from the itenv through (simple driver)

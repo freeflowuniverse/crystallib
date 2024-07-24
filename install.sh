@@ -35,6 +35,7 @@ fi
 # sudo cp ${ABS_DIR_OF_SCRIPT}/cli/crystallib /usr/local/bin/crystallib
 # rm -f ${ABS_DIR_OF_SCRIPT}/cli/crystallib
 
+bash ~/code/github/freeflowuniverse/crystallib/crystallib/develop/juggler/copy_templates.sh
 
 echo "INSTALL OK"
 

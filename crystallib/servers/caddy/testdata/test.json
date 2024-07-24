@@ -1,0 +1,129 @@
+{
+    "apps": {
+        "http": {
+            "servers": {
+                "srv0": {
+                    "listen": [
+                        ":443"
+                    ],
+                    "routes": [
+                        {
+                            "handle": [
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "reverse_proxy",
+                                                    "upstreams": [
+                                                        {
+                                                            "dial": ":8000"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "terminal": true
+                                        }
+                                    ]
+                                }
+                            ],
+                            "match": [
+                                {
+                                    "host": [
+                                        "juggler.protocol.me"
+                                    ]
+                                }
+                            ],
+                            "terminal": true
+                        },
+                        {
+                            "handle": [
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "vars",
+                                                    "root": "/root/hero/www/info/projectinca"
+                                                },
+                                                {
+                                                    "handler": "authentication"
+                                                },
+                                                {
+                                                    "handler": "file_server",
+                                                    "hide": [
+                                                        "/etc/caddy/Caddyfile"
+                                                    ]
+                                                }
+                                            ],
+                                            "terminal": true
+                                        }
+                                    ]
+                                }
+                            ],
+                            "match": [
+                                {
+                                    "host": [
+                                        "info2.internetcapacity.org"
+                                    ]
+                                }
+                            ],
+                            "terminal": true
+                        },
+                        {
+                            "handle": [
+                                {
+                                    "handler": "subroute",
+                                    "routes": [
+                                        {
+                                            "handle": [
+                                                {
+                                                    "handler": "vars",
+                                                    "root": "/root/hero/www/info/duniayetu"
+                                                },
+                                                {
+                                                    "handler": "authentication",
+                                                    "providers": {
+                                                        "http_basic": {
+                                                            "accounts": [
+                                                                {
+                                                                    "password": "",
+                                                                    "username": ""
+                                                                }
+                                                            ],
+                                                            "hash": {
+                                                                "algorithm": "bcrypt"
+                                                            },
+                                                            "hash_cache": {}
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "handler": "file_server",
+                                                    "hide": [
+                                                        "/etc/caddy/Caddyfile"
+                                                    ]
+                                                }
+                                            ],
+                                            "terminal": true
+                                        }
+                                    ]
+                                }
+                            ],
+                            "match": [
+                                {
+                                    "host": [
+                                        "info2.duniayetu.tf"
+                                    ]
+                                }
+                            ],
+                            "terminal": true
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -58,7 +58,7 @@ pub fn (mut books MDBooks[Config]) generate(args_ MDBookArgs) !&MDBook {
 	r.expire('mdbook:${args.name}:build', 3600 * 12)! // expire after 12h
 	r.expire('mdbook:${args.name}:publish', 3600 * 12)!
 
-	// mut context := base.context()!
+	mut context := base.context()!
 	mut gs := gittools.get()!
 
 	if args.summary_url.len > 0 {

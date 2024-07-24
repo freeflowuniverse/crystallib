@@ -124,12 +124,8 @@ pub fn (mut e Encoder) encode_struct[T](t T) ! {
 	// encode children structs and array of structs
 	$for field in T.fields {
 		val := t.$(field.name)
-		$if val is time.Time {
-			// e.add(val)!
-			panic('time not supported')
-		} $else $if val is ourtime.OurTime {
-			panic('ourtime not supported')
-			// e.add(val)!
+		// time is encoded in the above params encoding step so skip and dont treat as recursive struct
+		$if val is time.Time || val is ourtime.OurTime {
 		} $else $if val is $struct {
 			if field.name[0].is_capital() {
 				embedded_params := paramsparser.encode(val, recursive: false)!
