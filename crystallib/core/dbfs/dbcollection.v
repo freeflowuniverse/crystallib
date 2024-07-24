@@ -49,6 +49,7 @@ pub mut:
 pub fn (mut dbcollection DBCollection) db_create(args_ DBCreateArgs) !DB {
 	mut args := args_
 	args.name = texttools.name_fix(args.name)
+	println('debugzonik ${dbcollection.path.path}/${args.name}')
 	mut p := pathlib.get_dir(create: true, path: '${dbcollection.path.path}/${args.name}')!
 	cfg := DBConfig{
 		withkeys: args.withkeys

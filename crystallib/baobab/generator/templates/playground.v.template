@@ -6,10 +6,8 @@ import freeflowuniverse.crystallib.rpc.openrpc
 import os
 import freeflowuniverse.crystallib.core.pathlib
 
-const (
-    openrpc_path = '@{dollar}{os.dir(os.dir(@@FILE))}/openrpc.json'
-    playground_path = '@{dollar}{os.dir(os.dir(@@FILE))}/playground'
-)
+const openrpc_path = '@{dollar}{os.dir(os.dir(@@FILE))}/openrpc.json'
+const playground_path = '@{dollar}{os.dir(os.dir(@@FILE))}/playground'
 
 pg := openrpc.new_playground(
 	dest: pathlib.get_dir(path: playground_path)!

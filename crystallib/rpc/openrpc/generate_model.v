@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 
 // generate_structs geenrates struct codes for schemas defined in an openrpc document
 pub fn (o OpenRPC) generate_model() ![]CodeItem {
-	components := o.components or { return []CodeItem{} }
+	components := o.components
 	mut structs := []CodeItem{}
 	for key, schema_ in components.schemas {
 		if schema_ is Schema {
