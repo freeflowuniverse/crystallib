@@ -26,7 +26,7 @@ openssl_base64_secret:=secrets.openssl_base64_secret()!
 some utils to manage secret keys and easily change them in text, ideal for config files.
 
 ```go
-#!/usr/bin/env -S v -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.crypt.secrets
 

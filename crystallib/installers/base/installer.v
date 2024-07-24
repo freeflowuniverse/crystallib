@@ -12,9 +12,15 @@ pub mut:
 }
 
 // install base will return true if it was already installed
-pub fn install(args InstallArgs) ! {
-	console.print_header('install base (reset: ${args.reset})')
+pub fn install(args_ InstallArgs) ! {
+	console.print_header('install base (reset: ${args_.reset})')
 	pl := osal.platform()
+
+	mut args:=args_
+
+	if pl == .osx && ! osal.cmd_exists("brew"){
+		args.reset=true
+	}
 
 	if args.reset == false && osal.done_exists('platform_prepare') {
 		console.print_header('Platform already prepared')
@@ -44,20 +50,20 @@ pub fn install(args InstallArgs) ! {
 		osal.package_install('mc,tmux,git,rsync,curl,screen,redis,wget,git-lfs')!
 		osal.exec(
 			cmd: '
-			brew services start redis
-			sleep 2
-			response=\$(redis-cli PING)
-
-			# Check if the response is PONG
-			if [[ "\${response}" == "PONG" ]]; then
-				echo
-				echo "REDIS OK"
-			else
-				echo "REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING" 
-				exit 1
-			fi 			
-
-		'
+			brew services stop redis
+			#sudo chmod -R 770 /opt/homebrew/var/db/redis			
+			#NEEDS TO BE DISABLED, THE REDIS PACKAGE WILL TAKE CARE OF IT
+			# sleep 2
+			# response=\$(redis-cli PING)
+			# # Check if the response is PONG
+			# if [[ "\${response}" == "PONG" ]]; then
+			# 	echo
+			# 	echo "REDIS OK"
+			# else
+			# 	echo "REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING" 
+			# 	exit 1
+			# fi 			
+			',ignore_error:true
 		)!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')

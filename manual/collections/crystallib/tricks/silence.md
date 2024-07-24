@@ -5,7 +5,7 @@ the following code shows how we can surpress all output, errors should still go 
 the example is a .vsh script note the arguments to v, this also makes sure there are no notices shown.
 
 ```go
-#!/usr/bin/env -S v -w -cg -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console

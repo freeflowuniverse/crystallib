@@ -7,7 +7,7 @@
 #### encode[T]
 
 ```v
-#!/usr/bin/env -S v -w -cg -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.data.encoderhero
 import time

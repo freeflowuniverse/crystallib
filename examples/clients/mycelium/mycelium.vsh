@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -cg -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import encoding.base64
 import freeflowuniverse.crystallib.clients.mycelium { get_msg_status, receive_msg, reply_msg, send_msg }

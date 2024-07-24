@@ -19,7 +19,7 @@ pub fn new() !LimaFactory {
 pub fn (mut lf LimaFactory) vm_get_all() ![]VM {
 	mut vms := []VM{}
 	for vm in raw.list()! {
-		// console.print_debug(vm)
+		console.print_debug(vm)
 		mut vm2 := VM{
 			name: vm.name
 			dir: vm.dir
@@ -84,8 +84,11 @@ pub fn (mut lf LimaFactory) vm_list() ![]string {
 	res := os.execute(cmd)
 	mut vms := []string{}
 	if res.exit_code > 0 {
-		return error('could not stop lima vm.\n${res}')
+		return error('could not list lima vm.\n${res}')
 	}
+	if res.output.contains("No instance found"){
+		return []string{}
+	}	
 	for line in res.output.split_into_lines() {
 		if line.trim_space() == '' {
 			continue
