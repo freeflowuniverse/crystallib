@@ -83,7 +83,7 @@ install_or_update_solana() {
         echo "Solana is not installed"
         echo "Installing Solana version $latest_version..."
         sh -c "$(curl -sSfL https://release.solana.com/v$latest_version/install)"
-        # echo 'export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"' >> ~/.bashrc
+        export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"
         echo "Solana $latest_version has been installed."
     else
         local current_version=$(solana --version | awk '{print $2}')
@@ -91,7 +91,6 @@ install_or_update_solana() {
         if [ "$current_version" != "$latest_version" ]; then
             echo "Updating Solana from version $current_version to $latest_version..."
             sh -c "$(curl -sSfL https://release.solana.com/v$latest_version/install)"
-            # echo 'export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"' >> ~/.bashrc
             updated_version=$(solana --version | awk '{print $2}')
             echo "Solana updated to version $updated_version"
         else
@@ -162,7 +161,7 @@ install_or_update_anchor() {
     echo "Anchor latest version is $latest_version" 
 
     if ! command_exists anchor; then
-        echo "Installing Anchor..."
+        echo "Installing Anchor... (may take a while)"
         cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
         avm install latest
         avm use latest
@@ -171,11 +170,10 @@ install_or_update_anchor() {
         local current_version=$(anchor --version | awk '{print $2}')
         
         if [ "$current_version" != "$latest_version" ]; then
-            echo "Updating Anchor from $current_version to $latest_version..."
+            echo "Updating Anchor from $current_version to $latest_version... (may take a while)"
             avm update
             avm install latest
             avm use latest
-            # echo 'export PATH="$PATH:$HOME/.avm/bin"' >> ~/.bashrc
         else
             echo "Anchor is already up to date (version $current_version)"
         fi
@@ -198,13 +196,13 @@ install_or_update_seahorse() {
     echo "Seahorse latest version is $latest_version" 
 
     if ! command_exists seahorse; then
-        echo "Installing Seahorse..."
+        echo "Installing Seahorse... (may take a while)"
         cargo install seahorse-lang
     else
         local current_version=$(get_current_seahorse_version)
         
         if [ "$current_version" != "$latest_version" ]; then
-            echo "Updating Seahorse from $current_version to $latest_version..."
+            echo "Updating Seahorse from $current_version to $latest_version... (may take a while)"
             cargo install seahorse-lang --force
         else
             echo "Seahorse is already up to date (version $current_version)"
@@ -220,8 +218,6 @@ install_or_update_node_js_npm
 install_or_update_yarn
 install_or_update_anchor
 install_or_update_seahorse
-
-# source $HOME/.bashrc # for solana and anchor
 
 check_install() {
     local command="$1"
