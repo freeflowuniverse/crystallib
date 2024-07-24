@@ -6,6 +6,11 @@ import os
 import net.urllib
 
 pub fn play_caddy(mut plbook playbook.PlayBook) ! {
+	caddy_actions := plbook.find(filter: 'caddy.')!
+	if caddy_actions.len == 0 {
+		return
+	}
+
 	mut coderoot := ''
 	mut reset := false
 	mut pull := false
@@ -87,7 +92,8 @@ pub fn play_caddy(mut plbook playbook.PlayBook) ! {
 	}
 
 	for mut action in plbook.find(filter: 'caddy.start')! {
-		c.restart()!
+		c.start()!
 		action.done = true
 	}
+	c.reload()!
 }

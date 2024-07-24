@@ -18,7 +18,6 @@ fn shebang(path string)!{
 
 fn do() ! {
 
-	redis.check()!
 
 	if os.args.len == 2{
 		mypath:=os.args[1]
@@ -33,7 +32,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.19'
+		version: '1.0.21'
 	}
 
 
@@ -41,6 +40,7 @@ fn do() ! {
 	if !osal.cmd_exists('mc') || !osal.cmd_exists('redis-cli') {
 		toinstall=true
 	}
+
 	if osal.is_osx(){
 		if !osal.cmd_exists('brew') {
 			console.clear()
@@ -57,12 +57,13 @@ fn do() ! {
 			exit(0)
 
 		}	
+	}else{
+		if toinstall{
+			installerbase.install()!
+		}
 	}
 
-	if toinstall{
-		installerbase.install()!
-	}
-
+	redis.check()!
 
 	herocmds.cmd_bootstrap(mut cmd)
 	herocmds.cmd_run(mut cmd)

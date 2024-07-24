@@ -37,21 +37,25 @@ pub enum ActiveState {
 
 // This provides more detailed information about the unit's state, often referred to as the "sub-state". This can vary significantly between different types of units (services, sockets, timers, etc.)
 pub enum SubState {
+	unknown
 	start
 	running // The service is currently running.
 	exited // The service has completed its process and exited. For services that do something at startup and then exit (oneshot services), this is a normal state.
 	failed // The service has failed after starting.
 	waiting // The service is waiting for some condition to be met.
 	autorestart
+	dead
 }
 
 pub fn process_list() ![]SystemdProcessInfo {
-	cmd := 'systemctl list-units --type=service --no-pager -o json-pretty '
+	cmd := 'systemctl list-units --type=service --no-pager --all -o json-pretty '
 	res_ := os.execute(cmd)
 	if res_.exit_code > 0 {
 		return error('could not execute: ${cmd}')
 	}
-	items := json.decode([]SystemdProcessInfoRaw, res_.output)!
+	items := json.decode([]SystemdProcessInfoRaw, res_.output) or {
+		panic('Failed to decode Systemd Process Info')
+	}
 	mut res := []SystemdProcessInfo{}
 	for item in items {
 		mut unit := SystemdProcessInfo{
@@ -79,8 +83,9 @@ pub fn process_list() ![]SystemdProcessInfo {
 			'exited' { unit.sub_state = .exited }
 			'failed' { unit.sub_state = .failed }
 			'waiting' { unit.sub_state = .waiting }
+			'dead' { unit.sub_state = .dead }
 			'auto-restart' { unit.sub_state = .autorestart }
-			else { return error("could not find right sub state for systemd:'${item.sub}") }
+			else { unit.sub_state = .unknown }
 		}
 		res << unit
 	}

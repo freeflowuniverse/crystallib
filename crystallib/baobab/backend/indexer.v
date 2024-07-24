@@ -3,7 +3,6 @@ module backend
 import json
 import db.sqlite
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 pub struct Indexer {
 	db sqlite.DB
@@ -48,7 +47,8 @@ pub fn (mut backend Indexer) new[T](obj T) ! {
 	obj_encoded := json.encode(obj)
 	// insert root object into its table
 	mut indices := ['data']
-	mut values := ["'${obj_encoded}'"]
+	obj_val := "'${obj_encoded.replace("'", "''")}'"
+	mut values := [obj_val]
 	$for field in T.fields {
 		$if field.name == 'id' {
 			indices << '${field.name}'
@@ -65,7 +65,7 @@ pub fn (mut backend Indexer) new[T](obj T) ! {
 	}
 	insert_query := 'insert into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
 	backend.db.exec(insert_query) or {
-		return error('Error inserting object ${obj} into table ${table_name}')
+		return error('Error inserting object ${obj} into table ${table_name}\n${err}')
 	}
 
 	// return id

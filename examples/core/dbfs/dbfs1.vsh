@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -enable-globals -cg run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.core.dbfs
 import time

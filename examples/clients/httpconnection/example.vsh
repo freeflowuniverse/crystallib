@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -cg -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.clients.httpconnection
 import json
@@ -39,7 +39,7 @@ res = conn.send(prefix: 'posts', cache_disable: false)!
 println(res.code)
 keys = conn.redis.keys('http:${conn.cache.key}*')!
 assert keys.len == 2
-// Creating a resource, response won't be cahced here, as by default we cache requests made by GET and HEAD methods only,
+// Creating a resource, response won't be cached here, as by default we cache requests made by GET and HEAD methods only,
 // also POST is unsafe method it would invalidate caches for resource `/posts` on subsequent GET requests.
 payload := {
 	'title':  'foo'

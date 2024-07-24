@@ -9,33 +9,27 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
+pub const version = '1.13.0'
+
 @[params]
 pub struct InstallArgs {
 pub mut:
 	homedir    string
 	configpath string
-	passwd     string @[secret]
+	username   string
+	password   string @[secret]
 	secret     string @[secret]
 	title      string = 'My Hero DAG'
 	reset      bool
 	start      bool = true
 	restart    bool
+	port       int = 8888
 }
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '1.13.0'
 
-	res := os.execute('${osal.profile_path_source_and()} dagu version')
-	if res.exit_code == 0 {
-		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
-		if r.len != 1 {
-			return error("couldn't parse dagu version.\n${res.output}")
-		}
-		if texttools.version(version) > texttools.version(r[0]) {
-			args.reset = true
-		}
-	} else {
+	if !is_installed(version)! {
 		args.reset = true
 	}
 
@@ -67,26 +61,6 @@ pub fn install(args_ InstallArgs) ! {
 			source: binpath.path
 		)!
 	}
-
-	if args.restart {
-		restart(args)!
-		return
-	}
-
-	if args.start {
-		start(args)!
-	}
-}
-
-pub fn restart(args_ InstallArgs) ! {
-	stop(args_)!
-	start(args_)!
-}
-
-pub fn stop(args_ InstallArgs) ! {
-	console.print_header('dagu stop')
-	mut sm := startupmanager.get()!
-	sm.stop('dagu')!
 }
 
 pub fn start(args_ InstallArgs) ! {
@@ -116,7 +90,7 @@ pub fn start(args_ InstallArgs) ! {
 	path.write(mycode)!
 	mut sm := startupmanager.get()!
 
-	cmd := 'dagu server --config ${args.configpath}'
+	cmd := 'dagu server --host 0.0.0.0 --config ${args.configpath}'
 
 	// TODO: we are not taking host & port into consideration
 
@@ -128,12 +102,16 @@ pub fn start(args_ InstallArgs) ! {
 	sm.start(
 		name: 'dagu'
 		cmd: cmd
+		env: {
+			'HOME': '/root'
+		}
 	)!
 
 	cmd2 := 'dagu scheduler' // TODO: do we need this
 
 	console.print_debug(cmd)
 
+	// time.sleep(100000000000)
 	for _ in 0 .. 50 {
 		if check(args)! {
 			return
@@ -143,10 +121,27 @@ pub fn start(args_ InstallArgs) ! {
 	return error('dagu did not install propertly, could not call api.')
 }
 
+// checks if a certain version or above is installed
+pub fn is_installed(version string) !bool {
+	res := os.execute('${osal.profile_path_source_and()} dagu version')
+	if res.exit_code == 0 {
+		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
+		if r.len != 1 {
+			return error("couldn't parse dagu version.\n${res.output}")
+		}
+		if texttools.version(version) > texttools.version(r[0]) {
+			return false
+		}
+	} else {
+		return false
+	}
+	return true
+}
+
 pub fn check(args InstallArgs) !bool {
 	// this checks health of dagu
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
-	mut conn := httpconnection.new(name: 'dagu', url: 'http://localhost:3333/api/v1/')!
+	mut conn := httpconnection.new(name: 'dagu', url: 'http://127.0.0.1:${args.port}/api/v1/')!
 
 	// console.print_debug("curl http://localhost:3333/api/v1/dags --oauth2-bearer ${secret}")
 	if args.secret.len > 0 {

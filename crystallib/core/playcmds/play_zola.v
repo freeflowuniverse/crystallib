@@ -77,11 +77,12 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 			mut p := action.params
 			url := p.get_default('url', '')!
 			path := p.get_default('path', '')!
+			pull := p.get_default_false('pull')
 			mut site_ := ws.site or {
 				return error("can't find website for doctree_add, should have been defined before with !!website.define")
 			}
 
-			site_.doctree_add(url: url, path: path)!
+			site_.doctree_add(url: url, path: path, pull: pull)!
 		} else if action.name == 'post_add' {
 			console.print_debug('website.post_add')
 			mut p := action.params
@@ -240,7 +241,7 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 			}
 
 			site_.generate()!
-			site_.serve()!
+			// site_.serve()!
 		} else {
 			return error("Cannot find right action for website. Found '${action.name}' which is a non understood action for !!website.")
 		}

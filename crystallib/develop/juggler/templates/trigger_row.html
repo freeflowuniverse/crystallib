@@ -1,0 +1,12 @@
+<tr>
+    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-white sm:pl-0"><p class="text-sm font-medium">@{trigger.name}</p><p class="text-xs font-light mt-2">@{trigger.description}</p></td>
+    <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-300 flex-col">
+      <ul class="list-disc">
+        @for script in scripts
+        <li>
+          <a href="/script/@{script.id}">@{script.name}</a>
+        </li>
+        @end
+      </ul>
+    </td>
+  </tr>
