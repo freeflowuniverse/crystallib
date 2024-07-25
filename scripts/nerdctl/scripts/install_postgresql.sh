@@ -24,7 +24,7 @@ function check_postgresql_installed() {
 if ! check_postgresql_installed; then
     # Update and install PostgreSQL
     apt-get update
-    apt-get install -y postgresql postgresql-contrib screen sudo postgresql-16-pllua
+    apt-get install -y postgresql postgresql-contrib screen sudo postgresql-16-pllua postgresql-plpython3-16    
 fi
 
 

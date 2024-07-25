@@ -21,17 +21,34 @@ limactl shell default
 ## to login over ssh
 
 ```bash
+#5 is for posgresql
+ssh -p 5022 root@127.0.0.1 -A 
+#7 is for crystal
+ssh -p 7022 root@127.0.0.1 -A 
+```
+
+
+
+if ssh-auth not done
+
+```bash
 sshpass -p 'admin' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 7022 root@127.0.0.1 -A
 ```
 
-the 7 of 7022 is the nr as used for the container creation
 
 ## to use ssh connection in visual studio code do
 
 use command for ssh connection and use following string
 
 ```bash
-ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 7022 root@127.0.0.1 -A
+ssh -p 7022 root@127.0.0.1 -A
+```
+
+## to log output of postgresql
+
+```bash
+#over ssh get the main log, useful for debugging of e.g. psql scripts
+ssh -p 5022 root@127.0.0.1 -A  'tail /var/log/postgresql/postgresql-16-main.log  -f'
 ```
 
 ## to get v-analyzer

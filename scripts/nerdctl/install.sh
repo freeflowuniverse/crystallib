@@ -24,7 +24,7 @@ lima nerdctl run --rm hello-world
 
 limactl list
 
-echo "LIMA OK"
+echo "LIMA INSTALl OK"
 
 limactl shell default
 

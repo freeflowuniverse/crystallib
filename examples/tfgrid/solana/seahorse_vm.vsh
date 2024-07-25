@@ -31,6 +31,25 @@ fn main() {
 
 	// ##### Part 1 #####
 
+
+	nodes=tfgrid.search(...)! //gives error if no nodes
+
+	//default is mycelium
+	vm:=tfgrid.vm_new(profilename="main",name="myvm",mem_mb=4000,ssd_gb=50,cpu_cores=4,nodeid=nodes[0].id,flist='')
+
+	vm.shell()
+	vm.ipaddr
+
+	vm.webgw_add(...)
+
+	b:=vm.builder()!
+
+	vm:=tfgrid.vm_get(...)
+	vm.delete()!
+
+	//gives me a builder (can do ssh on it)
+	b.exec(..)
+
 	chain_net_enum := get_chain_network(chain_network)!
 	mut deployer := tfgrid.new_deployer(mnemonics, chain_net_enum, mut logger)!
 	
@@ -38,6 +57,9 @@ fn main() {
 	// node_id := get_node_id(chain_net_enum, memory, disk, cpu, public_ip)!
 	node_id := u32(146)
 	logger.info('deploying on node: ${node_id}')
+
+
+
 
 	network_name := 'net_${rand.string(5).to_lower()}' // autocreate a network
 	wg_port := deployer.assign_wg_port(node_id)!
