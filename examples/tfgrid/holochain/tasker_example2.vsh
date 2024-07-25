@@ -1,4 +1,4 @@
-#!/usr/bin/env v -cg -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.tfrobot
 import freeflowuniverse.crystallib.ui.console

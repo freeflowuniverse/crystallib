@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.ui.console
 import rand
 
 pub struct GetStruct {
+pub:
 	code []CodeItem
 	mod  string
 	name string
@@ -44,6 +45,7 @@ pub fn inflate_struct_fields(code []CodeItem, mut struct_ CodeItem) {
 
 @[params]
 pub struct GenerateCallParams {
+pub:
 	receiver string
 }
 

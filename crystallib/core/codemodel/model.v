@@ -8,10 +8,12 @@ pub type CodeItem = Alias | Comment | CustomCode | Function | Import | Struct | 
 
 // item for adding custom code in
 pub struct CustomCode {
+pub:
 	text string
 }
 
 pub struct Comment {
+pub:
 	text     string
 	is_multi bool
 }
@@ -184,6 +186,7 @@ pub mut:
 }
 
 pub struct File {
+pub mut:
 	name      string
 	extension string
 	content   string

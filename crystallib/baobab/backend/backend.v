@@ -15,15 +15,21 @@ pub struct BackendConfig {
 pub:
 	name   string
 	secret string
+	reset bool
 }
 
 pub fn new(config BackendConfig) !Backend {
 	mut backend := Backend{
-		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite')!
+		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite'
+			reset: config.reset
+		)!
 		dbs: dbfs.get(
 			contextid: 1
 			secret: config.secret
 		)!
+	}
+	if config.reset {
+		backend.reset_all()!
 	}
 	return backend
 }
@@ -89,7 +95,7 @@ pub fn (mut backend Backend) list[T]() ![]T {
 pub fn (mut backend Backend) filter[T, D](filter D, params FilterParams) ![]T {
 	mut db := backend.dbs.db_get_create(name: get_table_name[T]())!
 	ids := backend.indexer.filter[T, D](filter, params)!
-	datas := ids.map(db.get('${it}')!)
+	datas := ids.map(db.get(id: it)!)
 	return datas.map(encoderhero.decode[T](it)!)
 }
 

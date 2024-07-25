@@ -35,12 +35,17 @@ function heroc_start() {
         fi
     else
         echo "Creating and starting the container..."
-        set -x
-        nerdctl run --platform "$platform" -d --privileged --name "$container_name" -p 127.0.0.1:$psqlport:5432 -p 127.0.0.1:$sshport:22 --memory 1000m "$docker_image" bash -c "while true; do sleep 1000; done"
-        # nerdctl run --platform "$platform" -d --privileged --name "$container_name" \
-        #             --tmpfs /tmp --tmpfs /run --tmpfs /run/lock \
-        #             --volume /sys/fs/cgroup:/sys/fs/cgroup:ro "$docker_image" \
-        #             /lib/systemd/systemd
+        set -ex
+        #needs to be in the vm
+        limactl shell default mkdir -p /tmp/aptcache
+        nerdctl run --platform "$platform" -d --privileged --name "$container_name" \
+            -p 127.0.0.1:$psqlport:5432 -p 127.0.0.1:$sshport:22 --memory 1000m \
+            --mount type=bind,src=/tmp/aptcache,dst=/var/cache/apt/archives \
+            --hostname "$container_name" \
+            "$docker_image" bash -c "while true; do sleep 1000; done"
+        
+        ssh-keygen -R \[127.0.0.1\]:$sshport
+        heroc_exec_script ${container_name} install_ssh.sh
     fi
 }
 
@@ -95,7 +100,7 @@ function heroc_shell() {
     local container_name="${1:-$DEFAULT_NAME}"
 
     # Ensure container is running
-    start_container "$container_name"
+    heroc_start "$container_name"
 
     # Get a shell inside the container
     echo "Opening shell inside '$container_name'..."

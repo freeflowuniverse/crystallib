@@ -10,36 +10,37 @@ memory: "4GiB"
 disk: "50GiB"
 
 mounts:
-  - location: "~"
-    writable: true
-  - location: "/tmp/lima"
-    writable: true
-    mountType: "virtiofs"
+- location: "~"
+  writable: true
+- location: "/tmp/lima"
+  writable: true
+
+mountType: "virtiofs"
 
 containerd:
-  system: true
+  system: false
   user: false
 
 provision:
   - mode: system
     script: |
-        #!/bin/bash
-        set -eux -o pipefail
-        exec &> /var/log/install_system.log
-        export TERM=xterm
-        export DEBIAN_FRONTEND=noninteractive
-        dpkg --configure -a
-        apt update -y
-        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt install apt-transport-https ca-certificates nerdctl curl mc tmux net-tools git htop software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        ##### COMMON PART
-        echo ' - ssh authorization'
-        mkdir -p /root/.ssh
-        echo "iam:${iam}"
-        ls  /home/${iam}.linux/.ssh
-        cp  /home/${iam}.linux/.ssh/authorized_keys /root/.ssh/authorized_keys
-        chmod 0600 /root/.ssh/authorized_keys
-        mkdir -p /Users/${iam}/code
-        ln -s /Users/${iam}/code /root/code
-        echo "install done " >> /var/log/install_system.log
+      #!/bin/bash
+      set -eux -o pipefail
+      exec &> /var/log/install_system.log
+      export TERM=xterm
+      export DEBIAN_FRONTEND=noninteractive
+      dpkg --configure -a
+      apt update -y
+      apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+      apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+      apt install apt-transport-https ca-certificates curl mc tmux net-tools git htop software-properties-common -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+      # ##### COMMON PART
+      echo ' - ssh authorization'
+      mkdir -p /root/.ssh
+      echo "iam:${iam}"
+      ls  /home/${iam}.linux/.ssh
+      cp  /home/${iam}.linux/.ssh/authorized_keys /root/.ssh/authorized_keys
+      chmod 0600 /root/.ssh/authorized_keys
+      mkdir -p /Users/${iam}/code
+      ln -s /Users/${iam}/code /root/code
+      echo "pre-install done " >> /var/log/install_system.log

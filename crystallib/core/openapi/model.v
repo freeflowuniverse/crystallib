@@ -113,7 +113,7 @@ pub struct Schema {
 	enum_       []string          @[json: 'enum']
 	properties  map[string]Schema
 	format      string
-	ref         string            @[json: '\$ref']
+	ref         string            @[json: '$ref']
 	example     string
 	nullable    bool
 	required    ?[]string

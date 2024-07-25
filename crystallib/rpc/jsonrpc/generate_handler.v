@@ -3,6 +3,7 @@ module jsonrpc
 import freeflowuniverse.crystallib.core.codemodel { Struct }
 
 pub struct HandlerArgs {
+pub:
 	stateful bool
 	receiver Struct
 	methods  []codemodel.Function
