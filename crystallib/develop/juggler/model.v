@@ -55,7 +55,7 @@ pub fn (event Event) card(repository Repository) string {
 		event_sub_1 := if event.commit.hash.len > 0 {
 		event.commit.hash[event.commit.hash.len-7..]
 	} else {''}
-	return $tmpl('./templates/event_card.html')
+	return $tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/event_card.html')
 }
 
 pub fn (mut j Juggler) row(play Play) string {
@@ -67,7 +67,7 @@ pub fn (mut j Juggler) row(play Play) string {
 		.running { 'amber-500' }
 		.error { 'red-500' }
 	}
-	return $tmpl('./templates/play_row.html')
+	return $tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/play_row.html')
 }
 
 pub fn (e GitEvent) category() string {
