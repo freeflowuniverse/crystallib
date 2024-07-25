@@ -32,4 +32,10 @@ use command for ssh connection and use following string
 
 ```bash
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 7022 root@127.0.0.1 -A
-````
+```
+
+## to get v-analyzer
+
+```bash
+v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
+```
