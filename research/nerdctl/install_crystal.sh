@@ -11,7 +11,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
-apt-get install -y build-essential curl wget mc
+apt-get install -y build-essential curl wget mc sudo
 
 curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/installer.sh > /tmp/install.sh
 bash /tmp/install.sh
@@ -25,13 +25,5 @@ apt-get install -y libsqlite3-dev tcc
 curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/build_hero.sh > /tmp/build_hero.sh
 bash /tmp/build_hero.sh
 
-
-# # Verify installation
-# if command -v rustc >/dev/null 2>&1; then
-#     echo "Rust installed successfully. Version: $(rustc --version)"
-# else
-#     echo "Rust installation failed."
-#     exit 1
-# fi
 
 echo "CRYSTAL INSTALLED."

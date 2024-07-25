@@ -8,7 +8,7 @@ export DEFAULT_PORTPREFIX="5"
 
 
 function heroc_start() {
-    set -x
+    set -ux -o pipefail
     local container_name="${1:-$DEFAULT_NAME}"
     local portprefix="${2:-$DEFAULT_PORTPREFIX}"
     local docker_image="${3:-$DEFAULT_IMAGE}"
@@ -46,6 +46,7 @@ function heroc_start() {
         
         ssh-keygen -R \[127.0.0.1\]:$sshport
         heroc_exec_script ${container_name} install_ssh.sh
+        authorize_ssh_key "${sshport}"
     fi
 }
 
@@ -134,12 +135,13 @@ function heroc_exec_script() {
 
 function heroc_exec_script_ssh() {
     # Ensure the function has two arguments: container name and script name
-    if [ "$#" -lt 2 ]; then
-        echo "Usage: heroc_exec_script_ssh <container_name> <script_name>"
+    if [ "$#" -lt 3 ]; then
+        echo "Usage: heroc_exec_script_ssh <container_name> <script_name> <sshport>"
         return 1
     fi
     local container_name="$1"
     local script_name="$2"
+    local sshport="$3"
     local ssh_user="root"  # Default SSH user for the container
     export MYPATH=$(dirname "$(realpath "$0")")
     local script_path="$MYPATH/$script_name"
@@ -161,7 +163,7 @@ function heroc_exec_script_ssh() {
     fi
 
     # Execute the script inside the container via SSH
-    ssh -p "$sshport" $ssh_options "$ssh_user@localhost" "chmod +x /tmp/$script_name && /tmp/$script_name"
+    sshpass -p 'admin' ssh -p "$sshport" $ssh_options "$ssh_user@localhost" "chmod +x /tmp/$script_name && /tmp/$script_name"
     if [ $? -ne 0 ]; then
         echo "Failed to execute script inside container!"
         return 1
@@ -169,6 +171,80 @@ function heroc_exec_script_ssh() {
 
     echo "Script executed successfully inside the container."
 }
+
+#!/bin/bash
+
+# Function to authorize SSH key on a remote server
+authorize_ssh_key() {
+    if [ "$#" -lt 1 ]; then
+        echo "Usage: authorize_ssh_key <sshport>"
+        return 1
+    fi    
+    set -x
+
+    local REMOTE_PORT=$1
+    local REMOTE_USER="root"
+    local REMOTE_HOST="localhost"
+    local PASSWORD="admin"
+    local TEMP_KEY_FILE="/tmp/sshkey"
+    local ssh_options="-A -o StrictHostKeyChecking=no"
+    rm -f "${TEMP_KEY_FILE}"
+
+    # Function to display an error message and exit
+    function error_exit {
+        echo "ERROR"
+        echo "$1" >&2
+        return 1
+    }
+
+    # Check if ssh-agent is running and has keys loaded
+    ssh-add -L > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+    error_exit "No keys are loaded in ssh-agent."
+    return 1
+    fi
+
+    # Get the first loaded key
+    KEY=$(ssh-add -L | head -n 1)
+    if [ -z "$KEY" ]; then
+        error_exit "No keys found in ssh-agent."
+        return 1
+    fi
+
+    # Save the first key to a temporary file
+    echo "$KEY" > "${TEMP_KEY_FILE}.pub"
+
+    cat "${TEMP_KEY_FILE}.pub"
+    
+    # Check if ssh-copy-id and sshpass are installed
+    if ! command -v ssh-copy-id &> /dev/null; then
+        error_exit "ssh-copy-id could not be found. Please install it and try again."
+        return 1
+    fi
+
+    if ! command -v sshpass &> /dev/null; then
+        error_exit "sshpass could not be found. Please install it and try again."
+        return 1
+    fi
+
+    # Copy the selected key to the remote server using sshpass
+    ssh-keygen -R [localhost]:${REMOTE_PORT}
+    sshpass -p "$PASSWORD" ssh -p "$REMOTE_PORT" $ssh_options "root@localhost" "ls /"
+    sshpass -p "$PASSWORD" ssh-copy-id -f -i "$TEMP_KEY_FILE" -p "$REMOTE_PORT" "$REMOTE_USER@$REMOTE_HOST"
+    if [ $? -ne 0 ]; then
+        #rm -f "$TEMP_KEY_FILE"
+        error_exit "Failed to copy SSH key to the remote server."
+        return 1
+    fi
+
+    # Clean up the temporary file
+    #rm -f "$TEMP_KEY_FILE"
+
+    echo "SSH key has been successfully authorized on the remote server."
+}
+
+# Example usage
+# authorize_ssh_key "7022"
 
 #start_container "vm1" "jrei/systemd-ubuntu" "linux/amd64"
 # execute_command "vm1" "echo hello"

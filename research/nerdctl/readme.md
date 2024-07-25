@@ -2,7 +2,9 @@
 
 is a nice tool to manage containers, following scripts show how to use, needs to be ported to crystal
 
-##
+## lima
+
+to install see install.sh
 
 ```bash
 limactl list
