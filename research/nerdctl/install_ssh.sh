@@ -1,10 +1,13 @@
 #!/bin/bash
+set -ex
 
 # Ensure the script is run as root
 if [ "$(id -u)" -ne 0 ]; then
     echo "Please run as root"
     exit 1
 fi
+
+rm -f /etc/apt/apt.conf.d/docker-clean
 
 screen_kill() {
     local screen_name="$1"
@@ -40,12 +43,19 @@ echo "root:admin" | chpasswd
 mkdir -p /run/sshd
 chmod 0755 /run/sshd
 
-echo 'export TERM=xterm' >> /root/.bashrc
+
+
+grep -qxF 'export TERM=xterm' /root/.bashrc || echo 'export TERM=xterm' >> /root/.bashrc
 
 export TERM=xterm
 # Start SSH service in a screen session
-screen_kill sshd
-pkill sshd
-screen -dmS sshd bash -c '/usr/sbin/sshd -D'
+# set +ex
+# screen -wipe
+# screen_kill sshd
+# pkill sshd
+# set -ex
+# screen -dmS sshd bash -c '/usr/sbin/sshd -D'
+
+/usr/sbin/sshd
 
 echo "OpenSSH installed, root login enabled, root password set to 'admin', and SSH daemon running in screen."

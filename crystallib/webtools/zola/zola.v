@@ -24,7 +24,7 @@ pub fn (mut self Zola) new(args_ ZolaSiteArgs) !&ZolaSite {
 		title: args.title
 		description: args.description
 		url: args.url
-		zola: &self
+		// zola: &self
 		tree: doctree.new(name: 'ws_${args.name}')!
 	}
 

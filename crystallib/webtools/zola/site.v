@@ -8,6 +8,10 @@ import freeflowuniverse.crystallib.develop.gittools
 import os
 import freeflowuniverse.crystallib.core.texttools
 
+pub struct Template {
+	url string
+}
+
 @[heap]
 pub struct ZolaSite {
 pub mut:
@@ -17,7 +21,7 @@ pub mut:
 	description  string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
-	zola         &Zola              @[skip; str: skip]
+	// zola         &Zola              @[skip; str: skip]
 	tree         doctree.Tree       @[skip; str: skip]
 	pages        []ZolaPage
 	header       ?Header
@@ -26,6 +30,7 @@ pub mut:
 	people       ?People
 	news         ?News
 	sections     map[string]Section
+	templates    []Template
 }
 
 @[params]
