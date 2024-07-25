@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.baobab.generator
 import freeflowuniverse.crystallib.core.codemodel { Struct }
@@ -39,7 +39,7 @@ for name, objects in actor_object_map {
 	}
 
 	// playground := actor.generate_playground() or {
-	// 	println('Failed to generate actor module ${name}\n${err}')
+	// 	console.print_debug('Failed to generate actor module ${name}\n${err}')
 	// 	continue
 	// }
 	actor.export_playground('${actors_dir}/${name}', '${actors_dir}/${name}/openrpc.json')!

@@ -3,7 +3,7 @@ module actor
 import freeflowuniverse.crystallib.baobab.backend
 
 pub struct Actor {
-mut:
+pub mut:
 	backend backend.Backend
 }
 

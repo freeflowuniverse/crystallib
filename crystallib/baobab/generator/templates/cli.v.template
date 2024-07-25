@@ -6,10 +6,9 @@ import vweb
 import freeflowuniverse.crystallib.rpc.openrpc
 import freeflowuniverse.crystallib.core.pathlib
 
-const (
-    openrpc_path = '@{dollar}{os.dir(os.dir(@@FILE))}/openrpc.json'
-    playground_path = '@{dollar}{os.dir(os.dir(@@FILE))}/playground'
-)
+
+const openrpc_path = '@{dollar}{os.dir(os.dir(@@FILE))}/openrpc.json'
+const playground_path = '@{dollar}{os.dir(os.dir(@@FILE))}/playground'
 
 fn do() ! {
 	mut cmd := new_command()

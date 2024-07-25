@@ -36,10 +36,10 @@ pub fn get(instance string, cfg Config) !DaguClient[Config] {
 
 	mut conn := httpconnection.new(
 		name: 'dagu'
-		url: '${cfg.url}'
+		url: '${cfg.url}/api/v1'
 	)!
 
-	// conn.default_header.add(.authorization, 'Bearer ${self.config()!.apisecret}')
+	conn.default_header.add(.authorization, 'Bearer ${cfg.apisecret}')
 	// req.add_custom_header('x-disable-pagination', 'True') !
 
 	self.connection = conn

@@ -3,7 +3,7 @@ module backend
 import json
 import db.sqlite
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.pathlib
 
 pub struct Indexer {
 	db sqlite.DB
@@ -15,7 +15,17 @@ pub struct RootObject {
 	table string // name of table root object is in
 }
 
-pub fn new_indexer(db_path string) !Indexer {
+@[params]
+pub struct IndexerConfig{
+	reset bool
+}
+
+pub fn new_indexer(db_path string, config IndexerConfig) !Indexer {
+	if config.reset {
+		println("debugzorko ${db_path}")
+		reset(db_path)!
+	}
+
 	mut backend := Indexer{
 		db: sqlite.connect(db_path)!
 	}
@@ -25,6 +35,20 @@ pub fn new_indexer(db_path string) !Indexer {
 	}!
 
 	return backend
+}
+
+
+// deletes an indexer table belonging to a base object
+pub fn reset(path string)! {	
+	mut db_file := pathlib.get_file(path: path)!
+	db_file.delete()!
+}
+
+// deletes an indexer table belonging to a base object
+pub fn (mut backend Indexer) delete_table[T]()! {
+	table_name := get_table_name[T]()
+	delete_query := 'delete table ${table_name}'
+	backend.db.exec(delete_query)!
 }
 
 // new creates a new root object entry in the root_objects table,
@@ -48,7 +72,8 @@ pub fn (mut backend Indexer) new[T](obj T) ! {
 	obj_encoded := json.encode(obj)
 	// insert root object into its table
 	mut indices := ['data']
-	mut values := ["'${obj_encoded}'"]
+	obj_val := "'${obj_encoded.replace("'", "''")}'"
+	mut values := [obj_val]
 	$for field in T.fields {
 		$if field.name == 'id' {
 			indices << '${field.name}'
@@ -65,7 +90,7 @@ pub fn (mut backend Indexer) new[T](obj T) ! {
 	}
 	insert_query := 'insert into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
 	backend.db.exec(insert_query) or {
-		return error('Error inserting object ${obj} into table ${table_name}')
+		return error('Error inserting object ${obj} into table ${table_name}\n${err}')
 	}
 
 	// return id
@@ -132,7 +157,7 @@ pub struct FilterParams {
 }
 
 // filter lists root objects of type T that match provided index parameters and params.
-pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]int {
+pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]u32 {
 	table_name := get_table_name[T]()
 	table_indices := backend.get_table_indices(table_name) or { panic(err) }
 
@@ -145,17 +170,25 @@ pub fn (mut backend Indexer) filter[T, D](filter D, params FilterParams) ![]int 
 
 	// $if D.fields.len > 0 {
 	select_stmt += ' where'
+
+	mut matchers := []string{}
 	$for field in D.fields {
 		val := filter.$(field.name)
-		select_stmt += " ${field.name} == '${val}'"
+		matchers << "${field.name} == '${val}'"
 	}
+	matchers_str := if params.matches_all {
+		matchers.join(' AND ')
+	} else {
+		matchers.join(' OR ')
+	}
+	select_stmt += ' ${matchers_str}'
 	// }
 
 	// console.print_debug(select_stmt)
 	responses := backend.db.exec(select_stmt) or { panic(err) }
 	ids := responses.map(it.vals[0])
 	// objects := responses.map(json.decode(T, it.vals[1]) or { panic(err) })
-	return if params.limit == 0 { ids.map(it.int()) } else { ids.map(it.int())[..params.limit] }
+	return if params.limit == 0 { ids.map(it.u32()) } else { ids.map(it.u32())[..params.limit] }
 }
 
 // create_root_struct_table creates a table for a root_struct with columns for each index field

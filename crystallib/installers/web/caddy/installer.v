@@ -7,6 +7,8 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 
+pub const version = '2.8.4'
+
 @[params]
 pub struct InstallArgs {
 pub mut:
@@ -52,9 +54,12 @@ pub fn install(args_ InstallArgs) ! {
 pub fn is_installed(version string) !bool {
 	res := os.execute('${osal.profile_path_source_and()} caddy version')
 	if res.exit_code == 0 {
-		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
+		mut r := res.output.split_into_lines().filter(it.trim_space().len > 0)
+		if r.len > 1 {
+			r = r.filter(it.starts_with('v'))
+		}
 		if r.len != 1 {
-			return error("couldn't parse dagu version.\n${res.output}")
+			return error("couldn't parse caddy version.\n${r}")
 		}
 		if texttools.version(version) > texttools.version(r[0]) {
 			return false

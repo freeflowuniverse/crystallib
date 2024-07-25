@@ -5,24 +5,31 @@ import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.data.encoderhero
 
 pub struct Backend {
-mut:
+pub mut:
 	indexer Indexer
 	dbs     dbfs.DBCollection
 }
 
 @[params]
 pub struct BackendConfig {
+pub:
 	name   string
 	secret string
+	reset bool
 }
 
 pub fn new(config BackendConfig) !Backend {
 	mut backend := Backend{
-		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite')!
+		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite'
+			reset: config.reset
+		)!
 		dbs: dbfs.get(
 			contextid: 1
 			secret: config.secret
 		)!
+	}
+	if config.reset {
+		backend.reset_all()!
 	}
 	return backend
 }
@@ -54,7 +61,7 @@ pub fn (mut backend Backend) set[T](obj T) ! {
 	backend.indexer.set[T](obj) or { return error('Failed to set new indices:\n${err}') }
 	data := encoderhero.encode[T](obj)!
 	// TODO: see if data changed
-	db.set(value: data)!
+	db.set(id: obj.id, value: data)!
 }
 
 pub fn (mut backend Backend) delete[T](id u32) ! {
@@ -86,12 +93,17 @@ pub fn (mut backend Backend) list[T]() ![]T {
 }
 
 pub fn (mut backend Backend) filter[T, D](filter D, params FilterParams) ![]T {
-	mut db := backend.dbs.db_get_create(get_table_name[T]())!
+	mut db := backend.dbs.db_get_create(name: get_table_name[T]())!
 	ids := backend.indexer.filter[T, D](filter, params)!
-	datas := ids.map(db.get('${it}')!)
+	datas := ids.map(db.get(id: it)!)
 	return datas.map(encoderhero.decode[T](it)!)
 }
 
-pub fn (mut backend Backend) reset() ! {
+pub fn (mut backend Backend) reset[T]() ! {
+	mut db := backend.dbs.db_get_create(name: get_table_name[T]())!
+	db.destroy()!
+}
+
+pub fn (mut backend Backend) reset_all() ! {
 	backend.dbs.destroy()!
 }

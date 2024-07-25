@@ -262,6 +262,7 @@ pub fn (result Result) vgen() string {
 
 @[params]
 pub struct WriteOptions {
+pub:
 	format    bool
 	overwrite bool
 	document  bool

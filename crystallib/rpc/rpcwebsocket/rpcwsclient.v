@@ -1,6 +1,6 @@
 module rpcwebsocket
 
-import freeflowuniverse.crystallib.data.jsonrpc
+import freeflowuniverse.crystallib.rpc.jsonrpc
 import log
 import net.websocket { Client, Message }
 import time
@@ -35,6 +35,9 @@ pub fn (mut w RpcWsClient) run() ! {
 
 pub fn (mut w RpcWsClient) send(message string, timeout int) !string {
 	// w.logger.debug('Sending message ${message}')
+	// if client.client_state == .closed {
+	// 	spawn w.run()!
+	// }
 	_ := w.client.write_string(message)!
 	select {
 		response := <-w.channel_incoming_messages {

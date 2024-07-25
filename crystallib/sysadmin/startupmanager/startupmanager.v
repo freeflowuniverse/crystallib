@@ -32,9 +32,11 @@ pub fn get() !StartupManager {
 pub struct StartArgs {
 pub mut:
 	description string
-	name        string @[requred]
+	name        string            @[requred]
 	cmd         string
 	reset       bool
+	restart     bool = true // whether the process should be restarted on failure
+	env         map[string]string
 	// start  bool = true
 	// attach bool
 }
@@ -54,6 +56,8 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 			_ = scr.add(name: args.name, cmd: args.cmd, reset: args.reset)!
 		}
 		.systemd {
+			if args.reset {
+			}
 			console.print_debug('  systemd')
 			mut systemdfactory := systemd.new()!
 			systemdfactory.new(
@@ -61,6 +65,8 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 				name: args.name
 				description: args.description
 				start: true
+				restart: args.restart
+				env: args.env
 			)!
 		}
 		else {
@@ -90,6 +96,24 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 	}
 }
 
+// kill the process by name
+pub fn (mut sm StartupManager) restart(name string) ! {
+	match sm.cat {
+		.screen {
+			panic('implement')
+		}
+		.systemd {
+			console.print_debug('  systemd')
+			mut systemdfactory := systemd.new()!
+			mut systemdprocess := systemdfactory.get(name)!
+			systemdprocess.restart()!
+		}
+		else {
+			panic('to implement, startup manager only support screen for now')
+		}
+	}
+}
+
 // remove from the startup manager
 pub fn (mut sm StartupManager) delete(name string) ! {
 	match sm.cat {
@@ -103,6 +127,59 @@ pub fn (mut sm StartupManager) delete(name string) ! {
 			mut systemdfactory := systemd.new()!
 			mut systemdprocess := systemdfactory.get(name)!
 			systemdprocess.delete()!
+		}
+		else {
+			panic('to implement, startup manager only support screen & systemd for now')
+		}
+	}
+}
+
+pub enum ProcessStatus {
+	unknown
+	active
+	inactive
+	failed
+	activating
+	deactivating
+}
+
+// remove from the startup manager
+pub fn (mut sm StartupManager) status(name string) !ProcessStatus {
+	match sm.cat {
+		.screen {
+			mut screen_factory := screen.new(reset: false)!
+			mut scr := screen_factory.get(name) or {
+				return error('process with name ${name} not found')
+			}
+			match scr.status()! {
+				.active { return .active }
+				.inactive { return .inactive }
+				.unknown { return .unknown }
+			}
+		}
+		.systemd {
+			mut systemdfactory := systemd.new()!
+			mut systemdprocess := systemdfactory.get(name) or { return .unknown }
+			systemd_status := systemdprocess.status() or {
+				return error('Failed to get status of process ${name}\n${err}')
+			}
+			s := ProcessStatus.from(systemd_status.str())!
+			return s
+		}
+		else {
+			panic('to implement, startup manager only support screen & systemd for now')
+		}
+	}
+}
+
+// remove from the startup manager
+pub fn (mut sm StartupManager) output(name string) !string {
+	match sm.cat {
+		.screen {
+			panic('implement')
+		}
+		.systemd {
+			return systemd.journalctl(service: name)!
 		}
 		else {
 			panic('to implement, startup manager only support screen & systemd for now')

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -n -cg -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.installers.infra.zinit as zinitinstaller
 import freeflowuniverse.crystallib.sysadmin.startupmanager

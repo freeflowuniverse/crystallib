@@ -1,134 +1,127 @@
 module juggler
 
+import freeflowuniverse.crystallib.core.texttools
+import time
+
+pub enum GitAction {
+	push
+	commit
+	manual
+}
+
 pub struct Event {
-pub:
-	ref           string
-	before        string
-	after         string
-	compare_url   string
-	commits       []Commit
-	total_commits int
-	head_commit   Commit
-	repository    Repository
-	pusher        User
-	sender        User
+pub mut:
+	id        u32
+	subject   string
+	object_id u32
+	commit    Commit
+	time      time.Time
+	action    GitAction
 }
 
-pub struct Commit {
-pub:
-	id           string
-	message      string
-	url          string
-	author       CommitUser
-	committer    CommitUser
-	verification ?string
-	timestamp    string
-	added        ?[]string
-	removed      ?[]string
-	modified     ?[]string
+pub struct GitEvent {
+pub mut:
+	id         u32
+	repository Repository
+	commit     Commit
+	time       time.Time
+	action     GitAction
 }
 
-pub struct CommitUser {
-pub:
-	name     string
-	email    string
-	username string
+pub fn (e Event) name() string {
+	// if e is GitEvent {
+	return 'git push to'
+	// } else {
+	// 	panic('implement')
+	// }
 }
 
-pub struct Repository {
-pub:
-	id                                int
-	owner                             User
-	name                              string
-	full_name                         string
-	description                       string
-	empty                             bool
-	private                           bool
-	fork                              bool
-	template                          bool
-	parent                            ?string
-	mirror                            bool
-	size                              int
-	language                          string
-	languages_url                     string
-	html_url                          string
-	url                               string
-	link                              string
-	ssh_url                           string
-	clone_url                         string
-	original_url                      string
-	website                           string
-	stars_count                       int
-	forks_count                       int
-	watchers_count                    int
-	open_issues_count                 int
-	open_pr_counter                   int
-	release_counter                   int
-	default_branch                    string
-	archived                          bool
-	created_at                        string
-	updated_at                        string
-	archived_at                       string
-	permissions                       Permissions
-	has_issues                        bool
-	internal_tracker                  InternalTracker
-	has_wiki                          bool
-	has_pull_requests                 bool
-	has_projects                      bool
-	has_releases                      bool
-	has_packages                      bool
-	has_actions                       bool
-	ignore_whitespace_conflicts       bool
-	allow_merge_commits               bool
-	allow_rebase                      bool
-	allow_rebase_explicit             bool
-	allow_squash_merge                bool
-	allow_rebase_update               bool
-	default_delete_branch_after_merge bool
-	default_merge_style               string
-	default_allow_maintainer_edit     bool
-	avatar_url                        string
-	internal                          bool
-	mirror_interval                   string
-	mirror_updated                    string
-	repo_transfer                     ?string
+pub fn (e Event) category() string {
+	// if e is GitEvent {
+	return e.category()
+	// } else {
+	// 	panic('implement')
+	// }
 }
 
-pub struct Permissions {
-pub:
-	admin bool
-	push  bool
-	pull  bool
+pub fn (mut j Juggler) event_card(event Event) !string {
+	repo := j.backend.get[Repository](event.object_id)!
+	return event.card(repo)
 }
 
-pub struct InternalTracker {
-pub:
-	enable_time_tracker                   bool
-	allow_only_contributors_to_track_time bool
-	enable_issue_dependencies             bool
+pub fn (event Event) card(repository Repository) string {
+	event_receiver := repository.full_name()
+	event_action := 'Push'
+		event_sub_1 := if event.commit.hash.len > 0 {
+		event.commit.hash[event.commit.hash.len-7..]
+	} else {''}
+	return $tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/event_card.html')
 }
 
-pub struct User {
+pub fn (mut j Juggler) row(play Play) string {
+	script := j.backend.get[Script](play.script_id) or { panic(err) }
+	event := j.backend.get[Event](play.event_id) or { panic(err) }
+	status_color := match play.status {
+		.starting { 'yellow-500' }
+		.success { 'emerald-500' }
+		.running { 'amber-500' }
+		.error { 'red-500' }
+	}
+	return $tmpl('../../../../webcomponents/webcomponents/tailwind/juggler_templates/play_row.html')
+}
+
+pub fn (e GitEvent) category() string {
+	return 'git push'
+}
+
+pub struct CustomEvent {
 pub:
-	id                  int
-	login               string
-	login_name          string
-	full_name           string
-	email               string
-	avatar_url          string
-	language            string
-	is_admin            bool
-	last_login          string
-	created             string
-	restricted          bool
-	active              bool
-	prohibit_login      bool
-	location            string
-	website             string
-	description         string
-	visibility          string
-	followers_count     int
-	following_count     int
-	starred_repos_count int
-	username            string
+	time time.Time
+}
+
+pub fn (e GitEvent) name() string {
+	return 'git push ${e.repository.full_name()}'
+}
+
+pub struct Script {
+pub mut:
+	id          u32
+	name        string
+	description string
+	url         string
+	path        string
+	status      string
+	category    ScriptCategory
+}
+
+pub fn (s Script) id() string {
+	return s.name.replace('.', '_')
+}
+
+// pub fn (play Play) id() string {
+// 	return '${play.event_id}_${texttools.name_fix(play.script_id)}'
+// }
+
+// a play of a script due to a trigger that occurs
+pub struct Play {
+pub mut:
+	id         u32
+	script_id  u32 // id of script that is played
+	event_id   u32 // id of event that triggered the play
+	trigger_id u32
+	status     Status    // status of the play
+	output     string    // output of the play
+	start      time.Time // time the play started
+	end        time.Time // time the play ended
+}
+
+pub fn (p Play) duration() time.Duration {
+	return p.end - p.start
+}
+
+pub enum Status {
+	starting
+	running
+	success
+	error
 }

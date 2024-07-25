@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -w -cg -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console

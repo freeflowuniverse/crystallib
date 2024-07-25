@@ -11,6 +11,7 @@ import v.pref
 // has methods that implement parsing
 @[params]
 pub struct VParser {
+pub:
 	exclude_dirs  []string // directories to be excluded from parsing
 	exclude_files []string // files to be excluded from parsing
 	only_pub      bool     // whether to only parse public functions and structs

@@ -22,7 +22,7 @@ pub mut:
 }
 
 pub struct PageFrontMatter {
-mut:
+pub mut:
 	id              string
 	title           string
 	description     string
