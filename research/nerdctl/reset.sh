@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ux -o pipefail
 
 # Stop all running Docker containers and remove Docker images, containers, and volumes
 echo "Removing all Docker containers, images, and volumes..."
@@ -19,24 +20,21 @@ rm -rf ~/Library/Containers/com.docker.helper
 rm -rf ~/Library/Application\ Support/Docker\ Desktop
 rm -rf ~/.docker
 
-# Remove nerdctl
-echo "Removing nerdctl..."
-nerdctl rm -a 2>/dev/null
-nerdctl rmi -a 2>/dev/null
+rm f ~/hero/bin/lima*
+rm f ~/hero/bin/docker*
+rm f ~/hero/bin/podman*
+rm f ~/hero/bin/kube*
+rm f ~/hero/bin/docker*
+
+
 
 # Remove Lima VMs
 echo "Removing Lima VMs..."
 limactl stop $(limactl list --quiet) 2>/dev/null
 limactl delete --force $(limactl list --quiet) 2>/dev/null
+limactl list
 
-# Uninstall Homebrew and all installed packages
-echo "Uninstalling Homebrew and all packages..."
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
+rm -rf ~/.lima
 
-# Verify removal and cleanup any remaining files
-echo "Cleaning up remaining files and verifying removal..."
-brew cleanup 2>/dev/null
 
-sudo rm -rf /opt/homebrew
-
-echo "Uninstallation process completed."
+echo "Remove containers process completed."

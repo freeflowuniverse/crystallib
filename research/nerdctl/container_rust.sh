@@ -5,7 +5,7 @@ cd $MYPATH
 
 export NAME="rust"
 
-source container_lib.sh
+source lib/container_lib.sh
 
 heroc_delete $NAME
 heroc_start $NAME 6 

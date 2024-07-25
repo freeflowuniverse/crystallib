@@ -2,6 +2,8 @@
 
 is a nice tool to manage containers, following scripts show how to use, needs to be ported to crystal
 
+> the scripts and examples only for for OSX right now
+
 ## lima
 
 to install see install.sh
@@ -11,7 +13,7 @@ limactl list
 #check how many cpu's if not enough change ~/Users/despiegk1~/.lima/default/lima.yaml
 #change cpu's to nr of cores you have
 
-#to go in vm
+#to go in vm which is running the containers
 limactl shell default
 
 ```

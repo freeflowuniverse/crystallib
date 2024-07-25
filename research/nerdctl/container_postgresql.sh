@@ -3,9 +3,9 @@ set -eux -o pipefail
 export MYPATH=$(dirname "$(realpath "$0")")
 cd $MYPATH
 
-export NAME="c1"
+export NAME="postgresql"
 
-source container_lib.sh
+source lib/container_lib.sh
 
 heroc_delete $NAME
 heroc_start $NAME

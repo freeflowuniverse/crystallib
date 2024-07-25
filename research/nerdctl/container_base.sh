@@ -6,7 +6,7 @@ cd $MYPATH
 export NAME="base"
 export BASENR=8
 
-source container_lib.sh
+source lib/container_lib.sh
 
 heroc_delete $NAME
 heroc_start $NAME $BASENR 
