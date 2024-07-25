@@ -26,6 +26,7 @@ pub mut:
 	uninstall bool
 	gitpull   bool
 	gitreset  bool
+	start bool
 }
 
 pub fn names(args_ InstallArgs) []string {
@@ -97,6 +98,7 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'mycelium' {
 				mycelium.install(reset: args.reset)!
+				mycelium.start()!
 			}
 			'lima' {
 				lima.install(reset: args.reset, uninstall: args.uninstall)!
