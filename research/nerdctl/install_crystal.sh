@@ -18,6 +18,9 @@ bash /tmp/install.sh
 
 #bash /root/code/github/freeflowuniverse/crystallib/install.sh
 
+apt-get remove -y gcc
+apt-get install -y libsqlite3-dev tcc
+
 #with hero (will compile hero as well)
 curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/build_hero.sh > /tmp/build_hero.sh
 bash /tmp/build_hero.sh

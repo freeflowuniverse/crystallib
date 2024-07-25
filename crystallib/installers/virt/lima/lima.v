@@ -61,7 +61,7 @@ pub fn install(args_ InstallArgs) ! {
 			dest_on_os = '/usr/local'
 			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Linux-x86_64.tar.gz'
 		} else if osal.is_osx() {
-			osx_install()!lima nerdctl run --rm hello-world
+			osx_install()!
 		// } else if osal.is_osx_arm() {
 		// 	url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-arm64.tar.gz'
 		// } else if osal.is_osx_intel() {

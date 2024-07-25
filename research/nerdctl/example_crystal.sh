@@ -10,7 +10,7 @@ source container_lib.sh
 heroc_delete $NAME
 heroc_start $NAME 7 
 
-heroc_exec_script ${NAME} install_crystal.sh
+heroc_exec_script_ssh ${NAME} install_crystal.sh
 
 echo "passwd is admin for root"
 

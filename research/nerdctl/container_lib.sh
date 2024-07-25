@@ -109,6 +109,11 @@ function heroc_shell() {
 
 
 function heroc_exec_script() {
+    # Ensure the function has two arguments: container name and script name
+    if [ "$#" -lt 2 ]; then
+        echo "Usage: heroc_exec_script_ssh <container_name> <script_name>"
+        return 1
+    fi    
     local container_name="${1:-$DEFAULT_NAME}"
     local script_name="$2"
     export MYPATH=$(dirname "$(realpath "$0")")
@@ -125,6 +130,44 @@ function heroc_exec_script() {
 
     # Execute the script inside the container
     nerdctl exec -it "$container_name" bash -c "chmod +x /tmp/$script_name && /tmp/$script_name"
+}
+
+function heroc_exec_script_ssh() {
+    # Ensure the function has two arguments: container name and script name
+    if [ "$#" -lt 2 ]; then
+        echo "Usage: heroc_exec_script_ssh <container_name> <script_name>"
+        return 1
+    fi
+    local container_name="$1"
+    local script_name="$2"
+    local ssh_user="root"  # Default SSH user for the container
+    export MYPATH=$(dirname "$(realpath "$0")")
+    local script_path="$MYPATH/$script_name"
+
+    # Ensure SSH agent forwarding, disable strict host key checking
+    local ssh_options="-A -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
+    # Check if the script exists
+    if [ ! -f "$script_path" ]; then
+        echo "Script $script_path not found!"
+        return 1
+    fi
+
+    # Copy the script to the container via SSH
+    scp -P "$sshport" $ssh_options "$script_path" "$ssh_user@localhost:/tmp/$script_name"
+    if [ $? -ne 0 ]; then
+        echo "Failed to copy script to container!"
+        return 1
+    fi
+
+    # Execute the script inside the container via SSH
+    ssh -p "$sshport" $ssh_options "$ssh_user@localhost" "chmod +x /tmp/$script_name && /tmp/$script_name"
+    if [ $? -ne 0 ]; then
+        echo "Failed to execute script inside container!"
+        return 1
+    fi
+
+    echo "Script executed successfully inside the container."
 }
 
 #start_container "vm1" "jrei/systemd-ubuntu" "linux/amd64"

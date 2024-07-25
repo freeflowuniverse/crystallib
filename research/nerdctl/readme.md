@@ -2,6 +2,18 @@
 
 is a nice tool to manage containers, following scripts show how to use, needs to be ported to crystal
 
+##
+
+```bash
+limactl list
+#check how many cpu's if not enough change ~/Users/despiegk1~/.lima/default/lima.yaml
+#change cpu's to nr of cores you have
+
+#to go in vm
+limactl shell default
+
+```
+
 ## to login over ssh
 
 ```bash
