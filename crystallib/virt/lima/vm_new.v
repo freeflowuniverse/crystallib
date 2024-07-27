@@ -14,7 +14,7 @@ pub mut:
 	platform		PlatformType
 	cpus            int = 8
 	memory          i64 = 2000 // in MB
-	disk            i64 = 20000 // in MB
+	disk            i64 = 50000 // in MB
 	reset           bool
 	start           bool = true
 	install_crystal bool // if you want crystal to be installed
@@ -26,6 +26,7 @@ pub enum TemplateName {
 	ubuntucloud
 	alpine
 	arch
+	containerd
 }
 
 pub enum PlatformType {
@@ -51,6 +52,9 @@ pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 	mut arch := $tmpl('templates/arch.yaml')
 	mut ubuntu := $tmpl('templates/ubuntu.yaml')
 	mut ubuntucloud := $tmpl('templates/ubuntucloud.yaml')
+	mut containerd := $tmpl('templates/containerd.yaml')
+
+	mut containerd_extra := ""
 
 	match args.template {
 		.ubuntu {
@@ -65,6 +69,10 @@ pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 		.ubuntucloud {
 			pathlib.template_write(ubuntucloud, ymlfile.path, true)!
 		}		
+		.containerd {
+			pathlib.template_write(containerd, ymlfile.path, true)!
+			containerd_extra = 
+		}				
 	}
 
 	memory2 := args.memory / 1000

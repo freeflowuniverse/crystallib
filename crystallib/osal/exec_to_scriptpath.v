@@ -25,14 +25,16 @@ pub fn cmd_to_script_path(cmd Command) !string {
 	mut firstlines := ''
 	mut extension := 'sh'
 	if cmd.runtime == .bash || cmd.runtime == .herocmd {
-		firstlines = '#!/bin/bash\n\n'
-		if !cmd.ignore_error {
-			firstlines += 'set -e\n' // exec 2>&1\n
-		} else {
-			firstlines += 'set +e\n' // exec 2>&1\n
-		}
-		if cmd.debug {
-			firstlines += 'set -x\n' // exec 2>&1\n
+		if ! cmd.cmd.contains("#!/bin/bash"){
+			firstlines = '#!/bin/bash\n\n'
+			if !cmd.ignore_error {
+				firstlines += 'set -e\n' // exec 2>&1\n
+			} else {
+				firstlines += 'set +e\n' // exec 2>&1\n
+			}
+			if cmd.debug {
+				firstlines += 'set -x\n' // exec 2>&1\n
+			}
 		}
 		if !cmd.interactive {
 			// firstlines += 'export DEBIAN_FRONTEND=noninteractive TERM=xterm\n\n'

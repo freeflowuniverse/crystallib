@@ -1,9 +1,11 @@
 module main
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.installers.base
 
 fn do() ! {
-	print("something")
+	base.uninstall_brew()!
+	//println("something")
 	// if osal.is_osx() {
 	// 	println('IS OSX')
 	// }
