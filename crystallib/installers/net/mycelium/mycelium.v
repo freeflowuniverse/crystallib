@@ -22,7 +22,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	console.print_header('install mycelium.')
 
-	version := '0.5.2'
+	version := '0.5.3'
 
 	res := os.execute('${osal.profile_path_source_and()} mycelium -V')
 	if res.exit_code == 0 {
@@ -98,10 +98,10 @@ pub fn stop() ! {
 
 pub fn start(args InstallArgs) ! {
 	myinitname := osal.initname()!
-	if myinitname != 'systemd' {
-		console.print_debug("can't start mycelium because init is '${myinitname}'.")
-		return
-	}
+	// if myinitname != 'systemd' {
+	// 	console.print_debug("can't start mycelium because init is '${myinitname}'.")
+	// 	return
+	// }
 
 	name := 'mycelium'
 	console.print_debug('start ${name} (startupmanger:${myinitname})')
@@ -132,7 +132,7 @@ pub fn start(args InstallArgs) ! {
 
 		console.print_stderr("
 		On the next screen you will be able to fill in your password.
-		Once done and the server is started: do 'control a + control d'
+		Once done and the server is started: do 'control a + d'
 		
 		")
 
