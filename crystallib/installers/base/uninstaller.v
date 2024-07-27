@@ -31,7 +31,7 @@ pub fn osx_uninstall_brew() ! {
 	if pl != .osx {
 		return error("only support OSX")
 	}
-	error('cannot uninstall containers, something went wrong.\n${err}') }
+	error('cannot uninstall containers, something went wrong.\n${err}')
 
 	brew_uninstall_file:=$embed_file('templates/brew_uninstall.sh')
 	osal.exec(cmd: brew_uninstall_file.to_string(), stdout: true, ignore_error:false, shell: true
