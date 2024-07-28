@@ -51,4 +51,6 @@ else
     fi    
 fi
 
+unminimize
+
 echo "CRYSTAL INSTALLED."
