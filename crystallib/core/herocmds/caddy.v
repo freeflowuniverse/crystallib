@@ -27,14 +27,8 @@ If you do -gr it will pull newest caddy content from git and overwrite local cha
 		execute: cmd_caddy_execute
 	}
 
+	//this adds the git command flags to it
 	cmd_run_add_flags(mut cmd_caddy)
-
-	// cmd_caddy.add_flag(Flag{
-	// 	flag: .bool
-	// 	required: false
-	// 	name: 'edit'
-	// 	description: 'will open vscode for collections & summary.'
-	// })
 
 	cmdroot.add_command(cmd_caddy)
 }

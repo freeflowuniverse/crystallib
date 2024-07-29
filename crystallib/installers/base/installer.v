@@ -68,7 +68,19 @@ pub fn install(args_ InstallArgs) ! {
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_refresh()!
-		osal.package_install('iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server')!
+		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server,tcc')!
+		osal.exec(
+			cmd: '
+				apt-get remove -y gcc
+				cd /tmp
+				wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+				tar -xvf v0.4.1.tar.gz
+				cd secp256k1-0.4.1/
+				./autogen.sh
+				./configure
+				make -j 5
+				make install   
+				')!
 	} else if pl == .alpine {
 		console.print_header(' - Alpine prepare')
 		osal.package_refresh()!

@@ -32,7 +32,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.22'
+		version: '1.0.23'
 	}
 
 

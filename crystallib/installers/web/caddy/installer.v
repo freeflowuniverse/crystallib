@@ -5,6 +5,8 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.sysadmin.startupmanager
+import freeflowuniverse.crystallib.installers.lang.golang
+
 import os
 
 pub const version = '2.8.4'
@@ -16,7 +18,7 @@ pub mut:
 	start     bool
 	restart   bool
 	stop      bool
-	homedir   string
+	homedir   string = "/var/www"
 	file_path string // path to caddyfile
 	file_url  string // path to caddyfile
 	xcaddy bool // wether to install caddy with xcaddy
@@ -33,11 +35,13 @@ pub fn install(args_ InstallArgs) ! {
 	if args.reset || !installed {
 		console.print_header('install caddy')
 		if args.xcaddy || args.plugins.len > 0 {
+			golang.install()!
 			install_caddy_with_xcaddy(args.plugins)!
 		} else {
 			install_caddy_from_release()!
 		}
 	} else if args.plugins.any(!plugin_is_installed(it)!) {
+		golang.install()!
 		install_caddy_with_xcaddy(args.plugins)!		
 	}
 
@@ -161,7 +165,7 @@ pub fn install_caddy_with_xcaddy(plugins []string) !{
 
 	// Define the xcaddy command to build Caddy with plugins
 	path := '/tmp/caddyserver/caddy'
-	cmd := 'xcaddy build v${caddy_version} ${plugins_str} --output ${path}'
+	cmd := 'source ${osal.profile_path()} && xcaddy build v${caddy_version} ${plugins_str} --output ${path}'
 	osal.exec(cmd: cmd)!
 	osal.cmd_add(
 		cmdname: 'caddy'
@@ -213,7 +217,7 @@ pub fn configuration_get() !string {
 @[params]
 pub struct ConfigurationArgs {
 pub mut:
-	content string
+	content string //caddyfile content
 	path    string
 	restart bool = true
 }
@@ -256,11 +260,12 @@ pub fn start(args_ InstallArgs) ! {
 	console.print_header('caddy start')
 
 	if args.homedir == '' {
-		args.homedir = '/tmp/caddy'
+		args.homedir = '/var/www'
 	}
 
 	if !os.exists('/etc/caddy/Caddyfile') {
-		return error("didn't find caddyfile")
+		//set the default caddyfile
+		configure_examples(path:args.homedir)!
 	}
 
 	cmd := 'caddy run --config /etc/caddy/Caddyfile'

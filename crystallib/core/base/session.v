@@ -19,90 +19,7 @@ pub mut:
 	end         ourtime.OurTime
 	context     &Context            @[skip; str: skip]
 	config      SessionConfig
-}
-
-@[params]
-pub struct SessionConfig {
-pub mut:
-	name        string // unique name for session (id), there can be more than 1 session per context
-	start       string // can be e.g. +1h
-	description string
-	params      string
-}
-
-// get a session object based on the name /
-// params:
-// ```
-// name string
-// ```
-pub fn (mut context Context) session_new(args_ SessionConfig) !Session {
-	mut args := args_
-	if args.name == '' {
-		args.name = ourtime.now().key()
-	}
-
-	if args.start == '' {
-		t := ourtime.new(args.start)!
-		args.start = t.str()
-	}
-
-	mut r := context.redis()!
-
-	rkey := 'sessions:config:${args.name}'
-
-	config_json := json.encode(args)
-
-	r.set(rkey, config_json)!
-
-	rkey_latest := 'sessions:config:latest'
-	r.set(rkey_latest, args.name)!
-
-	return context.session_get(name: args.name)!
-}
-
-@[params]
-pub struct ContextSessionGetArgs {
-pub mut:
-	name string
-}
-
-pub fn (mut context Context) session_get(args_ ContextSessionGetArgs) !Session {
-	mut args := args_
-	mut r := context.redis()!
-
-	if args.name == '' {
-		rkey_latest := 'sessions:config:latest'
-		args.name = r.get(rkey_latest)!
-	}
-	rkey := 'sessions:config:${args.name}'
-	mut datajson := r.get(rkey)!
-	if datajson == '' {
-		if args.name == '' {
-			return context.session_new()!
-		} else {
-			return error("can't find session with name ${args.name}")
-		}
-	}
-	config := json.decode(SessionConfig, datajson)!
-	t := ourtime.new(config.start)!
-	mut s := Session{
-		name: args.name
-		start: t
-		context: &context
-		params: paramsparser.new(config.params)!
-		config: config
-	}
-	return s
-}
-
-pub fn (mut context Context) session_latest() !Session {
-	mut r := context.redis()!
-	rkey_latest := 'sessions:config:latest'
-	latestname := r.get(rkey_latest)!
-	if latestname == '' {
-		return context.session_new()!
-	}
-	return context.session_get(name: latestname)!
+	env			map[string]string
 }
 
 ///////// LOAD & SAVE
@@ -110,6 +27,8 @@ pub fn (mut context Context) session_latest() !Session {
 // fn (mut self Session) key() string {
 // 	return 'hero:sessions:${self.guid()}'
 // }
+
+
 
 // get db of the session, is unique per session
 pub fn (mut self Session) db_get() !dbfs.DB {
@@ -143,20 +62,36 @@ pub fn (mut self Session) save() ! {
 	r.set(rkey, config_json)!
 }
 
+// Set an environment variable
+pub fn (mut self Session) env_set(key string, value string)! {
+    self.env[key] = value
+	self.save()!
+}
+
+// Get an environment variable
+pub fn (mut self Session) env_get(key string) !string {
+    return self.env[key] or { return error("can't find env in session ${self.id}") }
+}
+
+// Delete an environment variable
+pub fn (mut self Session) env_delete(key string) {
+    self.env.delete(key)
+}
+
 ////////// REPRESENTATION
 
-pub fn (mut self Session) check() ! {
+pub fn (self Session) check() ! {
 	if self.name.len < 3 {
 		return error('name should be at least 3 char')
 	}
 }
 
-// pub fn (mut self Session) guid() string {
-// 	return '${self.context.guid()}:${self.name}'
-// }
+pub fn (self Session) guid() string {
+	return '${self.context.guid()}:${self.name}'
+}
 
 fn (self Session) str2() string {
-	mut out := 'name:${self.name}'
+	mut out := 'session:${self.guid()}'
 	out += ' start:\'${self.start}\''
 	if !self.end.empty() {
 		out += ' end:\'${self.end}\''

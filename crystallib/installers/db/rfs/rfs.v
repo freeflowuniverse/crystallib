@@ -1,4 +1,4 @@
-module fungistor
+module rfs
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.lang.rust
@@ -9,8 +9,8 @@ import freeflowuniverse.crystallib.ui.console
 pub fn install() ! {
 	rust.install()!
 	zinit.install()!
-	console.print_header('install fungistor')
-	if !osal.done_exists('install_fungistor') || !osal.cmd_exists('rfs') {
+	console.print_header('install rfs')
+	if !osal.done_exists('install_rfs') || !osal.cmd_exists('rfs') {
 		osal.package_install('musl-dev,musl-tools')!
 
 		path := gittools.code_get(url: 'https://github.com/threefoldtech/rfs', reset: true)!
@@ -21,9 +21,9 @@ pub fn install() ! {
 
 		cp ~/code/github/threefoldtech/rfs/target/x86_64-unknown-linux-musl/release/rfs /usr/local/bin/
 		'
-		console.print_header('build fungistor')
+		console.print_header('build rfs')
 		osal.execute_stdout(cmd)!
-		osal.done_set('install_fungistor', 'OK')!
+		osal.done_set('install_rfs', 'OK')!
 	}
-	console.print_header('fungistor already done')
+	console.print_header('rfs already done')
 }

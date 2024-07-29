@@ -21,7 +21,7 @@ pub mut:
 // configure a context object
 // params: .
 // ```
-// id			u32 @[required]
+// id		   u32 //if not set then redis will get a new context id
 // name        string = 'default'
 // params      string
 // coderoot    string

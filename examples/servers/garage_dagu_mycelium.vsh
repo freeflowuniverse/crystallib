@@ -1,7 +1,7 @@
 #!/usr/bin/env -S v -n -w -enable-globals run
 
 import freeflowuniverse.crystallib.installers.sysadmintools.garage_s3
-import freeflowuniverse.crystallib.installers.sysadmintools.fungistor
+import freeflowuniverse.crystallib.installers.sysadmintools.rfs
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.installers.db.zdb
@@ -13,7 +13,7 @@ zdb.install(start:true)!
 
 mycelium.install()!
 
-fungistor.install()!
+rfs.install()!
 
 dagu.install(start:true)!
 

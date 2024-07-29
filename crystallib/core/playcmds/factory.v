@@ -5,6 +5,9 @@ import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.clients.b2
 import freeflowuniverse.crystallib.threefold.grid4.simulator
+//import freeflowuniverse.crystallib.installers.base as base_install
+import freeflowuniverse.crystallib.installers.infra.import freeflowuniverse.crystallib.installers.infra.coredns
+
 
 pub fn run(mut plbook playbook.PlayBook) ! {
 	play_core(mut plbook)!
@@ -19,6 +22,9 @@ pub fn run(mut plbook playbook.PlayBook) ! {
 	hetzner.heroplay(mut plbook)!
 	b2.heroplay(mut plbook)!
 	simulator.play(mut plbook)!
+	//base_install(play(mut plbook)!
+	coredns(play(mut plbook)!
+
 
 	// plbook.empty_check()!
 

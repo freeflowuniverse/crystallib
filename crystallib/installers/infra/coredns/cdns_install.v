@@ -4,19 +4,23 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.httpconnection
 import os
 
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset   bool
-	passwd  string
-	secret  string
-	title   string
+	reset   bool    //this means we re-install and forgot what we did before
 	start   bool = true
-	restart bool
+	stop   bool
+	restart bool     //this means we stop if started, otherwise just start
+	homedir   string //not sure what this is?
+	config_path string // path to Corefile, if empty will install default one
+	config_url  string // path to Corefile through e.g. git url, will pull it if it is not local yet
+	dnszones_path string //path to where all the dns zones are
+	dnszones_url string //path on git url pull if needed
+	plugins []string // list of plugins to build CoreDNS with
+	example bool   // if true we will install examples
 }
 
 pub fn install(args_ InstallArgs) ! {
@@ -65,6 +69,12 @@ pub fn install(args_ InstallArgs) ! {
 		)!
 	}
 
+	configure(args)!
+
+	if args.example{
+		example_configure(args)!
+	}
+
 	if args.restart {
 		restart(args)!
 		return
@@ -85,28 +95,9 @@ pub fn stop(args_ InstallArgs) ! {
 
 	name := 'coredns'
 
+	//use startup manager, see caddy
 	mut scr := screen.new()!
 	scr.kill(name)!
-}
-
-pub fn configure(args_ InstallArgs) ! {
-	mut args := args_
-	dnszones_dir := '${os.home_dir()}/hero/cfg/dnszones'
-	corednsconfigs_dir := '${os.home_dir()}/hero/cfg/corednsconfigs'
-
-	mycode := $tmpl('templates/Corefile')
-	testdbfile := $tmpl('templates/test.db')
-	exampledbfile := $tmpl('templates/db.example.org')
-
-	// example config
-	mut path_exampleconfig := pathlib.get_file(path: '${corednsconfigs_dir}/test.db', create: true)!
-	path_exampleconfig.template_write(testdbfile, true)!
-
-	mut path_testzone := pathlib.get_file(path: '${dnszones_dir}/db.example.org', create: true)!
-	path_testzone.template_write(exampledbfile, true)!
-
-	mut path := pathlib.get_file(path: '${os.home_dir()}/hero/cfg/Corefile', create: true)!
-	path.write(mycode)!
 }
 
 pub fn start(args_ InstallArgs) ! {

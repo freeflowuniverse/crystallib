@@ -48,9 +48,18 @@ pub fn (mut self Context) params() !&paramsparser.Params {
 	return p
 }
 
-pub fn (mut self Context) id() string {
+pub fn (self Context) id() string {
 	return self.config.id.str()
 }
+
+pub fn (self Context) name() string {
+	return self.config.name
+}
+
+pub fn (self Context) guid() string {
+	return '${self.id()}:${self.name()}'
+}
+
 
 //////DATA
 
@@ -80,11 +89,6 @@ pub fn (mut self Context) id() string {
 // 	return out
 // }
 
-// pub fn (mut self Context) guid() string {
-// 	panic("implement")
-// 	//return '${self.cid}:${self.name}'
-// 	return ""
-// }
 
 pub fn (mut self Context) redis() !&redisclient.Redis {
 	mut r2 := self.redis_ or {
@@ -124,7 +128,7 @@ fn (mut self Context) cfg_redis_exists() !bool {
 	return r.exists('context:config')!
 }
 
-// return the gistructure as is being used in context
+// return db collection
 pub fn (mut self Context) dbcollection() !&dbfs.DBCollection {
 	mut dbc2 := self.dbcollection_ or {
 		if self.config.db_path.len == 0 {

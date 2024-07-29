@@ -1,4 +1,4 @@
-module fungistor
+module rfs
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
@@ -15,11 +15,11 @@ pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 	version := '2.0.6'
 
-	res := os.execute('fungistor --version')
+	res := os.execute('rfs --version')
 	if res.exit_code == 0 {
 		r := res.output.trim_space().split(' ')
 		if r.len != 2 {
-			return error("couldn't parse fungistor version.\n${res.output}")
+			return error("couldn't parse rfs version.\n${res.output}")
 		}
 
 		if texttools.version(version) > texttools.version(r[1]) {
@@ -33,11 +33,11 @@ pub fn install(args_ InstallArgs) ! {
 		return
 	}
 
-	console.print_header('install fungistor')
+	console.print_header('install rfs')
 
 	mut url := ''
 	if osal.is_linux_intel() {
-		url = 'https://github.com/threefoldtech/fungistor/releases/download/v${version}/fungistor'
+		url = 'https://github.com/threefoldtech/rfs/releases/download/v${version}/rfs'
 	} else {
 		return error('unsported platform')
 	}
@@ -45,12 +45,12 @@ pub fn install(args_ InstallArgs) ! {
 	mut dest := osal.download(
 		url: url
 		minsize_kb: 9000
-		dest: '/tmp/fungistor'
+		dest: '/tmp/rfs'
 		reset: true
 	)!
 
 	osal.cmd_add(
-		cmdname: 'fungistor'
+		cmdname: 'rfs'
 		source: '${dest.path}'
 	)!
 }

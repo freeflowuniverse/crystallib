@@ -3,5 +3,5 @@
     log
     errors
     health :3334
-    import  '${corednsconfigs_dir}/*'
+    import  '${args.dnszones_path}/*'
 }

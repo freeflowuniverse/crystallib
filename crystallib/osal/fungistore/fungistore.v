@@ -1,9 +1,9 @@
-module fungistore
+module rfse
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal.screen
-import freeflowuniverse.crystallib.installers.sysadmintools.fungistore as fungi
+import freeflowuniverse.crystallib.installers.sysadmintools.rfse as fungi
 
 @[params]
 pub struct PackArgs {

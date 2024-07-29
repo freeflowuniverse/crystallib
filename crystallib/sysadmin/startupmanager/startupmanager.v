@@ -87,8 +87,10 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 		.systemd {
 			console.print_debug('  systemd')
 			mut systemdfactory := systemd.new()!
-			mut systemdprocess := systemdfactory.get(name)!
-			systemdprocess.stop()!
+			if systemdfactory.exists(name){
+				mut systemdprocess := systemdfactory.get(name)!
+				systemdprocess.stop()!
+			}
 		}
 		else {
 			panic('to implement, startup manager only support screen for now')

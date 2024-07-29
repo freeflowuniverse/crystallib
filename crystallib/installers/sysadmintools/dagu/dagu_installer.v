@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
-pub const version = '1.13.0'
+pub const version = '1.14.1'
 
 @[params]
 pub struct InstallArgs {
@@ -22,7 +22,9 @@ pub mut:
 	title      string = 'My Hero DAG'
 	reset      bool
 	start      bool = true
+	stop 	   bool
 	restart    bool
+	ipaddr     string
 	port       int = 8888
 }
 
@@ -61,6 +63,21 @@ pub fn install(args_ InstallArgs) ! {
 			source: binpath.path
 		)!
 	}
+
+	if args.restart {
+		restart(args)!
+		return
+	}
+
+	if args.start {
+		start(args)!
+	}
+
+	if args.stop {
+		stop()!
+	}	
+
+
 }
 
 pub fn start(args_ InstallArgs) ! {
@@ -155,9 +172,21 @@ pub fn check(args InstallArgs) !bool {
 	// println(r0)
 	// if true{panic("ssss")}
 	// r := conn.get_json_dict(prefix: 'dags', debug: false) or {return false}
-	// println(r)	
+	// println(r)
 	// dags := r['DAGs'] or { return false }
 	// // console.print_debug(dags)
 	console.print_debug('Dagu is answering.')
 	return true
+}
+
+
+pub fn stop() ! {
+	console.print_header('Dagu Stop')
+	mut sm := startupmanager.get()!
+	sm.stop('dagu')!
+}
+
+pub fn restart(args InstallArgs) ! {
+	stop()!
+	start(args)!
 }
