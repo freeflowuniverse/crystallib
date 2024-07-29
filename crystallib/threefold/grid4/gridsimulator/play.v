@@ -1,44 +1,52 @@
-module simulator
+module gridsimulator
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 import freeflowuniverse.crystallib.biz.spreadsheet
 
+
 pub fn play(mut plbook PlayBook) ! {
 	mut sheet_name := ''
 	// first make sure we find a run action to know the name
-	mut actions4 := plbook.actions_find_by_name(actor: 'tfgrid4_simulator')!
+	mut my_actions := plbook.actions_find_by_name(actor: 'tfgrid_simulator')!
 
-	if actions4.len == 0 {
+	if my_actions.len == 0 {
 		return
 	}
 
-	for mut action in actions4 {
+	mut name:=""
+
+	for mut action in my_actions {
+
 		if action.name == 'run' {
-			sheet_name = action.params.get('name')!
+			name = action.params.get('name')!
 		}
+
+		mut sim := new(
+			name: action.params.get('name')!
+			path: action.params.get_default('name',default="")!
+			git_url: action.params.get_default('git_url',default="")!
+			git_reset: action.params.get_default_false('git_reset')!
+			git_pull: action.params.get_default_false('git_pull')!
+		)!
+
+		sim.play(mut plbook)!
+		simulator_set(sim)
+
 	}
-
-	if sheet_name == '' {
-		return error("can't find run action for tfgrid4_simulator, name needs to be specified as arg.")
-	}
-
-	mut sh := spreadsheet.sheet_new(name: 'tfgridsim_${sheet_name}')!
-	mut sim := Simulator{
-		sheet: &sh
-		// currencies: cs
-	}
-
-	simulator_set(sim)
-
-	sim.play(mut plbook)!
 }
 
 pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
-	self.nodes = cloudslices.play(mut plbook)!
-
+	
 	// make sure we know the inca price
 	mut actions4 := plbook.actions_find_by_name(actor: 'tfgrid4_simulator')!
+
+	if actions4.len() == 0{
+		return 
+	}
+
+	self.nodes = cloudslices.play(mut plbook)!
+
 	for mut action in actions4 {
 		if action.name == 'incaprice_define' {
 			mut incaprice := self.sheet.row_new(

@@ -2,8 +2,10 @@ module cloudslices
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 
+//this play script should never be called from hero directly its called by gridsimulator
 pub fn play(mut plbook PlayBook) !map[string]&Node {
 	mut actions2 := plbook.actions_find_by_name(actor: 'tfgrid4_node')!
+
 	mut nodesdict := map[string]&Node{}
 	for action in actions2 {
 		if action.name == 'define' {
