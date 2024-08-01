@@ -71,6 +71,7 @@ pub fn install(args_ InstallArgs) ! {
 		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server,tcc')!
 		osal.exec(
 			cmd: '
+				set +e
 				apt-get remove -y gcc
 				// cd /tmp
 				// wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
