@@ -4,6 +4,7 @@ import crypto.hmac
 import crypto.sha256
 import encoding.base64
 import json
+import x.json2
 import time
 import crypto.rand
 import os
@@ -94,6 +95,21 @@ pub fn (token SignedJWT) decode() !JsonWebToken {
 		JwtHeader: header
 		JwtPayload: payload
 	}
+}
+
+// gets cookie token, returns user obj
+pub fn (token SignedJWT) get_field(field string) !string {
+	if !token.is_valid() {
+		return error('Token `${token}` is not valid')
+	}
+	header_urlencoded := token.split('.')[0]
+	header_json := base64.url_decode(header_urlencoded).bytestr()
+	header := json.decode(JwtHeader, header_json) or { panic('Decode header: ${err}') }
+	payload_urlencoded := token.split('.')[1]
+	payload_json := base64.url_decode(payload_urlencoded).bytestr()
+	payload_raw := json2.raw_decode(payload_json) or { panic('Decoding payload: ${err}') }
+	payload_map := payload_raw.as_map()
+	return payload_map[field].str()
 }
 
 // gets cookie token, returns user obj

@@ -15,7 +15,7 @@ pub mut:
 	params   paramsparser.Params
 	result   paramsparser.Params // can be used to remember outputs
 	// run    bool = true // certain actions can be defined but meant to be executed directly
-	actiontype ActionType
+	actiontype ActionType = .sal
 	comments   string
 	done       bool // if done then no longer need to process
 }
@@ -43,7 +43,14 @@ pub fn (action Action) heroscript() string {
 	if action.comments.len > 0 {
 		out += texttools.indent(action.comments, '// ')
 	}
-	out += '!!'
+	if action.actiontype==.sal{
+		out += '!!'
+	}else if action.actiontype==.macro{
+		out += '!!!'
+	}else{
+		panic("only action sal and macro supported for now,\n${action}")
+	}
+	
 	if action.actor != '' {
 		out += '${action.actor}.'
 	}

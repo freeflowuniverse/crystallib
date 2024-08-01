@@ -2,13 +2,12 @@ module gridsimulator
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.threefold.grid4.cloudslices
-import freeflowuniverse.crystallib.biz.spreadsheet
-
+import freeflowuniverse.crystallib.ui.console
 
 pub fn play(mut plbook PlayBook) ! {
-	mut sheet_name := ''
+	console.print_header('playbook for gridsim')
 	// first make sure we find a run action to know the name
-	mut my_actions := plbook.actions_find_by_name(actor: 'tfgrid_simulator')!
+	mut my_actions := plbook.actions_find(actor: 'tfgrid_simulator')!
 
 	if my_actions.len == 0 {
 		return
@@ -19,32 +18,29 @@ pub fn play(mut plbook PlayBook) ! {
 	for mut action in my_actions {
 
 		if action.name == 'run' {
-			name = action.params.get('name')!
+			name = action.params.get_default('name','default')! //when name not specified is 'default'
+
+			mut sim := new(
+				name: name
+				path: action.params.get_default('path',"")!
+				git_url: action.params.get_default('git_url',"")!
+				git_reset: action.params.get_default_false('git_reset')
+				git_pull: action.params.get_default_false('git_pull')
+			)!
+
+			sim.play(mut plbook)!
+			simulator_set(sim)
 		}
-
-		mut sim := new(
-			name: action.params.get('name')!
-			path: action.params.get_default('name',default="")!
-			git_url: action.params.get_default('git_url',default="")!
-			git_reset: action.params.get_default_false('git_reset')!
-			git_pull: action.params.get_default_false('git_pull')!
-		)!
-
-		sim.play(mut plbook)!
-		simulator_set(sim)
-
 	}
 }
 
 pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
-	
 	// make sure we know the inca price
-	mut actions4 := plbook.actions_find_by_name(actor: 'tfgrid4_simulator')!
+	mut actions4 := plbook.actions_find(actor: 'tfgrid_simulator')!
 
-	if actions4.len() == 0{
+	if actions4.len == 0{
 		return 
 	}
-
 	self.nodes = cloudslices.play(mut plbook)!
 
 	for mut action in actions4 {
@@ -65,10 +61,10 @@ pub fn (mut self Simulator) play(mut plbook PlayBook) ! {
 	}
 
 	if 'incaprice' !in self.sheet.rows {
-		return error("can't find incaprice_define action for tfgrid4_simulator, needs to define INCA price.")
+		return error("can't find incaprice_define action for tfgrid_simulator, needs to define INCA price.")
 	}
 
-	mut actions2 := plbook.actions_find_by_name(actor: 'tfgrid4_simulator')!
+	mut actions2 := plbook.actions_find(actor: 'tfgrid_simulator')!
 	for action in actions2 {
 		if action.name == 'node_growth_define' {
 			mut node_name := action.params.get_default('node_name', '')!

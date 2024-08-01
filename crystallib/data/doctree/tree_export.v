@@ -17,12 +17,19 @@ pub mut:
 // all names will be in name_fixed mode .
 // all images in img/
 pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
-	console.print_green('export tree: name:${tree.name} to ${args_.dest}')
+	console.print_header('export tree: name:${tree.name} to ${args_.dest}')
 	mut args := args_
 
 	tree.process_includes()! // process definitions (will also do defs
 
 	tree.process_macros()!
+
+	console.print_header("EXPORT DEBUG")
+
+	// mut c:=tree.collections['tfgridsimulation_farming'] or {panic("aaaa")}
+	// mut p:=c.pages['node_1u'] or {panic("qqqq")}
+	// println(p.doc()!)
+	// if true{panic("sdsd")}
 
 	mut path_src := pathlib.get_dir(path: '${args.dest}/src', create: true)!
 	mut path_edit := pathlib.get_dir(path: '${args.dest}/edit', create: true)!

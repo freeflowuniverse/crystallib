@@ -116,7 +116,7 @@ pub fn start(args_ InstallArgs) ! {
 
 	mut s := scr.add(name: name, reset: true)!
 
-	cmd2 := "coredns -conf '${os.home_dir()}/hero/cfg/Corefile'"
+	cmd2 := "coredns -conf '${args.config_path}'"
 
 	s.cmd_send(cmd2)!
 

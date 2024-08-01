@@ -2,30 +2,33 @@ module caddy
 
 import net.urllib
 import freeflowuniverse.crystallib.servers.caddy.security
+import freeflowuniverse.crystallib.servers.caddy.http
 
 pub struct CaddyFile {
 pub mut:
-	apps Apps
+	admin AdminConfig @[omitempty]
+	apps Apps @[omitempty]
 }
 
 pub struct Address {
 pub mut:
-	url urllib.URL
-	description string
+	url urllib.URL @[omitempty]
+	description string @[omitempty]
 }
 
-struct AdminConfig {
-	disabled         bool
-	listen           string
-	enforce_origin   bool
-	origins          []string
-	config           ConfigSettings
-	identity         IdentityConfig
-	remote           RemoteAdmin
+pub struct AdminConfig {
+pub mut:
+	disabled         bool @[omitempty]
+	listen           string @[omitempty]
+	enforce_origin   bool @[omitempty]
+	origins          []string @[omitempty]
+	config           ConfigSettings @[omitempty]
+	identity         IdentityConfig @[omitempty]
+	remote           RemoteAdmin @[omitempty]
 }
 
 struct ConfigSettings {
-	persist bool
+	persist bool @[omitempty]
 	load    LoadConfig
 }
 
@@ -71,12 +74,12 @@ struct WriterConfig {
 }
 
 struct CustomLog {
-	writer    WriterConfig
-	encoder   EncoderConfig
+	writer    WriterConfig @[omitempty]
+	encoder   EncoderConfig @[omitempty]
 	level     string
-	sampling  LogSampling
-	include   []string
-	exclude   []string
+	sampling  LogSampling @[omitempty]
+	include   []string @[omitempty]
+	exclude   []string @[omitempty]
 }
 
 struct EncoderConfig {
@@ -89,15 +92,8 @@ struct LogSampling {
 	thereafter  int
 }
 
-// struct Config {
-// 	admin   AdminConfig
-// 	logging LoggingConfig
-// 	storage StorageConfig
-// 	apps    AppsConfig
-// }
-
-struct Apps {
-mut:
-	// security security.Security
-	http HTTP
+pub struct Apps {
+pub mut:
+	security security.Security
+	http http.HTTP
 }

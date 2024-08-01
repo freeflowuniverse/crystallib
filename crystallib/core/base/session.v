@@ -70,7 +70,7 @@ pub fn (mut self Session) env_set(key string, value string)! {
 
 // Get an environment variable
 pub fn (mut self Session) env_get(key string) !string {
-    return self.env[key] or { return error("can't find env in session ${self.id}") }
+    return self.env[key] or { return error("can't find env in session ${self.name}") }
 }
 
 // Delete an environment variable

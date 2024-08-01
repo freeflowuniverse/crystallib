@@ -1,9 +1,12 @@
 module coredns
 
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.installers.base
 import os
 
-pub fn play_coredns(mut plbook playbook.PlayBook) ! {
+pub fn play(mut plbook playbook.PlayBook) ! {
+    base.play(playbook)!
+    
     coredns_actions := plbook.find(filter: 'coredns.')!
     if coredns_actions.len == 0 {
         return
@@ -25,7 +28,7 @@ pub fn play_coredns(mut plbook playbook.PlayBook) ! {
             config_url := p.get_default('config_url', '')!
             dnszones_path := p.get_default('dnszones_path', '${os.home_dir()}/hero/var/coredns/zones')!
             dnszones_url := p.get_default('dnszones_url', '')!
-            plugins := p.get_list('plugins', []string{})!
+            plugins := p.get_list_default('plugins', [])!
             example := p.get_default_false('example')
 
             install(

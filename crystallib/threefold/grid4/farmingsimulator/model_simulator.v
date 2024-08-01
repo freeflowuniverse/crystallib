@@ -1,11 +1,20 @@
 module farmingsimulator
 
+import freeflowuniverse.crystallib.biz.spreadsheet
+// import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.threefold.grid4.cloudslices
+
 @[heap]
 pub struct Simulator {
 pub mut:
 	name   	string
 	sheet  	&spreadsheet.Sheet
-	params 	SimulatorArgs
+	args SimulatorArgs
+	params 	Params
 	nrmonths           int = 6 * 12
 	regional_internets map[string]&RegionalInternet
 	node_templates     map[string]&NodeTemplate

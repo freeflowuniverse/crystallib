@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 // walk over one specific collection, find all files and pages
 pub fn (mut collection Collection) scan() ! {
 	$if debug {
-		console.print_debug('load collection: ${collection.name} - ${collection.path.path}')
+		console.print_header('load collection: ${collection.name} - ${collection.path.path}')
 	}
 	collection.scan_internal(mut collection.path)!
 	$if debug {

@@ -1,10 +1,11 @@
 module doctree
 
-import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link }
+import freeflowuniverse.crystallib.data.markdownparser.elements { Doc, Link, Action }
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.playmacros
 
 pub fn (mut page Page) doc() !&Doc {
 	mut mydoc := page.doc_ or {
@@ -15,6 +16,41 @@ pub fn (mut page Page) doc() !&Doc {
 	page.doc_ = mydoc
 	return mydoc
 }
+
+//reparse the markdown
+pub fn (mut page Page) doc_process() ! {
+	mut mydoc := page.doc()!
+	mut nrmacros:=0
+	for mut element in mydoc.children_recursive() {
+		if mut element is Action {
+			if element.action.actiontype == .macro{		
+				content := playmacros.play_macro( element.action)!
+				//console.print_debug("macro content for action '${element.action.name}': content\n ${content}")
+				nrmacros+=1
+				if content.len > 0 {
+					element.content = content
+				}
+			}
+		}
+	}
+	if nrmacros>0{
+		//we know that there was a change in the structure, need to re-process
+		c:=mydoc.markdown()!
+		console.print_header("UUUUUU")
+		console.print_debug(c)
+		console.print_header("--->UUUUUU")
+		// if true{
+		// 	panic("ssrf3")
+		// }
+		mut doc := markdownparser.new(content:c )!
+		page.doc_ = &doc
+		//recursive, make sure we have all macro's processed
+		page.doc_process()!
+	}
+}
+
+
+
 
 @[params]
 struct DocArgs {
@@ -30,7 +66,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 
 	mut collection := page.collection()!
 	args.done << page.name
-	//console.print_debug(' ++++ doc: ${collection.name}:${page.name} -> ${args.dest} ')
+	//console.print_debug('++++ process links doc: ${collection.name}:${page.name} -> ${args.dest} ')
 
 	// find the links, and for each link check if collection is same, is not need to copy
 	for mut element in mydoc.children_recursive() {
@@ -45,7 +81,7 @@ fn (mut page Page) doc_process_link(args_ DocArgs) !&Doc {
 
 			mut collection_path := '.'
 			if element.cat == .image {
-				console.print_debug('POINTER IMAGE: ' + pointername)
+				//console.print_debug('POINTER IMAGE: ' + pointername)
 				if page.tree.image_exists(pointername) {
 					mut linkimage := page.tree.image_get(pointername)!
 					if linkimage.collection.name != page.collection_name {

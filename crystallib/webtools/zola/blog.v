@@ -1,7 +1,7 @@
 module zola
 
-import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.data.ourtime
+import freeflowuniverse.crystallib.data.doctree
 
 // Blog section for Zola site
 pub struct Blog {

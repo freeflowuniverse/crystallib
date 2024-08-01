@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.biz.spreadsheet
 pub fn play(mut plbook PlayBook) ! {
 	mut sheet_name := ''
 	// first make sure we find a run action to know the name
-	mut actions4 := plbook.actions_find_by_name(actor: 'tfgrid4_simulator')!
+	mut actions4 := plbook.actions_find(actor: 'tfgrid_simulator')!
 
 	if actions4.len == 0 {
 		return
@@ -22,7 +22,7 @@ pub fn play(mut plbook PlayBook) ! {
 	}
 
 	if sheet_name == '' {
-		return error("can't find run action for tfgrid4_simulator, name needs to be specified as arg.")
+		return error("can't find run action for tfgrid_simulator, name needs to be specified as arg.")
 	}
 
 	mut sh := spreadsheet.sheet_new(name: 'tfgridsim_${sheet_name}')!

@@ -4,13 +4,12 @@ import freeflowuniverse.crystallib.biz.spreadsheet
 // import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.texttools
-// import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 
 __global (
-	farmingsimulators shared map[string]&Simulator
+	grid_simulators shared map[string]&Simulator
 )
 
 pub struct Simulator {
@@ -38,9 +37,9 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 		return error('simulation needs to have a name')
 	}
 	args.name = texttools.name_fix(args.name)
-	if args.mdbook_name == '' {
-		args.mdbook_name = args.name
-	}
+	// if args.mdbook_name == '' {
+	// 	args.mdbook_name = args.name
+	// }
 
 	// mut cs := currency.new()
 	mut sh := spreadsheet.sheet_new(name: 'tfgridsim_${args.name}')!
@@ -68,25 +67,26 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 
 // get sheet from global
 pub fn simulator_get(name string) !&Simulator {
-	rlock farmingsimulators {
-		if name in farmingsimulators {
-			return farmingsimulators[name]
+	rlock grid_simulators {
+		if name in grid_simulators {
+			return grid_simulators[name]
 		}
 	}
-	return error("cann't find tfgrid gridsimulator:'${name}' in global farmingsimulators")
+	return error("cann't find tfgrid gridsimulator:'${name}' in global grid_simulators")
 }
 
 // remember sheet in global
 pub fn simulator_set(sim Simulator) {
-	lock farmingsimulators {
-		farmingsimulators[sim.name] = &sim
+	lock grid_simulators {
+		grid_simulators[sim.name] = &sim
 	}
 	spreadsheet.sheet_set(sim.sheet)
 }
 
 // load the mdbook content from path or git
 pub fn (mut self Simulator) load() ! {
-	console.print_debug('SIMULATOR LOAD ${self.params.name}')
+	console.print_header('GRID SIMULATOR LOAD ${self.params.name}')
+	
 
 	mut plbook := playbook.new(path: self.params.path)!
 

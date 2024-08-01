@@ -65,7 +65,7 @@ fn cmd_zola_execute(cmd Command) ! {
 
 		// get name from the book.generate action
 		if name == '' {
-			mut a := plbook.action_get_by_name(actor: 'zola', name: 'generate')!
+			mut a := plbook.action_get(actor: 'zola', name: 'generate')!
 			name = a.params.get('name') or { '' }
 		}
 	} else {

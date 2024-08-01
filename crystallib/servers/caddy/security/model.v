@@ -21,17 +21,17 @@ pub mut:
 pub struct UIConfig {
 pub mut:
     theme                   string
-    templates               map[string]string
-    allow_role_selection    bool
-    title                   string
-    logo_url                string
-    logo_description        string
-    private_links           []PrivateLink
-    auto_redirect_url       string
-    realms                  []Realm
-    password_recovery_enabled bool
-    custom_css_path         string
-    custom_js_path          string
+    templates               map[string]string @[omitempty]
+    allow_role_selection    bool @[omitempty]
+    title                   string @[omitempty]
+    logo_url                string @[omitempty]
+    logo_description        string @[omitempty]
+    private_links           []PrivateLink @[omitempty]
+    auto_redirect_url       string @[omitempty]
+    realms                  []Realm @[omitempty]
+    password_recovery_enabled bool @[omitempty]
+    custom_css_path         string @[omitempty]
+    custom_js_path          string @[omitempty]
 }
 
 pub struct UserRegistrationConfig {
@@ -66,7 +66,7 @@ pub mut:
 
 pub struct CookieConfig {
 pub mut:
-    domains   map[string]DomainConfig
+    domains   map[string]DomainConfig @[omitempty]
     path      string
     lifetime  int
     insecure  bool
@@ -114,24 +114,24 @@ pub mut:
 
 pub struct APIConfig {
 pub mut:
-    enabled bool
+    enabled bool @[skip]
 }
 
 pub struct AuthenticationPortal {
 pub mut:
     name                   string
     ui                     UIConfig
-    user_registration_config UserRegistrationConfig
-    user_transformer_configs []UserTransformerConfig
-    cookie_config          CookieConfig
-    identity_stores        []string
-    identity_providers     []string
-    access_list_configs    []AccessListConfig
-    token_validator_options TokenValidatorOptions
+    user_registration_config UserRegistrationConfig @[omitempty]
+    user_transformer_configs []UserTransformerConfig @[omitempty]
+    cookie_config          CookieConfig @[omitempty]
+    identity_stores        []string @[omitempty]
+    identity_providers     []string @[omitempty]
+    access_list_configs    []AccessListConfig @[omitempty]
+    token_validator_options TokenValidatorOptions @[omitempty]
     crypto_key_configs     []CryptoKeyConfig
-    crypto_key_store_config map[string]string
-    token_grantor_options  TokenGrantorOptions
-    api                    APIConfig
+    crypto_key_store_config map[string]string @[omitempty]
+    token_grantor_options  TokenGrantorOptions @[omitempty]
+    api                    APIConfig @[omitempty]
 }
 
 pub struct BypassConfig {
@@ -155,12 +155,12 @@ pub mut:
     auth_redirect_query_param string
     auth_redirect_status_code int
     redirect_with_javascript  bool
-    bypass_configs            []BypassConfig
-    header_injection_configs  []HeaderInjectionConfig
-    access_list_rules         []AccessListConfig
-    crypto_key_configs        []CryptoKeyConfig
-    crypto_key_store_config   map[string]string
-    auth_proxy_config         map[string]map[string]bool
+    bypass_configs            []BypassConfig @[omitempty]
+    header_injection_configs  []HeaderInjectionConfig @[omitempty]
+    access_list_rules         []AccessListConfig @[omitempty]
+    crypto_key_configs        []CryptoKeyConfig @[omitempty]
+    crypto_key_store_config   map[string]string @[omitempty]
+    auth_proxy_config         map[string]map[string]bool @[omitempty]
     allowed_token_sources     []string
     strip_token_enabled       bool
     forbidden_url             string
@@ -210,22 +210,33 @@ pub struct IdentityProvider {
 pub mut:
     name   string
     kind   string
-    params map[string]string
+    params Params @[omitempty]
+}
+
+pub struct Params {
+    base_auth_url string @[omitempty]
+    client_id string @[omitempty]
+    client_secret string @[omitempty]
+    domain_name string @[omitempty]
+    driver string @[omitempty]
+    metadata_url string @[omitempty]
+    realm string @[omitempty]
+    scopes []string @[omitempty]
 }
 
 pub struct Security {
 pub mut:
-    config Config
+    config Config @[omitempty]
 }
 
 pub struct Config {
 pub mut:
     credentials           map[string][]GenericCredential @[skip; omitempty]
-    authentication_portals []AuthenticationPortal
-    authorization_policies []AuthorizationPolicy
-    messaging              MessagingConfig
-    identity_stores        []IdentityStore
-    identity_providers     []IdentityProvider
+    authentication_portals []AuthenticationPortal @[omitempty]
+    authorization_policies []AuthorizationPolicy @[omitempty]
+    messaging              MessagingConfig @[omitempty]
+    identity_stores        []IdentityStore @[omitempty]
+    identity_providers     []IdentityProvider @[omitempty]
 }
 
 pub struct GenericCredential {

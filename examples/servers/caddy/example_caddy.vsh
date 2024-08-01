@@ -53,55 +53,50 @@ fn generate_security_config() !caddy.Security {
 }
 
 // Main function to set up the server and generate the Caddyfile
-fn do() ! {
 
-	osal.load_env_file('${os.dir(@FILE)}/.env')!
-	// Start the webserver
-	spawn start_webserver()
 
-	// Generate the security configuration
-	security_config := generate_security_config()!
+osal.load_env_file('${os.dir(@FILE)}/.env')!
+// Start the webserver
+spawn start_webserver()
 
-	mut caddyfile := caddy.CaddyFile{
-		path: '${os.dir(@FILE)}/Caddyfile'
-		site_blocks: [security_config.export()]
-	}
+// Generate the security configuration
+security_config := generate_security_config()!
 
-	caddyfile.add_site_block(
-		addresses: [Address{
-			domain: 'localhost'
-			port: 8088
-		}]
-		directives: [
-			Directive{
-				name: 'authenticate' 
-				args: ['with myportal']
-			},
-    		Directive{
-				name: 'reverse_proxy'
-				args: [':8080']
-			}
-		]
-	)
-
-	mut caddy_instance := caddy.configure('example', 
-		homedir: os.dir(@FILE)
-		reset: false
-		file: caddyfile
-		plugins: ['github.com/greenpau/caddy-security']
-	) or {
-		return error ('Failed to configure Caddy instance: $err')
-	}
-
-	// Export CaddyFile to file
-	caddyfile_content := caddyfile.export() or { panic(err) }
-	os.write_file('${os.dir(@FILE)}/Caddyfile', caddyfile_content) or { panic(err) }
-
-	// caddy_instance.restart()!
-	
-	for {}
+mut caddyfile := caddy.CaddyFile{
+	path: '${os.dir(@FILE)}/Caddyfile'
+	site_blocks: [security_config.export()]
 }
 
-fn main() {
-	do() or {panic(err)}
+caddyfile.add_site_block(
+	addresses: [Address{
+		domain: 'localhost'
+		port: 8088
+	}]
+	directives: [
+		Directive{
+			name: 'authenticate' 
+			args: ['with myportal']
+		},
+		Directive{
+			name: 'reverse_proxy'
+			args: [':8080']
+		}
+	]
+)
+
+mut caddy_instance := caddy.configure('example', 
+	homedir: os.dir(@FILE)
+	reset: false
+	file: caddyfile
+	plugins: ['github.com/greenpau/caddy-security']
+) or {
+	return error ('Failed to configure Caddy instance: $err')
 }
+
+// Export CaddyFile to file
+caddyfile_content := caddyfile.export() or { panic(err) }
+os.write_file('${os.dir(@FILE)}/Caddyfile', caddyfile_content) or { panic(err) }
+
+// caddy_instance.restart()!
+
+for {}

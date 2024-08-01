@@ -12,6 +12,7 @@ pub fn (params &Params) get(key_ string) !string {
 			return p.value.trim(' ')
 		}
 	}
+	//print_backtrace()
 	return error('Did not find key:${key} in ${params}')
 }
 

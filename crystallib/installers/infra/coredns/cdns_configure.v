@@ -1,6 +1,7 @@
 module coredns
 
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.develop.gittools
 import os
 
 
@@ -9,8 +10,7 @@ pub fn configure(args_ InstallArgs) ! {
 	mut args := args_
 
 	if args.config_url.len>0{
-		//TODO use gittools to pull url and fill in path
-		//use /root/code/github/freeflowuniverse/crystallib/crystallib/develop/gittools/codeget.v
+		args.config_path = gittools.code_get(url: args.config_url)!
 	}
 
 	if args.config_path.len==0{
@@ -19,8 +19,7 @@ pub fn configure(args_ InstallArgs) ! {
 
 
 	if args.dnszones_url.len>0{
-		//TODO use gittools to pull url and fill in path
-		//use /root/code/github/freeflowuniverse/crystallib/crystallib/develop/gittools/codeget.v
+		args.dnszones_path = gittools.code_get(url: args.dnszones_url)!
 	}
 
 	if args.dnszones_path.len==0{
@@ -39,9 +38,6 @@ pub fn example_configure(args_ InstallArgs) ! {
 
 	exampledbfile := $tmpl('templates/db.example.org')
 
-	mut path_testzone := pathlib.get_file(path: '${dnszones_dir}/db.example.org', create: true)!
-	path_testzone.template_write(..., true)!
-
-	//TODO: write in dnszones_path
-
+	mut path_testzone := pathlib.get_file(path: '${args_.dnszones_path}/db.example.org', create: true)!
+	path_testzone.template_write(exampledbfile, true)!
 }

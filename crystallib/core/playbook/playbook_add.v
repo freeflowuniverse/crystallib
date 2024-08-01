@@ -120,9 +120,9 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 				if actionname.starts_with('!!!!!') {
 					error('there is no action starting with 5 x !')
 				} else if actionname.starts_with('!!!!') {
-					action.actiontype = .macro
-				} else if actionname.starts_with('!!!') {
 					action.actiontype = .wal
+				} else if actionname.starts_with('!!!') {
+					action.actiontype = .macro
 				} else if actionname.starts_with('!!') {
 					action.actiontype = .sal
 				} else if actionname.starts_with('!') {

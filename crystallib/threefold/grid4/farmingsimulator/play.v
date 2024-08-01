@@ -1,45 +1,48 @@
 module farmingsimulator
 
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
-import freeflowuniverse.crystallib.threefold.grid4.cloudslices
-import freeflowuniverse.crystallib.biz.spreadsheet
+//import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
 
 pub fn play(mut plbook PlayBook) ! {
-	mut sheet_name := ''
+	// mut sheet_name := ''
 	// first make sure we find a run action to know the name
-	mut my_actions := plbook.actions_find_by_name(actor: 'farming_simulator')!
+
+	mut my_actions := plbook.actions_find(actor: 'tfgridsimulation_farming')!
 
 	if my_actions.len == 0 {
 		return
 	}
 
 	mut name:=""
-
+	// console.print_header("AAAA")
+	// console.print_debug(plbook)
+	// console.print_header("BBBB")
+	
 	for mut action in my_actions {
 
 		if action.name == 'run' {
-			name = action.params.get('name')!
+			mut sim := new(
+				name: action.params.get_default('name',"default")!
+				path: action.params.get_default('path',"")!
+				git_url: action.params.get_default('git_url',"")!
+				git_reset: action.params.get_default_false('git_reset')
+				git_pull: action.params.get_default_false('git_pull')
+			)!
+			console.print_header('run the grid farming simulator')
+			sim.play(mut plbook)!
+			simulator_set(sim)
+			console.print_debug('done')
 		}
-
-		mut sim := new(
-			name: action.params.get('name')!
-			path: action.params.get_default('name',default="")!
-			git_url: action.params.get_default('git_url',default="")!
-			git_reset: action.params.get_default_false('git_reset')!
-			git_pull: action.params.get_default_false('git_pull')!
-		)!
-
-		sim.play(mut plbook)!
-		simulator_set(sim)
 
 	}
 }
 
-pub fn (mut s farmingsimulator) play(mut plbook PlayBook) ! {
+pub fn (mut s Simulator) play(mut plbook PlayBook) ! {
 
-	mut actions2 := plbook.actions_find_by_name(actor: 'farming_simulator')!
+	mut actions2 := plbook.actions_find(actor: 'tfgridsimulation_farming')!
 
-	if actions2.len() == 0{
+	if actions2.len == 0{
 		//means nothing to do return quickly
 		return 
 	}
@@ -93,7 +96,7 @@ pub fn (mut s farmingsimulator) play(mut plbook PlayBook) ! {
 	}
 
 	// NOW ADD THE REGIONAL INTERNETS
-	mut actions3 := plbook.actions_find_by_name(actor: 'farming_simulator')!
+	mut actions3 := plbook.actions_find(actor: 'tfgridsimulation_farming')!
 	for action_ri in actions3 {
 		if action_ri.name == 'regional_internet_add' {
 			mut iname := action_ri.params.get('name')!
@@ -110,8 +113,8 @@ pub fn (mut s farmingsimulator) play(mut plbook PlayBook) ! {
 	}
 
 	//now do the simulation, run it
-	mut actions4 := plbook.actions_find_by_name(actor: 'farming_simulator')!
-	for action_ri in actions3 {
+	mut actions4 := plbook.actions_find(actor: 'tfgridsimulation_farming')!
+	for action_ri in actions4 {
 		if action_ri.name == 'regional_internet_add' {
 			mut iname := action_ri.params.get('name')!
 			s.regionalinternet_add(iname)!

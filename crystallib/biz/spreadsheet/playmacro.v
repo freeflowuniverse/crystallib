@@ -3,8 +3,8 @@ module spreadsheet
 import freeflowuniverse.crystallib.core.playbook { Action }
 import freeflowuniverse.crystallib.ui.console
 
-pub fn playmacro(action Action) !string {
-	console.print_green('playmacro: ${action}')
+pub fn playmacro( action Action) !string {
+	console.print_green('playmacro for worksheet')
 
 	sheet_name := action.params.get('sheetname') or {
 		return error("can't find sheetname from sheet.chart macro.")

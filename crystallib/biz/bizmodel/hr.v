@@ -18,7 +18,7 @@ import rand
 
 fn (mut m BizModel) hr_actions(plbook_ PlayBook) ! {
 	mut plbook := plbook_
-	mut actions2 := plbook.actions_find_by_name(actor: 'hr')!
+	mut actions2 := plbook.actions_find(actor: 'hr')!
 	for action in actions2 {
 		if action.name == 'employee_define' {
 			mut name := action.params.get_default('name', '')!

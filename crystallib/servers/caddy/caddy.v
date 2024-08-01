@@ -16,6 +16,7 @@ pub fn (mut self Caddy[Config]) restart() ! {
 // Restart the Caddy
 pub fn (mut self Caddy[Config]) reload() ! {
 	mut cfg := self.config()!
+	cfg.file.export('${cfg.homedir}/Caddyfile.json')!
 	osal.exec(cmd: 'caddy --config ${cfg.homedir}/Caddyfile.json reload')!
 }
 
@@ -54,15 +55,3 @@ pub fn (mut self Caddy[Config]) set_caddyfile(file CaddyFile) ! {
 	cfg.file = file
 }
 
-[params]
-pub struct HashPasswordParams {
-	algorithm string = 'bcrypt'
-}
-
-pub fn hash_password(plaintext string, params HashPasswordParams) !string {
-	if plaintext == '' {
-		return error('plaintext cannot be empty')
-	}
-	result := osal.exec(cmd:'caddy hash-password -p ${plaintext}')!
-	return result.output.trim_space()
-}

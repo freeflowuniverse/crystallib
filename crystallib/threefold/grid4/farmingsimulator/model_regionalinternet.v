@@ -16,7 +16,8 @@ pub mut:
 }
 
 pub fn (mut sim Simulator) regionalinternet_add(name string) !&RegionalInternet {
-	mut sh := spreadsheet.sheet_new(name: name, nrcol: sim.nrmonths) or { panic(err) }
+	
+	mut sh := spreadsheet.sheet_new(name: "regionalinternet_${name}", nrcol: sim.nrmonths) or { panic(err) }
 	mut ri := RegionalInternet{
 		name: name
 		simulator: &sim

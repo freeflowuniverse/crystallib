@@ -2,10 +2,10 @@
 
 ## Capacity
 
-- CRU: @{nodetemplate.capacity.cru}
-- MRU: @{nodetemplate.capacity.mru} GB
-- SRU: @{nodetemplate.capacity.sru} GB
-- HRU: @{nodetemplate.capacity.hru} GB
+- CRU: @{nodetemplate.capacity.resourceunits.cru}
+- MRU: @{nodetemplate.capacity.resourceunits.mru} GB
+- SRU: @{nodetemplate.capacity.resourceunits.sru} GB
+- HRU: @{nodetemplate.capacity.resourceunits.hru} GB
 
 ## Components
 

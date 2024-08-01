@@ -40,7 +40,7 @@ fn cmd_caddy_execute(cmd Command) ! {
 		// execute the attached playbook
 		mut plbook, _ := plbook_run(cmd)!
 		// get name from the caddy.generate action
-		mut a := plbook.action_get_by_name(actor: 'caddy', name: 'generate')!
+		mut a := plbook.action_get(actor: 'caddy', name: 'generate')!
 	} else {
 		caddy_help(cmd)
 	}

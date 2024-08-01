@@ -11,7 +11,7 @@ import freeflowuniverse.crystallib.core.texttools
 // - type: loan or capital .
 fn (mut m BizModel) funding_actions(plbook_ PlayBook) ! {
 	mut plbook := plbook_
-	mut actions2 := plbook.actions_find_by_name(actor: 'funding')!
+	mut actions2 := plbook.actions_find(actor: 'funding')!
 	for action in actions2 {
 		if action.name == 'define' {
 			mut name := action.params.get_default('name', '')!

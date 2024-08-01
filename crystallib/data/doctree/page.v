@@ -72,10 +72,10 @@ pub fn (mut page Page) export(args_ PageExportArgs) !&Doc {
 	// if args.dest == '' {
 	// 	args.dest = page.path.path
 	// }
-	mut doc := markdownparser.new(content: page.doc()!.markdown()!)!
-	page.doc_ = &doc
 
-	console.print_debug(' ++++ export: ${page.name} -> ${args.dest}')
+	page.doc_process()!
+
+	//console.print_debug(' ++++ export: ${page.name} -> ${args.dest}')
 	mut p := pathlib.get_file(path: args.dest, create: true)!
 	dirpath := p.parent()!
 	// mut mydoc := page.doc()!

@@ -15,7 +15,7 @@ import freeflowuniverse.crystallib.ui.console
 
 fn (mut m BizModel) overhead_actions(plbook_ PlayBook) ! {
 	mut plbook := plbook_
-	mut actions2 := plbook.actions_find_by_name(actor: 'costs')!
+	mut actions2 := plbook.actions_find(actor: 'costs')!
 	for action in actions2 {
 		if action.name == 'define' {
 			mut name := action.params.get_default('name', '')!

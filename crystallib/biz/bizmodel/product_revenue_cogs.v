@@ -18,7 +18,7 @@ import freeflowuniverse.crystallib.ui.console
 //
 fn (mut m BizModel) revenue_actions(plbook_ PlayBook) ! {
 	mut plbook := plbook_
-	mut actions2 := plbook.actions_find_by_name(actor: 'revenue')!
+	mut actions2 := plbook.actions_find(actor: 'revenue')!
 	for action in actions2 {
 		if action.name == 'define' {
 			// !!revenue.define
@@ -102,7 +102,7 @@ fn (mut m BizModel) revenue_actions(plbook_ PlayBook) ! {
 			// console.print_debug(m.sheet.wiki()!)
 			// console.print_debug(revenue_growth_param)
 			// console.print_debug(revenue_growth)
-			// if true{panic("sdsd")}
+			// if true{panic("5997")}
 
 			mut cogs_perc := m.sheet.row_new(
 				name: '${name}_cogs_perc'

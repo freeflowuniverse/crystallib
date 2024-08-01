@@ -1,7 +1,10 @@
 module farmingsimulator
 
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.biz.spreadsheet
+import freeflowuniverse.crystallib.ui.console
 
 __global (
 	farmingsimulators shared map[string]&Simulator
@@ -19,6 +22,8 @@ pub mut:
 
 //is called from the play
 pub fn new(args_ SimulatorArgs) !Simulator {
+
+
 	mut args := args_
 
 	if args.name == '' {
@@ -26,21 +31,22 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 	}
 	args.name = texttools.name_fix(args.name)
 
+	console.print_header('farming simulator \'${args.name}\'')
 
-	if args.mdbook_name == '' {
-		args.mdbook_name = args.name
-	}
+	// if args.mdbook_name == '' {
+	// 	args.mdbook_name = args.name
+	// }
 
 	// mut cs := currency.new()
 	mut sh := spreadsheet.sheet_new(name: 'tffarmingsim_${args.name}')!
 	mut sim := Simulator{
 		name: args.name
 		sheet: &sh
-		params: args
+		args: args
+		// params: args
 		// currencies: cs
 	}
 	
-
 	if args.git_url.len > 0 {
 		args.path = gittools.code_get(
 			url: args.git_url
@@ -50,8 +56,11 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 		)!
 	}
 
+	if args.path.len>0{
+		sim.load()!
+	}
+
 	simulator_set(sim)
-	sim.load()!
 
 	return sim
 }
@@ -77,9 +86,9 @@ pub fn simulator_set(sim Simulator) {
 
 // load the mdbook content from path or git
 fn (mut self Simulator) load() ! {
-	console.print_debug('FARMING SIMULATOR LOAD ${self.params.name}')
+	console.print_header('farming simulator load from ${self.args.path}')
 
-	mut plbook := playbook.new(path: self.params.path)!
+	mut plbook := playbook.new(path: self.args.path)!
 
 	self.play(mut plbook)!
 }

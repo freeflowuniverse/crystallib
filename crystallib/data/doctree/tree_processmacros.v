@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playmacros
 
+
 @[params]
 pub struct MacroGetArgs {
 pub mut:
@@ -27,7 +28,7 @@ pub fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&Action {
 }
 
 pub fn (mut tree Tree) process_macros() ! {
-	console.print_green('process macros for tree: name:${tree.name}')
+	console.print_green('process actions & macros for tree:\'${tree.name}\'')
 
 	// first process the generic actions, which can be executed as is
 	mut plbook := playbook.new()!
@@ -35,20 +36,12 @@ pub fn (mut tree Tree) process_macros() ! {
 		plbook.actions << &element_action.action
 	}
 
-	playmacros.play(mut plbook)!
+	playmacros.play( mut plbook)!
 
 	// now get specific actions which need to return content
 	for _, mut collection in tree.collections {
 		for _, mut page in collection.pages {
-			mut mydoc := page.doc()!
-			for mut element in mydoc.children_recursive() {
-				if mut element is Action {
-					content := playmacros.playmacro(element.action)!
-					if content.len > 0 {
-						element.content = content
-					}
-				}
-			}
+			page.doc_process()!
 		}
 	}
 }

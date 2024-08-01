@@ -10,6 +10,7 @@ pub mut:
 	actions    []&Action
 	priorities map[int][]int // first key is the priority, the list of int's is position in list self.actions
 	othertext  string        // in case there is text outside of the actions
+	result string 			 // if any result
 	nractions  int
 	done       []int // which actions did we already find/run?
 	session    &base.Session
@@ -70,7 +71,7 @@ pub fn (mut plbook PlayBook) actions_sorted(args SortArgs) ![]&Action {
 		}
 		action_ids := plbook.priorities[nr] or { panic('bug') }
 		for id in action_ids {
-			mut a := plbook.action_get(id)!
+			mut a := plbook.action_get(id:id)!
 			res << a
 		}
 	}
@@ -109,63 +110,72 @@ pub fn (mut plbook PlayBook) names() ![]string {
 	return names
 }
 
-pub fn (plbook PlayBook) action_exists(id int) bool {
-	for a in plbook.actions {
-		if a.id == id {
-			return true
-		}
-	}
-	return false
-}
-
 @[params]
 pub struct ActionGetArgs {
 pub mut:
+	id int 
 	actor string
 	name  string
+	actiontype ActionType = .sal
 }
 
-pub fn (plbook PlayBook) action_exists_once(args ActionGetArgs) bool {
-	mut counter := 0
-	for a in plbook.actions {
-		if a.actor == args.actor && a.name == args.name {
-			counter += 1
-		}
-	}
-	return counter == 1
-}
-
-pub fn (mut plbook PlayBook) action_get_by_name(args ActionGetArgs) !&Action {
-	for a in plbook.actions {
-		if a.actor == args.actor && a.name == args.name {
-			return a
-		}
-	}
-	return error("couldn't find action with args:${args}")
-}
-
-pub fn (mut plbook PlayBook) actions_find_by_name(args ActionGetArgs) ![]&Action {
+// Find all actions based on ActionGetArgs
+// - If id == 0, then matches all ids; when id is specified, can only return 1.
+// - If actor == "", then matches all actors.
+// - If name == "", then matches all actions from the defined actor (if defined).
+// - If actiontype == .unknown, then matches all action types; when specified, filters by the action type, default .sal
+pub fn (mut plbook PlayBook) actions_find(args ActionGetArgs) ![]&Action {
 	mut res := []&Action{}
 	for a in plbook.actions {
+		// If id is specified, return only the action with that id
+		if args.id != 0 {
+			if a.id == args.id {
+				return [a]
+			}
+			continue
+		}
+		// Filter by actor if specified
 		if args.actor.len > 0 && a.actor != args.actor {
 			continue
 		}
+		// Filter by name if specified
 		if args.name.len > 0 && a.name != args.name {
 			continue
 		}
+		// Filter by actiontype if specified
+		if args.actiontype != .unknown && a.actiontype != args.actiontype {
+			continue
+		}		
+		// If the action passes all filters, add it to the result
 		res << a
 	}
 	return res
 }
 
-pub fn (mut plbook PlayBook) action_get(id int) !&Action {
-	for a in plbook.actions {
-		if a.id == id {
-			return a
-		}
+pub fn (mut plbook PlayBook) action_exists(args ActionGetArgs) bool {
+	// Use actions_find to get the filtered actions
+	actions := plbook.actions_find(args) or { return false }
+	if actions.len == 1 {
+		return true
+	} else if actions.len == 0 {
+		return false
+	} else {
+		return false
 	}
-	return error("can't find action with id:${id}")
 }
+
+pub fn (mut plbook PlayBook) action_get(args ActionGetArgs) !&Action {
+	// Use actions_find to get the filtered actions
+	actions := plbook.actions_find(args)!
+	if actions.len == 1 {
+		return actions[0]
+	} else if actions.len == 0 {
+		return error("couldn't find action with args: ${args}")
+	} else {
+		return error("multiple actions found with args: ${args}, expected only one")
+	}
+}
+
 
 pub fn (plbook PlayBook) hashkey() string {
 	mut out := []string{}
