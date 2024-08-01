@@ -674,17 +674,16 @@ function v_analyzer_install {
 function crystal_deps_install {
     set -e
 
-    if [[ "${OSNAME}" == "ubuntu" || "${OSNAME}" == "arch"* ]]; then
-        
+    if [[ "${OSNAME}" == "ubuntu" || "${OSNAME}" == "arch"* ]]; then        
         cd /tmp
-        package_install autoconf libtool libsqlite3-dev gcc
-        wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
-        tar -xvf v0.4.1.tar.gz
-        cd secp256k1-0.4.1/
-        ./autogen.sh
-        ./configure
-        make -j 5
-        make install   
+        # package_install autoconf libtool libsqlite3-dev gcc
+        # wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+        # tar -xvf v0.4.1.tar.gz
+        # cd secp256k1-0.4.1/
+        # ./autogen.sh
+        # ./configure
+        # make -j 5
+        # make install   
         apt-get remove -y gcc
         package_install tcc
     # elif [[ "${OSNAME}" == "darwin"* ]]; then
