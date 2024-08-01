@@ -72,14 +72,14 @@ pub fn install(args_ InstallArgs) ! {
 		osal.exec(
 			cmd: '
 				apt-get remove -y gcc
-				cd /tmp
-				wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
-				tar -xvf v0.4.1.tar.gz
-				cd secp256k1-0.4.1/
-				./autogen.sh
-				./configure
-				make -j 5
-				make install   
+				// cd /tmp
+				// wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+				// tar -xvf v0.4.1.tar.gz
+				// cd secp256k1-0.4.1/
+				// ./autogen.sh
+				// ./configure
+				// make -j 5
+				// make install   
 				')!
 	} else if pl == .alpine {
 		console.print_header(' - Alpine prepare')
