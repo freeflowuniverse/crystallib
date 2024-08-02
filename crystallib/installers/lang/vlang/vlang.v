@@ -35,7 +35,7 @@ pub fn install(args_ InstallArgs) ! {
 		return
 	}
 
-	base.develop(reset: args.reset)!
+	base.develop()!
 
 	mut gs := gittools.new(
 		name: 'vlang'

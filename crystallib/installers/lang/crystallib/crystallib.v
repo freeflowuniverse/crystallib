@@ -23,9 +23,12 @@ pub fn install(args InstallArgs) ! {
 	// install crystallib if it was already done will return true
 	console.print_header('install crystallib (reset: ${args.reset})')
 	// osal.package_refresh()!
-	base.install(develop:true,reset:args.reset)!
-	vlang.install(reset: args.reset)!
-	vlang.v_analyzer_install(reset: args.reset)!
+	if args.reset{
+		osal.done_reset()!
+	}
+	base.install(develop:true)!
+	vlang.install(reset:args.reset)!
+	vlang.v_analyzer_install(reset:args.reset)!
 
 	mut gs := gittools.get()!
 	gs.config.light = true // means we clone depth 1
