@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.lang.vlang
+
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.develop.gittools
@@ -21,13 +22,8 @@ pub mut:
 pub fn install(args InstallArgs) ! {
 	// install crystallib if it was already done will return true
 	console.print_header('install crystallib (reset: ${args.reset})')
-	if args.reset {
-		console.print_header('reset crystallib')
-		uninstall()!
-		return
-	}
 	// osal.package_refresh()!
-	base.develop()!
+	base.install(develop:true,reset:args.reset)!
 	vlang.install(reset: args.reset)!
 	vlang.v_analyzer_install(reset: args.reset)!
 

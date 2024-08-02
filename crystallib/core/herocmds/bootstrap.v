@@ -1,6 +1,8 @@
 module herocmds
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.installers.base
+import freeflowuniverse.crystallib.installers.lang.crystallib
 import freeflowuniverse.crystallib.builder
 import cli { Command, Flag }
 
@@ -59,18 +61,25 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	// mut hero := cmd.flags.get_bool('hero') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
 	if address == '' {
-		address = 'localhost'
-	}
-
-	mut b := builder.new()!
-	mut n := b.node_new(ipaddr: address)!
-
-	if develop {
 		osal.profile_path_add_hero()!
-		n.crystal_install(reset: reset)!
-		n.hero_install()!
-		n.dagu_install()!
-	} else {
-		return error(cmd.help_message())
+		if develop{
+			crystallib.install(reset:reset)!
+		}else{
+			base.install(reset:reset)!
+		}
+		
+	}else{
+		mut b := builder.new()!
+		mut n := b.node_new(ipaddr: address)!
+		if develop {			
+			n.crystal_install(reset: reset)!
+			n.hero_install()!
+			n.dagu_install()!
+		} else {
+			panic("implement, need to download here and install")	
+		}
+		//return error(cmd.help_message())
 	}
+
+
 }
