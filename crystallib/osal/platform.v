@@ -84,6 +84,9 @@ pub fn cputype() CPUType {
 		'arm64' {
 			CPUType.arm
 		}
+		'aarch64' {
+			CPUType.arm
+		}		
 		// TODO 32 bit ones!
 		else {
 			logger.error('Unknown cpu type ${sys_info}')

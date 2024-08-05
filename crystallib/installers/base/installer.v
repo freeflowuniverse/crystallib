@@ -68,19 +68,7 @@ pub fn install(args_ InstallArgs) ! {
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_refresh()!
-		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server,tcc')!
-		osal.exec(
-			cmd: '
-				apt-get remove -y gcc
-				cd /tmp
-				wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
-				tar -xvf v0.4.1.tar.gz
-				cd secp256k1-0.4.1/
-				./autogen.sh
-				./configure
-				make -j 5
-				make install   
-				')!
+		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server')!
 	} else if pl == .alpine {
 		console.print_header(' - Alpine prepare')
 		osal.package_refresh()!
@@ -93,7 +81,7 @@ pub fn install(args_ InstallArgs) ! {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
 	if args.develop {
-		develop()!
+		develop(reset:args.reset)!
 	}
 	sshkeysinstall()!
 	console.print_header('platform prepare DONE')
@@ -124,8 +112,6 @@ pub fn develop(args InstallArgs) ! {
 	if args.reset == false && osal.done_exists('crystal_development') {
 		return
 	}
-
-	install(reset: args.reset)!
 	if pl == .osx {
 		console.print_header(' - OSX prepare for development.')
 		osal.package_install('bdw-gc,libpq')!
@@ -136,7 +122,18 @@ pub fn develop(args InstallArgs) ! {
 		}
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
-		osal.package_install('libgc-dev,make,libpq-dev,build-essential')!
+		osal.package_install('libgc-dev,make,libpq-dev,build-essential,gcc,tcc')!
+		osal.exec(
+			cmd: '
+				cd /tmp
+				wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+				tar -xvf v0.4.1.tar.gz
+				cd secp256k1-0.4.1/
+				./autogen.sh
+				./configure
+				make -j 5
+				make install   
+				')!
 	} else if pl == .alpine {
 		osal.package_install('libpq-dev,make')!
 	} else if pl == .arch {
@@ -144,6 +141,6 @@ pub fn develop(args InstallArgs) ! {
 	} else {
 		panic('only arch, alpine, ubuntu and osx supported for now')
 	}
-
 	osal.done_set('crystal_development', 'OK')!
+	console.print_header('platform development DONE')
 }
