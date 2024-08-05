@@ -9,14 +9,14 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
-pub const version = '1.14.1'
+pub const version = '1.14.2'
 
 @[params]
 pub struct InstallArgs {
 pub mut:
 	homedir    string
 	configpath string
-	username   string
+	username   string = "admin"
 	password   string @[secret]
 	secret     string @[secret]
 	title      string = 'My Hero DAG'
@@ -24,9 +24,10 @@ pub mut:
 	start      bool = true
 	stop 	   bool
 	restart    bool
-	ipaddr     string
+	host        string = 'localhost' // server host (default is localhost)
 	port       int = 8888
 }
+
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
@@ -71,6 +72,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	if args.start {
 		start(args)!
+		return
 	}
 
 	if args.stop {
@@ -87,12 +89,6 @@ pub fn start(args_ InstallArgs) ! {
 		args.title = 'HERO DAG'
 	}
 
-	if check(args)! {
-		return
-	}
-
-	console.print_header('dagu start')
-
 	if args.homedir == '' {
 		args.homedir = '${os.home_dir()}/hero/var/dagu'
 	}
@@ -100,12 +96,16 @@ pub fn start(args_ InstallArgs) ! {
 		args.configpath = '${os.home_dir()}/hero/cfg/dagu.yaml'
 	}
 
-	// FILL IN THE TEMPLATE
-	mut mycode := $tmpl('templates/admin.yaml')
+	if check(args)! {
+		return
+	}
 
-	mut path := pathlib.get_file(path: args.configpath, create: true)!
-	path.write(mycode)!
-	mut sm := startupmanager.get()!
+	console.print_header('dagu start')
+
+	//println(args)
+
+
+	configure(args)!
 
 	cmd := 'dagu server --host 0.0.0.0 --config ${args.configpath}'
 
@@ -116,6 +116,8 @@ pub fn start(args_ InstallArgs) ! {
 	// port string // server port (default is 8080)
 	// result := os.execute_opt('dagu start-all ${flags}')!
 
+	mut sm := startupmanager.get()!
+
 	sm.start(
 		name: 'dagu'
 		cmd: cmd
@@ -124,9 +126,13 @@ pub fn start(args_ InstallArgs) ! {
 		}
 	)!
 
-	cmd2 := 'dagu scheduler' // TODO: do we need this
-
+	//cmd2 := 'dagu scheduler' // TODO: do we need this
 	console.print_debug(cmd)
+
+	// if true{
+	// 	panic("sdsdsds dagu install")
+	// }
+
 
 	// time.sleep(100000000000)
 	for _ in 0 .. 50 {
@@ -135,7 +141,28 @@ pub fn start(args_ InstallArgs) ! {
 		}
 		time.sleep(100 * time.millisecond)
 	}
-	return error('dagu did not install propertly, could not call api.')
+	return error('dagu did not install propertly, could not call api.')	
+
+}
+
+
+
+pub fn configure(args_ InstallArgs) ! {
+	mut cfg := args_
+
+	if cfg.password == "" || cfg.secret == ""{
+		return error("password and secret needs to be filled in for dagu")
+	}
+
+
+	mut mycode := $tmpl('templates/admin.yaml')
+
+	mut path := pathlib.get_file(path: cfg.configpath, create: true)!
+	path.write(mycode)!
+
+	console.print_debug(mycode)
+	
+
 }
 
 // checks if a certain version or above is installed
@@ -189,4 +216,10 @@ pub fn stop() ! {
 pub fn restart(args InstallArgs) ! {
 	stop()!
 	start(args)!
+}
+
+
+
+pub fn installargs(args InstallArgs) InstallArgs {
+	return args	
 }

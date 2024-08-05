@@ -1,25 +1,25 @@
 host: "::"                          # default: 127.0.0.1
-port: ${args.port}
+port: ${cfg.port}
 
 # path to the DAGs directory
-dags: ${args.homedir}/dags
+dags: ${cfg.homedir}/dags
 
 # Web UI Color & Title
 # navbarColor: <ui header color>                               # header color for web UI (e.g. "#ff0000")
-navbarTitle: ${args.title}                                 # header title for web UI (e.g. "PROD")
+navbarTitle: ${cfg.title}                                 # header title for web UI (e.g. "PROD")
 
 isBasicAuth: true
-basicAuthUsername: ${args.username}
-basicAuthPassword: ${args.password}
+basicAuthUsername: ${cfg.username}
+basicAuthPassword: ${cfg.password}
 
 isAuthToken: true                                    # enables API token
-authToken: ${args.secret}
+authToken: ${cfg.secret}
 
 # Base Config
-baseConfig: ${args.homedir}/config.yaml
+baseConfig: ${cfg.homedir}/config.yaml
 
 # Working Directory
-# workDir: ${args.homedir}/working                        # default: DAG location
+# workDir: ${cfg.homedir}/working                        # default: DAG location
 
 # SSL Configuration
 # tls:

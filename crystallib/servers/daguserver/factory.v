@@ -1,12 +1,9 @@
 module daguserver
 
 import freeflowuniverse.crystallib.core.base
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.crypt.secrets
-import freeflowuniverse.crystallib.clients.dagu as daguclient
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
 import os
-
+import freeflowuniverse.crystallib.ui.console
 // import freeflowuniverse.crystallib.ui.console
 
 pub struct DaguServer[T] {
@@ -27,6 +24,11 @@ pub mut:
 	port        int    = 8888 // server port (default is 8888)	
 }
 
+pub fn new(args Config) !DaguServer[Config] {
+	mut c:=configure("default",args)!
+	return c
+}
+
 pub fn get(instance_ string) !DaguServer[Config] {
 	instance := if instance_ == '' {'default'} else {instance_}
 	mut self := DaguServer[Config]{}
@@ -36,6 +38,7 @@ pub fn get(instance_ string) !DaguServer[Config] {
 
 // set the configuration, will make defaults for password & secret
 pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
+
 	mut cfg := cfg_
 	mut self := DaguServer[Config]{}
 
@@ -47,11 +50,18 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 		cfg.username = 'admin'
 	}
 
+	dagu_secret := os.getenv('DAGU_SECRET')
+	console.print_debug("dagu secret from getenv:'${dagu_secret}'")
+	if cfg.password == '' {
+		cfg.password = dagu_secret
+	}
 	if cfg.password == '' {
 		cfg.password = secrets.hex_secret()!
 	}
+
+	//TODO:use DAGU_SECRET from env variables in os if not set then empty string
 	if cfg.secret == '' {
-		cfg.secret = secrets.openssl_hex_secret()!
+		cfg.secret = secrets.openssl_hex_secret(input:dagu_secret)!
 	}
 
 	if cfg.homedir == '' {
@@ -66,30 +76,27 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 		cfg.port = 8080
 	}
 
-	daguinstaller.install(
-		start: false
-		homedir: cfg.homedir
-		username: cfg.username
-		password: cfg.password
-		secret: cfg.secret
-		title: cfg.title
-	)!
-
 	self.init('daguserver', instance, .set, cfg)!
 
+	//println(self)
 
-	// FILL IN THE TEMPLATE
-	mut mycode := $tmpl('templates/admin.yaml')
-	mut path := pathlib.get_file(path: cfg.configpath, create: true)!
-	path.write(mycode)!
-
-	// configure a client to the local instance
-	// the name will be 'local'
-	daguclient.get('local',
-		url: 'http://${cfg.host}:${cfg.port}'
-		username: 'admin'
-		password: cfg.password
-		apisecret: cfg.secret
-	)!
 	return self
+}
+
+
+
+pub struct InstallArgs {
+pub mut:
+	homedir    string
+	configpath string
+	username   string
+	password   string @[secret]
+	secret     string @[secret]
+	title      string = 'My Hero DAG'
+	reset      bool
+	start      bool = true
+	stop 	   bool
+	restart    bool
+	host        string = 'localhost' // server host (default is localhost)
+	port       int = 8888
 }

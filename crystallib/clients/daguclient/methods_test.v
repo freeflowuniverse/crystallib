@@ -1,4 +1,4 @@
-module dagu
+module daguclient
 
 import json
 import freeflowuniverse.crystallib.clients.httpconnection
@@ -36,10 +36,10 @@ fn testsuite_begin() {
 }
 
 fn testsuite_end() {
-	client.delete_dag('test_new_dag')!
-	client.delete_dag('test_start_dag')!
-	client.delete_dag('test_stop_dag')!
-	client.delete_dag('test_suspend_dag')!
+	client.dag_delete('test_new_dag')!
+	client.dag_delete('test_start_dag')!
+	client.dag_delete('test_stop_dag')!
+	client.dag_delete('test_suspend_dag')!
 }
 
 fn test_new_dag() ! {

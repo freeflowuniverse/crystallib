@@ -1,4 +1,4 @@
-module dagu
+module daguclient
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui as gui
@@ -7,7 +7,9 @@ import freeflowuniverse.crystallib.clients.httpconnection
 
 // import freeflowuniverse.crystallib.ui.console
 
-pub struct DaguClient[T] {
+type DaguClient = DaguClient_[Config]
+
+pub struct DaguClient_[T] {
 	base.BaseConfig[T]
 pub mut:
 	connection &httpconnection.HTTPConnection
@@ -22,8 +24,8 @@ pub mut:
 	apisecret string @[secret]
 }
 
-pub fn get(instance string, cfg Config) !DaguClient[Config] {
-	mut self := DaguClient[Config]{
+pub fn get(instance string, cfg Config) !DaguClient {
+	mut self := DaguClient{
 		connection: &httpconnection.HTTPConnection{}
 	}
 
@@ -34,15 +36,19 @@ pub fn get(instance string, cfg Config) !DaguClient[Config] {
 		self.init('daguclient', instance, .get)!
 	}
 
-	mut conn := httpconnection.new(
+	cfg2 := self.config_get()!
+	// if self.connection.base_url != '${cfg2.url}/api/v1' {
+	mut con := httpconnection.new(
 		name: 'dagu'
-		url: '${cfg.url}/api/v1'
+		url: '${cfg2.url}/api/v1'
 	)!
+	con.basic_auth(cfg2.username, cfg2.password)
+	self.connection = con
+	// }
 
-	conn.default_header.add(.authorization, 'Bearer ${cfg.apisecret}')
-	// req.add_custom_header('x-disable-pagination', 'True') !
-
-	self.connection = conn
+	//cannot do both, or basic authentication or the apisecret
+	//self.connection.default_header.add(.authorization, 'Bearer ${cfg.apisecret}')
+	
 	return self
 }
 

@@ -1,4 +1,4 @@
-module dagu
+module daguclient
 
 pub struct ApiError {
 	code             int    @[skip]

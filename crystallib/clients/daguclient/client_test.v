@@ -1,4 +1,4 @@
-module dagu
+module daguclient
 
 import time
 import freeflowuniverse.crystallib.osal.dagu as dagu_osal
@@ -23,7 +23,7 @@ fn testsuite_begin() {
 
 fn testsuite_end() {
 	mut d := dagu_osal.new()!
-	d.delete_dag('test_dag')!
+	d.dag_delete('test_dag')!
 }
 
 fn test_create_dag() ! {
@@ -33,15 +33,15 @@ fn test_create_dag() ! {
 	}
 }
 
-fn test_list_dags() ! {
-	response := client.list_dags()!
+fn test_dags_list() ! {
+	response := client.dags_list()!
 }
 
 fn test_delete_dag() ! {
 	mut error := false
-	client.delete_dag(@FN) or { error = true }
+	client.dag_delete(@FN) or { error = true }
 	assert error
 
 	client.create_dag(@FN)!
-	client.delete_dag(@FN)!
+	client.dag_delete(@FN)!
 }

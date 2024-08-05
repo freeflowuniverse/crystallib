@@ -1,8 +1,9 @@
-module dagu
+module daguclient
 
 import json
-import freeflowuniverse.crystallib.clients.httpconnection
 
+import freeflowuniverse.crystallib.clients.httpconnection
+import freeflowuniverse.crystallib.ui.console
 struct CreateDag {
 	action string = 'new' @[required]
 	value  string @[required]
@@ -12,30 +13,22 @@ struct CreateDagResponse {
 	dag_id string = 'new' @[json: 'DagID'; required]
 }
 
-fn (mut cl DaguClient[Config]) set_http_connection() ! {
-	cfg := cl.config_get()!
-	if cl.connection.base_url != '${cfg.url}/api/v1' {
-		mut con := httpconnection.new(
-			name: 'dagu'
-			url: '${cfg.url}/api/v1'
-		)!
-		con.basic_auth(cfg.username, cfg.password)
-		cl.connection = con
-	}
-}
 
 // Creates a new DAG.
-pub fn (mut client DaguClient[Config]) create_dag(name string) !CreateDagResponse {
+fn (mut client DaguClient) dag_create(name string) !CreateDagResponse {
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags'
 		data: json.encode(CreateDag{ action: 'new', value: name })
 	) or { return error('Failed to create request: ${err}') }
-
 	result := client.connection.send(request) or { return error('Failed to send request: ${err}') }
+	
 	if !result.is_ok() {
-		err := json.decode(ApiError, result.data) or {
-			return error('Failed to decode api error ${err}')
+		mut err := json.decode(ApiError, result.data)  or {			
+			return error('Failed to dag create: error: ${result}')
+		}
+		if "${err}".trim_space()==""{
+			return error("Failed to send request: $request, errorcode:${result.code}")
 		}
 		return ApiError{
 			...err
@@ -43,7 +36,9 @@ pub fn (mut client DaguClient[Config]) create_dag(name string) !CreateDagRespons
 		}
 	}
 
-	response := json.decode(CreateDagResponse, result.data)!
+	response := json.decode(CreateDagResponse, result.data) or {			
+			return error('Failed to decode dag response: ${result}')
+		}
 	return response
 }
 
@@ -93,22 +88,29 @@ pub struct DagStatus {
 }
 
 // Creates a new DAG.
-pub fn (mut client DaguClient[Config]) list_dags() !ListDagsResponse {
+pub fn (mut client DaguClient) dags_list() !ListDagsResponse {
 	request := httpconnection.new_request(
 		method: .get
 		prefix: 'dags'
 	)!
 
+	//request.add_custom_header('x-disable-pagination', 'True') !
+
 	result := client.connection.send(request)!
+	//console.print_debug("dags_list:\n${result}")
 	if !result.is_ok() {
-		err := json.decode(ApiError, result.data)!
-		return ApiError{
+		err := json.decode(ApiError, result.data) or {			
+			return error('Failed to call dag list: error ${result}')
+		}
+		return ApiError{			
 			...err
 			code: result.code
 		}
 	}
 
-	response := json.decode(ListDagsResponse, result.data)!
+	response := json.decode(ListDagsResponse, result.data) or {			
+			return error('Failed to decodelist dag response ${result}')
+		}
 	return response
 }
 
@@ -136,7 +138,7 @@ pub struct PostDagActionResponse {
 	new_dag_id string @[json: 'NewDagID']
 }
 
-pub fn (mut client DaguClient[Config]) post_dag_action(dag_id string, params PostDagAction) !PostDagActionResponse {
+fn (mut client DaguClient) post_dag_action(dag_id string, params PostDagAction) !PostDagActionResponse {
 	request := httpconnection.new_request(
 		method: .post
 		prefix: 'dags/${dag_id}'
@@ -145,18 +147,22 @@ pub fn (mut client DaguClient[Config]) post_dag_action(dag_id string, params Pos
 
 	result := client.connection.send(request)!
 	if !result.is_ok() {
-		err := json.decode(ApiError, result.data)!
+		err := json.decode(ApiError, result.data) or {			
+			return error('Failed to decode post dag action ${result}')
+		}
 		return ApiError{
 			...err
 			code: result.code
 		}
 	}
 
-	response := json.decode(PostDagActionResponse, result.data)!
+	response := json.decode(PostDagActionResponse, result.data) or {			
+			return error('Failed to decode post dag action 2 ${result}')
+		}
 	return response
 }
 
-pub fn (mut client DaguClient[Config]) delete_dag(dag_id string) ! {
+fn (mut client DaguClient) dag_delete(dag_id string) ! {
 	request := httpconnection.new_request(
 		method: .delete
 		prefix: 'dags/${dag_id}'
@@ -164,7 +170,9 @@ pub fn (mut client DaguClient[Config]) delete_dag(dag_id string) ! {
 
 	result := client.connection.send(request)!
 	if !result.is_ok() {
-		err := json.decode(ApiError, result.data)!
+		err := json.decode(ApiError, result.data) or {			
+			return error('Failed to decode dag delete ${result}')
+		}
 		return ApiError{
 			...err
 			code: result.code

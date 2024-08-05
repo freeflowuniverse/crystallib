@@ -1,4 +1,4 @@
-module dagu
+module daguclient
 
 import freeflowuniverse.crystallib.core.playbook
 
