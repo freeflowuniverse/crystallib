@@ -4,7 +4,7 @@ module tfrobot
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.osal.dagu
-import freeflowuniverse.crystallib.clients.dagu as dagu_client
+import freeflowuniverse.crystallib.clients.daguclient as dagu_client
 import freeflowuniverse.crystallib.ui.console
 import time
 

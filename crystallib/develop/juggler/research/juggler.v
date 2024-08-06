@@ -3,7 +3,7 @@ module juggler
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.clients.dagu { DAG }
+import freeflowuniverse.crystallib.clients.daguclient { DAG }
 import veb
 import json
 

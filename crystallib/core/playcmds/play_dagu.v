@@ -1,6 +1,6 @@
 module playcmds
 
-import freeflowuniverse.crystallib.clients.dagu { DAG }
+import freeflowuniverse.crystallib.clients.daguclient { DAG }
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
 import freeflowuniverse.crystallib.servers.daguserver
 import freeflowuniverse.crystallib.core.playbook
@@ -53,7 +53,7 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 				start: start
 				stop:stop
 				restart: restart
-				ipaddr: ipaddr
+				host: ipaddr
 				port: port
 			)!
 		}
@@ -86,14 +86,14 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 		
 		// configure dagu client with server url and api secret
 		server_cfg := server.config()!
-		dagu.get(instance, 
+		daguclient.get(instance, 
 			url: 'http://localhost:${port}'
 			apisecret: server_cfg.secret
 		)!
 	} else {
 		mut server := daguserver.get('')!
 		server.start()!
-		dagu.get('')!
+		daguclient.get('')!
 	}
 
 	mut dags := map[string]DAG{}
@@ -120,6 +120,7 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'dagu.run')! {
 		mut p := action.params
 		dag := p.get_default('dag', 'default')!
-		d.new_dag(dags[dag])!
+		//d.new_dag(dags[dag])!
+		panic("to implement")
 	}
 }

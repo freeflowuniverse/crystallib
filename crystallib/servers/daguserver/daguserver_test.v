@@ -3,7 +3,7 @@ module daguserver
 import os
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.clients.dagu
+import freeflowuniverse.crystallib.clients.daguclient
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
 import freeflowuniverse.crystallib.core.texttools
