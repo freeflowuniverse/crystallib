@@ -56,13 +56,14 @@ pub fn build() ! {
 	osal.package_install('pkg-config,openssl')!
 	mut ok := false
 	cmd := '
+	echo "start mdbook installer"
 	set +ex
 	rm ${os.home_dir()}/.cargo/bin/mdb* 2>&1 >/dev/null
 	rm ${dest_on_os}/mdb*  > /dev/null 2>&1
 	source ~/.cargo/env > /dev/null 2>&1
 
-	set -ex
-	
+	set -ex	
+	export CC=gcc
 	cargo install mdbook
 	cargo install mdbook-mermaid
 	cargo install mdbook-echarts

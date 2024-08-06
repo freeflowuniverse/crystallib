@@ -43,7 +43,7 @@ pub fn install(args_ InstallArgs) ! {
 	console.print_header('start install rust')
 
 	if pl == .ubuntu {
-		osal.package_install('build-essential,openssl,pkg-config,libssl-dev')!
+		osal.package_install('build-essential,openssl,pkg-config,libssl-dev,gcc')!
 	}
 	if pl == .arch {
 		osal.package_install('rust, cargo, pkg-config, openssl')!
