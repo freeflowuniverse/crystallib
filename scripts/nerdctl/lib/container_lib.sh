@@ -41,16 +41,20 @@ function heroc_start() {
             echo "Starting the '$container_name' container..."
             lima nerdctl start "$container_name"
         fi
+        heroc_exec_script "$container_name" install_ssh.sh
     else
         echo "Creating and starting the container..."
-        set -e
-        limactl shell default mkdir -p /tmp/aptcache
+        set -ex
+        mkdir -p $HOME/aptcache
+        limactl shell default mkdir -p /aptcache
         lima nerdctl run --platform "$platform" -d --privileged --name "$container_name" \
-            -p 127.0.0.1:$psqlport:5432 -p 127.0.0.1:$sshport:22 --memory 1000m \
-            --mount type=bind,src=/tmp/aptcache,dst=/var/cache/apt/archives \
+            -p 127.0.0.1:$psqlport:5432 -p 127.0.0.1:$sshport:22 --memory 2000m \
+            --mount type=bind,src=/code,dst=/root/code \
+            --mount type=bind,src=/aptcache,dst=/var/cache/apt/archives \
             --hostname "$container_name" \
             "$docker_image" bash -c "while true; do sleep 1000; done"
-        
+            
+
         ssh-keygen -R \[127.0.0.1\]:$sshport
         heroc_exec_script "$container_name" install_ssh.sh
         if [ $? -ne 0 ]; then

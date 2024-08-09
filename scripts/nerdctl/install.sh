@@ -19,7 +19,6 @@ limactl create --name default --tty=false templates/default.yaml
 
 limactl start default
 
-
 lima nerdctl run --rm hello-world
 
 limactl list

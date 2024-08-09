@@ -27,8 +27,6 @@ ssh -p 5022 root@127.0.0.1 -A
 ssh -p 7022 root@127.0.0.1 -A 
 ```
 
-
-
 if ssh-auth not done
 
 ```bash
