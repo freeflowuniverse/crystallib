@@ -8,8 +8,9 @@ export BASENR=7
 
 source lib/container_lib.sh
 
-heroc_delete $NAME
-heroc_start $NAME 7 
+# heroc_delete $NAME
+heroc_stop $NAME 7 
+heroc_start $NAME 7 base
 
 heroc_exec_script_ssh ${NAME} install_crystal.sh ${BASENR}022
 
@@ -20,7 +21,10 @@ heroc_exec_script_ssh ${NAME} install_crystal.sh ${BASENR}022
 #heroc_shell ${NAME}
 
 ssh -p ${BASENR}022 root@127.0.0.1 -A 'ls /'
-ssh -p ${BASENR}022 root@127.0.0.1 -A 
+
+nerdctl commit crystal crystal
+
+ssh -p ${BASENR}022 root@127.0.0.1 -A
 
 
 

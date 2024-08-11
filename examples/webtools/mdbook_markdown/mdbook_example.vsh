@@ -13,14 +13,14 @@ console.print_header('Lets use a heroscript to generate an mdbook')
 mdbookinstaller.install()!
 
 
-//will create session and run a playbook from a heroscript
+// //will create session and run a playbook from a heroscript
 
-mut session := play.session_new(
-	context_name: "test"
-	interactive: true
-	url:"https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/heroscript"
-	run:true
-)!
+// mut session := play.session_new(
+// 	context_name: "test"
+// 	interactive: true
+// 	url:"https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/heroscript"
+// 	run:true
+// )!
 
-//now run them for the generic and understood playcmds
-playcmds.run(session)!
+// //now run them for the generic and understood playcmds
+// playcmds.run(session)!

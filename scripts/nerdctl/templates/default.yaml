@@ -1,18 +1,16 @@
-vmType: vz
+vmType: qemu
 os: null
 arch: null
 images:
-- location: "https://cloud-images.ubuntu.com/releases/24.04/release-20240423/ubuntu-24.04-server-cloudimg-amd64.img"
+- location: "https://cloud-images.ubuntu.com/releases/24.04/release-20240806/ubuntu-24.04-server-cloudimg-amd64.img"
   arch: "x86_64"
-  digest: "sha256:32a9d30d18803da72f5936cf2b7b9efcb4d0bb63c67933f17e3bdfd1751de3f3"
-- location: "https://cloud-images.ubuntu.com/releases/24.04/release-20240423/ubuntu-24.04-server-cloudimg-arm64.img"
+- location: "https://cloud-images.ubuntu.com/releases/24.04/release-20240806/ubuntu-24.04-server-cloudimg-arm64.img"
   arch: "aarch64"
-  digest: "sha256:c841bac00925d3e6892d979798103a867931f255f28fefd9d5e07e3e22d0ef22"
-- location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
-  arch: "x86_64"
-- location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
-  arch: "aarch64"
-cpus: 16
+# - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
+#   arch: "x86_64"
+# - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
+#   arch: "aarch64"
+cpus: 8
 memory: null
 disk: null
 mounts:
@@ -26,8 +24,9 @@ mounts:
 - location: "/tmp/lima"
   writable: true
 - location: "~/code"
+  mountPoint: "/code"
   writable: true  
-mountType: virtiofs
+#mountType: virtiofs
 mountInotify: null
 ssh:
   localPort: 0
@@ -35,3 +34,17 @@ ssh:
   forwardAgent: null
   forwardX11: null
   forwardX11Trusted: null
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail
+    mkdir -p /aptcache
+    chmod -R 777 /aptcache
+    export DEBIAN_FRONTEND=noninteractive
+    apt update 
+    apt-get install -y mc curl -y
+- mode: user
+  script: |
+    #!/bin/bash
+    set -eux -o pipefail

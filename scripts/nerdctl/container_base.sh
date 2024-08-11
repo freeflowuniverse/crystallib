@@ -20,6 +20,9 @@ echo "passwd is admin for root"
 # ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${BASENR}022 root@127.0.0.1 -A
 
 ssh -p ${BASENR}022 root@127.0.0.1 -A 'ls /'
+
+nerdctl commit base base
+
 ssh -p ${BASENR}022 root@127.0.0.1 -A
 
 #heroc_shell ${NAME}

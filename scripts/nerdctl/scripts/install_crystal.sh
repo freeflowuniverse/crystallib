@@ -18,7 +18,7 @@ bash /tmp/install.sh
 
 #bash /root/code/github/freeflowuniverse/crystallib/install.sh
 
-apt-get remove -y gcc
+#apt-get remove -y gcc
 apt-get install -y libsqlite3-dev tcc
 
 #with hero (will compile hero as well)
@@ -51,6 +51,7 @@ else
     fi    
 fi
 
-unminimize
+
+hero bootstrap -d
 
 echo "CRYSTAL INSTALLED."

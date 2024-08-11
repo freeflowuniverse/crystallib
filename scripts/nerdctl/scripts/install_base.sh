@@ -12,6 +12,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
 apt-get install -y curl wget mc sudo
+unminimize
 
 
 echo "BASE INSTALLED."
