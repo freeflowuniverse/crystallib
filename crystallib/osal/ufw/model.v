@@ -21,7 +21,7 @@ pub mut:
 pub struct Rule {
 pub mut: 
 	ipv6 bool
-	to     string
+	port     int
 	from   string = "any"
 	tcp bool
 	udp bool
@@ -33,7 +33,7 @@ pub mut:
 pub struct RuleArgs {
 pub mut: 
 	ipv6 bool
-	to     string
+	port     int
 	from   string = "any"
 	tcp bool = true
 	udp bool
@@ -42,10 +42,11 @@ pub mut:
 // Allow incoming traffic to a specific port or service
 pub fn (mut rs RuleSet) allow(args RuleArgs) {
 	rs.rules << Rule{		
-		to: args.to
+		port: args.port
 		tcp: args.tcp
 		udp: args.udp
 		allow: true
+		from: args.from
 		ipv6:args.ipv6
 	}
 }
@@ -54,8 +55,9 @@ pub fn (mut rs RuleSet) allow(args RuleArgs) {
 // Deny incoming traffic to a specific port or service
 pub fn (mut rs RuleSet) deny(args RuleArgs) {
 	rs.rules << Rule{		
-		to: args.to
+		port: args.port
 		tcp: args.tcp
+		from: args.from
 		udp: args.udp
 		allow: false
 		ipv6:args.ipv6

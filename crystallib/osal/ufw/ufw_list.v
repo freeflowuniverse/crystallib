@@ -33,22 +33,25 @@ pub fn ufw_status() !UFWStatus {
 			tostart = true
 			continue
 		}		
-		rule := parse_rule(line_trimmed)!
-		ufw_data.rules << rule
+		if tostart{
+			rule := parse_rule(line_trimmed)!
+			ufw_data.rules << rule
+		}
 	}
 
 	return ufw_data
 }
 
-fn parse_rule(line string) !Rule {
+fn parse_rule(line_ string) !Rule {
+	mut line:=line_
+	line=line.replace(" (v6)","(v6)")
 	parts := line.split_any(' \t').filter(it.len > 0)
 
 	if parts.len != 3{
 		return error("error in parsing rule of ufw.\n${parts}")
 	}
-
-	mut rule := Rule{
-		to: parts[0]
+	mut to:= parts[0]
+	mut rule := Rule{		
 		from: parts[parts.len - 1]
 	}
 
@@ -57,27 +60,29 @@ fn parse_rule(line string) !Rule {
 	}
 
 	// Check for IPv6
-	if rule.to.contains('(v6)') || rule.from.contains('(v6)') {
+	if to.contains('(v6)') || rule.from.contains('(v6)') {
 		rule.ipv6 = true
-		rule.to = rule.to.replace('(v6)', '').trim_space()
+		to = to.replace('(v6)', '').trim_space()
 		rule.from = rule.from.replace('(v6)', '').trim_space()
 	}
 
 	// Check for protocol
-	if rule.to.contains('/') {
-		proto := rule.to.split('/')[1]
-		rule.to = rule.to.split('/')[0]
+	if to.contains('/') {
+		proto := to.split('/')[1]
+		to = to.split('/')[0]
 		if proto == 'tcp' {
 			rule.tcp = true
 		}
 		if proto == 'udp' {
 			rule.udp = true
 		}
-		rule.to = rule.to.split('/')[0].trim_space()
+		to = to.split('/')[0].trim_space()
 	}else{
 		rule.tcp = true
 		rule.udp = true
 	}
+
+	rule.port = to.int()
 
 	// Convert 'Anywhere' to 'any'
 	if rule.from.contains('Anywhere') {

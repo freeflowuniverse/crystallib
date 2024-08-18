@@ -2,7 +2,5 @@
 ## UFW OSAL
 
 
-```v
+see crystallib/examples/osal/ufw.vsh for example.
 
-
-```

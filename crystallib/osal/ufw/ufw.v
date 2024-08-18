@@ -6,17 +6,16 @@ import os
 
 
 pub fn reset() ! {
-	console.print_debug('reset ufw')
 	osal.execute_silent("
 		ufw --force disable
 		ufw --force reset
 		ufw allow 22
 		ufw --force enable
 		")!
+	console.print_debug('UFW Reset')
 }
 
-
-
+//ufw allow proto tcp to any port 80
 
 pub fn apply_rule(rule_ Rule) ! {
 	mut rule := rule_
@@ -28,6 +27,12 @@ pub fn apply_rule(rule_ Rule) ! {
 		command += 'deny '
 	}
 
+	if rule.tcp && !rule.udp {
+		command += 'proto tcp '
+	} else if !rule.tcp && rule.udp {
+		command += 'proto udp '
+	}
+	
 	if rule.from.trim_space()==""{
 		rule.from = 'any'
 	}
@@ -36,37 +41,34 @@ pub fn apply_rule(rule_ Rule) ! {
 		command += 'from ${rule.from} '
 	}
 
-	if rule.to.trim_space()==""{
-		rule.to = 'any'
+	command+="to any "
+
+	if rule.port==0{
+		return error("rule port cannot be 0, needs to be a port nr")
 	}
 
-	if rule.to != 'any' {
-		command += 'to ${rule.to} '
-	}
+	command += 'port ${rule.port} '
 
-	if rule.tcp && !rule.udp {
-		command += 'proto tcp '
-	} else if !rule.tcp && rule.udp {
-		command += 'proto udp '
+	result := os.execute(command)
+	if result.exit_code != 0 {
+		return error('Failed to apply rule: \n${rule}\n${command}\nError: ${result.output}')
 	}
-	// result := os.execute(command)
-	// if result.exit_code != 0 {
-	// 	return error('Failed to apply rule: ${command}\nError: ${result.output}')
-	// }
-	println('Rule applied: ${command}')
+	console.print_debug('Rule applied: ${command}')
 }
 
-fn allow_ssh(){
-	os.execute_or_panic('ufw allow ssh')
+pub fn allow_ssh()!{
+	osal.execute_silent('ufw default deny incoming')! //make sure all is default denied
+	osal.execute_silent('ufw allow ssh')!
 }
 
-fn disable_ufw() {
-	os.execute_or_panic('ufw --force enable')
+pub fn disable()! {
+	osal.execute_silent('ufw --force disable')!
 }
 
 
-fn enable_ufw() {
-	os.execute_or_panic('ufw --force disable')
+pub fn enable()! {
+	allow_ssh()!
+	osal.execute_silent('ufw --force enable')!
 }
 
 
@@ -74,14 +76,17 @@ pub fn apply(ruleset RuleSet) ! {
 	if ruleset.reset {
 		reset()!
 	}
-	disable_ufw()
+	disable()!
+	console.print_debug('UFW Disabled')
 	for rule in ruleset.rules {
 		apply_rule(rule)!
 	}
 	if ruleset.ssh {
-		allow_ssh() 
+		console.print_debug('SSH enable')
+		allow_ssh()!
 	}	
-	enable_ufw()
+	enable()!
+	console.print_debug('UFW Enabled and Configured')
 }
 
 pub fn new() RuleSet{
