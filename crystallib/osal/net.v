@@ -23,12 +23,15 @@ pub mut:
 // address is e.g. 8.8.8.8
 // ping means we check if the destination responds
 pub fn ping(args PingArgs) PingResult {
-	mut cmd := ''
 	platform_ := platform()
+	mut cmd:= "ping"
+	if args.address.contains(":"){
+		cmd = "ping6"
+	}
 	if platform_ == .osx {
-		cmd = 'ping -c ${args.count} -W ${args.timeout * 1000} ${args.address}'
+		cmd += ' -c ${args.count} -W ${args.timeout * 1000} ${args.address}'
 	} else if platform_ == .ubuntu {
-		cmd = 'ping -c ${args.count} -w ${args.timeout} ${args.address}'
+		cmd += ' -c ${args.count} -w ${args.timeout} ${args.address}'
 	} else {
 		panic('Unsupported platform for ping')
 	}

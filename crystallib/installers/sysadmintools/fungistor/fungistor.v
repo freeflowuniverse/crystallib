@@ -1,4 +1,4 @@
-module rfs
+module fungistor
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console

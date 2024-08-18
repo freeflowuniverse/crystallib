@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.crypt.secrets
 // import freeflowuniverse.crystallib.core.texttools
 // import freeflowuniverse.crystallib.clients.httpconnection
-// import os
+import os
 import time
 
 @[params]
@@ -18,7 +18,7 @@ pub mut:
 	sled_cache_capacity u32    = 128 // in MB
 	compression_level   u8     = 1
 
-	rpc_secret        string //{GARAGE.RPCSECRET}
+	rpc_secret        string //{GARAGE_RPCSECRET}
 	rpc_bind_addr     string = '[::]:3901'
 	rpc_bind_outgoing bool
 	rpc_public_addr   string = '127.0.0.1:3901'
@@ -33,46 +33,59 @@ pub mut:
 	web_root_domain string = '.web.garage'
 
 	admin_api_bind_addr string = '[::]:3903'
-	admin_metrics_token string //{GARAGE:METRICSTOKEN}
-	admin_token         string //{GARAGE:ADMINTOKEN}
+	admin_metrics_token string //{GARAGE_METRICSTOKEN}
+	admin_token         string //{GARAGE_ADMINTOKEN}
 	admin_trace_sink    string = 'http://localhost:4317'
 
 	reset bool
-	start bool
+	config_reset bool
+	start bool = true
+	restart bool = true
 }
 
-pub fn start(args_ S3Config) ! {
+pub fn configure(args_ S3Config) !S3Config {
 	mut args := args_
+
+	if args.rpc_secret == ""{
+		args.rpc_secret = secrets.openssl_hex_secret()!
+		println("export GARAGE_RPCSECRET=${args.rpc_secret}")
+	}
+		
+	if args.admin_metrics_token == ""{
+		args.admin_metrics_token = secrets.openssl_base64_secret()!
+		println("export GARAGE_METRICSTOKEN=${args.admin_metrics_token}")
+	}
+
+	if args.admin_token == ""{
+		args.admin_token = secrets.openssl_base64_secret()!
+		println("export GARAGE_ADMINTOKEN=${args.admin_token}")
+	}
+
 	mut config_file := $tmpl('templates/garage.toml')
+
+	myconfigpath_ := '/etc/garage.toml'
+	mut myconfigpath := pathlib.get_file(path: myconfigpath_, create: true)!
+	myconfigpath.write(config_file)!
 
 	console.print_header('garage start')
 
-	// create the paths
-	myconfigpath_ := '${args.metadata_dir}/garage.toml'
+	return args
 
-	mut box := secrets.get()!
-	config_file = box.replace(
-		txt: config_file
-		defaults: {
-			'GARAGE.RPCSECRET':    secrets.DefaultSecretArgs{
-				secret: args.rpc_secret
-				cat: .openssl_hex
-			}
-			'GARAGE.METRICSTOKEN': secrets.DefaultSecretArgs{
-				secret: args.admin_metrics_token
-				cat: .openssl_base64
-			}
-			'GARAGE.ADMINTOKEN':   secrets.DefaultSecretArgs{
-				secret: args.admin_token
-				cat: .openssl_base64
-			}
-		}
-		printsecrets: true
-	)!
+}
 
-	mut myconfigpath := pathlib.get_file(path: myconfigpath_, create: true)!
-	myconfigpath.write(config_file)!
-	pathlib.get_dir(path: args.data_dir, create: true)!
+
+pub fn start(args_ S3Config) !S3Config {
+	mut args := args_
+
+	myconfigpath_ := '/etc/garage.toml'
+
+	if args.config_reset || ! os.exists(myconfigpath_){
+		args = configure(args)!
+	}
+
+	if args.restart{
+		stop()!
+	}
 
 	mut sm := startupmanager.get()!
 
@@ -85,12 +98,13 @@ pub fn start(args_ S3Config) ! {
 
 	for _ in 0 .. 50 {
 		if check(args)! {
-			return
+			return args
 		}
 		time.sleep(100 * time.millisecond)
 	}
 
 	return error('garage server did not start properly.')
+
 }
 
 pub fn stop() ! {
@@ -100,6 +114,11 @@ pub fn stop() ! {
 }
 
 fn check(args S3Config) !bool {
-	// TODO: implement health check
-	return true
+	
+	cmd:="garage status"
+	res := os.execute('garage status')
+	if res.exit_code == 0 {	
+		return true
+	}
+	return false
 }
