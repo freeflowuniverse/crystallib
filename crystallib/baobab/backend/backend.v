@@ -1,6 +1,8 @@
 module backend
 
 import os
+import db.sqlite
+import db.pg
 import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.data.encoderhero
 
@@ -16,13 +18,27 @@ pub:
 	name   string
 	secret string
 	reset bool
+	db_type DatabaseType
 }
+
+// fn get_db(name string, db_type DatabaseType) ! {
+// 	match db_type {
+// 		.sqlite {
+// 			return sqlite.connect('${os.home_dir()}/hero/db/${name}.sqlite')!
+// 		} .postgres {
+// 			return pg.connect(dbname: name)!
+// 		}
+// 	}
+// }
 
 pub fn new(config BackendConfig) !Backend {
 	mut backend := Backend{
-		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite'
+		indexer: new_indexer(
+			Database{
+				sqlite_db: sqlite.connect('${os.home_dir()}/hero/db/${config.name}.sqlite')!
+			},
 			reset: config.reset
-		)!
+		)!,
 		dbs: dbfs.get(
 			contextid: 1
 			secret: config.secret
