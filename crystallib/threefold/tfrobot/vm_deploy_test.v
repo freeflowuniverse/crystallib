@@ -14,8 +14,6 @@ fn test_vm_deploy() ! {
 	mneumonics := os.getenv('MNEUMONICS')
 	ssh_key := os.getenv('SSH_KEY')
 
-	println('debbb ${ssh_key}')
-
 	mut robot := configure('testrobot', 
 		mnemonics: mneumonics
 		network: 'main'
