@@ -52,9 +52,9 @@ pub fn build() ! {
 	)!
 	cmd := '
 	cd ${path}
-	cd mass-deployer
+	cd tfrobot
 	make build
-	cp ${path}/mass-deployer/bin/tfrobot ${dest_on_os}/
+	cp ${path}/tfrobot/bin/tfrobot ${dest_on_os}/
 	'
 	console.print_header('build tfrobot')
 	osal.execute_stdout(cmd)!
