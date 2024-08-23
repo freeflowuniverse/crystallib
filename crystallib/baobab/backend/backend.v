@@ -8,8 +8,8 @@ import freeflowuniverse.crystallib.data.encoderhero
 
 pub struct Backend {
 pub mut:
-	indexer Indexer
-	dbs     dbfs.DBCollection
+	indexer Indexer // storing indeces
+	dbs     dbfs.DBCollection // 
 }
 
 @[params]

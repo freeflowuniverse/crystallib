@@ -16,6 +16,7 @@ mut:
 @[params]
 pub struct IndexerConfig {
 	reset bool
+	default_db DatabaseType
 }
 
 pub fn new_indexer(db Database, config IndexerConfig) !Indexer {
@@ -23,8 +24,19 @@ pub fn new_indexer(db Database, config IndexerConfig) !Indexer {
 	// 	reset(db_path)!
 	// }
 
+	mut default_db := config.default_db
+	if _ := db.sqlite_db {
+		default_db = sqlite_db
+	}
+	if _ := db.postgres_db {
+		default_db = postgres_db
+	}
+
 	mut backend := Indexer{
-		db: db
+		db: Database{
+			...db
+			default_db: default_db
+		}
 	}
 
 	return backend
@@ -35,7 +47,6 @@ pub fn reset(path string)! {
 	mut db_file := pathlib.get_file(path: path)!
 	db_file.delete()!
 }
-
 
 // new creates a new root object entry in the root_objects table,
 // and the table belonging to the type of root object with columns for index fields

@@ -7,7 +7,7 @@ import x.json2
 pub struct RootObject {
 pub mut:
 	id string
-	name string
+	name string // Story
 	fields []FieldDescription
 }
 
@@ -25,7 +25,7 @@ pub mut:
 pub fn (field FieldDescription) sql_type() string {
 	return match field.typ {
 		.text {'TEXT'}
-		.number {'NUMBER'}
+		.number {'INTEGER'}
 	}
 }
 
@@ -43,6 +43,7 @@ pub fn (obj RootObject) to_json() string {
 	return obj_map.str()
 }
 
+
 // returns the lists of the indices of a root objects db table, and corresponding values
 pub fn (obj RootObject) sql_indices_values() ([]string, []string) {
 	obj_encoded := obj.to_json()
@@ -53,24 +54,22 @@ pub fn (obj RootObject) sql_indices_values() ([]string, []string) {
 	mut values := [obj_val]
 
 	for field in obj.fields {
+		indices << '${field.name}'
 		if field.name == 'id' {
-			indices << '${field.name}'
-			values << "'${field.value}'"
+			values << "${field.value}"
 		}
 
 		if field.typ == .text {
 			if field.is_index {
-				indices << '${field.name}'
 				values << "'${field.value}'"
 			}
 		} else if field.typ == .number {
 			if field.is_index {
-				indices << '${field.name}'
 				values << "${field.value}"
 			}
 		}
 	}
-
+	println('debugzoni ${indices} ${values}')
 	return indices, values
 
 }

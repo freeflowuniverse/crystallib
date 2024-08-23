@@ -25,12 +25,18 @@ fn db_path(db_name string) string {
 	return '${db_dir}/${db_name}.db'
 }
 
+const pgconfig := pg.Config {
+	dbname: 'default'
+	user: 'admin'
+	password: 'test'
+}
+
 fn test_new_indexer() ! {
 	sqlite_db :=  sqlite.connect(db_path(@FN))!
 	sqlite_indexer := new_indexer(sqlite_db: sqlite_db)!
 	
-	// postgres_db := pg.connect(dbname: 'default')!
-	// postgres_indexer := new_indexer(postgres_db: postgres_db)!
+	postgres_db := pg.connect(pgconfig)!
+	postgres_indexer := new_indexer(postgres_db: postgres_db)!
 }
 
 fn test_reset() ! {
@@ -43,24 +49,43 @@ pub struct TestStruct {
 }
 
 fn test_indexer_new() ! {
-	sqlite_db :=  sqlite.connect(db_path(@FN))!
-	mut sqlite_indexer := new_indexer(sqlite_db: sqlite_db)!
-	// mut postgres_indexer := new_indexer(new_db(@FN, PostgresConfig{})!)!
-	
-	sqlite_indexer.generic_new(TestStruct{
+	// sqlite_db :=  sqlite.connect(db_path(@FN))!
+	// mut sqlite_indexer := new_indexer(sqlite_db: sqlite_db)!
+
+	// sqlite_indexer.generic_new(TestStruct{
+	// 	text: 'test_text'
+	// 	number: 41
+	// })!
+
+	// mut list := sqlite_indexer.generic_list[TestStruct]()!
+	// assert list.len == 1
+
+	// sqlite_indexer.generic_new(TestStruct{
+	// 	text: 'test_text2'
+	// 	number: 42
+	// })!
+
+	// list = sqlite_indexer.generic_list[TestStruct]()!
+	// assert list.len == 2
+
+	// postgres
+	postgres_db := pg.connect(pgconfig)!
+	mut postgres_indexer := new_indexer(postgres_db: postgres_db)!
+
+	postgres_indexer.generic_new(TestStruct{
 		text: 'test_text'
 		number: 41
 	})!
 
-	mut list := sqlite_indexer.generic_list[TestStruct]()!
+	mut list := postgres_indexer.generic_list[TestStruct]()!
 	assert list.len == 1
 
-	sqlite_indexer.generic_new(TestStruct{
+	postgres_indexer.generic_new(TestStruct{
 		text: 'test_text2'
 		number: 42
 	})!
 
-	list = sqlite_indexer.generic_list[TestStruct]()!
+	list = postgres_indexer.generic_list[TestStruct]()!
 	assert list.len == 2
 }
 

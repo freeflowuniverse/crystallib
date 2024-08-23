@@ -14,13 +14,13 @@ pub fn (mut backend Indexer) new(object RootObject) ! {
 	table_name := get_table_name(object)
 
 	// create table for root object if it doesn't exist
-	backend.create_root_object_table(object)!
-
-	indices, values := object.sql_indices_values()
-	insert_query := 'insert into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
-	backend.db.exec(insert_query) or {
-		return error('Error inserting object ${object} into table ${table_name}\n${err}')
-	}
+	backend.create_root_object_table(object, .postgres)!
+	backend.db.insert(object)!
+	// indices, values := object.sql_indices_values()
+	// insert_query := 'INSERT into ${table_name} (${indices.join(',')}) values (${values.join(',')})'
+	// backend.db.exec(insert_query) or {
+	// 	return error('Error inserting object ${object} into table ${table_name}\n${err}')
+	// }
 }
 
 // save the session to redis & mem
@@ -121,8 +121,12 @@ pub fn (mut backend Indexer) filter(filter RootObject, params FilterParams) ![]s
 }
 
 // create_root_struct_table creates a table for a root_struct with columns for each index field
-fn (mut backend Indexer) create_root_object_table(object RootObject) ! {
-	mut columns := ['id integer primary key AUTOINCREMENT', 'data TEXT']
+fn (mut backend Indexer) create_root_object_table(object RootObject, db_type DatabaseType) ! {
+	mut columns := if db_type == .sqlite {
+		['id integer primary key AUTOINCREMENT', 'data TEXT']
+	} else {
+		['id SERIAL PRIMARY KEY', 'data JSONB']
+	}
 
 	// create columns for fields marked as index
 	for field in object.fields {
