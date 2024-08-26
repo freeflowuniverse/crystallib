@@ -108,10 +108,9 @@ heroscript:="
 !!cluster.add_service
     name: 'web_service'
     description: 'Main web service'
-    port: '80,443'
-    port_public: '8080,8443'
+    port_public: '443'
     active: true
-    installer: 'nginx'
+    installer: 'caddy'
     depends: 'database_service'
     nodes: '1,2'
     master: 1
@@ -120,11 +119,8 @@ heroscript:="
     name: 'database_service'
     description: 'Database service'
     port: 5432
-    port_public: 
-    active: true
     installer: 'postgresql'
     nodes: 2
-    master: 2
 
 
 "

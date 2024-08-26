@@ -1,7 +1,6 @@
 module caddy
 
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.installers.base
 import os
 
 pub fn play(mut plbook playbook.PlayBook) ! {
@@ -27,7 +26,17 @@ pub fn play(mut plbook playbook.PlayBook) ! {
             file_path := p.get_default('file_path', '')!
 			file_url := p.get_default('file_url', '')!
 			xcaddy := p.get_default_false('xcaddy')
-			plugins := p.get_list_default('plugins', [])!
+			mut plugins := p.get_list_default('plugins', [])!
+
+            if xcaddy{
+                if plugins == []{
+                    plugins = ['github.com/mholt/caddy-webdav',
+                            'github.com/mohammed90/caddy-git-fs',
+                            'github.com/abiosoft/caddy-exec',
+                            'github.com/greenpau/caddy-security']
+                }
+            }
+
 
             install(
                 reset: reset
