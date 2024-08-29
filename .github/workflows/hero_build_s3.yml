@@ -31,21 +31,29 @@ jobs:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
-
-      - name: Install dependencies
+      
+      - name: Debug environment
         run: |
-          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
-            set -x
-            sudo apt update
-            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis gcc
-            redis-server --daemonize yes
-            sudo apt install -y build-essential wget autoconf libtool         
-          else
-            brew install libgc tmux git rsync curl redis libpq
-            brew services start redis
-          fi          
-          sleep 2
-          redis-cli ping
+          echo "GITHUB_ACTIONS: $GITHUB_ACTIONS"
+          env | grep GITHUB
+          G=1
+          set +x && echo G
+          exit 1
+          
+      # - name: Install dependencies
+      #   run: |
+      #     if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+      #       set -x
+      #       sudo apt update
+      #       sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis gcc
+      #       redis-server --daemonize yes
+      #       sudo apt install -y build-essential wget autoconf libtool         
+      #     else
+      #       brew install libgc tmux git rsync curl redis libpq
+      #       brew services start redis
+      #     fi          
+      #     sleep 2
+      #     redis-cli ping
 
       - name: Check out repository code
         uses: actions/checkout@v3
