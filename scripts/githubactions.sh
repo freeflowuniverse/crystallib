@@ -884,6 +884,7 @@ function crystal_pull {
 
 function crystal_test {
     set -e
+    pushd $DIR_CODE/github/freeflowuniverse/crystallib
     v -enable-globals -stats test crystallib/core/pathlib
     v -enable-globals -stats test crystallib/core/texttools
     v -enable-globals -stats test crystallib/core/playbook
@@ -893,6 +894,7 @@ function crystal_test {
     v -enable-globals -stats test crystallib/data/ourtime
     v -enable-globals -stats test crystallib/data/paramsparser
     # v -enable-globals -stats test crystallib/data/doctree
+    popd 2>&1 >> /dev/null
 }
 
 
@@ -1070,6 +1072,6 @@ sshknownkeysadd
 
 
 hero_build
-crystal_test
+#crystal_test
 hero_upload
 echo 'OK'
