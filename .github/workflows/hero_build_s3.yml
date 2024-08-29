@@ -32,14 +32,6 @@ jobs:
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
       
-      - name: Debug environment
-        run: |
-          echo "GITHUB_ACTIONS: $GITHUB_ACTIONS"
-          env | grep GITHUB
-          G=1
-          set +x && echo G
-          exit 1
-          
       # - name: Install dependencies
       #   run: |
       #     if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
@@ -58,6 +50,10 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
+      - name: INSTALLBASE
+        run: |
+          cd $(pwd) && find . -maxdepth 2 && sudo bash +x scripts/install_base.sh
+
       - name: Get crystalweb
         run: |
           mkdir -p ~/.vmodules
@@ -66,9 +62,6 @@ jobs:
           find . -maxdepth 2
           git clone --depth 1 https://github.com/freeflowuniverse/webcomponents
 
-      - name: INSTALLBASE
-        run: |
-          cd $(pwd) && find . -maxdepth 2 && sudo bash +x scripts/install_base.sh          
 
       - name: DEBUG
         run: |

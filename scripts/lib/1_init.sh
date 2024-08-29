@@ -99,5 +99,5 @@ function execute_with_marker {
 
 
 is_github_actions() {
-    [ -n "$GITHUB_ACTIONS" ]
+    [ -d "/home/runner" ] || [ -d "$HOME/runner" ]
 }

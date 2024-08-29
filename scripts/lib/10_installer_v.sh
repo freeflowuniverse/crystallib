@@ -63,7 +63,7 @@ function v_install {
 
 function v_analyzer_install {
 
-    if [ -n "$GITHUB_ACTIONS" ]; then
+    if is_github_actions; then
         return
     fi
 
