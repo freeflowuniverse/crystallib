@@ -29,13 +29,13 @@ function crystal_deps_install {
 function crystal_lib_pull {
 
     if [[ -z "${DEBUG}" ]]; then
-        exit 0
+        return 0
     fi
 
     pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
     if [[ $(git status -s) ]]; then
         echo "There are uncommitted changes in the Git repository crystallib."
-        exit 1
+        return 1
     fi
     git pull
     popd 2>&1 >> /dev/null

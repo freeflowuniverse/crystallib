@@ -648,6 +648,7 @@ function redis_test {
 
 function v_install {
     set -e
+    echo "v install"
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1
@@ -702,7 +703,7 @@ function v_install {
 
 
     if ! [ -x "$(command -v v)" ]; then
-    echo 'vlang is not installed.' >&2
+    echo 'ERROR: vlang is not installed.' >&2
     exit 1
     fi
 }
@@ -756,13 +757,13 @@ function crystal_deps_install {
 function crystal_lib_pull {
 
     if [[ -z "${DEBUG}" ]]; then
-        exit 0
+        return 0
     fi
 
     pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
     if [[ $(git status -s) ]]; then
         echo "There are uncommitted changes in the Git repository crystallib."
-        exit 1
+        return 1
     fi
     git pull
     popd 2>&1 >> /dev/null
