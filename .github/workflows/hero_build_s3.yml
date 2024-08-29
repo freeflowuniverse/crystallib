@@ -60,7 +60,7 @@ jobs:
 
       - name: INSTALLBASE
         run: |
-          cd $(pwd) && find . -maxdepth 2 && bash +x scripts/install_base.sh          
+          cd $(pwd) && find . -maxdepth 2 && sudo bash +x scripts/install_base.sh          
 
       - name: DEBUG
         run: |
