@@ -63,13 +63,15 @@ jobs:
           echo "******** LS CRYSTALLIB"
           ls $(pwd)
           echo "******** LS WEBCOMPONENTS"
-          ls $(pwd)/../webcomponents          
+          ls $(pwd)/../webcomponents  
+          echo "******** END"
+          pushd $(pwd)/../webcomponents
+          git status
+          popd                  
 
       - name: Get crystallib
         run: |
-          pushd $(pwd)/webcomponents
-          git status
-          popd
+
           echo "******** END"          
           mkdir -p ~/.vmodules/freeflowuniverse
           rm -f ~/.vmodules/freeflowuniverse/crystallib
