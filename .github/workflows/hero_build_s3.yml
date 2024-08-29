@@ -63,16 +63,16 @@ jobs:
           cd $(pwd)
           cd ..
           echo "******** LS BASE CODE"
-          find . -maxdepth 3
+          find . -maxdepth 2
           echo "******** LS CRYSTALLIB"
           cd $(pwd)
-          ls
+          find . -maxdepth 2
           git status
           echo "******** LS WEBCOMPONENTS"
           cd $(pwd)
           cd ..
           cd webcomponents  
-          ls
+          find . -maxdepth 2
           git status
           echo "******** END"
 
@@ -85,7 +85,7 @@ jobs:
           rm -f ~/.vmodules/freeflowuniverse/webcomponents
           cd $(pwd)
           cd ..                    
-          ls
+          find . -maxdepth 2
           ln -s $(pwd)/../webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
           ls ~/.vmodules
           ls ~/.vmodules/freeflowuniverse
