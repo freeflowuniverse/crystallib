@@ -9,7 +9,6 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
-
 @[params]
 pub struct InstallArgs {
 pub mut:
@@ -19,15 +18,14 @@ pub mut:
 	// password   string @[secret]
 	// secret     string @[secret]
 	// title      string = 'My Hero DAG'
-	reset      bool
-	start      bool = true
-	stop 	   bool
-	restart    bool
+	reset     bool
+	start     bool = true
+	stop      bool
+	restart   bool
 	uninstall bool
 	// host        string = 'localhost' // server host (default is localhost)
 	// port       int = 8888
 }
-
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
@@ -36,16 +34,16 @@ pub fn install(args_ InstallArgs) ! {
 
 	res := os.execute('${osal.profile_path_source_and()} grafana --version')
 	if res.exit_code == 0 {
-		r := res.output.split_into_lines().filter(it.trim_space().starts_with("grafana"))
+		r := res.output.split_into_lines().filter(it.trim_space().starts_with('grafana'))
 		if r.len != 1 {
-			args.reset=true
+			args.reset = true
 		}
-		version2 := r[0].split("version")[1]
+		version2 := r[0].split('version')[1]
 		if texttools.version(version) > texttools.version(version2) {
-			args.reset=true
+			args.reset = true
 		}
 	} else {
-		args.reset=true
+		args.reset = true
 	}
 
 	if args.reset {
@@ -64,11 +62,10 @@ pub fn install(args_ InstallArgs) ! {
 			expand_dir: '/tmp/grafana'
 		)!
 
-		mut mypath:=pathlib.get_dir(path:"/tmp/grafana/grafana-v${version}")!
-		mypath.copy(dest:"/root/hero/grafana",delete:false,rsync:true)!
+		mut mypath := pathlib.get_dir(path: '/tmp/grafana/grafana-v${version}')!
+		mypath.copy(dest: '/root/hero/grafana', delete: false, rsync: true)!
 
-		osal.profile_path_add(path: "/root/hero/grafana/bin")!
-
+		osal.profile_path_add(path: '/root/hero/grafana/bin')!
 	}
 
 	// if args.restart {
@@ -84,8 +81,6 @@ pub fn install(args_ InstallArgs) ! {
 	// if args.stop {
 	// 	stop()!
 	// }	
-
-
 }
 
 // pub fn start(args_ InstallArgs) ! {
@@ -109,7 +104,6 @@ pub fn install(args_ InstallArgs) ! {
 // 	console.print_header('grafana start')
 
 // 	//println(args)
-
 
 // 	configure(args)!
 
@@ -139,7 +133,6 @@ pub fn install(args_ InstallArgs) ! {
 // 	// 	panic("sdsdsds grafana install")
 // 	// }
 
-
 // 	// time.sleep(100000000000)
 // 	for _ in 0 .. 50 {
 // 		if check(args)! {
@@ -151,8 +144,6 @@ pub fn install(args_ InstallArgs) ! {
 
 // }
 
-
-
 // pub fn configure(args_ InstallArgs) ! {
 // 	mut cfg := args_
 
@@ -160,17 +151,14 @@ pub fn install(args_ InstallArgs) ! {
 // 		return error("password and secret needs to be filled in for grafana")
 // 	}
 
-
 // 	mut mycode := $tmpl('templates/admin.yaml')
 
 // 	mut path := pathlib.get_file(path: cfg.configpath, create: true)!
 // 	path.write(mycode)!
 
 // 	console.print_debug(mycode)
-	
 
 // }
-
 
 // pub fn check(args InstallArgs) !bool {
 // 	// this checks health of grafana
@@ -196,7 +184,6 @@ pub fn install(args_ InstallArgs) ! {
 // 	return true
 // }
 
-
 // pub fn stop() ! {
 // 	console.print_header('Dagu Stop')
 // 	mut sm := startupmanager.get()!
@@ -207,8 +194,6 @@ pub fn install(args_ InstallArgs) ! {
 // 	stop()!
 // 	start(args)!
 // }
-
-
 
 // pub fn installargs(args InstallArgs) InstallArgs {
 // 	return args	

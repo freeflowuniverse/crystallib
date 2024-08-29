@@ -16,13 +16,13 @@ pub struct RootObject {
 }
 
 @[params]
-pub struct IndexerConfig{
+pub struct IndexerConfig {
 	reset bool
 }
 
 pub fn new_indexer(db_path string, config IndexerConfig) !Indexer {
 	if config.reset {
-		println("debugzorko ${db_path}")
+		println('debugzorko ${db_path}')
 		reset(db_path)!
 	}
 
@@ -37,15 +37,14 @@ pub fn new_indexer(db_path string, config IndexerConfig) !Indexer {
 	return backend
 }
 
-
 // deletes an indexer table belonging to a base object
-pub fn reset(path string)! {	
+pub fn reset(path string) ! {
 	mut db_file := pathlib.get_file(path: path)!
 	db_file.delete()!
 }
 
 // deletes an indexer table belonging to a base object
-pub fn (mut backend Indexer) delete_table[T]()! {
+pub fn (mut backend Indexer) delete_table[T]() ! {
 	table_name := get_table_name[T]()
 	delete_query := 'delete table ${table_name}'
 	backend.db.exec(delete_query)!

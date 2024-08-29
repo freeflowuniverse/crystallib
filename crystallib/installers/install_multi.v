@@ -30,7 +30,7 @@ pub mut:
 	uninstall bool
 	gitpull   bool
 	gitreset  bool
-	start bool
+	start     bool
 }
 
 pub fn names(args_ InstallArgs) []string {
@@ -108,13 +108,12 @@ pub fn install_multi(args_ InstallArgs) ! {
 				mycelium.install(reset: args.reset)!
 				mycelium.start()!
 			}
-			'garage_s3'
-			{
-				garage_s3.install(reset: args.reset,config_reset:args.reset,restart:true)!
-			}			
+			'garage_s3' {
+				garage_s3.install(reset: args.reset, config_reset: args.reset, restart: true)!
+			}
 			'fungistor' {
 				fungistor.install(reset: args.reset)!
-			}			
+			}
 			'lima' {
 				lima.install(reset: args.reset, uninstall: args.uninstall)!
 			}
@@ -124,7 +123,7 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'prometheus' {
 				prometheus.install(reset: args.reset, uninstall: args.uninstall)!
 			}
-			'grafana'{
+			'grafana' {
 				grafana.install(reset: args.reset, uninstall: args.uninstall)!
 			}
 			'vscode' {

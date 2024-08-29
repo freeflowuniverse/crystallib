@@ -19,7 +19,7 @@ pub mut:
 	end         ourtime.OurTime
 	context     &Context            @[skip; str: skip]
 	config      SessionConfig
-	env			map[string]string
+	env         map[string]string
 }
 
 ///////// LOAD & SAVE
@@ -27,8 +27,6 @@ pub mut:
 // fn (mut self Session) key() string {
 // 	return 'hero:sessions:${self.guid()}'
 // }
-
-
 
 // get db of the session, is unique per session
 pub fn (mut self Session) db_get() !dbfs.DB {
@@ -63,19 +61,19 @@ pub fn (mut self Session) save() ! {
 }
 
 // Set an environment variable
-pub fn (mut self Session) env_set(key string, value string)! {
-    self.env[key] = value
+pub fn (mut self Session) env_set(key string, value string) ! {
+	self.env[key] = value
 	self.save()!
 }
 
 // Get an environment variable
 pub fn (mut self Session) env_get(key string) !string {
-    return self.env[key] or { return error("can't find env in session ${self.name}") }
+	return self.env[key] or { return error("can't find env in session ${self.name}") }
 }
 
 // Delete an environment variable
 pub fn (mut self Session) env_delete(key string) {
-    self.env.delete(key)
+	self.env.delete(key)
 }
 
 ////////// REPRESENTATION

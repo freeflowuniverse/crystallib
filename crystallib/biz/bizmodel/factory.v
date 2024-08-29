@@ -12,15 +12,12 @@ __global (
 	bizmodels shared map[string]&BizModel
 )
 
-
-
 pub struct BizModel {
 pub mut:
 	sheet     spreadsheet.Sheet
 	params    BizModelArgs
 	employees map[string]&Employee
 }
-
 
 @[params]
 pub struct BizModelArgs {

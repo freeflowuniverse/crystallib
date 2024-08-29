@@ -16,23 +16,22 @@ pub struct InstallArgs {
 pub mut:
 	homedir    string
 	configpath string
-	username   string = "admin"
+	username   string = 'admin'
 	password   string @[secret]
 	secret     string @[secret]
 	title      string = 'My Hero DAG'
 	reset      bool
 	start      bool = true
-	stop 	   bool
+	stop       bool
 	restart    bool
-	host        string = 'localhost' // server host (default is localhost)
-	port       int = 8888
+	host       string = 'localhost' // server host (default is localhost)
+	port       int    = 8888
 }
-
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	if !is_installed(version)! {
+	if !is_installed(dagu.version)! {
 		args.reset = true
 	}
 
@@ -41,13 +40,13 @@ pub fn install(args_ InstallArgs) ! {
 
 		mut url := ''
 		if osal.is_linux_arm() {
-			url = 'https://github.com/dagu-dev/dagu/releases/download/v${version}/dagu_${version}_linux_arm64.tar.gz'
+			url = 'https://github.com/dagu-dev/dagu/releases/download/v${dagu.version}/dagu_${dagu.version}_linux_arm64.tar.gz'
 		} else if osal.is_linux_intel() {
-			url = 'https://github.com/dagu-dev/dagu/releases/download/v${version}/dagu_${version}_linux_amd64.tar.gz'
+			url = 'https://github.com/dagu-dev/dagu/releases/download/v${dagu.version}/dagu_${dagu.version}_linux_amd64.tar.gz'
 		} else if osal.is_osx_arm() {
-			url = 'https://github.com/dagu-dev/dagu/releases/download/v${version}/dagu_${version}_darwin_arm64.tar.gz'
+			url = 'https://github.com/dagu-dev/dagu/releases/download/v${dagu.version}/dagu_${dagu.version}_darwin_arm64.tar.gz'
 		} else if osal.is_osx_intel() {
-			url = 'https://github.com/dagu-dev/dagu/releases/download/v${version}/dagu_${version}_darwin_amd64.tar.gz'
+			url = 'https://github.com/dagu-dev/dagu/releases/download/v${dagu.version}/dagu_${dagu.version}_darwin_amd64.tar.gz'
 		} else {
 			return error('unsported platform')
 		}
@@ -77,9 +76,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	if args.stop {
 		stop()!
-	}	
-
-
+	}
 }
 
 pub fn start(args_ InstallArgs) ! {
@@ -102,8 +99,7 @@ pub fn start(args_ InstallArgs) ! {
 
 	console.print_header('dagu start')
 
-	//println(args)
-
+	// println(args)
 
 	configure(args)!
 
@@ -126,13 +122,12 @@ pub fn start(args_ InstallArgs) ! {
 		}
 	)!
 
-	//cmd2 := 'dagu scheduler' // TODO: do we need this
+	// cmd2 := 'dagu scheduler' // TODO: do we need this
 	console.print_debug(cmd)
 
 	// if true{
 	// 	panic("sdsdsds dagu install")
 	// }
-
 
 	// time.sleep(100000000000)
 	for _ in 0 .. 50 {
@@ -141,19 +136,15 @@ pub fn start(args_ InstallArgs) ! {
 		}
 		time.sleep(100 * time.millisecond)
 	}
-	return error('dagu did not install propertly, could not call api.')	
-
+	return error('dagu did not install propertly, could not call api.')
 }
-
-
 
 pub fn configure(args_ InstallArgs) ! {
 	mut cfg := args_
 
-	if cfg.password == "" || cfg.secret == ""{
-		return error("password and secret needs to be filled in for dagu")
+	if cfg.password == '' || cfg.secret == '' {
+		return error('password and secret needs to be filled in for dagu')
 	}
-
 
 	mut mycode := $tmpl('templates/admin.yaml')
 
@@ -161,8 +152,6 @@ pub fn configure(args_ InstallArgs) ! {
 	path.write(mycode)!
 
 	console.print_debug(mycode)
-	
-
 }
 
 // checks if a certain version or above is installed
@@ -206,7 +195,6 @@ pub fn check(args InstallArgs) !bool {
 	return true
 }
 
-
 pub fn stop() ! {
 	console.print_header('Dagu Stop')
 	mut sm := startupmanager.get()!
@@ -218,8 +206,6 @@ pub fn restart(args InstallArgs) ! {
 	start(args)!
 }
 
-
-
 pub fn installargs(args InstallArgs) InstallArgs {
-	return args	
+	return args
 }

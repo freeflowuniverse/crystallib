@@ -111,7 +111,7 @@ fn plbook_code_get(cmd Command) !string {
 
 	if coderoot.len > 0 {
 		base.context_new(coderoot: coderoot)!
-		
+
 		// panic('coderoot >0 not supported yet, not imeplemented.')
 	}
 

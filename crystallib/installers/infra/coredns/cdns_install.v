@@ -10,17 +10,17 @@ import os
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset   bool    //this means we re-install and forgot what we did before
-	start   bool = true
-	stop   bool
-	restart bool     //this means we stop if started, otherwise just start
-	homedir   string //not sure what this is?
-	config_path string // path to Corefile, if empty will install default one
-	config_url  string // path to Corefile through e.g. git url, will pull it if it is not local yet
-	dnszones_path string //path to where all the dns zones are
-	dnszones_url string //path on git url pull if needed
-	plugins []string // list of plugins to build CoreDNS with
-	example bool   // if true we will install examples
+	reset         bool // this means we re-install and forgot what we did before
+	start         bool = true
+	stop          bool
+	restart       bool     // this means we stop if started, otherwise just start
+	homedir       string   // not sure what this is?
+	config_path   string   // path to Corefile, if empty will install default one
+	config_url    string   // path to Corefile through e.g. git url, will pull it if it is not local yet
+	dnszones_path string   // path to where all the dns zones are
+	dnszones_url  string   // path on git url pull if needed
+	plugins       []string // list of plugins to build CoreDNS with
+	example       bool     // if true we will install examples
 }
 
 pub fn install(args_ InstallArgs) ! {
@@ -71,7 +71,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	configure(args)!
 
-	if args.example{
+	if args.example {
 		example_configure(args)!
 	}
 
@@ -95,7 +95,7 @@ pub fn stop(args_ InstallArgs) ! {
 
 	name := 'coredns'
 
-	//use startup manager, see caddy
+	// use startup manager, see caddy
 	mut scr := screen.new()!
 	scr.kill(name)!
 }

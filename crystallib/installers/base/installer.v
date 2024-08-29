@@ -16,10 +16,10 @@ pub fn install(args_ InstallArgs) ! {
 	console.print_header('install base (reset: ${args_.reset})')
 	pl := osal.platform()
 
-	mut args:=args_
+	mut args := args_
 
-	if pl == .osx && ! osal.cmd_exists("brew"){
-		args.reset=true
+	if pl == .osx && !osal.cmd_exists('brew') {
+		args.reset = true
 	}
 
 	if args.reset == false && osal.done_exists('platform_prepare') {
@@ -63,7 +63,8 @@ pub fn install(args_ InstallArgs) ! {
 			# 	echo "REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING" 
 			# 	exit 1
 			# fi 			
-			',ignore_error:true
+			'
+			ignore_error: true
 		)!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
@@ -81,7 +82,7 @@ pub fn install(args_ InstallArgs) ! {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
 	if args.develop {
-		develop(reset:args.reset)!
+		develop(reset: args.reset)!
 	}
 	sshkeysinstall()!
 	console.print_header('platform prepare DONE')
@@ -133,7 +134,8 @@ pub fn develop(args InstallArgs) ! {
 				./configure
 				make -j 5
 				make install   
-				')!
+				'
+		)!
 	} else if pl == .alpine {
 		osal.package_install('libpq-dev,make')!
 	} else if pl == .arch {

@@ -3,11 +3,10 @@ module tfrobot
 import os
 import freeflowuniverse.crystallib.osal
 
-
 const testdata_dir = '${os.dir(@FILE)}/testdata'
 
 fn testsuite_begin() ! {
-	osal.load_env_file('${testdata_dir}/.env')!
+	osal.load_env_file('${tfrobot.testdata_dir}/.env')!
 }
 
 fn test_vm_deploy() ! {
@@ -16,7 +15,7 @@ fn test_vm_deploy() ! {
 
 	println('debbb ${ssh_key}')
 
-	mut robot := configure('testrobot', 
+	mut robot := configure('testrobot',
 		mnemonics: mnemonics
 		network: 'main'
 	)!

@@ -104,7 +104,6 @@ fn juggler_code_get(cmd Command) !string {
 		// panic('coderoot >0 not supported yet, not imeplemented.')
 	}
 
-
 	reset := cmd.flags.get_bool('gitreset') or { false }
 	pull := cmd.flags.get_bool('gitpull') or { false }
 	// interactive := !cmd.flags.get_bool('script') or { false }
@@ -121,4 +120,3 @@ fn juggler_code_get(cmd Command) !string {
 
 	return path
 }
-

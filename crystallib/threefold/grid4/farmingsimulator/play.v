@@ -2,7 +2,7 @@ module farmingsimulator
 
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
-//import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
+// import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
 
 pub fn play(mut plbook PlayBook) ! {
 	// mut sheet_name := ''
@@ -14,18 +14,17 @@ pub fn play(mut plbook PlayBook) ! {
 		return
 	}
 
-	mut name:=""
+	mut name := ''
 	// console.print_header("AAAA")
 	// console.print_debug(plbook)
 	// console.print_header("BBBB")
-	
-	for mut action in my_actions {
 
+	for mut action in my_actions {
 		if action.name == 'run' {
 			mut sim := new(
-				name: action.params.get_default('name',"default")!
-				path: action.params.get_default('path',"")!
-				git_url: action.params.get_default('git_url',"")!
+				name: action.params.get_default('name', 'default')!
+				path: action.params.get_default('path', '')!
+				git_url: action.params.get_default('git_url', '')!
 				git_reset: action.params.get_default_false('git_reset')
 				git_pull: action.params.get_default_false('git_pull')
 			)!
@@ -34,17 +33,15 @@ pub fn play(mut plbook PlayBook) ! {
 			simulator_set(sim)
 			console.print_debug('done')
 		}
-
 	}
 }
 
 pub fn (mut s Simulator) play(mut plbook PlayBook) ! {
-
 	mut actions2 := plbook.actions_find(actor: 'tfgridsimulation_farming')!
 
-	if actions2.len == 0{
-		//means nothing to do return quickly
-		return 
+	if actions2.len == 0 {
+		// means nothing to do return quickly
+		return
 	}
 
 	for action_nt in actions2 {
@@ -112,7 +109,7 @@ pub fn (mut s Simulator) play(mut plbook PlayBook) ! {
 		}
 	}
 
-	//now do the simulation, run it
+	// now do the simulation, run it
 	mut actions4 := plbook.actions_find(actor: 'tfgridsimulation_farming')!
 	for action_ri in actions4 {
 		if action_ri.name == 'regional_internet_add' {
@@ -126,7 +123,4 @@ pub fn (mut s Simulator) play(mut plbook PlayBook) ! {
 	}
 
 	simulator_set(s)
-
 }
-
-

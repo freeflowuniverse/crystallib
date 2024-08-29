@@ -7,24 +7,18 @@ import os
 import net.urllib
 
 pub fn play_caddy(mut plbook playbook.PlayBook) ! {
-
-
 	play_caddy_basic(mut plbook)!
 	play_caddy_configure(mut plbook)!
 }
 
 pub fn play_caddy_configure(mut plbook playbook.PlayBook) ! {
-
-
 	mut caddy_actions := plbook.find(filter: 'caddy_configure')!
 	if caddy_actions.len == 0 {
 		return
 	}
-
 }
 
 pub fn play_caddy_basic(mut plbook playbook.PlayBook) ! {
-
 	caddy_actions := plbook.find(filter: 'caddy.')!
 	if caddy_actions.len == 0 {
 		return
@@ -32,8 +26,8 @@ pub fn play_caddy_basic(mut plbook playbook.PlayBook) ! {
 
 	mut install_actions := plbook.find(filter: 'caddy.install')!
 
-	if install_actions.len > 0{
-		for install_action in install_actions{
+	if install_actions.len > 0 {
+		for install_action in install_actions {
 			mut p := install_action.params
 			xcaddy := p.get_default_false('xcaddy')
 			file_path := p.get_default('file_path', '/etc/caddy')!
@@ -46,22 +40,21 @@ pub fn play_caddy_basic(mut plbook playbook.PlayBook) ! {
 			plugins := p.get_list_default('plugins', []string{})!
 
 			caddy_installer.install(
-				xcaddy:xcaddy
-				file_path:file_path
-				file_url:file_url
-				reset:reset
-				start:start
-				restart:restart
-				stop:stop
-				homedir:homedir
-				plugins:plugins
+				xcaddy: xcaddy
+				file_path: file_path
+				file_url: file_url
+				reset: reset
+				start: start
+				restart: restart
+				stop: stop
+				homedir: homedir
+				plugins: plugins
 			)!
-
 		}
 	}
 
 	mut config_actions := plbook.find(filter: 'caddy.configure')!
-	if config_actions.len > 0{
+	if config_actions.len > 0 {
 		mut coderoot := ''
 		mut reset := false
 		mut pull := false
@@ -69,7 +62,7 @@ pub fn play_caddy_basic(mut plbook playbook.PlayBook) ! {
 		mut public_ip := ''
 
 		mut c := caddy.get('')!
-		//that to me seems to be wrong, not generic enough
+		// that to me seems to be wrong, not generic enough
 		if config_actions.len > 1 {
 			return error('can only have 1 config action for books')
 		} else if config_actions.len == 1 {
@@ -81,7 +74,7 @@ pub fn play_caddy_basic(mut plbook playbook.PlayBook) ! {
 			config_actions[0].done = true
 		}
 
-		mut caddyfile := CaddyFile {}
+		mut caddyfile := CaddyFile{}
 		for mut action in plbook.find(filter: 'caddy.add_reverse_proxy')! {
 			mut p := action.params
 			mut from := p.get_default('from', '')!
@@ -103,7 +96,7 @@ pub fn play_caddy_basic(mut plbook playbook.PlayBook) ! {
 			mut domain := p.get_default('domain', '')!
 			mut root := p.get_default('root', '')!
 
-			if root.starts_with('~') { 
+			if root.starts_with('~') {
 				root = '${os.home_dir()}${root.trim_string_left('~')}'
 			}
 
@@ -147,5 +140,4 @@ pub fn play_caddy_basic(mut plbook playbook.PlayBook) ! {
 		}
 		c.reload()!
 	}
-
 }

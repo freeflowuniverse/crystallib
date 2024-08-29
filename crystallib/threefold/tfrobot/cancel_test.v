@@ -5,7 +5,7 @@ import toml
 
 __global (
 	mnemonics string
-	ssh_key    string
+	ssh_key   string
 )
 
 const test_name = 'cancel_test'

@@ -2,7 +2,7 @@ module cloudslices
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 
-//this play script should never be called from hero directly its called by gridsimulator
+// this play script should never be called from hero directly its called by gridsimulator
 pub fn play(mut plbook PlayBook) !map[string]&Node {
 	mut actions2 := plbook.actions_find(actor: 'tfgrid_simulator')!
 

@@ -37,28 +37,28 @@ pub mut:
 	admin_token         string //{GARAGE_ADMINTOKEN}
 	admin_trace_sink    string = 'http://localhost:4317'
 
-	reset bool
+	reset        bool
 	config_reset bool
-	start bool = true
-	restart bool = true
+	start        bool = true
+	restart      bool = true
 }
 
 pub fn configure(args_ S3Config) !S3Config {
 	mut args := args_
 
-	if args.rpc_secret == ""{
+	if args.rpc_secret == '' {
 		args.rpc_secret = secrets.openssl_hex_secret()!
-		println("export GARAGE_RPCSECRET=${args.rpc_secret}")
-	}
-		
-	if args.admin_metrics_token == ""{
-		args.admin_metrics_token = secrets.openssl_base64_secret()!
-		println("export GARAGE_METRICSTOKEN=${args.admin_metrics_token}")
+		println('export GARAGE_RPCSECRET=${args.rpc_secret}')
 	}
 
-	if args.admin_token == ""{
+	if args.admin_metrics_token == '' {
+		args.admin_metrics_token = secrets.openssl_base64_secret()!
+		println('export GARAGE_METRICSTOKEN=${args.admin_metrics_token}')
+	}
+
+	if args.admin_token == '' {
 		args.admin_token = secrets.openssl_base64_secret()!
-		println("export GARAGE_ADMINTOKEN=${args.admin_token}")
+		println('export GARAGE_ADMINTOKEN=${args.admin_token}')
 	}
 
 	mut config_file := $tmpl('templates/garage.toml')
@@ -70,20 +70,18 @@ pub fn configure(args_ S3Config) !S3Config {
 	console.print_header('garage start')
 
 	return args
-
 }
-
 
 pub fn start(args_ S3Config) !S3Config {
 	mut args := args_
 
 	myconfigpath_ := '/etc/garage.toml'
 
-	if args.config_reset || ! os.exists(myconfigpath_){
+	if args.config_reset || !os.exists(myconfigpath_) {
 		args = configure(args)!
 	}
 
-	if args.restart{
+	if args.restart {
 		stop()!
 	}
 
@@ -104,7 +102,6 @@ pub fn start(args_ S3Config) !S3Config {
 	}
 
 	return error('garage server did not start properly.')
-
 }
 
 pub fn stop() ! {
@@ -114,10 +111,9 @@ pub fn stop() ! {
 }
 
 fn check(args S3Config) !bool {
-	
-	cmd:="garage status"
+	cmd := 'garage status'
 	res := os.execute('garage status')
-	if res.exit_code == 0 {	
+	if res.exit_code == 0 {
 		return true
 	}
 	return false

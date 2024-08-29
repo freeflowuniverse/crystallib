@@ -59,13 +59,13 @@ pub fn get_mnemonics() !string {
 pub fn new_deployer(mnemonics string, chain_network ChainNetwork) !Deployer {
 	mut logger := &log.Log{}
 	logger.set_level(.debug)
-	
+
 	mut client := griddriver.Client{
 		mnemonic: mnemonics
 		substrate: grid.substrate_url[chain_network]
 		relay: grid.relay_url[chain_network]
 	}
-	twin_id := client.get_user_twin() or {return error('failed to get twin ${err}')}
+	twin_id := client.get_user_twin() or { return error('failed to get twin ${err}') }
 
 	return Deployer{
 		mnemonics: mnemonics

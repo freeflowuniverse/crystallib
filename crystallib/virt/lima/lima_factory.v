@@ -86,9 +86,9 @@ pub fn (mut lf LimaFactory) vm_list() ![]string {
 	if res.exit_code > 0 {
 		return error('could not list lima vm.\n${res}')
 	}
-	if res.output.contains("No instance found"){
+	if res.output.contains('No instance found') {
 		return []string{}
-	}	
+	}
 	for line in res.output.split_into_lines() {
 		if line.trim_space() == '' {
 			continue

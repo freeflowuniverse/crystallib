@@ -30,14 +30,12 @@ pub fn memdb_exists(key string) bool {
 pub fn get_logger() log.Logger {
 	log_level := env_get_default('OSAL_LOG_LEVEL', 'info')
 	mut logger := &log.Log{}
-	logger.set_level(
-		match log_level.to_lower() {
-			'debug' { .debug }
-			'info' { .info }
-			'warn' { .warn }
-			'error' { .error }
-			else { .info }
-		}
-	)
+	logger.set_level(match log_level.to_lower() {
+		'debug' { .debug }
+		'info' { .info }
+		'warn' { .warn }
+		'error' { .error }
+		else { .info }
+	})
 	return logger
 }

@@ -87,7 +87,7 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 		.systemd {
 			console.print_debug('  systemd')
 			mut systemdfactory := systemd.new()!
-			if systemdfactory.exists(name){
+			if systemdfactory.exists(name) {
 				mut systemdprocess := systemdfactory.get(name)!
 				systemdprocess.stop()!
 			}

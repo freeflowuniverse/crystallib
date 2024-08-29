@@ -37,8 +37,6 @@ pub fn play(mut plbook PlayBook) ! {
 }
 
 pub fn (mut self BizModel) play(mut plbook PlayBook) ! {
-
-	
 	self.revenue_actions(plbook)!
 	self.hr_actions(plbook)!
 	self.funding_actions(plbook)!

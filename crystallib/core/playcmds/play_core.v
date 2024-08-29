@@ -28,19 +28,13 @@ pub fn play_core(mut plbook playbook.PlayBook) ! {
 	}
 
 	for mut action in plbook.find(filter: 'session.')! {
-		
 		mut p := action.params
 		mut session := plbook.session
 
 		//!!session.env_set key:'JWT_SHARED_KEY' val:'...'
 
-		
-
 		action.done = true
 	}
-
-	
-
 
 	for action_ in plbook.find(filter: 'play.*')! {
 		if action_.name == 'run' {

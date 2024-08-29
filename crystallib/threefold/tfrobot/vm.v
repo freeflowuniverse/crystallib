@@ -28,7 +28,7 @@ pub mut:
 	ip4       bool = true
 	ip6       bool = true
 	planetary bool = true
-	mycelium bool = true
+	mycelium  bool = true
 	timeout   int  = 120 // timeout in sec
 }
 

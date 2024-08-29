@@ -19,12 +19,12 @@ fn entropy_from_hexstring(input string) ![]u8 {
 }
 
 fn test_python_vectors() {
-	vectors := $embed_file("vectors.json")
+	vectors := $embed_file('vectors.json')
 	data := vectors.to_string()
 
 	root := json.decode(Vectors, data) or {
-		eprintln("Failed to decode json, error: ${err}")
-		assert "json parsing failed" == "${err}"
+		eprintln('Failed to decode json, error: ${err}')
+		assert 'json parsing failed' == '${err}'
 		return
 	}
 
@@ -41,8 +41,8 @@ fn test_python_vectors() {
 		// create words from entropy
 		parsed := entropy_from_hexstring(expected_entropy)!
 		words := m.to_mnemonic(parsed)!
-		assert words.join(" ") == expected_words
-		
+		assert words.join(' ') == expected_words
+
 		// TODO: implement seed
 	}
 }
@@ -52,7 +52,7 @@ fn test_loop() {
 
 	entropy := m.generate_entropy(224)!
 	words := m.to_mnemonic(entropy)!
-	wayback := m.to_entropy(words.join(" "))!
+	wayback := m.to_entropy(words.join(' '))!
 
 	assert wayback == entropy
 }

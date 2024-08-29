@@ -6,9 +6,8 @@ import json
 pub struct NewDagOptions {
 pub:
 	overwrite bool = true // whether to overwrite existing dag with same name
-	start bool 
+	start     bool
 }
-
 
 // create new DAG
 // ```
@@ -29,15 +28,15 @@ pub fn (mut client DaguClient) dag_new(args_ DAGArgs) DAG {
 pub fn (mut client DaguClient) dag_register(dag DAG, opts NewDagOptions) !PostDagActionResponse {
 	if opts.overwrite {
 		dag_list := client.dags_list()!
-		//println(dag_list)
+		// println(dag_list)
 		if dag_list.dags.any(it.dag.name == dag.name) {
 			client.dag_delete(dag.name)!
 		}
 	}
 
 	client.dag_create(dag.name)!
-	mut d_result:=client.edit_dag(dag.name, dag)!
-	if opts.start{
+	mut d_result := client.edit_dag(dag.name, dag)!
+	if opts.start {
 		client.dag_start(dag.name)!
 	}
 	return d_result
@@ -51,7 +50,7 @@ fn (mut client DaguClient) edit_dag(name string, dag DAG) !PostDagActionResponse
 }
 
 pub fn (mut client DaguClient) dag_start(name string) !PostDagActionResponse {
-	println("dag start ${name}")
+	println('dag start ${name}')
 	return client.post_dag_action(name, action: .start)!
 }
 
@@ -62,5 +61,3 @@ pub fn (mut client DaguClient) dag_stop(name string) !PostDagActionResponse {
 pub fn (mut client DaguClient) dag_suspend(name string) !PostDagActionResponse {
 	return client.post_dag_action(name, action: .suspend)!
 }
-
-

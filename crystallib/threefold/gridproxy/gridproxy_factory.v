@@ -54,17 +54,17 @@ fn tfgrid_net_string(net TFGridNet) string {
 }
 
 @[params]
-pub struct GridProxyClientArgs{
+pub struct GridProxyClientArgs {
 pub mut:
-	net TFGridNet = .main
-	cache bool 
+	net   TFGridNet = .main
+	cache bool
 }
 
 // get returns a gridproxy client for the given net.
 //
 //```
 // net TFGridNet = .main
-// cache bool 
+// cache bool
 //```
 pub fn new(args GridProxyClientArgs) !&GridProxyClient {
 	mut f := factory_get()
@@ -104,6 +104,3 @@ pub fn farmfilter() !model.FarmFilter {
 pub fn twinfilter() !model.TwinFilter {
 	return model.TwinFilter{}
 }
-
-
-

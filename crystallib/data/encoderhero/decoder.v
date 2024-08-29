@@ -70,7 +70,6 @@ pub fn is_struct_array[U](_ []U) !bool {
 	return false
 }
 
-
 pub fn decode_array[T](_ []T, data string) ![]T {
 	mut arr := []T{}
 	// for i in 0 .. val.len {

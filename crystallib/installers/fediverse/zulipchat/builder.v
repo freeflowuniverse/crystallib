@@ -22,8 +22,7 @@ pub fn build(args BuildArgs) ! {
 		return error('only support ubuntu for now')
 	}
 	python.install()!
-	//osal.execute_stdout(cmd)!
+	// osal.execute_stdout(cmd)!
 
-	panic("implement")
-
+	panic('implement')
 }

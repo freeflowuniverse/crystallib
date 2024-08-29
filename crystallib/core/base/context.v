@@ -60,7 +60,6 @@ pub fn (self Context) guid() string {
 	return '${self.id()}:${self.name()}'
 }
 
-
 //////DATA
 
 // pub fn (mut self Context) str() string {
@@ -88,7 +87,6 @@ pub fn (self Context) guid() string {
 // 	// }
 // 	return out
 // }
-
 
 pub fn (mut self Context) redis() !&redisclient.Redis {
 	mut r2 := self.redis_ or {

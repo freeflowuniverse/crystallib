@@ -8,22 +8,17 @@ import freeflowuniverse.crystallib.ui.console
 import os
 
 pub fn play_dagu(mut plbook playbook.PlayBook) ! {
-
 	dagu_actions := plbook.find(filter: 'dagu.')!
 	if dagu_actions.len == 0 {
 		return
 	}
-	
 
 	play_dagu_basic(mut plbook)!
-	//play_dagu_configure(mut plbook)!
+	// play_dagu_configure(mut plbook)!
 }
-
 
 // play_dagu plays the dagu play commands
 pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
-
-	
 	mut install_actions := plbook.find(filter: 'dagu.install')!
 
 	if install_actions.len > 0 {
@@ -51,7 +46,7 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 				title: title
 				reset: reset
 				start: start
-				stop:stop
+				stop: stop
 				restart: restart
 				host: ipaddr
 				port: port
@@ -63,7 +58,7 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 	if dagu_actions.len == 0 {
 		return
 	}
-	
+
 	mut config_actions := plbook.find(filter: 'dagu.configure')!
 	mut d := if config_actions.len > 1 {
 		return error('can only have 1 config action for dagu')
@@ -78,15 +73,14 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 			port: port
 			username: username
 			password: password
-
 		)!
 		server.start()!
 		console.print_debug('Dagu server is running at http://localhost:${port}')
 		console.print_debug('Username: ${username} password: ${password}')
-		
+
 		// configure dagu client with server url and api secret
 		server_cfg := server.config()!
-		daguclient.get(instance, 
+		daguclient.get(instance,
 			url: 'http://localhost:${port}'
 			apisecret: server_cfg.secret
 		)!
@@ -120,7 +114,7 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'dagu.run')! {
 		mut p := action.params
 		dag := p.get_default('dag', 'default')!
-		//d.new_dag(dags[dag])!
-		panic("to implement")
+		// d.new_dag(dags[dag])!
+		panic('to implement')
 	}
 }

@@ -24,9 +24,9 @@ pub mut:
 // ping means we check if the destination responds
 pub fn ping(args PingArgs) PingResult {
 	platform_ := platform()
-	mut cmd:= "ping"
-	if args.address.contains(":"){
-		cmd = "ping6"
+	mut cmd := 'ping'
+	if args.address.contains(':') {
+		cmd = 'ping6'
 	}
 	if platform_ == .osx {
 		cmd += ' -c ${args.count} -W ${args.timeout * 1000} ${args.address}'

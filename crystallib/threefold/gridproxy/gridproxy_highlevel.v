@@ -1,6 +1,6 @@
 module gridproxy
 
-import freeflowuniverse.crystallib.threefold.gridproxy.model { Node, Contract, ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, NodeFilter, NodeIterator, ResourceFilter, Twin }
+import freeflowuniverse.crystallib.threefold.gridproxy.model { Contract, ContractFilter, Farm, FarmFilter, Node, NodeFilter, ResourceFilter, Twin }
 
 // fetch specific twin information by twin id.
 //
@@ -73,7 +73,7 @@ pub fn (mut c GridProxyClient) get_farms_by_twin_id(twin_id u64) []Farm {
 	}
 	mut iter := c.get_farms_iterator(filter)
 	mut result := []Farm{}
-	for f in iter{
+	for f in iter {
 		result << f
 	}
 	return result
@@ -94,10 +94,10 @@ pub fn (mut c GridProxyClient) get_contracts_by_twin_id(twin_id u64) []Contract 
 	}
 	mut iter := c.get_contracts_iterator(filter)
 	mut result := []Contract{}
-	for f in iter{
+	for f in iter {
 		result << f
 	}
-	return result	
+	return result
 }
 
 // get_contracts_by_node_id returns iterator over all contracts deployed on specific node.
@@ -115,10 +115,10 @@ pub fn (mut c GridProxyClient) get_contracts_by_node_id(node_id u64) []Contract 
 	}
 	mut iter := c.get_contracts_iterator(filter)
 	mut result := []Contract{}
-	for f in iter{
+	for f in iter {
 		result << f
 	}
-	return result	
+	return result
 }
 
 // get_nodes_has_resources returns iterator over all nodes with specific minimum free reservable resources.
@@ -139,9 +139,8 @@ fn (mut c GridProxyClient) get_nodes_has_resources(filter ResourceFilter) []Node
 	}
 	mut iter := c.get_nodes_iterator(filter_)
 	mut result := []Node{}
-	for f in iter{
+	for f in iter {
 		result << f
 	}
-	return result	
-
+	return result
 }

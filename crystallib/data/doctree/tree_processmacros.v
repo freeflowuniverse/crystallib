@@ -5,7 +5,6 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playmacros
 
-
 @[params]
 pub struct MacroGetArgs {
 pub mut:
@@ -36,7 +35,7 @@ pub fn (mut tree Tree) process_macros() ! {
 		plbook.actions << &element_action.action
 	}
 
-	playmacros.play( mut plbook)!
+	playmacros.play(mut plbook)!
 
 	// now get specific actions which need to return content
 	for _, mut collection in tree.collections {

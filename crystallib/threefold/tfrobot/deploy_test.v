@@ -5,7 +5,7 @@ import toml
 
 __global (
 	mnemonics string
-	ssh_key    string
+	ssh_key   string
 )
 
 fn testsuite_begin() ! {

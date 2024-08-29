@@ -43,14 +43,14 @@ pub fn (action Action) heroscript() string {
 	if action.comments.len > 0 {
 		out += texttools.indent(action.comments, '// ')
 	}
-	if action.actiontype==.sal{
+	if action.actiontype == .sal {
 		out += '!!'
-	}else if action.actiontype==.macro{
+	} else if action.actiontype == .macro {
 		out += '!!!'
-	}else{
-		panic("only action sal and macro supported for now,\n${action}")
+	} else {
+		panic('only action sal and macro supported for now,\n${action}')
 	}
-	
+
 	if action.actor != '' {
 		out += '${action.actor}.'
 	}

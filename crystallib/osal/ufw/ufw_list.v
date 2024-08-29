@@ -1,4 +1,5 @@
 module ufw
+
 import os
 
 pub fn ufw_status() !UFWStatus {
@@ -15,25 +16,25 @@ pub fn ufw_status() !UFWStatus {
 	mut ufw_data := UFWStatus{
 		rules: []
 	}
-	mut tostart:=false
+	mut tostart := false
 	// Parse the output
 	for line in lines {
 		line_trimmed := line.trim_space()
 		if line_trimmed.starts_with('Status:') {
 			status := line_trimmed.split(':')[1].trim_space()
-			if status.to_lower() == "active"{
+			if status.to_lower() == 'active' {
 				ufw_data.active = true
 			}
 			continue
 		}
-		if line_trimmed == ''{
+		if line_trimmed == '' {
 			continue
 		}
-		if line_trimmed.starts_with('--'){
+		if line_trimmed.starts_with('--') {
 			tostart = true
 			continue
-		}		
-		if tostart{
+		}
+		if tostart {
 			rule := parse_rule(line_trimmed)!
 			ufw_data.rules << rule
 		}
@@ -43,20 +44,20 @@ pub fn ufw_status() !UFWStatus {
 }
 
 fn parse_rule(line_ string) !Rule {
-	mut line:=line_
-	line=line.replace(" (v6)","(v6)")
+	mut line := line_
+	line = line.replace(' (v6)', '(v6)')
 	parts := line.split_any(' \t').filter(it.len > 0)
 
-	if parts.len != 3{
-		return error("error in parsing rule of ufw.\n${parts}")
+	if parts.len != 3 {
+		return error('error in parsing rule of ufw.\n${parts}')
 	}
-	mut to:= parts[0]
-	mut rule := Rule{		
+	mut to := parts[0]
+	mut rule := Rule{
 		from: parts[parts.len - 1]
 	}
 
-	if parts[1].to_lower().contains("allow"){
-		rule.allow=true
+	if parts[1].to_lower().contains('allow') {
+		rule.allow = true
 	}
 
 	// Check for IPv6
@@ -77,7 +78,7 @@ fn parse_rule(line_ string) !Rule {
 			rule.udp = true
 		}
 		to = to.split('/')[0].trim_space()
-	}else{
+	} else {
 		rule.tcp = true
 		rule.udp = true
 	}

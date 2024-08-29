@@ -12,7 +12,6 @@ pub fn play_luadns(mut plbook playbook.PlayBook) ! {
 	mut reset := false
 	mut pull := false
 
-
 	for mut action in plbook.find(filter: 'luadns.set_domain')! {
 		mut p := action.params
 		url := p.get_default('url', '')!
@@ -29,7 +28,7 @@ pub fn play_luadns(mut plbook playbook.PlayBook) ! {
 		if domain == '' || ip == '' {
 			return error('luadns set domain: domain or ip cant be empty')
 		}
-		
+
 		dns.set_domain(domain, ip)!
 		action.done = true
 	}

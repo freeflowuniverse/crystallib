@@ -9,8 +9,6 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
-
-
 pub fn install_prom2json(args_ InstallArgs) ! {
 	mut args := args_
 
@@ -18,7 +16,7 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 
 	res := os.execute('${osal.profile_path_source_and()} prom2json --help')
 	if res.exit_code != 0 {
-		args.reset=true
+		args.reset = true
 	}
 
 	if args.reset {
@@ -37,12 +35,12 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 			expand_dir: '/tmp/prometheus'
 		)!
 
-		mut dest2:=pathlib.get_dir(path:"/tmp/prometheus/prom2json-${version}.linux-amd64")!
-		for abin in ["prom2json"]{
+		mut dest2 := pathlib.get_dir(path: '/tmp/prometheus/prom2json-${version}.linux-amd64')!
+		for abin in ['prom2json'] {
 			mut binpath := dest2.file_get(abin)!
-			binpath.copy(dest:"/root/hero/prometheus/${abin}",delete:true,rsync:false)!
+			binpath.copy(dest: '/root/hero/prometheus/${abin}', delete: true, rsync: false)!
 		}
-		osal.profile_path_add(path: "/root/hero/prometheus")!
+		osal.profile_path_add(path: '/root/hero/prometheus')!
 	}
 
 	// if args.restart {
@@ -58,8 +56,6 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 	// if args.stop {
 	// 	stop()!
 	// }	
-
-
 }
 
 // pub fn start(args_ InstallArgs) ! {
@@ -83,7 +79,6 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 // 	console.print_header('prometheus start')
 
 // 	//println(args)
-
 
 // 	configure(args)!
 
@@ -113,7 +108,6 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 // 	// 	panic("sdsdsds prometheus install")
 // 	// }
 
-
 // 	// time.sleep(100000000000)
 // 	for _ in 0 .. 50 {
 // 		if check(args)! {
@@ -125,8 +119,6 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 
 // }
 
-
-
 // pub fn configure(args_ InstallArgs) ! {
 // 	mut cfg := args_
 
@@ -134,17 +126,14 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 // 		return error("password and secret needs to be filled in for prometheus")
 // 	}
 
-
 // 	mut mycode := $tmpl('templates/admin.yaml')
 
 // 	mut path := pathlib.get_file(path: cfg.configpath, create: true)!
 // 	path.write(mycode)!
 
 // 	console.print_debug(mycode)
-	
 
 // }
-
 
 // pub fn check(args InstallArgs) !bool {
 // 	// this checks health of prometheus
@@ -170,7 +159,6 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 // 	return true
 // }
 
-
 // pub fn stop() ! {
 // 	console.print_header('Dagu Stop')
 // 	mut sm := startupmanager.get()!
@@ -181,8 +169,6 @@ pub fn install_prom2json(args_ InstallArgs) ! {
 // 	stop()!
 // 	start(args)!
 // }
-
-
 
 // pub fn installargs(args InstallArgs) InstallArgs {
 // 	return args	

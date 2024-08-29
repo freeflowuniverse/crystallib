@@ -46,9 +46,9 @@ pub fn get(instance string, cfg Config) !DaguClient {
 	self.connection = con
 	// }
 
-	//cannot do both, or basic authentication or the apisecret
-	//self.connection.default_header.add(.authorization, 'Bearer ${cfg.apisecret}')
-	
+	// cannot do both, or basic authentication or the apisecret
+	// self.connection.default_header.add(.authorization, 'Bearer ${cfg.apisecret}')
+
 	return self
 }
 

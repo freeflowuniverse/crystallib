@@ -25,12 +25,12 @@ pub mut:
 }
 
 pub fn new(args Config) !DaguServer[Config] {
-	mut c:=configure("default",args)!
+	mut c := configure('default', args)!
 	return c
 }
 
 pub fn get(instance_ string) !DaguServer[Config] {
-	instance := if instance_ == '' {'default'} else {instance_}
+	instance := if instance_ == '' { 'default' } else { instance_ }
 	mut self := DaguServer[Config]{}
 	self.init('daguserver', instance, .get)!
 	return self
@@ -38,7 +38,6 @@ pub fn get(instance_ string) !DaguServer[Config] {
 
 // set the configuration, will make defaults for password & secret
 pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
-
 	mut cfg := cfg_
 	mut self := DaguServer[Config]{}
 
@@ -59,9 +58,9 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 		cfg.password = secrets.hex_secret()!
 	}
 
-	//TODO:use DAGU_SECRET from env variables in os if not set then empty string
+	// TODO:use DAGU_SECRET from env variables in os if not set then empty string
 	if cfg.secret == '' {
-		cfg.secret = secrets.openssl_hex_secret(input:dagu_secret)!
+		cfg.secret = secrets.openssl_hex_secret(input: dagu_secret)!
 	}
 
 	if cfg.homedir == '' {
@@ -78,12 +77,10 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 
 	self.init('daguserver', instance, .set, cfg)!
 
-	//println(self)
+	// println(self)
 
 	return self
 }
-
-
 
 pub struct InstallArgs {
 pub mut:
@@ -95,8 +92,8 @@ pub mut:
 	title      string = 'My Hero DAG'
 	reset      bool
 	start      bool = true
-	stop 	   bool
+	stop       bool
 	restart    bool
-	host        string = 'localhost' // server host (default is localhost)
-	port       int = 8888
+	host       string = 'localhost' // server host (default is localhost)
+	port       int    = 8888
 }

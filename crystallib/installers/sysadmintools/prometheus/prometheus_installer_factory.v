@@ -9,8 +9,6 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
-
-
 @[params]
 pub struct InstallArgs {
 pub mut:
@@ -20,15 +18,14 @@ pub mut:
 	// password   string @[secret]
 	// secret     string @[secret]
 	// title      string = 'My Hero DAG'
-	reset      bool
-	start      bool = true
-	stop 	   bool
-	restart    bool
+	reset     bool
+	start     bool = true
+	stop      bool
+	restart   bool
 	uninstall bool
 	// host        string = 'localhost' // server host (default is localhost)
 	// port       int = 8888
 }
-
 
 pub fn install(args_ InstallArgs) ! {
 	install_prometheus(args_)!

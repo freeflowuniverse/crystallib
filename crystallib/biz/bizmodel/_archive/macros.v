@@ -13,8 +13,10 @@ pub fn macroprocessor_new(bizmodel_name string) MacroProcessorBizmodel {
 }
 
 pub fn (processor MacroProcessorBizmodel) process(code string) !doctree.MacroResult {
-	mut r := doctree.MacroResult{
-		state: .stop
+	mut r := doctree.MacroResult
+	{
+		state:
+		.stop
 	}
 	ap := playbook.parse_playbook(text: code)!
 	mut actions2 := ap.find(actor: 'bizmodel')
