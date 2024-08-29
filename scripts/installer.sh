@@ -487,7 +487,7 @@ function os_update {
         dpkg --configure -a
         apt update -y
         if [ -n "$GITHUB_ACTIONS" ]; then
-            echo "** github actions"
+            echo "** IN GITHUB ACTIONS, DON'T DO UPDATE"
         else
             set +e
             echo "** UPDATE"
