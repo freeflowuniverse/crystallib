@@ -77,13 +77,13 @@ jobs:
 
       - name: Get crystallib
         run: |
-
-          echo "******** END"          
           mkdir -p ~/.vmodules/freeflowuniverse
           rm -f ~/.vmodules/freeflowuniverse/crystallib
           ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
           rm -f ~/.vmodules/freeflowuniverse/webcomponents
-          ln -s $(pwd)/webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents    
+          cd $(pwd)
+          cd ..          
+          ln -s webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents    
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
