@@ -39,15 +39,7 @@ jobs:
             sudo apt update
             sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis gcc
             redis-server --daemonize yes
-            sudo apt install -y build-essential wget autoconf libtool
-            cd /tmp
-            wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
-            tar -xvf v0.3.2.tar.gz
-            cd secp256k1-0.3.2/
-            ./autogen.sh
-            ./configure
-            sudo make -j 5
-            sudo make install            
+            sudo apt install -y build-essential wget autoconf libtool         
           else
             brew install libgc tmux git rsync curl redis libpq
             brew services start redis
@@ -62,7 +54,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: freeflowuniverse/webcomponents
-          path: webcomponents
+          path: ../webcomponents
 
       - name: Get crystalweb
         run: |
@@ -74,14 +66,17 @@ jobs:
           ls ~/.vmodules/webcomponents
           ln -s ~/.vmodules/webcomponents $(pwd)/crystallib
 
-      - name: Get crystallib
+      - name: DEBUG
         run: |
           echo "******** LS BASE CODE"
-          ls $(pwd)
+          ls $(pwd)/..
           echo "******** LS CRYSTALLIB"
-          ls $(pwd)/crystallib
+          ls $(pwd)
           echo "******** LS WEBCOMPONENTS"
-          ls $(pwd)/webcomponents
+          ls $(pwd)/../webcomponents          
+
+      - name: Get crystallib
+        run: |
           pushd $(pwd)/webcomponents
           git status
           popd
@@ -97,6 +92,21 @@ jobs:
         with:
           check-latest: true
 
+      - name: Install secp256k1
+        run: |
+          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+            set -x
+            cd /tmp
+            wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+            tar -xvf v0.3.2.tar.gz
+            cd secp256k1-0.3.2/
+            ./autogen.sh
+            ./configure
+            sudo make -j 5
+            sudo make install            
+          else
+            echo "no secp256k1 install"
+          fi
 
       - name: Build hero
         run: |
