@@ -64,27 +64,30 @@ jobs:
           echo "******** LS BASE CODE"
           ls
           echo "******** LS CRYSTALLIB"
+          cd $(pwd)
+          cd ..
           cd crystallib
           ls
           git status
-          cd ..
           echo "******** LS WEBCOMPONENTS"
+          cd $(pwd)
+          cd ..
           cd webcomponents  
           ls
           git status
-          cd ..
           echo "******** END"
 
       - name: Get crystallib
         run: |
+          set +x
           mkdir -p ~/.vmodules/freeflowuniverse
           rm -f ~/.vmodules/freeflowuniverse/crystallib
           ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
           rm -f ~/.vmodules/freeflowuniverse/webcomponents
           cd $(pwd)
-          cd ..          
-          ln -s webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
-          set +x
+          cd ..                    
+          ls
+          ln -s $(pwd)/../webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
           ls ~/.vmodules
           ls ~/.vmodules/freeflowuniverse
           ls ~/.vmodules/freeflowuniverse/crystallib
