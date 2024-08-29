@@ -26,10 +26,10 @@ pub fn new_indexer(db Database, config IndexerConfig) !Indexer {
 
 	mut default_db := config.default_db
 	if _ := db.sqlite_db {
-		default_db = sqlite_db
+		default_db = .sqlite
 	}
 	if _ := db.postgres_db {
-		default_db = postgres_db
+		default_db = .postgres
 	}
 
 	mut backend := Indexer{
