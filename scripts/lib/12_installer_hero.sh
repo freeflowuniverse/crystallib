@@ -91,7 +91,7 @@ function hero_upload {
     fi
     set -x
     s3_configure
-    rclone lsl b2:threefold/$MYPLATFORMID/
-    rclone copy "$hero_path" b2:threefold/$MYPLATFORMID/
+    rclone --config="${HOME}/.config/rclone/rclone.conf" lsl b2:threefold/$MYPLATFORMID/
+    rclone --config="${HOME}/.config/rclone/rclone.conf" copy "$hero_path" b2:threefold/$MYPLATFORMID/
 }
     

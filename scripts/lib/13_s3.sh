@@ -16,7 +16,6 @@ type = b2
 account = $S3KEYID
 key = $S3APPID
 hard_delete = true
-hard_delete = true
 EOL
 
 echo "made S3 config on: ${HOME}/.config/rclone/rclone.conf"
