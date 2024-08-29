@@ -59,10 +59,11 @@ jobs:
 
       - name: DEBUG
         run: |
+          set +x
           cd $(pwd)
           cd ..
           echo "******** LS BASE CODE"
-          ls
+          find . -maxdepth 3
           echo "******** LS CRYSTALLIB"
           cd $(pwd)
           ls
