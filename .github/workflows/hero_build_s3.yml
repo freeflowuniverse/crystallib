@@ -65,8 +65,6 @@ jobs:
           ls
           echo "******** LS CRYSTALLIB"
           cd $(pwd)
-          cd ..
-          cd crystallib
           ls
           git status
           echo "******** LS WEBCOMPONENTS"
