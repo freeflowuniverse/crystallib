@@ -63,6 +63,11 @@ pub fn bash_installers_package() !string {
 		echo 'BUILD HERO OK'
 		")!
 
+	script_write(out, 'githubactions', "
+		echo 'OK'
+		")!
+
+
 	mut p4 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
 	return p4.path
 }

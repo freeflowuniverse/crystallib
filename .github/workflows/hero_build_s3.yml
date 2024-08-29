@@ -55,7 +55,12 @@ jobs:
           mkdir -p ~/.vmodules
           cd $(pwd)
           cd ..
+          find . -maxdepth 2
           git clone --depth 1 https://github.com/freeflowuniverse/webcomponents
+
+      - name: INSTALLBASE
+        run: |
+          cd cd $(pwd) && bash +x scripts/install_base.sh          
 
       - name: DEBUG
         run: |
