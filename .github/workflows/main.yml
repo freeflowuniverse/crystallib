@@ -17,9 +17,9 @@ jobs:
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
             short-name: linux-i64
-          - target: aarch64-unknown-linux-musl
-            os: ubuntu-latest
-            short-name: linux-arm64            
+          # - target: aarch64-unknown-linux-musl
+          #   os: ubuntu-latest
+          #   short-name: linux-arm64            
           # - target: aarch64-apple-darwin
           #   os: macos-latest
           #   short-name: macos-arm64
