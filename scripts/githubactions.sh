@@ -125,9 +125,9 @@ function myplatform {
     elif [ -e /etc/os-release ]; then
         # Read the ID field from the /etc/os-release file
         export OSNAME=$(grep '^ID=' /etc/os-release | cut -d= -f2)
-        if [ "${os_id,,}" == "ubuntu" ]; then
-            export OSNAME="ubuntu"          
-        fi
+        # if [ "${os_id,,}" == "ubuntu" ]; then
+        #     export OSNAME="ubuntu"          
+        # fi
         if [ "${OSNAME}" == "archarm" ]; then
             export OSNAME="arch"          
         fi        
@@ -989,6 +989,7 @@ function hero_install {
 # }
 
 function hero_upload {
+    echo "uploading hero with ostype $OSTYPE"
     set -e    
     hero_path=$(which hero 2>/dev/null)
     if [ -z "$hero_path" ]; then
@@ -1006,14 +1007,14 @@ function hero_upload {
 
 function s3_configure {
 # Check if environment variables are set
-if [ -z "$S3KEYID" ] || [ -z "$S3APPID" ]; then
-    echo "Error: S3KEYID or S3APPID is not set"
-    exit 1
-fi
+    if [ -z "$S3KEYID" ] || [ -z "$S3APPID" ]; then
+        echo "Error: S3KEYID or S3APPID is not set"
+        exit 1
+    fi
 
-# Create rclone config file
-mkdir -p "${HOME}/.config/rclone"
-cat > "${HOME}/.config/rclone/rclone.conf" <<EOL
+    # Create rclone config file
+    mkdir -p "${HOME}/.config/rclone"
+    cat > "${HOME}/.config/rclone/rclone.conf" <<EOL
 [b2]
 type = b2
 account = $S3KEYID
@@ -1021,9 +1022,9 @@ key = $S3APPID
 hard_delete = true
 EOL
 
-echo "made S3 config on: ${HOME}/.config/rclone/rclone.conf"
+    echo "made S3 config on: ${HOME}/.config/rclone/rclone.conf"
 
-cat ${HOME}/.config/rclone/rclone.conf
+    cat ${HOME}/.config/rclone/rclone.conf
 
 }
 
