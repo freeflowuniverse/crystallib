@@ -137,3 +137,17 @@ function crystal_pull {
     git pull
     popd 2>&1 >> /dev/null
 }
+
+function crystal_test {
+    set -e
+    v -enable-globals -stats test crystallib/core/pathlib
+    v -enable-globals -stats test crystallib/core/texttools
+    v -enable-globals -stats test crystallib/core/playbook
+    v -enable-globals -stats test crystallib/data/encoder
+    v -enable-globals -stats test crystallib/data/currency
+    v -enable-globals -stats test crystallib/data/markdownparser
+    v -enable-globals -stats test crystallib/data/ourtime
+    v -enable-globals -stats test crystallib/data/paramsparser
+    # v -enable-globals -stats test crystallib/data/doctree
+}
+

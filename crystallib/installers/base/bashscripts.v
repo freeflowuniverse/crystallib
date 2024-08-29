@@ -66,6 +66,7 @@ pub fn bash_installers_package() !string {
 
 	script_write(out, 'githubactions', "
 		hero_build
+		crystal_test
 		hero_upload
 		echo 'OK'
 		")!

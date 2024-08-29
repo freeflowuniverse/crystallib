@@ -37,9 +37,10 @@ jobs:
 
       - name: INSTALLBASE
         run: |
-          export S3KEYID=${{ secrets.S3KEYID }}
-          export S3APPID=${{ secrets.S3APPID }}        
-          cd $(pwd) && sudo bash +x scripts/githubactions.sh
+          echo 'export S3KEYID=${{ secrets.S3KEYID }}' > ${HOME}/mysecrets.sh
+          echo 'export S3APPID=${{ secrets.S3APPID }}' >> ${HOME}/mysecrets.sh
+          set -e && cat ${HOME}/mysecrets.sh
+          sudo bash +x scripts/githubactions.sh
 
       - name: Extract tag name
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV

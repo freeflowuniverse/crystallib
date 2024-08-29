@@ -102,6 +102,22 @@ is_github_actions() {
     [ -d "/home/runner" ] || [ -d "$HOME/runner" ]
 }
 
+set -x
+if [ -n "$SUDO_USER" ]; then
+    export HOME_SUDO=$(eval echo "~$SUDO_USER")
+    SECRET_FILE="${HOME_SUDO}/mysecrets.sh"
+    if [ -f "$SECRET_FILE" ]; then
+        echo 'get secrets for sudoer'
+        source "$SECRET_FILE"
+    fi
+fi
+
+SECRET_FILE2="${HOME}/mysecrets.sh"
+if [ -f "$SECRET_FILE2" ]; then
+    echo 'get secrets for home user'
+    source "$SECRET_FILE2"
+fi
+
 
 function myplatform {
     if [[ "${OSTYPE}" == "darwin"* ]]; then
@@ -865,6 +881,20 @@ function crystal_pull {
     git pull
     popd 2>&1 >> /dev/null
 }
+
+function crystal_test {
+    set -e
+    v -enable-globals -stats test crystallib/core/pathlib
+    v -enable-globals -stats test crystallib/core/texttools
+    v -enable-globals -stats test crystallib/core/playbook
+    v -enable-globals -stats test crystallib/data/encoder
+    v -enable-globals -stats test crystallib/data/currency
+    v -enable-globals -stats test crystallib/data/markdownparser
+    v -enable-globals -stats test crystallib/data/ourtime
+    v -enable-globals -stats test crystallib/data/paramsparser
+    # v -enable-globals -stats test crystallib/data/doctree
+}
+
 
 
 

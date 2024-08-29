@@ -102,3 +102,19 @@ is_github_actions() {
     [ -d "/home/runner" ] || [ -d "$HOME/runner" ]
 }
 
+set -x
+if [ -n "$SUDO_USER" ]; then
+    export HOME_SUDO=$(eval echo "~$SUDO_USER")
+    SECRET_FILE="${HOME_SUDO}/mysecrets.sh"
+    if [ -f "$SECRET_FILE" ]; then
+        echo 'get secrets for sudoer'
+        source "$SECRET_FILE"
+    fi
+fi
+
+SECRET_FILE2="${HOME}/mysecrets.sh"
+if [ -f "$SECRET_FILE2" ]; then
+    echo 'get secrets for home user'
+    source "$SECRET_FILE2"
+fi
+
