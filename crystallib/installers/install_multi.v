@@ -16,7 +16,7 @@ import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.installers.web.caddy
 import freeflowuniverse.crystallib.installers.hero.heroweb
 import freeflowuniverse.crystallib.installers.hero.herodev
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu
+import freeflowuniverse.crystallib.servers.daguserver
 import freeflowuniverse.crystallib.installers.sysadmintools.prometheus
 import freeflowuniverse.crystallib.installers.sysadmintools.grafana
 import freeflowuniverse.crystallib.installers.sysadmintools.fungistor
@@ -142,7 +142,11 @@ pub fn install_multi(args_ InstallArgs) ! {
 				heroweb.install()!
 			}
 			'dagu' {
-				dagu.install()!
+				//will call the installer underneith
+				mut dserver:=daguserver.new()! 
+				dserver.install()! 
+				dserver.restart()!
+				mut dagucl:=dserver.client()!
 			}
 			else {
 				return error('cannot find installer for: ${item}')

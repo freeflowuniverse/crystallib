@@ -18,7 +18,6 @@ fn shebang(path string)!{
 
 fn do() ! {
 
-
 	if os.args.len == 2{
 		mypath:=os.args[1]
 		if mypath.to_lower().ends_with(".hero"){
@@ -32,7 +31,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.24'
+		version: '1.0.25'
 	}
 
 

@@ -142,8 +142,8 @@ pub fn start(args_ InstallArgs) ! {
 pub fn configure(args_ InstallArgs) ! {
 	mut cfg := args_
 
-	if cfg.password == '' || cfg.secret == '' {
-		return error('password and secret needs to be filled in for dagu')
+	if cfg.password == '' && cfg.secret == '' {
+		return error('password or secret needs to be filled in for dagu')
 	}
 
 	mut mycode := $tmpl('templates/admin.yaml')
