@@ -24,6 +24,16 @@ function crystal_deps_install {
     fi
 
 
+      #       set -x
+      #       cd /tmp
+      #       wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+      #       tar -xvf v0.3.2.tar.gz
+      #       cd secp256k1-0.3.2/
+      #       ./autogen.sh
+      #       ./configure
+      #       sudo make -j 5
+      #       sudo make install   
+
 }
 
 function crystal_lib_pull {

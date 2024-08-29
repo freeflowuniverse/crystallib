@@ -752,6 +752,16 @@ function crystal_deps_install {
     fi
 
 
+      #       set -x
+      #       cd /tmp
+      #       wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+      #       tar -xvf v0.3.2.tar.gz
+      #       cd secp256k1-0.3.2/
+      #       ./autogen.sh
+      #       ./configure
+      #       sudo make -j 5
+      #       sudo make install   
+
 }
 
 function crystal_lib_pull {
@@ -940,13 +950,14 @@ function hero_install {
 
 
 function hero_upload {
-    set -e
+    set -e    
     hero_path=$(which hero 2>/dev/null)
     if [ -z "$hero_path" ]; then
         echo "Error: 'hero' command not found in PATH" >&2
         exit 1
     fi
     set -x
+    s3_configure
     rclone lsl b2:threefold/$MYPLATFORMID/
     rclone copy "$hero_path" b2:threefold/$MYPLATFORMID/
 }
