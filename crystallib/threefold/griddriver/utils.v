@@ -26,3 +26,5 @@ pub fn (mut c Client) generate_wg_priv_key() ![]string {
 	}
 	return key
 }
+
+

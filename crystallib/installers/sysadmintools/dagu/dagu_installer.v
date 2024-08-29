@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
 
-pub const version = '1.14.2'
+pub const version = '1.14.3'
 
 @[params]
 pub struct InstallArgs {

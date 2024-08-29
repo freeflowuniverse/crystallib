@@ -324,6 +324,10 @@ pub fn (mut path Path) empty() ! {
 	if path.cat == .dir {
 		os.mkdir_all(path.path)!
 		path.exist = .yes
+		mut list := path.list()!
+		for mut subpath in list.paths {
+			subpath.delete()!
+		}
 	} else if path.cat == Category.linkfile {
 		mut p2 := path.getlink()!
 		p2.empty()!

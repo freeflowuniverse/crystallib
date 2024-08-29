@@ -68,7 +68,7 @@ pub fn install(args_ InstallArgs) ! {
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_refresh()!
-		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server')!
+		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server,ufw')!
 	} else if pl == .alpine {
 		console.print_header(' - Alpine prepare')
 		osal.package_refresh()!
@@ -76,7 +76,7 @@ pub fn install(args_ InstallArgs) ! {
 	} else if pl == .arch {
 		console.print_header(' - Arch prepare')
 		osal.package_refresh()!
-		osal.package_install('rsync,ncdu, git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop,arch-install-scripts')!
+		osal.package_install('rsync,ncdu, git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop,arch-install-scripts,ufw')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}

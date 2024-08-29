@@ -4,104 +4,103 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.installers.net.mycelium
+import freeflowuniverse.crystallib.sysadmin.startupmanager
 import time
 import os
 
-@[heap]
-pub struct RedisInstaller {
-pub mut:
-	name    string
-	port    int
-	datadir string
-}
 
 @[params]
-pub struct RedisInstallerArgs {
+pub struct InstallArgs {
 pub mut:
-	name    string = 'default'
 	port    int    = 6379
-	datadir string
-	start   bool = true
+	datadir string = '${os.home_dir()}/hero/var/redis'
+	ipaddr  string = "localhost" //can be more than 1, space separated
+	reset   bool
+	start   bool
+	restart bool = true
 }
 
-pub fn install(args_ RedisInstallerArgs) !RedisInstaller {
+// ```
+// struct InstallArgs {
+// 	port    int    = 6379
+// 	datadir string = '${os.home_dir()}/hero/var/redis'
+// 	ipaddr  string = "localhost" //can be more than 1, space separated
+// 	reset   bool
+// 	start   bool
+// 	restart bool = true
+// }
+// ```
+pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
-	args.start = true
+	console.print_header('install redis.')
 
 	if !(osal.cmd_exists_profile('redis-server')) {
-		osal.package_install('redis')!
-	}
-
-	return new(args)!
-}
-
-pub fn new(args_ RedisInstallerArgs) !RedisInstaller {
-	mut args := args_
-	if args.datadir == '' {
-		args.datadir = '${os.home_dir()}/hero/var/redis/${args.name}'
+		if osal.is_linux() {
+			osal.package_install('redis-server')!
+		}else{
+			osal.package_install('redis')!
+		}
 	}
 	osal.execute_silent('mkdir -p ${args.datadir}')!
-	mut r := RedisInstaller{
-		name: args.name
-		port: args.port
-		datadir: args.datadir
+
+	if args.restart{
+		stop()!
 	}
-	if args.start {
-		r.start()!
-	}
-	return r
+	start(args)!
 }
 
-fn (self RedisInstaller) configfilepath() string {
-	return '${self.datadir}/redis.conf'
+fn configfilepath(args InstallArgs) string {
+	if osal.is_linux() {
+		return "/etc/redis/redis.conf"
+	}else{
+		return '${args.datadir}/redis.conf'
+	}
 }
 
-fn (self RedisInstaller) configdo() ! {
+fn configure(args InstallArgs) ! {
+	
 	c := $tmpl('template/redis_config.conf')
-	pathlib.template_write(c, self.configfilepath(), true)!
+	pathlib.template_write(c, configfilepath(), true)!
 }
 
-pub fn check() ! {
-	res := os.execute('redis-cli -c ping > /dev/null 2>&1')
+pub fn check(args InstallArgs) bool {
+	res := os.execute('redis-cli -c -p ${args.port} ping > /dev/null 2>&1')
+	console.print_debug('redis ping ok.')
 	if res.exit_code == 0 {
-		return
+		return true
 	}
-	install(start: true)!
+	return false
 }
 
-pub fn (self RedisInstaller) start() ! {
-	res := os.execute('redis-cli -c ping')
-	if res.exit_code == 0 {
+pub fn start(args InstallArgs) ! {
+
+	if check(){
 		return
 	}
 
-	self.configdo()!
-	name := 'redis_${self.name}'
-
+	configure(args)!
 	//remove all redis in memory
 	osal.process_kill_recursive(name:"redis-server")!
 
-	mut scr := screen.new()!
-
-	mut s := scr.add(
-		name: name
-		reset: true
-		start: true
-		cmd: 'redis-server ${self.configfilepath()}'
+	mut sm := startupmanager.get()!
+	sm.start(
+		name: "redis"
+		cmd: cmd
 	)!
 
+
 	for _ in 0 .. 100 {
-		mut res2 := os.execute('redis-cli -c ping')
-		if res2.exit_code == 0 {
-			console.print_header('redis is running')
+		if check(){
+			console.print_debug('redis started.')
 			return
 		}
-		time.sleep(10000)
+		time.sleep(100)
 	}
 	return error("Redis did not install propertly could not do:'redis-cli -c ping'")
 }
 
-// pub fn (m RedisInstaller) stop() ! {
-// 	osal.execute('')!
-// }
+pub fn stop() ! {
+	osal.execute('')!
+}

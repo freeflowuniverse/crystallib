@@ -9,11 +9,13 @@ import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 import time
+import json
 
 @[params]
 pub struct InstallArgs {
 pub mut:
 	reset bool
+	restart bool = true
 }
 
 // install mycelium will return true if it was already installed
@@ -37,10 +39,11 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-	if args.reset {
-		console.print_header('install mycelium')
+	if  check()==false{
+		args.reset = true
+	}
 
-		// install mycelium if it was already done will return true
+	if args.reset {
 		console.print_header('install mycelium')
 
 		mut url := ''
@@ -55,7 +58,7 @@ pub fn install(args_ InstallArgs) ! {
 		} else {
 			return error('unsported platform')
 		}
-		console.print_debug(url)
+		//console.print_debug(url)
 		mut dest := osal.download(
 			url: url
 			minsize_kb: 1000
@@ -65,16 +68,18 @@ pub fn install(args_ InstallArgs) ! {
 
 		mut myceliumfile := dest.file_get('mycelium')! // file in the dest
 
-		console.print_debug(myceliumfile.str())
+		//console.print_debug(myceliumfile.str())
 
 		osal.cmd_add(
 			source: myceliumfile.path
 		)!
-
-		restart()!
-	} else {
-		start()!
+	} 
+	
+	if args.restart{
+		stop()!
 	}
+	start()!
+
 	console.print_debug('install mycelium ok')
 }
 
@@ -97,12 +102,11 @@ pub fn stop() ! {
 }
 
 pub fn start(args InstallArgs) ! {
+	if check(){
+		//console.print_header('mycelium was already running')
+		return
+	}
 	myinitname := osal.initname()!
-	// if myinitname != 'systemd' {
-	// 	console.print_debug("can't start mycelium because init is '${myinitname}'.")
-	// 	return
-	// }
-
 	name := 'mycelium'
 	console.print_debug('start ${name} (startupmanger:${myinitname})')
 
@@ -112,8 +116,8 @@ pub fn start(args InstallArgs) ! {
 		cmd = 'sudo -s '
 	}
 
-	cmd += 'mycelium --peers tcp://188.40.132.242:9651 quic://185.69.166.7:9651 tcp://65.21.231.58:9651 --tun-name utun9'
-
+	cmd += 'mycelium --key-file ${osal.hero_path()!}/cfg/priv_key.bin --peers tcp://188.40.132.242:9651 quic://185.69.166.7:9651 tcp://65.21.231.58:9651 --tun-name utun9'
+	console.print_debug(cmd)
 	if osal.is_osx() {
 		// do not change, because we need this on osx at least
 
@@ -151,32 +155,34 @@ pub fn start(args InstallArgs) ! {
 
 	time.sleep(100 * time.millisecond)
 
-	if !check()! {
+	if !check() {
 		return error('cound not start mycelium')
 	}
 
 	console.print_header('mycelium is running')
 }
 
-pub fn check() !bool {
-	if osal.is_osx() {
-		mut scr := screen.new(reset: false)!
-		name := 'mycelium'
-		if !scr.exists(name) {
-			return false
-		}
+pub fn check() bool {
+	// if osal.is_osx() {
+	// 	mut scr := screen.new(reset: false) or {return False}
+	// 	name := 'mycelium'
+	// 	if !scr.exists(name) {
+	// 		return false
+	// 	}
+	// }
+
+	// if !(osal.process_exists_byname('mycelium') or {return False}) {
+	// 	return false
+	// }
+
+	//TODO: might be dangerous if that one goes out
+	ping_result:= osal.ping(address:"40a:152c:b85b:9646:5b71:d03a:eb27:2462",retry:3)
+	if ping_result == .ok{
+		console.print_debug("could reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462")
 		return true
 	}
-
-	if !(osal.process_exists_byname('mycelium')!) {
-		return false
-	}
-
-	// res := os.execute('mycelium -c ping')
-	// if res.exit_code > 0 {
-	// 	return error("mycelium did not install propertly could not do:'mycelium-cli -c ping'\n${res.output}")
-	// }
-	return true
+	console.print_stderr("could not reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462")
+	return false
 }
 
 // install mycelium will return true if it was already installed
@@ -203,4 +209,28 @@ pub fn build() ! {
 	} else {
 		console.print_header('mycelium already installed')
 	}
+}
+
+
+struct MyceliumInspectResult {
+	public_key string @[json: publicKey]
+	address    string
+}
+
+pub fn inspect()!MyceliumInspectResult{
+	command := 'mycelium inspect --key-file /root/hero/cfg/priv_key.bin --json'
+	result := os.execute(command)
+	if result.exit_code != 0 {
+		return error("Command failed: ${result.output}")
+	}
+	inspect_result := json.decode(MyceliumInspectResult, result.output) or {
+		return error('Failed to parse JSON: $err')
+	}
+	return inspect_result
+}
+
+//if returns empty then probably mycelium is not installed
+pub fn ipaddr()string{
+	r:=inspect() or {MyceliumInspectResult{}}
+	return r.address
 }
