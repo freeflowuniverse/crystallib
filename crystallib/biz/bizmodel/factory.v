@@ -1,12 +1,10 @@
 module bizmodel
 
 import freeflowuniverse.crystallib.biz.spreadsheet
-// import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 
 __global (
 	bizmodels shared map[string]&BizModel
@@ -39,7 +37,6 @@ pub fn new(args_ BizModelArgs) !BizModel {
 	// mut cs := currency.new()
 	mut sh := spreadsheet.sheet_new(name: 'bizmodel_${args.name}')!
 	mut bizmodel := BizModel{
-		name: args.name
 		sheet: &sh
 		params: args
 		// currencies: cs
@@ -83,7 +80,7 @@ pub fn simulator_get(name string) !&BizModel {
 // remember sheet in global
 pub fn simulator_set(bizmodel BizModel) {
 	lock bizmodels {
-		bizmodels[bizmodel.name] = &bizmodel
+		bizmodels[bizmodel.params.name] = &bizmodel
 	}
 	spreadsheet.sheet_set(bizmodel.sheet)
 }

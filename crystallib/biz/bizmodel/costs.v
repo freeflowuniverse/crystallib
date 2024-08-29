@@ -2,7 +2,6 @@ module bizmodel
 
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.ui.console
 
 // populate the params for hr
 // !!hr.employee_define
