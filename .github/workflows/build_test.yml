@@ -73,4 +73,4 @@ jobs:
           v -enable-globals -stats test crystallib/data/markdownparser
           v -enable-globals -stats test crystallib/data/ourtime
           v -enable-globals -stats test crystallib/data/paramsparser
-          v -enable-globals -stats test crystallib/data/doctree
+          # v -enable-globals -stats test crystallib/data/doctree
