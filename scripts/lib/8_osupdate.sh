@@ -2,7 +2,7 @@
 function os_update {
     echo ' - os update'
     if [[ "${OSNAME}" == "ubuntu" ]]; then
-        if is_github_runner; then
+        if [ -n "$GITHUB_ACTIONS" ]; then
             echo "github actions"
         else
             rm -f /var/lib/apt/lists/lock
@@ -13,7 +13,7 @@ function os_update {
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
         apt update -y
-        if is_github_runner; then
+        if [ -n "$GITHUB_ACTIONS" ]; then
             echo "** github actions"
         else
             set +e

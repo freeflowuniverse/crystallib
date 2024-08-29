@@ -98,15 +98,8 @@ function execute_with_marker {
 }
 
 
-is_github_runner() {
-    set +x
-    echo $GITHUB_ACTIONS
-    echo 'ghactions: ${GITHUB_ACTIONS}'
-    if [ -n "$GITHUB_ACTIONS" ] && [ "$GITHUB_ACTIONS" = "true" ]; then
-        echo "true"
-    else
-        echo "false"
-    fi
+is_github_actions() {
+    [ -n "$GITHUB_ACTIONS" ]
 }
 
 function myplatform {
@@ -482,7 +475,7 @@ function zinitinit {
 function os_update {
     echo ' - os update'
     if [[ "${OSNAME}" == "ubuntu" ]]; then
-        if is_github_runner; then
+        if [ -n "$GITHUB_ACTIONS" ]; then
             echo "github actions"
         else
             rm -f /var/lib/apt/lists/lock
@@ -493,7 +486,7 @@ function os_update {
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
         apt update -y
-        if is_github_runner; then
+        if [ -n "$GITHUB_ACTIONS" ]; then
             echo "** github actions"
         else
             set +e
@@ -682,7 +675,7 @@ function v_install {
 
 function v_analyzer_install {
 
-    if is_github_runner; then
+    if [ -n "$GITHUB_ACTIONS" ]; then
         return
     fi
 

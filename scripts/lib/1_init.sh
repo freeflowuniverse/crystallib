@@ -98,13 +98,6 @@ function execute_with_marker {
 }
 
 
-is_github_runner() {
-    set +x
-    echo $GITHUB_ACTIONS
-    echo 'ghactions: ${GITHUB_ACTIONS}'
-    if [ -n "$GITHUB_ACTIONS" ] && [ "$GITHUB_ACTIONS" = "true" ]; then
-        echo "true"
-    else
-        echo "false"
-    fi
+is_github_actions() {
+    [ -n "$GITHUB_ACTIONS" ]
 }
