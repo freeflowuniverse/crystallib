@@ -43,6 +43,13 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
+      - name: Get crystalweb
+        run: |
+          mkdir -p ~/.vmodules
+          pushd ~/.vmodules
+          git clone --depth 1 https://github.com/freeflowuniverse/webcomponents
+          popd
+
       - name: Install crystallib
         run: |
           mkdir -p ~/.vmodules/freeflowuniverse
