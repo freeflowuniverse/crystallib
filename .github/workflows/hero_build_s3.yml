@@ -50,25 +50,30 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Checkout another repository
-        uses: actions/checkout@v3
-        with:
-          repository: freeflowuniverse/webcomponents
-          path: ../webcomponents
-          set-safe-directory: false
+      - name: Get crystalweb
+        run: |
+          mkdir -p ~/.vmodules
+          cd $(pwd)
+          cd ..
+          git clone --depth 1 https://github.com/freeflowuniverse/webcomponents
 
       - name: DEBUG
         run: |
+          cd $(pwd)
+          cd ..
           echo "******** LS BASE CODE"
-          ls $(pwd)/..
+          ls
           echo "******** LS CRYSTALLIB"
-          ls $(pwd)
-          echo "******** LS WEBCOMPONENTS"
-          ls $(pwd)/../webcomponents  
-          echo "******** END"
-          pushd $(pwd)/../webcomponents
+          cd crystallib
+          ls
           git status
-          popd                  
+          cd ..
+          echo "******** LS WEBCOMPONENTS"
+          cd webcomponents  
+          ls
+          git status
+          cd ..
+          echo "******** END"
 
       - name: Get crystallib
         run: |
