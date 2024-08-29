@@ -31,6 +31,7 @@ pub fn bash_installers_package() !string {
 		10_installer_v.sh
 		11_installer_crystallib.sh
 		12_installer_hero.sh
+		13_s3.sh
 		20_installers.sh
 	'
 	mut out := ''
@@ -65,6 +66,7 @@ pub fn bash_installers_package() !string {
 
 	script_write(out, 'githubactions', "
 		hero_build
+		hero_upload
 		echo 'OK'
 		")!
 

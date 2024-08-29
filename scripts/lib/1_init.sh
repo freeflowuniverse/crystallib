@@ -101,3 +101,4 @@ function execute_with_marker {
 is_github_actions() {
     [ -d "/home/runner" ] || [ -d "$HOME/runner" ]
 }
+

@@ -80,3 +80,17 @@ function hero_install {
         exit 1
     fi
 }
+
+
+function hero_upload {
+    set -e
+    hero_path=$(which hero 2>/dev/null)
+    if [ -z "$hero_path" ]; then
+        echo "Error: 'hero' command not found in PATH" >&2
+        exit 1
+    fi
+    set -x
+    rclone lsl b2:threefold/$MYPLATFORMID/
+    rclone copy "$hero_path" b2:threefold/$MYPLATFORMID/
+}
+    

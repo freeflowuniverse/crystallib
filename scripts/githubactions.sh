@@ -101,6 +101,8 @@ function execute_with_marker {
 is_github_actions() {
     [ -d "/home/runner" ] || [ -d "$HOME/runner" ]
 }
+
+
 function myplatform {
     if [[ "${OSTYPE}" == "darwin"* ]]; then
         export OSNAME='darwin'
@@ -154,6 +156,40 @@ function is_zinit_installed {
 }
 
 
+
+
+myplatformid() {
+    local arch=$(uname -m)
+    local os=$(uname -s)
+
+    case "$os" in
+        Linux*)
+            case "$arch" in
+                aarch64|arm64) echo "linux-arm64" ;;
+                x86_64) echo "linux-i64" ;;
+                *) echo "unknown" ;;
+            esac
+            ;;
+        Darwin*)
+            case "$arch" in
+                arm64) echo "macos-arm64" ;;
+                x86_64) echo "macos-i64" ;;
+                *) echo "unknown" ;;
+            esac
+            ;;
+        *)
+            echo "unknown"
+            ;;
+    esac
+}
+
+
+export MYPLATFORMID=$(myplatformid)
+
+if [ "$MYPLATFORMID" == "unknown" ]; then
+    echo "Error: Unable to detect platform" >&2
+    exit 1
+fi
 
 function gitcheck {
     # Check if Git email is set
@@ -900,6 +936,43 @@ function hero_install {
         exit 1
     fi
 }
+
+
+function hero_upload {
+    set -e
+    hero_path=$(which hero 2>/dev/null)
+    if [ -z "$hero_path" ]; then
+        echo "Error: 'hero' command not found in PATH" >&2
+        exit 1
+    fi
+    set -x
+    rclone lsl b2:threefold/$MYPLATFORMID/
+    rclone copy "$hero_path" b2:threefold/$MYPLATFORMID/
+}
+    
+
+
+function s3_configure {
+# Check if environment variables are set
+if [ -z "$S3KEYID" ] || [ -z "$S3APPID" ]; then
+    echo "Error: S3KEYID or S3APPID is not set"
+    exit 1
+fi
+
+# Create rclone config file
+mkdir -p "${HOME}/.config/rclone"
+cat > "${HOME}/.config/rclone/rclone.conf" <<EOL
+[b2]
+type = b2
+account = $S3KEYID
+key = $S3APPID
+hard_delete = true
+hard_delete = true
+EOL
+
+}
+
+
 function freeflow_dev_env_install {
 
     set -e
@@ -955,4 +1028,5 @@ sshknownkeysadd
 
 
 hero_build
+hero_upload
 echo 'OK'
