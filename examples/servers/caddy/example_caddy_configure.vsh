@@ -1,9 +1,12 @@
 #!/usr/bin/env -S v -n -w -enable-globals run
 
+
+
 import vweb
 import os
-import freeflowuniverse.crystallib.servers.caddy {Address, ReverseProxy, Directive}
+import freeflowuniverse.crystallib.servers.caddy
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
 
 const auth_url = 'https://auth.some.url/oauth2/generic'
 
@@ -52,8 +55,22 @@ fn generate_security_config() !caddy.Security {
 	}
 }
 
-// Main function to set up the server and generate the Caddyfile
+//install caddy
+heroscript := "
+!!caddy.install
+    xcaddy:true
+    restart:true
+    reset:true
+    homedir:'/root/www'
+    xcaddy:1
 
+"
+
+// mut plbook := playbook.new(text: heroscript)!
+// caddyinstaller.play(mut plbook)!
+    
+
+// Main function to set up the server and generate the Caddyfile
 
 osal.load_env_file('${os.dir(@FILE)}/.env')!
 // Start the webserver
