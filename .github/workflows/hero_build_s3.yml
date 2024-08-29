@@ -55,6 +55,7 @@ jobs:
         with:
           repository: freeflowuniverse/webcomponents
           path: ../webcomponents
+          set-safe-directory: false
 
       - name: DEBUG
         run: |
