@@ -14,9 +14,10 @@ function os_update {
         dpkg --configure -a
         apt update -y
         if is_github_runner; then
-            echo "github actions"
+            echo "** github actions"
         else
             set +e
+            echo "** UPDATE"
             apt-mark hold grub-efi-amd64-signed
             set -e
             apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
@@ -25,16 +26,6 @@ function os_update {
         #apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "apt-transport-https ca-certificates curl wget software-properties-common tmux"
         package_install "rsync mc redis-server screen net-tools git htop ca-certificates lsb-release binutils pkg-config"
-
-        if is_github_runner; then
-            echo "github actions"
-        else
-            set +e
-            apt-mark hold grub-efi-amd64-signed
-            set -e
-            apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-            apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        fi 
 
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
