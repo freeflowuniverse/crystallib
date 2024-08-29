@@ -975,7 +975,7 @@ EOL
 
 function freeflow_dev_env_install {
 
-    set -e
+    set -ex
 
     crystal_lib_get
 
