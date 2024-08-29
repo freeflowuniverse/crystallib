@@ -96,3 +96,10 @@ function execute_with_marker {
 }
 
 
+is_github_runner() {
+    if [ -n "$GITHUB_ACTIONS" ] && [ "$GITHUB_ACTIONS" = "true" ]; then
+        return 0  # True, we are in a GitHub Actions runner
+    else
+        return 1  # False, we are not in a GitHub Actions runner
+    fi
+}
