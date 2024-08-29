@@ -83,7 +83,12 @@ jobs:
           rm -f ~/.vmodules/freeflowuniverse/webcomponents
           cd $(pwd)
           cd ..          
-          ln -s webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents    
+          ln -s webcomponents/webcomponents ~/.vmodules/freeflowuniverse/webcomponents
+          set +x
+          ls ~/.vmodules
+          ls ~/.vmodules/freeflowuniverse
+          ls ~/.vmodules/freeflowuniverse/crystallib
+          ls ~/.vmodules/freeflowuniverse/webcomponents
 
       - name: Setup Vlang
         uses: vlang/setup-v@v1.3
