@@ -25,7 +25,7 @@ function os_update {
         fi 
         #apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "apt-transport-https ca-certificates curl wget software-properties-common tmux"
-        package_install "rsync mc redis-server screen net-tools git htop ca-certificates lsb-release binutils pkg-config"
+        package_install "rclone rsync mc redis-server screen net-tools git htop ca-certificates lsb-release binutils pkg-config"
 
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
