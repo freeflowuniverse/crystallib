@@ -62,6 +62,11 @@ function v_install {
 
 
 function v_analyzer_install {
+
+    if is_github_runner; then
+        return
+    fi
+
     if [[ -n "${DEBUG}" ]]; then
         v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
     fi  

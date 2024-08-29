@@ -3,6 +3,7 @@ function os_update {
     echo ' - os update'
     if [[ "${OSNAME}" == "ubuntu" ]]; then
         if is_github_runner; then
+            echo "github actions"
         else
             rm -f /var/lib/apt/lists/lock
             rm -f /var/cache/apt/archives/lock
@@ -13,6 +14,7 @@ function os_update {
         dpkg --configure -a
         apt update -y
         if is_github_runner; then
+            echo "github actions"
         else
             set +e
             apt-mark hold grub-efi-amd64-signed

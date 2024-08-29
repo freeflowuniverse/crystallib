@@ -96,6 +96,13 @@ function execute_with_marker {
 }
 
 
+is_github_runner() {
+    if [ -n "$GITHUB_ACTIONS" ] && [ "$GITHUB_ACTIONS" = "true" ]; then
+        return 0  # True, we are in a GitHub Actions runner
+    else
+        return 1  # False, we are not in a GitHub Actions runner
+    fi
+}
 
 function myplatform {
     if [[ "${OSTYPE}" == "darwin"* ]]; then
@@ -470,18 +477,26 @@ function zinitinit {
 function os_update {
     echo ' - os update'
     if [[ "${OSNAME}" == "ubuntu" ]]; then
-        rm -f /var/lib/apt/lists/lock
-        rm -f /var/cache/apt/archives/lock
-        rm -f /var/lib/dpkg/lock*		
+        if is_github_runner; then
+            echo "github actions"
+        else
+            rm -f /var/lib/apt/lists/lock
+            rm -f /var/cache/apt/archives/lock
+            rm -f /var/lib/dpkg/lock*		
+        fi    
         export TERM=xterm
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
         apt update -y
-        set +e
-        apt-mark hold grub-efi-amd64-signed
-        set -e
-        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        if is_github_runner; then
+            echo "github actions"
+        else
+            set +e
+            apt-mark hold grub-efi-amd64-signed
+            set -e
+            apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+            apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        fi 
         apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
         package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release binutils wget pkg-config"
 
@@ -659,6 +674,11 @@ function v_install {
 
 
 function v_analyzer_install {
+
+    if is_github_runner; then
+        return
+    fi
+
     if [[ -n "${DEBUG}" ]]; then
         v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
     fi  
