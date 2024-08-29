@@ -479,26 +479,26 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 	return m
 }
 
-pub enum NodeStatus {
-	all
-	online
-}
+// pub enum NodeStatus {
+// 	all
+// 	online
+// }
 
-@[params]
-pub struct ResourceFilter {
-pub mut:
-	free_mru_gb u64
-	free_sru_gb u64
-	free_hru_gb u64
-	free_cpu    u64
-	free_ips    u64
-}
+// @[params]
+// pub struct ResourceFilter {
+// pub mut:
+// 	free_mru_gb u64
+// 	free_sru_gb u64
+// 	free_hru_gb u64
+// 	free_cpu    u64
+// 	free_ips    u64
+// }
 
-@[params]
-pub struct StatFilter {
-pub mut:
-	status NodeStatus
-}
+// @[params]
+// pub struct StatFilter {
+// pub mut:
+// 	status NodeStatus
+// }
 
 @[params]
 pub struct TwinFilter {

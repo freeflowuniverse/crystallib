@@ -11,13 +11,13 @@ fn testsuite_begin() ! {
 }
 
 fn test_vm_deploy() ! {
-	mneumonics := os.getenv('MNEUMONICS')
+	mnemonics := os.getenv('TFGRID_MNEMONIC')
 	ssh_key := os.getenv('SSH_KEY')
 
 	println('debbb ${ssh_key}')
 
 	mut robot := configure('testrobot', 
-		mnemonics: mneumonics
+		mnemonics: mnemonics
 		network: 'main'
 	)!
 	result := robot.vm_deploy(

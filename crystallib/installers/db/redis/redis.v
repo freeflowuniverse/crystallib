@@ -2,9 +2,7 @@ module redis
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import time
 import os
@@ -87,7 +85,7 @@ pub fn start(args InstallArgs) ! {
 	mut sm := startupmanager.get()!
 	sm.start(
 		name: "redis"
-		cmd: cmd
+		cmd: "redis-server ${configfilepath()} --daemonize yes"
 	)!
 
 
@@ -102,5 +100,5 @@ pub fn start(args InstallArgs) ! {
 }
 
 pub fn stop() ! {
-	osal.execute('')!
+	osal.execute_silent('redis-cli shutdown')!
 }

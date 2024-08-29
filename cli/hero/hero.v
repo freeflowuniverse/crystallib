@@ -63,7 +63,7 @@ fn do() ! {
 		}
 	}
 
-	redis.check()!
+	redis.check()
 
 	herocmds.cmd_bootstrap(mut cmd)
 	herocmds.cmd_run(mut cmd)

@@ -47,10 +47,10 @@ pub fn (mut robot TFRobot[Config]) vm_deploy(args_ VMSpecs) !VMOutput {
 	node_group := 'ng_${args.cores}_${args.memory}_${args.size}_${rand.string(8).to_lower()}'
 
 	config := robot.config()!
-	mneumonics := config.mnemonics
+	mnemonics := config.mnemonics
 	output := robot.deploy(
 		name: args.name
-		mnemonic: mneumonics
+		mnemonic: mnemonics
 		network: .main
 		node_groups: [
 			NodeGroup{

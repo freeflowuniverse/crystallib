@@ -464,26 +464,26 @@ pub fn (mut c GridProxyClient) is_pingable() !bool {
 // to be used in a loop to get all available results, or to lazely traverse pages till a specific condition is met.
 
 // get_nodes_iterator creates an iterator through node pages with custom filter
-pub fn (mut c GridProxyClient) get_nodes_iterator(filter NodeFilter) NodeIterator {
+fn (mut c GridProxyClient) get_nodes_iterator(filter NodeFilter) NodeIterator {
 	return NodeIterator{filter, c.get_nodes}
 }
 
 // get_gateways_iterator creates an iterator through gateway pages with custom filter
-pub fn (mut c GridProxyClient) get_gateways_iterator(filter NodeFilter) NodeIterator {
+fn (mut c GridProxyClient) get_gateways_iterator(filter NodeFilter) NodeIterator {
 	return NodeIterator{filter, c.get_gateways}
 }
 
 // get_farms_iterator creates an iterator through farms pages with custom filter
-pub fn (mut c GridProxyClient) get_farms_iterator(filter FarmFilter) FarmIterator {
+fn (mut c GridProxyClient) get_farms_iterator(filter FarmFilter) FarmIterator {
 	return FarmIterator{filter, c.get_farms}
 }
 
 // get_twins_iterator creates an iterator through twin pages with custom filter
-pub fn (mut c GridProxyClient) get_twins_iterator(filter TwinFilter) TwinIterator {
+fn (mut c GridProxyClient) get_twins_iterator(filter TwinFilter) TwinIterator {
 	return TwinIterator{filter, c.get_twins}
 }
 
 // get_contracts_iterator creates an iterator through contracts pages with custom filter
-pub fn (mut c GridProxyClient) get_contracts_iterator(filter ContractFilter) ContractIterator {
+fn (mut c GridProxyClient) get_contracts_iterator(filter ContractFilter) ContractIterator {
 	return ContractIterator{filter, c.get_contracts}
 }
