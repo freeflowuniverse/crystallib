@@ -56,16 +56,6 @@ jobs:
           repository: freeflowuniverse/webcomponents
           path: ../webcomponents
 
-      - name: Get crystalweb
-        run: |
-          mkdir -p ~/.vmodules
-          pushd ~/.vmodules
-          git clone --depth 1 https://github.com/freeflowuniverse/webcomponents
-          popd
-          echo "LS WEB"
-          ls ~/.vmodules/webcomponents
-          ln -s ~/.vmodules/webcomponents $(pwd)/crystallib
-
       - name: DEBUG
         run: |
           echo "******** LS BASE CODE"
