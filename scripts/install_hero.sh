@@ -1014,6 +1014,10 @@ hard_delete = true
 hard_delete = true
 EOL
 
+echo "made S3 config on: ${HOME}/.config/rclone/rclone.conf"
+
+cat ${HOME}/.config/rclone/rclone.conf
+
 }
 
 
