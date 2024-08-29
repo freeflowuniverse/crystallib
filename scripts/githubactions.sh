@@ -954,4 +954,5 @@ sshknownkeysadd
 
 
 
+hero_build
 echo 'OK'

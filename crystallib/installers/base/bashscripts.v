@@ -64,6 +64,7 @@ pub fn bash_installers_package() !string {
 		")!
 
 	script_write(out, 'githubactions', "
+		hero_build
 		echo 'OK'
 		")!
 

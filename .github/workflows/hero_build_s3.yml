@@ -52,7 +52,7 @@ jobs:
 
       - name: INSTALLBASE
         run: |
-          cd $(pwd) && sudo bash +x scripts/install_base.sh
+          cd $(pwd) && sudo bash +x scripts/githubactions.sh
 
       - name: Get crystalweb
         run: |
