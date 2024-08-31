@@ -13,8 +13,9 @@ fn main() {
 }
 
 fn do() ! {
-	zinit.destroy()!
-	mut z:=zinit.new()!
+	mut z:=zinit.get()!
+
+	z.destroy()!
 
 	// name      string            @[required]
 	// cmd       string            @[required]

@@ -13,7 +13,7 @@ import freeflowuniverse.crystallib.core.playcmds
 
 fn shebang(path string)!{
 	mut plbook := playbook.new(path: path)!
-	playcmds.run(mut plbook)!
+	playcmds.run(mut plbook,false)!
 }
 
 fn do() ! {

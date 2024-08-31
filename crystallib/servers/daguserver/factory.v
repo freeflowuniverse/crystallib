@@ -13,7 +13,7 @@ pub struct DaguServer[T] {
 @[params]
 pub struct Config {
 pub mut:
-	homedir     string = '${os.home_dir()}/hero/var/dagu'
+	homedir     string
 	configpath  string
 	username    string
 	password    string @[secret]
@@ -77,8 +77,9 @@ pub fn configure(instance string, cfg_ Config) !DaguServer[Config] {
 
 	self.init('daguserver', instance, .set, cfg)!
 
-	// println(self)
-
+    os.mkdir_all(cfg.homedir) or {
+        return error('Failed to create home directory: ${cfg.homedir} $err')
+    }
 	return self
 }
 

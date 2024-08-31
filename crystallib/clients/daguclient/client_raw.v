@@ -88,15 +88,18 @@ pub struct DagStatus {
 
 // Creates a new DAG.
 pub fn (mut client DaguClient) dags_list() !ListDagsResponse {
-	request := httpconnection.new_request(
+	
+	mut request := httpconnection.new_request(
 		method: .get
 		prefix: 'dags'
 	)!
 
-	// request.add_custom_header('x-disable-pagination', 'True') !
+	request.header.add_custom('x-disable-pagination', 'True')!
+	request.params["limit"]="1000"
+	request.params["page"]="1"
 
 	result := client.connection.send(request)!
-	// console.print_debug("dags_list:\n${result}")
+	console.print_debug("dags_list:\n${result}")
 	if !result.is_ok() {
 		err := json.decode(ApiError, result.data) or {
 			return error('Failed to call dag list: error ${result}')

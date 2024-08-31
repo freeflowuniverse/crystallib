@@ -9,16 +9,15 @@ import time
 
 pub struct ZProcess {
 pub:
-	name string
+	name string = "default"
 pub mut:
-	cmd     string
-	test    string
+	cmd     string		//command to start
+	test    string 		//command line to test service is running
 	status  ZProcessStatus
 	pid     int
-	after   []string
+	after   []string 	//list of service we depend on
 	env     map[string]string
 	oneshot bool
-	zinit   &Zinit            @[skip; str: skip]
 }
 
 pub enum ZProcessStatus {
@@ -31,13 +30,13 @@ pub enum ZProcessStatus {
 	spawned
 }
 
-pub fn (mut zinit Zinit) process_get(name_ string) !ZProcess {
+pub fn (mut zinit Zinit) get(name_ string) !ZProcess {
 	name := texttools.name_fix(name_)
 	// console.print_debug(zinit)
 	return zinit.processes[name] or { return error("cannot find process in zinit:'${name}'") }
 }
 
-pub fn (mut zinit Zinit) process_exists(name_ string) bool {
+pub fn (mut zinit Zinit) exists(name_ string) bool {
 	name := texttools.name_fix(name_)
 	if name in zinit.processes {
 		return true
@@ -45,7 +44,22 @@ pub fn (mut zinit Zinit) process_exists(name_ string) bool {
 	return false
 }
 
-pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
+@[params]
+pub struct ZProcessNewArgs {
+pub mut:
+	name      string            @[required]
+	cmd       string            @[required]
+	cmd_file  bool // if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
+	test      string
+	test_file bool
+	after     []string
+	env       map[string]string
+	oneshot   bool
+	start 	  bool = true
+}
+
+//will delete the process if it exists while starting
+pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
 	mut args := args_
 
 	args.name = texttools.name_fix(args.name)
@@ -59,21 +73,20 @@ pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 		return error('cmd cannot be empty for ${args} in zinit.')
 	}
 
-	if zinit.process_exists(args.name) {
-		mut p := zinit.process_get(args.name)!
+	if zinit.exists(args.name) {
+		mut p := zinit.get(args.name)!
 		p.destroy()!
 	}
 
 	mut zp := ZProcess{
 		name: args.name
-		zinit: &zinit
 		cmd: args.cmd
 	}
 
 	// means we can load the special cmd
 	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
 
-	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd)
+	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd) + "\n"
 	pathcmd.write(zp.cmd)!
 	pathcmd.chmod(0x770)!
 	zp.cmd = '/bin/bash -c ${pathcmd.path}'
@@ -95,11 +108,29 @@ pub fn (mut zinit Zinit) process_new(args_ ZProcessNewArgs) !ZProcess {
 	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
 	// console.print_debug('debug zprocess path yaml: ${pathyaml}')
 	pathyaml.write(zp.config_content())!
-	zp.start()!
+	if args.start{
+		zp.start()!
+	}
 	zinit.processes[args.name] = zp
 
 	return zp
 }
+
+pub fn (mut zinit Zinit) stop(name string) ! {
+	mut p:=zinit.get(name)!
+	p.stop()!
+}
+
+pub fn (mut zinit Zinit) start(name string) ! {
+	mut p:=zinit.get(name)!
+	p.start()!
+}
+
+pub fn (mut zinit Zinit) delete(name string) ! {
+	mut p:=zinit.get(name)!
+	p.destroy()!
+}
+
 
 pub fn (zp ZProcess) cmd() string {
 	p := '/etc/zinit/cmd/${zp.name}.sh'
@@ -154,7 +185,7 @@ log: ring
 	if zp.env.len > 0 {
 		out += 'env:\n'
 		for key, val in zp.env {
-			out += '  ${key}:${val}\n'
+			out += '  ${key}: \'${val}\'\n'
 		}
 	}
 	return out
@@ -184,9 +215,10 @@ pub fn (mut zp ZProcess) destroy() ! {
 	zp.stop()!
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}
-	mut path1 := zp.zinit.pathcmds.file_get_new(zp.name + '.sh')!
-	mut path2 := zp.zinit.pathtests.file_get_new(zp.name + '.sh')!
-	mut pathyaml := zp.zinit.path.file_get_new(zp.name + '.yaml')!
+	mut zinit := get()!
+	mut path1 := zinit.pathcmds.file_get_new(zp.name + '.sh')!
+	mut path2 := zinit.pathtests.file_get_new(zp.name + '.sh')!
+	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
 	path1.delete()!
 	path2.delete()!
 	pathyaml.delete()!

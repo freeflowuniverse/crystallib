@@ -13,7 +13,7 @@ pub mut:
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '1.65.1'
+	version := '1.67.0'
 
 	res := os.execute('${osal.profile_path_source_and()} rclone version')
 	if res.exit_code == 0 {

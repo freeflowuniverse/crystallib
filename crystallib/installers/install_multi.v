@@ -17,6 +17,7 @@ import freeflowuniverse.crystallib.installers.web.caddy
 import freeflowuniverse.crystallib.installers.hero.heroweb
 import freeflowuniverse.crystallib.installers.hero.herodev
 import freeflowuniverse.crystallib.servers.daguserver
+import freeflowuniverse.crystallib.installers.sysadmintools.rclone
 import freeflowuniverse.crystallib.installers.sysadmintools.prometheus
 import freeflowuniverse.crystallib.installers.sysadmintools.grafana
 import freeflowuniverse.crystallib.installers.sysadmintools.fungistor
@@ -41,10 +42,10 @@ pub fn names(args_ InstallArgs) []string {
 		crystal
 		dagu
 		develop
+		fungistor
 		garage_s3
 		golang
 		grafana
-		fungistor
 		hero
 		herodev
 		heroweb
@@ -53,6 +54,7 @@ pub fn names(args_ InstallArgs) []string {
 		nodejs
 		podman
 		prometheus
+		rclone
 		rust
 		vlang
 		vscode
@@ -77,6 +79,9 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'develop' {
 				base.install(reset: args.reset, develop: true)!
+			}
+			'rclone' {
+				rclone.install(reset: args.reset)!
 			}
 			'rust' {
 				rust.install(reset: args.reset)!

@@ -1,4 +1,4 @@
-host: "::"                          # default: 127.0.0.1
+host: "${cfg.host}"                          # default: 127.0.0.1
 port: ${cfg.port}
 
 # path to the DAGs directory
@@ -16,10 +16,10 @@ isAuthToken: true                                    # enables API token
 authToken: ${cfg.secret}
 
 # Base Config
-baseConfig: ${cfg.homedir}/config.yaml
+baseConfig: ${cfg.configpath}
 
 # Working Directory
-# workDir: ${cfg.homedir}/working                        # default: DAG location
+#workDir: ${cfg.homedir}/working                        # default: DAG location
 
 # SSL Configuration
 # tls:

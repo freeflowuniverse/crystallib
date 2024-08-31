@@ -9,7 +9,14 @@ import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
 // import freeflowuniverse.crystallib.installers.base as base_install
 // import freeflowuniverse.crystallib.installers.infra.coredns
 
-pub fn run(mut plbook playbook.PlayBook) ! {
+pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
+
+
+	if dagu{
+		hscript := plbook.str()
+		scheduler(hscript)!
+	}
+
 	play_core(mut plbook)!
 	play_ssh(mut plbook)!
 	play_git(mut plbook)!

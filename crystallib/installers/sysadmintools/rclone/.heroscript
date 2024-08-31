@@ -1,0 +1,2 @@
+
+!!hero_code.generate cat:'installer' name:'rclone' singleton:0 templates:0 objname:'RClone'

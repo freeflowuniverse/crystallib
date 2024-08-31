@@ -94,6 +94,14 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		abbrev: 'st'
 		description: 'Open sourcetree (git mgmt) for the repo where we found the content.'
 	})
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'dagu'
+		abbrev: 'da'
+		description: 'Schedule the heroscripts through DAGU.'
+	})	
 }
 
 // returns the path of the fetched repo
@@ -143,7 +151,9 @@ fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
 	// add all actions inside to the playbook
 	mut plbook := playbook.new(path: path)!
 
-	playcmds.run(mut plbook)!
+	dagu := cmd.flags.get_bool('dagu') or { false }
+
+	playcmds.run(mut plbook,dagu)!
 
 	console.print_stdout(plbook.str())
 	return &plbook, path
