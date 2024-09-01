@@ -1,0 +1,11 @@
+
+!!hero_code.generate_installer
+    name:'daguserver' 
+    objname:'DaguServer'
+    singleton:1            //there can only be 1 object in the globals, is called 'default'
+    templates:1            //are there templates for the installer
+    default:1              //can we create a default when the factory is used
+	title:''
+	supported_platforms:'' //osx, ... (empty means all)
+	reset:0                 // regenerate all, dangerous !!!
+	startupmanager:1      //managed by a startup manager, default true

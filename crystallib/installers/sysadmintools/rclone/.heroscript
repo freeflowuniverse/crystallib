@@ -1,2 +1,11 @@
 
-!!hero_code.generate cat:'installer' name:'rclone' singleton:0 templates:0 objname:'RClone'
+!!hero_code.generate_installer
+    name:'rclone' 
+    objname:'RClone'
+    singleton:0            //there can only be 1 object in the globals, is called 'default'
+    templates:1            //are there templates for the installer
+    default:0            //can we create a default when the factory is used
+	title:''
+	supported_platforms:'' //osx, ... (empty means all)
+	reset:0               // regenerate all, dangerous !!!
+	startupmanager:0      //managed by a startup manager, default true
