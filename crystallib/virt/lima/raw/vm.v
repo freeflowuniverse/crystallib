@@ -8,7 +8,7 @@ pub fn list() ![]VM {
 	// console.print_debug(" - list vm")
 	cmd := 'limactl list --json'
 	res := os.execute(cmd)
-	if res.exit_code > 0 || res.output.contains("error="){
+	if res.exit_code > 0 || res.output.contains('error=') {
 		return error("can't list the lima vm's\nCommand was: 'limactl list --json'\nerror:\n${res.output}")
 	}
 	if res.output.contains('No instance found') {

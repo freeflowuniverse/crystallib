@@ -10,7 +10,7 @@ pub mut:
 	actions    []&Action
 	priorities map[int][]int // first key is the priority, the list of int's is position in list self.actions
 	othertext  string        // in case there is text outside of the actions
-	result string 			 // if any result
+	result     string        // if any result
 	nractions  int
 	done       []int // which actions did we already find/run?
 	session    &base.Session
@@ -71,7 +71,7 @@ pub fn (mut plbook PlayBook) actions_sorted(args SortArgs) ![]&Action {
 		}
 		action_ids := plbook.priorities[nr] or { panic('bug') }
 		for id in action_ids {
-			mut a := plbook.action_get(id:id)!
+			mut a := plbook.action_get(id: id)!
 			res << a
 		}
 	}
@@ -113,9 +113,9 @@ pub fn (mut plbook PlayBook) names() ![]string {
 @[params]
 pub struct ActionGetArgs {
 pub mut:
-	id int 
-	actor string
-	name  string
+	id         int
+	actor      string
+	name       string
 	actiontype ActionType = .sal
 }
 
@@ -145,7 +145,7 @@ pub fn (mut plbook PlayBook) actions_find(args ActionGetArgs) ![]&Action {
 		// Filter by actiontype if specified
 		if args.actiontype != .unknown && a.actiontype != args.actiontype {
 			continue
-		}		
+		}
 		// If the action passes all filters, add it to the result
 		res << a
 	}
@@ -172,10 +172,9 @@ pub fn (mut plbook PlayBook) action_get(args ActionGetArgs) !&Action {
 	} else if actions.len == 0 {
 		return error("couldn't find action with args: ${args}")
 	} else {
-		return error("multiple actions found with args: ${args}, expected only one")
+		return error('multiple actions found with args: ${args}, expected only one')
 	}
 }
-
 
 pub fn (plbook PlayBook) hashkey() string {
 	mut out := []string{}

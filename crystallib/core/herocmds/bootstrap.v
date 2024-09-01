@@ -62,24 +62,21 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	mut address := cmd.flags.get_string('address') or { '' }
 	if address == '' {
 		osal.profile_path_add_hero()!
-		if develop{
-			crystallib.install(reset:reset)!
-		}else{
-			base.install(reset:reset)!
+		if develop {
+			crystallib.install(reset: reset)!
+		} else {
+			base.install(reset: reset)!
 		}
-		
-	}else{
+	} else {
 		mut b := builder.new()!
 		mut n := b.node_new(ipaddr: address)!
-		if develop {			
+		if develop {
 			n.crystal_install(reset: reset)!
 			n.hero_install()!
 			n.dagu_install()!
 		} else {
-			panic("implement, need to download here and install")	
+			panic('implement, need to download here and install')
 		}
-		//return error(cmd.help_message())
+		// return error(cmd.help_message())
 	}
-
-
 }

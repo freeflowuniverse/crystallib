@@ -13,6 +13,7 @@ pub:
 	substrate_url string
 	twin_id       u32
 	relay_url     string
+	chain_network ChainNetwork
 	env           string
 pub mut:
 	client griddriver.Client
@@ -55,18 +56,22 @@ pub fn get_mnemonics() !string {
 	return mnemonics
 }
 
-pub fn new_deployer(mnemonics string, chain_network ChainNetwork, mut logger log.Log) !Deployer {
+pub fn new_deployer(mnemonics string, chain_network ChainNetwork) !Deployer {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
+
 	mut client := griddriver.Client{
 		mnemonic: mnemonics
 		substrate: grid.substrate_url[chain_network]
 		relay: grid.relay_url[chain_network]
 	}
-	twin_id := client.get_user_twin()!
+	twin_id := client.get_user_twin() or { return error('failed to get twin ${err}') }
 
 	return Deployer{
 		mnemonics: mnemonics
 		substrate_url: grid.substrate_url[chain_network]
 		twin_id: twin_id
+		chain_network: chain_network
 		relay_url: grid.relay_url[chain_network]
 		env: grid.envs[chain_network]
 		logger: logger
@@ -181,7 +186,6 @@ fn is_deployment_up_to_date(old_dl models.Deployment, new_dl models.Deployment) 
 pub fn (mut d Deployer) deploy(node_id u32, mut dl models.Deployment, body string, solution_provider u64) !u64 {
 	public_ips := dl.count_public_ips()
 	hash_hex := dl.challenge_hash().hex()
-
 	contract_id := d.client.create_node_contract(node_id, body, hash_hex, public_ips,
 		solution_provider)!
 	d.logger.info('ContractID: ${contract_id}')

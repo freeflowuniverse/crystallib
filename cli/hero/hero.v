@@ -13,11 +13,10 @@ import freeflowuniverse.crystallib.core.playcmds
 
 fn shebang(path string)!{
 	mut plbook := playbook.new(path: path)!
-	playcmds.run(mut plbook)!
+	playcmds.run(mut plbook,false)!
 }
 
 fn do() ! {
-
 
 	if os.args.len == 2{
 		mypath:=os.args[1]
@@ -32,7 +31,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.23'
+		version: '1.0.25'
 	}
 
 
@@ -63,7 +62,7 @@ fn do() ! {
 		}
 	}
 
-	redis.check()!
+	redis.check()
 
 	herocmds.cmd_bootstrap(mut cmd)
 	herocmds.cmd_run(mut cmd)

@@ -7,6 +7,9 @@ import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import freeflowuniverse.crystallib.ui
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.rootpath
 import json
 import os
 import crypto.md5
@@ -60,7 +63,6 @@ pub fn (self Context) guid() string {
 	return '${self.id()}:${self.name()}'
 }
 
-
 //////DATA
 
 // pub fn (mut self Context) str() string {
@@ -88,7 +90,6 @@ pub fn (self Context) guid() string {
 // 	// }
 // 	return out
 // }
-
 
 pub fn (mut self Context) redis() !&redisclient.Redis {
 	mut r2 := self.redis_ or {
@@ -156,6 +157,29 @@ fn (mut self Context) db_config_get() !dbfs.DB {
 	mut dbc := self.dbcollection()!
 	return dbc.db_get_create(name: 'config', withkeys: true)!
 }
+
+pub fn (mut self Context) hero_config_set(cat string, name string, content_ string) ! {
+	mut content := texttools.dedent(content_)
+	content = rootpath.shell_expansion(content)
+	path:='${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
+	mut config_file := pathlib.get_file(path: path)!
+	config_file.write(content)!
+}
+
+pub fn (mut self Context) hero_config_exists(cat string, name string) bool {
+	path:='${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
+	return os.exists(path)
+}
+
+
+
+
+pub fn (mut self Context) hero_config_get(cat string, name string) !string {
+	path:='${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
+	mut config_file := pathlib.get_file(path: path,create:false)!
+	return config_file.read()!
+}
+
 
 /////////////PRIVKEY
 

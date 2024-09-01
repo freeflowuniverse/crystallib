@@ -65,7 +65,7 @@ pub fn parse(text string) !Params {
 					value = '${value.all_before_last(',')},"${last_item}"'
 				}
 				state = .value_wait
-			} else if ch == '\n' && list{
+			} else if ch == '\n' && list {
 				list = false
 			} else {
 				state = .start

@@ -1,69 +1,39 @@
 module playcmds
 
 import freeflowuniverse.crystallib.clients.daguclient { DAG }
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver as daguinstaller
 import freeflowuniverse.crystallib.servers.daguserver
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
 import os
 
 pub fn play_dagu(mut plbook playbook.PlayBook) ! {
-
 	dagu_actions := plbook.find(filter: 'dagu.')!
 	if dagu_actions.len == 0 {
 		return
 	}
-	
 
 	play_dagu_basic(mut plbook)!
-	//play_dagu_configure(mut plbook)!
+	// play_dagu_configure(mut plbook)!
 }
-
 
 // play_dagu plays the dagu play commands
 pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
-
-	
-	mut install_actions := plbook.find(filter: 'dagu.install')!
+	mut install_actions := plbook.find(filter: 'daguserver.configure')!
 
 	if install_actions.len > 0 {
 		for install_action in install_actions {
 			mut p := install_action.params
-			homedir := p.get_default('homedir', '${os.home_dir()}/hero/var/dagu')!
-			configpath := p.get_default('configpath', '${os.home_dir()}/hero/cfg/dagu.yaml')!
-			username := p.get_default('username', '')!
-			password := p.get_default('password', '')!
-			secret := p.get_default('secret', '')!
-			title := p.get_default('title', 'My Hero DAG')!
-			reset := p.get_default_false('reset')
-			start := p.get_default_true('start')
-			stop := p.get_default_false('stop')
-			restart := p.get_default_false('restart')
-			ipaddr := p.get_default('ipaddr', '')!
-			port := p.get_int_default('port', 8888)!
-
-			daguinstaller.install(
-				homedir: homedir
-				configpath: configpath
-				username: username
-				password: password
-				secret: secret
-				title: title
-				reset: reset
-				start: start
-				stop:stop
-				restart: restart
-				host: ipaddr
-				port: port
-			)!
+			panic("daguinstall play")
 		}
 	}
 
-	dagu_actions := plbook.find(filter: 'dagu.configure')!
-	if dagu_actions.len == 0 {
+	dagu_actions := plbook.find(filter: 'daguserver.install')!
+	if dagu_actions.len > 0 {
+		panic("daguinstall play")
 		return
 	}
-	
+
 	mut config_actions := plbook.find(filter: 'dagu.configure')!
 	mut d := if config_actions.len > 1 {
 		return error('can only have 1 config action for dagu')
@@ -78,15 +48,14 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 			port: port
 			username: username
 			password: password
-
 		)!
 		server.start()!
 		console.print_debug('Dagu server is running at http://localhost:${port}')
 		console.print_debug('Username: ${username} password: ${password}')
-		
+
 		// configure dagu client with server url and api secret
 		server_cfg := server.config()!
-		daguclient.get(instance, 
+		daguclient.get(instance,
 			url: 'http://localhost:${port}'
 			apisecret: server_cfg.secret
 		)!
@@ -120,7 +89,7 @@ pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'dagu.run')! {
 		mut p := action.params
 		dag := p.get_default('dag', 'default')!
-		//d.new_dag(dags[dag])!
-		panic("to implement")
+		// d.new_dag(dags[dag])!
+		panic('to implement')
 	}
 }

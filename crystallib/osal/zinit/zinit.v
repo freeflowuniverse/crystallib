@@ -1,10 +1,10 @@
 module zinit
 
-import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.osal.systemd
-import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
+
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.data.ourtime
 import os
 
 @[heap]
@@ -16,38 +16,128 @@ pub mut:
 	pathtests pathlib.Path
 }
 
-@[params]
-struct InitDProcGet {
-	delete bool
-	start  bool = true
+
+//will delete the process if it exists while starting
+pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
+
+	console.print_header(' zinit process new')
+	mut args:=args_
+
+	if args.cmd.len == 0 {
+		$if debug {
+			print_backtrace()
+		}
+		return error('cmd cannot be empty for ${args} in zinit.')
+	}
+
+	if zinit.exists(args.name) {
+		mut p := zinit.get(args.name)!
+		p.destroy()!
+	}
+
+	mut zp := ZProcess{
+		name: args.name
+		cmd: args.cmd
+	}
+
+	// means we can load the special cmd
+	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
+
+	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd) + "\n"
+	pathcmd.write(zp.cmd)!
+	pathcmd.chmod(0x770)!
+	zp.cmd = '/bin/bash -c ${pathcmd.path}'
+
+	if args.test.len > 0 {
+		if args.test.contains('\n'){
+			// means we can load the special cmd
+			mut pathcmd2 := zinit.pathtests.file_get_new(args.name + '.sh')!
+			args.test = texttools.dedent(args.test)
+			pathcmd2.write(args.test)!
+			pathcmd2.chmod(0x770)!
+			zp.test = '/bin/bash -c ${pathcmd2.path}'
+		}
+	}
+
+	zp.oneshot = args.oneshot
+	zp.env = args.env.move()
+	zp.after = args.after
+	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
+	// console.print_debug('debug zprocess path yaml: ${pathyaml}')
+	pathyaml.write(zp.config_content())!
+	if args.start{
+		zp.start()!
+	}
+	zinit.processes[args.name] = zp
+
+	return zp
 }
 
-@[params]
-pub struct ZProcessNewArgs {
-pub mut:
-	name      string            @[required]
-	cmd       string            @[required]
-	cmd_file  bool // if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
-	test      string
-	test_file bool
-	after     []string
-	env       map[string]string
-	oneshot   bool
+pub fn (mut zinit Zinit) get(name_ string) !ZProcess {
+	name := texttools.name_fix(name_)
+	// console.print_debug(zinit)
+	return zinit.processes[name] or { return error("cannot find process in zinit:'${name}'") }
 }
 
-// start  it with systemd, because the zinit by itself needs to run somewhere
-fn initd_proc_get(args InitDProcGet) !systemd.SystemdProcess {
-	mut initdfactory := systemd.new()!
-	mut initdprocess := initdfactory.new(
-		cmd: '/usr/local/bin/zinit init'
-		name: 'zinit'
-		description: 'a super easy to use startup manager.'
-	)!
-	// if args.delete {
-	// 	initdprocess.remove()!
-	// }
-	// if args.start {
-	// 	initdprocess.start()!
-	// }
-	return initdprocess
+pub fn (mut zinit Zinit) exists(name_ string) bool {
+	name := texttools.name_fix(name_)
+	if name in zinit.processes {
+		return true
+	}
+	return false
 }
+
+pub fn (mut zinit Zinit) stop(name string) ! {
+	mut p:=zinit.get(name)!
+	p.stop()!
+}
+
+pub fn (mut zinit Zinit) start(name string) ! {
+	mut p:=zinit.get(name)!
+	p.start()!
+}
+
+pub fn (mut zinit Zinit) delete(name string) ! {
+	mut p:=zinit.get(name)!
+	p.destroy()!
+}
+
+
+pub fn (mut self Zinit) load() ! {
+
+	cmd := 'zinit list'
+	mut res := os.execute(cmd)
+	if res.exit_code > 0 {
+		if res.output.contains('failed to connect') {
+			self.systemd_start()!
+			res = os.execute(cmd)
+			if res.exit_code > 0 {
+				$if debug {
+					print_backtrace()
+				}
+				return error("can't do zinit list, after start of zinit.\n${res}")
+			}
+		} else {
+			$if debug {
+				print_backtrace()
+			}
+			return error("can't do zinit list.\n${res}")
+		}
+	}
+	mut state := ''
+	for line in res.output.split_into_lines() {
+		if line.starts_with('---') {
+			state = 'ok'
+			continue
+		}
+		if state == 'ok' && line.contains(':') {
+			name := line.split(':')[0].to_lower().trim_space()
+			mut zp := ZProcess{
+				name: name
+			}
+			zp.load()!
+			self.processes[name] = zp
+		}
+	}
+}
+

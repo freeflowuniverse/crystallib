@@ -33,6 +33,7 @@ pub mut:
 	after     []string
 	env       map[string]string
 	oneshot   bool
+	start bool = true
 }
 
 // start  it with systemd, because the zinit by itself needs to run somewhere

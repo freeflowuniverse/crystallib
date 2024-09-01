@@ -1,107 +1,58 @@
 #!/usr/bin/env -S v -n -w -enable-globals run
 
-import freeflowuniverse.crystallib.threefold.gridproxy { TFGridNet }
-import freeflowuniverse.crystallib.threefold.gridproxy.model { Node, ResourceFilter }
-import log
-import os
+import freeflowuniverse.crystallib.threefold.gridproxy
+import freeflowuniverse.crystallib.ui.console
 
-fn main() {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
 
-	// Default value used in intializing the resources
-	mut resources_filter := ResourceFilter{}
+// * `available_for` (u64): Available for twin id. [optional].
+// * `certification_type` (string): Certificate type NotCertified, Silver or Gold. [optional].
+// * `city_contains` (string): Node partial city filter. [optional].
+// * `city` (string): Node city filter. [optional].
+// * `country_contains` (string): Node partial country filter. [optional].
+// * `country` (string): Node country filter. [optional].
+// * `dedicated` (bool): Set to true to get the dedicated nodes only. [optional].
+// * `domain` (string): Set to true to filter nodes with domain. [optional].
+// * `farm_ids` ([]u64): List of farm ids. [optional].
+// * `farm_name_contains` (string): Get nodes for specific farm. [optional].
+// * `farm_name` (string): Get nodes for specific farm. [optional].
+// * `free_hru` (u64): Min free reservable hru in bytes. [optional].
+// * `free_ips` (u64): Min number of free ips in the farm of the node. [optional].
+// * `free_mru` (u64): Min free reservable mru in bytes. [optional].
+// * `free_sru` (u64): Min free reservable sru in bytes. [optional].
+// * `gpu_available` (bool): Filter nodes that have available GPU. [optional].
+// * `gpu_device_id` (string): Filter nodes based on GPU device ID. [optional].
+// * `gpu_device_name` (string): Filter nodes based on GPU device partial name. [optional].
+// * `gpu_vendor_id` (string): Filter nodes based on GPU vendor ID. [optional].
+// * `gpu_vendor_name` (string): Filter nodes based on GPU vendor partial name. [optional].
+// * `has_gpu`: Filter nodes on whether they have GPU support or not. [optional].
+// * `ipv4` (string): Set to true to filter nodes with ipv4. [optional].
+// * `ipv6` (string): Set to true to filter nodes with ipv6. [optional].
+// * `node_id` (u64): Node id. [optional].
+// * `page` (u64): Page number. [optional].
+// * `rentable` (bool): Set to true to filter the available nodes for renting. [optional].
+// * `rented_by` (u64): Rented by twin id. [optional].
+// * `ret_count` (bool): Set nodes' count on headers based on filter. [optional].
+// * `size` (u64): Max result per page. [optional].
+// * `status` (string): Node status filter, set to 'up' to get online nodes only. [optional].
+// * `total_cru` (u64): Min total cru in bytes. [optional].
+// * `total_hru` (u64): Min total hru in bytes. [optional].
+// * `total_mru` (u64): Min total mru in bytes. [optional].
+// * `total_sru` (u64): Min total sru in bytes. [optional].
+// * `twin_id` (u64): Twin id. [optional].
 
-	if '--help' in os.args {
-		println('This script to get nodes by available resources \n
-		--sru		nodes selected should have a minumum value of free sru in GB (ssd resource unit) equal to this (optional) \n
-		--hru		nodes selected should have a minumum value of free hru in GB (hd resource unit) equal to this (optional) \n
-		--mru		nodes selected should have a minumum value of free mru in GB (memory resource unit) equal to this (optional) \n
-		--ips		nodes selected should have a minumum value of ips (ips in the farm of the node) equal to this (optional) \n
-		--network	one of (dev, test, qa, main) (optional) (default to `test`) \n
-		--max-count	maximum number of nodes to be selected (optional) (default to 0 which means no limit) \n
-		--cache		enable cache (optional) (default to false')
-		return
-	}
 
-	if '--sru' in os.args {
-		index_val := os.args.index('--sru')
-		resources_filter.free_sru_gb = os.args[index_val + 1].u64()
-	}
+// Default value used in intializing the resources
 
-	if '--ips' in os.args {
-		index_val := os.args.index('--ips')
-		resources_filter.free_ips = os.args[index_val + 1].u64()
-	}
+mut myfilter := gridproxy.nodefilter()
 
-	if '--hru' in os.args {
-		index_val := os.args.index('--hru')
-		resources_filter.free_hru_gb = os.args[index_val + 1].u64()
-	}
+myfilter.free_sru_gb = 1
+myfilter.free_ips = 1
+myfilter.free_hru_gb = 1
+myfilter.free_mru_gb = 1
 
-	if '--mru' in os.args {
-		index_val := os.args.index('--mru')
-		resources_filter.free_mru_gb = os.args[index_val + 1].u64()
-	}
+//network: dev, test, qa or main
+mut gp_client := gridproxy.get(network:.main, cache:false)!
+mynodes := gp_client.get_nodes(filter:myfilter)!
 
-	mut net := 'test'
-	if '--network' in os.args {
-		index_val := os.args.index('--network')
-		net = os.args[index_val + 1]
-	}
-
-	mut max_count := 0
-	if '--max-count' in os.args {
-		index_val := os.args.index('--max-count')
-		max_count = os.args[index_val + 1].int()
-	}
-
-	mut cache := false
-	if '--cache' in os.args {
-		cache = true
-	}
-
-	network := match net {
-		'dev' {
-			TFGridNet.dev
-		}
-		'test' {
-			TFGridNet.test
-		}
-		'qa' {
-			TFGridNet.qa
-		}
-		'main' {
-			TFGridNet.main
-		}
-		else {
-			panic('network ${net} not supported')
-		}
-	}
-	mut gp_client := gridproxy.get(network, cache)!
-	nodes_iter := gp_client.get_nodes_has_resources(resources_filter) /*
-	or {
-		println("got an error while getting nodes")
-		println("error message : ${err.msg()}")
-		println("error code : ${err.code()}")
-		return
-	}*/
-
-	mut nodes_with_min_resources := []Node{}
-	// itereate over all availble pages on the server and get array of nodes for each page
-	outer: for nodes in nodes_iter {
-		// flatten the array of nodes into a single array
-		for node in nodes {
-			nodes_with_min_resources << node
-			if max_count > 0 && nodes_with_min_resources.len == max_count {
-				break outer
-			}
-		}
-	}
-	logger.info('found ${nodes_with_min_resources.len} nodes on ${net.to_upper()} network with following min resources:\n${resources_filter}')
-	if max_count > 0 {
-		logger.info('Note: a limit of getting at most ${max_count} nodes was set')
-	}
-	logger.info('---------------------------------------')
-	logger.info('${nodes_with_min_resources}')
-}
+console.print_debug("${mynodes}")
+	

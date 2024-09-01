@@ -24,18 +24,28 @@ function crystal_deps_install {
     fi
 
 
+      #       set -x
+      #       cd /tmp
+      #       wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+      #       tar -xvf v0.3.2.tar.gz
+      #       cd secp256k1-0.3.2/
+      #       ./autogen.sh
+      #       ./configure
+      #       sudo make -j 5
+      #       sudo make install   
+
 }
 
 function crystal_lib_pull {
 
     if [[ -z "${DEBUG}" ]]; then
-        exit 0
+        return 0
     fi
 
     pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
     if [[ $(git status -s) ]]; then
         echo "There are uncommitted changes in the Git repository crystallib."
-        exit 1
+        return 1
     fi
     git pull
     popd 2>&1 >> /dev/null
@@ -127,3 +137,19 @@ function crystal_pull {
     git pull
     popd 2>&1 >> /dev/null
 }
+
+function crystal_test {
+    set -e
+    pushd $DIR_CODE/github/freeflowuniverse/crystallib
+    v -enable-globals -stats test crystallib/core/pathlib
+    v -enable-globals -stats test crystallib/core/texttools
+    v -enable-globals -stats test crystallib/core/playbook
+    v -enable-globals -stats test crystallib/data/encoder
+    v -enable-globals -stats test crystallib/data/currency
+    v -enable-globals -stats test crystallib/data/markdownparser
+    v -enable-globals -stats test crystallib/data/ourtime
+    v -enable-globals -stats test crystallib/data/paramsparser
+    # v -enable-globals -stats test crystallib/data/doctree
+    popd 2>&1 >> /dev/null
+}
+

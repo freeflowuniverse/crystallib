@@ -80,3 +80,26 @@ function hero_install {
         exit 1
     fi
 }
+
+# function get_rclone_config() {
+#     for conf in "/root/.config/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"; do
+#         [[ -f "$conf" ]] && echo "$conf" && return 0
+#     done
+#     echo "Error: No rclone configuration file found" >&2
+#     return 1
+# }
+
+function hero_upload {
+    set -e    
+    hero_path=$(which hero 2>/dev/null)
+    if [ -z "$hero_path" ]; then
+        echo "Error: 'hero' command not found in PATH" >&2
+        exit 1
+    fi
+    set -x
+    s3_configure
+    # rclone_config=$(get_rclone_config) || { echo "$rclone_config"; exit 1; }
+    rclone --config="${HOME}/.config/rclone/rclone.conf" lsl b2:threefold/$MYPLATFORMID/
+    rclone --config="${HOME}/.config/rclone/rclone.conf" copy "$hero_path" b2:threefold/$MYPLATFORMID/
+}
+    

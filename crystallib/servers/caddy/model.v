@@ -7,28 +7,28 @@ import freeflowuniverse.crystallib.servers.caddy.http
 pub struct CaddyFile {
 pub mut:
 	admin AdminConfig @[omitempty]
-	apps Apps @[omitempty]
+	apps  Apps        @[omitempty]
 }
 
 pub struct Address {
 pub mut:
-	url urllib.URL @[omitempty]
-	description string @[omitempty]
+	url         urllib.URL @[omitempty]
+	description string     @[omitempty]
 }
 
 pub struct AdminConfig {
 pub mut:
-	disabled         bool @[omitempty]
-	listen           string @[omitempty]
-	enforce_origin   bool @[omitempty]
-	origins          []string @[omitempty]
-	config           ConfigSettings @[omitempty]
-	identity         IdentityConfig @[omitempty]
-	remote           RemoteAdmin @[omitempty]
+	disabled       bool           @[omitempty]
+	listen         string         @[omitempty]
+	enforce_origin bool           @[omitempty]
+	origins        []string       @[omitempty]
+	config         ConfigSettings @[omitempty]
+	identity       IdentityConfig @[omitempty]
+	remote         RemoteAdmin    @[omitempty]
 }
 
 struct ConfigSettings {
-	persist bool @[omitempty]
+	persist bool       @[omitempty]
 	load    LoadConfig
 }
 
@@ -46,8 +46,8 @@ struct IssuerConfig {
 }
 
 struct RemoteAdmin {
-	listen          string
-	access_control  []AdminAccess
+	listen         string
+	access_control []AdminAccess
 }
 
 struct AdminAccess {
@@ -61,8 +61,8 @@ struct AdminPermissions {
 }
 
 struct LoggingConfig {
-	sink  SinkConfig
-	logs  map[string]CustomLog
+	sink SinkConfig
+	logs map[string]CustomLog
 }
 
 struct SinkConfig {
@@ -74,12 +74,12 @@ struct WriterConfig {
 }
 
 struct CustomLog {
-	writer    WriterConfig @[omitempty]
-	encoder   EncoderConfig @[omitempty]
-	level     string
-	sampling  LogSampling @[omitempty]
-	include   []string @[omitempty]
-	exclude   []string @[omitempty]
+	writer   WriterConfig  @[omitempty]
+	encoder  EncoderConfig @[omitempty]
+	level    string
+	sampling LogSampling   @[omitempty]
+	include  []string      @[omitempty]
+	exclude  []string      @[omitempty]
 }
 
 struct EncoderConfig {
@@ -87,13 +87,13 @@ struct EncoderConfig {
 }
 
 struct LogSampling {
-	interval    int
-	first       int
-	thereafter  int
+	interval   int
+	first      int
+	thereafter int
 }
 
 pub struct Apps {
 pub mut:
 	security security.Security
-	http http.HTTP
+	http     http.HTTP
 }

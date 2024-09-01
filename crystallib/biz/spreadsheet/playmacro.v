@@ -3,7 +3,7 @@ module spreadsheet
 import freeflowuniverse.crystallib.core.playbook { Action }
 import freeflowuniverse.crystallib.ui.console
 
-pub fn playmacro( action Action) !string {
+pub fn playmacro(action Action) !string {
 	console.print_green('playmacro for worksheet')
 
 	sheet_name := action.params.get('sheetname') or {
@@ -13,7 +13,7 @@ pub fn playmacro( action Action) !string {
 
 	// sheet_name := action.params.get('sheetname') or {return error("can't find sheetname from sheet.chart macro.")}
 	// mut sh:= sheet_get(sheet_name)!	
-	//console.print_debug(sh)
+	// console.print_debug(sh)
 
 	supported_actions := ['sheet_wiki', 'graph_pie_row', 'graph_line_row', 'graph_bar_row',
 		'graph_title_row', 'wiki_row_overview']

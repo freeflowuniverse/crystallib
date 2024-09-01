@@ -62,10 +62,10 @@ pub fn install(args_ InstallArgs) ! {
 			url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Linux-x86_64.tar.gz'
 		} else if osal.is_osx() {
 			osx_install()!
-		// } else if osal.is_osx_arm() {
-		// 	url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-arm64.tar.gz'
-		// } else if osal.is_osx_intel() {
-		// 	url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-x86_64.tar.gz'
+			// } else if osal.is_osx_arm() {
+			// 	url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-arm64.tar.gz'
+			// } else if osal.is_osx_intel() {
+			// 	url = 'https://github.com/lima-vm/lima/releases/download/v${version}/lima-${version}-Darwin-x86_64.tar.gz'
 		} else {
 			return error('unsported platform')
 		}
@@ -113,7 +113,6 @@ pub fn uninstall() ! {
 	osal.exec(cmd: cmd)!
 }
 
-
 pub fn osx_install() ! {
-	osal.package_install("lima")!
+	osal.package_install('lima')!
 }

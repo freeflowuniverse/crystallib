@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import os
 
-pub fn (mut server Server[Config]) start() ! {	
+pub fn (mut server Server[Config]) start() ! {
 	config := server.config()!
 	console.print_header('start conduit: ${server.name}')
 
@@ -53,7 +53,7 @@ pub fn (mut server Server[Config]) restart() ! {
 
 pub fn (mut server Server[Config]) status() !startupmanager.ProcessStatus {
 	mut sm := startupmanager.get()!
-	return sm.status(server.process_name()) or {return .unknown}
+	return sm.status(server.process_name()) or { return .unknown }
 }
 
 // check health, return true if ok
@@ -94,7 +94,6 @@ pub fn (mut server Server[Config]) user_add(args UserAddArgs) ! {
 	console.print_debug(cmd)
 	job := osal.exec(cmd: cmd)!
 }
-
 
 fn (server Server[Config]) process_name() string {
 	return 'conduit_${server.name}'

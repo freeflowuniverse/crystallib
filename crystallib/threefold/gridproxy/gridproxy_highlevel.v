@@ -1,6 +1,6 @@
 module gridproxy
 
-import freeflowuniverse.crystallib.threefold.gridproxy.model { ContractFilter, ContractIterator, Farm, FarmFilter, FarmIterator, NodeFilter, NodeIterator, ResourceFilter, Twin }
+import freeflowuniverse.crystallib.threefold.gridproxy.model { Contract, ContractFilter, Farm, FarmFilter, Node, NodeFilter, ResourceFilter, Twin }
 
 // fetch specific twin information by twin id.
 //
@@ -67,12 +67,16 @@ pub fn (mut c GridProxyClient) get_farm_by_name(farm_name string) !Farm {
 // * `twin_id`: twin id.
 //
 // returns: `FarmIterator`.
-pub fn (mut c GridProxyClient) get_farms_by_twin_id(twin_id u64) FarmIterator {
+pub fn (mut c GridProxyClient) get_farms_by_twin_id(twin_id u64) []Farm {
 	mut filter := FarmFilter{
 		twin_id: twin_id
 	}
 	mut iter := c.get_farms_iterator(filter)
-	return iter
+	mut result := []Farm{}
+	for f in iter {
+		result << f
+	}
+	return result
 }
 
 // get_contracts_by_twin_id returns iterator over all contracts owned by specific twin.
@@ -80,7 +84,7 @@ pub fn (mut c GridProxyClient) get_farms_by_twin_id(twin_id u64) FarmIterator {
 // * `twin_id`: twin id.
 //
 // returns: `ContractIterator`.
-pub fn (mut c GridProxyClient) get_contracts_by_twin_id(twin_id u64) ContractIterator {
+pub fn (mut c GridProxyClient) get_contracts_by_twin_id(twin_id u64) []Contract {
 	/*
 	contracts := c.get_contracts(twin_id: twin_id) or {
 		return error_with_code('http client error: $err.msg()', gridproxy.err_http_client)
@@ -89,7 +93,11 @@ pub fn (mut c GridProxyClient) get_contracts_by_twin_id(twin_id u64) ContractIte
 		twin_id: twin_id
 	}
 	mut iter := c.get_contracts_iterator(filter)
-	return iter
+	mut result := []Contract{}
+	for f in iter {
+		result << f
+	}
+	return result
 }
 
 // get_contracts_by_node_id returns iterator over all contracts deployed on specific node.
@@ -97,7 +105,7 @@ pub fn (mut c GridProxyClient) get_contracts_by_twin_id(twin_id u64) ContractIte
 // * `node_id`: node id.
 //
 // returns: `ContractIterator`.
-pub fn (mut c GridProxyClient) get_contracts_by_node_id(node_id u64) ContractIterator {
+pub fn (mut c GridProxyClient) get_contracts_by_node_id(node_id u64) []Contract {
 	/*
 	contracts := c.get_contracts(node_id: node_id) or {
 		return error_with_code('http client error: $err.msg()', gridproxy.err_http_client)
@@ -106,7 +114,11 @@ pub fn (mut c GridProxyClient) get_contracts_by_node_id(node_id u64) ContractIte
 		node_id: node_id
 	}
 	mut iter := c.get_contracts_iterator(filter)
-	return iter
+	mut result := []Contract{}
+	for f in iter {
+		result << f
+	}
+	return result
 }
 
 // get_nodes_has_resources returns iterator over all nodes with specific minimum free reservable resources.
@@ -117,7 +129,7 @@ pub fn (mut c GridProxyClient) get_contracts_by_node_id(node_id u64) ContractIte
 // * `free_hru_gb` (u64): minimum free hru in GB. [optional].
 //
 // returns: `NodeIterator`.
-pub fn (mut c GridProxyClient) get_nodes_has_resources(filter ResourceFilter) NodeIterator {
+fn (mut c GridProxyClient) get_nodes_has_resources(filter ResourceFilter) []Node {
 	mut filter_ := NodeFilter{
 		free_ips: filter.free_ips
 		free_mru: filter.free_mru_gb * (1204 * 1204 * 1204)
@@ -126,6 +138,9 @@ pub fn (mut c GridProxyClient) get_nodes_has_resources(filter ResourceFilter) No
 		total_cru: filter.free_cpu
 	}
 	mut iter := c.get_nodes_iterator(filter_)
-
-	return iter
+	mut result := []Node{}
+	for f in iter {
+		result << f
+	}
+	return result
 }

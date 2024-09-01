@@ -16,7 +16,12 @@ import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.installers.web.caddy
 import freeflowuniverse.crystallib.installers.hero.heroweb
 import freeflowuniverse.crystallib.installers.hero.herodev
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu
+import freeflowuniverse.crystallib.servers.daguserver
+import freeflowuniverse.crystallib.installers.sysadmintools.rclone
+import freeflowuniverse.crystallib.installers.sysadmintools.prometheus
+import freeflowuniverse.crystallib.installers.sysadmintools.grafana
+import freeflowuniverse.crystallib.installers.sysadmintools.fungistor
+import freeflowuniverse.crystallib.installers.sysadmintools.garage_s3
 
 @[params]
 pub struct InstallArgs {
@@ -26,7 +31,7 @@ pub mut:
 	uninstall bool
 	gitpull   bool
 	gitreset  bool
-	start bool
+	start     bool
 }
 
 pub fn names(args_ InstallArgs) []string {
@@ -37,7 +42,10 @@ pub fn names(args_ InstallArgs) []string {
 		crystal
 		dagu
 		develop
+		fungistor
+		garage_s3
 		golang
+		grafana
 		hero
 		herodev
 		heroweb
@@ -45,6 +53,8 @@ pub fn names(args_ InstallArgs) []string {
 		mycelium
 		nodejs
 		podman
+		prometheus
+		rclone
 		rust
 		vlang
 		vscode
@@ -69,6 +79,9 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'develop' {
 				base.install(reset: args.reset, develop: true)!
+			}
+			'rclone' {
+				rclone.install(reset: args.reset)!
 			}
 			'rust' {
 				rust.install(reset: args.reset)!
@@ -100,11 +113,23 @@ pub fn install_multi(args_ InstallArgs) ! {
 				mycelium.install(reset: args.reset)!
 				mycelium.start()!
 			}
+			'garage_s3' {
+				garage_s3.install(reset: args.reset, config_reset: args.reset, restart: true)!
+			}
+			'fungistor' {
+				fungistor.install(reset: args.reset)!
+			}
 			'lima' {
 				lima.install(reset: args.reset, uninstall: args.uninstall)!
 			}
 			'podman' {
 				podman.install(reset: args.reset, uninstall: args.uninstall)!
+			}
+			'prometheus' {
+				prometheus.install(reset: args.reset, uninstall: args.uninstall)!
+			}
+			'grafana' {
+				grafana.install(reset: args.reset, uninstall: args.uninstall)!
 			}
 			'vscode' {
 				vscode.install(reset: args.reset)!
@@ -122,7 +147,11 @@ pub fn install_multi(args_ InstallArgs) ! {
 				heroweb.install()!
 			}
 			'dagu' {
-				dagu.install()!
+				//will call the installer underneith
+				mut dserver:=daguserver.new()! 
+				dserver.install()! 
+				dserver.restart()!
+				mut dagucl:=dserver.client()!
 			}
 			else {
 				return error('cannot find installer for: ${item}')

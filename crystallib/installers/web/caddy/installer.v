@@ -6,7 +6,6 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.installers.lang.golang
-
 import os
 
 pub const version = '2.8.4'
@@ -18,11 +17,11 @@ pub mut:
 	start     bool
 	restart   bool
 	stop      bool
-	homedir   string = "/var/www"
-	file_path string // path to caddyfile
-	file_url  string // path to caddyfile
-	xcaddy bool // wether to install caddy with xcaddy
-	plugins []string // list of plugins to build caddy with
+	homedir   string = '/var/www'
+	file_path string   // path to caddyfile
+	file_url  string   // path to caddyfile
+	xcaddy    bool     // wether to install caddy with xcaddy
+	plugins   []string // list of plugins to build caddy with
 }
 
 // install caddy will return true if it was already installed
@@ -42,7 +41,7 @@ pub fn install(args_ InstallArgs) ! {
 		}
 	} else if args.plugins.any(!plugin_is_installed(it)!) {
 		golang.install()!
-		install_caddy_with_xcaddy(args.plugins)!		
+		install_caddy_with_xcaddy(args.plugins)!
 	}
 
 	if args.restart {
@@ -73,7 +72,7 @@ pub fn is_installed(version string) !bool {
 	return false
 }
 
-pub fn install_caddy_from_release() !{
+pub fn install_caddy_from_release() ! {
 	version := '2.8.4'
 	mut url := ''
 	if osal.is_linux_arm() {
@@ -104,16 +103,18 @@ pub fn install_caddy_from_release() !{
 pub fn plugin_is_installed(plugin_ string) !bool {
 	plugin := plugin_.trim_space()
 	result := osal.exec(cmd: 'caddy list-modules --packages')!
-	
+
 	mut lines := result.output.split('\n')
-	
+
 	mut standardard_packages := []string{}
 	mut nonstandardard_packages := []string{}
 
 	mut standard := true
 	for mut line in lines {
 		line = line.trim_space()
-		if line == '' {continue}
+		if line == '' {
+			continue
+		}
 		if line.starts_with('Standard modules') {
 			standard = false
 			continue
@@ -129,7 +130,7 @@ pub fn plugin_is_installed(plugin_ string) !bool {
 	return plugin in standardard_packages || plugin in nonstandardard_packages
 }
 
-pub fn install_caddy_with_xcaddy(plugins []string) !{
+pub fn install_caddy_with_xcaddy(plugins []string) ! {
 	xcaddy_version := '0.4.2'
 	caddy_version := '2.8.4'
 
@@ -146,7 +147,7 @@ pub fn install_caddy_with_xcaddy(plugins []string) !{
 	} else {
 		return error('unsported platform')
 	}
-	
+
 	mut dest := osal.download(
 		url: url
 		minsize_kb: 1000
@@ -217,7 +218,7 @@ pub fn configuration_get() !string {
 @[params]
 pub struct ConfigurationArgs {
 pub mut:
-	content string //caddyfile content
+	content string // caddyfile content
 	path    string
 	restart bool = true
 }
@@ -264,8 +265,8 @@ pub fn start(args_ InstallArgs) ! {
 	}
 
 	if !os.exists('/etc/caddy/Caddyfile') {
-		//set the default caddyfile
-		configure_examples(path:args.homedir)!
+		// set the default caddyfile
+		configure_examples(path: args.homedir)!
 	}
 
 	cmd := 'caddy run --config /etc/caddy/Caddyfile'

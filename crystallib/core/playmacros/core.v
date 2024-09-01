@@ -13,14 +13,14 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 }
 
 pub fn play_macro(action playbook.Action) !string {
-	if action.actiontype != .macro{
-		panic("should always be a macro")
+	if action.actiontype != .macro {
+		panic('should always be a macro')
 	}
-	console.print_green("macro: ${action.actor}:${action.name}")
-	console.print_debug("${action}")
+	console.print_green('macro: ${action.actor}:${action.name}')
+	console.print_debug('${action}')
 	if action.actor == 'sheet' {
-		return spreadsheet.playmacro( action)!
-	}else if action.actor == 'tfgridsimulation_farming' {
+		return spreadsheet.playmacro(action)!
+	} else if action.actor == 'tfgridsimulation_farming' {
 		return farmingsimulator.playmacro(action)!
 	}
 	return ''

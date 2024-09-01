@@ -40,5 +40,3 @@ pub fn configure(instance string, cfg_ Config) !Caddy[Config] {
 
 	return self
 }
-
-

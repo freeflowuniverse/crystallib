@@ -54,4 +54,3 @@ pub fn (mut self Caddy[Config]) set_caddyfile(file CaddyFile) ! {
 	mut cfg := self.config()!
 	cfg.file = file
 }
-

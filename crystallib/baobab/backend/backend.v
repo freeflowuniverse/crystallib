@@ -15,12 +15,12 @@ pub struct BackendConfig {
 pub:
 	name   string
 	secret string
-	reset bool
+	reset  bool
 }
 
 pub fn new(config BackendConfig) !Backend {
 	mut backend := Backend{
-		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite'
+		indexer: new_indexer('${os.home_dir()}/hero/db/${config.name}.sqlite',
 			reset: config.reset
 		)!
 		dbs: dbfs.get(

@@ -29,6 +29,7 @@ fn main() {
 	mut logger := &log.Log{}
 	logger.set_level(.debug)
 
+
 	// ##### Part 1 #####
 
 
@@ -149,9 +150,10 @@ fn main() {
 	machine_res := get_machine_result(dl)!
 	logger.info('zmachine result: ${machine_res}')
 
-
 	// Add a small delay after deployment to ensure the VM is fully up and running before attempting to connect
-	// time.sleep(30 * time.second) // Wait for 30 seconds
+	logger.info('Wait for 30 seconds to ensure the VM is fully up...')
+	time.sleep(30 * time.second) // Wait for 30 seconds
+
 
 	// ##### Part 2 #####
 
@@ -175,13 +177,13 @@ fn main() {
         //     return
         // }
 
-		logger.error('Mycelium is not running.')
+		logger.error('Mycelium is not running on local machine.')
 		return
     } else {
-		logger.info('Mycelium is running.')
+		logger.info('Mycelium is running on local machine.')
 	}
 
-	remote_mycelium_ip := '405:e3fc:c4e:4004:ff0f:6a49:7a54:7850'
+	remote_mycelium_ip := machine_res.mycelium_ip
 	logger.info('Mycelium IP: ${remote_mycelium_ip}')
 
 	// Ping remote mycelium ip
@@ -209,6 +211,61 @@ fn main() {
 		logger.info('Seahorse remote installation completed successfully')
     }
 }
+
+fn get_machine_result(dl models.Deployment) !models.ZmachineResult {
+	for _, w in dl.workloads {
+		if w.type_ == models.workload_types.zmachine {
+			res := json.decode(models.ZmachineResult, w.result.data)!
+			return res
+		}
+	}
+
+	return error('failed to get zmachine workload')
+}
+
+fn get_chain_network(network string) !tfgrid.ChainNetwork {
+	chain_net_enum := match network {
+		'dev' { tfgrid.ChainNetwork.dev }
+		'qa' { tfgrid.ChainNetwork.qa }
+		'test' { tfgrid.ChainNetwork.test }
+		'main' { tfgrid.ChainNetwork.main }
+		else { return error('invalid chain newtork ${network}. must be one of (dev, qa, test, main)') }
+	}
+
+	return chain_net_enum
+}
+
+fn get_node_id(network tfgrid.ChainNetwork, memory int, disk int, cpu int, public_ip bool) !u32{
+	gp_net := match network {
+		.dev { gridproxy.TFGridNet.dev }
+		.qa { gridproxy.TFGridNet.qa }
+		.test { gridproxy.TFGridNet.test }
+		.main { gridproxy.TFGridNet.main }
+	}
+
+	mut gridproxy_client := gridproxy.get(gp_net, false)!
+	mut free_ips := u64(0)
+	if public_ip{
+		free_ips = 1
+	}
+
+	mut node_it := gridproxy_client.get_nodes_has_resources(
+		free_mru_gb: u64(memory)
+		free_sru_gb: u64(disk)
+		free_cpu: u64(cpu)
+		free_ips: free_ips
+	)
+	nodes := node_it.next()
+	mut node_id := u32(0) // get from user or use gridproxy to get nodeid
+	if nodes_list := nodes {
+		node_id = u32(nodes_list[0].node_id)
+	} else {
+		return error('cannot find a suitable node matching your specs')
+	}
+
+	return node_id
+}
+
 
 // Function to check if Mycelium is installed
 fn is_mycelium_installed() bool {
@@ -293,7 +350,7 @@ fn execute_remote_script(mycelium_ip string, script_name string) bool {
 
     // Construct the SSH and SCP commands
     scp_command := 'scp -6 -o StrictHostKeyChecking=no ${script_path} root@${scp_ip}:${remote_script_path}'
-    ssh_command := 'ssh -6 -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${ssh_ip}'
+    ssh_command := 'ssh -6 -o ConnectTimeout=10 -o StrictHostKeyChecking=no -tt root@${ssh_ip}'
 
     // Copy the script to the remote machine
     logger.info('Copying script to remote machine: ${scp_command}')
@@ -314,14 +371,17 @@ fn execute_remote_script(mycelium_ip string, script_name string) bool {
     logger.info('Script found on remote machine: ${remote_script_path}')
 
     // Now execute the script on the remote machine and stream the output
-    run_script_command := '${ssh_command} "bash ${remote_script_path}"'
+	log_file := '/tmp/output.log'
+	run_script_command := '${ssh_command} "bash -l ${remote_script_path} | tee ${log_file}"'
     logger.info('Executing remote script: ${run_script_command}')
+	logger.info('Follow remote script execution: ${ssh_command} "tail -f ${log_file}"')
 	run_result := os.execute(run_script_command)
+	logger.info('See full output log file: ${ssh_command} "cat ${log_file}"')
     if run_result.exit_code == 0 {
         logger.info('Remote script execution completed successfully')
         return true
     } else {
-        logger.error('Remote script execution failed with exit code: ${result.exit_code}')
+        logger.error('Remote script execution failed with exit code: ${run_result.exit_code}')
         return false
     }
 }

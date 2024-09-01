@@ -1,0 +1,46 @@
+name: Test Crystal & Release to S3
+
+permissions:
+  contents: write
+
+
+on:
+  push:
+    branches: ["development"]   
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            short-name: linux-i64
+          # - target: aarch64-unknown-linux-musl
+          #   os: ubuntu-latest
+          #   short-name: linux-arm64            
+          # - target: aarch64-apple-darwin
+          #   os: macos-latest
+          #   short-name: macos-arm64
+          # - target: x86_64-apple-darwin
+          #   os: macos-latest
+          #   short-name: macos-i64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: INSTALLBASE
+        run: |
+          echo 'export S3KEYID=${{ secrets.S3KEYID }}' > ${HOME}/mysecrets.sh
+          echo 'export S3APPID=${{ secrets.S3APPID }}' >> ${HOME}/mysecrets.sh
+          set -e && cat ${HOME}/mysecrets.sh
+          sudo bash +x scripts/githubactions.sh
+
+      - name: Extract tag name
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV

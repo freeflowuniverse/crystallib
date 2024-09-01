@@ -15,7 +15,7 @@ lmdb_map_size = "1T"
 
 compression_level = ${args.compression_level}
 
-rpc_secret = "{GARAGE.RPCSECRET}"
+rpc_secret = "${args.rpc_secret}"
 rpc_bind_addr = "${args.rpc_bind_addr}"
 rpc_bind_outgoing = ${args.rpc_bind_outgoing}
 rpc_public_addr = "${args.rpc_public_addr}"
@@ -54,6 +54,6 @@ root_domain = "${args.web_root_domain}"
 
 [admin]
 api_bind_addr = "${args.admin_api_bind_addr}"
-metrics_token = "{GARAGE.METRICSTOKEN}"
-admin_token = "{GARAGE.ADMINTOKEN}"
+metrics_token = "${args.admin_metrics_token}"
+admin_token = "${args.admin_token}"
 trace_sink = "${args.admin_trace_sink}"

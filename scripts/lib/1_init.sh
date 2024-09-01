@@ -42,6 +42,8 @@ mkdir -p $DIR_BUILD
 mkdir -p $DIR_BIN
 mkdir -p $DIR_SCRIPTS
 
+echo "DIRCODE: ${DIR_CODE}"
+
 
 pathmunge () {
     if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
@@ -95,4 +97,24 @@ function execute_with_marker {
     fi
 }
 
+
+is_github_actions() {
+    [ -d "/home/runner" ] || [ -d "$HOME/runner" ]
+}
+
+set -x
+if [ -n "$SUDO_USER" ]; then
+    export HOME_SUDO=$(eval echo "~$SUDO_USER")
+    SECRET_FILE="${HOME_SUDO}/mysecrets.sh"
+    if [ -f "$SECRET_FILE" ]; then
+        echo 'get secrets for sudoer'
+        source "$SECRET_FILE"
+    fi
+fi
+
+SECRET_FILE2="${HOME}/mysecrets.sh"
+if [ -f "$SECRET_FILE2" ]; then
+    echo 'get secrets for home user'
+    source "$SECRET_FILE2"
+fi
 

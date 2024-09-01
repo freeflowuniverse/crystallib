@@ -7,7 +7,7 @@ import os
 
 pub fn install(args_ S3Config) ! {
 	mut args := args_
-	version := '0.9.3'
+	version := '1.0.0'
 
 	res := os.execute('garage --version')
 	if res.exit_code == 0 {

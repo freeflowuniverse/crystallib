@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.webcomponents.htmx
 import net.http
 
-pub fn decode_form[T] (data string) T {
+pub fn decode_form[T](data string) T {
 	data_map := http.parse_form(data)
 	mut t := T{}
 	$for field in T.fields {
@@ -43,7 +43,6 @@ pub fn (element Element) html() string {
 	return element.HTMX.str()
 }
 
-
 pub struct Section {
 pub mut:
 	heading SectionHeading
@@ -52,24 +51,24 @@ pub mut:
 
 pub struct SectionHeading {
 pub mut:
-	title string
+	title       string
 	description string
-	buttons []Button
+	buttons     []Button
 }
 
-pub fn list_object_page[U] (u []U, routes ObjectRoutes) Page {
+pub fn list_object_page[U](u []U, routes ObjectRoutes) Page {
 	object_name := typeof[U]().all_after_last('.')
-	return Page {
-		heading: PageHeading {
+	return Page{
+		heading: PageHeading{
 			title: object_name.title()
 			buttons: [
 				Button{
 					label: 'Manual'
-				}
+				},
 			]
 		}
-		content: Section {
-			heading: SectionHeading {
+		content: Section{
+			heading: SectionHeading{
 				title: '${object_name.title()} List'
 				description: ''
 				buttons: [
@@ -77,13 +76,13 @@ pub fn list_object_page[U] (u []U, routes ObjectRoutes) Page {
 						label: 'Filter'
 						get: '${routes.object_route}/filter'
 						push_url: 'true'
-					}
+					},
 					Button{
 						label: 'New ${object_name}'
 						get: '${routes.object_route}/new'
 						push_url: 'true'
 						color: .violet
-					}
+					},
 				]
 			}
 			content: table(u).html()
@@ -96,15 +95,19 @@ pub enum Color {
 	zinc
 }
 
-pub fn list_objectsection[U] (u []U) Section {
+pub fn list_objectsection[U](u []U) Section {
 	object_name := typeof[U]().all_after_last('.')
-	return Section {
-		heading: SectionHeading {
+	return Section{
+		heading: SectionHeading{
 			title: '${object_name.title()} List'
 			description: ''
 			buttons: [
-				Button{label: 'Filter'}
-				Button{label: 'New ${object_name}'}
+				Button{
+					label: 'Filter'
+				},
+				Button{
+					label: 'New ${object_name}'
+				},
 			]
 		}
 		content: to_list(u)
@@ -113,16 +116,16 @@ pub fn list_objectsection[U] (u []U) Section {
 
 pub struct ObjectRoutes {
 pub mut:
-	object_route string
-	new_object_route string
+	object_route        string
+	new_object_route    string
 	filter_object_route string
-	edit_object_route fn (string) string
-	object_page_route fn (string) string
+	edit_object_route   fn (string) string
+	object_page_route   fn (string) string
 }
 
-pub fn new_object_page[T]() Page {	
-	return Page {
-		heading: PageHeading {
+pub fn new_object_page[T]() Page {
+	return Page{
+		heading: PageHeading{
 			title: typeof[T]().title()
 			description: ''
 		}
@@ -225,13 +228,12 @@ pub fn form[T](endpoint string) string {
 	return $tmpl('../../../../webcomponents/webcomponents/baobab_templates/form.html')
 }
 
-
 pub struct Input {
 pub mut:
-	label string
-	typ InputType
+	label    string
+	typ      InputType
 	endpoint string
-	name string
+	name     string
 }
 
 pub enum InputType {
@@ -241,9 +243,9 @@ pub enum InputType {
 
 pub fn input[T](field FieldData, t T) Input {
 	mut input := Input{}
-	
-	input.name= texttools.name_fix(field.name)
-	input.label= input.name.title()
+
+	input.name = texttools.name_fix(field.name)
+	input.label = input.name.title()
 	if field.typ == 21 {
 		input.typ = .input
 	} else if field.is_enum {
@@ -253,17 +255,17 @@ pub fn input[T](field FieldData, t T) Input {
 }
 
 pub fn (input Input) html() string {
-if input.typ == .input {
+	if input.typ == .input {
 		return $tmpl('../../../../webcomponents/webcomponents/baobab_templates/input.html')
-		}else if input.typ == .dropdown {
-			return $tmpl('../../../../webcomponents/webcomponents/baobab_templates/dropdown.html')
-		}
+	} else if input.typ == .dropdown {
+		return $tmpl('../../../../webcomponents/webcomponents/baobab_templates/dropdown.html')
+	}
 	return ''
 }
 
 pub struct Shell {
 pub mut:
-	page Page
+	page    Page
 	sidebar Sidebar
 }
 
@@ -276,9 +278,9 @@ pub mut:
 
 pub struct PageHeading {
 pub mut:
-	title string
+	title       string
 	description string
-	buttons []Button
+	buttons     []Button
 }
 
 pub struct Sidebar {
@@ -302,7 +304,7 @@ pub mut:
 pub struct Item {
 pub mut:
 	label string
-	icon string
+	icon  string
 	route string
 }
 
@@ -314,7 +316,7 @@ pub fn (shell Shell) html() string {
 
 pub struct Response {
 	target string
-	html string
+	html   string
 }
 
 pub fn (shell Shell) difference(prev_shell Shell) string {
@@ -330,7 +332,7 @@ pub fn (sidebar Sidebar) html() string {
 	return $tmpl('../../../../webcomponents/webcomponents/baobab_templates/sidebar.html')
 }
 
-pub fn to_component[T] (t T) string {
+pub fn to_component[T](t T) string {
 	$if t.is_array {
 		return to_list(t)
 	}
@@ -338,11 +340,9 @@ pub fn to_component[T] (t T) string {
 	//  $else {
 	// 	return "$tmpl('../../../../webcomponents/webcomponents/baobab_templates/objects_table.html')"
 	// }
-
 }
 
-
-pub fn card[T] (t T) string {
+pub fn card[T](t T) string {
 	mut top_fields := []string{}
 	mut fields := []string{}
 	object_name := texttools.name_fix(typeof[T]().all_after_last('.'))
@@ -358,7 +358,7 @@ pub fn card[T] (t T) string {
 	return $tmpl('../../../../webcomponents/webcomponents/baobab_templates/card2.html')
 }
 
-pub fn table[U] (u []U) Table {
+pub fn table[U](u []U) Table {
 	mut headers := []string{}
 	$for field in U.fields {
 		if !field.name.is_capital() && !field.is_array {
@@ -366,8 +366,8 @@ pub fn table[U] (u []U) Table {
 		}
 	}
 	rows := u.map(row(it))
-	
-	return Table {
+
+	return Table{
 		title: typeof[T]().title()
 		description: ''
 		headers: headers
@@ -377,16 +377,16 @@ pub fn table[U] (u []U) Table {
 
 pub struct Table {
 pub mut:
-	title string
+	title       string
 	description string
-	headers []string
-	rows []Row
+	headers     []string
+	rows        []Row
 }
 
 pub struct Row {
 pub mut:
-	route string
-	items []string
+	route   string
+	items   []string
 	buttons []Button
 }
 
@@ -398,7 +398,7 @@ pub fn (row Row) html() string {
 	return $tmpl('../../../../webcomponents/webcomponents/baobab_templates/row.html')
 }
 
-pub fn row[T] (t T) Row {
+pub fn row[T](t T) Row {
 	mut items := []string{}
 	$for field in T.fields {
 		if !field.name.is_capital() && !field.is_array {
@@ -406,12 +406,14 @@ pub fn row[T] (t T) Row {
 			items << '${val}'
 		}
 	}
-	return Row {
+	return Row{
 		route: '${t.id}'
 		items: items
-		buttons: [Button {
-			label: 'Edit'
-			route: '/publisher/website/${t.id}'
-		}]
+		buttons: [
+			Button{
+				label: 'Edit'
+				route: '/publisher/website/${t.id}'
+			},
+		]
 	}
 }

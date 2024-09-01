@@ -47,7 +47,7 @@ pub fn dag_new(args_ DAGArgs) DAG {
 @[params]
 pub struct StepArgs {
 pub mut:
-	nr                int     
+	nr                int
 	name              string  // The name of the step.
 	description       string  // A brief description of the step.
 	dir               string  // The working directory for the step.
@@ -58,18 +58,18 @@ pub mut:
 	signal_on_stop    ?string // The signal name (e.g., SIGINT) to be sent when the process is stopped.
 	continue_on_error bool
 	depends           string
-	retry_nr       	int   = 3
-	retry_interval 	int = 5
+	retry_nr          int = 3
+	retry_interval    int = 5
 }
 
 pub fn (mut d DAG) step_add(args_ StepArgs) !&Step {
 	mut args := args_
-	if args.nr==0{
-		args.nr = d.steps.len+1
+	if args.nr == 0 {
+		args.nr = d.steps.len + 1
 	}
-	if args.name == "" {
-		args.name = "step_${args.nr}"
-	}	
+	if args.name == '' {
+		args.name = 'step_${args.nr}'
+	}
 	mut s := Step{
 		nr: args.nr
 		name: args.name
@@ -100,7 +100,7 @@ pub fn (mut d DAG) step_add(args_ StepArgs) !&Step {
 		s.continue_on(true, false) // means we continue even if failure)
 	}
 
-	s.retry_policy(retry_nr:args.retry_nr,retry_interval:args.retry_interval)
+	s.retry_policy(retry_nr: args.retry_nr, retry_interval: args.retry_interval)
 
 	d.steps << s
 	return &s
@@ -127,15 +127,12 @@ pub fn (mut self Step) continue_on(failure bool, skipped bool) {
 	self.continue_on = c
 }
 
-
-
 @[params]
 pub struct RetryPolicyArgs {
 pub:
-	retry_nr       int   = 1
+	retry_nr       int = 1
 	retry_interval int = 15
 }
-
 
 // should we retry and if yes how long .
 // args
@@ -144,7 +141,6 @@ pub:
 // interval_sec int //sec between the retries in seconds
 //```
 pub fn (mut self Step) retry_policy(args RetryPolicyArgs) {
-	
 	c := RetryPolicy{
 		limit: args.retry_nr
 		interval_sec: args.retry_interval

@@ -1,0 +1,99 @@
+<!--
+  This example requires some changes to your config:
+  
+  ```
+  // tailwind.config.js
+  module.exports = {
+    // ...
+    plugins: [
+      // ...
+      require('@@tailwindcss/forms'),
+    ],
+  }
+  ```
+-->
+<!--
+  This example requires updating your template:
+
+  ```
+  <html class="h-full bg-zinc-900">
+  <body class="h-full">
+  ```
+-->
+<html class="h-full bg-zinc-900">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+<body class="h-full">
+<div>
+    @include "./sidebar.html"
+  
+    <div class="xl:pl-72">
+
+  
+      <main>
+        <div class="bg-zinc-900">
+          <div class="mx-auto max-w-7xl">
+            <div class="bg-zinc-900 py-10">
+              <div class="px-4 sm:px-6 lg:px-8">
+                <div class="sm:flex sm:items-center">
+                  <div class="sm:flex-auto">
+                    <h1 class="text-base font-semibold leading-6 text-white">Scripts</h1>
+                    <p class="mt-2 text-sm text-zinc-300">A list of all the scripts registered to juggler.</p>
+                  </div>
+                  <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                    <button onclick="window.location='/triggers/new'" type="button" class="block rounded-md bg-violet-500 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-violet-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500">Add script</button>
+                  </div>
+                </div>
+
+        
+  
+          <div class="mt-8 flow-root">
+          <ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          @for id, script in scripts
+            <li class="col-span-1 divide-y divide-zinc-700 rounded-lg bg-zinc-800 shadow">
+              <a href="/script/${script.id}">
+              <div class="flex w-full items-center justify-between space-x-6 p-6">
+                <div class="flex-1 line-clamp-2">
+                  <div class="flex items-center space-x-3">
+                    <h3 class="truncate text-sm font-medium text-white">@{script.name}</h3>
+                    <span class="inline-flex flex-shrink-0 items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">@{script.category}</span>
+                  </div>
+                  <p class="mt-1 line-clamp-2 text-sm text-zinc-400">@{script.description}</p>
+                </div>
+              </div>
+            </a>
+              <div>
+                <div class="-mt-px flex divide-x divide-zinc-700">
+                  <div class="flex w-0 flex-1">
+                    <a href="@{script.url}" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-white">
+                        <svg class="h-5 w-5 text-zinc-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 8-4 4 4 4m8 0 4-4-4-4m-2-3-4 14"/>
+                        </svg>
+                      Source
+                    </a>
+                  </div>
+                  <div class="-ml-px flex w-0 flex-1">
+                    <a href="/script/@{script.id}/play" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-white">
+                      <svg class="h-5 w-5 text-zinc-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 18V6l8 6-8 6Z"/>
+                      </svg>                      
+                      Play
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          @end
+            <!-- More people... -->
+          </ul>
+        </div>
+              </div></div></div></div>
+        
+      </main>
+    </div>
+  </div>
+</body>
+</html>

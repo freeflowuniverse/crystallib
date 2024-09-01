@@ -58,12 +58,12 @@ pub mut:
 	script         ?string // The script to execute.
 	signal_on_stop ?string // The signal name (e.g., SIGINT) to be sent when the process is stopped.
 	mail_on        ?MailOn // Whether to send an email notification when the step fails or succeeds.
-	continue_on    ?ContinueOn   @[json: 'continueOn'] // Whether to continue to the next step, regardless of whether the step failed or not or the preconditions are met or not.
-	retry_policy   ?RetryPolicy  @[json: 'retryPolicy'] // The retry policy for the step.
-	repeat_policy  ?RepeatPolicy @[json: 'repeatPolicy']// The repeat policy for the step.
-	preconditions  []string      // The conditions that must be met before a step can run.
-	depends        []string      // The step depends on the other step.
-	call           ?Call // User defined function call
+	continue_on    ?ContinueOn   @[json: 'continueOn']     // Whether to continue to the next step, regardless of whether the step failed or not or the preconditions are met or not.
+	retry_policy   ?RetryPolicy  @[json: 'retryPolicy']   // The retry policy for the step.
+	repeat_policy  ?RepeatPolicy @[json: 'repeatPolicy'] // The repeat policy for the step.
+	preconditions  []string // The conditions that must be met before a step can run.
+	depends        []string // The step depends on the other step.
+	call           ?Call    // User defined function call
 	executor       ?Executor
 }
 
@@ -77,18 +77,16 @@ pub:
 	skipped bool
 }
 
-
-
 pub struct RetryPolicy {
 pub:
 	limit        int // nr of times to retry
-	interval_sec int @[json: 'intervalSec']// sec between the retries in seconds
+	interval_sec int @[json: 'intervalSec'] // sec between the retries in seconds
 }
 
 pub struct RepeatPolicy {
 pub:
 	repeat       bool
-	interval_sec int @[json: 'intervalSec']
+	interval_sec int  @[json: 'intervalSec']
 }
 
 // https://dagu.readthedocs.io/en/latest/yaml_format.html#id9

@@ -22,7 +22,7 @@ fn test_add_file_server() {
 
 	file.add_file_server(
 		domain: 'example.com'
-		root: '${testdata_path}/example'
+		root: '${caddy.testdata_path}/example'
 	) or {
 		assert false, 'Failed to add file server: ${err}'
 		return

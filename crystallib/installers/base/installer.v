@@ -16,10 +16,10 @@ pub fn install(args_ InstallArgs) ! {
 	console.print_header('install base (reset: ${args_.reset})')
 	pl := osal.platform()
 
-	mut args:=args_
+	mut args := args_
 
-	if pl == .osx && ! osal.cmd_exists("brew"){
-		args.reset=true
+	if pl == .osx && !osal.cmd_exists('brew') {
+		args.reset = true
 	}
 
 	if args.reset == false && osal.done_exists('platform_prepare') {
@@ -63,12 +63,13 @@ pub fn install(args_ InstallArgs) ! {
 			# 	echo "REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING" 
 			# 	exit 1
 			# fi 			
-			',ignore_error:true
+			'
+			ignore_error: true
 		)!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_refresh()!
-		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server')!
+		osal.package_install('autoconf,libtool,iputils-ping,net-tools,git,rsync,curl,mc,tmux,libsqlite3-dev,xz-utils,git,git-lfs,redis-server,ufw')!
 	} else if pl == .alpine {
 		console.print_header(' - Alpine prepare')
 		osal.package_refresh()!
@@ -76,12 +77,12 @@ pub fn install(args_ InstallArgs) ! {
 	} else if pl == .arch {
 		console.print_header(' - Arch prepare')
 		osal.package_refresh()!
-		osal.package_install('rsync,ncdu, git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop,arch-install-scripts')!
+		osal.package_install('rsync,ncdu, git,curl,mc,tmux,screen,git-lfs,redis,unzip,sudo,wget,htop,arch-install-scripts,ufw')!
 	} else {
 		panic('only ubuntu, arch, alpine and osx supported for now')
 	}
 	if args.develop {
-		develop(reset:args.reset)!
+		develop(reset: args.reset)!
 	}
 	sshkeysinstall()!
 	console.print_header('platform prepare DONE')
@@ -123,17 +124,18 @@ pub fn develop(args InstallArgs) ! {
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_install('libgc-dev,make,libpq-dev,build-essential,gcc,tcc')!
-		osal.exec(
-			cmd: '
-				cd /tmp
-				wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
-				tar -xvf v0.4.1.tar.gz
-				cd secp256k1-0.4.1/
-				./autogen.sh
-				./configure
-				make -j 5
-				make install   
-				')!
+		// osal.exec(
+		// 	cmd: '
+		// 		cd /tmp
+		// 		wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.4.1.tar.gz
+		// 		tar -xvf v0.4.1.tar.gz
+		// 		cd secp256k1-0.4.1/
+		// 		./autogen.sh
+		// 		./configure
+		// 		make -j 5
+		// 		make install   
+		// 		'
+		// )!
 	} else if pl == .alpine {
 		osal.package_install('libpq-dev,make')!
 	} else if pl == .arch {

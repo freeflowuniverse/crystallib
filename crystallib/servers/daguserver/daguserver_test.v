@@ -20,13 +20,13 @@ pub fn testsuite_end() ! {
 
 fn cleanup() ! {
 	mut sm := startupmanager.get()!
-	if sm.exists('${instance_name}_dagu')! {
-		sm.stop('${instance_name}_dagu')!
+	if sm.exists('${daguserver.instance_name}_dagu')! {
+		sm.stop('${daguserver.instance_name}_dagu')!
 	}
 }
 
 pub fn test_is_running() ! {
-	mut server := get(instance_name)!
+	mut server := get(daguserver.instance_name)!
 	assert !server.is_running()!
 	server.start()!
 	assert server.is_running()!

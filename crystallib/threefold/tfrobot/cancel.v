@@ -1,7 +1,6 @@
 module tfrobot
 
 import json
-import os
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.osal
 

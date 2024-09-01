@@ -43,8 +43,9 @@ fn close(sc &unix.StreamConn) {
 // get string from the zinit socket
 fn (z Client) rpc(cmd string) !string {
 	mut c := z.connect()!
+	console.print_debug("zinit rpc: '${cmd}'")
 	c.write_string(cmd + '\n')!
-	mut res := []u8{len: 1000, cap: 1000}
+	mut res := []u8{len: 5000, cap: 5000}
 	n := c.read(mut res)!
 	close(c)
 	return res[..n].bytestr()
@@ -53,6 +54,9 @@ fn (z Client) rpc(cmd string) !string {
 fn (z Client) list() !map[string]string {
 	response := z.rpc('list')!
 	decoded_response := json.decode(ZinitResponse, response)!
+	// println("")
+	// println(decoded_response)
+	// println("")
 	if decoded_response.state == .error {
 		$if debug {
 			print_backtrace()

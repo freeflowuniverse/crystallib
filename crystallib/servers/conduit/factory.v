@@ -26,15 +26,15 @@ pub mut:
 	name                       string = 'default'
 	reset                      bool
 	path                       string = '/data/conduit'
-	password                     string 
+	password                   string
 	postgresql_name            string = 'default'
-	domain                     string 
-	registration_shared_secret string 
-	recaptcha_public_key       string 
+	domain                     string
+	registration_shared_secret string
+	recaptcha_public_key       string
 	recaptcha_private_key      string
 	recaptcha_bypass_secret    string
-	path_config pathlib.Path
-	version string
+	path_config                pathlib.Path
+	version                    string
 }
 
 // get the conduit server
@@ -48,7 +48,7 @@ pub fn get(instance string) !Server[Config] {
 
 	mut server := Server[Config]{}
 	server.init('conduit_${instance}', instance, .get)!
-	
+
 	cfg := server.config()!
 	conduit_installer.install(
 		reset: cfg.reset
@@ -68,7 +68,7 @@ pub fn configure(instance string, config_ Config) !Server[Config] {
 		version: config.version
 	)!
 
-	mut server := Server[Config] {
+	mut server := Server[Config]{
 		name: config.name
 		path_config: pathlib.get_dir(path: '${config.path}/cfg', create: true)!
 	}

@@ -1,3 +1,5 @@
+module raft
+
 import os
 import net
 import time
@@ -14,9 +16,10 @@ const (
     sock_recv_size = 32768
 )
 
+// TODO: global variables are discouraged by V, and i don't believe we need these to be global at all
 __global (
     my_id string
-    replica_ids []string
+    replica_ids []string 
     sock net.UnixStreamSocket
 )
 
@@ -43,11 +46,24 @@ mut:
     last_heartbeat_sent int
 }
 
+// TODO: no mention of persistent storage, which is definitely needed, if a server crashes it has to be rebooted with the exact same configs
+// TODO: there is no rpc server, only a unix socket, who should be at the other end of the socket? currently, it is expected to 
+// have some kind of message broker or router which needs to have persistant state about servers and their addresses
+// TODO: no mention of reconfiguration, cluster cannot change
+// TODO: the only defined struct is the StateMachine struct
+// TODO: no error handling, either succeed or panic
+// TODO: no mention of snapshotting, 
+
+struct ClientRequest{}
+struct LogEntry{}
+struct RaftMessage{}
+struct CommandData{}
+
 fn new_state_machine(id string, other_server_ids []string) &StateMachine {
     mut sm := &StateMachine{
         id: id
         other_server_ids: other_server_ids
-        log: []LogEntry{init: LogEntry{}}
+        log: []LogEntry{len: 0, init: LogEntry{}}
     }
     sm.next_index = sm.init_next_idx_to_send()
     sm.match_index = sm.init_match_idxs()
@@ -58,12 +74,15 @@ fn new_state_machine(id string, other_server_ids []string) &StateMachine {
 // run method
 fn (mut sm StateMachine) run() {
     for {
+        // TODO: sock is not initialized
+        // TODO: servers act upon receiving a message, if no message is received server will block
         raw_msg := sock.recv(sock_recv_size)
         // received nothing
         if raw_msg.len == 0 {
             return
         } else {
             msg := json.decode(RaftMessage, raw_msg) or { panic(err) }
+            // TODO: apply should not happen unless the log is committed (sent to a majority of servers)
             sm.apply_command_and_reply_client()
             if msg.type !in ['get', 'put'] {
                 sm.check_terms(msg.term, msg.leader)
@@ -149,7 +168,7 @@ fn (mut sm StateMachine) client_handler(msg RaftMessage) {
                 mid: m.mid
             }
             sock.send(response.encode()) or { panic(err) }
-            sm.queued_client_requests.delete(m)
+            sm.queued_client_requests.delete(m) // TODO: empty queue when done 
         }
         response := RaftMessage{
             src: sm.id
@@ -409,6 +428,8 @@ fn (mut sm StateMachine) act_as_follower(msg RaftMessage) {
     // have we timed out
     if time.sys_mono_unixtime_ms() - sm.last_rpc_time >= sm.election_timeout {
         // TODO We'll talk about this
+
+        // TODO: this way we lose the msg, no???
         if sm.voted_for.len == 0 {
             sm.become_candidate()
             return
@@ -476,7 +497,7 @@ fn (mut sm StateMachine) act_as_candidate(msg RaftMessage) {
                 }
             }
         // don't vote because we're a candidate
-        } else if msg.type_ == 'vote_request' {
+        } else if msg.type_ == '0' {
             sm.send_vote_response(msg, sm.current_term, false)
         } else if msg.type_ == 'append_request' {
             sm.append_handler(msg)

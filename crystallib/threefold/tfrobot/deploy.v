@@ -42,9 +42,10 @@ pub mut:
 	node_group  string
 	cpu         int = 4               @[required]
 	mem         int = 4               @[required] // in GB
-	public_ip4  bool
-	public_ip6  bool
-	planetary   bool = true
+	public_ip4  bool = false
+	public_ip6  bool = false
+	ygg_ip      bool = true
+	mycelium_ip bool = true
 	flist       string            @[required]
 	entry_point string            @[required]
 	root_size   int = 20
@@ -63,11 +64,13 @@ pub:
 pub struct VMOutput {
 pub mut:
 	name            string  @[json: 'Name'; required]
+	network_name    string  @[json: 'NetworkName'; required]
 	node_group      string
 	deployment_name string
 	public_ip4      string  @[json: 'PublicIP4'; required]
 	public_ip6      string  @[json: 'PublicIP6'; required]
-	planetary_ip    string  @[json: 'PlanetaryIP'; required]
+	yggdrasil_ip    string  @[json: 'YggIP'; required]
+	mycelium_ip     string  @[json: 'MyceliumIP'; required]
 	ip              string  @[json: 'IP'; required]
 	mounts          []Mount @[json: 'Mounts'; required]
 	node_id         u32     @[json: 'NodeID']
@@ -114,7 +117,7 @@ pub fn (mut robot TFRobot[Config]) deploy(config_ DeployConfig) !DeployResult {
 			vm.ssh_key = config.ssh_keys.keys().first() // first one of the dict
 		}
 		if vm.ssh_key !in config.ssh_keys {
-			return error('Could not find specified sshkey: ${vm.ssh_key} in known sshkeys.\n${config.ssh_keys}')
+			return error('Could not find specified sshkey: ${vm.ssh_key} in known sshkeys.\n${config.ssh_keys.values()}')
 		}
 		if vm.node_group == '' {
 			vm.node_group = node_group
@@ -141,7 +144,7 @@ pub fn (mut robot TFRobot[Config]) deploy(config_ DeployConfig) !DeployResult {
 	_ := osal.exec(
 		cmd: cmd
 		stdout: true
-	)!
+	) or { return error('TFRobot command ${cmd} failed:\n${err}') }
 	output := output_file.read()!
 	mut res := json.decode(DeployResult, output)!
 

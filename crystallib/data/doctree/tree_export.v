@@ -24,7 +24,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 
 	tree.process_macros()!
 
-	console.print_header("EXPORT DEBUG")
+	console.print_header('EXPORT DEBUG')
 
 	// mut c:=tree.collections['tfgridsimulation_farming'] or {panic("aaaa")}
 	// mut p:=c.pages['node_1u'] or {panic("qqqq")}

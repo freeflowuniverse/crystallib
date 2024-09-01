@@ -11,7 +11,7 @@ pub struct VMNewArgs {
 pub mut:
 	name            string = 'default'
 	template        TemplateName
-	platform		PlatformType
+	platform        PlatformType
 	cpus            int = 8
 	memory          i64 = 2000 // in MB
 	disk            i64 = 50000 // in MB
@@ -34,7 +34,6 @@ pub enum PlatformType {
 	x86_64
 }
 
-
 // valid template names: .alpine,.arch .
 pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 	if args.reset {
@@ -54,7 +53,7 @@ pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 	mut ubuntucloud := $tmpl('templates/ubuntucloud.yaml')
 	mut containerd := $tmpl('templates/containerd.yaml')
 
-	mut containerd_extra := ""
+	mut containerd_extra := ''
 
 	match args.template {
 		.ubuntu {
@@ -68,18 +67,18 @@ pub fn (mut lf LimaFactory) vm_new(args VMNewArgs) !VM {
 		}
 		.ubuntucloud {
 			pathlib.template_write(ubuntucloud, ymlfile.path, true)!
-		}		
+		}
 		.containerd {
 			pathlib.template_write(containerd, ymlfile.path, true)!
-			containerd_extra = 
-		}				
+			// containerd_extra =
+		}
 	}
 
 	memory2 := args.memory / 1000
 
-	mut myarch:="aarch64"
-	if args.platform==.x86_64{
-		myarch="x86_64"
+	mut myarch := 'aarch64'
+	if args.platform == .x86_64 {
+		myarch = 'x86_64'
 	}
 
 	cmd := 'limactl create --name=${args.name} --arch=${myarch}  --cpus=${args.cpus} --memory=${memory2} ${ymlfile.path}'
