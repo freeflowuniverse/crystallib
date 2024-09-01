@@ -57,6 +57,10 @@ fn install() ! {
 	)!
 }
 
+fn build()!{
+	
+}
+
 fn startupcmd () ![]zinit.ZProcessNewArgs{
 	mut res := []zinit.ZProcessNewArgs{}
 

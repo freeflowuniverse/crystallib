@@ -82,7 +82,6 @@ pub fn generate(path string, args_ GeneratorArgs) ! {
 			mut templ_5 := $tmpl('templates/readme.md')
 			pathlib.template_write(templ_5, '${path}/readme.md', args.reset)!
 
-
         }
     }
 

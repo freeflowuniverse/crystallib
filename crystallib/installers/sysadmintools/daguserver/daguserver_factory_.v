@@ -17,10 +17,6 @@ pub fn get() !&DaguCFG {
 			if default{
 				config_save()!
 			}
-			// println(config_exists())
-			// println(default)
-			// panic("sss")
-			
 		}
 		config_load()!
 	}
@@ -32,7 +28,7 @@ pub fn switch(name string) {
 	//daguserver_default = name
 }
 
-fn config_exists() bool {
+fn 	() bool {
 	name := "default"
 	mut context:=base.context() or { panic("bug") }
 	return context.hero_config_exists("daguserver",name)
