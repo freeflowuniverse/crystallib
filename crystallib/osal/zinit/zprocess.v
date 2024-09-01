@@ -1,7 +1,7 @@
 module zinit
 
 import os
-import freeflowuniverse.crystallib.core.texttools
+
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.ui.console
@@ -18,6 +18,9 @@ pub mut:
 	after   []string 	//list of service we depend on
 	env     map[string]string
 	oneshot bool
+	start 	  bool = true
+	restart     bool = true // whether the process should be restarted on failure
+	description string //not used in zinit
 }
 
 pub enum ZProcessStatus {
@@ -30,107 +33,22 @@ pub enum ZProcessStatus {
 	spawned
 }
 
-pub fn (mut zinit Zinit) get(name_ string) !ZProcess {
-	name := texttools.name_fix(name_)
-	// console.print_debug(zinit)
-	return zinit.processes[name] or { return error("cannot find process in zinit:'${name}'") }
-}
-
-pub fn (mut zinit Zinit) exists(name_ string) bool {
-	name := texttools.name_fix(name_)
-	if name in zinit.processes {
-		return true
-	}
-	return false
-}
 
 @[params]
 pub struct ZProcessNewArgs {
 pub mut:
 	name      string            @[required]
 	cmd       string            @[required]
-	cmd_file  bool // if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
-	test      string
-	test_file bool
-	after     []string
-	env       map[string]string
-	oneshot   bool
+	test    string 		//command line to test service is running
+	status  ZProcessStatus
+	pid     int
+	after   []string 	//list of service we depend on
+	env     map[string]string
+	oneshot bool
 	start 	  bool = true
+	restart     bool = true // whether the process should be restarted on failure
+	description string //not used in zinit
 }
-
-//will delete the process if it exists while starting
-pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
-	mut args := args_
-
-	args.name = texttools.name_fix(args.name)
-
-	console.print_header(' zinit process new: ${args.name}')
-
-	if args.cmd.len == 0 {
-		$if debug {
-			print_backtrace()
-		}
-		return error('cmd cannot be empty for ${args} in zinit.')
-	}
-
-	if zinit.exists(args.name) {
-		mut p := zinit.get(args.name)!
-		p.destroy()!
-	}
-
-	mut zp := ZProcess{
-		name: args.name
-		cmd: args.cmd
-	}
-
-	// means we can load the special cmd
-	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
-
-	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd) + "\n"
-	pathcmd.write(zp.cmd)!
-	pathcmd.chmod(0x770)!
-	zp.cmd = '/bin/bash -c ${pathcmd.path}'
-
-	if args.test.len > 0 {
-		if args.test.contains('\n') || args.test_file {
-			// means we can load the special cmd
-			mut pathcmd2 := zinit.pathtests.file_get_new(args.name + '.sh')!
-			args.test = texttools.dedent(args.test)
-			pathcmd2.write(args.test)!
-			pathcmd2.chmod(0x770)!
-			zp.test = '/bin/bash -c ${pathcmd2.path}'
-		}
-	}
-
-	zp.oneshot = args.oneshot
-	zp.env = args.env.move()
-	zp.after = args.after
-	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
-	// console.print_debug('debug zprocess path yaml: ${pathyaml}')
-	pathyaml.write(zp.config_content())!
-	if args.start{
-		zp.start()!
-	}
-	zinit.processes[args.name] = zp
-
-	return zp
-}
-
-pub fn (mut zinit Zinit) stop(name string) ! {
-	mut p:=zinit.get(name)!
-	p.stop()!
-}
-
-pub fn (mut zinit Zinit) start(name string) ! {
-	mut p:=zinit.get(name)!
-	p.start()!
-}
-
-pub fn (mut zinit Zinit) delete(name string) ! {
-	mut p:=zinit.get(name)!
-	p.destroy()!
-}
-
 
 pub fn (zp ZProcess) cmd() string {
 	p := '/etc/zinit/cmd/${zp.name}.sh'
@@ -215,10 +133,10 @@ pub fn (mut zp ZProcess) destroy() ! {
 	zp.stop()!
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}
-	mut zinit := get()!
-	mut path1 := zinit.pathcmds.file_get_new(zp.name + '.sh')!
-	mut path2 := zinit.pathtests.file_get_new(zp.name + '.sh')!
-	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
+	mut zinit_obj := new()!
+	mut path1 := zinit_obj.pathcmds.file_get_new(zp.name + '.sh')!
+	mut path2 := zinit_obj.pathtests.file_get_new(zp.name + '.sh')!
+	mut pathyaml := zinit_obj.path.file_get_new(zp.name + '.yaml')!
 	path1.delete()!
 	path2.delete()!
 	pathyaml.delete()!

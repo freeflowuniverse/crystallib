@@ -1,7 +1,7 @@
 module playcmds
 
 import freeflowuniverse.crystallib.clients.daguclient { DAG }
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu as daguinstaller
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver as daguinstaller
 import freeflowuniverse.crystallib.servers.daguserver
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
@@ -19,43 +19,18 @@ pub fn play_dagu(mut plbook playbook.PlayBook) ! {
 
 // play_dagu plays the dagu play commands
 pub fn play_dagu_basic(mut plbook playbook.PlayBook) ! {
-	mut install_actions := plbook.find(filter: 'dagu.install')!
+	mut install_actions := plbook.find(filter: 'daguserver.configure')!
 
 	if install_actions.len > 0 {
 		for install_action in install_actions {
 			mut p := install_action.params
-			homedir := p.get_default('homedir', '${os.home_dir()}/hero/var/dagu')!
-			configpath := p.get_default('configpath', '${os.home_dir()}/hero/cfg/dagu.yaml')!
-			username := p.get_default('username', '')!
-			password := p.get_default('password', '')!
-			secret := p.get_default('secret', '')!
-			title := p.get_default('title', 'My Hero DAG')!
-			reset := p.get_default_false('reset')
-			start := p.get_default_true('start')
-			stop := p.get_default_false('stop')
-			restart := p.get_default_false('restart')
-			ipaddr := p.get_default('ipaddr', '')!
-			port := p.get_int_default('port', 8888)!
-
-			daguinstaller.install(
-				homedir: homedir
-				configpath: configpath
-				username: username
-				password: password
-				secret: secret
-				title: title
-				reset: reset
-				start: start
-				stop: stop
-				restart: restart
-				host: ipaddr
-				port: port
-			)!
+			panic("daguinstall play")
 		}
 	}
 
-	dagu_actions := plbook.find(filter: 'dagu.configure')!
-	if dagu_actions.len == 0 {
+	dagu_actions := plbook.find(filter: 'daguserver.install')!
+	if dagu_actions.len > 0 {
+		panic("daguinstall play")
 		return
 	}
 

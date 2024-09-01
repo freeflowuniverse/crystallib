@@ -3,6 +3,7 @@ import freeflowuniverse.crystallib.data.paramsparser
 
 pub const version = '1.14.3'
 const singleton = true
+const default = true
 const heroscript_default = "
 
 !!daguserver.configure
@@ -15,11 +16,11 @@ const heroscript_default = "
     host: 'localhost'
     port: 8888
 
-!!daguserver.start
-!!daguserver.stop
-!!daguserver.restart
-!!daguserver.delete
-!!daguserver.check
+// !!daguserver.start
+// !!daguserver.stop
+// !!daguserver.restart
+// !!daguserver.delete
+// !!daguserver.check
 
 "
 
@@ -28,15 +29,15 @@ pub mut:
     name string = 'default'
 	homedir    string
 	configpath string
-	username   string = 'admin'
+	username   string
 	password   string @[secret]
 	secret     string @[secret]
-	title      string = 'My Hero DAG'
-	host       string = 'localhost' // server host (default is localhost), all would be '::'
-	port       int    = 8888
+	title      string
+	host       string
+	port       int
 }
 
-pub fn cfg_play(p paramsparser.Params) ! {
+fn cfg_play(p paramsparser.Params) ! {
 
     mut mycfg := DaguCFG{
         homedir: p.get_default('homedir', '{HOME}/hero/var/dagu')!
@@ -53,39 +54,5 @@ pub fn cfg_play(p paramsparser.Params) ! {
         return error('password or secret needs to be filled in for dagu')
     }
 
-    set(cfg:mycfg)!
-}
-
-pub fn (mut self DaguCFG) init() ! {
-}
-
-pub fn (mut self DaguCFG) start() ! {
-    switch(self.name)
-    start()!
-}
-
-pub fn (mut self DaguCFG) stop() ! {
-    switch(self.name)    
-    stop()!
-}
-
-pub fn (mut self DaguCFG) restart() ! {
-    switch(self.name)    
-    stop()!
-    start()!
-}
-
-pub fn (mut self DaguCFG) destroy() ! {
-    switch(self.name)    
-    destroy()!
-}
-
-pub fn (mut self DaguCFG) init() ! {
-    switch(self.name)    
-    destroy()!
-}
-
-pub fn (mut self DaguCFG) init() ! {
-    switch(self.name)    
-    destroy()!
+    set(mycfg)!
 }

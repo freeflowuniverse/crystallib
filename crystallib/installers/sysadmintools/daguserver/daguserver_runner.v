@@ -1,9 +1,10 @@
 module daguserver
 
 import freeflowuniverse.crystallib.core.playbook
-import freeflowuniverse.crystallib.osal.zinit
+//import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.ui.console
+import time
 
 @[params]
 pub struct InstallPlayArgs {
@@ -43,26 +44,26 @@ pub fn play(args_ InstallPlayArgs) ! {
 
 //load from disk and make sure is properly intialized
 pub fn (mut self DaguCFG) reload() ! {
-    switch(self.name)
+    //switch(self.name)
     obj_init()!
 }
 
 pub fn (mut self DaguCFG) start() ! {
-    switch(self.name)
+    //switch(self.name)
     if self.running()!{
         return
     }
 
 	console.print_header('dagu start')
 
-	configure(cfg)!
+	configure()!
 
     start_pre()!
 
 	mut sm := startupmanager.get()!
 
-    for zprocess in startupcmd(){
-    	sm.start_process(zprocess)!
+    for zprocess in startupcmd()!{
+    	sm.start(zprocess.name)!
     }
 
     start_post()!
@@ -80,8 +81,9 @@ pub fn (mut self DaguCFG) start() ! {
 pub fn (mut self DaguCFG) stop() ! {
     switch(self.name)
     stop_pre()!
-    for zprocess in startupcmd(){
-    	sm.stop_process(zprocess)!
+    mut sm := startupmanager.get()!
+    for zprocess in startupcmd()!{
+    	sm.stop(zprocess.name)!
     }
     stop_post()!
 }
@@ -98,20 +100,18 @@ pub fn (mut self DaguCFG) destroy() ! {
     destroy()!
 }
 
-pub fn (mut self DaguCFG) running() ! {
+pub fn (mut self DaguCFG) running() !bool {
     switch(self.name)    
 
 	mut sm := startupmanager.get()!
 
     //walk over the generic processes, if not running return
-    for zprocess in startupcmd(){
-    	r:=sm.process_running(zprocess)!
+    for zprocess in startupcmd()!{
+    	r:=sm.running(zprocess.name)!
         if r==false{
             return false
         }
     }
-
     return running()!
-
 }
 

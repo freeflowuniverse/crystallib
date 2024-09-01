@@ -1,43 +1,52 @@
 module zinit
-
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.osal
 
 __global (
 	zinit_global shared map[string]&Zinit
 )
 
-@[params]
-pub struct FactorySetGet{
-	reset bool
-	zinit ?Zinit
-}
-
-pub fn get(args_ FactorySetGet) !&Zinit {
-	mut args := args_
-	args.name = "default"
+pub fn new() !&Zinit {
+	name := "default"
 	rlock zinit_global {
-		if !(args.name in zinit_global) {
-			set(args_)!
+		if !(name in zinit_global) {
+			set()!
 		}
-		return zinit_global[args.name] or { panic("bug") }
+		return zinit_global[name] or { panic("bug") }
 	}
-	return error("cann't find zinit in globals:'${args.name}'")
+	return error("cann't find zinit in globals:'${name}'")
 }
 
-pub fn set(args_ FactorySetGet)! {
-	mut args := args_
-	args.name = "default"
-	mut obj := args.zinit or {
-			Zinit{
-				name:args.name
-				path: pathlib.get_dir(path: '/etc/zinit', create: true)!
-				pathcmds: pathlib.get_dir(path: '/etc/zinit/cmds', create: true)!
-				pathtests: pathlib.get_dir(path: '/etc/zinit/tests', create: true)!
-			}			
-		}
-	obj.load()!
+fn set()! {
+	name := "default"
+	mut self := Zinit{
+		path: pathlib.get_dir(path: '/etc/zinit', create: true)!
+		pathcmds: pathlib.get_dir(path: '/etc/zinit/cmds', create: true)!
+		pathtests: pathlib.get_dir(path: '/etc/zinit/tests', create: true)!
+	}			
+	self.load()!
 	lock zinit_global {
-		zinit_global[obj.name] = &obj
+		zinit_global[name] = &self
 	}
 }
 
 
+
+pub fn check() bool {
+	if !osal.cmd_exists('zinit') {
+		return false
+	}
+	//println(osal.execute_ok('zinit list'))
+	return osal.execute_ok('zinit list')
+}
+
+
+
+// remove all know services to zinit
+pub fn destroy() ! {
+	initd_proc_get(delete: true, start: false)!
+	mut zinitpath := pathlib.get_dir(path: '/etc/zinit', create: true)!
+	zinitpath.empty()!
+	console.print_header(' zinit destroyed')
+}

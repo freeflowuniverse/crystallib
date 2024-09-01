@@ -24,7 +24,7 @@ pub mut:
 
 pub fn get() !StartupManager {
 	mut sm := StartupManager{}
-	if zinit.check()! {
+	if zinit.check() {
 		sm.cat = .zinit		
 	}else if systemd.check()! {
 		sm.cat = .systemd
@@ -32,36 +32,30 @@ pub fn get() !StartupManager {
 	return sm
 }
 
-pub struct StartArgs {
-pub mut:
-	description string
-	name        string            @[requred]
-	cmd         string
-	reset       bool
-	restart     bool = true // whether the process should be restarted on failure
-	env         map[string]string
-	// start  bool = true
-	// attach bool
-}
-
 // launch a new process
 //```
-// name  string
-// cmd   string
-// reset bool
+// name      string            @[required]
+// cmd       string            @[required]
+// test    string 		//command line to test service is running
+// status  ZProcessStatus
+// pid     int
+// after   []string 	//list of service we depend on
+// env     map[string]string
+// oneshot bool
+// start 	  bool = true
+// restart     bool = true // whether the process should be restarted on failure
+// description string //not used in zinit
 //```
-pub fn (mut sm StartupManager) start(args StartArgs) ! {
-	console.print_debug("startupmanager start:${args.name} cmd:'${args.cmd}' reset:${args.reset}")
+pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
+	console.print_debug("startupmanager start:${args.name} cmd:'${args.cmd}' restart:${args.restart}")
 	match sm.cat {
 		.screen {
 			mut scr := screen.new(reset: false)!
-			console.print_debug('  screen')
-			_ = scr.add(name: args.name, cmd: args.cmd, reset: args.reset)!
+			console.print_debug('screen')
+			_ = scr.add(name: args.name, cmd: args.cmd, reset: args.restart)!
 		}
 		.systemd {
-			if args.reset {
-			}
-			console.print_debug('  systemd start  ${args.name}')
+			console.print_debug('systemd start  ${args.name}')
 			mut systemdfactory := systemd.new()!
 			systemdfactory.new(
 				cmd: args.cmd
@@ -73,8 +67,6 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 			)!
 		}
 		.zinit {
-			if args.reset {
-			}
 			console.print_debug('  zinit start ${args.name}')
 			mut zinitfactory := zinit.new()!
 			// pub struct ZProcessNewArgs {
@@ -88,12 +80,7 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 			// 	oneshot   bool
 			// }
 
-			zinitfactory.new(
-				cmd: args.cmd
-				name: args.name
-				env: args.env
-				start: true
-			)!
+			zinitfactory.new(args)!
 		}
 		else {
 			panic('to implement, startup manager only support screen & systemd for now')
@@ -101,7 +88,31 @@ pub fn (mut sm StartupManager) start(args StartArgs) ! {
 	}
 }
 
-// kill the process by name
+pub fn (mut sm StartupManager) start(name string) ! {
+	match sm.cat {
+		.screen {
+			return error("cannot do simple start with screen")
+		}
+		.systemd {
+			console.print_debug('systemd start ${name}')
+			mut systemdfactory := systemd.new()!
+			if systemdfactory.exists(name) {
+				mut systemdprocess := systemdfactory.get(name)!
+				systemdprocess.stop()!
+			}
+		}
+		.zinit {
+			console.print_debug('zinit start ${name}')
+			mut zinitfactory := zinit.new()!
+			zinitfactory.stop(name)!
+		}
+		else {
+			panic('to implement, startup manager only support screen for now')
+		}
+	}
+}
+
+
 pub fn (mut sm StartupManager) stop(name string) ! {
 	match sm.cat {
 		.screen {
@@ -233,6 +244,11 @@ pub fn (mut sm StartupManager) status(name string) !ProcessStatus {
 			panic('to implement, startup manager only support screen & systemd for now')
 		}
 	}
+}
+
+pub fn (mut sm StartupManager) running(name string) !bool {
+	mut s:=sm.status(name)!
+	return s == .active
 }
 
 // remove from the startup manager

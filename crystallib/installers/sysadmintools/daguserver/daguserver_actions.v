@@ -57,10 +57,10 @@ fn install() ! {
 	)!
 }
 
-fn startupcmd () ![]zinit.ZProcess{
-	mut res := []zinit.ZProcess{}
+fn startupcmd () ![]zinit.ZProcessNewArgs{
+	mut res := []zinit.ZProcessNewArgs{}
 
-	res << zinit.ZProcess{
+	res << zinit.ZProcessNewArgs{
 		name: 'dagu'
 		cmd: 'dagu server'
 		env: {
@@ -68,7 +68,7 @@ fn startupcmd () ![]zinit.ZProcess{
 		}	
 	}
 
-	res << zinit.ZProcess{
+	res << zinit.ZProcessNewArgs{
 		name: 'dagu_scheduler'
 		cmd: 'dagu scheduler'
 		env: {

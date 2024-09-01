@@ -1,2 +1,6 @@
 
-!!hero_code.generate cat:'installer' name:'daguserver' singleton:1 templates:1 objname:'DaguServer'
+!!hero_code.generate cat:'installer' name:'daguserver' 
+    singleton:1 
+    templates:1 
+    objname:'DaguServer'
+    default:1
