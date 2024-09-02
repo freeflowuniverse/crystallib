@@ -59,7 +59,7 @@ pub fn bash_installers_package() !string {
 
 	script_write(out, 'install_hero', "
 		hero_install
-		echo 'BUILD HERO OK'
+		echo 'INSTALL HERO OK'
 		")!
 
 	script_write(out, 'githubactions', "

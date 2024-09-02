@@ -16,10 +16,11 @@ pub fn scan(path_ string) ! {
 
 	//now walk over all directories, find .heroscript
 	mut pathroot:=pathlib.get_dir(path:path,create:false)!
-	mut plist := pathroot.list(recursive:true,regex:["r'\\.heroscript'"])!
+	mut plist := pathroot.list(recursive:true,ignoredefault:false, regex:["\\.heroscript"])!
 
 	for mut p in plist.paths{
 		pparent:=p.parent()!
+		//println("-- ${pparent}")
 		generate(pparent.path,args_)!
 	}
 
@@ -39,7 +40,7 @@ pub mut:
 	startupmanager		  bool = true
 }
 
-pub fn generate(path string, args_ GeneratorArgs) ! {
+pub fn generate(path string) ! {
 
 	console.print_debug("generate installer code for path: ${path}")
 
@@ -82,10 +83,8 @@ pub fn generate(path string, args_ GeneratorArgs) ! {
 			mut templ_5 := $tmpl('templates/readme.md')
 			pathlib.template_write(templ_5, '${path}/readme.md', args.reset)!
 
-        }
-    }
-
-
+      	}
+	}
 }	
 
 
