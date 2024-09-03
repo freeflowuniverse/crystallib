@@ -56,8 +56,3 @@ fn cfg_play(p paramsparser.Params) ! {
 
     set(mycfg)!
 }
-
-
-// pub fn (mut self DaguServer) dag_path(name string) string {
-// 	return '${os.home_dir()}/dags/${texttools.name_fix(name)}.yaml'
-// }

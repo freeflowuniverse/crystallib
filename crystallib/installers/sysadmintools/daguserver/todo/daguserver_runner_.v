@@ -1,4 +1,4 @@
-module ${args.name}
+module daguserver
 
 import freeflowuniverse.crystallib.core.playbook
 //import freeflowuniverse.crystallib.osal.zinit
@@ -6,7 +6,7 @@ import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.ui.console
 import time
 
-^^[params]
+@[params]
 pub struct InstallPlayArgs {
 pub mut:
 	name string = 'default'
@@ -32,7 +32,7 @@ pub fn play(args_ InstallPlayArgs) ! {
         playbook.new(text: args.heroscript)!
     }
     
-    mut install_actions := plbook.find(filter: '${args.name}.configure')!
+    mut install_actions := plbook.find(filter: 'daguserver.configure')!
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
@@ -42,20 +42,19 @@ pub fn play(args_ InstallPlayArgs) ! {
 
 }
 
-@if args.startupmanager
 //load from disk and make sure is properly intialized
-pub fn (mut self ${args.classname}) reload() ! {
-    switch(self.name)
+pub fn (mut self DaguServer) reload() ! {
+    //switch(self.name)
     obj_init()!
 }
 
-pub fn (mut self ${args.classname}) start() ! {
-    switch(self.name)
+pub fn (mut self DaguServer) start() ! {
+    //switch(self.name)
     if self.running()!{
         return
     }
 
-	console.print_header('${args.name} start')
+	console.print_header('dagu start')
 
 	configure()!
 
@@ -75,17 +74,11 @@ pub fn (mut self ${args.classname}) start() ! {
 		}
 		time.sleep(100 * time.millisecond)
 	}
-	return error('${args.name} did not install properly.')
+	return error('dagu did not install properly.')
 
 }
 
-pub fn (mut self ${args.classname}) install_start(args RestartArgs) ! {
-    switch(self.name)
-    self.install(args)!
-    self.start()!
-}
-
-pub fn (mut self ${args.classname}) stop() ! {
+pub fn (mut self DaguServer) stop() ! {
     switch(self.name)
     stop_pre()!
     mut sm := startupmanager.get()!
@@ -95,14 +88,21 @@ pub fn (mut self ${args.classname}) stop() ! {
     stop_post()!
 }
 
-pub fn (mut self ${args.classname}) restart() ! {
-    switch(self.name)
+pub fn (mut self DaguServer) restart() ! {
+    switch(self.name)    
     self.stop()!
     self.start()!
 }
 
-pub fn (mut self ${args.classname}) running() !bool {
-    switch(self.name)
+pub fn (mut self DaguServer) destroy() ! {
+    switch(self.name)    
+    self.stop()!
+    destroy()!
+}
+
+pub fn (mut self DaguServer) running() !bool {
+    switch(self.name)    
+
 	mut sm := startupmanager.get()!
 
     //walk over the generic processes, if not running return
@@ -114,25 +114,4 @@ pub fn (mut self ${args.classname}) running() !bool {
     }
     return running()!
 }
-@end
 
-@@[params]
-pub struct RestartArgs{
-pub mut:
-    reset bool
-}
-
-pub fn (mut self ${args.classname}) install(args RestartArgs) ! {
-    switch(self.name)
-    if args.reset || (!installed()!) {
-        install()!
-    }    
-}
-
-pub fn (mut self ${args.classname}) destroy() ! {
-    switch(self.name)
-@if args.startupmanager
-    self.stop()!
-@end
-    destroy()!
-}

@@ -145,9 +145,10 @@ pub fn start(args InstallArgs) ! {
 		s.attach()! // to allow filling in passwd		
 	} else {
 		mut sm := startupmanager.get()!
-		sm.start(
+		sm.new(
 			name: name
 			cmd: cmd
+			start: true
 		)!
 	}
 

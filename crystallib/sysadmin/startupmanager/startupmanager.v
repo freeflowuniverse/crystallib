@@ -86,6 +86,12 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 			panic('to implement, startup manager only support screen & systemd for now')
 		}
 	}
+	if args.start{
+		sm.start(args.name)!
+	}else if args.restart {
+		sm.restart(args.name)!
+	}
+
 }
 
 pub fn (mut sm StartupManager) start(name string) ! {

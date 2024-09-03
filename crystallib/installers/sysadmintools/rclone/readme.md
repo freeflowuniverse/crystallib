@@ -1,12 +1,12 @@
-# daguserver
+# rclone
 
 
 
 ## heroscript
 
 ```yaml
-!!daguserver.install
-    homedir: '/home/user/daguserver'
+!!rclone.install
+    homedir: '/home/user/rclone'
     username: 'admin'
     password: 'secretpassword'
     title: 'Some Title'

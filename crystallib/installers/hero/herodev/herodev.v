@@ -2,7 +2,7 @@ module herodev
 
 import freeflowuniverse.crystallib.installers.web.mdbook
 import freeflowuniverse.crystallib.installers.web.zola
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
 @[params]
 pub struct InstallArgs {
@@ -16,5 +16,6 @@ pub fn install(args_ InstallArgs) ! {
 
 	mdbook.install(reset: args.reset)!
 	zola.install(reset: args.reset)!
+	mut dagu := daguserver.get()!
 	dagu.install(reset: args.reset)!
 }
