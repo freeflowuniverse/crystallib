@@ -1,17 +1,10 @@
-#!/usr/bin/env -S v -n -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals -cg run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
-import log
+import freeflowuniverse.crystallib.ui.console
 
-fn get_contract_billing(contract_id u64) ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
-	mut grid_proxy := gridproxy.get(.dev, false)!
-	bills := grid_proxy.get_contract_hourly_bill(contract_id)!
-	logger.info('${bills}')
-}
+contract_id := u64(119450)
+mut gp_client := gridproxy.new(net:.dev, cache:false)!
+bills := gp_client.get_contract_hourly_bill(contract_id)!
 
-fn main() {
-	contract_id := u64(119450)
-	get_contract_billing(contract_id) or { println('error happened: ${err}') }
-}
+console.print_debug("${bills}")

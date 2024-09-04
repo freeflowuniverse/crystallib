@@ -1,27 +1,30 @@
-#!/usr/bin/env -S v -n -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals -cg run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
-import log
+import freeflowuniverse.crystallib.threefold.gridproxy.model { NodeStatus }
+import freeflowuniverse.crystallib.ui.console
 
 fn get_online_grid_stats_example() ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
-	mut gp_client := gridproxy.get(.dev, true)!
+	mut myfilter := gridproxy.statfilter()!
 
-	grid_online_stats := gp_client.get_stats(status: .online)!
-	logger.info('${grid_online_stats}')
+	myfilter.status = NodeStatus.online
+
+	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mystats := gp_client.get_stats(myfilter)!
+
+	console.print_debug("${mystats}")
 }
 
 fn get_all_grid_stats_example() ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
-	mut gp_client := gridproxy.get(.dev, true)!
+	mut myfilter := gridproxy.statfilter()!
 
-	grid_all_stats := gp_client.get_stats(status: .all)!
-	logger.info('${grid_all_stats}')
+	myfilter.status = NodeStatus.all
+
+	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mystats := gp_client.get_stats(myfilter)!
+
+	console.print_debug("${mystats}")
 }
 
-fn main() {
-	get_online_grid_stats_example()!
-	get_all_grid_stats_example()!
-}
+get_online_grid_stats_example()!
+get_all_grid_stats_example()!
