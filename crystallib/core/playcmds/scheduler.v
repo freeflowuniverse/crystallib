@@ -1,12 +1,12 @@
 module playcmds
 
-import freeflowuniverse.crystallib.servers.daguserver
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
 pub fn scheduler(heroscript string) ! {
 
-	mut dserver:=daguserver.new()! 
+	mut dserver:=daguserver.get()!
 
-	mut dagucl:=dserver.client()!
+	// mut dagucl:=dserver.client()!
 
 
 

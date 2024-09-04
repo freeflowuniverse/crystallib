@@ -6,7 +6,7 @@ module heroweb
 import freeflowuniverse.crystallib.installers.web.mdbook
 import freeflowuniverse.crystallib.installers.web.zola
 import freeflowuniverse.crystallib.installers.web.caddy
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 import freeflowuniverse.crystallib.installers.net.mycelium
 
 @[params]
@@ -21,7 +21,8 @@ pub fn install(args_ InstallArgs) ! {
 
 	mdbook.install(reset: args.reset)!
 	zola.install(reset: args.reset)!
-	dagu.install(reset: args.reset)!
+	mut dagu := daguserver.get()!
+	dagu.install()!
 	caddy.install(reset: args.reset)!
 	mycelium.install(reset: args.reset)!
 }

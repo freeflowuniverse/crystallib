@@ -172,13 +172,14 @@ pub fn (mut j Juggler) run_play(play Play) ! {
 		}
 	}
 	mut sm := startupmanager.get() or { panic('failed to get sm ${err}') }
-	sm.start(
+	sm.new(
 		name: 'juggler_play${play.id}'
 		cmd: command
 		env: {
 			'HOME': os.home_dir()
 		}
 		restart: false
+		start: true
 	) or { panic('failed to start sm ${err}') }
 }
 

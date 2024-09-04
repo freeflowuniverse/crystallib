@@ -87,9 +87,10 @@ pub fn start(args_ S3Config) !S3Config {
 
 	mut sm := startupmanager.get()!
 
-	sm.start(
+	sm.new(
 		name: 'garage'
 		cmd: 'garage -c ${myconfigpath_} server'
+		start: true
 	)!
 
 	console.print_debug('garage -c ${myconfigpath_} server')

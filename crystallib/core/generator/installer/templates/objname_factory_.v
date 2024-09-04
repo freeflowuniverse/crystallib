@@ -11,13 +11,26 @@ __global (
 
 /////////FACTORY
 
-@if args.default
-pub fn get() !&${args.classname}  {
-	name := "default"
-@else
-pub fn get(name string) !&${args.classname} 
-@end
-	if !(name in ${args.name}_global) {
+^^[params]
+pub struct ArgsGet{
+pub mut:
+    name string = "default"
+}
+
+fn args_get (args_ ArgsGet) ArgsGet {	
+	mut args:=args_
+	if args.name == ""{
+		args.name = ${args.name}_default
+	}
+	if args.name == ""{
+		args.name = "default"
+	}	
+	return args
+}
+ 
+pub fn get(args_ ArgsGet) !&${args.classname}  {
+    mut args := args_get(args_)
+	if !(args.name in ${args.name}_global) {
 		if ! config_exists(){
 			if default{
 				config_save()!
@@ -25,47 +38,32 @@ pub fn get(name string) !&${args.classname}
 		}
 		config_load()!
 	}
-	return ${args.name}_global[name] or { panic("bug") }
+	return ${args.name}_global[args.name] or { panic("bug") }
 }
 
-
-@if args.default
 //switch instance to be used for ${args.name}
 pub fn switch(name string) {
 	${args.name}_default = name
 }
-@end
 
 
-@if args.default
-fn config_exists() bool {
-	name := "default"
-@else
-fn config_exists(name string) bool {
-@end
+fn config_exists(args_ ArgsGet) bool {
+    mut args := args_get(args_)
 	mut context:=base.context() or { panic("bug") }
-	return context.hero_config_exists("${args.name}",name)
+	return context.hero_config_exists("${args.name}",args.name)
 }
 
-@if args.default
-fn config_load() bool {
-	name := "default"
-@else
-fn config_load(name string) bool {
-@end
+fn config_load(args_ ArgsGet) ! {
+	mut args := args_get(args_)
 	mut context:=base.context()!
-	mut heroscript := context.hero_config_get("${args.name}",name)!
+	mut heroscript := context.hero_config_get("${args.name}",args.name)!
 	play(heroscript:heroscript)!
 }
 
-@if args.default
-fn config_save() bool {
-	name := "default"
-@else
-fn config_save(name string) bool {
-@end
+fn config_save(args_ ArgsGet) ! {
+	mut args := args_get(args_)
 	mut context:=base.context()!
-	context.hero_config_set("${args.name}",name,heroscript_default)!
+	context.hero_config_set("${args.name}",args.name,heroscript_default)!
 }
 
 

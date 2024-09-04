@@ -35,14 +35,14 @@ pub:
 	success bool
 }
 
-pub fn (mut self DaguServer[Config]) comms_configure(config DaguCommunicationConfig) ! {
-	mut homedir := self.config()!.homedir
+pub fn (mut self DaguServer) comms_configure(config DaguCommunicationConfig) ! {
+	// mut homedir := self.config()!.homedir
 
-	config_yaml := $tmpl('./templates/config.yaml')
-	os.write_file('${homedir}/config.yaml', config_yaml)!
+	// config_yaml := $tmpl('./templates/communication.yaml')
+	// os.write_file('${homedir}/communication.yaml', config_yaml)!
 
-	dags_dir := '${homedir}/dags'
-	if !os.exists(dags_dir) {
-		os.mkdir(dags_dir)!
-	}
+	// dags_dir := '${homedir}/dags'
+	// if !os.exists(dags_dir) {
+	// 	os.mkdir(dags_dir)!
+	// }
 }

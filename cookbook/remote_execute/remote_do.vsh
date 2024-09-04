@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.builder
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.installers.net.mycelium
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
 //the next statement makes the current script to be executed remotely
 nodes:='65.21.132.119'

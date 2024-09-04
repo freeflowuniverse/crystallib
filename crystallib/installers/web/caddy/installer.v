@@ -273,9 +273,10 @@ pub fn start(args_ InstallArgs) ! {
 
 	mut sm := startupmanager.get()!
 
-	sm.start(
+	sm.new(
 		name: 'caddy'
 		cmd: cmd
+		start: true
 	)!
 }
 

@@ -16,7 +16,7 @@ import freeflowuniverse.crystallib.installers.lang.python
 import freeflowuniverse.crystallib.installers.web.caddy
 import freeflowuniverse.crystallib.installers.hero.heroweb
 import freeflowuniverse.crystallib.installers.hero.herodev
-import freeflowuniverse.crystallib.servers.daguserver
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 import freeflowuniverse.crystallib.installers.sysadmintools.rclone
 import freeflowuniverse.crystallib.installers.sysadmintools.prometheus
 import freeflowuniverse.crystallib.installers.sysadmintools.grafana
@@ -81,7 +81,9 @@ pub fn install_multi(args_ InstallArgs) ! {
 				base.install(reset: args.reset, develop: true)!
 			}
 			'rclone' {
-				rclone.install(reset: args.reset)!
+				// rclone.install(reset: args.reset)!
+				mut rc := rclone.get()!
+				rc.install(reset: args.reset)!
 			}
 			'rust' {
 				rust.install(reset: args.reset)!
@@ -148,10 +150,10 @@ pub fn install_multi(args_ InstallArgs) ! {
 			}
 			'dagu' {
 				//will call the installer underneith
-				mut dserver:=daguserver.new()! 
+				mut dserver:=daguserver.get()! 
 				dserver.install()! 
 				dserver.restart()!
-				mut dagucl:=dserver.client()!
+				// mut dagucl:=dserver.client()!
 			}
 			else {
 				return error('cannot find installer for: ${item}')

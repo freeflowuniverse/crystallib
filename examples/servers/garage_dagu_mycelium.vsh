@@ -2,7 +2,7 @@
 
 import freeflowuniverse.crystallib.installers.sysadmintools.garage_s3
 import freeflowuniverse.crystallib.installers.sysadmintools.rfs
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.installers.db.zdb
 import freeflowuniverse.crystallib.installers.db.redis

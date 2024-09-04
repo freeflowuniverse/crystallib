@@ -80,10 +80,7 @@ pub fn start(args InstallArgs) ! {
 	osal.process_kill_recursive(name: 'redis-server')!
 
 	mut sm := startupmanager.get()!
-	sm.start(
-		name: 'redis'
-		cmd: 'redis-server ${configfilepath()} --daemonize yes'
-	)!
+	sm.new(name: 'redis', cmd: 'redis-server ${configfilepath()} --daemonize yes', start: true)!
 
 	for _ in 0 .. 100 {
 		if check() {

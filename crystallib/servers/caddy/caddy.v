@@ -38,9 +38,10 @@ pub fn (mut self Caddy[Config]) start() ! {
 
 	mut sm := startupmanager.get()!
 
-	sm.start(
+	sm.new(
 		name: 'caddy'
 		cmd: cmd
+		start: true
 	)!
 }
 

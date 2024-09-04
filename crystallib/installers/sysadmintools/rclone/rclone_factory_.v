@@ -1,12 +1,12 @@
 
-module daguserver
+module rclone
 
 import freeflowuniverse.crystallib.core.base
 
 
 __global (
-    daguserver_global map[string]&DaguServer
-    daguserver_default string
+    rclone_global map[string]&RClone
+    rclone_default string
 )
 
 /////////FACTORY
@@ -20,7 +20,7 @@ pub mut:
 fn args_get (args_ ArgsGet) ArgsGet {    
     mut args:=args_
     if args.name == ""{
-        args.name = daguserver_default
+        args.name = rclone_default
     }
     if args.name == ""{
         args.name = "default"
@@ -28,9 +28,9 @@ fn args_get (args_ ArgsGet) ArgsGet {
     return args
 }
  
-pub fn get(args_ ArgsGet) !&DaguServer  {
+pub fn get(args_ ArgsGet) !&RClone  {
     mut args := args_get(args_)
-    if !(args.name in daguserver_global) {
+    if !(args.name in rclone_global) {
         if ! config_exists(){
             if default{
                 config_save()!
@@ -38,38 +38,38 @@ pub fn get(args_ ArgsGet) !&DaguServer  {
         }
         config_load()!
     }
-    return daguserver_global[args.name] or { panic("bug") }
+    return rclone_global[args.name] or { panic("bug") }
 }
 
-//switch instance to be used for daguserver
+//switch instance to be used for rclone
 pub fn switch(name string) {
-    daguserver_default = name
+    rclone_default = name
 }
 
 
 fn config_exists(args_ ArgsGet) bool {
     mut args := args_get(args_)
     mut context:=base.context() or { panic("bug") }
-    return context.hero_config_exists("daguserver",args.name)
+    return context.hero_config_exists("rclone",args.name)
 }
 
 fn config_load(args_ ArgsGet) ! {
     mut args := args_get(args_)
     mut context:=base.context()!
-    mut heroscript := context.hero_config_get("daguserver",args.name)!
+    mut heroscript := context.hero_config_get("rclone",args.name)!
     play(heroscript:heroscript)!
 }
 
 fn config_save(args_ ArgsGet) ! {
     mut args := args_get(args_)
     mut context:=base.context()!
-    context.hero_config_set("daguserver",args.name,heroscript_default)!
+    context.hero_config_set("rclone",args.name,heroscript_default)!
 }
 
 
-fn set(o DaguServer)! {
+fn set(o RClone)! {
     obj_init()!
-    daguserver_global["default"] = &o
+    rclone_global["default"] = &o
 }
 
 
