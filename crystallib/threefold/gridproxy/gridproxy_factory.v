@@ -104,3 +104,7 @@ pub fn farmfilter() !model.FarmFilter {
 pub fn twinfilter() !model.TwinFilter {
 	return model.TwinFilter{}
 }
+
+pub fn statfilter() !model.StatFilter {
+	return model.StatFilter{}
+}
