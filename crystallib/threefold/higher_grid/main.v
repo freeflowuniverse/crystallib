@@ -1,10 +1,10 @@
 module main
 import freeflowuniverse.crystallib.threefold.higher_grid.models
-import freeflowuniverse.crystallib.threefold.grid.models
+// import freeflowuniverse.crystallib.threefold.grid.models as GridModels
 
 
 fn do()!{
-	mut grid := new_gridclient(mnemonic: "", network: "") or {}
+	mut grid := models.new_gridclient("", "")!
 
 	mut vms := models.GridVM{
 		name: "Machines interface",
@@ -32,9 +32,9 @@ fn do()!{
 		]
 	}
 
-	grid.vms.deploy(vms)
+	grid.vms.deploy(vms)!
 }
 
 fn main(){
-	do()
+	do()!
 }

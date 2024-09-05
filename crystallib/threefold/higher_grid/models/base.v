@@ -14,7 +14,7 @@ pub struct GridClient {
 		vms GridVM
 }
 
-fn new_gridclient(mnemonic string, network string) !GridClient {
+pub fn new_gridclient(mnemonic string, network string) !GridClient {
 	chain_network := match network {
 		"dev" {
 			grid.ChainNetwork.dev

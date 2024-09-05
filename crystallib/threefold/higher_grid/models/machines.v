@@ -36,8 +36,8 @@ pub struct GridVM {
 		metadata string
 }
 
-pub fn (mut mm GridVM)deploy(vms GridVM){
-	mut deployer := grid.new_deployer(mm.mnemonic, mm.chain_network)
+pub fn (mut mm GridVM)deploy(vms GridVM) ! {
+	mut deployer := grid.new_deployer(mm.mnemonic, mm.chain_network)!
 	// println(grid.)
 	// println(vms)
 }
