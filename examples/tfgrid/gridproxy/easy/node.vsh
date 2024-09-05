@@ -1,93 +1,96 @@
-#!/usr/bin/env -S v -n -w -enable-globals run
+#!/usr/bin/env -S v -n -w -enable-globals -cg run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.threefold.gridproxy.model
-import log
+import freeflowuniverse.crystallib.ui.console
 
 fn get_nodes_example() ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
-	mut gp_client := gridproxy.get(.dev, true)!
+	mut myfilter := gridproxy.nodefilter()!
 
-	mut node_filter := model.NodeFilter{}
+	myfilter.status = 'up'
+	myfilter.country = 'egypt'
 
-	node_filter.status = 'up'
-	node_filter.country = 'egypt'
-	node_filter.free_ips = u64(4)
+	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mynodes := gp_client.get_nodes(myfilter)!
 
-	nodes := gp_client.get_nodes(node_filter)!
-	logger.info('${nodes}')
+	console.print_debug("${mynodes}")
 }
 
 fn get_node_by_id_example(node_id u64) ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
-	mut gp_client := gridproxy.get(.dev, true)!
+	mut myfilter := gridproxy.nodefilter()!
 
-	node := gp_client.get_node_by_id(node_id)!
+	myfilter.node_id = node_id
+
+	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mynodes := gp_client.get_nodes(myfilter)!
+
+	console.print_debug("${mynodes}")
 
 	// get node available resources
-	node_available_resources := node.calc_available_resources()
-	logger.info('${node_available_resources}')
+	node_available_resources := mynodes[0].calc_available_resources()
+	console.print_debug("${node_available_resources}")
 }
 
-fn get_node_stats_by_id(node_id u64) ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
-	mut gp_client := gridproxy.get(.dev, true)!
+fn get_node_stats_by_id_example(node_id u64) ! {
+	mut gp_client := gridproxy.new(net:.dev, cache:true)!
 
 	node_stats := gp_client.get_node_stats_by_id(node_id)!
-	logger.info('${node_stats}')
+
+	console.print_debug("${node_stats}")
 }
 
-fn get_nodes_iterator_example() ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
-	mut gp_client := gridproxy.get(.dev, true)!
+fn get_node_by_available_capacity_example() ! {
+	mut myfilter := gridproxy.nodefilter()!
 
-	max_page_iteration := u64(5) // set maximum pages to iterate on
+	// minimum free capacity
+	myfilter.free_mru = u64(0)
+	myfilter.free_sru = u64(1024)  // 1 tb
+	myfilter.free_hru = u64(0)
+	myfilter.free_ips = u64(1)
 
-	mut node_iterator := gp_client.get_nodes_iterator(status: 'up')
-	mut iterator_available_node := []model.Node{}
-	for {
-		if node_iterator.filter.page is u64 && node_iterator.filter.page >= max_page_iteration {
-			break
-		}
-
-		iterator_nodes := node_iterator.next()
-		if iterator_nodes != none {
-			iterator_available_node << iterator_nodes
-		} else {
-			break // if the page is empty the next function will return none
-		}
-	}
-	logger.info('${iterator_available_node}')
-}
-
-fn get_node_by_resources_filter_example() ! {
-	mut logger := &log.Log{}
-	logger.set_level(.debug)
 	// init gridproxy client on devnet with redis cash
-	mut gp_client := gridproxy.get(.dev, true)!
+	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mynodes := gp_client.get_nodes(myfilter)!
 
-	// using resource filter
+	console.print_debug("${mynodes}")
+}
 
-	resources := model.ResourceFilter{
-		free_sru_gb: 1 // gb
-		free_hru_gb: 0
-		free_mru_gb: 0
-		free_ips: 0
+fn get_node_by_city_country_example() ! {
+	mut myfilter := gridproxy.nodefilter()!
+
+	myfilter.city = 'Rio de Janeiro'
+	myfilter.country = 'Brazil'
+
+	mut gp_client := gridproxy.new(net:.main, cache:false)!
+	mynodes := gp_client.get_nodes(myfilter)!
+
+	console.print_debug("${mynodes}")
+}
+
+fn get_node_box_poc_example() ! {
+	mut myfilter := gridproxy.nodefilter()!
+
+	myfilter.status = 'up'
+
+	mut gp_client := gridproxy.new(net:.main, cache:true)!
+	mynodes := gp_client.get_nodes(myfilter)!
+
+	for node in mynodes{
+		console.print_debug('${node}')
+		console.print_debug('${node.capacity.total_resources.hru.to_gigabytes()}')
+
+		node_available_resources := node.calc_available_resources()
+		console.print_debug('${node_available_resources}')
+
+		node_stats := gp_client.get_node_stats_by_id(node.node_id)!
+		console.print_debug('${node_stats}')
+
+		if true{panic("s")}
 	}
-
-	node_has_resources := gp_client.get_nodes_has_resources(resources)
-	nodes_have_resources := node_has_resources.get_func()!
-	logger.info('${nodes_have_resources.len}')
 }
 
-fn main() {
-	get_nodes_example()!
-	get_node_by_id_example(u64(11))!
-	get_node_stats_by_id(u64(11))!
-	get_nodes_iterator_example()!
-	get_node_by_resources_filter_example()!
-}
+get_nodes_example()!
+get_node_by_id_example(u64(11))!
+get_node_stats_by_id_example(u64(11))!
+get_node_by_available_capacity_example()!
+get_node_by_city_country_example()!
+get_node_box_poc_example()!

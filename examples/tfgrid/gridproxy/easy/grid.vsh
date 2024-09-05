@@ -5,9 +5,17 @@ import freeflowuniverse.crystallib.ui.console
 
 mut gp_client := gridproxy.new(net:.test, cache:true)!
 
+// get twin list
+twins := gp_client.get_twins()!
+console.print_debug('${twins}')
+
 // get farm list
 farms := gp_client.get_farms()!
 console.print_debug('${farms}')
+
+// get node list
+nodes := gp_client.get_nodes()!
+console.print_debug('${nodes}')
 
 // get gateway list
 gateways := gp_client.get_gateways()!
@@ -20,16 +28,4 @@ console.print_debug('${contracts}')
 // get grid stats
 stats := gp_client.get_stats()!
 console.print_debug('${stats}')
-
-// get twin list
-twins := gp_client.get_twins()!
-console.print_debug('${twins}')
-
-// get node list
-mut nodefilter := gridproxy.nodefilter()!
-nodefilter.dedicated = true
-nodefilter.free_ips = u64(1)
-nodefilter.status = 'up'
-nodes := gp_client.get_nodes(nodefilter)!
-console.print_debug('${nodes}')
 
