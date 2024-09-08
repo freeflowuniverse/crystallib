@@ -1,5 +1,7 @@
 module models
+
 import freeflowuniverse.crystallib.threefold.grid
+import log
 
 pub struct ComputeCapacity {
 	pub mut:
@@ -7,38 +9,17 @@ pub struct ComputeCapacity {
 	memory int
 }
 
-pub struct GridClient {
+pub struct GridConfig {
 	pub mut:
-		mnemonic string
-		network grid.ChainNetwork
-		vms GridVM
+		mnemonic      string
+		chain_network grid.ChainNetwork
+		node_id       int
 }
 
-pub fn new_gridclient(mnemonic string, network string) !GridClient {
-	chain_network := match network {
-		"dev" {
-			grid.ChainNetwork.dev
-		}
-		"qa" {
-			grid.ChainNetwork.qa
-		}
-		"test" {
-			grid.ChainNetwork.test
-		}
-		"main" {
-			grid.ChainNetwork.main
-		}
-		else {
-			return error("The provided chain network '${network}' does not exist.")
-		}
-	}
+__global logger = init_logger()
 
-	return GridClient{
-		mnemonic: mnemonic
-		network: chain_network
-		vms: GridVM{
-			mnemonic: mnemonic
-			chain_network: chain_network
-		}
-	}
-} 
+fn init_logger() &log.Log {
+	mut logger := &log.Log{}
+	logger.set_level(.debug)
+	return logger
+}
