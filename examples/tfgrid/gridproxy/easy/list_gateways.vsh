@@ -14,6 +14,4 @@ fn list_gateways() ! {
 	logger.info('found ${contracts.len} gateways available')
 }
 
-fn main() {
-	list_gateways() or { println('error happened: ${err}') }
-}
+list_gateways() or { println('error happened: ${err}') }

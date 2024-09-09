@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.core.playbook
 @[heap]
 pub struct Investor {
 pub mut:
-    id string
+    oid string
     name string
     code string
     description string
@@ -17,7 +17,7 @@ fn play_investor(mut investortool &InvestorTool,mut plbook playbook.PlayBook) ! 
     for mut action in plbook.find(filter: 'investortool.investor_define')! {
         mut p := action.params
         mut investor := Investor{
-            id: p.get_default('id', '')!
+            oid: p.get_default('oid', '')!
             name: p.get_default('name', '')!
             code: p.get_default('code', '')!
             description: p.get_default('description', '')!
@@ -25,7 +25,7 @@ fn play_investor(mut investortool &InvestorTool,mut plbook playbook.PlayBook) ! 
             admins: p.get_list_default('admins', [])!
             comments: p.get_list_default('comments', [])!
         }
-        println(investor)
+        // println(investor)
 
 		investortool.investor_add(investor)!
     }

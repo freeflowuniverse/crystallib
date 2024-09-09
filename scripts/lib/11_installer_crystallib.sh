@@ -12,7 +12,7 @@ function crystal_deps_install {
         # ./configure
         # make -j 5
         # make install   
-        apt-get remove -y gcc
+        # apt-get remove -y gcc
         package_install tcc
     # elif [[ "${OSNAME}" == "darwin"* ]]; then
     #     brew install secp256k1        

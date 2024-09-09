@@ -60,6 +60,7 @@ pub fn rates_get(cur_array []string, crypto bool) ! {
 	decoded := json.decode(ResponseBody, response) or {
 		return error('Failed to decode crypto json: ${err}')
 	}
+	println(decoded.rates)
 	for key, rate in decoded.rates {
 		c := Currency{
 			name: key.to_upper()

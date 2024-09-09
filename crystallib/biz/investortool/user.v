@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.core.playbook
 @[heap]
 pub struct User {
 pub mut:
-    id string
+    oid string
     usercode string
     name string
     investor_ids []string
@@ -19,17 +19,17 @@ fn play_user(mut investortool &InvestorTool,mut plbook playbook.PlayBook) ! {
     for mut action in plbook.find(filter: 'investortool.user_define')! {
         mut p := action.params
         mut user := User{
-            id: p.get_default('id', '')!
+            oid: p.get_default('oid', '')!
             usercode: p.get_default('usercode', '')!
             name: p.get_default('name', '')!
             investor_ids: p.get_list_default('investor_ids', [])!
             status: p.get_default('status', '')!
             info_links: p.get_list_default('info_links', [])!
-            telnrs: p.get_list_default('telnrs', [])!
-            emails: p.get_list_default('emails', [])!
+            telnrs: p.get_telnrs_default('telnrs', [])!
+            emails: p.get_emails_default('emails', [])!
             secret: p.get_default('secret', '')!
         }
-        println(user)
+        // println(user)
         investortool.user_add(user)!
         //TODO: now we need to do some mapping to make sure telnr's and emails are normalized (no . in tel nr, no spaces ...)
     }
