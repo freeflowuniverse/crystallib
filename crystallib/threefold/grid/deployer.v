@@ -235,6 +235,15 @@ pub fn (mut d Deployer) get_deployment(contract_id u64, node_id u32) !models.Dep
 	return json.decode(models.Deployment, res)
 }
 
+pub fn (mut d Deployer) delete_deployment(contract_id u64, node_id u32) !models.Deployment {
+	twin_id := d.client.get_node_twin(node_id)!
+	payload := {
+		'contract_id': contract_id
+	}
+	res := d.rmb_deployment_delete(twin_id, json.encode(payload))!
+	return json.decode(models.Deployment, res)
+}
+
 pub fn (mut d Deployer) deployment_changes(node_id u32, contract_id u64) ![]models.Workload {
 	twin_id := d.client.get_node_twin(node_id)!
 
