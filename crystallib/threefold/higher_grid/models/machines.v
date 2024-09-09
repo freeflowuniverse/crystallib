@@ -10,33 +10,31 @@ import json
 pub fn (mut gm GridMachinesModel) deploy(vms GridMachinesModel) ! {
 	logger.info('Starting deployment process.')
 
-	mut deployer := grid.new_deployer(gm.mnemonic, gm.chain_network)!
-	logger.debug('Deployer Twin ID: ${deployer.twin_id}')
-
 	// Validate SSH key
 	if gm.ssh_key.len == 0 {
 		logger.warn("No SSH key set. You won't be able to access your deployment without it.")
 	}
 
 	// Prepare Workloads
-	workloads := create_workloads(gm, vms, mut deployer)!
+	workloads := create_workloads(mut gm, vms)!
 
 	// Create and deploy deployment
-	contract_id := create_and_deploy_deployment(gm, vms, mut deployer, workloads)!
+	contract_id := create_and_deploy_deployment(mut gm, vms, workloads)!
 
 	// Fetch deployment result
-	machine_res := fetch_deployment_result(mut deployer, contract_id, u32(vms.node_id))!
+	machine_res := fetch_deployment_result(mut gm.client.deployer, contract_id, u32(vms.node_id))!
 	logger.info('Zmachine result: ${machine_res}')
+	logger.debug("Client Disconnected.")
 }
 
 // Helper function to create workloads
-fn create_workloads(gm GridMachinesModel, vms GridMachinesModel, mut deployer grid.Deployer) ![]grid_models.Workload {
+fn create_workloads(mut gm GridMachinesModel, vms GridMachinesModel) ![]grid_models.Workload {
 	logger.info('Creating workloads.')
 
 	mut workloads := []grid_models.Workload{}
 
 	// Create network workload
-	wg_port := deployer.assign_wg_port(u32(vms.node_id))!
+	wg_port := gm.client.deployer.assign_wg_port(u32(vms.node_id))!
 	workloads << create_network_workload(vms, wg_port)
 
 	// Create machine workloads
@@ -56,20 +54,20 @@ fn create_workloads(gm GridMachinesModel, vms GridMachinesModel, mut deployer gr
 }
 
 // Helper function to create and deploy deployment
-fn create_and_deploy_deployment(gm GridMachinesModel, vms GridMachinesModel, mut deployer grid.Deployer, workloads []grid_models.Workload) !int {
+fn create_and_deploy_deployment(mut gm GridMachinesModel, vms GridMachinesModel, workloads []grid_models.Workload) !int {
 	logger.info('Creating deployment.')
 
 	mut deployment := grid_models.new_deployment(
-		twin_id: deployer.twin_id,
+		twin_id: gm.client.deployer.twin_id,
 		description: 'VGridClient Deployment',
 		workloads: workloads,
-		signature_requirement: create_signature_requirement(deployer.twin_id),
+		signature_requirement: create_signature_requirement(gm.client.deployer.twin_id),
 	)
 
 	log_and_set_metadata(mut logger, mut deployment, 'vm', vms.name)
 
 	logger.info('Deploying workloads...')
-	contract_id := deployer.deploy(u32(vms.node_id), mut deployment, deployment.metadata, 0) or {
+	contract_id := gm.client.deployer.deploy(u32(vms.node_id), mut deployment, deployment.metadata, 0) or {
 		logger.error('Deployment failed: ${err}')
 		return err
 	}
@@ -182,9 +180,25 @@ fn get_machine_result(dl grid_models.Deployment) !grid_models.ZmachineResult {
 	return error('Failed to get Zmachine workload')
 }
 
+// Placeholder for get operation
+pub fn (mut gm GridMachinesModel) list() ! {
+	logger.info("Listing active contracts.")
+	contracts := gm.client.contracts.get_my_contracts()!
+	logger.info("Active contracts listed.")
+
+	logger.info("Listing deployments.")
+	for contract in contracts{
+		if contract.contract_type == "node"{
+			dl := gm.client.deployer.get_deployment(contract.contract_id, u32(contract.details.node_id))!
+			logger.info("Deployment Result: ${dl}")
+		}
+	}
+	logger.debug("Client Disconnected.")
+}
+
 // Placeholder for delete operation
 pub fn (mut gm GridMachinesModel) delete() ! {
-	mut deployer := grid.new_deployer(gm.mnemonic, gm.chain_network)!
+	// mut deployer := grid.new_deployer(gm.mnemonic, gm.chain_network)!
 	logger.warn("Delete operation is not implemented.")
 }
 

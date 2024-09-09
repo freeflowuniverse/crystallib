@@ -90,7 +90,29 @@ pub fn (mut c GridProxyClient) get_contracts_by_twin_id(twin_id u64) []Contract 
 		return error_with_code('http client error: $err.msg()', gridproxy.err_http_client)
 	}*/
 	mut filter := ContractFilter{
-		twin_id: twin_id
+		twin_id: twin_id,
+	}
+	mut iter := c.get_contracts_iterator(filter)
+	mut result := []Contract{}
+	for f in iter {
+		result << f
+	}
+	return result
+}
+
+// get_active_contracts returns iterator over `created` contracts owned by specific twin.
+//
+// * `twin_id`: twin id.
+//
+// returns: `ContractIterator`.
+pub fn (mut c GridProxyClient) get_active_contracts(twin_id u64) []Contract {
+	/*
+	contracts := c.get_contracts(twin_id: twin_id) or {
+		return error_with_code('http client error: $err.msg()', gridproxy.err_http_client)
+	}*/
+	mut filter := ContractFilter{
+		twin_id: twin_id,
+		state: "created"
 	}
 	mut iter := c.get_contracts_iterator(filter)
 	mut result := []Contract{}

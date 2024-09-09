@@ -9,7 +9,7 @@ fn do()! {
 
 	// Create the GridConfig for deployment
 	// Assuming "dev" is the chain network
-	mut grid := models.new_grid_client(mnemonic, .dev, ssh_key)
+	mut grid := models.new_grid_client(mnemonic, .dev, ssh_key)!
 
 	// Define the VM to be deployed
 	mut vms := models.GridMachinesModel{
@@ -37,8 +37,8 @@ fn do()! {
 		]
 	}
 
-	grid.machiens.deploy(vms)!
-	// grid.machiens.delete()!
+	// grid.machines.deploy(vms)!
+	grid.machines.list()!
 	// Deploy the VM
 }
 
