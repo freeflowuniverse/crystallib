@@ -42,9 +42,9 @@ pub mut:
 // ```
 // please note links are ignored for walking over dirstructure (for files and dirs)
 pub fn (mut path Path) list(args_ ListArgs) !PathList {
-	$if debug {
-		console.print_header(' list: ${args_}')
-	}
+	// $if debug {
+	// 	console.print_header(' list: ${args_}')
+	// }
 	mut r := []regex.RE{}
 	for regexstr in args_.regex {
 		mut re := regex.regex_opt(regexstr) or {

@@ -64,6 +64,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 			} else {
 				'${dir_src.path}/${page.name}.md'
 			}
+			console.print_debug('export page ${page.name} to ${dest}')
 			mut mydoc := page.export(dest: dest)!
 			for linked_page in mydoc.linked_pages {
 				if linked_page !in collection_linked_pages {
@@ -74,6 +75,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 
 		for _, mut file in collection.files {
 			mut d := '${dir_src.path}/img/${file.name}.${file.ext}'
+			console.print_debug('export file ${d}')
 			if args.reset || !os.exists(d) {
 				file.copy(d)!
 			}
@@ -82,6 +84,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		for _, mut file in collection.images {
 			mut d := '${dir_src.path}/img/${file.name}.${file.ext}'
 			if args.reset || !os.exists(d) {
+				console.print_debug('export image ${d}')
 				file.copy(d)!
 			}
 		}
