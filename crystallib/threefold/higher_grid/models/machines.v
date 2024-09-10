@@ -24,7 +24,6 @@ pub fn (mut gm GridMachinesModel) deploy(vms GridMachinesModel) ! {
 	// Fetch deployment result
 	machine_res := fetch_deployment_result(mut gm.client.deployer, contract_id, u32(vms.node_id))!
 	logger.info('Zmachine result: ${machine_res}')
-	logger.debug("Client Disconnected.")
 }
 
 // Helper function to create workloads
@@ -180,13 +179,14 @@ fn get_machine_result(dl grid_models.Deployment) !grid_models.ZmachineResult {
 	return error('Failed to get Zmachine workload')
 }
 
-pub fn (mut gm GridMachinesModel) list() ! {
+pub fn (mut gm GridMachinesModel) list() ![]grid_models.Deployment {
+	mut deployments := []grid_models.Deployment{}
 	logger.info("Listing active contracts.")
 	contracts := gm.client.contracts.get_my_active_contracts() or {
 		return error("Cannot list twin contracts due to: ${err}")
 	}
 
-	logger.info("Active contracts listed: ${contracts}")
+	logger.info("Active contracts listed.")
 	logger.info("Listing deployments.")
 
 	for contract in contracts {
@@ -196,27 +196,78 @@ pub fn (mut gm GridMachinesModel) list() ! {
 				contract.contract_id,
 				u32(contract.details.node_id)
 			) or {
-				logger.warn("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}")
+				logger.warn("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}.")
 				continue
 			}
-			logger.info("Deployment Result: ${dl}")
+			deployments << dl
+			logger.info("Deployment Result: ${dl}.")
 		}
 	}
-	logger.debug("Client Disconnected.")
+	return deployments
 }
 
-// Placeholder for delete operation
-pub fn (mut gm GridMachinesModel) delete() ! {
-	// mut deployer := grid.new_deployer(gm.mnemonic, gm.chain_network)!
-	logger.warn("Delete operation is not implemented.")
+fn (mut gm GridMachinesModel) list_contract_names() ![]string {
+	contracts := gm.client.contracts.get_my_active_contracts()!
+	mut names := []string
+	for contract in contracts {
+		res := json.decode(ContractMetaData, contract.details.deployment_data) or {
+			return error("Cannot decode the deployment metadata due to: ${err}")
+		}
+		names << res.name
+	}
+	return names
+}
+
+pub fn (mut gm GridMachinesModel) delete(deployment_name string) ! {
+	logger.info("Deleting deployment with name: ${deployment_name}.")
+	logger.info("Listing the twin `${gm.client.deployer.twin_id}` active contracts.")
+	contracts := gm.client.contracts.get_my_active_contracts() or {
+		return error("Cannot list twin contracts due to: ${err}")
+	}
+
+	logger.info("Active contracts listed.")
+
+	for contract in contracts {
+		res := json.decode(ContractMetaData, contract.details.deployment_data) or {
+			return error("Cannot decode the contract deployment data due to: ${err}")
+		}
+
+		if res.name == deployment_name {
+			logger.info("Start deleting deployment ${deployment_name}.")
+			gm.client.deployer.client.cancel_contract(contract.contract_id) or {
+				return error("Cannot delete deployment due to: ${err}")
+			}
+			logger.info("Deployment ${deployment_name} deleted!.")
+		}
+	}
 }
 
 // Placeholder for get operation
-pub fn (mut gm GridMachinesModel) get() {
-	logger.warn("Get operation is not implemented.")
-}
+pub fn (mut gm GridMachinesModel)get(deployment_name string) ![]grid_models.Deployment {
+	mut deployments := []grid_models.Deployment{}
+	contracts := gm.client.contracts.get_my_active_contracts() or {
+		return error("Cannot list twin contracts due to: ${err}")
+	}
 
-// Placeholder for update operation
-pub fn (mut gm GridMachinesModel) update() {
-	logger.warn("Update operation is not implemented.")
+	for contract in contracts {
+		if contract.contract_type == "node" {
+			dl := gm.client.deployer.get_deployment(
+				contract.contract_id,
+				u32(contract.details.node_id)
+			) or {
+				logger.warn("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}.")
+				continue
+			}
+			if dl.metadata.len != 0 {
+				res := json.decode(ContractMetaData, dl.metadata) or {
+					return error("Cannot decode the deployment metadata due to: ${err}")
+				}
+				if deployment_name == res.name{
+					deployments << dl
+				}
+			}
+		}
+	}
+	logger.info("Deployments: ${deployments}")
+	return deployments
 }

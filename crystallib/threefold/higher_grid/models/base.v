@@ -36,6 +36,14 @@ pub struct MachineModel {
 		capacity        ComputeCapacity
 }
 
+// ContractMetaData struct to represent a deployment metadata.
+pub struct ContractMetaData {
+	pub mut:
+		type_           string @[json: "type"]
+		name 						string
+		project_name  	string @[json: "projectName"]
+}
+
 // GridMachinesModel struct to represent multiple machines in the grid
 pub struct GridMachinesModel {
 	mnemonic      string

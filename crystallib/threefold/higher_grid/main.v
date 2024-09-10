@@ -38,7 +38,9 @@ fn do()! {
 	}
 
 	// grid.machines.deploy(vms)!
-	grid.machines.list()!
+	// grid.machines.list()!
+	// grid.machines.delete("Machinesinterface")!
+	grid.machines.get("Machinesinterface")!
 }
 
 fn main() {
