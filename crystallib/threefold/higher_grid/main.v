@@ -39,7 +39,6 @@ fn do()! {
 
 	// grid.machines.deploy(vms)!
 	grid.machines.list()!
-	// Deploy the VM
 }
 
 fn main() {

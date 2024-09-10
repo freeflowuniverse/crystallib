@@ -42,7 +42,7 @@ pub struct GridMachinesModel {
 	ssh_key       string
 	chain_network grid.ChainNetwork
 	pub mut:
-		client        &GridClient = unsafe { nil } // Reference to GridClient, initially nil
+		client    &GridClient = unsafe { nil }
 		node_id   int
 		network   NetworkModel
 		machines  []MachineModel
@@ -53,14 +53,7 @@ pub struct GridMachinesModel {
 // GridContractsModel struct to represent contracts in the grid
 pub struct GridContractsModel {
 	pub mut:
-		client &GridClient = unsafe { nil } // Reference to GridClient, initially nil
-		network grid.ChainNetwork
-}
-
-// GridZosModel struct to represent contracts in the grid
-pub struct GridContractsModel {
-	pub mut:
-		client &GridClient = unsafe { nil } // Reference to GridClient, initially nil
+		client 	&GridClient = unsafe { nil }
 		network grid.ChainNetwork
 }
 

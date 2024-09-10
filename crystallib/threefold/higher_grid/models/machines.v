@@ -180,16 +180,25 @@ fn get_machine_result(dl grid_models.Deployment) !grid_models.ZmachineResult {
 	return error('Failed to get Zmachine workload')
 }
 
-// Placeholder for get operation
 pub fn (mut gm GridMachinesModel) list() ! {
 	logger.info("Listing active contracts.")
-	contracts := gm.client.contracts.get_my_contracts()!
-	logger.info("Active contracts listed.")
+	contracts := gm.client.contracts.get_my_active_contracts() or {
+		return error("Cannot list twin contracts due to: ${err}")
+	}
 
+	logger.info("Active contracts listed: ${contracts}")
 	logger.info("Listing deployments.")
-	for contract in contracts{
-		if contract.contract_type == "node"{
-			dl := gm.client.deployer.get_deployment(contract.contract_id, u32(contract.details.node_id))!
+
+	for contract in contracts {
+		logger.info("Listing deployment node ${contract.details.node_id}.")
+		if contract.contract_type == "node" {
+			dl := gm.client.deployer.get_deployment(
+				contract.contract_id,
+				u32(contract.details.node_id)
+			) or {
+				logger.warn("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}")
+				continue
+			}
 			logger.info("Deployment Result: ${dl}")
 		}
 	}
