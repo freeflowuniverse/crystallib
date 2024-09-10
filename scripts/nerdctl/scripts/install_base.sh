@@ -12,7 +12,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
 apt-get install -y curl wget mc sudo python3.12-venv  python3-pip
-unminimize
+#unminimize
 
 
 echo "BASE INSTALLED."

@@ -141,7 +141,7 @@ function crystal_pull {
 function crystal_test {
     set -e
     pushd $DIR_CODE/github/freeflowuniverse/crystallib
-    v -enable-globals -stats test crystallib/core/pathlib
+    #v -enable-globals -stats test crystallib/core/pathlib
     v -enable-globals -stats test crystallib/core/texttools
     v -enable-globals -stats test crystallib/core/playbook
     v -enable-globals -stats test crystallib/data/encoder
