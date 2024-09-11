@@ -34,9 +34,17 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 		flag: .bool
 		required: false
 		name: 'compileupload'
-		abbrev: 'u'
+		abbrev: 'c'
 		description: 'Compile and upload hero.'
 	})	
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'update'
+		abbrev: 'u'
+		description: 'Update/install hero.'
+	})		
 
 	cmd_run.add_flag(Flag{
 		flag: .bool
@@ -66,7 +74,9 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 fn cmd_bootstrap_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
+	
 	mut compileupload := cmd.flags.get_bool('compileupload') or { false }
+	mut update := cmd.flags.get_bool('update') or { false }
 	
 	// mut hero := cmd.flags.get_bool('hero') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
@@ -98,5 +108,13 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 		println("please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/githubactions.sh")
 
 	}
+
+	if update{
+		println("please execute:\n/root/code/github/freeflowuniverse/crystallib/scripts/install_hero.sh")
+
+	}
+	
+	
+
 	
 }
