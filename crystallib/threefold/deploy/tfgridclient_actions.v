@@ -13,13 +13,26 @@ import os
 
 // checks if a certain version or above is installed
 fn installed() !bool {
-    return griddriver.check()
+	// griddriver.build()!
+
+	res := os.execute('${osal.profile_path_source_and()} griddriver version')
+	if res.exit_code == 0 {
+		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
+		if r.len != 1 {
+			return error("couldn't parse griddriver version.\n${res.output}")
+		}
+		if texttools.version(version) > texttools.version(r[0]) {
+			return false
+		}
+	} else {
+		return false
+	}
+	return true
 }
 
 fn install() ! {
-    console.print_header('install tfdeployer')
-    griddriver.install()!
-
+	console.print_header('install tfdeployer')
+	griddriver.install()!
 }
 
 
@@ -44,14 +57,18 @@ fn destroy() ! {
 
 
 fn obj_init()!{
-    mut args := get()!
+	mut args := get()!
 	myenv := os.environ()
+	println("mnemonic: ${args.mnemonic}")
+
 	if args.mnemonic == "" && 'TFGRID_MNEMONIC' in myenv{
 		args.mnemonic = myenv["TFGRID_MNEMONIC"]
 	}
+
 	if args.ssh_key == "" && 'SSH_KEY' in myenv{
 		args.ssh_key = myenv["SSH_KEY"]
 	}
+
 	if args.mnemonic.len == 0 {
 		return error('Please export the `TFGRID_MNEMONIC` and point it to your wallet secret.')
 	}
