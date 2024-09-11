@@ -1,5 +1,5 @@
 
-module tfgridclient
+module deploy
 
 import freeflowuniverse.crystallib.core.base
 

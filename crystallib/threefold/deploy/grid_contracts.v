@@ -1,4 +1,5 @@
-module models
+module deploy
+
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model as proxy_models
@@ -21,12 +22,13 @@ pub mut:
 //   contracts := cn.get_my_contracts()!
 pub fn (mut self TFDeployment) tfchain_contracts(args ContractGetArgs) ![]proxy_models.Contract {
 	net := self.resolve_network()
-	args := gridproxy.GridProxyClientArgs{
+	args2 := gridproxy.GridProxyClientArgs{
 		net: net
 		cache: true
 		twin_id: cn.client.deployer.twin_id
 	}
-	mut proxy := gridproxy.new(args)!
+
+	mut proxy := gridproxy.new(args2)!
 	if args.active{
 		return proxy.get_contracts_active() //TODO
 	}else{

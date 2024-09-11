@@ -1,4 +1,4 @@
-module daguserver
+module caddy
 
 import freeflowuniverse.crystallib.core.playbook
 //import freeflowuniverse.crystallib.osal.zinit
@@ -32,7 +32,7 @@ pub fn play(args_ InstallPlayArgs) ! {
         playbook.new(text: args.heroscript)!
     }
     
-    mut install_actions := plbook.find(filter: 'daguserver.configure')!
+    mut install_actions := plbook.find(filter: 'caddy.configure')!
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
@@ -44,18 +44,18 @@ pub fn play(args_ InstallPlayArgs) ! {
 
 
 //load from disk and make sure is properly intialized
-pub fn (mut self DaguServer) reload() ! {
+pub fn (mut self CaddyServer) reload() ! {
     switch(self.name)
     obj_init()!
 }
 
-pub fn (mut self DaguServer) start() ! {
+pub fn (mut self CaddyServer) start() ! {
     switch(self.name)
     if self.running()!{
         return
     }
 
-    console.print_header('daguserver start')
+    console.print_header('caddy start')
 
     configure()!
 
@@ -75,17 +75,17 @@ pub fn (mut self DaguServer) start() ! {
         }
         time.sleep(100 * time.millisecond)
     }
-    return error('daguserver did not install properly.')
+    return error('caddy did not install properly.')
 
 }
 
-pub fn (mut self DaguServer) install_start(args RestartArgs) ! {
+pub fn (mut self CaddyServer) install_start(args RestartArgs) ! {
     switch(self.name)
     self.install(args)!
     self.start()!
 }
 
-pub fn (mut self DaguServer) stop() ! {
+pub fn (mut self CaddyServer) stop() ! {
     switch(self.name)
     stop_pre()!
     mut sm := startupmanager.get()!
@@ -95,13 +95,13 @@ pub fn (mut self DaguServer) stop() ! {
     stop_post()!
 }
 
-pub fn (mut self DaguServer) restart() ! {
+pub fn (mut self CaddyServer) restart() ! {
     switch(self.name)
     self.stop()!
     self.start()!
 }
 
-pub fn (mut self DaguServer) running() !bool {
+pub fn (mut self CaddyServer) running() !bool {
     switch(self.name)
     mut sm := startupmanager.get()!
 
@@ -121,14 +121,14 @@ pub mut:
     reset bool
 }
 
-pub fn (mut self DaguServer) install(args RestartArgs) ! {
+pub fn (mut self CaddyServer) install(args RestartArgs) ! {
     switch(self.name)
     if args.reset || (!installed()!) {
         install()!
     }    
 }
 
-pub fn (mut self DaguServer) destroy() ! {
+pub fn (mut self CaddyServer) destroy() ! {
     switch(self.name)
 
     self.stop()!

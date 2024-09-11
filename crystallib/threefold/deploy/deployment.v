@@ -1,6 +1,7 @@
-module tfdeployer
-import freeflowuniverse.crystallib.data.paramsparser
+module deploy
 
+import freeflowuniverse.crystallib.data.paramsparser
+import freeflowuniverse.crystallib.threefold.grid
 
 pub const version = '1.14.3'
 const singleton = true
@@ -20,11 +21,21 @@ mut:
     deployer	  ?grid.Deployer
 }
 
-fn (mut self TFDeployment) deployer()! {
+fn (mut self TFDeployment) deployer() !grid.Deployer {
     return self.deployer or {
-        logger.debug('Initializing Deployer instance')
+        //logger.debug('Initializing Deployer instance')
         mut grid_client := get()!
-        self.deployer =  grid.new_deployer(grid_client.mnemonic, grid_client.chain_network)!        
+        network := match grid_client.network{
+            .dev { grid.ChainNetwork.dev }
+            .qa { grid.ChainNetwork.qa }
+            .test {
+                return grid.ChainNetwork.test
+            }
+            .main {
+                return grid.ChainNetwork.main
+            }
+        }
+        self.deployer =  grid.new_deployer(grid_client.mnemonic, grid_client.network)!        
         self.deployer
     }
 }
@@ -73,7 +84,7 @@ pub fn (mut self TFDeployment) vm_list()![]string {
 fn (self TFDeployment) encode() ![]u8 {
 	mut b := encoder.new()
     //encode what is required on TFDeployment level
-    b.add_string(self.name) 
+    b.add_string(self.name)
 	for vm in self.vms{
         data:=vm.encode()!
         b.add_int(v.data.len)

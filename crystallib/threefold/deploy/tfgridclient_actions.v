@@ -1,4 +1,4 @@
-module tfgridclient
+module deploy
 
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
@@ -7,16 +7,9 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.osal.zinit
-
-
-
-import os
-
 import freeflowuniverse.crystallib.installers.tfgrid.griddriver    
 
-
 import os
-
 
 // checks if a certain version or above is installed
 fn installed() !bool {

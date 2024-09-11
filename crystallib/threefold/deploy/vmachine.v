@@ -1,4 +1,8 @@
 
+module deploy
+
+import freeflowuniverse.crystallib.data.encoder
+
 
 
 // MachineNetworkReq struct to represent network access configuration
@@ -37,9 +41,6 @@ pub mut:
 }
 
 
-import freeflowuniverse.crystallib.data.encoder
-
-
 
 // returns bin encoder already populated with all base properties
 fn (self VMachine) encode() ![]u8 {
@@ -49,12 +50,12 @@ fn (self VMachine) encode() ![]u8 {
 	b.add_int(self.cpu)
 	b.add_int(self.memory)
 	b.add_bool(self.public_ip4)
-	if self.network {
-		b.add_bool(true)
-		b....
-	}else{
-		b.add_bool(false)
-	}
+	// if self.network {
+	// 	b.add_bool(true)
+	// 	b....
+	// }else{
+	// 	b.add_bool(false)
+	// }
 	//TODO
 	return b
 	//TODO: description < 32 chars
@@ -71,9 +72,9 @@ fn vm_decode(data []u8) !VMachine {
 	self.name = d.get_string()
 	//TODO: decode
 	networkexists := d.get_bool()
-	if networkexists{
-		self.network ...
-	}
+	// if networkexists{
+	// 	self.network ...
+	// }
 
 }
 

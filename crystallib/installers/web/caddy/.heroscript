@@ -1,7 +1,7 @@
 
 !!hero_code.generate_installer
-    name:'daguserver'
-    classname:'DaguServer'
+    name:'caddy'
+    classname:'CaddyServer'
     singleton:1            //there can only be 1 object in the globals, is called 'default'
     templates:1            //are there templates for the installer
     default:1              //can we create a default when the factory is used
