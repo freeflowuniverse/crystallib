@@ -3,12 +3,10 @@ module zinit
 import freeflowuniverse.crystallib.osal.systemd
 import freeflowuniverse.crystallib.ui.console
 
-
 pub fn (mut self Zinit) systemd_start() ! {
 	console.print_header('zinit start')
 	initd_proc_get(delete: true, start: true)!
 }
-
 
 @[params]
 struct InitDProcGet {

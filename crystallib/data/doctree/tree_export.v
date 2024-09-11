@@ -11,7 +11,7 @@ pub mut:
 	reset          bool = true
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
-	production bool = true
+	production     bool = true
 }
 
 // export all collections to chosen directory .
@@ -34,7 +34,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 
 	mut path_src := pathlib.get_dir(path: '${args.dest}', create: true)!
 	mut path_edit := pathlib.get_dir(path: '${args.dest}/.edit', create: true)!
-	if !args.production{		
+	if !args.production {
 		if args.reset {
 			path_edit.empty()!
 		}
@@ -42,7 +42,6 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 
 	if args.reset {
 		path_src.empty()!
-		
 	}
 
 	for name, mut collection in tree.collections {
@@ -50,7 +49,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		console.print_green('export collection: name:${name}')
 		dir_src := pathlib.get_dir(path: path_src.path + '/' + name, create: true)!
 
-		if !args.production{
+		if !args.production {
 			collection.path.link('${path_edit.path}/${name}', true)!
 		}
 

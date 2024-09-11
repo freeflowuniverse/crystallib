@@ -39,17 +39,17 @@ pub fn play(args_ InstallPlayArgs) ! {
 
 // load from disk and make sure is properly intialized
 pub fn (mut self DaguServer) reload() ! {
-	switch(self.name)
+	// switch(self.name)
 	obj_init()!
 }
 
 pub fn (mut self DaguServer) start() ! {
-	switch(self.name)
+	// switch(self.name)
 	if self.running()! {
 		return
 	}
 
-	console.print_header('daguserver start')
+	console.print_header('dagu start')
 
 	configure()!
 
@@ -69,13 +69,7 @@ pub fn (mut self DaguServer) start() ! {
 		}
 		time.sleep(100 * time.millisecond)
 	}
-	return error('daguserver did not install properly.')
-}
-
-pub fn (mut self DaguServer) install_start(args RestartArgs) ! {
-	switch(self.name)
-	self.install(args)!
-	self.start()!
+	return error('dagu did not install properly.')
 }
 
 pub fn (mut self DaguServer) stop() ! {
@@ -94,8 +88,15 @@ pub fn (mut self DaguServer) restart() ! {
 	self.start()!
 }
 
+pub fn (mut self DaguServer) destroy() ! {
+	switch(self.name)
+	self.stop()!
+	destroy()!
+}
+
 pub fn (mut self DaguServer) running() !bool {
 	switch(self.name)
+
 	mut sm := startupmanager.get()!
 
 	// walk over the generic processes, if not running return
@@ -106,24 +107,4 @@ pub fn (mut self DaguServer) running() !bool {
 		}
 	}
 	return running()!
-}
-
-@[params]
-pub struct RestartArgs {
-pub mut:
-	reset bool
-}
-
-pub fn (mut self DaguServer) install(args RestartArgs) ! {
-	switch(self.name)
-	if args.reset || (!installed()!) {
-		install()!
-	}
-}
-
-pub fn (mut self DaguServer) destroy() ! {
-	switch(self.name)
-
-	self.stop()!
-	destroy()!
 }

@@ -2,7 +2,6 @@ module zinit
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.ourtime
 import os
@@ -16,12 +15,10 @@ pub mut:
 	pathtests pathlib.Path
 }
 
-
-//will delete the process if it exists while starting
+// will delete the process if it exists while starting
 pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
-
 	console.print_header(' zinit process new')
-	mut args:=args_
+	mut args := args_
 
 	if args.cmd.len == 0 {
 		$if debug {
@@ -43,13 +40,14 @@ pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
 	// means we can load the special cmd
 	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
 
-	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd) + "\n"
+	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd) +
+		'\n'
 	pathcmd.write(zp.cmd)!
 	pathcmd.chmod(0x770)!
 	zp.cmd = '/bin/bash -c ${pathcmd.path}'
 
 	if args.test.len > 0 {
-		if args.test.contains('\n'){
+		if args.test.contains('\n') {
 			// means we can load the special cmd
 			mut pathcmd2 := zinit.pathtests.file_get_new(args.name + '.sh')!
 			args.test = texttools.dedent(args.test)
@@ -65,7 +63,7 @@ pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
 	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
 	// console.print_debug('debug zprocess path yaml: ${pathyaml}')
 	pathyaml.write(zp.config_content())!
-	if args.start{
+	if args.start {
 		zp.start()!
 	}
 	zinit.processes[args.name] = zp
@@ -88,23 +86,21 @@ pub fn (mut zinit Zinit) exists(name_ string) bool {
 }
 
 pub fn (mut zinit Zinit) stop(name string) ! {
-	mut p:=zinit.get(name)!
+	mut p := zinit.get(name)!
 	p.stop()!
 }
 
 pub fn (mut zinit Zinit) start(name string) ! {
-	mut p:=zinit.get(name)!
+	mut p := zinit.get(name)!
 	p.start()!
 }
 
 pub fn (mut zinit Zinit) delete(name string) ! {
-	mut p:=zinit.get(name)!
+	mut p := zinit.get(name)!
 	p.destroy()!
 }
 
-
 pub fn (mut self Zinit) load() ! {
-
 	cmd := 'zinit list'
 	mut res := os.execute(cmd)
 	if res.exit_code > 0 {
@@ -140,4 +136,3 @@ pub fn (mut self Zinit) load() ! {
 		}
 	}
 }
-

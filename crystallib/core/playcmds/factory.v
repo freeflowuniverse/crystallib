@@ -10,9 +10,7 @@ import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
 // import freeflowuniverse.crystallib.installers.infra.coredns
 
 pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
-
-
-	if dagu{
+	if dagu {
 		hscript := plbook.str()
 		scheduler(hscript)!
 	}

@@ -1,5 +1,4 @@
 module investorsimulator
 
-pub struct CapTable{
-	
+pub struct CapTable {
 }

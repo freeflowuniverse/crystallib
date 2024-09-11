@@ -50,7 +50,7 @@ pub fn (mut path Path) list(args_ ListArgs) !PathList {
 		mut re := regex.regex_opt(regexstr) or {
 			return error("cannot create regex for:'${regexstr}'")
 		}
-		//console.print_debug(re.get_query())
+		// console.print_debug(re.get_query())
 		r << re
 	}
 	mut args := ListArgsInternal{

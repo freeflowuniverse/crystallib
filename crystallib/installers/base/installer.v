@@ -133,7 +133,7 @@ pub fn develop(args InstallArgs) ! {
 		// 		./autogen.sh
 		// 		./configure
 		// 		make -j 5
-		// 		make install   
+		// 		make install
 		// 		'
 		// )!
 	} else if pl == .alpine {

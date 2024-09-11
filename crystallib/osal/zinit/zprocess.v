@@ -1,7 +1,6 @@
 module zinit
 
 import os
-
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.data.ourtime
 import freeflowuniverse.crystallib.ui.console
@@ -9,18 +8,18 @@ import time
 
 pub struct ZProcess {
 pub:
-	name string = "default"
+	name string = 'default'
 pub mut:
-	cmd     string		//command to start
-	test    string 		//command line to test service is running
-	status  ZProcessStatus
-	pid     int
-	after   []string 	//list of service we depend on
-	env     map[string]string
-	oneshot bool
-	start 	  bool = true
+	cmd         string // command to start
+	test        string // command line to test service is running
+	status      ZProcessStatus
+	pid         int
+	after       []string // list of service we depend on
+	env         map[string]string
+	oneshot     bool
+	start       bool = true
 	restart     bool = true // whether the process should be restarted on failure
-	description string //not used in zinit
+	description string // not used in zinit
 }
 
 pub enum ZProcessStatus {
@@ -33,21 +32,20 @@ pub enum ZProcessStatus {
 	spawned
 }
 
-
 @[params]
 pub struct ZProcessNewArgs {
 pub mut:
-	name      string            @[required]
-	cmd       string            @[required]
-	test    string 		//command line to test service is running
-	status  ZProcessStatus
-	pid     int
-	after   []string 	//list of service we depend on
-	env     map[string]string
-	oneshot bool
-	start 	  bool = true
+	name        string            @[required]
+	cmd         string            @[required]
+	test        string // command line to test service is running
+	status      ZProcessStatus
+	pid         int
+	after       []string // list of service we depend on
+	env         map[string]string
+	oneshot     bool
+	start       bool = true
 	restart     bool = true // whether the process should be restarted on failure
-	description string //not used in zinit
+	description string // not used in zinit
 }
 
 pub fn (zp ZProcess) cmd() string {

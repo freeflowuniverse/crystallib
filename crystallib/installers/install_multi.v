@@ -149,9 +149,9 @@ pub fn install_multi(args_ InstallArgs) ! {
 				heroweb.install()!
 			}
 			'dagu' {
-				//will call the installer underneith
-				mut dserver:=daguserver.get()! 
-				dserver.install()! 
+				// will call the installer underneith
+				mut dserver := daguserver.get()!
+				dserver.install()!
 				dserver.restart()!
 				// mut dagucl:=dserver.client()!
 			}

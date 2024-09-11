@@ -25,8 +25,8 @@ pub mut:
 pub fn get() !StartupManager {
 	mut sm := StartupManager{}
 	if zinit.check() {
-		sm.cat = .zinit		
-	}else if systemd.check()! {
+		sm.cat = .zinit
+	} else if systemd.check()! {
 		sm.cat = .systemd
 	}
 	return sm
@@ -86,18 +86,17 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 			panic('to implement, startup manager only support screen & systemd for now')
 		}
 	}
-	if args.start{
+	if args.start {
 		sm.start(args.name)!
-	}else if args.restart {
+	} else if args.restart {
 		sm.restart(args.name)!
 	}
-
 }
 
 pub fn (mut sm StartupManager) start(name string) ! {
 	match sm.cat {
 		.screen {
-			return error("cannot do simple start with screen")
+			return error('cannot do simple start with screen')
 		}
 		.systemd {
 			console.print_debug('systemd start ${name}')
@@ -117,7 +116,6 @@ pub fn (mut sm StartupManager) start(name string) ! {
 		}
 	}
 }
-
 
 pub fn (mut sm StartupManager) stop(name string) ! {
 	match sm.cat {
@@ -163,7 +161,7 @@ pub fn (mut sm StartupManager) restart(name string) ! {
 			mut zinitfactory := zinit.new()!
 			zinitfactory.stop(name)!
 			zinitfactory.start(name)!
-		}			
+		}
 		else {
 			panic('to implement, startup manager only support screen for now')
 		}
@@ -253,7 +251,7 @@ pub fn (mut sm StartupManager) status(name string) !ProcessStatus {
 }
 
 pub fn (mut sm StartupManager) running(name string) !bool {
-	mut s:=sm.status(name)!
+	mut s := sm.status(name)!
 	return s == .active
 }
 

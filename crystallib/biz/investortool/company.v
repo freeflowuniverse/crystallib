@@ -1,24 +1,23 @@
 module investortool
+
 import freeflowuniverse.crystallib.core.playbook
 
 @[heap]
 pub struct Company {
 pub mut:
-    oid string
-    short_code string
-    name string
-    current_nr_shares int
-    current_share_value string
-    description string
-    admins []string
-    comments []string
+	oid                 string
+	short_code          string
+	name                string
+	current_nr_shares   int
+	current_share_value string
+	description         string
+	admins              []string
+	comments            []string
 }
 
-
-fn play_company(mut investortool &InvestorTool, mut plbook playbook.PlayBook) ! {
-
+fn play_company(mut investortool InvestorTool, mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'investortool.company_define')! {
-		mut p:= action.params		
+		mut p := action.params
 		mut company := Company{
 			oid: p.get_default('oid', '')!
 			short_code: p.get_default('short_code', '')!
@@ -32,5 +31,4 @@ fn play_company(mut investortool &InvestorTool, mut plbook playbook.PlayBook) ! 
 		println(company)
 		investortool.company_add(company)!
 	}
-	
 }
