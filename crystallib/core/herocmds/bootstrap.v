@@ -35,7 +35,7 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 		flag: .bool
 		required: false
 		name: 'compileupload'
-		abbrev: 'u'
+		abbrev: 'c'
 		description: 'Compile and upload hero.'
 	})	
 
@@ -43,7 +43,8 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 		flag: .bool
 		required: false
 		name: 'hero'
-		description: 'will compile hero.'
+		abbrev: 'u'
+		description: 'Update hero.'
 	})
 
 	// cmd_run.add_flag(Flag{
@@ -100,5 +101,11 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 
 	}
 
-	
+	if hero{
+		// mycmd:='
+		// 	\${HOME}/code/github/freeflowuniverse/crystallib/scripts/package.vsh
+		// '
+		// osal.exec(cmd: mycmd)!
+		println("please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/install_hero.sh")
+	}
 }
