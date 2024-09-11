@@ -582,6 +582,7 @@ function os_update {
             execute_with_marker "paru_install" paru_install
         fi
     fi
+    echo 'os_update done'
 }
 
 function paru_install {
@@ -607,7 +608,8 @@ EOF
 }
 
 function redis_start {
-    set +e
+    set +ex
+    echo 'REDIS START'
     if redis-cli ping | grep -q "PONG"; then
         echo "Redis is already running."
         return
@@ -616,6 +618,7 @@ function redis_start {
 
     if [[ "${OSNAME}" == "darwin"* ]]; then
         brew services start redis
+        sleep 0.2
     # elif [[ "${OSNAME}" == "arch"* ]]; then
     #     redis-server --daemonize yes
     else
@@ -1051,7 +1054,7 @@ function freeflow_dev_env_install {
     exit 1
     fi
 
-    ~/code/github/freeflowuniverse/crystallib/scripts/package.vsh
+    #~/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 
     local response=$(redis-cli PING)
 

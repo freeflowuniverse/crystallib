@@ -58,6 +58,7 @@ function os_update {
             execute_with_marker "paru_install" paru_install
         fi
     fi
+    echo 'os_update done'
 }
 
 function paru_install {
