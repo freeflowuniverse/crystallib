@@ -101,7 +101,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 		name: 'dagu'
 		abbrev: 'da'
 		description: 'Schedule the heroscripts through DAGU.'
-	})	
+	})
 }
 
 // returns the path of the fetched repo
@@ -153,7 +153,7 @@ fn plbook_run(cmd Command) !(&playbook.PlayBook, string) {
 
 	dagu := cmd.flags.get_bool('dagu') or { false }
 
-	playcmds.run(mut plbook,dagu)!
+	playcmds.run(mut plbook, dagu)!
 
 	console.print_stdout(plbook.str())
 	return &plbook, path

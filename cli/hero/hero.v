@@ -31,7 +31,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.25'
+		version: '1.0.28'
 	}
 
 
@@ -62,7 +62,7 @@ fn do() ! {
 		}
 	}
 
-	redis.check()
+	redis.install()!	
 
 	herocmds.cmd_bootstrap(mut cmd)
 	herocmds.cmd_run(mut cmd)
@@ -80,8 +80,11 @@ fn do() ! {
 	herocmds.cmd_caddy(mut cmd)
 	herocmds.cmd_zola(mut cmd)
 	herocmds.cmd_juggler(mut cmd)
+	herocmds.cmd_generator(mut cmd)
 
 	cmd.setup()
+	
+
 	cmd.parse(os.args)	
 }
 

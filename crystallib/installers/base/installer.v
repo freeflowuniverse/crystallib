@@ -47,25 +47,7 @@ pub fn install(args_ InstallArgs) ! {
 				shell: true
 			) or { return error('cannot install brew, something went wrong.\n${err}') }
 		}
-		osal.package_install('mc,tmux,git,rsync,curl,screen,redis,wget,git-lfs')!
-		osal.exec(
-			cmd: '
-			brew services stop redis
-			#sudo chmod -R 770 /opt/homebrew/var/db/redis			
-			#NEEDS TO BE DISABLED, THE REDIS PACKAGE WILL TAKE CARE OF IT
-			# sleep 2
-			# response=\$(redis-cli PING)
-			# # Check if the response is PONG
-			# if [[ "\${response}" == "PONG" ]]; then
-			# 	echo
-			# 	echo "REDIS OK"
-			# else
-			# 	echo "REDIS CLI INSTALLED BUT REDIS SERVER NOT RUNNING" 
-			# 	exit 1
-			# fi 			
-			'
-			ignore_error: true
-		)!
+		osal.package_install('mc,tmux,git,rsync,curl,screen,wget,git-lfs')!
 	} else if pl == .ubuntu {
 		console.print_header(' - Ubuntu prepare')
 		osal.package_refresh()!
@@ -133,7 +115,7 @@ pub fn develop(args InstallArgs) ! {
 		// 		./autogen.sh
 		// 		./configure
 		// 		make -j 5
-		// 		make install   
+		// 		make install
 		// 		'
 		// )!
 	} else if pl == .alpine {

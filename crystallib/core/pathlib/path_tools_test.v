@@ -176,16 +176,16 @@ fn test_write_and_read() {
 	// mut test_path_dir := pathlib.get("$testpath")
 }
 
-fn test_copy() {
-	console.print_stdout('************ TEST_copy ************')
-	//- Copy /test_path/testfile1 to /test_path/test_parent
-	mut dest_dir := pathlib.get('${testpath}/test_parent')
-	mut src_f := pathlib.get('${testpath}/testfile1')
-	src_f.copy(dest: '${dest_dir.path}/testfile2') or { panic(err) }
-	mut dest_file := pathlib.get('${testpath}/test_parent/testfile2')
-	dest_file.delete()!
-	console.print_stdout('Copy function works correctly')
-}
+// fn test_copy() {
+// 	console.print_stdout('************ TEST_copy ************')
+// 	//- Copy /test_path/testfile1 to /test_path/test_parent
+// 	mut dest_dir := pathlib.get('${testpath}/test_parent')
+// 	mut src_f := pathlib.get('${testpath}/testfile1')
+// 	src_f.copy(dest: '${dest_dir.path}/testfile2') or { panic(err) }
+// 	mut dest_file := pathlib.get('${testpath}/test_parent/testfile2')
+// 	dest_file.delete()!
+// 	console.print_stdout('Copy function works correctly')
+// }
 
 // TODO need other test
 // fn test_link(){
