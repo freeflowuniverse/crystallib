@@ -5,12 +5,10 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.httpconnection
-//import freeflowuniverse.crystallib.develop.gittools
+// import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.crypt.secrets
-
 import os
-
 
 // checks if a certain version or above is installed
 fn installed() !bool {
@@ -30,7 +28,7 @@ fn installed() !bool {
 }
 
 fn install() ! {
-    console.print_header('install daguserver')
+	console.print_header('install daguserver')
 	mut url := ''
 	if osal.is_linux_arm() {
 		url = 'https://github.com/dagu-dev/dagu/releases/download/v${version}/dagu_${version}_linux_arm64.tar.gz'
@@ -57,18 +55,15 @@ fn install() ! {
 	)!
 }
 
-
-
-
-fn startupcmd () ![]zinit.ZProcessNewArgs{
-    mut res := []zinit.ZProcessNewArgs{}
+fn startupcmd() ![]zinit.ZProcessNewArgs {
+	mut res := []zinit.ZProcessNewArgs{}
 
 	res << zinit.ZProcessNewArgs{
 		name: 'dagu'
 		cmd: 'dagu server'
 		env: {
 			'HOME': '/root'
-		}	
+		}
 	}
 
 	res << zinit.ZProcessNewArgs{
@@ -76,16 +71,15 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
 		cmd: 'dagu scheduler'
 		env: {
 			'HOME': '/root'
-		}	
-	}	
+		}
+	}
 
-    return res
-    
+	return res
 }
 
-//user needs to us switch to make sure we get the right object
+// user needs to us switch to make sure we get the right object
 fn configure() ! {
-    mut cfg := get()! 
+	mut cfg := get()!
 
 	if cfg.password == '' {
 		cfg.password = secrets.hex_secret()!
@@ -96,22 +90,17 @@ fn configure() ! {
 		cfg.secret = secrets.openssl_hex_secret(input: cfg.password)!
 	}
 
-
-    mut mycode := $tmpl('templates/dagu.yaml')
-    mut path := pathlib.get_file(path: cfg.configpath, create: true)!
-    path.write(mycode)!
-    console.print_debug(mycode)
+	mut mycode := $tmpl('templates/dagu.yaml')
+	mut path := pathlib.get_file(path: cfg.configpath, create: true)!
+	path.write(mycode)!
+	console.print_debug(mycode)
 }
 
-
-
-
 fn running() !bool {
-
 	mut cfg := get()!
 	// this checks health of dagu
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
-	url:='http://127.0.0.1:${cfg.port}/api/v1'
+	url := 'http://127.0.0.1:${cfg.port}/api/v1'
 	mut conn := httpconnection.new(name: 'dagu', url: url)!
 
 	if cfg.secret.len > 0 {
@@ -119,7 +108,7 @@ fn running() !bool {
 	}
 	conn.default_header.add(.content_type, 'application/json')
 	console.print_debug("curl -X 'GET' '${url}'/tags --oauth2-bearer ${cfg.secret}")
-	r := conn.get_json_dict(prefix: 'tags', debug: false) or {return false}
+	r := conn.get_json_dict(prefix: 'tags', debug: false) or { return false }
 	// println(r)
 	// if true{panic("ssss")}
 	tags := r['Tags'] or { return false }
@@ -128,10 +117,8 @@ fn running() !bool {
 	return true
 }
 
-
-
 fn destroy() ! {
-    cmd:="
+	cmd := '
         systemctl disable daguserver_scheduler.service
         systemctl disable daguserver.service
         systemctl stop daguserver_scheduler.service
@@ -143,30 +130,22 @@ fn destroy() ! {
 
         ps aux | grep daguserver
 
-        "
-    
-    osal.exec(cmd: cmd, stdout:true, debug: false)!
+        '
+
+	osal.exec(cmd: cmd, stdout: true, debug: false)!
 }
 
-
-fn obj_init()!{
-
+fn obj_init() ! {
 }
 
-
-fn start_pre()!{
-    
+fn start_pre() ! {
 }
 
-fn start_post()!{
-    
+fn start_post() ! {
 }
 
-fn stop_pre()!{
-    
+fn stop_pre() ! {
 }
 
-fn stop_post()!{
-    
+fn stop_post() ! {
 }
-

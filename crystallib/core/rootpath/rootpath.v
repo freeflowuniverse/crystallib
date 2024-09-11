@@ -4,11 +4,11 @@ import os
 
 // replace ~ to home dir in string as given
 pub fn shell_expansion(s_ string) string {
-	mut s:=s_
+	mut s := s_
 	home := os.real_path(os.home_dir())
-	for x in ["{HOME}","~"]{
+	for x in ['{HOME}', '~'] {
 		if s.contains(x) {
-			s=s.replace(x, home)
+			s = s.replace(x, home)
 		}
 	}
 	return s

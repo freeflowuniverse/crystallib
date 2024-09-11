@@ -42,15 +42,15 @@ pub mut:
 // ```
 // please note links are ignored for walking over dirstructure (for files and dirs)
 pub fn (mut path Path) list(args_ ListArgs) !PathList {
-	$if debug {
-		console.print_header(' list: ${args_}')
-	}
+	// $if debug {
+	// 	console.print_header(' list: ${args_}')
+	// }
 	mut r := []regex.RE{}
 	for regexstr in args_.regex {
 		mut re := regex.regex_opt(regexstr) or {
 			return error("cannot create regex for:'${regexstr}'")
 		}
-		//console.print_debug(re.get_query())
+		// console.print_debug(re.get_query())
 		r << re
 	}
 	mut args := ListArgsInternal{
@@ -133,7 +133,7 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 			}
 		}
 		if addthefile && !args.dirs_only {
-			if (!args.files_only || new_path.is_file()) {
+			if !args.files_only || new_path.is_file() {
 				all_list << new_path
 			}
 		}

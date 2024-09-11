@@ -3,5 +3,5 @@
 
 import freeflowuniverse.crystallib.core.generator.installer
 
-installer.scan("/root/code/github/freeflowuniverse/crystallib/crystallib")!
+installer.scan("~/github/freeflowuniverse/crystallib/crystallib")!
 

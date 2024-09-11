@@ -49,7 +49,9 @@ pub fn (mut zp ZProcess) load() ! {
 			} else {
 				line.trim_space().starts_with('-')
 				{
-					_, after := line.split_once('-') or { panic('bug in ${pathyaml} for line ${line}') }
+					_, after := line.split_once('-') or {
+						panic('bug in ${pathyaml} for line ${line}')
+					}
 					zp.after << after.to_lower().trim_space()
 				}
 			}
@@ -60,8 +62,10 @@ pub fn (mut zp ZProcess) load() ! {
 			} else {
 				line.contains('=')
 				{
-					key, val := line.split_once(':') or {panic('bug in ${pathyaml} for line ${line} for env')  }
-					zp.env[key.trim(" '\"")] = val.trim(" '\"")
+					key, val := line.split_once(':') or {
+						panic('bug in ${pathyaml} for line ${line} for env')
+					}
+					zp.env[key.trim(' \'"')] = val.trim(' \'"')
 				}
 			}
 		}

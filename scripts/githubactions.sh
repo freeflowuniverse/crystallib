@@ -582,6 +582,7 @@ function os_update {
             execute_with_marker "paru_install" paru_install
         fi
     fi
+    echo 'os_update done'
 }
 
 function paru_install {
@@ -607,7 +608,8 @@ EOF
 }
 
 function redis_start {
-    set +e
+    set +ex
+    echo 'REDIS START'
     if redis-cli ping | grep -q "PONG"; then
         echo "Redis is already running."
         return
@@ -616,6 +618,7 @@ function redis_start {
 
     if [[ "${OSNAME}" == "darwin"* ]]; then
         brew services start redis
+        sleep 0.2
     # elif [[ "${OSNAME}" == "arch"* ]]; then
     #     redis-server --daemonize yes
     else
@@ -756,7 +759,7 @@ function crystal_deps_install {
         # ./configure
         # make -j 5
         # make install   
-        apt-get remove -y gcc
+        # apt-get remove -y gcc
         package_install tcc
     # elif [[ "${OSNAME}" == "darwin"* ]]; then
     #     brew install secp256k1        
@@ -838,6 +841,8 @@ function crystal_lib_get {
     ln -s "$DIR_CODE/github/freeflowuniverse/crystallib/crystallib" ~/.vmodules/freeflowuniverse/crystallib
 
     crystal_web_get
+
+    
 }
 
 
@@ -883,7 +888,7 @@ function crystal_pull {
 }
 
 function crystal_test {
-    set -e
+    set -ex
     pushd $DIR_CODE/github/freeflowuniverse/crystallib
     v -enable-globals -stats test crystallib/core/pathlib
     v -enable-globals -stats test crystallib/core/texttools
@@ -1005,6 +1010,13 @@ function hero_upload {
 
 
 function s3_configure {
+
+SECRET_FILE="/${HOME}/code/git.ourworld.tf/despiegk/hero_secrets/mysecrets.sh"
+if [ -f "$SECRET_FILE" ]; then
+    echo get secrets
+    source "$SECRET_FILE"
+fi    
+
 # Check if environment variables are set
 if [ -z "$S3KEYID" ] || [ -z "$S3APPID" ]; then
     echo "Error: S3KEYID or S3APPID is not set"
@@ -1039,8 +1051,10 @@ function freeflow_dev_env_install {
     fi
     if ! [ -x "$(command -v redis-cli)" ]; then
         echo "CANNOT FIND REDIS-SERVER"
-        exit 1
+    exit 1
     fi
+
+    #~/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 
     local response=$(redis-cli PING)
 

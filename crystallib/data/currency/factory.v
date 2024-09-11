@@ -18,7 +18,7 @@ pub fn refresh() {
 	defaults_set()
 	env := os.environ()
 	egpval := (1 / 32)
-	if 'OFFLINE' in env {
+	if true || 'OFFLINE' in env {
 		// compensate for internet not being there
 		default_set('EUR', 0.9)
 		default_set('AED', 0.25)
@@ -37,6 +37,7 @@ pub fn get(name_ string) !Currency {
 	mut name := name_.to_upper().trim_space()
 	check()
 	rlock currencies {
+		println(currencies)
 		return currencies[name] or { return error('Could not find currency ${name}') }
 	}
 	panic('bug')

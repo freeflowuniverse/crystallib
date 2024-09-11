@@ -1,4 +1,5 @@
 module daguserver
+
 import freeflowuniverse.crystallib.data.paramsparser
 
 pub const version = '1.14.3'
@@ -26,7 +27,7 @@ const heroscript_default = "
 
 pub struct DaguServer {
 pub mut:
-    name string = 'default'
+	name       string = 'default'
 	homedir    string
 	configpath string
 	username   string
@@ -38,25 +39,23 @@ pub mut:
 }
 
 fn cfg_play(p paramsparser.Params) ! {
+	mut mycfg := DaguServer{
+		homedir: p.get_default('homedir', '{HOME}/hero/var/dagu')!
+		configpath: p.get_default('configpath', '{HOME}/hero/var/dagu/admin.yaml')!
+		username: p.get_default('username', 'admin')!
+		password: p.get_default('password', '')!
+		secret: p.get_default('secret', '')!
+		title: p.get_default('title', 'HERO DAG')!
+		host: p.get_default('host', 'localhost')!
+		port: p.get_int_default('port', 8888)!
+	}
 
-    mut mycfg := DaguServer{
-        homedir: p.get_default('homedir', '{HOME}/hero/var/dagu')!
-        configpath: p.get_default('configpath', '{HOME}/hero/var/dagu/admin.yaml')!
-        username: p.get_default('username', 'admin')!
-        password: p.get_default('password', '')!
-        secret: p.get_default('secret', '')!
-        title: p.get_default('title', 'HERO DAG')!
-        host: p.get_default('host', 'localhost')!
-        port: p.get_int_default('port', 8888)!
-    }
+	if mycfg.password == '' && mycfg.secret == '' {
+		return error('password or secret needs to be filled in for dagu')
+	}
 
-    if mycfg.password == '' && mycfg.secret == '' {
-        return error('password or secret needs to be filled in for dagu')
-    }
-
-    set(mycfg)!
+	set(mycfg)!
 }
-
 
 // pub fn (mut self DaguServer) dag_path(name string) string {
 // 	return '${os.home_dir()}/dags/${texttools.name_fix(name)}.yaml'
