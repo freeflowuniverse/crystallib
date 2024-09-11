@@ -18,5 +18,4 @@ zdb-data
 zdb-index
 .idea/
 .venv/
-
-
+.trunk/

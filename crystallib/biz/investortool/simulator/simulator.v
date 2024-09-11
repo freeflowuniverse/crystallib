@@ -3,7 +3,7 @@ module investorsimulator
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.biz.investortool
 
-__global(
+__global (
 	simulators map[string]Simulator
 )
 
@@ -39,12 +39,9 @@ pub fn play(mut plbook PlayBook) ! {
 	for mut action in plbook.find(filter: 'investorsimulator.run')! {
 		name := action.params.get_default('name', 'default')!
 		data_path := action.params.get('data_path')!
-		mut sim := new(
-			name
-			data_path
-		)!
+		mut sim := new(name, data_path)!
 
-		lock simulators{
+		lock simulators {
 			simulators[name] = sim
 		}
 

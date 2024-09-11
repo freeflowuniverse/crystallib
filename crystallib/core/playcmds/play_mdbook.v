@@ -64,10 +64,9 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		build_path := p.get('path')!
 		reset2 := p.get_default_false('reset')
 		production2 := p.get_default_true('production')
-		tree.export(dest: build_path, reset: reset2, production:production2)!
+		tree.export(dest: build_path, reset: reset2, production: production2)!
 		action.done = true
 	}
-
 
 	for mut action in plbook.find(filter: 'book:generate')! {
 		mut p := action.params

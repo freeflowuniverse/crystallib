@@ -161,25 +161,21 @@ fn (mut self Context) db_config_get() !dbfs.DB {
 pub fn (mut self Context) hero_config_set(cat string, name string, content_ string) ! {
 	mut content := texttools.dedent(content_)
 	content = rootpath.shell_expansion(content)
-	path:='${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
+	path := '${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
 	mut config_file := pathlib.get_file(path: path)!
 	config_file.write(content)!
 }
 
 pub fn (mut self Context) hero_config_exists(cat string, name string) bool {
-	path:='${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
+	path := '${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
 	return os.exists(path)
 }
 
-
-
-
 pub fn (mut self Context) hero_config_get(cat string, name string) !string {
-	path:='${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
-	mut config_file := pathlib.get_file(path: path,create:false)!
+	path := '${os.home_dir()}/hero/context/${self.config.name}/${cat}__${name}.yaml'
+	mut config_file := pathlib.get_file(path: path, create: false)!
 	return config_file.read()!
 }
-
 
 /////////////PRIVKEY
 

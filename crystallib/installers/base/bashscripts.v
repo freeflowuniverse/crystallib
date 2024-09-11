@@ -45,7 +45,7 @@ pub fn bash_installers_package() !string {
 		out += c
 	}
 
-	script_write(out, 'baselib', "")!
+	script_write(out, 'baselib', '')!
 
 	script_write(out, 'installer', "
 		freeflow_dev_env_install
@@ -68,7 +68,6 @@ pub fn bash_installers_package() !string {
 		hero_upload
 		echo 'OK'
 		")!
-
 
 	mut p4 := pathlib.get_dir(path: '${base.scriptspath}', create: false)!
 	return p4.path

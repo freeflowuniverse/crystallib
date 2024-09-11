@@ -6,14 +6,10 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.httpconnection
-
-
 import os
-
 
 // checks if a certain version or above is installed
 fn installed() !bool {
-
 	res := os.execute('${osal.profile_path_source_and()} dagu version')
 	if res.exit_code == 0 {
 		r := res.output.split_into_lines().filter(it.trim_space().len > 0)
@@ -57,11 +53,10 @@ fn install() ! {
 	)!
 }
 
-fn build()!{
-	
+fn build() ! {
 }
 
-fn startupcmd () ![]zinit.ZProcessNewArgs{
+fn startupcmd() ![]zinit.ZProcessNewArgs {
 	mut res := []zinit.ZProcessNewArgs{}
 
 	res << zinit.ZProcessNewArgs{
@@ -69,7 +64,7 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
 		cmd: 'dagu server'
 		env: {
 			'HOME': '/root'
-		}	
+		}
 	}
 
 	res << zinit.ZProcessNewArgs{
@@ -77,15 +72,13 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
 		cmd: 'dagu scheduler'
 		env: {
 			'HOME': '/root'
-		}	
-	}	
+		}
+	}
 
 	return res
-	
 }
 
 fn configure() ! {
-	
 	mut cfg := get()!
 
 	mut mycode := $tmpl('templates/admin.yaml')
@@ -96,13 +89,11 @@ fn configure() ! {
 	console.print_debug(mycode)
 }
 
-
-
 fn running() !bool {
 	mut cfg := get()!
 	// this checks health of dagu
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
-	url:='http://127.0.0.1:${cfg.port}/api/v1'
+	url := 'http://127.0.0.1:${cfg.port}/api/v1'
 	mut conn := httpconnection.new(name: 'dagu', url: url)!
 
 	if cfg.secret.len > 0 {
@@ -110,7 +101,7 @@ fn running() !bool {
 	}
 	conn.default_header.add(.content_type, 'application/json')
 	console.print_debug("curl -X 'GET' '${url}'/tags --oauth2-bearer ${cfg.secret}")
-	r := conn.get_json_dict(prefix: 'tags', debug: false) or {return false}
+	r := conn.get_json_dict(prefix: 'tags', debug: false) or { return false }
 	// println(r)
 	// if true{panic("ssss")}
 	tags := r['Tags'] or { return false }
@@ -119,10 +110,8 @@ fn running() !bool {
 	return true
 }
 
-
-
 fn destroy() ! {
-	cmd:="
+	cmd := '
 		systemctl disable dagu_scheduler.service
 		systemctl disable dagu.service
 		systemctl stop dagu_scheduler.service
@@ -134,30 +123,22 @@ fn destroy() ! {
 
 		ps aux | grep dagu
 
-		"
-	
-	osal.exec(cmd: cmd, stdout:true, debug: false)!
+		'
+
+	osal.exec(cmd: cmd, stdout: true, debug: false)!
 }
 
-
-fn obj_init()!{
-
+fn obj_init() ! {
 }
 
-
-fn start_pre()!{
-	
+fn start_pre() ! {
 }
 
-fn start_post()!{
-	
+fn start_post() ! {
 }
 
-fn stop_pre()!{
-	
+fn stop_pre() ! {
 }
 
-fn stop_post()!{
-	
+fn stop_post() ! {
 }
-
