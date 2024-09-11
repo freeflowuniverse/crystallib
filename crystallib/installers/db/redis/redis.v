@@ -15,7 +15,7 @@ pub mut:
 	ipaddr  string = 'localhost' // can be more than 1, space separated
 	reset   bool
 	start   bool
-	restart bool = true
+	restart bool //do not put on true
 }
 
 // ```
@@ -31,6 +31,11 @@ pub mut:
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
 
+	if !args.reset{
+		if check(){
+			return
+		}
+	}
 	console.print_header('install redis.')
 
 	if !(osal.cmd_exists_profile('redis-server')) {
@@ -79,8 +84,18 @@ pub fn start(args InstallArgs) ! {
 	// remove all redis in memory
 	osal.process_kill_recursive(name: 'redis-server')!
 
-	mut sm := startupmanager.get()!
-	sm.new(name: 'redis', cmd: 'redis-server ${configfilepath()} --daemonize yes', start: true)!
+
+	if osal.platform() == .osx {
+		osal.exec(cmd:"redis-server ${configfilepath()} --daemonize yes")!
+		// osal.exec(cmd:"brew services start redis") or {
+		// 	osal.exec(cmd:"redis-server ${configfilepath()} --daemonize yes")!
+		// }
+	}else{
+		mut sm := startupmanager.get()!
+		sm.new(name: 'redis', cmd: 'redis-server ${configfilepath()}', start: true)!
+	}
+
+
 
 	for _ in 0 .. 100 {
 		if check() {

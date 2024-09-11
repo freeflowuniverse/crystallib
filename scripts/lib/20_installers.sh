@@ -13,7 +13,7 @@ function freeflow_dev_env_install {
     exit 1
     fi
 
-    ~/code/github/freeflowuniverse/crystallib/scripts/package.vsh
+    #~/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 
     local response=$(redis-cli PING)
 

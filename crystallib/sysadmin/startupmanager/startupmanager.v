@@ -96,7 +96,7 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 pub fn (mut sm StartupManager) start(name string) ! {
 	match sm.cat {
 		.screen {
-			return error('cannot do simple start with screen')
+			return
 		}
 		.systemd {
 			console.print_debug('systemd start ${name}')
