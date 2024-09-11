@@ -94,6 +94,8 @@ function crystal_lib_get {
     ln -s "$DIR_CODE/github/freeflowuniverse/crystallib/crystallib" ~/.vmodules/freeflowuniverse/crystallib
 
     crystal_web_get
+
+    
 }
 
 
@@ -139,9 +141,9 @@ function crystal_pull {
 }
 
 function crystal_test {
-    set -e
+    set -ex
     pushd $DIR_CODE/github/freeflowuniverse/crystallib
-    #v -enable-globals -stats test crystallib/core/pathlib
+    v -enable-globals -stats test crystallib/core/pathlib
     v -enable-globals -stats test crystallib/core/texttools
     v -enable-globals -stats test crystallib/core/playbook
     v -enable-globals -stats test crystallib/data/encoder

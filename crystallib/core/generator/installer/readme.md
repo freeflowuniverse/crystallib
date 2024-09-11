@@ -56,4 +56,10 @@ to call from command line
 
 ```bash
 
+#when path not specified then will generate for the path we are in
+hero generate
+
+hero generate -p ~/github/freeflowuniverse/crystallib/crystallib
+
+#-r means reset, super dangerous, don't use, will remove changes, onlu use it for specific dirs
 ```

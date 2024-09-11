@@ -76,24 +76,24 @@ pub fn generate(path string) ! {
 			mut path_actions := pathlib.get(path + '/${args.name}_actions.v')
 			if !path_actions.exists() || args.reset {
 				println('actions doesnt exists or reset = ${args.reset}')
-				mut templ_1 := $tmpl('templates/objname_actions.v')
+				mut templ_1 := $tmpl('templates/objname_actions.vtemplate')
 				pathlib.template_write(templ_1, '${path}/${args.name}_actions.vtemplate',
 					true)!
 			}
 
-			mut templ_2 := $tmpl('templates/objname_factory_.v')
+			mut templ_2 := $tmpl('templates/objname_factory_.vtemplate')
 			pathlib.template_write(templ_2, '${path}/${args.name}_factory_.vtemplate',
 				true)!
 
 			mut path_model := pathlib.get(path + '/${args.name}_model.v')
 			if args.reset || !path_model.exists() {
 				println('model doesnt exists or reset = ${args.reset}')
-				mut templ_3 := $tmpl('templates/objname_model.v')
+				mut templ_3 := $tmpl('templates/objname_model.vtemplate')
 				pathlib.template_write(templ_3, '${path}/${args.name}_model.vtemplate',
 					true)!
 			}
 
-			mut templ_4 := $tmpl('templates/objname_runner_.v')
+			mut templ_4 := $tmpl('templates/objname_runner_.vtemplate')
 			pathlib.template_write(templ_4, '${path}/${args.name}_runner_.vtemplate',
 				true)!
 

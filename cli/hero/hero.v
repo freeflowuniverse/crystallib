@@ -31,7 +31,7 @@ fn do() ! {
 	mut cmd := Command{
 		name: 'hero'
 		description: 'Your HERO toolset.'
-		version: '1.0.27'
+		version: '1.0.28'
 	}
 
 
@@ -80,6 +80,7 @@ fn do() ! {
 	herocmds.cmd_caddy(mut cmd)
 	herocmds.cmd_zola(mut cmd)
 	herocmds.cmd_juggler(mut cmd)
+	herocmds.cmd_generator(mut cmd)
 
 	cmd.setup()
 	cmd.parse(os.args)	
