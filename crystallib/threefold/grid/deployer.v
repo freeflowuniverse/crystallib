@@ -49,9 +49,9 @@ const relay_url = {
 }
 
 pub fn get_mnemonics() !string {
-	mnemonics := os.getenv('MNEMONICS')
+	mnemonics := os.getenv('TFGRID_MNEMONIC')
 	if mnemonics == '' {
-		return error('failed to get mnemonics, run `export MNEMONICS=....`')
+		return error('failed to get mnemonics, run `export TFGRID_MNEMONIC=....`')
 	}
 	return mnemonics
 }

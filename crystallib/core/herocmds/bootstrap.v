@@ -112,7 +112,7 @@ fn cmd_bootstrap_execute(cmd Command) ! {
 	}
 
 	
-	if hero{
+	if update{
 		// mycmd:='
 		// 	\${HOME}/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 		// '

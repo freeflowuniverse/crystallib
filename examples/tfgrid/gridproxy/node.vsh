@@ -7,9 +7,9 @@ fn get_nodes_example() ! {
 	mut myfilter := gridproxy.nodefilter()!
 
 	myfilter.status = 'up'
-	myfilter.country = 'egypt'
+	myfilter.country = 'belgium'
 
-	mut gp_client := gridproxy.new(net:.dev, cache:true)!
+	mut gp_client := gridproxy.new(net:.main, cache:true)!
 	mynodes := gp_client.get_nodes(myfilter)!
 
 	console.print_debug("${mynodes}")
@@ -84,7 +84,6 @@ fn get_node_box_poc_example() ! {
 		node_stats := gp_client.get_node_stats_by_id(node.node_id)!
 		console.print_debug('${node_stats}')
 
-		if true{panic("s")}
 	}
 }
 

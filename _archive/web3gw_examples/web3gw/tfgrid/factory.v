@@ -8,7 +8,7 @@ import os
 // export MNEMONIC='...'
 pub fn tfgridclient_example() !TFGridClient {
 	if !'MNEMONIC' in os.env {
-		return error("Specify 'MNEMONICS' as ENV env. do 'export MNEMONIC=...'")
+		return error("Specify 'TFGRID_MNEMONIC' as ENV env. do 'export MNEMONIC=...'")
 	}
 
 	mnemonic := os.env('MNEMONIC')

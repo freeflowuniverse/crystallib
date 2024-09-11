@@ -3,17 +3,13 @@ module models
 import freeflowuniverse.crystallib.threefold.grid
 import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import rand
-import log
+import freeflowuniverse.crystallib.ui.console
 import json
 
 // Deploy the workloads
 pub fn (mut gm GridMachinesModel) deploy(vms GridMachinesModel) ! {
-	logger.info('Starting deployment process.')
+	console.print_header('Starting deployment process.')
 
-	// Validate SSH key
-	if gm.ssh_key.len == 0 {
-		logger.warn("No SSH key set. You won't be able to access your deployment without it.")
-	}
 
 	// Prepare Workloads
 	workloads := create_workloads(mut gm, vms)!
@@ -23,12 +19,12 @@ pub fn (mut gm GridMachinesModel) deploy(vms GridMachinesModel) ! {
 
 	// Fetch deployment result
 	machine_res := fetch_deployment_result(mut gm.client.deployer, contract_id, u32(vms.node_id))!
-	logger.info('Zmachine result: ${machine_res}')
+	console.print_header('Zmachine result: ${machine_res}')
 }
 
 // Helper function to create workloads
 fn create_workloads(mut gm GridMachinesModel, vms GridMachinesModel) ![]grid_models.Workload {
-	logger.info('Creating workloads.')
+	console.print_header('Creating workloads.')
 
 	mut workloads := []grid_models.Workload{}
 
@@ -54,7 +50,7 @@ fn create_workloads(mut gm GridMachinesModel, vms GridMachinesModel) ![]grid_mod
 
 // Helper function to create and deploy deployment
 fn create_and_deploy_deployment(mut gm GridMachinesModel, vms GridMachinesModel, workloads []grid_models.Workload) !int {
-	logger.info('Creating deployment.')
+	console.print_header('Creating deployment.')
 
 	mut deployment := grid_models.new_deployment(
 		twin_id: gm.client.deployer.twin_id,
@@ -65,13 +61,13 @@ fn create_and_deploy_deployment(mut gm GridMachinesModel, vms GridMachinesModel,
 
 	log_and_set_metadata(mut logger, mut deployment, 'vm', vms.name)
 
-	logger.info('Deploying workloads...')
+	console.print_header('Deploying workloads...')
 	contract_id := gm.client.deployer.deploy(u32(vms.node_id), mut deployment, deployment.metadata, 0) or {
 		logger.error('Deployment failed: ${err}')
 		return err
 	}
 
-	logger.info('Deployment successful. Contract ID: ${contract_id}')
+	console.print_header('Deployment successful. Contract ID: ${contract_id}')
 	return int(contract_id)
 }
 
@@ -86,8 +82,8 @@ fn fetch_deployment_result(mut deployer grid.Deployer, contract_id int, node_id 
 }
 
 // Helper function to create a Zmachine workload
-fn create_zmachine_workload(machine MachineModel, network NetworkModel, ssh_key string, public_ip_name string) grid_models.Zmachine {
-	logger.info('Creating Zmachine workload.')
+fn create_zmachine_workload(machine MachineModel, network NetworkInfo, ssh_key string, public_ip_name string) grid_models.Zmachine {
+	console.print_header('Creating Zmachine workload.')
 	return grid_models.Zmachine{
 		flist: 'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist',
 		network: grid_models.ZmachineNetwork{
@@ -117,7 +113,7 @@ fn create_zmachine_workload(machine MachineModel, network NetworkModel, ssh_key 
 
 // Helper function to create a network workload
 fn create_network_workload(gm GridMachinesModel, wg_port u32) grid_models.Workload {
-	logger.info('Creating network workload.')
+	console.print_header('Creating network workload.')
 	return grid_models.Znet{
 		ip_range: gm.network.ip_range,
 		subnet: gm.network.subnet,
@@ -141,7 +137,7 @@ fn create_network_workload(gm GridMachinesModel, wg_port u32) grid_models.Worklo
 
 // Helper function to create a public IP workload
 fn create_public_ip_workload(is_v4 bool, is_v6 bool, name string) grid_models.Workload {
-	logger.info('Creating Public IP workload.')
+	console.print_header('Creating Public IP workload.')
 	return grid_models.PublicIP{
 		v4: is_v4,
 		v6: is_v6,
@@ -150,7 +146,7 @@ fn create_public_ip_workload(is_v4 bool, is_v6 bool, name string) grid_models.Wo
 
 // Helper function to create signature requirements
 fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
-	logger.info('Setting signature requirement.')
+	console.print_header('Setting signature requirement.')
 	return grid_models.SignatureRequirement{
 		weight_required: 1,
 		requests: [
@@ -164,7 +160,7 @@ fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
 
 // Helper function to log and set metadata
 fn log_and_set_metadata(mut logger &log.Log, mut deployment grid_models.Deployment, key string, value string) {
-	logger.info('Setting ${key} metadata.')
+	console.print_header('Setting ${key} metadata.')
 	deployment.add_metadata(key, value)
 }
 
@@ -181,26 +177,26 @@ fn get_machine_result(dl grid_models.Deployment) !grid_models.ZmachineResult {
 
 pub fn (mut gm GridMachinesModel) list() ![]grid_models.Deployment {
 	mut deployments := []grid_models.Deployment{}
-	logger.info("Listing active contracts.")
+	console.print_header("Listing active contracts.")
 	contracts := gm.client.contracts.get_my_active_contracts() or {
 		return error("Cannot list twin contracts due to: ${err}")
 	}
 
-	logger.info("Active contracts listed.")
-	logger.info("Listing deployments.")
+	console.print_header("Active contracts listed.")
+	console.print_header("Listing deployments.")
 
 	for contract in contracts {
-		logger.info("Listing deployment node ${contract.details.node_id}.")
+		console.print_header("Listing deployment node ${contract.details.node_id}.")
 		if contract.contract_type == "node" {
 			dl := gm.client.deployer.get_deployment(
 				contract.contract_id,
 				u32(contract.details.node_id)
 			) or {
-				logger.warn("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}.")
+				console.print_stderror("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}.")
 				continue
 			}
 			deployments << dl
-			logger.info("Deployment Result: ${dl}.")
+			console.print_header("Deployment Result: ${dl}.")
 		}
 	}
 	return deployments
@@ -219,13 +215,13 @@ fn (mut gm GridMachinesModel) list_contract_names() ![]string {
 }
 
 pub fn (mut gm GridMachinesModel) delete(deployment_name string) ! {
-	logger.info("Deleting deployment with name: ${deployment_name}.")
-	logger.info("Listing the twin `${gm.client.deployer.twin_id}` active contracts.")
+	console.print_header("Deleting deployment with name: ${deployment_name}.")
+	console.print_header("Listing the twin `${gm.client.deployer.twin_id}` active contracts.")
 	contracts := gm.client.contracts.get_my_active_contracts() or {
 		return error("Cannot list twin contracts due to: ${err}")
 	}
 
-	logger.info("Active contracts listed.")
+	console.print_header("Active contracts listed.")
 
 	for contract in contracts {
 		res := json.decode(ContractMetaData, contract.details.deployment_data) or {
@@ -233,11 +229,11 @@ pub fn (mut gm GridMachinesModel) delete(deployment_name string) ! {
 		}
 
 		if res.name == deployment_name {
-			logger.info("Start deleting deployment ${deployment_name}.")
+			console.print_header("Start deleting deployment ${deployment_name}.")
 			gm.client.deployer.client.cancel_contract(contract.contract_id) or {
 				return error("Cannot delete deployment due to: ${err}")
 			}
-			logger.info("Deployment ${deployment_name} deleted!.")
+			console.print_header("Deployment ${deployment_name} deleted!.")
 		}
 	}
 }
@@ -255,7 +251,7 @@ pub fn (mut gm GridMachinesModel)get(deployment_name string) ![]grid_models.Depl
 				contract.contract_id,
 				u32(contract.details.node_id)
 			) or {
-				logger.warn("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}.")
+				console.print_stderror("Cannot list twin deployment for contract ${contract.contract_id} due to: ${err}.")
 				continue
 			}
 			if dl.metadata.len != 0 {
@@ -268,6 +264,6 @@ pub fn (mut gm GridMachinesModel)get(deployment_name string) ![]grid_models.Depl
 			}
 		}
 	}
-	logger.info("Deployments: ${deployments}")
+	console.print_header("Deployments: ${deployments}")
 	return deployments
 }

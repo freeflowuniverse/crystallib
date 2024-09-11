@@ -1,0 +1,11 @@
+
+!!hero_code.generate_installer
+    name:'tfgridclient' 
+    classname:'TFGridClient'
+    singleton:0            //there can only be 1 object in the globals, is called 'default'
+    templates:0            //are there templates for the installer
+    default:1              //can we create a default when the factory is used
+	title:''
+	supported_platforms:'' //osx, ... (empty means all)
+	reset:0                 // regenerate all, dangerous !!!
+	startupmanager:0      //managed by a startup manager, default true

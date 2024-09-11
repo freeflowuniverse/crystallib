@@ -560,16 +560,16 @@ function os_update {
             unset NONINTERACTIVE
         fi
         set +e
-        brew install mc redis curl tmux screen htop wget
+        brew install mc redis curl tmux screen htop wget rclone
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
-        apk add mc curl rsync htop redis bash bash-completion screen git
+        apk add mc curl rsync htop redis bash bash-completion screen git rclone
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm arch-install-scripts gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen
+        pacman -Su --noconfirm arch-install-scripts gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen rclone
 
         # Check if builduser exists, create if not
         if ! id -u builduser > /dev/null 2>&1; then

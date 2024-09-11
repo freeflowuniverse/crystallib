@@ -13,7 +13,7 @@ module web3gw
 // 	mut args := args_
 
 // 	if !'MNEMONIC' in os.env {
-// 		return error("Specify 'MNEMONICS' as ENV env. do 'export MNEMONIC=...'")
+// 		return error("Specify 'TFGRID_MNEMONIC' as ENV env. do 'export MNEMONIC=...'")
 // 	}
 
 // 	if 'RPCADDR' in os.env {
