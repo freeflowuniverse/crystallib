@@ -32,33 +32,45 @@ fn installed() !bool {
 
 fn install() ! {
     console.print_header('install caddy')
-    //THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
-    // mut url := ''
-    // if osal.is_linux_arm() {
-    //     url = 'https://github.com/caddy-dev/caddy/releases/download/v${version}/caddy_${version}_linux_arm64.tar.gz'
-    // } else if osal.is_linux_intel() {
-    //     url = 'https://github.com/caddy-dev/caddy/releases/download/v${version}/caddy_${version}_linux_amd64.tar.gz'
-    // } else if osal.is_osx_arm() {
-    //     url = 'https://github.com/caddy-dev/caddy/releases/download/v${version}/caddy_${version}_darwin_arm64.tar.gz'
-    // } else if osal.is_osx_intel() {
-    //     url = 'https://github.com/caddy-dev/caddy/releases/download/v${version}/caddy_${version}_darwin_amd64.tar.gz'
-    // } else {
-    //     return error('unsported platform')
-    // }
 
-    // mut dest := osal.download(
-    //     url: url
-    //     minsize_kb: 9000
-    //     expand_dir: '/tmp/caddy'
-    // )!
+	mut url := ''
+	if osal.is_linux_arm() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_linux_arm64.tar.gz'
+	} else if osal.is_linux_intel() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_linux_amd64.tar.gz'
+	} else if osal.is_osx_arm() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_mac_arm64.tar.gz'
+	} else if osal.is_osx_intel() {
+		url = 'https://github.com/caddyserver/xcaddy/releases/download/v${xcaddy_version}/xcaddy_${xcaddy_version}_mac_amd64.tar.gz'
+	} else {
+		return error('unsported platform')
+	}
 
-    // //dest.moveup_single_subdir()!
+	mut dest := osal.download(
+		url: url
+		minsize_kb: 1000
+		expand_dir: '/tmp/xcaddy_dir'
+	)!
 
-    // mut binpath := dest.file_get('caddy')!
-    // osal.cmd_add(
-    //     cmdname: 'caddy'
-    //     source: binpath.path
-    // )!
+	mut binpath := dest.file_get('xcaddy')!
+	osal.cmd_add(
+		cmdname: 'xcaddy'
+		source: binpath.path
+	)!
+
+	console.print_header('Installing Caddy with xcaddy')
+
+	plugins_str := plugins.map('--with ${it}').join(' ')
+
+	// Define the xcaddy command to build Caddy with plugins
+	path := '/tmp/caddyserver/caddy'
+	cmd := 'source ${osal.profile_path()} && xcaddy build v${caddy_version} ${plugins_str} --output ${path}'
+	osal.exec(cmd: cmd)!
+	osal.cmd_add(
+		cmdname: 'caddy'
+		source: path
+		reset: true
+	)!
 }
 
 
@@ -96,7 +108,6 @@ pub fn configure_examples(config WebConfig) ! {
 	if config.domain.len > 0 {
 		config_file = $tmpl('templates/caddyfile_domain')
 	}
-	install()!
 	os.mkdir_all(config.path)!
 
 	default_html := '
