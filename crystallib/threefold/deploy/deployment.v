@@ -36,25 +36,29 @@ fn (mut self TFDeployment) new_deployer() !grid.Deployer {
 
 pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)!VMachine {
     console.print_header('Starting deployment process.')
-    console.print_header('Creating workloads.')
-    
     mut deployer := self.new_deployer() or {
-        return error('Deployer is not initialized')
+        return error('Failed to initialize deployer: ${err}')
     }
 
     mut workloads := []grid_models.Workload{}
     mut public_ip_name := ''
-    node_id := u32(11)
+    node_id := u32(11) // Assuming this is a placeholder
 
-    if args_.network != none {
-        mut network := args_.network or {
-            return error('Network is not initialized')
+    // Default network configuration
+    mut network := args_.network or {
+        NetworkSpecs{
+            name: "wedtest",
+            ip_range: "10.249.0.0/16",
+            subnet: "10.249.0.0/24",
         }
-
-        wg_port := deployer.assign_wg_port(node_id)!
-        workloads << create_network_workload(network, wg_port)!
     }
 
+    wg_port := deployer.assign_wg_port(node_id)!
+
+    // Create network workload
+    workloads << create_network_workload(network, wg_port)!
+
+    // Add public IP workload if needed
     if args_.public_ip4 || args_.public_ip6 {
         public_ip_name = rand.string(5).to_lower()
         workloads << create_public_ip_workload(
@@ -64,18 +68,15 @@ pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)!VMachine {
         )
     }
 
-    // Handle potential error from create_zmachine_workload()
-    zmachine := create_zmachine_workload(
-        args_,
-        public_ip_name
-    )!
+    // Create Zmachine workload
+    mut zmachine := create_zmachine_workload(args_, network, public_ip_name)!
 
-    // Handle potential error from to_workload()
     workloads << zmachine.to_workload(
         name: args_.name,
         description: args_.description
     )
 
+    // Create and deploy the deployment
     console.print_header('Creating deployment.')
     mut deployment := grid_models.new_deployment(
 		twin_id: deployer.twin_id,
@@ -84,9 +85,8 @@ pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)!VMachine {
 		signature_requirement: create_signature_requirement(deployer.twin_id),
 	)
 
-	console.print_header('Setting metadata.')
+	console.print_header('Setting metadata and deploying workloads.')
 	deployment.add_metadata("vm", args_.name)
-    console.print_header('Deploying workloads...')
 
 	contract_id := deployer.deploy(
         node_id,
@@ -99,12 +99,11 @@ pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)!VMachine {
 
 	console.print_header('Deployment successful. Contract ID: ${contract_id}')
     return VMachine{
-        tfchain_contract_id: contract_id
-        name: args_.name
+        tfchain_contract_id: contract_id,
+        name: args_.name,
         description: args_.description
     }
 }
-
 
 // Helper function to create signature requirements
 fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
@@ -153,15 +152,11 @@ fn create_public_ip_workload(is_v4 bool, is_v6 bool, name string) grid_models.Wo
 }
 
 // Helper function to create a Zmachine workload
-fn create_zmachine_workload(args_ VMRequirements, public_ip_name string)! grid_models.Zmachine {
+fn create_zmachine_workload(args_ VMRequirements, network NetworkSpecs, public_ip_name string)! grid_models.Zmachine {
     console.print_header('Creating Zmachine workload.')
     mut grid_client := get()!
-    mut network := args_.network or {
-        return error('Network is not initialized')
-    }
-    
+
     return grid_models.Zmachine{
-        flist: 'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist',
         network: grid_models.ZmachineNetwork{
             interfaces: [
                 grid_models.ZNetworkInterface{
@@ -174,17 +169,26 @@ fn create_zmachine_workload(args_ VMRequirements, public_ip_name string)! grid_m
             mycelium: grid_models.MyceliumIP{
                 network: network.name,
                 hex_seed: rand.string(6).bytes().hex(),
-            }
+            },
         },
+        flist: 'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist',
         entrypoint: '/sbin/zinit init',
         compute_capacity: grid_models.ComputeCapacity{
             cpu: u8(args_.cpu),
-            memory: i64(args_.memory) * 1024 * 1024,
+            memory: i64(args_.memory) * 1024 * 1024 * 1024,
         },
         env: {
             'SSH_KEY': grid_client.ssh_key,
-        }
+        },
     }
+}
+
+pub fn (mut self TFDeployment) vm_get(name string)!VMachine {
+    //TODO: check vm already exists if not fail
+    //TODO: load the metadata from the VM, populater a VMachine
+
+    //the name on TFChain is $deploymentname__$name
+    return VMachine{}
 }
 
 //gets the info from the TFGrid
@@ -197,13 +201,7 @@ fn (mut self TFDeployment) load()!{
 //     //TODO: save info to the TFChain, encrypt with mnemonic (griddriver should do this)
 // }
 
-// pub fn (mut self TFDeployment) vm_get(name string)!VMachine {
-//     //TODO: check vm already exists if not fail
-//     //TODO: load the metadata from the VM, populater a VMachine
 
-//     //the name on TFChain is $deploymentname__$name
-
-// }
 
 // pub fn (mut self TFDeployment) vm_delete(name string)!VMachine {
 //     //TODO: check vm already exists if not fail
