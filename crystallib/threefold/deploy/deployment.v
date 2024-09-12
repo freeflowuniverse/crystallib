@@ -201,12 +201,8 @@ pub fn (mut self TFDeployment) vm_get(name string)! []VMachine {
 }
 
 pub fn (mut self TFDeployment) load(deployment_name string)! TFDeployment {
-    mut deployer := self.new_deployer() or {
-        return error('Failed to initialize deployer: ${err}')
-    }
-
     path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
-    filepath := "${path}${deployer.twin_id}${deployment_name}"
+    filepath := "${path}${deployment_name}"
     base64_string := os.read_file(filepath) or {
         return error("Failed to open file due to: ${err}")
     }
@@ -218,7 +214,7 @@ pub fn (mut self TFDeployment) load(deployment_name string)! TFDeployment {
 fn (mut self TFDeployment) save()! {
     dir_path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
     os.mkdir_all(dir_path)!
-    file_path := dir_path + self.vms[0].tfchain_id
+    file_path := dir_path + self.name
 
     encoded_data := self.encode() or {
         return error('Failed to encode deployment data: ${err}')

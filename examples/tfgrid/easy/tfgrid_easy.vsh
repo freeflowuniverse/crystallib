@@ -6,8 +6,9 @@ import freeflowuniverse.crystallib.ui.console
 
 
 fn main(){
+	deployment_name := "mymachine"
 	mut vm := deploy.VMRequirements{
-		name: "mymachine",
+		name: deployment_name,
 		cpu: 1,
 		memory: 2,
 		public_ip4: false,
@@ -18,7 +19,7 @@ fn main(){
 	}
 
 	mut deployment := deploy.TFDeployment{}
-	// vm_result := deployment.vm_deploy(vm)!
-	vm_result := deployment.vm_get("mymachine")!
+	deployment.vm_deploy(vm)!
+	vm_result := deployment.vm_get(deployment_name)!
 	println(vm_result)
 }
