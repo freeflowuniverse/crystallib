@@ -22,7 +22,7 @@ pub mut:
 // Example:
 //   contracts := cn.get_my_contracts()!
 pub fn (mut self TFDeployment) tfchain_contracts(args ContractGetArgs) ![]proxy_models.Contract {
-	net := self.resolve_network()!
+	net := resolve_network()!
 	args2 := gridproxy.GridProxyClientArgs{
 		net: net
 		cache: true
@@ -44,7 +44,7 @@ pub fn (mut self TFDeployment) tfchain_contracts(args ContractGetArgs) ![]proxy_
 //
 // Returns:
 //   - A `gridproxy.TFGridNet` value corresponding to the grid network.
-fn (self TFDeployment) resolve_network() !gridproxy.TFGridNet {
+fn resolve_network() !gridproxy.TFGridNet {
     mut cfg := get()!
     return match cfg.network {
         .dev { gridproxy.TFGridNet.dev }

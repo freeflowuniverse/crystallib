@@ -288,6 +288,7 @@ pub mut:
 	dedicated          ?bool   @[json: 'Dedicated']
 	rentable           ?bool   @[json: 'Rentable']
 	rented             ?bool   @[json: 'Rented']
+	healthy          	 ?bool   @[json: 'healthy']
 	rented_by          ?u64    @[json: 'RentedBy']
 	available_for      ?u64    @[json: 'AvailableFor']
 	node_id            ?u64    @[json: 'NodeID']

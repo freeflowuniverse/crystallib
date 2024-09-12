@@ -6,17 +6,19 @@ import freeflowuniverse.crystallib.ui.console
 
 
 fn main(){
-	vm := deploy.VMRequirements{
+	mut vm := deploy.VMRequirements{
 		name: "mymachine",
 		cpu: 1,
 		memory: 2,
 		public_ip4: false,
 		public_ip6: false,
 		planetary: true,
-		mycelium: true
+		mycelium: true,
+		// nodes: [11]
 	}
 
 	mut deployment := deploy.TFDeployment{}
-	vm_result := deployment.vm_deploy(vm)!
+	// vm_result := deployment.vm_deploy(vm)!
+	vm_result := deployment.vm_get("mymachine")!
 	println(vm_result)
 }

@@ -1,22 +1,23 @@
 module deploy
 
+import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import freeflowuniverse.crystallib.data.paramsparser
 import freeflowuniverse.crystallib.threefold.grid
+import freeflowuniverse.crystallib.data.encoder
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import rand
-
+import json
+import encoding.base64
+import os
 
 @[heap]
 pub struct TFDeployment {
 pub mut:
-    name     string = 'default'
+    name        string = 'default'
     description string
-    vms []VMachine
-    // zdbs  //TODO
-    // webgw     
+    vms         []VMachine
 mut:
-    deployer	  ?grid.Deployer
+    deployer    ?grid.Deployer  @[skip; str: skip]
 }
 
 fn (mut self TFDeployment) new_deployer() !grid.Deployer {
@@ -29,129 +30,140 @@ fn (mut self TFDeployment) new_deployer() !grid.Deployer {
         }
         self.deployer = grid.new_deployer(grid_client.mnemonic, network)!
     }
-
     return self.deployer or { return error('Deployer not initialized') }
 }
 
-
-pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)!VMachine {
+pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)! VMachine {
     console.print_header('Starting deployment process.')
+
     mut deployer := self.new_deployer() or {
         return error('Failed to initialize deployer: ${err}')
     }
 
-    mut workloads := []grid_models.Workload{}
-    mut public_ip_name := ''
-    node_id := u32(11) // Assuming this is a placeholder
+    mut node_id := get_node_id(args_) or {
+        return error('Failed to determine node ID: ${err}')
+    }
 
-    // Default network configuration
     mut network := args_.network or {
         NetworkSpecs{
-            name: "wedtest",
+            name: 'net' + rand.string(5),
             ip_range: "10.249.0.0/16",
             subnet: "10.249.0.0/24",
         }
     }
 
     wg_port := deployer.assign_wg_port(node_id)!
+    workloads := create_workloads(args_, network, wg_port)!
 
-    // Create network workload
-    workloads << create_network_workload(network, wg_port)!
+    console.print_header('Creating deployment.')
+    mut deployment := grid_models.new_deployment(
+        twin_id: deployer.twin_id,
+        description: 'VGridClient Deployment',
+        workloads: workloads,
+        signature_requirement: create_signature_requirement(deployer.twin_id),
+    )
 
-    // Add public IP workload if needed
-    if args_.public_ip4 || args_.public_ip6 {
-        public_ip_name = rand.string(5).to_lower()
-        workloads << create_public_ip_workload(
-            args_.public_ip4,
-            args_.public_ip6,
-            public_ip_name
-        )
+    console.print_header('Setting metadata and deploying workloads.')
+    deployment.add_metadata("vm", args_.name)
+    contract_id := deployer.deploy(node_id, mut deployment, deployment.metadata, 0) or {
+        return error('Deployment failed: ${err}')
     }
 
-    // Create Zmachine workload
-    mut zmachine := create_zmachine_workload(args_, network, public_ip_name)!
+    console.print_header('Deployment successful. Contract ID: ${contract_id}')
 
+    vm := VMachine{
+        tfchain_id: "${deployer.twin_id}${args_.name}",
+        tfchain_contract_id: int(contract_id),
+        name: args_.name,
+        description: args_.description,
+        cpu: args_.cpu,
+        memory: args_.memory,
+    }
+
+    self.name = args_.name
+    self.description = args_.description
+    self.vms << vm
+
+    self.save()!
+    self.load(args_.name)!
+    return vm
+}
+
+fn get_node_id(args_ VMRequirements) !u32 {
+    if args_.nodes.len == 0 {
+        console.print_header('Requesting the proxy to filter nodes.')
+        nodes := nodefilter(args_)!
+        if nodes.len == 0 {
+            return error('No suitable nodes found.')
+        }
+        return u32(nodes[0].node_id)
+    }
+    return u32(args_.nodes[0])
+}
+
+fn create_workloads(args_ VMRequirements, network NetworkSpecs, wg_port u32) ![]grid_models.Workload {
+    mut workloads := []grid_models.Workload{}
+
+    workloads << create_network_workload(network, wg_port)!
+    mut public_ip_name := ""
+    if args_.public_ip4 || args_.public_ip6 {
+        public_ip_name = rand.string(5).to_lower()
+        workloads << create_public_ip_workload(args_.public_ip4, args_.public_ip6, public_ip_name)
+    }
+
+    zmachine := create_zmachine_workload(args_, network, public_ip_name)!
     workloads << zmachine.to_workload(
         name: args_.name,
         description: args_.description
     )
 
-    // Create and deploy the deployment
-    console.print_header('Creating deployment.')
-    mut deployment := grid_models.new_deployment(
-		twin_id: deployer.twin_id,
-		description: 'VGridClient Deployment',
-		workloads: workloads,
-		signature_requirement: create_signature_requirement(deployer.twin_id),
-	)
+    return workloads
+}
 
-	console.print_header('Setting metadata and deploying workloads.')
-	deployment.add_metadata("vm", args_.name)
-
-	contract_id := deployer.deploy(
-        node_id,
-        mut deployment,
-        deployment.metadata,
-        0
-    ) or {
-		return error('Deployment failed: ${err}')
-	}
-
-	console.print_header('Deployment successful. Contract ID: ${contract_id}')
-    return VMachine{
-        tfchain_contract_id: contract_id,
-        name: args_.name,
-        description: args_.description
+fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
+    console.print_header('Setting signature requirement.')
+    return grid_models.SignatureRequirement{
+        weight_required: 1,
+        requests: [
+            grid_models.SignatureRequest{
+                twin_id: u32(twin_id),
+                weight: 1,
+            },
+        ],
     }
 }
 
-// Helper function to create signature requirements
-fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
-	console.print_header('Setting signature requirement.')
-	return grid_models.SignatureRequirement{
-		weight_required: 1,
-		requests: [
-			grid_models.SignatureRequest{
-				twin_id: u32(twin_id),
-				weight: 1,
-			},
-		],
-	}
-}
-
 fn create_network_workload(network NetworkSpecs, wg_port u32) !grid_models.Workload {
-	console.print_header('Creating network workload.')
-	return grid_models.Znet{
-		ip_range: network.ip_range,
-		subnet: network.subnet,
-		wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE=',
-		wireguard_listen_port: u16(wg_port),
-		mycelium: grid_models.Mycelium{
-			hex_key: rand.string(32).bytes().hex(),
-		},
-		peers: [
-			grid_models.Peer{
-				subnet: network.subnet,
-				wireguard_public_key: '4KTvZS2KPWYfMr+GbiUUly0ANVg8jBC7xP9Bl79Z8zM=',
-				allowed_ips: [network.subnet],
-			},
-		]
-	}.to_workload(
-		name: network.name,
-		description: 'VGridClient Network',
-	)
+    console.print_header('Creating network workload.')
+    return grid_models.Znet{
+        ip_range: network.ip_range,
+        subnet: network.subnet,
+        wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE=',
+        wireguard_listen_port: u16(wg_port),
+        mycelium: grid_models.Mycelium{
+            hex_key: rand.string(32).bytes().hex(),
+        },
+        peers: [
+            grid_models.Peer{
+                subnet: network.subnet,
+                wireguard_public_key: '4KTvZS2KPWYfMr+GbiUUly0ANVg8jBC7xP9Bl79Z8zM=',
+                allowed_ips: [network.subnet],
+            },
+        ]
+    }.to_workload(
+        name: network.name,
+        description: 'VGridClient Network',
+    )
 }
 
-// Helper function to create a public IP workload
 fn create_public_ip_workload(is_v4 bool, is_v6 bool, name string) grid_models.Workload {
-	console.print_header('Creating Public IP workload.')
-	return grid_models.PublicIP{
-		v4: is_v4,
-		v6: is_v6,
-	}.to_workload(name: name)
+    console.print_header('Creating Public IP workload.')
+    return grid_models.PublicIP{
+        v4: is_v4,
+        v6: is_v6,
+    }.to_workload(name: name)
 }
 
-// Helper function to create a Zmachine workload
 fn create_zmachine_workload(args_ VMRequirements, network NetworkSpecs, public_ip_name string)! grid_models.Zmachine {
     console.print_header('Creating Zmachine workload.')
     mut grid_client := get()!
@@ -183,49 +195,74 @@ fn create_zmachine_workload(args_ VMRequirements, network NetworkSpecs, public_i
     }
 }
 
-pub fn (mut self TFDeployment) vm_get(name string)!VMachine {
-    //TODO: check vm already exists if not fail
-    //TODO: load the metadata from the VM, populater a VMachine
-
-    //the name on TFChain is $deploymentname__$name
-    return VMachine{}
+pub fn (mut self TFDeployment) vm_get(name string)! []VMachine {
+    d := self.load(name)!
+    return d.vms
 }
 
-//gets the info from the TFGrid
-fn (mut self TFDeployment) load()!{
-    //TODO: load the metadata from TFGrid and populate the TFDeployment ((ssh_key))
-    mut grid_client := get()!
+pub fn (mut self TFDeployment) load(deployment_name string)! TFDeployment {
+    mut deployer := self.new_deployer() or {
+        return error('Failed to initialize deployer: ${err}')
+    }
+
+    path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
+    filepath := "${path}${deployer.twin_id}${deployment_name}"
+    base64_string := os.read_file(filepath) or {
+        return error("Failed to open file due to: ${err}")
+    }
+    bytes := base64.decode(base64_string)
+    d := self.decode(bytes)!
+    return d
 }
 
-// fn (mut self TFDeployment) save()! {
-//     //TODO: save info to the TFChain, encrypt with mnemonic (griddriver should do this)
-// }
+fn (mut self TFDeployment) save()! {
+    dir_path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
+    os.mkdir_all(dir_path)!
+    file_path := dir_path + self.vms[0].tfchain_id
 
+    encoded_data := self.encode() or {
+        return error('Failed to encode deployment data: ${err}')
+    }
+    base64_string := base64.encode(encoded_data)
 
+    os.write_file(file_path, base64_string) or {
+        return error('Failed to write to file: ${err}')
+    }
+}
 
-// pub fn (mut self TFDeployment) vm_delete(name string)!VMachine {
-//     //TODO: check vm already exists if not fail
-//     //TODO: load the metadata from the VM, populater a VMachine
+fn (self TFDeployment) encode() ![]u8 {
+    mut b := encoder.new()
+    b.add_string(self.name)
+    b.add_int(self.vms.len)
 
-//     //the name on TFChain is $deploymentname__$name
+    for vm in self.vms {
+        vm_data := vm.encode()!
+        b.add_int(vm_data.len)
+        b.add_bytes(vm_data)
+    }
 
-// }
+    return b.data
+}
 
+fn (self TFDeployment) decode(data []u8) !TFDeployment {
+    if data.len == 0 {
+        return error("Data cannot be empty")
+    }
 
-// pub fn (mut self TFDeployment) vm_list()![]string {
-//     //list names of vm's we have for this deployment
-// }
+    mut d := encoder.decoder_new(data)
+    mut result := TFDeployment{
+        name: d.get_string(),
+    }
 
+    num_vms := d.get_int()
 
+    for _ in 0 .. num_vms {
+        d.get_int()
+        vm_data := d.get_bytes()
+        mut dd := encoder.decoder_new(vm_data)
+        vm := decode_vmachine(mut dd)!
+        result.vms << vm
+    }
 
-// fn (self TFDeployment) encode() ![]u8 {
-// 	mut b := encoder.new()
-//     //encode what is required on TFDeployment level
-//     b.add_string(self.name)
-// 	for vm in self.vms{
-//         data:=vm.encode()!
-//         b.add_int(v.data.len)
-//         b.add_bytes(data)        
-//     }
-// }
-
+    return result
+}

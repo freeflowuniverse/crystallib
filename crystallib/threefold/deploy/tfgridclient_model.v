@@ -33,7 +33,7 @@ pub mut:
 
 pub fn (mut self TFGridClient) deployment_get(name string) !TFDeployment {
     mut d:=TFDeployment{}
-    d.load()!
+    d.load(name)!
     return d
 }
 

@@ -11,14 +11,15 @@ pub struct VMRequirements {
 pub mut:
 	name				string
 	description	string
-	cpu    			int //vcores
-	memory 			int //gbyte
+	cpu    			int // vcores
+	memory 			int // gbyte
 	public_ip4  bool
 	public_ip6  bool
 	planetary   bool
 	mycelium    bool
 	network 		?NetworkSpecs
-	heroscript 	string //will be executed once the node is up & running with hero, this is useful for e.g. redeployment
+	heroscript 	string // will be executed once the node is up & running with hero, this is useful for e.g. redeployment
+	nodes 			[]int // if set will chose a node from the list to deploy on
 }
 
 
@@ -31,56 +32,43 @@ pub mut:
 }
 
 
-
 // MachineModel struct to represent a machine and its associated details
 pub struct VMachine {
 pub mut:
-	tfchain_id 					string
-	tfchain_contract_id u64
 	name            		string
+	tfchain_id 					string
+	tfchain_contract_id int
+	cpu 								int
+	memory							int
 	description 				string
 	//TODO: what other enduser info do we need?
 }
 
 
 
-// // returns bin encoder already populated with all base properties
-// fn (self VMachine) encode() ![]u8 {
-// 	mut b := encoder.new()
-// 	b.add_u8(1)
-// 	b.add_string(self.name)
-// 	b.add_int(self.cpu)
-// 	b.add_int(self.memory)
-// 	b.add_bool(self.public_ip4)
-// 	// if self.network {
-// 	// 	b.add_bool(true)
-// 	// 	b....
-// 	// }else{
-// 	// 	b.add_bool(false)
-// 	// }
-// 	//TODO
-// 	return b
-// 	//TODO: description < 32 chars
-// }
+// Helper function to encode a VMachine
+fn (self VMachine) encode() ![]u8 {
+	mut b := encoder.new()
+	b.add_string(self.name)
+	b.add_string(self.tfchain_id)
+	b.add_int(self.tfchain_contract_id)
+	b.add_int(self.cpu)
+	b.add_int(self.memory)
+	b.add_string(self.description)
+	return b.data
+}
 
-
-// fn vm_decode(data []u8) !VMachine {
-// 	mut d := encoder.decoder_new(data)
-// 	mut self := VMachine{}
-// 	version := d.get_u8()
-// 	if version != 1{
-// 		return error("only support version 1")
-// 	}
-// 	self.name = d.get_string()
-// 	//TODO: decode
-// 	networkexists := d.get_bool()
-// 	// if networkexists{
-// 	// 	self.network ...
-// 	// }
-
-// }
-
-
+// Helper function to decode a VMachine
+fn decode_vmachine(mut d encoder.Decoder) !VMachine {
+	return VMachine{
+		name: d.get_string(),
+		tfchain_id: d.get_string(),
+		tfchain_contract_id: d.get_int(),
+		cpu: d.get_int(),
+		memory: d.get_int(),
+		description: d.get_string(),
+	}
+}
 
 
 // // check if the node where the machine runs on is up and running

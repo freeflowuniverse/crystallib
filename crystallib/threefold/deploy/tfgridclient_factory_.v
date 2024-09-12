@@ -22,7 +22,6 @@ pub mut:
 
 fn args_get (args_ ArgsGet) ArgsGet {    
     mut args:=args_
-    println(args)
     if args.name == ""{
         args.name = tfgridclient_default
     }
@@ -35,9 +34,7 @@ fn args_get (args_ ArgsGet) ArgsGet {
 }
  
 pub fn get(args_ ArgsGet) !&TFGridClient {
-    mut args := args_get(args_)
-    println("Arguments received: ${args}")
-    
+    mut args := args_get(args_)    
     // Check if the client exists in the global map
     if !(args.name in tfgridclient_global) {
         println("Client not found in global map for name: ${args.name}")
