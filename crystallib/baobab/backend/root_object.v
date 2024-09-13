@@ -54,17 +54,19 @@ pub fn (obj RootObject) sql_indices_values() ([]string, []string) {
 	mut values := [obj_val]
 
 	for field in obj.fields {
-		indices << '${field.name}'
 		if field.name == 'id' {
+			indices << '${field.name}'
 			values << "${field.value}"
 		}
 
 		if field.typ == .text {
 			if field.is_index {
+				indices << '${field.name}'
 				values << "'${field.value}'"
 			}
 		} else if field.typ == .number {
 			if field.is_index {
+				indices << '${field.name}'
 				values << "${field.value}"
 			}
 		}

@@ -15,6 +15,7 @@ mut:
 
 @[params]
 pub struct IndexerConfig {
+pub:
 	reset bool
 	default_db DatabaseType
 }
@@ -26,10 +27,10 @@ pub fn new_indexer(db Database, config IndexerConfig) !Indexer {
 
 	mut default_db := config.default_db
 	if _ := db.sqlite_db {
-		default_db = sqlite_db
+		default_db = .sqlite
 	}
 	if _ := db.postgres_db {
-		default_db = postgres_db
+		default_db = .postgres
 	}
 
 	mut backend := Indexer{
@@ -86,7 +87,7 @@ fn (mut backend Indexer) generic_create_root_object_table[T]() ! {
 
 // deletes an indexer table belonging to a base object
 fn (mut backend Indexer) generic_delete_table[T]()! {
-	table_name := get_table_name[T]()
+	table_name := generic_get_table_name[T]()
 	delete_query := 'delete table ${table_name}'
 	backend.db.exec(delete_query)!
 }

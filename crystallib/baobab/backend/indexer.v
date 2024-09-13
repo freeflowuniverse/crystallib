@@ -136,7 +136,7 @@ fn (mut backend Indexer) create_root_object_table(object RootObject, db_type Dat
 	}
 	table_name := get_table_name(object)
 	create_query := 'create table if not exists ${table_name} (${columns.join(',')})'
-	backend.db.exec(create_query)!
+	backend.db.exec(create_query) or {panic('errz ${err}')}
 }
 
 // deletes an indexer table belonging to a root object
