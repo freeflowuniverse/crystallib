@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <script src="/static/htmx.min.js"></script>
+    </head>
+    <h1>Email Authentication Example</h1>
+    <p></p>
+    <form id="email-form" hx-post="@verify_path" hx-trigger="submit once">
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email"/>
+    </form>
+
+
+
+</html>
