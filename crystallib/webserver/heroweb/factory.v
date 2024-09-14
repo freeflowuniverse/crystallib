@@ -43,5 +43,7 @@ pub fn example() ! {
 	// app.mount_static_folder_at('${os.home_dir()}/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
 	app.mount_static_folder_at('static', '/static')!
 
-	veb.run[App, Context](mut app, 8090)
+	model_auth_example()!
+
+	//veb.run[App, Context](mut app, 8090)
 }

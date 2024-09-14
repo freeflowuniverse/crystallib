@@ -3,12 +3,6 @@ module heroweb
 //import freeflowuniverse.crystallib.core.texttools
 import veb
 
-pub struct User {
-pub mut:
-	name string
-	id   int
-    email string
-}
 
 pub struct Context {
 	veb.Context

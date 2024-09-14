@@ -8,7 +8,7 @@ pub fn (app &App) register(mut ctx Context) veb.Result {
 	
 	// Create JWT token
 	claims := User{
-		email: email
+		email: [email]
 	}
 	alg := jwt.new_algorithm(jwt.AlgorithmType.hs256)
 	jwt_token := jwt.encode<User>(claims, alg, app.secret_key, 1000 * 60 * 60) or {
@@ -25,22 +25,23 @@ pub fn (app &App) register(mut ctx Context) veb.Result {
 	// return ctx.json({
 	// 	'token': jwt_token
 	// })
+	
 	return ctx.html("Check your email for the verification link")
 }
 
-@['/verify/:token']
-pub fn (app &App) verify(mut ctx Context, token string) veb.Result {
-	alg := jwt.new_algorithm(jwt.AlgorithmType.hs256)
-	claims := jwt.verify<User>(token, alg, app.secret_key) or {
-		return ctx.text('Invalid or expired token')
-	}
+// @['/verify/:token']
+// pub fn (app &App) verify(mut ctx Context, token string) veb.Result {
+// 	alg := jwt.new_algorithm(jwt.AlgorithmType.hs256)
+// 	claims := jwt.verify<User>(token, alg, app.secret_key) or {
+// 		return ctx.text('Invalid or expired token')
+// 	}
 	
-	// In a real-world scenario, you would mark the user as verified in your database here
-	return ctx.json({
-		'message': 'User verified successfully',
-		'email': claims.email
-	})
-}
+// 	// In a real-world scenario, you would mark the user as verified in your database here
+// 	return ctx.json({
+// 		'message': 'User verified successfully',
+// 		'email': claims.email
+// 	})
+// }
 
 
 @['/signin']
