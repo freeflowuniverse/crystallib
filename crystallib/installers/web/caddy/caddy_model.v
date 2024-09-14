@@ -11,32 +11,36 @@ const heroscript_default = "
 !!caddy.configure
     path: ''
     domain: ''
-
+    plugins: ''
 "
 
-//THIS THE THE SOURCE OF THE INFORMATION OF THIS FILE, HERE WE HAVE THE CONFIG OBJECT CONFIGURED AND MODELLED
+
+// CaddyServer represents a Caddy server configuration.
 pub struct CaddyServer {
-pub mut:
-    name string = 'default'
-	path   string = '/var/www'
-	domain string //sort of default domain
+    pub mut:
+        // name is the name of the Caddy server.
+        name string = 'default'
+
+        // path is the path to the server's root directory.
+        path string = '/var/www'
+
+        // domain is the default domain for the server.
+        domain string // sort of default domain
+
+        // plugins is a list of plugins to be used by the server.
+        plugins []string
 }
 
+
 fn cfg_play(p paramsparser.Params) ! {
-    //THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED IN LINE WITH struct above
     mut mycfg := CaddyServer{
-        homedir: p.get_default('homedir', '{HOME}/hero/var/caddy')!
-        configpath: p.get_default('configpath', '{HOME}/hero/var/caddy/admin.yaml')!
-        username: p.get_default('username', 'admin')!
-        password: p.get_default('password', '')!
-        secret: p.get_default('secret', '')!
-        title: p.get_default('title', 'HERO DAG')!
-        host: p.get_default('host', 'localhost')!
-        port: p.get_int_default('port', 8888)!
+        path: p.get_default('homedir', '{HOME}/hero/var/caddy')!
+        domain: p.get_default('configpath', '{HOME}/hero/var/caddy/admin.yaml')!
+        plugins: p.get_list_default('plugins', []string{})!
     }
 
-    if mycfg.password == '' && mycfg.secret == '' {
-        return error('password or secret needs to be filled in for caddy')
+    if mycfg.path == '' && mycfg.domain == '' {
+        return error('path or domain needs to be filled in for caddy')
     }
 
     set(mycfg)!

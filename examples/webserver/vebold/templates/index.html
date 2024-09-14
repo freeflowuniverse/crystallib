@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ doc.title }}</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/^^picocss/pico^^2.0.6/css/pico.classless.min.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <link rel="stylesheet" href="/static/css/heroweb.css" />
+    </head>
+    <body>
+        {% if doc.markdown.nav %}
+        <textarea id="markdown-nav" style="display: none">
+{{ doc.markdown.nav }}
+        </textarea>
+        {% endif %}
+        <!-- now the main one -->
+        {% if doc.markdown.content %}
+        <textarea id="markdown-input" style="display: none">
+{{ doc.markdown.content }}
+        </textarea>
+        {% endif %}
+
+        <nav>
+            <ul>
+                {% for item in doc.navbar.items %}
+                <li>
+                    <a href="{{ item.href }}" class="{{ item.class_name }}">{{ item.text }}</a>
+                </li>
+                {% endfor %}
+                <navbar-right>
+                    <input type="search" name="search" placeholder="Search..." />
+                    <a href="#login">Login</a>
+                    <div id="theme-switcher-icons"></div>
+                </navbar-right>
+            </ul>
+        </nav>
+        <main class="container">
+            <mynav id="mynav"> </mynav>
+            <article id="markdown-output"></article>
+            <docnav>
+                <br />
+                <h5>{{ doc.markdown.title }}</h5>
+                <ul id="content-pointers"></ul>
+            </docnav>
+        </main>
+        <script src="/static/js/heroweb.js"></script>
+    </body>
+</html>
