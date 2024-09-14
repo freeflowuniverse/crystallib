@@ -9,7 +9,7 @@ const default = true
 
 const heroscript_default = "
 !!tfdeployer.configure
-    sshkey: ''
+    ssh_key: ''
     mnemonic: ''
     network:'main'
 "
@@ -31,9 +31,9 @@ pub mut:
 }
 
 
-fn (mut self TFGridClient) deployment_get(name string)!TFDeployment {
+pub fn (mut self TFGridClient) deployment_get(name string) !TFDeployment {
     mut d:=TFDeployment{}
-    d.load()!
+    d.load(name)!
     return d
 }
 
@@ -46,8 +46,8 @@ fn cfg_play(p paramsparser.Params) ! {
         else { Network.main }
     }
 
-    mut mycfg := TFDeployment{
-        sshkey: p.get_default('sshkey', '')!
+    mut mycfg := TFGridClient{
+        ssh_key: p.get_default('ssh_key', '')!
         mnemonic: p.get_default('mnemonic', '')!
         network: network
     }

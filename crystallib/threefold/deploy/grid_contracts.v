@@ -8,6 +8,7 @@ import freeflowuniverse.crystallib.threefold.gridproxy.model as proxy_models
 pub struct ContractGetArgs{
 pub mut:
 	active bool = true
+	twin_id u64
 }
 
 // Retrieves all contracts (active and inactive) on the selected grid network.
@@ -21,20 +22,19 @@ pub mut:
 // Example:
 //   contracts := cn.get_my_contracts()!
 pub fn (mut self TFDeployment) tfchain_contracts(args ContractGetArgs) ![]proxy_models.Contract {
-	net := self.resolve_network()
+	net := resolve_network()!
 	args2 := gridproxy.GridProxyClientArgs{
 		net: net
 		cache: true
-		twin_id: cn.client.deployer.twin_id
 	}
 
 	mut proxy := gridproxy.new(args2)!
 	if args.active{
-		return proxy.get_contracts_active() //TODO
+		return proxy.get_contracts_active(args.twin_id)
 	}else{
-		return proxy.get_contracts() //TODO
+		params := proxy_models.ContractFilter{twin_id: args.twin_id}
+		return proxy.get_contracts(params)
 	}
-	return contracts
 }
 
 // Resolves the correct grid network based on the `cn.network` value.
@@ -44,11 +44,11 @@ pub fn (mut self TFDeployment) tfchain_contracts(args ContractGetArgs) ![]proxy_
 //
 // Returns:
 //   - A `gridproxy.TFGridNet` value corresponding to the grid network.
-fn (self TFDeployment) resolve_network() gridproxy.TFGridNet {
-	return match cn.network {
-		.dev { gridproxy.TFGridNet.dev }
-		.qa { gridproxy.TFGridNet.qa }
-		.test { gridproxy.TFGridNet.test }
-		.main { gridproxy.TFGridNet.main }
-	}
+fn resolve_network() !gridproxy.TFGridNet {
+    mut cfg := get()!
+    return match cfg.network {
+        .dev { gridproxy.TFGridNet.dev }
+        .test { gridproxy.TFGridNet.test }
+        .main { gridproxy.TFGridNet.main }
+    }
 }

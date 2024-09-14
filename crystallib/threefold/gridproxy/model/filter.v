@@ -274,6 +274,7 @@ pub mut:
 	domain             OptionBool = EmptyOption{}
 	status             string
 	dedicated          OptionBool = EmptyOption{}
+	healthy          	 OptionBool = EmptyOption{}
 	rentable           OptionBool = EmptyOption{}
 	rented_by          OptionU64  = EmptyOption{}
 	rented             OptionBool = EmptyOption{}
@@ -396,6 +397,12 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 		EmptyOption {}
 		bool {
 			m['ipv6'] = p.ipv6.str()
+		}
+	}
+	match p.healthy {
+		EmptyOption {}
+		bool {
+			m['healthy'] = p.healthy.str()
 		}
 	}
 	match p.domain {
