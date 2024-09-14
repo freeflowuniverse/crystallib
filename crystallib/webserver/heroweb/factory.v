@@ -1,7 +1,7 @@
 module heroweb
 
 import veb
-
+import os
 // import freeflowuniverse.crystallib.core.texttools
 
 
@@ -46,7 +46,7 @@ pub fn example()! {
 		secret_key: 'secret'
 	}
 
-	app.mount_static_folder_at('/root/code/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static', '/static')!
+	app.mount_static_folder_at('${os.home_dir()}/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static', '/static')!
 
 	veb.run[App, Context](mut app, 8090)
 
