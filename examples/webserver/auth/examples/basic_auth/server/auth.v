@@ -1,59 +1,89 @@
 module main
 
-import vweb
+import veb
 import json
 import net.http
+import db.sqlite
 
-fn (mut app App) before_request() {
+pub struct App {
+	veb.StaticHandler
+mut:
+	db sqlite.DB
+}
+
+pub struct Context {
+	veb.Context
+}
+
+pub struct User {
+pub mut:
+	id       int
+	username string
+	password string
+}
+
+pub struct CustomResponse {
+	status  int
+	message string
+}
+
+pub fn (mut app App) before_request(mut ctx Context) bool {
 	basic_auth({
 		'Emad': '0000'
-	}, mut app) or { panic(err) }
+	}, mut ctx) or { panic(err) }
+	return true
 }
 
 @['/users'; post]
-fn (mut app App) register() vweb.Result {
-	// Register a new user into database
-	// to make sure that login function working well.
-	user := json.decode(User, app.req.data) or {
-		app.set_status(400, 'Bad Request')
-		er := CustomResponse{400, invalid_json}
-		return app.json(er.to_json())
+pub fn (mut app App) register(mut ctx Context) veb.Result {
+	user := json.decode(User, ctx.req.data) or {
+		ctx.set_status(400, 'Bad Request')
+		er := CustomResponse{400, 'Invalid JSON'}
+		return ctx.json(er)
 	}
-	// To make sure the username is unique.
-	user_found := sql app.db {
-		select from User where username == user.username
+
+	user_found := app.db.exec_param('SELECT * FROM User WHERE username = ?', user.username) or {
+		[]
 	}
 	if user_found.len > 0 {
-		app.set_status(400, 'Bad Request')
-		er := CustomResponse{400, user_unique}
-		return app.json(er.to_json())
+		ctx.set_status(400, 'Bad Request')
+		er := CustomResponse{400, 'Username must be unique'}
+		return ctx.json(er)
 	}
-	sql app.db {
-		insert user into User
-	}
-	new_id := app.db.last_id() as int
-	created := User{new_id, user.username, user.password}
-	app.set_status(201, 'created')
-	return app.json(created.to_json())
+
+	app.db.exec_param('INSERT INTO User (username, password) VALUES (?, ?)', user.username,
+		user.password) or { panic(err) }
+	new_id := app.db.last_insert_rowid()
+	created := User{int(new_id), user.username, user.password}
+	ctx.set_status(201, 'Created')
+	return ctx.json(created)
 }
 
 @['/users'; get]
-fn (mut app App) login() ?vweb.Result {
-	// To test basic_auth middleware, we need to check if the credentials are valid.
-	// Then we can make a condition on request based on this valid.
-	authorization := app.Context.req.header.get(http.CommonHeader.authorization)?
+pub fn (mut app App) login(mut ctx Context) veb.Result {
+	authorization := ctx.req.header.get(http.CommonHeader.authorization) or {
+		ctx.set_status(401, 'Unauthorized')
+		return ctx.json(CustomResponse{401, 'Authorization header missing'})
+	}
 	sig := decode(authorization)
-	fileds := sig.split(':')
-	username, password := fileds[0], fileds[1]
-	user_found := sql app.db {
-		select from User where username == username && password == password
+	fields := sig.split(':')
+	username, password := fields[0], fields[1]
+
+	user_found := app.db.exec_param('SELECT * FROM User WHERE username = ? AND password = ?',
+		username, password) or { [] }
+	if user_found.len == 0 {
+		ctx.set_status(404, 'Not Found')
+		er := CustomResponse{404, 'User not found'}
+		return ctx.json(er)
 	}
-	if user_found == [] {
-		app.set_status(404, 'Not Found')
-		er := CustomResponse{404, user_not_found}
-		return app.json(er.to_json())
+
+	ctx.set_status(200, 'Successfully Logged in')
+	return ctx.json(user_found[0])
+}
+
+fn main() {
+	mut app := App{
+		db: sqlite.connect('users.db')!
 	}
-	ret := json.encode(user_found)
-	app.set_status(200, 'Successfully Logged in')
-	return app.json(ret)
+	veb.run[App, Context](mut app, 8080)
 }
