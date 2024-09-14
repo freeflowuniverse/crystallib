@@ -7,6 +7,7 @@ pub struct User {
 pub mut:
 	name string
 	id   int
+    email string
 }
 
 pub struct Context {
