@@ -1,0 +1,36 @@
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 1rem;
+}
+.day {
+    border: 1px solid var(--pico-muted-border-color);
+    padding: 5px;
+    min-height: 130px;
+    overflow: hidden;
+}
+.day-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.event {
+    font-size: 0.8em;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.more-events {
+    font-size: 0.8em;
+    color: var(--pico-muted-color);
+}
+.month-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.month-nav h2 {
+    margin: 0;
+}
