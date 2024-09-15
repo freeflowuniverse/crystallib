@@ -18,9 +18,7 @@ pub fn scan(path_ string) ! {
 	mut plist := pathroot.list(
 		recursive:     true
 		ignoredefault: false
-		regex:         [
-			'\\.heroscript',
-		]
+		regex:['.heroscript']
 	)!
 
 	for mut p in plist.paths {
