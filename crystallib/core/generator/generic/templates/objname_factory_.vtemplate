@@ -17,17 +17,17 @@ pub mut:
     name string = "default"
 }
 
-fn args_get (args_ ArgsGet) ArgsGet {	
+fn args_get (args_ ArgsGet) ArgsGet {
 	mut args:=args_
 	if args.name == ""{
 		args.name = ${args.name}_default
 	}
 	if args.name == ""{
 		args.name = "default"
-	}	
+	}
 	return args
 }
- 
+
 pub fn get(args_ ArgsGet) !&${args.classname}  {
     mut args := args_get(args_)
 	if !(args.name in ${args.name}_global) {
@@ -71,5 +71,3 @@ fn set(o ${args.classname})! {
 	obj_init()!
 	${args.name}_global["default"] = &o
 }
-
-

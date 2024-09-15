@@ -1,4 +1,4 @@
-module installer
+module generic
 
 import os
 import freeflowuniverse.crystallib.core.pathlib
@@ -16,9 +16,9 @@ pub fn scan(path_ string) ! {
 	// now walk over all directories, find .heroscript
 	mut pathroot := pathlib.get_dir(path: path, create: false)!
 	mut plist := pathroot.list(
-		recursive: true
+		recursive:     true
 		ignoredefault: false
-		regex: [
+		regex:         [
 			'\\.heroscript',
 		]
 	)!
@@ -32,21 +32,27 @@ pub fn scan(path_ string) ! {
 
 pub struct GeneratorArgs {
 pub mut:
-	name                  string   @[required]
-	classname             string   @[required]
-	default               bool // means user can just get the object and a default will be created
-	title                 string
-	supported_platforms   []string
-	configure_interactive bool
-	singleton             bool // means there can only be one
-	templates             bool
-	reset                 bool // regenerate all, dangerous !!!
-	startupmanager        bool = true
-	build                 bool
+	name                string
+	classname           string
+	default             bool // means user can just get the object and a default will be created
+	title               string
+	supported_platforms []string // only relevant for installers for now
+	singleton           bool     // means there can only be one
+	templates           bool     // means we will use templates in the installer, client doesn't do this'
+	reset               bool     // regenerate all, dangerous !!!
+	startupmanager      bool = true
+	build               bool
+	cat                 Cat
+	path                string
 }
 
-pub fn generate(path string) ! {
-	console.print_debug('generate installer code for path: ${path}')
+pub enum Cat {
+	installer
+	client
+}
+
+pub fn play(path string) ! {
+	console.print_debug('play installer code for path: ${path}')
 
 	mut config_path := pathlib.get_file(path: '${path}/.heroscript', create: false)!
 
@@ -61,61 +67,84 @@ pub fn generate(path string) ! {
 		for install_action in install_actions {
 			mut p := install_action.params
 			mut args := GeneratorArgs{
-				name: p.get('name')!
-				classname: p.get('classname')!
-				title: p.get_default('title', '')!
-				default: p.get_default_true('default')
+				name:                p.get('name')!
+				classname:           p.get('classname')!
+				title:               p.get_default('title', '')!
+				default:             p.get_default_true('default')
 				supported_platforms: p.get_list('supported_platforms')!
+				singleton:           p.get_default_false('singleton')
+				templates:           p.get_default_false('templates')
+				reset:               p.get_default_false('reset')
+				startupmanager:      p.get_default_true('startupmanager')
+				build:               p.get_default_false('build')
+				cat:                 .installer
+				path:                path
+			}
+			generate_from_args(mut args)!
+		}
+	}
+
+	mut client_actions := plbook.find(filter: 'hero_code.generate_client')!
+	if client_actions.len > 0 {
+		for client_action in client_actions {
+			mut p := client_action.params
+			mut args := GeneratorArgs{
+				name:      p.get('name')!
+				classname: p.get('classname')!
+				title:     p.get_default('title', '')!
+				default:   p.get_default_true('default')
 				singleton: p.get_default_false('singleton')
-				templates: p.get_default_false('templates')
-				reset: p.get_default_false('reset')
-				startupmanager: p.get_default_true('startupmanager')
-				build: p.get_default_false('build')
+				reset:     p.get_default_false('reset')
+				cat:       .client
+				path:      path
 			}
+			generate_from_args(mut args)!
+		}
+	}
+}
 
-			mut path_actions := pathlib.get(path + '/${args.name}_actions.v')
-			if !path_actions.exists() || args.reset {
-				println('actions doesnt exists or reset = ${args.reset}')
-				mut templ_1 := $tmpl('templates/objname_actions.vtemplate')
-				pathlib.template_write(templ_1, '${path}/${args.name}_actions.v',
+pub fn generate_from_args(mut args GeneratorArgs) ! {
+	console.print_debug('generate code for path: ${args.path}')
+
+	if args.cat == .installer {
+		mut path_actions := pathlib.get(args.path + '/${args.name}_actions.v')
+		if !path_actions.exists() || args.reset {
+			println('actions doesnt exists or reset = ${args.reset}')
+			mut templ_1 := $tmpl('templates/objname_actions.vtemplate')
+			pathlib.template_write(templ_1, '${args.path}/${args.name}_actions.v', true)!
+		}
+
+		mut templ_2 := $tmpl('templates/objname_factory_.vtemplate')
+		pathlib.template_write(templ_2, '${args.path}/${args.name}_factory_.v', true)!
+
+		mut path_model := pathlib.get(args.path + '/${args.name}_model.v')
+		if args.reset || !path_model.exists() {
+			println('model doesnt exists or reset = ${args.reset}')
+			mut templ_3 := $tmpl('templates/objname_model.vtemplate')
+			pathlib.template_write(templ_3, '${args.path}/${args.name}_model.v', true)!
+		}
+
+		mut templ_4 := $tmpl('templates/objname_runner_.vtemplate')
+		pathlib.template_write(templ_4, '${args.path}/${args.name}_runner_.v', true)!
+
+		mut templ_5 := $tmpl('templates/readme.md')
+		pathlib.template_write(templ_5, '${args.path}/readme.md', true)!
+
+		if args.templates {
+			// create template dir
+			mut path_templ_dir := pathlib.get_dir(path: args.path + '/templates', create: false)!
+			if args.reset {
+				path_templ_dir.delete()!
+			}
+			// if true{
+			// 	println(path_templ_dir)
+			// 	println(path_templ_dir.exists())
+			// 	panic("sss")
+			// }
+			if !path_templ_dir.exists() {
+				mut templ_6 := $tmpl('templates/atemplate.yaml')
+				pathlib.template_write(templ_6, '${args.path}/templates/atemplate.yaml',
 					true)!
-			}
-
-			mut templ_2 := $tmpl('templates/objname_factory_.vtemplate')
-			pathlib.template_write(templ_2, '${path}/${args.name}_factory_.v',
-				true)!
-
-			mut path_model := pathlib.get(path + '/${args.name}_model.v')
-			if args.reset || !path_model.exists() {
-				println('model doesnt exists or reset = ${args.reset}')
-				mut templ_3 := $tmpl('templates/objname_model.vtemplate')
-				pathlib.template_write(templ_3, '${path}/${args.name}_model.v',
-					true)!
-			}
-
-			mut templ_4 := $tmpl('templates/objname_runner_.vtemplate')
-			pathlib.template_write(templ_4, '${path}/${args.name}_runner_.v',
-				true)!
-
-			mut templ_5 := $tmpl('templates/readme.md')
-			pathlib.template_write(templ_5, '${path}/readme.md', true)!
-
-			if args.templates {
-				// create template dir
-				mut path_templ_dir := pathlib.get_dir(path: path + '/templates', create: false)!
-				if args.reset {
-					path_templ_dir.delete()!
-				}
-				// if true{
-				// 	println(path_templ_dir)
-				// 	println(path_templ_dir.exists())
-				// 	panic("sss")
-				// }
-				if !path_templ_dir.exists() {
-					mut templ_6 := $tmpl('templates/atemplate.yaml')
-					pathlib.template_write(templ_6, '${path}/templates/atemplate.yaml',
-						true)!
-				}
 			}
 		}
 	}
