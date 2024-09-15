@@ -6,6 +6,9 @@
     title: 'ThreeFold: Reinventing the Internet'
     path: '/path/to/slides'
 
+!!slides.add_collection
+    name: 'mycollection'
+
 !!slides.add_slide
     name: 'threefold_intro_depin.png'
     title: 'Introduction to ThreeFold and DePIN'

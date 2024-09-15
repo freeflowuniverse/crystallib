@@ -30,8 +30,6 @@ pub fn (s SlidesViewData) get_slide(name string) ?Slide {
 	return none
 }
 
-
-
 fn play_slides(mut plbook playbook.PlayBook) !SlidesViewData {
     mut slides_data := SlidesViewData{}
     

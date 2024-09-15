@@ -1,0 +1,74 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "HeroScript",
+  "patterns": [
+    {
+      "include": "#actions"
+    },
+    {
+      "include": "#parameters"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#comments"
+    }
+  ],
+  "repository": {
+    "actions": {
+      "patterns": [
+        {
+          "match": "^(!!)([\\w]+)(\\.)([\\w]+)",
+          "captures": {
+            "1": { "name": "keyword.control.heroscript" },
+            "2": { "name": "entity.name.class.heroscript" },
+            "3": { "name": "keyword.operator.heroscript" },
+            "4": { "name": "entity.name.function.heroscript" }
+          }
+        }
+      ]
+    },
+    "parameters": {
+      "patterns": [
+        {
+          "match": "^\\s*(\\w+)\\s*:",
+          "captures": {
+            "1": { "name": "variable.parameter.heroscript" }
+          }
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.single.heroscript",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.heroscript",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.double.heroscript",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.heroscript",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "comments": {
+      "name": "comment.line.double-slash.heroscript",
+      "match": "//.*$"
+    }
+  },
+  "scopeName": "source.heroscript"
+}

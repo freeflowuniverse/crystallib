@@ -290,49 +290,49 @@ pub fn play_auth(mut plbook playbook.PlayBook) !WebDB {
         ) or { return error('Failed to add ACL: ${err}') }
     }
 
-    webdb_actions4 := plbook.find(filter: 'webdb.ace_add')!
-    for action in webdb_actions4 {
-        acl_name := action.params.get_default('acl', '')!
-        mut acl := db.acls[acl_name] or { return error('ACL ${acl_name} not found') }
-        acl.add(
-            group: action.params.get_default('group', '')!
-            user: action.params.get_default('user', '')?
-            right: RightEnum(action.params.get_default('right', '')
-        ) or { return error('Failed to add ACE: ${err}') }
+    // webdb_actions4 := plbook.find(filter: 'webdb.ace_add')!
+    // for action in webdb_actions4 {
+    //     acl_name := action.params.get_default('acl', '')!
+    //     mut acl := db.acls[acl_name] or { return error('ACL ${acl_name} not found') }
+    //     acl.add(
+    //         group: action.params.get_default('group', '')!
+    //         user: action.params.get_default('user', '')?
+    //         right: RightEnum(action.params.get_default('right', '')
+    //     ) or { return error('Failed to add ACE: ${err}') }
 
-    }
+    // }
 
-    webdb_actions5 := plbook.find(filter: 'webdb.infopointer_add')!
-    for action in webdb_actions5 {
-            db.infopointer_add(
-                name: action.params.get_default('name', '')!
-                path: action.params.get_default('path', '')!
-                acl: action.params.get_list('acl')!
-                description: action.params.get_default('description', '')?
-                expiration: action.params.get_default('expiration', '')?
-            ) or { return error('Failed to add InfoPointer: ${err}') }
-    }
+    // webdb_actions5 := plbook.find(filter: 'webdb.infopointer_add')!
+    // for action in webdb_actions5 {
+    //         db.infopointer_add(
+    //             name: action.params.get_default('name', '')!
+    //             path: action.params.get_default('path', '')!
+    //             acl: action.params.get_list('acl')!
+    //             description: action.params.get_default('description', '')!
+    //             expiration: action.params.get_default('expiration', '')!
+    //         ) or { return error('Failed to add InfoPointer: ${err}') }
+    // }
 
     return db
 }
 
-pub fn  model_auth_new(args_ ModelAuthNewArgs) !WebDB  {
-    mut db:=WebDB{}
-	mut args:=args_
-	if args.heroscript ==""{
-		args.heroscript = $tmpl("templates/example_slides.md")
-	}	
-	mut plbook := playbook.new(text: args.heroscript)!
-	mut db := play_auth(mut plbook)!
-    return 
-}
+// pub fn  model_auth_new(args_ ModelAuthNewArgs) !WebDB  {
+//     mut db:=WebDB{}
+// 	mut args:=args_
+// 	if args.heroscript ==""{
+// 		args.heroscript = $tmpl("templates/example_slides.md")
+// 	}	
+// 	mut plbook := playbook.new(text: args.heroscript)!
+// 	mut db := play_auth(mut plbook)!
+//     return db
+// }
 
-pub fn model_auth_demo()! {
+// pub fn model_auth_demo()! {
 	
-	// Create Slides instance and parse the input
-	mut db := model_auth_new()!
-    println(db)
+// 	// Create Slides instance and parse the input
+// 	mut db := model_auth_new()!
+//     println(db)
 
-    //TODO: implement the model_auth new
+//     //TODO: implement the model_auth new
 
-}
+// }
