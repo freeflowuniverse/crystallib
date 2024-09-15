@@ -229,7 +229,7 @@ docnav ul li {
     max-width: 40ch;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 500px) {
     nav {
         margin-top: 0rem;
     }

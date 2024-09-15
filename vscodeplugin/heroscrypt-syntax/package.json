@@ -1,0 +1,22 @@
+{
+    "name": "heroscript-syntax",
+    "displayName": "HeroScript Syntax",
+    "description": "Syntax highlighting for HeroScript",
+    "version": "0.0.1",
+    "engines": {
+      "vscode": "^1.60.0"
+    },
+    "contributes": {
+      "languages": [{
+        "id": "heroscript",
+        "aliases": ["HeroScript", "heroscript"],
+        "extensions": [".hero"],
+        "configuration": "./language-configuration.json"
+      }],
+      "grammars": [{
+        "language": "heroscript",
+        "scopeName": "source.heroscript",
+        "path": "./syntaxes/heroscript.tmLanguage.json"
+      }]
+    }
+  }

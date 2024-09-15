@@ -62,6 +62,11 @@ pub fn name_fix(name string) string {
 	return name2
 }
 
+pub fn name_fix_list(name string) []string {
+    name2 := name_fix_keepext(name)
+    return name2.split(',').map(it.trim_space()).map(name_fix(it))
+}
+
 // get name back keep extensions and underscores, but when end on .md then remove extension
 pub fn name_fix_no_md(name string) string {
 	name2 := name_fix_keepext(name)
