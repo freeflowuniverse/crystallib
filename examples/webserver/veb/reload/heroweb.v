@@ -1,5 +1,4 @@
-#!/usr/bin/env -S v -n -cg -w -enable-globals run
-
+module main
 
 import freeflowuniverse.crystallib.webserver.heroweb
 

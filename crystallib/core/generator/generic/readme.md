@@ -8,6 +8,9 @@ hero generate -p thepath_is_optional -t client
 #if installer, default is a client
 hero generate -p thepath_is_optional -t installer
 
+#when you want to scan over multiple directories
+hero generate -p thepath_is_optional -t installer -s 
+
 ```
 
 there will be a ```.heroscript``` in the director you want to generate for, the format is as follows:

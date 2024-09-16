@@ -13,7 +13,7 @@ import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.lang.crystallib
 import freeflowuniverse.crystallib.installers.lang.nodejs
 import freeflowuniverse.crystallib.installers.lang.python
-import freeflowuniverse.crystallib.installers.web.caddy
+//import freeflowuniverse.crystallib.installers.web.caddy
 import freeflowuniverse.crystallib.installers.hero.heroweb
 import freeflowuniverse.crystallib.installers.hero.herodev
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
@@ -105,7 +105,7 @@ pub fn install_multi(args_ InstallArgs) ! {
 				crystallib.hero_install(reset: args.reset)!
 			}
 			'caddy' {
-				caddy.install(reset: args.reset)!
+				//caddy.install(reset: args.reset)!
 				// caddy.configure_examples()!
 			}
 			'chrome' {
@@ -145,9 +145,9 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'herodev' {
 				herodev.install()!
 			}
-			'heroweb' {
-				heroweb.install()!
-			}
+			// 'heroweb' {
+			// 	heroweb.install()!
+			// }
 			'dagu' {
 				// will call the installer underneith
 				mut dserver := daguserver.get()!

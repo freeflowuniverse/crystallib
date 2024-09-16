@@ -4,9 +4,6 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.clients.httpconnection
-import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.osal.zinit
 
 @if args.build
 import freeflowuniverse.crystallib.installers
@@ -37,6 +34,7 @@ fn installed() !bool {
 
 fn install() ! {
 	console.print_header('install ${args.name}')
+	mut installer := get()!
 	//THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
 	// mut url := ''
 	// if osal.is_linux_arm() {
@@ -68,7 +66,7 @@ fn install() ! {
 
 @if args.build
 fn build() ! {
-
+	mut installer := get()!
 	url := 'https://github.com/threefoldtech/${args.name}'
 
 	// make sure we install base on the node
@@ -93,13 +91,14 @@ fn build() ! {
 
 //get the Upload List of the files
 fn ulist() ?installers.UList {
+	mut installer := get()!
 	//optionally build a UList which is all paths which are result of building, is then used e.g. in upload
 }
 
 
 //uploads to S3 server if configured
 fn upload() ! {
-
+	mut installer := get()!
 	// installers.upload(
 	// 	cmdname: '${args.name}'
 	// 	source: '??{gitpath}/target/x86_64-unknown-linux-musl/release/${args.name}'
@@ -126,25 +125,11 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
 }
 @end
 
-//user needs to us switch to make sure we get the right object
-fn configure() ! {
-	mut cfg := get()! 
-	//THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED
-@if args.templates
-	// mut mycode := ??tmpl('templates/atemplate.yaml')
-	// mut path := pathlib.get_file(path: cfg.configpath, create: true)!
-	// path.write(mycode)!
-	// console.print_debug(mycode)
-@else
-@end
-	//implement if steps need to be done for configuration
-}
-
 
 
 
 fn running() !bool {
-	mut cfg := get()!
+	mut installer := get()!
 
 	//THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
 	
@@ -169,8 +154,27 @@ fn running() !bool {
 
 
 
+fn start_pre()!{
+	
+}
+
+fn start_post()!{
+	
+}
+
+fn stop_pre()!{
+	
+}
+
+fn stop_post()!{
+	
+}
+
+
+
 fn destroy() ! {
-	//THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
+	mut installer := get()!	
+	//THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED
 	// cmd:="
 	// 	systemctl disable ${args.name}_scheduler.service
 	// 	systemctl disable ${args.name}.service
@@ -186,27 +190,5 @@ fn destroy() ! {
 	// 	"
 	
 	// osal.exec(cmd: cmd, stdout:true, debug: false)!
-}
-
-
-fn obj_init()!{
-
-}
-
-
-fn start_pre()!{
-	
-}
-
-fn start_post()!{
-	
-}
-
-fn stop_pre()!{
-	
-}
-
-fn stop_post()!{
-	
 }
 

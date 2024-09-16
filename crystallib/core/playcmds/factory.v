@@ -20,7 +20,7 @@ pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
 	play_git(mut plbook)!
 	play_zola(mut plbook)!
 	play_dagu(mut plbook)!
-	play_caddy(mut plbook)!
+	//play_caddy(mut plbook)!
 	play_juggler(mut plbook)!
 	play_luadns(mut plbook)!
 	hetzner.heroplay(mut plbook)!

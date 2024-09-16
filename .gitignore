@@ -20,3 +20,4 @@ zdb-index
 .venv/
 .trunk/
 .DS_Store
+.venv/
