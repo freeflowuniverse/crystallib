@@ -1,6 +1,6 @@
-#!/usr/bin/env -S v -n -cg -w -enable-globals run
+#!/usr/bin/env -S v -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import freeflowuniverse.crystallib.servers.daguserver
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
 //will call the installer underneith
 

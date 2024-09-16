@@ -21,3 +21,4 @@ if ! [[ ${OSTYPE} == "linux-gnu"* ]]; then
     open docs/index.html
 fi
 
+echo "DOC DONE"

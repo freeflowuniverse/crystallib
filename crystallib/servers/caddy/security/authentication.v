@@ -3,7 +3,6 @@ module security
 import os
 import freeflowuniverse.crystallib.core.pathlib
 
-
 // [params]
 // pub struct AuthenticationPortalParams {
 // 	UIConfigParams
@@ -18,7 +17,7 @@ import freeflowuniverse.crystallib.core.pathlib
 // 		ui: ui_config(portal.ui, params.UIConfigParams)
 // 		enable_identity_providers: ['generic']
 // 		cookie_domain: config.cookie_domain
-		
+
 // 	}
 // }
 
@@ -46,7 +45,6 @@ import freeflowuniverse.crystallib.core.pathlib
 // 		role: role
 // 	}
 // }
-
 
 fn export_login_template(path string) ! {
 	mut file := pathlib.get_file(path: path, create: true)!

@@ -52,3 +52,37 @@ function is_zinit_installed {
 }
 
 
+
+
+myplatformid() {
+    local arch=$(uname -m)
+    local os=$(uname -s)
+
+    case "$os" in
+        Linux*)
+            case "$arch" in
+                aarch64|arm64) echo "linux-arm64" ;;
+                x86_64) echo "linux-i64" ;;
+                *) echo "unknown" ;;
+            esac
+            ;;
+        Darwin*)
+            case "$arch" in
+                arm64) echo "macos-arm64" ;;
+                x86_64) echo "macos-i64" ;;
+                *) echo "unknown" ;;
+            esac
+            ;;
+        *)
+            echo "unknown"
+            ;;
+    esac
+}
+
+
+export MYPLATFORMID=$(myplatformid)
+
+if [ "$MYPLATFORMID" == "unknown" ]; then
+    echo "Error: Unable to detect platform" >&2
+    exit 1
+fi

@@ -177,7 +177,7 @@ pub fn (mut dl Deployment) add_metadata(type_ string, project_name string) {
 	mut data := DeploymentData{
 		type_: type_
 		name: project_name
-		project_name: project_name
+		project_name: "${type_}/${project_name}" // To be listed in the dashboard.
 	}
 	dl.metadata = data.json_encode()
 }

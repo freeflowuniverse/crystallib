@@ -11,6 +11,7 @@ pub mut:
 	reset          bool = true
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
+	production     bool = true
 }
 
 // export all collections to chosen directory .
@@ -24,19 +25,23 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 
 	tree.process_macros()!
 
-	console.print_header("EXPORT DEBUG")
+	console.print_header('EXPORT DEBUG')
 
 	// mut c:=tree.collections['tfgridsimulation_farming'] or {panic("aaaa")}
 	// mut p:=c.pages['node_1u'] or {panic("qqqq")}
 	// println(p.doc()!)
 	// if true{panic("sdsd")}
 
-	mut path_src := pathlib.get_dir(path: '${args.dest}/src', create: true)!
-	mut path_edit := pathlib.get_dir(path: '${args.dest}/edit', create: true)!
+	mut path_src := pathlib.get_dir(path: '${args.dest}', create: true)!
+	mut path_edit := pathlib.get_dir(path: '${args.dest}/.edit', create: true)!
+	if !args.production {
+		if args.reset {
+			path_edit.empty()!
+		}
+	}
 
 	if args.reset {
 		path_src.empty()!
-		path_edit.empty()!
 	}
 
 	for name, mut collection in tree.collections {
@@ -44,7 +49,9 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		console.print_green('export collection: name:${name}')
 		dir_src := pathlib.get_dir(path: path_src.path + '/' + name, create: true)!
 
-		collection.path.link('${path_edit.path}/${name}', true)!
+		if !args.production {
+			collection.path.link('${path_edit.path}/${name}', true)!
+		}
 
 		mut cfile := pathlib.get_file(path: dir_src.path + '/.collection', create: true)! // will auto safe it
 		cfile.write("name:${name} src:'${collection.path.path}'")!
@@ -56,6 +63,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 			} else {
 				'${dir_src.path}/${page.name}.md'
 			}
+			console.print_debug('export page ${page.name} to ${dest}')
 			mut mydoc := page.export(dest: dest)!
 			for linked_page in mydoc.linked_pages {
 				if linked_page !in collection_linked_pages {
@@ -66,6 +74,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 
 		for _, mut file in collection.files {
 			mut d := '${dir_src.path}/img/${file.name}.${file.ext}'
+			console.print_debug('export file ${d}')
 			if args.reset || !os.exists(d) {
 				file.copy(d)!
 			}
@@ -74,6 +83,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		for _, mut file in collection.images {
 			mut d := '${dir_src.path}/img/${file.name}.${file.ext}'
 			if args.reset || !os.exists(d) {
+				console.print_debug('export image ${d}')
 				file.copy(d)!
 			}
 		}

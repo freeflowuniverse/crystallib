@@ -74,12 +74,9 @@ pub fn (mut j Juggler) trigger(mut ctx Context) veb.Result {
 		}
 		play.id = j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
 
-		j.run_play(play) or {
-			ctx.server_error('failed to run play ${play.id}')
-		}
+		j.run_play(play) or { ctx.server_error('failed to run play ${play.id}') }
 		response += '\n- Play ${play.id}: https://juggler.protocol.me/play/${play.id}'
 	}
-
 
 	return ctx.text(response)
 }
@@ -131,18 +128,14 @@ pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 		name: 'Custom push'
 		description: 'Trigger to customly play event'
 		script_ids: [id.u32()]
-	}) or {
-		return ctx.server_error('Failed to create trigger')	
-	}
+	}) or { return ctx.server_error('Failed to create trigger') }
 
 	event_id := j.backend.new[Event](Event{
 		subject: 'admin'
 		object_id: id.u32()
 		action: .manual
 		time: time.now()
-	}) or {
-		return ctx.server_error('Failed to create event')	
-	}
+	}) or { return ctx.server_error('Failed to create event') }
 
 	mut play := Play{
 		event_id: event_id
@@ -154,34 +147,39 @@ pub fn (mut j Juggler) script_play(mut ctx Context, id string) veb.Result {
 
 	play.id = j.backend.new[Play](play) or { panic('this shouldnt happen ${err}') }
 
-	j.run_play(play) or {
-		ctx.server_error('failed to run play ${play.id}')
-	}
-	
-	return ctx.redirect('/play/${play.id}')	
+	j.run_play(play) or { ctx.server_error('failed to run play ${play.id}') }
+
+	return ctx.redirect('/play/${play.id}')
 }
 
 pub fn (mut j Juggler) run_play(play Play) ! {
 	mut script := j.backend.get[Script](play.script_id) or {
 		return error('script with id <${play.script_id}> not found')
 	}
-	
+
 	command := match script.category {
-		.hero { 'hero run -cr ${os.home_dir()}/code -p ${script.path}' }
-		.shell {'/bin/bash -c \'for script in ${script.path}/*.sh; do bash "\$script"; done\''}
+		.hero {
+			'hero run -cr ${os.home_dir()}/code -p ${script.path}'
+		}
+		.shell {
+			'/bin/bash -c \'for script in ${script.path}/*.sh; do bash "\$script"; done\''
+		}
 		.hybrid {
 			'hero run -cr ${os.home_dir()}/code -p ${script.path}\nfor script in ${script.path}/*.sh; do bash "\$script"; done'
 		}
-		else {panic('implement')}
-	} 
+		else {
+			panic('implement')
+		}
+	}
 	mut sm := startupmanager.get() or { panic('failed to get sm ${err}') }
-	sm.start(
+	sm.new(
 		name: 'juggler_play${play.id}'
 		cmd: command
 		env: {
 			'HOME': os.home_dir()
 		}
 		restart: false
+		start: true
 	) or { panic('failed to start sm ${err}') }
 }
 
@@ -237,22 +235,31 @@ pub fn (mut j Juggler) play(mut ctx Context, id string) veb.Result {
 		return ctx.server_error('event with id <${play.event_id}> not found')
 	}
 
-	event_subject := if event.commit.committer != '' {event.commit.committer} else {event.subject}
-	event_object_name := if event.commit.hash.len > 0 {event.commit.hash[event.commit.hash.len-7..]} else {'undefined'}
+	event_subject := if event.commit.committer != '' {
+		event.commit.committer
+	} else {
+		event.subject
+	}
+	event_object_name := if event.commit.hash.len > 0 {
+		event.commit.hash[event.commit.hash.len - 7..]
+	} else {
+		'undefined'
+	}
 	event_action := match event.action {
 		.manual {
 			'manually triggered'
-		} else {
+		}
+		else {
 			'pushed'
 		}
 	}
 
 	repository := j.backend.get[Repository](event.object_id) or {
 		Repository{
-			name:''
-			owner:'null'
-			host:'null'
-			branch:'null'
+			name: ''
+			owner: 'null'
+			host: 'null'
+			branch: 'null'
 		}
 		// return ctx.server_error('repo with id <${event.object_id}> not found')
 	}

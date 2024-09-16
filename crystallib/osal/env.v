@@ -62,19 +62,19 @@ pub fn env_get_default(key string, def string) string {
 }
 
 pub fn load_env_file(file_path string) ! {
-    mut file := pathlib.get_file(path: file_path)!
+	mut file := pathlib.get_file(path: file_path)!
 	content := file.read()!
-    lines := content.split_into_lines()
-    for line in lines {
-        if line.len == 0 || line[0] == `#` {
-            continue
-        }
+	lines := content.split_into_lines()
+	for line in lines {
+		if line.len == 0 || line[0] == `#` {
+			continue
+		}
 		if !line.contains('=') {
 			continue
 		}
-        parts := line.split('=')
-        key := line.all_before('=').trim_space()
-        value := line.all_after('=').trim_space()
-        os.setenv(key, value, true)
-    }
+		parts := line.split('=')
+		key := line.all_before('=').trim_space()
+		value := line.all_after('=').trim_space()
+		os.setenv(key, value, true)
+	}
 }

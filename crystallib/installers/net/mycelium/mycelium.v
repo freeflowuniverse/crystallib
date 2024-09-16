@@ -14,7 +14,7 @@ import json
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset bool
+	reset   bool
 	restart bool = true
 }
 
@@ -39,7 +39,7 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-	if  check()==false{
+	if check() == false {
 		args.reset = true
 	}
 
@@ -58,7 +58,7 @@ pub fn install(args_ InstallArgs) ! {
 		} else {
 			return error('unsported platform')
 		}
-		//console.print_debug(url)
+		// console.print_debug(url)
 		mut dest := osal.download(
 			url: url
 			minsize_kb: 1000
@@ -68,14 +68,14 @@ pub fn install(args_ InstallArgs) ! {
 
 		mut myceliumfile := dest.file_get('mycelium')! // file in the dest
 
-		//console.print_debug(myceliumfile.str())
+		// console.print_debug(myceliumfile.str())
 
 		osal.cmd_add(
 			source: myceliumfile.path
 		)!
-	} 
-	
-	if args.restart{
+	}
+
+	if args.restart {
 		stop()!
 	}
 	start()!
@@ -102,8 +102,8 @@ pub fn stop() ! {
 }
 
 pub fn start(args InstallArgs) ! {
-	if check(){
-		//console.print_header('mycelium was already running')
+	if check() {
+		// console.print_header('mycelium was already running')
 		return
 	}
 	myinitname := osal.initname()!
@@ -145,9 +145,10 @@ pub fn start(args InstallArgs) ! {
 		s.attach()! // to allow filling in passwd		
 	} else {
 		mut sm := startupmanager.get()!
-		sm.start(
+		sm.new(
 			name: name
 			cmd: cmd
+			start: true
 		)!
 	}
 
@@ -175,13 +176,13 @@ pub fn check() bool {
 	// 	return false
 	// }
 
-	//TODO: might be dangerous if that one goes out
-	ping_result:= osal.ping(address:"40a:152c:b85b:9646:5b71:d03a:eb27:2462",retry:3)
-	if ping_result == .ok{
-		console.print_debug("could reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462")
+	// TODO: might be dangerous if that one goes out
+	ping_result := osal.ping(address: '40a:152c:b85b:9646:5b71:d03a:eb27:2462', retry: 3)
+	if ping_result == .ok {
+		console.print_debug('could reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462')
 		return true
 	}
-	console.print_stderr("could not reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462")
+	console.print_stderr('could not reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462')
 	return false
 }
 
@@ -211,26 +212,25 @@ pub fn build() ! {
 	}
 }
 
-
 struct MyceliumInspectResult {
 	public_key string @[json: publicKey]
 	address    string
 }
 
-pub fn inspect()!MyceliumInspectResult{
+pub fn inspect() !MyceliumInspectResult {
 	command := 'mycelium inspect --key-file /root/hero/cfg/priv_key.bin --json'
 	result := os.execute(command)
 	if result.exit_code != 0 {
-		return error("Command failed: ${result.output}")
+		return error('Command failed: ${result.output}')
 	}
 	inspect_result := json.decode(MyceliumInspectResult, result.output) or {
-		return error('Failed to parse JSON: $err')
+		return error('Failed to parse JSON: ${err}')
 	}
 	return inspect_result
 }
 
-//if returns empty then probably mycelium is not installed
-pub fn ipaddr()string{
-	r:=inspect() or {MyceliumInspectResult{}}
+// if returns empty then probably mycelium is not installed
+pub fn ipaddr() string {
+	r := inspect() or { MyceliumInspectResult{} }
 	return r.address
 }

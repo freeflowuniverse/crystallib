@@ -1,7 +1,7 @@
 
 function freeflow_dev_env_install {
 
-    set -e
+    set -ex
 
     crystal_lib_get
 
@@ -10,8 +10,10 @@ function freeflow_dev_env_install {
     fi
     if ! [ -x "$(command -v redis-cli)" ]; then
         echo "CANNOT FIND REDIS-SERVER"
-        exit 1
+    exit 1
     fi
+
+    #~/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 
     local response=$(redis-cli PING)
 

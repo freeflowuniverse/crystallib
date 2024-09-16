@@ -11,15 +11,15 @@ import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 @[heap]
 pub struct Simulator {
 pub mut:
-	name   	string
-	sheet  	&spreadsheet.Sheet
-	args SimulatorArgs
-	params 	Params
+	name               string
+	sheet              &spreadsheet.Sheet
+	args               SimulatorArgs
+	params             Params
 	nrmonths           int = 6 * 12
 	regional_internets map[string]&RegionalInternet
 	node_templates     map[string]&NodeTemplate
 	components         map[string]&Component
-	//params             Params
+	// params             Params
 }
 
 pub fn (mut s Simulator) regionalinternet_get(name_ string) !&RegionalInternet {

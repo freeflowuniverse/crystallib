@@ -1,30 +1,28 @@
 module zinit
 
-import os
-import freeflowuniverse.crystallib.osal
-
 pub fn (mut zp ZProcess) load() ! {
 	zp.status()!
+	mut zinitobj := new()!
 
-	if !zp.zinit.path.file_exists(zp.name + '.yaml') {
+	if !zinitobj.path.file_exists(zp.name + '.yaml') {
 		$if debug {
 			print_backtrace()
 		}
 		return error('there should be a file ${zp.name}.yaml in /etc/zinit')
 	}
 
-	if zp.zinit.pathcmds.file_exists(zp.name) {
+	if zinitobj.pathcmds.file_exists(zp.name) {
 		// means we can load the special cmd
-		mut pathcmd := zp.zinit.pathcmds.file_get(zp.name)!
+		mut pathcmd := zinitobj.pathcmds.file_get(zp.name)!
 		zp.cmd = pathcmd.read()!
 	}
-	if zp.zinit.pathtests.file_exists(zp.name) {
+	if zinitobj.pathtests.file_exists(zp.name) {
 		// means we can load the special cmd
-		mut pathtest := zp.zinit.path.file_get(zp.name)!
+		mut pathtest := zinitobj.path.file_get(zp.name)!
 		zp.test = pathtest.read()!
 	}
 
-	mut pathyaml := zp.zinit.path.file_get_new(zp.name + '.yaml')!
+	mut pathyaml := zinitobj.path.file_get_new(zp.name + '.yaml')!
 	contentyaml := pathyaml.read()!
 
 	// the parsing of the file is needed to find the info which we can't get from the zinit daemon
@@ -51,7 +49,9 @@ pub fn (mut zp ZProcess) load() ! {
 			} else {
 				line.trim_space().starts_with('-')
 				{
-					_, after := line.split_once('-') or { panic('bug') }
+					_, after := line.split_once('-') or {
+						panic('bug in ${pathyaml} for line ${line}')
+					}
 					zp.after << after.to_lower().trim_space()
 				}
 			}
@@ -62,8 +62,10 @@ pub fn (mut zp ZProcess) load() ! {
 			} else {
 				line.contains('=')
 				{
-					key, val := line.split_once('=') or { panic('bug') }
-					zp.env[key.trim_space()] = val.trim_space()
+					key, val := line.split_once(':') or {
+						panic('bug in ${pathyaml} for line ${line} for env')
+					}
+					zp.env[key.trim(' \'"')] = val.trim(' \'"')
 				}
 			}
 		}

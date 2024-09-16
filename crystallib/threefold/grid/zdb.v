@@ -2,19 +2,19 @@ module grid
 
 import freeflowuniverse.crystallib.clients.redisclient
 
-struct ZDBSpecs{
+struct ZDBSpecs {
 	deployment_name string
-	nodeid string
-	namespace string
-	secret string
+	nodeid          string
+	namespace       string
+	secret          string
 }
 
-struct ZDBDeployed{
-	nodeid string
-	namespace string
-	secret string
+struct ZDBDeployed {
+	nodeid       string
+	namespace    string
+	secret       string
 	yggdrasil_ip string
-	mycelium_ip string
+	mycelium_ip  string
 }
 
 // //only connect to yggdrasil and mycelium
@@ -47,7 +47,7 @@ struct ZDBDeployed{
 // 	}
 
 // 	mut deployment := models.new_deployment(
-// 		// twin_id: 
+// 		// twin_id:
 // 		workloads: [machine.to_workload()]
 // 		metadata: models.DeploymentData{
 // 			name: args.deployment_name
@@ -73,8 +73,7 @@ struct ZDBDeployed{
 // 	return vm_deployed
 // }
 
-
-//test zdb is answering
+// test zdb is answering
 pub fn (zdb ZDBDeployed) ping() bool {
 	panic('implement')
 }

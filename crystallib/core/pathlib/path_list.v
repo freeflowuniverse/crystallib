@@ -133,7 +133,7 @@ fn (mut path Path) list_internal(args ListArgsInternal) ![]Path {
 			}
 		}
 		if addthefile && !args.dirs_only {
-			if (!args.files_only || new_path.is_file()) {
+			if !args.files_only || new_path.is_file() {
 				all_list << new_path
 			}
 		}

@@ -15,12 +15,13 @@ pub fn (mut j Juggler) start() ! {
 
 	mut sm := startupmanager.get()!
 
-	sm.start(
+	sm.new(
 		name: 'juggler'
 		cmd: cmd
 		env: {
 			'HOME': os.home_dir()
 		}
+		start: true
 	)!
 }
 

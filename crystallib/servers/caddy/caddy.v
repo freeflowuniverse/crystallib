@@ -38,9 +38,10 @@ pub fn (mut self Caddy[Config]) start() ! {
 
 	mut sm := startupmanager.get()!
 
-	sm.start(
+	sm.new(
 		name: 'caddy'
 		cmd: cmd
+		start: true
 	)!
 }
 
@@ -54,4 +55,3 @@ pub fn (mut self Caddy[Config]) set_caddyfile(file CaddyFile) ! {
 	mut cfg := self.config()!
 	cfg.file = file
 }
-

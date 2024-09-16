@@ -101,6 +101,7 @@ pub mut:
 	id           string
 	ip           string
 	planetary_ip string
+	mycelium_ip  string
 	console_url  string
 }
 

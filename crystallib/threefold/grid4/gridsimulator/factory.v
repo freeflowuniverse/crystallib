@@ -23,11 +23,11 @@ pub mut:
 @[params]
 pub struct SimulatorArgs {
 pub mut:
-	name          string = 'default' // name of simulation
-	path          string
-	git_url       string
-	git_reset     bool
-	git_pull      bool
+	name      string = 'default' // name of simulation
+	path      string
+	git_url   string
+	git_reset bool
+	git_pull  bool
 }
 
 pub fn new(args_ SimulatorArgs) !Simulator {
@@ -86,7 +86,6 @@ pub fn simulator_set(sim Simulator) {
 // load the mdbook content from path or git
 pub fn (mut self Simulator) load() ! {
 	console.print_header('GRID SIMULATOR LOAD ${self.params.name}')
-	
 
 	mut plbook := playbook.new(path: self.params.path)!
 

@@ -1,6 +1,6 @@
 # KnowledgeTree
 
-this tool can be seen like a pre-processor for collections of markdown docs which 
+this tool can be seen like a pre-processor for collections of markdown docs which
 
 - fixes links
 - re-sizes images
@@ -37,24 +37,40 @@ in this file there can be ```name = 'mycollectionname' ``` if you want to specif
 ## Example
 
 ```v
-import freeflowuniverse.crystallib.data.knowledgetree
+import freeflowuniverse.crystallib.data.doctree
 
-mut tree:=knowledgetree.tree_get(cid:"abc",name:"test")!
+mut tree:=doctree.new(name:"test")!
 
-//the next scan operation will pull information from git and process
-tree.scan(
-	heal:true
-	git_url:'https://git.ourworld.tf/threefold_coop/info_threefold_coop/src/branch/main/collections'
-	git_root:'/tmp/code'
-	git_pull:true
-)!
+// path      string
+// heal      bool = true // healing means we fix images
+// git_url   string
+// git_reset bool
+// git_root  string
+// git_pull  bool
+// load      bool = true // means we scan automatically the added collection
+for project in 'projectinca, legal, why, web4,tfgrid3,companies'.split(',').map(it.trim_space()) {
+	tree.scan(
+		git_url:  'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/collections/${project}'
+		git_pull: false
+	)!
+}
 
-//will scan all collections (each dir which has  .collection file inside is a collection)
-tree.scan("/data/mybooks/collections")! 
+tree.export(dest:"/tmp/test",reset:true,keep_structure:true,exclude_errors:false,production:true)!
+
+
+```
+
+## heroscript example
+
+A good example how to use hero
+
+> see https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/heroscript/exporter/run.sh
 
 
 
 ```
+```
+
 
 ## what are the features of the healing (fixing)
 
@@ -93,26 +109,3 @@ it might be following is needed on OSX
 ```bash
 ulimit -n 1024
 ```
-
-
-## TODO: lets finish this module
-
-Hi Mario, Ashraf,
-
-The documentation is now better should be easier to make the tool work as intented, no need to do anything with mdbook in here, that will be at the end.
-
-> todo: crystallib/data/doctree/fix_test.v can you do this file with tests, its important one
-
-note how we copy the originals back so we can do the test many times
-
-check on following
-
-- errors.md file is created and has the errors
-- the links are properly repaired
-- the images are properly repaired (you will have to put 1 png in original dir, then check it becomes jpeg and link changed)
-- the markdown output is ok
-
-once we have this module working properly then generating mdbook out of it, is super easy, is last step.
-
-
-

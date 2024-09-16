@@ -1,0 +1,49 @@
+.kanban-board {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem;
+}
+.swimlane {
+    flex: 1;
+    min-width: 250px;
+    border-radius: 8px;
+    padding: 1rem;
+}
+.swimlane h3 {
+    margin-top: 0;
+}
+.event-card {
+    background-color: white;
+    border-radius: 4px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    /* box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); */
+}
+.event-card h4 {
+    margin: 0 0 0.5rem 0;
+}
+.event-meta {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+.event-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+.label {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.3rem;
+    border-radius: 1px;
+    background-color: #e0e0e0;
+}
+.priority-High { border-left: 3px solid red; }
+.priority-Medium { border-left: 3px solid orange; }
+.priority-Low { border-left: 3px solid green; }
+.color-red { background-color: #ffcccb; }
+.color-green { background-color: #90ee90; }
+.color-yellow { background-color: #ffffe0; }
+.color-orange { background-color: #ffd580; }
+.color-blue { background-color: #add8e6; }
+.color-purple { background-color: #e6e6fa; }

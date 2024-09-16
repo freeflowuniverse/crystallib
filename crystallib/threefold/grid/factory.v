@@ -62,7 +62,7 @@ pub fn (mut self TFGridClient[Config]) config_interactive() ! {
 
 	cfg.network = myui.ask_dropdown(
 		question: 'choose environment'
-		items: grid.envs.values()
+		items: envs.values()
 	)!
 
 	self.config_save()!

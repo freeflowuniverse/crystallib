@@ -146,7 +146,7 @@ pub fn (mut shelve Shelve) add(mut path pathlib.Path) !Item {
 	}
 	newname := item_new.name_nr()
 	mut dest := pathlib.get_no_check('${shelve.path.path}/.vault/${newname}')
-	//console.print_debug('------ ${dest}')
+	// console.print_debug('------ ${dest}')
 	path.copy(dest: dest.path)!
 	shelve.items << item_new
 	shelve.changed = true

@@ -2,20 +2,30 @@
 function os_update {
     echo ' - os update'
     if [[ "${OSNAME}" == "ubuntu" ]]; then
-        rm -f /var/lib/apt/lists/lock
-        rm -f /var/cache/apt/archives/lock
-        rm -f /var/lib/dpkg/lock*		
+        if is_github_actions; then
+            echo "github actions"
+        else
+            rm -f /var/lib/apt/lists/lock
+            rm -f /var/cache/apt/archives/lock
+            rm -f /var/lib/dpkg/lock*		
+        fi    
         export TERM=xterm
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
         apt update -y
-        set +e
-        apt-mark hold grub-efi-amd64-signed
-        set -e
-        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release binutils wget pkg-config"
+        if is_github_actions; then
+            echo "** IN GITHUB ACTIONS, DON'T DO UPDATE"
+        else
+            set +e
+            echo "** UPDATE"
+            apt-mark hold grub-efi-amd64-signed
+            set -e
+            apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+            apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        fi 
+        #apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        package_install "apt-transport-https ca-certificates curl wget software-properties-common tmux"
+        package_install "rclone rsync mc redis-server screen net-tools git htop ca-certificates lsb-release binutils pkg-config"
 
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
@@ -26,16 +36,16 @@ function os_update {
             unset NONINTERACTIVE
         fi
         set +e
-        brew install mc redis curl tmux screen htop wget
+        brew install mc redis curl tmux screen htop wget rclone
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
-        apk add mc curl rsync htop redis bash bash-completion screen git
+        apk add mc curl rsync htop redis bash bash-completion screen git rclone
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm arch-install-scripts gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen
+        pacman -Su --noconfirm arch-install-scripts gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen rclone
 
         # Check if builduser exists, create if not
         if ! id -u builduser > /dev/null 2>&1; then
@@ -48,6 +58,7 @@ function os_update {
             execute_with_marker "paru_install" paru_install
         fi
     fi
+    echo 'os_update done'
 }
 
 function paru_install {

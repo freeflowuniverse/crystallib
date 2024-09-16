@@ -42,6 +42,8 @@ mkdir -p $DIR_BUILD
 mkdir -p $DIR_BIN
 mkdir -p $DIR_SCRIPTS
 
+echo "DIRCODE: ${DIR_CODE}"
+
 
 pathmunge () {
     if ! echo "$PATH" | grep -Eq "(^|:)$1($|:)" ; then
@@ -95,6 +97,26 @@ function execute_with_marker {
     fi
 }
 
+
+is_github_actions() {
+    [ -d "/home/runner" ] || [ -d "$HOME/runner" ]
+}
+
+set -x
+if [ -n "$SUDO_USER" ]; then
+    export HOME_SUDO=$(eval echo "~$SUDO_USER")
+    SECRET_FILE="${HOME_SUDO}/mysecrets.sh"
+    if [ -f "$SECRET_FILE" ]; then
+        echo 'get secrets for sudoer'
+        source "$SECRET_FILE"
+    fi
+fi
+
+SECRET_FILE2="${HOME}/mysecrets.sh"
+if [ -f "$SECRET_FILE2" ]; then
+    echo 'get secrets for home user'
+    source "$SECRET_FILE2"
+fi
 
 
 function myplatform {
@@ -150,6 +172,40 @@ function is_zinit_installed {
 }
 
 
+
+
+myplatformid() {
+    local arch=$(uname -m)
+    local os=$(uname -s)
+
+    case "$os" in
+        Linux*)
+            case "$arch" in
+                aarch64|arm64) echo "linux-arm64" ;;
+                x86_64) echo "linux-i64" ;;
+                *) echo "unknown" ;;
+            esac
+            ;;
+        Darwin*)
+            case "$arch" in
+                arm64) echo "macos-arm64" ;;
+                x86_64) echo "macos-i64" ;;
+                *) echo "unknown" ;;
+            esac
+            ;;
+        *)
+            echo "unknown"
+            ;;
+    esac
+}
+
+
+export MYPLATFORMID=$(myplatformid)
+
+if [ "$MYPLATFORMID" == "unknown" ]; then
+    echo "Error: Unable to detect platform" >&2
+    exit 1
+fi
 
 function gitcheck {
     # Check if Git email is set
@@ -470,20 +526,30 @@ function zinitinit {
 function os_update {
     echo ' - os update'
     if [[ "${OSNAME}" == "ubuntu" ]]; then
-        rm -f /var/lib/apt/lists/lock
-        rm -f /var/cache/apt/archives/lock
-        rm -f /var/lib/dpkg/lock*		
+        if is_github_actions; then
+            echo "github actions"
+        else
+            rm -f /var/lib/apt/lists/lock
+            rm -f /var/cache/apt/archives/lock
+            rm -f /var/lib/dpkg/lock*		
+        fi    
         export TERM=xterm
         export DEBIAN_FRONTEND=noninteractive
         dpkg --configure -a
         apt update -y
-        set +e
-        apt-mark hold grub-efi-amd64-signed
-        set -e
-        apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
-        package_install "rsync mc redis-server curl tmux screen net-tools git htop ca-certificates lsb-release binutils wget pkg-config"
+        if is_github_actions; then
+            echo "** IN GITHUB ACTIONS, DON'T DO UPDATE"
+        else
+            set +e
+            echo "** UPDATE"
+            apt-mark hold grub-efi-amd64-signed
+            set -e
+            apt upgrade  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+            apt autoremove  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        fi 
+        #apt install apt-transport-https ca-certificates curl software-properties-common  -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --force-yes
+        package_install "apt-transport-https ca-certificates curl wget software-properties-common tmux"
+        package_install "rclone rsync mc redis-server screen net-tools git htop ca-certificates lsb-release binutils pkg-config"
 
     elif [[ "${OSNAME}" == "darwin"* ]]; then
         if command -v brew >/dev/null 2>&1; then
@@ -494,16 +560,16 @@ function os_update {
             unset NONINTERACTIVE
         fi
         set +e
-        brew install mc redis curl tmux screen htop wget
+        brew install mc redis curl tmux screen htop wget rclone
         set -e
     elif [[ "${OSNAME}" == "alpine"* ]]; then
         apk update screen git htop tmux
-        apk add mc curl rsync htop redis bash bash-completion screen git
+        apk add mc curl rsync htop redis bash bash-completion screen git rclone
         sed -i 's#/bin/ash#/bin/bash#g' /etc/passwd             
     elif [[ "${OSNAME}" == "arch"* ]]; then
         pacman -Syy --noconfirm
         pacman -Syu --noconfirm
-        pacman -Su --noconfirm arch-install-scripts gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen
+        pacman -Su --noconfirm arch-install-scripts gcc mc git tmux curl htop redis wget screen net-tools git sudo htop ca-certificates lsb-release screen rclone
 
         # Check if builduser exists, create if not
         if ! id -u builduser > /dev/null 2>&1; then
@@ -516,6 +582,7 @@ function os_update {
             execute_with_marker "paru_install" paru_install
         fi
     fi
+    echo 'os_update done'
 }
 
 function paru_install {
@@ -541,7 +608,8 @@ EOF
 }
 
 function redis_start {
-    set +e
+    set +ex
+    echo 'REDIS START'
     if redis-cli ping | grep -q "PONG"; then
         echo "Redis is already running."
         return
@@ -550,6 +618,7 @@ function redis_start {
 
     if [[ "${OSNAME}" == "darwin"* ]]; then
         brew services start redis
+        sleep 0.2
     # elif [[ "${OSNAME}" == "arch"* ]]; then
     #     redis-server --daemonize yes
     else
@@ -598,6 +667,7 @@ function redis_test {
 
 function v_install {
     set -e
+    echo "v install"
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1
@@ -652,13 +722,18 @@ function v_install {
 
 
     if ! [ -x "$(command -v v)" ]; then
-    echo 'vlang is not installed.' >&2
+    echo 'ERROR: vlang is not installed.' >&2
     exit 1
     fi
 }
 
 
 function v_analyzer_install {
+
+    if is_github_actions; then
+        return
+    fi
+
     if [[ -n "${DEBUG}" ]]; then
         v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
     fi  
@@ -684,7 +759,7 @@ function crystal_deps_install {
         # ./configure
         # make -j 5
         # make install   
-        apt-get remove -y gcc
+        # apt-get remove -y gcc
         package_install tcc
     # elif [[ "${OSNAME}" == "darwin"* ]]; then
     #     brew install secp256k1        
@@ -696,18 +771,28 @@ function crystal_deps_install {
     fi
 
 
+      #       set -x
+      #       cd /tmp
+      #       wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+      #       tar -xvf v0.3.2.tar.gz
+      #       cd secp256k1-0.3.2/
+      #       ./autogen.sh
+      #       ./configure
+      #       sudo make -j 5
+      #       sudo make install   
+
 }
 
 function crystal_lib_pull {
 
     if [[ -z "${DEBUG}" ]]; then
-        exit 0
+        return 0
     fi
 
     pushd $DIR_CODE/github/freeflowuniverse/crystallib 2>&1 >> /dev/null     
     if [[ $(git status -s) ]]; then
         echo "There are uncommitted changes in the Git repository crystallib."
-        exit 1
+        return 1
     fi
     git pull
     popd 2>&1 >> /dev/null
@@ -756,6 +841,8 @@ function crystal_lib_get {
     ln -s "$DIR_CODE/github/freeflowuniverse/crystallib/crystallib" ~/.vmodules/freeflowuniverse/crystallib
 
     crystal_web_get
+
+    
 }
 
 
@@ -799,6 +886,22 @@ function crystal_pull {
     git pull
     popd 2>&1 >> /dev/null
 }
+
+function crystal_test {
+    set -ex
+    pushd $DIR_CODE/github/freeflowuniverse/crystallib
+    v -enable-globals -stats test crystallib/core/pathlib
+    v -enable-globals -stats test crystallib/core/texttools
+    v -enable-globals -stats test crystallib/core/playbook
+    v -enable-globals -stats test crystallib/data/encoder
+    v -enable-globals -stats test crystallib/data/currency
+    v -enable-globals -stats test crystallib/data/markdownparser
+    v -enable-globals -stats test crystallib/data/ourtime
+    v -enable-globals -stats test crystallib/data/paramsparser
+    # v -enable-globals -stats test crystallib/data/doctree
+    popd 2>&1 >> /dev/null
+}
+
 
 
 
@@ -881,9 +984,65 @@ function hero_install {
         exit 1
     fi
 }
+
+# function get_rclone_config() {
+#     for conf in "/root/.config/rclone/rclone.conf" "${HOME}/.config/rclone/rclone.conf"; do
+#         [[ -f "$conf" ]] && echo "$conf" && return 0
+#     done
+#     echo "Error: No rclone configuration file found" >&2
+#     return 1
+# }
+
+function hero_upload {
+    set -e    
+    hero_path=$(which hero 2>/dev/null)
+    if [ -z "$hero_path" ]; then
+        echo "Error: 'hero' command not found in PATH" >&2
+        exit 1
+    fi
+    set -x
+    s3_configure
+    # rclone_config=$(get_rclone_config) || { echo "$rclone_config"; exit 1; }
+    rclone --config="${HOME}/.config/rclone/rclone.conf" lsl b2:threefold/$MYPLATFORMID/
+    rclone --config="${HOME}/.config/rclone/rclone.conf" copy "$hero_path" b2:threefold/$MYPLATFORMID/
+}
+    
+
+
+function s3_configure {
+
+SECRET_FILE="/${HOME}/code/git.ourworld.tf/despiegk/hero_secrets/mysecrets.sh"
+if [ -f "$SECRET_FILE" ]; then
+    echo get secrets
+    source "$SECRET_FILE"
+fi    
+
+# Check if environment variables are set
+if [ -z "$S3KEYID" ] || [ -z "$S3APPID" ]; then
+    echo "Error: S3KEYID or S3APPID is not set"
+    exit 1
+fi
+
+# Create rclone config file
+mkdir -p "${HOME}/.config/rclone"
+cat > "${HOME}/.config/rclone/rclone.conf" <<EOL
+[b2]
+type = b2
+account = $S3KEYID
+key = $S3APPID
+hard_delete = true
+EOL
+
+echo "made S3 config on: ${HOME}/.config/rclone/rclone.conf"
+
+cat ${HOME}/.config/rclone/rclone.conf
+
+}
+
+
 function freeflow_dev_env_install {
 
-    set -e
+    set -ex
 
     crystal_lib_get
 
@@ -892,8 +1051,10 @@ function freeflow_dev_env_install {
     fi
     if ! [ -x "$(command -v redis-cli)" ]; then
         echo "CANNOT FIND REDIS-SERVER"
-        exit 1
+    exit 1
     fi
+
+    #~/code/github/freeflowuniverse/crystallib/scripts/package.vsh
 
     local response=$(redis-cli PING)
 

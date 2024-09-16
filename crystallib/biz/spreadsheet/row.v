@@ -145,7 +145,7 @@ pub fn (row Row) filter(args_ RowGetArgs) !bool {
 	if args.namefilter.len == 0 && args.includefilter.len == 0 && args.excludefilter.len == 0 {
 		return true
 	}
-	
+
 	if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
 		if args.includefilter.len > 0 || args.excludefilter.len > 0 {
 			tagstofilter := paramsparser.parse(row.tags)!

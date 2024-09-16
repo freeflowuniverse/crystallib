@@ -2,20 +2,20 @@ module grid
 
 import freeflowuniverse.crystallib.clients.redisclient
 
-struct DeploymentStateDB{
-	redis redisclient.Redis
-	secret string //to encrypt symmetric
+struct DeploymentStateDB {
+	redis  redisclient.Redis
+	secret string // to encrypt symmetric
 }
 
-struct DeploymentState{
+struct DeploymentState {
 	name string
-	vms []VMDeployed
+	vms  []VMDeployed
 	zdbs []ZDBDeployed
 }
 
-pub fn (db DeploymentStateDB) set(deployment_name string, key string, val string)! {
-	//store  e.g. \n separated list of all keys per deployment_name
-	//encrypt
+pub fn (db DeploymentStateDB) set(deployment_name string, key string, val string) ! {
+	// store  e.g. \n separated list of all keys per deployment_name
+	// encrypt
 }
 
 // pub fn (db DeploymentStateDB) get(deployment_name string, key string)!string {

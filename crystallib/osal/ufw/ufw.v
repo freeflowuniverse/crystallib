@@ -4,23 +4,22 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import os
 
-
 pub fn reset() ! {
-	osal.execute_silent("
+	osal.execute_silent('
 		ufw --force disable
 		ufw --force reset
 		ufw allow 22
 		ufw --force enable
-		")!
+		')!
 	console.print_debug('UFW Reset')
 }
 
-//ufw allow proto tcp to any port 80
+// ufw allow proto tcp to any port 80
 
 pub fn apply_rule(rule_ Rule) ! {
 	mut rule := rule_
 	mut command := 'ufw '
-	
+
 	if rule.allow {
 		command += 'allow '
 	} else {
@@ -32,8 +31,8 @@ pub fn apply_rule(rule_ Rule) ! {
 	} else if !rule.tcp && rule.udp {
 		command += 'proto udp '
 	}
-	
-	if rule.from.trim_space()==""{
+
+	if rule.from.trim_space() == '' {
 		rule.from = 'any'
 	}
 
@@ -41,10 +40,10 @@ pub fn apply_rule(rule_ Rule) ! {
 		command += 'from ${rule.from} '
 	}
 
-	command+="to any "
+	command += 'to any '
 
-	if rule.port==0{
-		return error("rule port cannot be 0, needs to be a port nr")
+	if rule.port == 0 {
+		return error('rule port cannot be 0, needs to be a port nr')
 	}
 
 	command += 'port ${rule.port} '
@@ -56,21 +55,19 @@ pub fn apply_rule(rule_ Rule) ! {
 	console.print_debug('Rule applied: ${command}')
 }
 
-pub fn allow_ssh()!{
-	osal.execute_silent('ufw default deny incoming')! //make sure all is default denied
+pub fn allow_ssh() ! {
+	osal.execute_silent('ufw default deny incoming')! // make sure all is default denied
 	osal.execute_silent('ufw allow ssh')!
 }
 
-pub fn disable()! {
+pub fn disable() ! {
 	osal.execute_silent('ufw --force disable')!
 }
 
-
-pub fn enable()! {
+pub fn enable() ! {
 	allow_ssh()!
 	osal.execute_silent('ufw --force enable')!
 }
-
 
 pub fn apply(ruleset RuleSet) ! {
 	if ruleset.reset {
@@ -84,11 +81,11 @@ pub fn apply(ruleset RuleSet) ! {
 	if ruleset.ssh {
 		console.print_debug('SSH enable')
 		allow_ssh()!
-	}	
+	}
 	enable()!
 	console.print_debug('UFW Enabled and Configured')
 }
 
-pub fn new() RuleSet{
+pub fn new() RuleSet {
 	return RuleSet{}
 }

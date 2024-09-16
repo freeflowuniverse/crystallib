@@ -61,8 +61,7 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 			}
 
 			site_.template_add(url: url, path: path)!
-		} 
-		else if action.name == 'content_add' {
+		} else if action.name == 'content_add' {
 			console.print_debug('website.content_add')
 			mut p := action.params
 			url := p.get_default('url', '')!
@@ -71,8 +70,8 @@ pub fn play_zola(mut plbook playbook.PlayBook) ! {
 				return error("can't find website for content_add, should have been defined before with !!website.define")
 			}
 
-			site_.content_add(url: url, path: path)!}
-		else if action.name == 'doctree_add' {
+			site_.content_add(url: url, path: path)!
+		} else if action.name == 'doctree_add' {
 			console.print_debug('website.doctree_add')
 			mut p := action.params
 			url := p.get_default('url', '')!

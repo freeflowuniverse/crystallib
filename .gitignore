@@ -18,5 +18,6 @@ zdb-data
 zdb-index
 .idea/
 .venv/
-
-
+.trunk/
+.DS_Store
+.venv/

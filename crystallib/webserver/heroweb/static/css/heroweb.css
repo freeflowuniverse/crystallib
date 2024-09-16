@@ -1,0 +1,261 @@
+/* Custom properties for theming */
+:root {
+    --nav-background: #f1f3f5;
+    --nav-text: #495057;
+    --nav-hover: #1971c2;
+    --nav-input-border: #ced4da;
+    --nav-input-background: #f8f9fa;
+    --theme-icon-hover: #e9ecef;
+    --background-color-article: #fffffff8;
+}
+
+[data-theme="dark"] {
+    --nav-background: #3c4149b9;
+    --nav-text: #e0e0e0;
+    --nav-hover: #4dabf7;
+    --nav-input-border: #495057;
+    --nav-input-background: #2a2e33;
+    --theme-icon-hover: #2a2e33;
+    --background-color-article: #242527;
+}
+
+/* Custom styles to enhance the nav bar */
+body > main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    height: 100vh;
+    overflow: hidden;
+}
+
+nav {
+    background-color: var(--nav-background);
+    padding: 0rem 1rem;
+    width: 100%; /* Ensure nav takes full width */
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure ul takes full width */
+}
+
+nav ul li {
+    margin: 0 0.5rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--nav-text);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--nav-hover);
+}
+
+.brand {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+navbar-right {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push to the right */
+    margin-right: 2px; /* Ensure no right margin */
+}
+
+navbar-right a {
+    margin-left: 1rem;
+}
+
+navbar-right input[type="search"] {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--nav-input-border);
+    border-radius: 1rem;
+    background-color: var(--nav-input-background);
+    color: var(--nav-text);
+    font-size: 0.8rem;
+    line-height: 1;
+    height: 2rem;
+    width: 300px;
+    margin: 0;
+}
+
+/* Styles for theme icons */
+.theme-icons {
+    display: flex;
+    align-items: center;
+}
+
+.theme-icon {
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+}
+
+.theme-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--nav-text);
+}
+
+.theme-icon:hover {
+    background-color: var(--theme-icon-hover);
+}
+
+mynav {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    overflow-y: auto;
+    color: var(--nav-text);
+    padding-top: 1.3rem;
+    font-size: 0.8rem;
+}
+
+mynav ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+mynav ul ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0.2rem;
+    display: none;
+}
+
+mynav ul li {
+    margin-left: 0.5rem;
+    padding-left: 0.3rem;
+    cursor: pointer;
+    list-style-type: none;
+}
+
+mynav ul li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+mynav ul li.open > ul {
+    display: block;
+}
+
+.arrow {
+    font-size: 0.8rem;
+    margin-right: 0.2rem;
+}
+
+article {
+    flex: 6;
+    min-width: 200px;
+    max-width: 1200px;
+    overflow-y: auto;
+    height: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    background-color: var(--background-color-article);
+}
+
+article p,
+article li,
+article blockquote,
+article table {
+    font-size: 0.8rem;
+    line-height: 1.2; /* Reduce line height to decrease space between lines */
+    margin-bottom: 0.6rem; /* Reduce margin to decrease space between paragraphs */
+}
+
+article table {
+    line-height: 0.9;
+}
+
+article ul li {
+    line-height: 1;
+    margin-bottom: 0.1rem; /* Reduce margin to decrease space between list items */
+}
+
+article h1 h2 h3 h4 h5 {
+    margin-top: 0rem;
+}
+
+article h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem; /* Reduce space after header */
+}
+
+article h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem; /* Reduce space after header */
+}
+article h3 {
+    font-size: 1rem;
+    margin-bottom: 0.3rem; /* Reduce space after header */
+}
+article h4 {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem; /* Reduce space after header */
+}
+
+docnav {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    overflow-y: auto;
+    color: var(--nav-text);
+    font-size: 0.6rem;
+}
+
+docnav ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+docnav ul li {
+    margin-left: 0.4rem;
+    padding-left: 0rem;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40ch;
+}
+
+@media (max-width: 500px) {
+    nav {
+        margin-top: 0rem;
+    }
+    nav ul {
+        flex-direction: column;
+        align-items: stretch; /* Changed from flex-start to stretch */
+    }
+    nav ul li {
+        margin: 0.5rem 0; /* Added vertical margin */
+    }
+    navbar-right {
+        flex-direction: column;
+        align-items: stretch; /* Changed from flex-start to stretch */
+        margin-left: 2px;
+        width: 100%; /* Ensure full width on mobile */
+    }
+    navbar-right a {
+        margin-left: 0;
+        margin-top: 0.5rem; /* Add some vertical spacing */
+    }
+    navbar-right input[type="search"] {
+        width: 100%;
+        margin: 0.5rem 0; /* Add some vertical spacing */
+    }
+    .theme-icons {
+        margin-top: 0.5rem;
+        justify-content: flex-end; /* Align icons to the right on mobile */
+    }
+}

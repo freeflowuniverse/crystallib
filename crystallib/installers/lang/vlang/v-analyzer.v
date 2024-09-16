@@ -6,8 +6,7 @@ import freeflowuniverse.crystallib.core.texttools
 import os
 // import freeflowuniverse.crystallib.sysadmin.downloader
 
-
-pub fn v_analyzer_install(args_ InstallArgs) ! {	
+pub fn v_analyzer_install(args_ InstallArgs) ! {
 	mut args := args_
 	console.print_header('install v-analyzer (reset: ${args.reset})')
 	version := '0.0.4'
@@ -44,14 +43,12 @@ pub fn v_analyzer_install(args_ InstallArgs) ! {
 			cd v-analyzer
 			v build.vsh debug
 			'
-		osal.execute_stdout(cmd) or { return error('Cannot install hero.\n${err}') }	
+		osal.execute_stdout(cmd) or { return error('Cannot install hero.\n${err}') }
 		osal.cmd_add(
 			cmdname: 'v-analyzer'
 			source: '${os.home_dir()}/_code/v-analyzer/bin/v-analyzer'
 		)!
 	}
-
-	 
 
 	// if pl == .ubuntu {
 	// }else{

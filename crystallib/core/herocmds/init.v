@@ -81,21 +81,19 @@ fn cmd_init_execute(cmd Command) ! {
 	mut git_reset := cmd.flags.get_bool('gitreset') or { false }
 	mut git_pull := cmd.flags.get_bool('gitpull') or { false }
 
-	// console.print_debug(hero.str())
-
-	if redis {
-		base.install()!
-		redisinstaller.install()!
-		return
+	if redis{
+		redisinstaller.install(reset:true)!
 	}
 
 	if develop {
+		console.print_header("init in development mode: reset:${reset}")		
 		base.install(reset: reset, develop: true)!
 		return
 	}
 	if hero {
 		base.install(reset: reset, develop: true)!
 		crystallib.install(reset: reset, git_pull: git_pull, git_reset: git_reset)!
+		redisinstaller.install()!
 		crystallib.hero_compile(reset: reset)!
 		r := osal.profile_path_add_hero()!
 		console.print_header(' add path ${r} to profile.')

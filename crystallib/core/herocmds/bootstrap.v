@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.lang.crystallib
 import freeflowuniverse.crystallib.builder
 import cli { Command, Flag }
+import os
 
 pub fn cmd_bootstrap(mut cmdroot Command) {
 	mut cmd_run := Command{
@@ -33,8 +34,25 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 	cmd_run.add_flag(Flag{
 		flag: .bool
 		required: false
+		name: 'compileupload'
+		abbrev: 'c'
+		description: 'Compile and upload hero.'
+	})	
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
+		name: 'update'
+		abbrev: 'u'
+		description: 'Update/install hero.'
+	})		
+
+	cmd_run.add_flag(Flag{
+		flag: .bool
+		required: false
 		name: 'hero'
-		description: 'will compile hero.'
+		abbrev: 'u'
+		description: 'Update hero.'
 	})
 
 	// cmd_run.add_flag(Flag{
@@ -58,28 +76,47 @@ pub fn cmd_bootstrap(mut cmdroot Command) {
 fn cmd_bootstrap_execute(cmd Command) ! {
 	mut develop := cmd.flags.get_bool('develop') or { false }
 	mut reset := cmd.flags.get_bool('reset') or { false }
+	
+	mut compileupload := cmd.flags.get_bool('compileupload') or { false }
+	mut update := cmd.flags.get_bool('update') or { false }
+	
 	// mut hero := cmd.flags.get_bool('hero') or { false }
 	mut address := cmd.flags.get_string('address') or { '' }
 	if address == '' {
 		osal.profile_path_add_hero()!
-		if develop{
-			crystallib.install(reset:reset)!
-		}else{
-			base.install(reset:reset)!
+		if develop {
+			crystallib.install(reset: reset)!
+		} else {
+			base.install(reset: reset)!
 		}
-		
-	}else{
+		base.bash_installers_package()!
+	} else {
 		mut b := builder.new()!
 		mut n := b.node_new(ipaddr: address)!
-		if develop {			
+		if develop {
 			n.crystal_install(reset: reset)!
 			n.hero_install()!
 			n.dagu_install()!
 		} else {
-			panic("implement, need to download here and install")	
+			panic('implement, need to download here and install')
 		}
-		//return error(cmd.help_message())
+		// return error(cmd.help_message())
+	}
+	if compileupload{
+		// mycmd:='
+		// 	\${HOME}/code/github/freeflowuniverse/crystallib/scripts/package.vsh
+		// '
+		// osal.exec(cmd: mycmd)!
+		println("please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/githubactions.sh")
+
 	}
 
-
+	
+	if update{
+		// mycmd:='
+		// 	\${HOME}/code/github/freeflowuniverse/crystallib/scripts/package.vsh
+		// '
+		// osal.exec(cmd: mycmd)!
+		println("please execute:\n~/code/github/freeflowuniverse/crystallib/scripts/install_hero.sh")
+	}
 }

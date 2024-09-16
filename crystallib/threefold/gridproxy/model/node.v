@@ -50,6 +50,7 @@ pub:
 	certification     string        @[json: certificationType]
 	status            string
 	dedicated         bool
+	healthy         	bool
 	rent_contract_id  u64           @[json: rentContractId]
 	rented_by_twin_id u64           @[json: rentedByTwinId]
 }
@@ -71,6 +72,7 @@ pub:
 	certification     string       @[json: certificationType]
 	status            string
 	dedicated         bool
+	healthy         	bool
 	rent_contract_id  u64          @[json: rentContractId]
 	rented_by_twin_id u64          @[json: rentedByTwinId]
 }
@@ -114,6 +116,7 @@ pub fn (n &Node_) with_nested_capacity() Node {
 		certification: n.certification
 		status: n.status
 		dedicated: n.dedicated
+		healthy: n.healthy
 		rent_contract_id: n.rent_contract_id
 		rented_by_twin_id: n.rented_by_twin_id
 	}

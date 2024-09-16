@@ -1,0 +1,76 @@
+name: build_test
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref_name }} and your repository is ${{ github.repository }}."
+
+      - name: Install dependencies
+        run: |
+          if [ ${{ matrix.os }} == 'ubuntu-latest' ]; then
+            sudo apt update
+            sudo apt install -y libgc-dev tmux git rsync curl imagemagick redis
+            redis-server --daemonize yes
+            sudo apt install -y build-essential wget autoconf libtool
+            cd /tmp
+            wget https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.3.2.tar.gz
+            tar -xvf v0.3.2.tar.gz
+            cd secp256k1-0.3.2/
+            ./autogen.sh
+            ./configure
+            sudo make -j 5
+            sudo make install              
+          else
+            brew install libgc tmux git rsync curl redis libpq secp256k1
+            redis-server --daemonize yes
+          fi
+          # redis-cli ping
+
+      - name: Setup Vlang
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Get crystalweb
+        run: |
+          mkdir -p ~/.vmodules
+          pushd ~/.vmodules
+          git clone --depth 1 https://github.com/freeflowuniverse/webcomponents
+          popd
+
+      - name: Install crystallib
+        run: |
+          mkdir -p ~/.vmodules/freeflowuniverse
+          rm -f ~/.vmodules/freeflowuniverse/crystallib
+          ln -s $(pwd)/crystallib ~/.vmodules/freeflowuniverse/crystallib
+
+      - name: Check formatting
+        run: |
+          v fmt -w $(pwd)/crystallib
+
+      - name: Run tests
+        env:
+          VJOBS: 1
+          OFFLINE: 1
+        run: |
+          v -enable-globals -stats test crystallib/core/pathlib
+          v -enable-globals -stats test crystallib/core/texttools
+          v -enable-globals -stats test crystallib/core/playbook
+          v -enable-globals -stats test crystallib/data/encoder
+          v -enable-globals -stats test crystallib/data/currency
+          v -enable-globals -stats test crystallib/data/markdownparser
+          v -enable-globals -stats test crystallib/data/ourtime
+          v -enable-globals -stats test crystallib/data/paramsparser
+          # v -enable-globals -stats test crystallib/data/doctree

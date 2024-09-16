@@ -16,21 +16,21 @@ pub struct Template {
 pub struct ZolaSite {
 pub mut:
 	name         string
-	url          string             @[required] // base url of site
+	url          string       @[required] // base url of site
 	title        string
 	description  string
 	path_build   pathlib.Path
 	path_publish pathlib.Path
 	// zola         &Zola              @[skip; str: skip]
-	tree         doctree.Tree       @[skip; str: skip]
-	pages        []ZolaPage
-	header       ?Header
-	footer       ?Footer
-	blog         Blog
-	people       ?People
-	news         ?News
-	sections     map[string]Section
-	templates    []Template
+	tree      doctree.Tree       @[skip; str: skip]
+	pages     []ZolaPage
+	header    ?Header
+	footer    ?Footer
+	blog      Blog
+	people    ?People
+	news      ?News
+	sections  map[string]Section
+	templates []Template
 }
 
 @[params]

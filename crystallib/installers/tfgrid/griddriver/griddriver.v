@@ -10,12 +10,12 @@ import os
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset     bool
+	reset bool
 }
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	
+
 	res := os.execute('${osal.profile_path_source_and()} griddriver')
 	if res.exit_code != 0 {
 		args.reset = true

@@ -1,6 +1,8 @@
 module gridproxy
 
 import freeflowuniverse.crystallib.clients.httpconnection
+import freeflowuniverse.crystallib.threefold.gridproxy.model
+import freeflowuniverse.crystallib.installers.tfgrid.griddriver
 
 @[heap]
 pub struct GridProxyClient {
@@ -52,21 +54,29 @@ fn tfgrid_net_string(net TFGridNet) string {
 	}
 }
 
+@[params]
+pub struct GridProxyClientArgs {
+pub mut:
+	net   TFGridNet = .main
+	cache bool
+}
+
 // get returns a gridproxy client for the given net.
 //
-// * `net` (enum): the net to get the gridproxy client for (one of .main, .test, .dev, .qa).
-// * `use_redis_cache` (bool): if true, the gridproxy client will use a redis cache and redis should be running on the host. otherwise, the gridproxy client will not use cache.
-//
-// returns: `&GridProxyClient`.
-pub fn get(net TFGridNet, use_redis_cache bool) !&GridProxyClient {
+//```
+// net TFGridNet = .main
+// cache bool
+//```
+pub fn new(args GridProxyClientArgs) !&GridProxyClient {
+	griddriver.install()!
 	mut f := factory_get()
-	netstr := tfgrid_net_string(net)
+	netstr := tfgrid_net_string(args.net)
 	if netstr !in gridproxy.factory.instances {
-		url := gridproxy_url_get(net)
+		url := gridproxy_url_get(args.net)
 		mut httpconn := httpconnection.new(
 			name: 'gridproxy_${netstr}'
 			url: url
-			cache: use_redis_cache
+			cache: args.cache
 		)!
 		// do the settings on the connection
 		httpconn.cache.expire_after = 7200 // make the cache timeout 2h
@@ -79,4 +89,24 @@ pub fn get(net TFGridNet, use_redis_cache bool) !&GridProxyClient {
 		return error_with_code('http client error: unknow error happened while trying to access the GridProxyClient instance',
 			err_grid_client)
 	}
+}
+
+pub fn nodefilter() !model.NodeFilter {
+	return model.NodeFilter{}
+}
+
+pub fn contractfilter() !model.ContractFilter {
+	return model.ContractFilter{}
+}
+
+pub fn farmfilter() !model.FarmFilter {
+	return model.FarmFilter{}
+}
+
+pub fn twinfilter() !model.TwinFilter {
+	return model.TwinFilter{}
+}
+
+pub fn statfilter() !model.StatFilter {
+	return model.StatFilter{}
 }

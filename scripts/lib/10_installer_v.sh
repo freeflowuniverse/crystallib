@@ -1,6 +1,7 @@
 
 function v_install {
     set -e
+    echo "v install"
     if [[ -z "${DIR_CODE_INT}" ]]; then 
         echo 'Make sure to source env.sh before calling this script.'
         exit 1
@@ -55,13 +56,18 @@ function v_install {
 
 
     if ! [ -x "$(command -v v)" ]; then
-    echo 'vlang is not installed.' >&2
+    echo 'ERROR: vlang is not installed.' >&2
     exit 1
     fi
 }
 
 
 function v_analyzer_install {
+
+    if is_github_actions; then
+        return
+    fi
+
     if [[ -n "${DEBUG}" ]]; then
         v -e "$(curl -fsSL https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh)"
     fi  

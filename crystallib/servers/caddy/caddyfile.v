@@ -24,24 +24,25 @@ pub fn (mut file CaddyFile) add_oauth(config security.OAuthConfig) ! {
 	file.apps.security.add_oauth(config)!
 }
 
-pub fn (file CaddyFile) export(path_ string) ! {	
+pub fn (file CaddyFile) export(path_ string) ! {
 	// Load the existing file and merge it with the current instance
 	mut path := path_
 	if !path.ends_with('.json') {
 		path = '${path}.json'
 	}
 	mut existing_file := pathlib.get_file(
-		path:path
+		path: path
 		create: true
 	)!
-	
+
 	caddyfile_json := existing_file.read()!
 
 	merged_file := if caddyfile_json != '' {
-		existing_object := json.decode(CaddyFile, caddyfile_json) or {panic(err)}
+		existing_object := json.decode(CaddyFile, caddyfile_json) or { panic(err) }
 		merge_caddyfiles(existing_object, file)
-	} else {file}
-
+	} else {
+		file
+	}
 
 	content := json.encode(merged_file)
 
@@ -72,13 +73,12 @@ pub fn validate(args ValidateArgs) ! {
 	return error('either text or path is required to validate caddyfile')
 }
 
-
 pub fn merge_caddyfiles(file1 CaddyFile, file2 CaddyFile) CaddyFile {
-	apps := Apps {
+	apps := Apps{
 		http: http.merge_http(file1.apps.http, file2.apps.http)
 	}
-	
-	return CaddyFile {
+
+	return CaddyFile{
 		apps: apps
 	}
 }

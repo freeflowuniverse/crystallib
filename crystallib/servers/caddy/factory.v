@@ -2,7 +2,7 @@ module caddy
 
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
+//import freeflowuniverse.crystallib.installers.web.caddy as caddyinstaller
 
 // import freeflowuniverse.crystallib.ui.console
 
@@ -30,15 +30,13 @@ pub fn configure(instance string, cfg_ Config) !Caddy[Config] {
 	mut cfg := cfg_
 	mut self := Caddy[Config]{}
 
-	caddyinstaller.install(
-		homedir: cfg.homedir
-		reset: cfg.reset
-		plugins: cfg.plugins
-	)!
+	// caddyinstaller.install(
+	// 	homedir: cfg.homedir
+	// 	reset: cfg.reset
+	// 	plugins: cfg.plugins
+	// )!
 
 	self.init('caddy', instance, .set, cfg)!
 
 	return self
 }
-
-

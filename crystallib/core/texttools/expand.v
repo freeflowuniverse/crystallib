@@ -6,9 +6,8 @@ pub fn expand(txt_ string, l int, expand_with string) string {
 	for _ in 0 .. l {
 		txt += expand_with
 	}
-	if txt.len>l{
-		txt=txt[0..l]
+	if txt.len > l {
+		txt = txt[0..l]
 	}
 	return txt
-
 }

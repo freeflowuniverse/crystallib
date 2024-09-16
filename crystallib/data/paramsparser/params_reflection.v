@@ -15,7 +15,7 @@ pub fn (params Params) decode_struct[T](_ T) !T {
 	mut t := T{}
 	$for field in T.fields {
 		$if field.is_enum {
-			t.$(field.name) = params.get_int(field.name) or {0}
+			t.$(field.name) = params.get_int(field.name) or { 0 }
 		} $else {
 			if field.name[0].is_capital() {
 				// embed := params.decode_struct(t.$(field.name))!

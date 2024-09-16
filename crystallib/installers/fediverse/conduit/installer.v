@@ -9,7 +9,7 @@ import freeflowuniverse.crystallib.ui.console
 @[params]
 pub struct InstallArgs {
 pub mut:
-	reset bool
+	reset   bool
 	version string
 }
 

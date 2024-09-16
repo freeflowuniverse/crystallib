@@ -49,9 +49,9 @@ const relay_url = {
 }
 
 pub fn get_mnemonics() !string {
-	mnemonics := os.getenv('MNEMONICS')
+	mnemonics := os.getenv('TFGRID_MNEMONIC')
 	if mnemonics == '' {
-		return error('failed to get mnemonics, run `export MNEMONICS=....`')
+		return error('failed to get mnemonics, run `export TFGRID_MNEMONIC=....`')
 	}
 	return mnemonics
 }
@@ -59,13 +59,13 @@ pub fn get_mnemonics() !string {
 pub fn new_deployer(mnemonics string, chain_network ChainNetwork) !Deployer {
 	mut logger := &log.Log{}
 	logger.set_level(.debug)
-	
+
 	mut client := griddriver.Client{
 		mnemonic: mnemonics
 		substrate: grid.substrate_url[chain_network]
 		relay: grid.relay_url[chain_network]
 	}
-	twin_id := client.get_user_twin() or {return error('failed to get twin ${err}')}
+	twin_id := client.get_user_twin() or { return error('failed to get twin ${err}') }
 
 	return Deployer{
 		mnemonics: mnemonics
@@ -231,7 +231,21 @@ pub fn (mut d Deployer) get_deployment(contract_id u64, node_id u32) !models.Dep
 	payload := {
 		'contract_id': contract_id
 	}
-	res := d.rmb_deployment_get(twin_id, json.encode(payload))!
+	res := d.rmb_deployment_get(
+		twin_id,
+		json.encode(payload)
+	) or {
+		return error("Node ${node_id} might be down.")
+	}
+	return json.decode(models.Deployment, res)
+}
+
+pub fn (mut d Deployer) delete_deployment(contract_id u64, node_id u32) !models.Deployment {
+	twin_id := d.client.get_node_twin(node_id)!
+	payload := {
+		'contract_id': contract_id
+	}
+	res := d.rmb_deployment_delete(twin_id, json.encode(payload))!
 	return json.decode(models.Deployment, res)
 }
 

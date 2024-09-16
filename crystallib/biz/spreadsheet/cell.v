@@ -2,7 +2,6 @@ module spreadsheet
 
 import freeflowuniverse.crystallib.data.currency
 
-
 pub struct Cell {
 pub mut:
 	val   f64

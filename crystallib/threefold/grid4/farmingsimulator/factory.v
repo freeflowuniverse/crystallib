@@ -13,17 +13,15 @@ __global (
 @[params]
 pub struct SimulatorArgs {
 pub mut:
-	name          string = 'default' // name of simulation
-	path          string
-	git_url       string
-	git_reset     bool
-	git_pull      bool
+	name      string = 'default' // name of simulation
+	path      string
+	git_url   string
+	git_reset bool
+	git_pull  bool
 }
 
-//is called from the play
+// is called from the play
 pub fn new(args_ SimulatorArgs) !Simulator {
-
-
 	mut args := args_
 
 	if args.name == '' {
@@ -46,7 +44,7 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 		// params: args
 		// currencies: cs
 	}
-	
+
 	if args.git_url.len > 0 {
 		args.path = gittools.code_get(
 			url: args.git_url
@@ -56,7 +54,7 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 		)!
 	}
 
-	if args.path.len>0{
+	if args.path.len > 0 {
 		sim.load()!
 	}
 
@@ -82,7 +80,6 @@ pub fn simulator_set(sim Simulator) {
 	}
 	spreadsheet.sheet_set(sim.sheet)
 }
-
 
 // load the mdbook content from path or git
 fn (mut self Simulator) load() ! {

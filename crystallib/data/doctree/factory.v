@@ -3,11 +3,9 @@ module doctree
 // import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.texttools
 
-
 __global (
 	doctrees shared map[string]&Tree
 )
-
 
 @[params]
 pub struct TreeArgsGet {
@@ -31,8 +29,6 @@ pub fn new(args_ TreeArgsGet) !&Tree {
 	tree_set(t)
 	return &t
 }
-
-
 
 // get sheet from global
 pub fn tree_get(name string) !&Tree {

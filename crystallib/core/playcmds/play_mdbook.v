@@ -50,12 +50,21 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		url := p.get_default('url', '')!
 		path := p.get_default('path', '')!
 		tree.scan(
-			path: path
-			git_url: url
+			path:      path
+			git_url:   url
 			git_reset: reset
-			git_root: coderoot
-			git_pull: pull
+			git_root:  coderoot
+			git_pull:  pull
 		)!
+		action.done = true
+	}
+
+	for mut action in plbook.find(filter: 'book:export')! {
+		mut p := action.params
+		build_path := p.get('path')!
+		reset2 := p.get_default_false('reset')
+		production2 := p.get_default_true('production')
+		tree.export(dest: build_path, reset: reset2, production: production2)!
 		action.done = true
 	}
 
@@ -69,8 +78,9 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		printbook := p.get_default_false('printbook')
 		foldlevel := p.get_int_default('foldlevel', 0)!
 		production := p.get_default_false('production')
+		reset3 := p.get_default_true('reset')
 
-		tree.export(dest: build_path, reset: true)!
+		tree.export(dest: build_path, reset: reset3)!
 
 		mut mdbooks := mdbook.get()!
 
@@ -80,14 +90,14 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 
 		mdbooks.generate(
 			doctree_path: build_path
-			name: name
-			title: title
-			summary_url: url
+			name:         name
+			title:        title
+			summary_url:  url
 			publish_path: publish_path
-			build_path: build_path
-			printbook: printbook
-			foldlevel: foldlevel
-			production: production
+			build_path:   build_path
+			printbook:    printbook
+			foldlevel:    foldlevel
+			production:   production
 		)!
 		action.done = true
 	}

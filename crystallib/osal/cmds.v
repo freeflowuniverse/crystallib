@@ -37,7 +37,7 @@ pub fn cmd_add(args_ CmdAddArgs) ! {
 			console.print_debug(' - did find a cmd which is not in path we expect:\n    expected:${destpath}\n    got:${existing_path}')
 			if args.reset {
 				if existing_path.contains('homebrew/bin') {
- 					exec(cmd: 'brew uninstall ${args.cmdname}') or {
+					exec(cmd: 'brew uninstall ${args.cmdname}') or {
 						return error('failed to remove existing command using brew')
 					}
 				} else {

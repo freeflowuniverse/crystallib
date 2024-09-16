@@ -1,10 +1,10 @@
-#!/usr/bin/env -S v -n -w -enable-globals run
+#!/usr/bin/env -S v -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.core.dbfs
 import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.db.redis as redis_installer
 import freeflowuniverse.crystallib.installers.infra.coredns as coredns_installer
-import freeflowuniverse.crystallib.installers.sysadmintools.dagu as dagu_installer
+import freeflowuniverse.crystallib.installers.sysadmintools.daguserver as dagu_installer
 import freeflowuniverse.crystallib.installers.sysadmintools.b2 as b2_installer
 import freeflowuniverse.crystallib.installers.net.mycelium as mycelium_installer
 import freeflowuniverse.crystallib.osal.screen
