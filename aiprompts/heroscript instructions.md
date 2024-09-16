@@ -38,8 +38,8 @@ an example of a heroscript is
 Notice how:
 - every action starts with !!
 	- the first part is the actor e.g. dagu in this case
-	- the 2e part is the action name
-- multilines are supported see the description field
+	- the second part is the action name
+- multilines are supported (see the description field)
 
 ## how to process heroscript in Vlang
 
