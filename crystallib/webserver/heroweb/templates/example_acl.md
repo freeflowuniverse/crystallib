@@ -54,9 +54,5 @@
     '
     expiration: '2024-12-31'
 
-!!webdb.webdb_create
-    users: 'John Doe,Jane Smith'
-    groups: 'Developers,Frontend,Backend'
-    acls: 'ProjectX_ACL'
-    infopointers: 'ProjectX_Documentation'
+
 ```

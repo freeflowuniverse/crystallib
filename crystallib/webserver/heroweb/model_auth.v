@@ -32,6 +32,7 @@ pub mut:
 
 pub struct User {
 pub mut:
+    id          u16 //increment as we load it
     name        string
     email       []string
     description string
@@ -53,7 +54,7 @@ pub mut:
     acl          []string
     description  string
     expiration   string
-    acl_resolved map[string]int
+    acl_resolved map[u16]u8 //TODO, need to use index towards the user, not the email address
 }
 
 pub struct WebDB {
