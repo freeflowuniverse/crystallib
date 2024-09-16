@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.osal.zinit
-import freeflowuniverse.crystallib.installers.tfgrid.griddriver    
+import freeflowuniverse.crystallib.installers.threefold.griddriver    
 
 import os
 

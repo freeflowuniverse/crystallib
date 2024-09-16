@@ -2,7 +2,7 @@ module gridproxy
 
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.threefold.gridproxy.model
-import freeflowuniverse.crystallib.installers.tfgrid.griddriver
+import freeflowuniverse.crystallib.installers.threefold.griddriver
 
 @[heap]
 pub struct GridProxyClient {

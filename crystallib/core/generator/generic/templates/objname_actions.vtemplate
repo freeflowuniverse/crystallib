@@ -66,8 +66,8 @@ fn install() ! {
 
 @if args.build
 fn build() ! {
-	mut installer := get()!
-	url := 'https://github.com/threefoldtech/${args.name}'
+	//mut installer := get()!
+	//url := 'https://github.com/threefoldtech/${args.name}'
 
 	// make sure we install base on the node
 	// if osal.platform() != .ubuntu {
@@ -85,20 +85,27 @@ fn build() ! {
 	// exit 1 #todo
 	// '
 	// osal.execute_stdout(cmd)!
-
+	//
+	// //now copy to the default bin path
+    // mut binpath := dest.file_get('...')!
+    // adds it to path
+    // osal.cmd_add(
+    //     cmdname: 'griddriver2'
+    //     source: binpath.path
+    // )!   
 
 }
 
 //get the Upload List of the files
-fn ulist() ?installers.UList {
-	mut installer := get()!
+fn ulist() !installers.UList {
+	//mut installer := get()!
 	//optionally build a UList which is all paths which are result of building, is then used e.g. in upload
+	return installers.UList{}
 }
-
 
 //uploads to S3 server if configured
 fn upload() ! {
-	mut installer := get()!
+	//mut installer := get()!
 	// installers.upload(
 	// 	cmdname: '${args.name}'
 	// 	source: '??{gitpath}/target/x86_64-unknown-linux-musl/release/${args.name}'
@@ -123,16 +130,10 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
 	return res
 	
 }
-@end
-
-
-
 
 fn running() !bool {
 	mut installer := get()!
-
 	//THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
-	
 	// this checks health of ${args.name}
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
 	// url:='http://127.0.0.1:??{cfg.port}/api/v1'
@@ -152,8 +153,6 @@ fn running() !bool {
 	return true
 }
 
-
-
 fn start_pre()!{
 	
 }
@@ -170,11 +169,10 @@ fn stop_post()!{
 	
 }
 
-
+@end
 
 fn destroy() ! {
-	mut installer := get()!	
-	//THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED
+	//mut installer := get()!	
 	// cmd:="
 	// 	systemctl disable ${args.name}_scheduler.service
 	// 	systemctl disable ${args.name}.service
