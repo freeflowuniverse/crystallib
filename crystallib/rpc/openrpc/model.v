@@ -22,22 +22,22 @@ pub:
 	title            string // The title of the application.
 	description      string // A verbose description of the application.
 	terms_of_service string  @[json: termsOfService] // A URL to the Terms of Service for the API. MUST be in the format of a URL.
-	contact          Contact // The contact information for the exposed API.
-	license          License // The license information for the exposed API.
-	version          string  // The version of the OpenRPC document (which is distinct from the OpenRPC Specification version or the API implementation version).
+	contact          Contact @[omitempty]// The contact information for the exposed API.
+	license          License @[omitempty]// The license information for the exposed API.
+	version          string @[omitempty]   // The version of the OpenRPC document (which is distinct from the OpenRPC Specification version or the API implementation version).
 }
 
 // Contact information for the exposed API.
 pub struct Contact {
-	name  string // The identifying name of the contact person/organization.
-	email string // The URL pointing to the contact information. MUST be in the format of a URL.
-	url   string // The email address of the contact person/organization. MUST be in the format of an email address.
+	name  string @[omitempty]// The identifying name of the contact person/organization.
+	email string @[omitempty]// The URL pointing to the contact information. MUST be in the format of a URL.
+	url   string @[omitempty]// The email address of the contact person/organization. MUST be in the format of an email address.
 }
 
 // License information for the exposed API.
 pub struct License {
-	name string // The license name used for the API.
-	url  string // A URL to the license used for the API. MUST be in the format of a URL.
+	name string  @[omitempty] // The license name used for the API.
+	url  string @[omitempty]// A URL to the license used for the API. MUST be in the format of a URL.
 }
 
 // An object representing a Server.
@@ -45,37 +45,37 @@ pub struct License {
 // TODO: server name is required but not for version 1.0.0
 pub struct Server {
 pub:
-	name        string // A name to be used as the cannonical name for the server.
-	url         RuntimeExpression // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenRPC document is being served. Server Variables are passed into the Runtime Expression to produce a server URL.
-	summary     string // A short summary of what the server is.
-	description string // An optional string describing the host designated by the URL.
-	variables   map[string]ServerVariable // A map between a variable name and its value. The value is passed into the Runtime Expression to produce a server URL.
+	name        string @[omitempty]// A name to be used as the cannonical name for the server.
+	url         RuntimeExpression   @[omitempty]       // A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenRPC document is being served. Server Variables are passed into the Runtime Expression to produce a server URL.
+	summary     string @[omitempty]// A short summary of what the server is.
+	description string @[omitempty]// An optional string describing the host designated by the URL.
+	variables   map[string]ServerVariable @[omitempty]// A map between a variable name and its value. The value is passed into the Runtime Expression to produce a server URL.
 }
 
 // An object representing a Server Variable for server URL template substitution.
 pub struct ServerVariable {
 	enum_       []string @[json: 'enum'] // An enumeration of string values to be used if the substitution options are from a limited set.
-	default_    string   @[json: 'default'; required] // The default value to use for substitution, which SHALL be sent if an alternate value is not supplied. Note this behavior is different than the Schema Object’s treatment of default values, because in those cases parameter values are optional.
-	description string // An optional description for the server variable. GitHub Flavored Markdown syntax MAY be used for rich text representation.
+	default_    string    @[json: 'default'; required] // The default value to use for substitution, which SHALL be sent if an alternate value is not supplied. Note this behavior is different than the Schema Object’s treatment of default values, because in those cases parameter values are optional.
+	description string @[omitempty] // An optional description for the server variable. GitHub Flavored Markdown syntax MAY be used for rich text representation.
 }
 
 // Describes the interface for the given method name. The method name is used as the method field of the JSON-RPC body. It therefore MUST be unique.
 // TODO: make result optional once issue is solved: https://github.com/vlang/v/issues/18001
 pub struct Method {
 pub mut:
-	name            string   // The cannonical name for the method. The name MUST be unique within the methods array.
-	tags            []TagRef // A list of tags for API documentation control. Tags can be used for logical grouping of methods by resources or any other qualifier.
-	summary         string   // A short summary of what the method does.
-	description     string   // A verbose explanation of the method behavior.
-	external_docs   ExternalDocs           @[json: externalDocs] // Additional external documentation for this method.
-	params          []ContentDescriptorRef // A list of parameters that are applicable for this method. The list MUST NOT include duplicated parameters and therefore require name to be unique. The list can use the Reference Object to link to parameters that are defined by the Content Descriptor Object. All optional params (content descriptor objects with “required”: false) MUST be positioned after all required params in the list.
-	result          ContentDescriptorRef   // The description of the result returned by the method. If defined, it MUST be a Content Descriptor or Reference Object. If undefined, the method MUST only be used as a notification.
-	deprecated      bool       // Declares this method to be deprecated. Consumers SHOULD refrain from usage of the declared method. Default value is false.
-	servers         []Server   // An alternative servers array to service this method. If an alternative servers array is specified at the Root level, it will be overridden by this value.
-	errors          []ErrorRef // A list of custom application defined errors that MAY be returned. The Errors MUST have unique error codes.
-	links           []LinkRef  // A list of possible links from this method call.
-	param_structure ParamStructure         @[json: paramStructure] // The expected format of the parameters. As per the JSON-RPC 2.0 specification, the params of a JSON-RPC request object may be an array, object, or either (represented as by-position, by-name, and either respectively). When a method has a paramStructure value of by-name, callers of the method MUST send a JSON-RPC request object whose params field is an object. Further, the key names of the params object MUST be the same as the contentDescriptor.names for the given method. Defaults to "either".
-	examples        []ExamplePairing // Array of Example Pairing Object where each example includes a valid params-to-result Content Descriptor pairing.
+	name            string       @[omitempty]           // The cannonical name for the method. The name MUST be unique within the methods array.
+	tags            []TagRef @[omitempty]// A list of tags for API documentation control. Tags can be used for logical grouping of methods by resources or any other qualifier.
+	summary         string   @[omitempty]// A short summary of what the method does.
+	description     string  @[omitempty] // A verbose explanation of the method behavior.
+	external_docs   ExternalDocs    @[json: externalDocs; omitempty] // Additional external documentation for this method.
+	params          []ContentDescriptorRef @[omitempty] // A list of parameters that are applicable for this method. The list MUST NOT include duplicated parameters and therefore require name to be unique. The list can use the Reference Object to link to parameters that are defined by the Content Descriptor Object. All optional params (content descriptor objects with “required”: false) MUST be positioned after all required params in the list.
+	result          ContentDescriptorRef @[omitempty]// The description of the result returned by the method. If defined, it MUST be a Content Descriptor or Reference Object. If undefined, the method MUST only be used as a notification.
+	deprecated      bool       @[omitempty]// Declares this method to be deprecated. Consumers SHOULD refrain from usage of the declared method. Default value is false.
+	servers         []Server   @[omitempty]// An alternative servers array to service this method. If an alternative servers array is specified at the Root level, it will be overridden by this value.
+	errors          []ErrorRef @[omitempty]// A list of custom application defined errors that MAY be returned. The Errors MUST have unique error codes.
+	links           []LinkRef @[omitempty] // A list of possible links from this method call.
+	param_structure ParamStructure        @[json: paramStructure; omitempty] // The expected format of the parameters. As per the JSON-RPC 2.0 specification, the params of a JSON-RPC request object may be an array, object, or either (represented as by-position, by-name, and either respectively). When a method has a paramStructure value of by-name, callers of the method MUST send a JSON-RPC request object whose params field is an object. Further, the key names of the params object MUST be the same as the contentDescriptor.names for the given method. Defaults to "either".
+	examples        []ExamplePairing @[omitempty]// Array of Example Pairing Object where each example includes a valid params-to-result Content Descriptor pairing.
 }
 
 enum ParamStructure {
@@ -91,23 +91,23 @@ pub type ContentDescriptorRef = ContentDescriptor | Reference
 // They MUST have a schema.
 pub struct ContentDescriptor {
 pub mut:
-	name        string    // Name of the content that is being described. If the content described is a method parameter assignable by-name, this field SHALL define the parameter’s key (ie name).
-	summary     string    // A short summary of the content that is being described.
-	description string    // A verbose explanation of the content descriptor behavior.
-	required    bool      // Determines if the content is a required field. Default value is false.
-	schema      SchemaRef // Schema that describes the content.
-	deprecated  bool      // Specifies that the content is deprecated and SHOULD be transitioned out of usage. Default value is false.
+	name        string  @[omitempty]   // Name of the content that is being described. If the content described is a method parameter assignable by-name, this field SHALL define the parameter’s key (ie name).
+	summary     string @[omitempty]// A short summary of the content that is being described.
+	description string @[omitempty]// A verbose explanation of the content descriptor behavior.
+	required    bool @[omitempty]  // Determines if the content is a required field. Default value is false.
+	schema      SchemaRef @[omitempty]// Schema that describes the content.
+	deprecated  bool @[omitempty]// Specifies that the content is deprecated and SHOULD be transitioned out of usage. Default value is false.
 }
 
 // The Example Pairing object consists of a set of example params and result.
 // The result is what you can expect from the JSON-RPC service given the exact params.
 pub struct ExamplePairing {
 pub mut:
-	name        string       // Name for the example pairing.
-	description string       // A verbose explanation of the example pairing.
-	summary     string       // Short description for the example pairing.
-	params      []ExampleRef // Example parameters.
-	result      ExampleRef   // Example result. When undefined, the example pairing represents usage of the method as a notification.
+	name        string      @[omitempty] // Name for the example pairing.
+	description string       @[omitempty]// A verbose explanation of the example pairing.
+	summary     string     @[omitempty]  // Short description for the example pairing.
+	params      []ExampleRef @[omitempty]// Example parameters.
+	result      ExampleRef @[omitempty]   // Example result. When undefined, the example pairing represents usage of the method as a notification.
 }
 
 type ExampleRef = Example | Reference
@@ -115,11 +115,11 @@ type ExampleRef = Example | Reference
 // The Example object is an object that defines an example that is intended to match the schema of a given Content Descriptor.
 // Question: how to handle any type for value?
 pub struct Example {
-	name           string // Cannonical name of the example.
-	summary        string // Short description for the example.
-	description    string // A verbose explanation of the example.
-	value          string // Embedded literal example. The value field and externalValue field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON, use a string value to contain the example, escaping where necessary.
-	external_value string @[json: externalValue] // A URL that points to the literal example. This provides the capability to reference examples that cannot easily be included in JSON documents. The value field and externalValue field are mutually exclusive.
+	name           string @[omitempty]// Cannonical name of the example.
+	summary        string @[omitempty]// Short description for the example.
+	description    string @[omitempty]// A verbose explanation of the example.
+	value          string @[omitempty]// Embedded literal example. The value field and externalValue field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON, use a string value to contain the example, escaping where necessary.
+	external_value string @[json: externalValue; omitempty] // A URL that points to the literal example. This provides the capability to reference examples that cannot easily be included in JSON documents. The value field and externalValue field are mutually exclusive.
 }
 
 type LinkRef = Link | Reference

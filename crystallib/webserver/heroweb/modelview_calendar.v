@@ -20,8 +20,6 @@ pub:
     link    string
 }
 
-
-
 fn (mut self CalendarViewData) validate() ! {
     if self.current_year < 2000 || self.current_year > 2060 {
         return error('Invalid year value (2000-2060)')

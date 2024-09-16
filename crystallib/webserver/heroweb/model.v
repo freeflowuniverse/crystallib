@@ -9,7 +9,7 @@ pub struct Context {
 pub mut:
 	// In the context struct we store data that could be different
 	// for each request. Like a User struct or a session id
-	user       User
+	user_id       u16
 	session_id string
 }
 

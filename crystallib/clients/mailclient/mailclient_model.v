@@ -32,7 +32,7 @@ pub fn heroscript_default() string {
 pub struct MailClient {
 pub mut:
     name string = 'default'
-    mail_from    string
+    mail_from    string 
     mail_password string @[secret]
     mail_port   int = 465
     mail_server   string
@@ -62,9 +62,10 @@ fn obj_init(obj_ MailClient)!MailClient{
 }
 
 //user needs to us switch to make sure we get the right object
-fn configure() ! {
-
-    mut client := get()!
+pub fn configure(config MailClient) !MailClient {
+    client := MailClient{...config}
+    set(client)!
+    return client
     //THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED
 
     //implement if steps need to be done for configuration

@@ -19,7 +19,7 @@ pub mut:
 	body      string
 }
 
-enum BodyType {
+pub enum BodyType {
 	text
 	html
 	markdown
