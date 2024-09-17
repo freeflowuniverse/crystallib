@@ -40,8 +40,7 @@ fn (mut self ListItem) parse() ! {
 		prefix = '.'
 		self.order = content.all_before('.').int()
 	}
-
-	mut p := self.paragraph_new(mut self.parent_doc_, content.all_after_first(prefix).trim_space())
+	mut p := self.paragraph_new(mut self.parent_doc(), content.all_after_first(prefix).trim_space())
 	p.process()!
 }
 
