@@ -197,7 +197,7 @@ pub fn (mut db WebDB) infopointer_resolve(info_name string) ! {
     mut info := db.infopointers[info_name] or {
         return error('InfoPointer ${info_name} not found')
     }
-    mut users := map[string]int{}
+    mut users := map[u16]u8{}
     
     acl_name := info.acl[0]
     mut acl := db.acls[acl_name] or {
@@ -210,19 +210,22 @@ pub fn (mut db WebDB) infopointer_resolve(info_name string) ! {
                 continue // Skip if group not found
             }
             for user_name in group.users {
-                users[user_name] = max(users[user_name] or { 0 }, ace.right.level())
+                thisuser:=db.users[user_name] or { panic("bug") }
+                users[thisuser.id] = u8(max(users[thisuser.id] or { 0 }, ace.right.level()))
             }
             for subgroup_name in group.groups {
                 subgroup := db.groups[subgroup_name] or {
                     continue // Skip if subgroup not found
                 }
                 for user_name in subgroup.users {
-                    users[user_name] = max(users[user_name] or { 0 }, ace.right.level())
+                    thisuser:=db.users[user_name] or { panic("bug") }
+                    users[thisuser.id] = u8(max(users[thisuser.id] or { 0 }, ace.right.level()))
                 }
             }
         }
         if ace.user != "" {
-            users[ace.user] = max(users[ace.user] or { 0 }, ace.right.level())
+            thisuser:=db.users[ace.user] or { panic("bug") }
+            users[thisuser.id] = u8(max(users[thisuser.id] or { 0 }, ace.right.level()))
         }
     }
 
