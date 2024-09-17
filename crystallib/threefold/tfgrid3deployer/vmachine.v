@@ -1,5 +1,5 @@
 
-module deploy
+module tfgrid3deployer
 
 import json
 import freeflowuniverse.crystallib.data.encoder
@@ -17,7 +17,6 @@ pub mut:
 	planetary   bool
 	mycelium    bool
 	network     ?NetworkSpecs
-	heroscript  string // will be executed once the node is up & running with hero, this is useful for e.g. redeployment
 	nodes       []int  // if set will chose a node from the list to deploy on
 }
 
@@ -33,7 +32,7 @@ pub mut:
 pub struct VMachine {
 pub mut:
 	tfchain_id          string
-	tfchain_contract_id int
+	tfchain_contract_id int //TODO: make multiple entries
 	requirements VMRequirements
 }
 

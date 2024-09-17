@@ -1,5 +1,6 @@
 
-module deploy
+module tfgrid3deployer
+
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.gridproxy.model as gridproxy_models
 

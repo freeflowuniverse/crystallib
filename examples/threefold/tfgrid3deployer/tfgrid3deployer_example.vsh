@@ -1,13 +1,13 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.threefold.deploy
+import freeflowuniverse.crystallib.threefold.tfgrid3deployer
 import freeflowuniverse.crystallib.ui.console
 
 
 fn main(){
 
-	mut tfgrid := deploy.new()!
+	mut tfgrid := tfgrid3deployer.get()!
 
 	// deployment_name := "mymachine"
 	// mut vm := deploy.VMRequirements{

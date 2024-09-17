@@ -1,4 +1,4 @@
-module deploy
+module tfgrid3deployer
 
 import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import freeflowuniverse.crystallib.data.paramsparser
@@ -10,37 +10,17 @@ import json
 import encoding.base64
 import os
 
-@[heap]
-pub struct TFDeployment {
-pub mut:
-    name        string = 'default'
-    description string
-    vms         []VMachine
-mut:
-    deployer    ?grid.Deployer  @[skip; str: skip]
-}
-
-fn (mut self TFDeployment) new_deployer() !grid.Deployer {
-    if self.deployer == none {
-        mut grid_client := get()!
-        network := match grid_client.network {
-            .dev { grid.ChainNetwork.dev }
-            .test { grid.ChainNetwork.test }
-            .main { grid.ChainNetwork.main }
-        }
-        self.deployer = grid.new_deployer(grid_client.mnemonic, network)!
-    }
-    return self.deployer or { return error('Deployer not initialized') }
-}
 
 pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)! VMachine {
     console.print_header('Starting deployment process.')
+
+	mut reqs := args_
 
     mut deployer := self.new_deployer() or {
         return error('Failed to initialize deployer: ${err}')
     }
 
-    mut node_id := get_node_id(args_) or {
+    mut node_id := get_node_id(reqs) or {
         return error('Failed to determine node ID: ${err}')
     }
 
@@ -64,7 +44,7 @@ pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)! VMachine {
     )
 
     console.print_header('Setting metadata and deploying workloads.')
-    deployment.add_metadata("vm", args_.name)
+    deployment.add_metadata("vm", reqs.name)
     contract_id := deployer.deploy(node_id, mut deployment, deployment.metadata, 0) or {
         return error('Deployment failed: ${err}')
     }
@@ -72,15 +52,13 @@ pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)! VMachine {
     console.print_header('Deployment successful. Contract ID: ${contract_id}')
 
     vm := VMachine{
-        tfchain_id: "${deployer.twin_id}${args_.name}",
+        tfchain_id: "${deployer.twin_id}${reqs.name}",
         tfchain_contract_id: int(contract_id),
-        name: args_.name,
-        description: args_.description,
-        cpu: args_.cpu,
-        memory: args_.memory,
+		requirements: reqs
+
     }
 
-    self.name = args_.name
+    self.name = reqs.name
     self.description = args_.description
     self.vms << vm
 
@@ -118,19 +96,6 @@ fn create_workloads(args_ VMRequirements, network NetworkSpecs, wg_port u32) ![]
     )
 
     return workloads
-}
-
-fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
-    console.print_header('Setting signature requirement.')
-    return grid_models.SignatureRequirement{
-        weight_required: 1,
-        requests: [
-            grid_models.SignatureRequest{
-                twin_id: u32(twin_id),
-                weight: 1,
-            },
-        ],
-    }
 }
 
 fn create_network_workload(network NetworkSpecs, wg_port u32) !grid_models.Workload {
@@ -193,72 +158,4 @@ fn create_zmachine_workload(args_ VMRequirements, network NetworkSpecs, public_i
             'SSH_KEY': grid_client.ssh_key,
         },
     }
-}
-
-pub fn (mut self TFDeployment) vm_get(name string)! []VMachine {
-    d := self.load(name)!
-    return d.vms
-}
-
-pub fn (mut self TFDeployment) load(deployment_name string)! TFDeployment {
-    path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
-    filepath := "${path}${deployment_name}"
-    base64_string := os.read_file(filepath) or {
-        return error("Failed to open file due to: ${err}")
-    }
-    bytes := base64.decode(base64_string)
-    d := self.decode(bytes)!
-    return d
-}
-
-fn (mut self TFDeployment) save()! {
-    dir_path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
-    os.mkdir_all(dir_path)!
-    file_path := dir_path + self.name
-
-    encoded_data := self.encode() or {
-        return error('Failed to encode deployment data: ${err}')
-    }
-    base64_string := base64.encode(encoded_data)
-
-    os.write_file(file_path, base64_string) or {
-        return error('Failed to write to file: ${err}')
-    }
-}
-
-fn (self TFDeployment) encode() ![]u8 {
-    mut b := encoder.new()
-    b.add_string(self.name)
-    b.add_int(self.vms.len)
-
-    for vm in self.vms {
-        vm_data := vm.encode()!
-        b.add_int(vm_data.len)
-        b.add_bytes(vm_data)
-    }
-
-    return b.data
-}
-
-fn (self TFDeployment) decode(data []u8) !TFDeployment {
-    if data.len == 0 {
-        return error("Data cannot be empty")
-    }
-
-    mut d := encoder.decoder_new(data)
-    mut result := TFDeployment{
-        name: d.get_string(),
-    }
-
-    num_vms := d.get_int()
-
-    for _ in 0 .. num_vms {
-        d.get_int()
-        vm_data := d.get_bytes()
-        mut dd := encoder.decoder_new(vm_data)
-        vm := decode_vmachine(mut dd)!
-        result.vms << vm
-    }
-
-    return result
 }
