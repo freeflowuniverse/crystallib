@@ -3,6 +3,14 @@ module heroweb
 //import freeflowuniverse.crystallib.core.texttools
 import veb
 
+pub struct WebDB {
+pub mut:
+	users        map[string]&User
+	groups       map[string]&Group
+	acls         map[string]&ACL
+	infopointers map[string]&InfoPointer
+}
+
 
 pub struct Context {
 	veb.Context
@@ -41,7 +49,7 @@ pub mut:
     title string
 }
 
-fn model_example() Doc {
+fn model_web_example() Doc {
     
     example_main:=$tmpl("templates/example_main.md")
     example_nav:=$tmpl("templates/example_nav.md")

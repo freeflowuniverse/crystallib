@@ -2,16 +2,14 @@ module heroweb
 
 import veb
 import os
-import freeflowuniverse.crystallib.security.authentication {Authenticator}
-import freeflowuniverse.crystallib.security.authorization {Authorizer}
+import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.clients.mailclient
 
 pub struct App {
 	veb.StaticHandler
 	veb.Middleware[Context]
 mut:
-	authenticator Authenticator
-	authorizer Authorizer
+	db WebDB
 pub:
 	base_url string = 'http://localhost:8090'
 	secret_key string = '1234'
@@ -21,35 +19,39 @@ pub fn (app &App) index(mut ctx Context) veb.Result {
 	return ctx.text('Hello V! The secret key is "${app.secret_key}"')
 }
 
-//@['/hello/:user']
-@['/wiki']
-pub fn (app &App) hello_user(mut ctx Context, user string) veb.Result {
-	doc := model_example()
-	d := $tmpl('templates/index.html')
-	return ctx.html(d)
-}
+
+// TODO: no longer needed
+// pub struct AppConfig {
+// pub:
+// 	authenticator Authenticator
+// 	authorizer Authorizer
+// }
 
 
-@['/kanban']
-pub fn (app &App) kanban(mut ctx Context) veb.Result {
-	data := kanban_example()
-	d := $tmpl('templates/kanban.html')
-	return ctx.html(d)
-}
-
-pub struct AppConfig {
-pub:
-	authenticator Authenticator
-	authorizer Authorizer
-}
-
-pub fn new(config AppConfig) !&App {
+//the path is pointing to the instructions
+pub fn new(path string) !&App {
 	mut app := &App{
-		authenticator: config.authenticator
-		authorizer: config.authorizer
+		db: WebDB{}
 	}
 
 	app.mount_static_folder_at('${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
+
+	mut plbook := playbook.new(path: path)!
+
+	//lets make sure the authentication is filled in
+	app.db.play_auth(mut plbook)!
+	//now lets add the infopointers
+	app.db.play_infopointers(mut plbook)!
+
+	//lets run the heroscripts
+	for key, ip in app.db.infopointers{
+		db.infopointer_run(key)!
+	}
+	
+
+	console.print_stdout(plbook.str())
+
+
 	return app
 }
 
@@ -59,8 +61,8 @@ pub fn example() ! {
 		secret_key: 'secret'
 	}
 
-	// app.mount_static_folder_at('${os.home_dir()}/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
-	app.mount_static_folder_at('static', '/static')!
+	//app.mount_static_folder_at('static', '/static')!
+	app.mount_static_folder_at('${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
 
 	//model_auth_example()!
 

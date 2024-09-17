@@ -4,10 +4,9 @@
 !!slides.define
     name: 'threefold_presentation'
     title: 'ThreeFold: Reinventing the Internet'
-    path: '/path/to/slides'
 
 !!slides.add_collection
-    name: 'mycollection'
+    url: 'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/collections/slides_threefold_depin'
 
 !!slides.add_slide
     name: 'threefold_intro_depin.png'

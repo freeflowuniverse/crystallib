@@ -1,6 +1,9 @@
 module heroweb
 
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.develop.gittools
+import os
 
 struct Slide {
 mut:
@@ -14,7 +17,7 @@ mut:
 	name  string
 	title string
 	slides []Slide
-	path   string
+	paths   []string
 }
 
 pub fn (mut s SlidesViewData) add_slide(slide Slide) {
@@ -40,7 +43,6 @@ fn play_slides(mut plbook playbook.PlayBook) !SlidesViewData {
         mut p := define_action.params
         slides_data.name = p.get('name')!
         slides_data.title = p.get('title')!
-        slides_data.path = p.get('path')!
     }
 
     // Find and process the slides.add_slide actions
@@ -53,6 +55,32 @@ fn play_slides(mut plbook playbook.PlayBook) !SlidesViewData {
             notes: p.get('notes')!
         }
         slides_data.slides << slide
+    }
+
+    slide_actions_coll := plbook.find(filter: 'slides.add_collection')!
+	mut gs := gittools.get()!
+
+    for action in slide_actions_coll {
+        mut p := action.params
+		url:=p.get_default("url","")!
+		pull:=p.get_default_false("pull")
+		reset:=p.get_default_false("reset")
+		mut path:=p.get_default("path","")!
+		if url.len > 0 {
+			path = gs.code_get(
+				pull: pull
+				reset: reset
+				url: url
+				reload: true
+			)!
+		}
+		if ! os.exists(path){
+			return error("can't find path ${path} for slides ${plbook}")
+		}
+		if ! (path in slides_data.paths){
+			slides_data.paths<<path
+		}	
+
     }
 
     return slides_data
@@ -78,6 +106,8 @@ pub fn slides_view_new(args_ SlidesViewParams) !SlidesViewData  {
 }
 
 pub fn slides_demo()! {
+
+	console.print_header("slides demo")
 	
 	// Create Slides instance and parse the input
 	mut slides := slides_view_new( name:'slides', title:'Slides', path:'')!
