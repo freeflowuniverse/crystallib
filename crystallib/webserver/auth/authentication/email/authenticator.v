@@ -16,9 +16,6 @@ pub struct Authenticator {
 mut:
 	config  SmtpConfig  @[required]
 	backend IBackend // Backend for authenticator
-	logger  &log.Logger = &log.Logger(&log.Log{
-	level: .info
-})
 }
 
 // Is initialized when an auth link is sent
@@ -37,9 +34,6 @@ pub struct AuthenticatorConfig {
 	secret  string
 	smtp    SmtpConfig
 	backend IBackend
-	logger  &log.Logger = &log.Logger(&log.Log{
-	level: .debug
-})
 }
 
 pub fn new(config AuthenticatorConfig) !Authenticator {
@@ -62,7 +56,6 @@ pub fn new(config AuthenticatorConfig) !Authenticator {
 		// 	password: config.smtp.password
 		// )!
 		backend: config.backend
-		logger: config.logger
 		secret: config.secret
 	}
 }
@@ -122,7 +115,6 @@ pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! 
 	)!
 
 	client.send(mail) or { panic('Error resolving email address') }
-	auth.logger.debug('Email Authenticator: Sent authentication email to ${config.email}')
 	client.quit() or { panic('Could not close connection to server') }
 }
 
@@ -135,8 +127,6 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 
 	encoded_signature := base64.url_encode(signature.bytestr().bytes())
 	link := '<a href="${config.link}/${config.email}/${expiration.unix()}/${encoded_signature}">Click to login</a>'
-	auth.logger.debug('Email authenticator: Created login link ${link}')
-
 	mail := smtp.Mail{
 		to: config.email
 		from: config.mail.from
@@ -154,7 +144,6 @@ pub fn (mut auth Authenticator) send_login_link(config SendMailConfig) ! {
 	)!
 
 	client.send(mail) or { panic('Error resolving email address') }
-	auth.logger.debug('Email Authenticator: Sent login link to ${config.email}')
 	client.quit() or { panic('Could not close connection to server') }
 }
 
@@ -167,8 +156,6 @@ pub:
 
 // sends mail with login link
 pub fn (mut auth Authenticator) authenticate_login_attempt(attempt LoginAttempt) ! {
-	auth.logger.info('Email Authenticator: Authenticating login attempt for ${attempt.email}')
-
 	if time.now() > attempt.expiration {
 		return error('link expired')
 	}
@@ -221,7 +208,6 @@ pub fn (mut auth Authenticator) authenticate(email string, cypher string) ! {
 
 	// authenticates if cypher in link matches authcode
 	if cypher == session.auth_code {
-		auth.logger.debug('Email Authenticator: email ${email} authenticated')
 		auth.backend.set_session_authenticated(email) or { panic(err) }
 	} else {
 		updated_session := AuthSession{

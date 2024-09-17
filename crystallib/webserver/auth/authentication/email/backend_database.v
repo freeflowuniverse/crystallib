@@ -9,19 +9,11 @@ import time
 struct DatabaseBackend {
 mut:
 	db     sqlite.DB
-	logger &log.Logger = &log.Logger(&log.Log{
-	level: .info
-})
 }
 
 @[params]
 pub struct DatabaseBackendConfig {
 	db_path string = 'email_authenticator.sqlite'
-mut:
-	// db     sqlite.DB
-	logger &log.Logger = &log.Logger(&log.Log{
-	level: .info
-})
 }
 
 // factory for
@@ -40,7 +32,7 @@ pub fn new_database_backend(config DatabaseBackendConfig) !DatabaseBackend {
 
 pub fn (auth DatabaseBackend) create_auth_session(session_ AuthSession) ! {
 	mut session := session_
-	if session.timeout.unix == 0 {
+	if session.timeout.unix() == 0 {
 		session.timeout = time.now().add_seconds(180)
 	}
 	sql auth.db {
