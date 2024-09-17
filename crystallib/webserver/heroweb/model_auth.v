@@ -1,6 +1,6 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-module authorization
+module heroweb
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.playbook
@@ -20,7 +20,7 @@ pub fn (r RightEnum) level() int {
 pub struct ACE {
 pub mut:
     group string
-    user  u16
+    user  string
     right RightEnum
 }
 
@@ -43,7 +43,7 @@ pub mut:
 pub struct Group {
 pub mut:
     name   string
-    users  []u16
+    users  []string
     groups []string
 }
 
@@ -57,9 +57,9 @@ pub mut:
     acl_resolved map[u16]u8 //TODO, need to use index towards the user, not the email address
 }
 
-pub struct Authorizer {
+pub struct WebDB {
 pub mut:
-    users        map[u16]&User
+    users        map[string]&User
     groups       map[string]&Group
     acls         map[string]&ACL
     infopointers map[string]&InfoPointer
@@ -100,13 +100,10 @@ pub mut:
     admin       bool
 }
 
-pub fn (mut self Authorizer) user_add(args UserAddArgs) !u16 {
+pub fn (mut self WebDB) user_add(args UserAddArgs) !&User {
     name := texttools.name_fix(args.name)
-    if self.users.values().any(name == it.name) {
+    if name in self.users {
         return error('User with name ${name} already exists')
-    }
-    if self.users.values().any(args.email in it.email) {
-        return error('User with email ${args.email} already exists')
     }
     mut new_user := &User{
         name: name
@@ -115,50 +112,26 @@ pub fn (mut self Authorizer) user_add(args UserAddArgs) !u16 {
         profile: args.profile
         admin: args.admin
     }
-    return self.new_user(new_user)
+    self.users[name] = new_user
+    return new_user
 }
 
 @[params]
 pub struct GroupAddArgs {
 pub mut:
     name   string
-    user_ids  []u16
-    user_names  []string
+    users  string
     groups string
 }
 
-pub fn (mut self Authorizer) new_user(user User) u16 {
-    id := u16(self.users.keys().len + 1)
-    self.users[id] = &User{...user, id: id}
-    return id
-}
-
-pub fn (self Authorizer) get_user_id(user User) ?u16 {
-    matches := self.users.values().filter(it.name == user.name || it.email == user.email)
-    if matches.len == 0 {return none}
-    if matches.len == 1 {
-        return matches[0].id
-    }
-    panic('user names and emails should be uniqe, this should never happen')
-}
-
-pub fn (mut self Authorizer) group_add(args GroupAddArgs) !&Group {
+pub fn (mut self WebDB) group_add(args GroupAddArgs) !&Group {
     name := texttools.name_fix(args.name)
     if name in self.groups {
         return error('Group with name ${name} already exists')
     }
-
-    mut user_ids := args.user_ids.clone()
-    for user_name in args.user_names {
-        id := self.get_user_id(
-            name: texttools.name_fix(user_name)
-        ) or {continue}
-        user_ids << id
-    }
-
     mut new_group := &Group{
         name: name
-        users: user_ids
+        users: texttools.name_fix_list(args.users)
         groups: texttools.name_fix_list(args.groups)
     }
     self.groups[name] = new_group
@@ -172,7 +145,7 @@ pub mut:
     entries []ACE
 }
 
-pub fn (mut self Authorizer) acl_add(args_ ACLAddArgs) !&ACL {
+pub fn (mut self WebDB) acl_add(args_ ACLAddArgs) !&ACL {
     mut args := args_
     args.name = texttools.name_fix(args.name)
     if args.name in self.acls {
@@ -180,7 +153,7 @@ pub fn (mut self Authorizer) acl_add(args_ ACLAddArgs) !&ACL {
     }
     for mut aceobj in args.entries {
         aceobj.group = texttools.name_fix(aceobj.group)
-        aceobj.user = aceobj.user
+        aceobj.user = texttools.name_fix(aceobj.user)
     }
     mut new_acl := &ACL{
         name: args.name
@@ -200,7 +173,7 @@ pub mut:
     expiration  string
 }
 
-pub fn (mut self Authorizer) infopointer_add(args InfoPointerAddArgs) !&InfoPointer {
+pub fn (mut self WebDB) infopointer_add(args InfoPointerAddArgs) !&InfoPointer {
     name := texttools.name_fix(args.name)
     if name in self.infopointers {
         return error('InfoPointer with name ${name} already exists')
@@ -220,11 +193,11 @@ pub fn (mut self Authorizer) infopointer_add(args InfoPointerAddArgs) !&InfoPoin
     return new_infopointer
 }
 
-pub fn (mut db Authorizer) infopointer_resolve(info_name string) ! {
+pub fn (mut db WebDB) infopointer_resolve(info_name string) ! {
     mut info := db.infopointers[info_name] or {
         return error('InfoPointer ${info_name} not found')
     }
-    mut users := map[u16]u8{}
+    mut users := map[string]int{}
     
     acl_name := info.acl[0]
     mut acl := db.acls[acl_name] or {
@@ -237,45 +210,23 @@ pub fn (mut db Authorizer) infopointer_resolve(info_name string) ! {
                 continue // Skip if group not found
             }
             for user_name in group.users {
-                users[user_name] = u8(max(users[user_name] or { 0 }, ace.right.level()))
+                users[user_name] = max(users[user_name] or { 0 }, ace.right.level())
             }
             for subgroup_name in group.groups {
                 subgroup := db.groups[subgroup_name] or {
                     continue // Skip if subgroup not found
                 }
                 for user_name in subgroup.users {
-                    users[user_name] = u8(max(users[user_name] or { 0 }, ace.right.level()))
+                    users[user_name] = max(users[user_name] or { 0 }, ace.right.level())
                 }
             }
         }
-        if ace.user != 0 {
-            users[ace.user] = u8(max(users[ace.user] or { 0 }, ace.right.level()))
+        if ace.user != "" {
+            users[ace.user] = max(users[ace.user] or { 0 }, ace.right.level())
         }
     }
 
     info.acl_resolved = &users
-}
-
-pub struct AuthorizationRequest {
-pub:
-    right RightEnum 
-    subject u16 // subject attempting to be authorized
-    object string // object for which authorization is being attempted 
-}
-
-pub fn (mut db Authorizer) authorize(request AuthorizationRequest) !bool {
-    db.infopointer_resolve(request.object)!
-
-    if request.object !in db.infopointers {
-        // QUESTION: expected behaviour?
-        return error('Access control for resource ${request.object} not found')
-    }
-
-    if request.subject !in db.infopointers[request.object].acl_resolved {
-        return false
-    }
-
-    return db.infopointers[request.object].acl_resolved[request.subject] >= u8(request.right)
 }
 
 fn max(a int, b int) int {
@@ -289,10 +240,10 @@ fn max(a int, b int) int {
 
 // Example usage
 pub fn model_auth_example()!{
-    mut db := Authorizer{}
+    mut db := WebDB{}
 
     db.user_add(name: 'john', email: 'john@example.com') or { panic(err) }
-    db.group_add(name: 'admins', user_names: ['john']) or { panic(err) }
+    db.group_add(name: 'admins', users: 'john') or { panic(err) }
     db.acl_add(name: 'default', entries: [ACE{group: 'admins', right: .admin}]) or { panic(err) }
     db.infopointer_add(name: 'test', path: '/test', acl: ['default']) or { panic(err) }
     db.infopointer_resolve('test') or { panic(err) }
@@ -307,8 +258,8 @@ pub mut:
 	heroscript string
 }
 
-pub fn play_auth(mut plbook playbook.PlayBook) !Authorizer {
-    mut db := Authorizer{}
+pub fn play_auth(mut plbook playbook.PlayBook) !WebDB {
+    mut db := WebDB{}
 
     // Process all webdb actions
 
@@ -327,8 +278,7 @@ pub fn play_auth(mut plbook playbook.PlayBook) !Authorizer {
     for action in webdb_actions2 {
         db.group_add(
                 name: action.params.get('name')!
-                user_names: action.params.get_list_default('user_names', [])!
-                user_ids: action.params.get_list_u16_default('user_ids', [])
+                users: action.params.get_default('users', '')!
                 groups: action.params.get_default('groups', '')!
         ) or { return error('Failed to add user: ${err}') }
     }
@@ -367,8 +317,8 @@ pub fn play_auth(mut plbook playbook.PlayBook) !Authorizer {
     return db
 }
 
-// pub fn  model_auth_new(args_ ModelAuthNewArgs) !Authorizer  {
-//     mut db:=Authorizer{}
+// pub fn  model_auth_new(args_ ModelAuthNewArgs) !WebDB  {
+//     mut db:=WebDB{}
 // 	mut args:=args_
 // 	if args.heroscript ==""{
 // 		args.heroscript = $tmpl("templates/example_slides.md")

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -no-retry-compilation -cc tcc -d use_openssl -enable-globals -cg run
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.installers.threefold.griddriver
 def_heroscript := griddriver.heroscript_default()

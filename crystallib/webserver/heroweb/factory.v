@@ -52,3 +52,17 @@ pub fn new(config AppConfig) !&App {
 	app.mount_static_folder_at('${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
 	return app
 }
+
+
+pub fn example() ! {
+	mut app := &App{
+		secret_key: 'secret'
+	}
+
+	// app.mount_static_folder_at('${os.home_dir()}/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
+	app.mount_static_folder_at('static', '/static')!
+
+	//model_auth_example()!
+
+	veb.run[App, Context](mut app, 8090)
+}
