@@ -41,7 +41,10 @@ pub fn get(args_ ArgsGet) !&TFGridDeployer  {
         }
         config_load()!
     }
-    return tfgrid3deployer_global[args.name] or { panic("bug") }
+    return tfgrid3deployer_global[args.name] or { 
+            println(tfgrid3deployer_global)
+            panic("bug in get from factory: ") 
+        }
 }
 
 
@@ -63,7 +66,7 @@ fn config_load(args_ ArgsGet) ! {
 fn config_save(args_ ArgsGet) ! {
     mut args := args_get(args_)
     mut context:=base.context()!
-    context.hero_config_set("tfgrid3deployer",args.name,heroscript_default())!
+    context.hero_config_set("tfgrid3deployer",args.name,heroscript_default()!)!
 }
 
 
@@ -80,6 +83,10 @@ pub mut:
     heroscript string  //if filled in then plbook will be made out of it
     plbook     ?playbook.PlayBook 
     reset      bool
+
+    start      bool
+    stop       bool
+    restart    bool
     delete     bool
     configure  bool     //make sure there is at least one installed
 }
@@ -90,7 +97,7 @@ pub fn play(args_ PlayArgs) ! {
 
 
     if args.heroscript == "" {
-        args.heroscript = heroscript_default()
+        args.heroscript = heroscript_default()!
     }
     mut plbook := args.plbook or {
         playbook.new(text: args.heroscript)!
@@ -101,7 +108,8 @@ pub fn play(args_ PlayArgs) ! {
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
-            cfg_play(p)!
+            mycfg:=cfg_play(p)!
+            set(mycfg)!
         }
     }
 

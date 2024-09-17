@@ -1,36 +1,17 @@
 # griddriver
 
-
+Griddirver allows us to talk to the TFChain
 
 To get started
 
 ```vlang
 
-
-
-import freeflowuniverse.crystallib.installers.something. griddriver
+import freeflowuniverse.crystallib.installers.threefold.griddriver
 
 mut installer:= griddriver.get()!
 
-installer.start()!
-
-
+installer.install()!
 
 
 ```
-
-## example heroscript
-
-
-```hero
-!!griddriver.install
-    homedir: '/home/user/griddriver'
-    username: 'admin'
-    password: 'secretpassword'
-    title: 'Some Title'
-    host: 'localhost'
-    port: 8888
-
-```
-
 

@@ -8,7 +8,7 @@ To get started
 
 
 
-import freeflowuniverse.crystallib.threefold.tfgrid3deployer
+import freeflowuniverse.crystallib.clients. tfgrid3deployer
 
 mut client:= tfgrid3deployer.get()!
 
@@ -24,11 +24,9 @@ client...
 
 ```hero
 !!tfgrid3deployer.configure
-    ssh_key: ...
-    mnemonic: ...
-    network: ...
+    secret: '...'
+    host: 'localhost'
+    port: 8888
 ```
-
-
 
 

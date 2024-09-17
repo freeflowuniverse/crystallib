@@ -8,7 +8,7 @@ const default = ${args.default}
 
 @if args.hasconfig
 //TODO: THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED IN LINE TO STRUCT BELOW, IS STRUCTURED AS HEROSCRIPT
-pub fn heroscript_default() string {
+pub fn heroscript_default() !string {
 @if args.cat == .installer    
     heroscript:="
     !!${args.name}.configure 
@@ -76,7 +76,7 @@ pub mut:
 @end
 }
 @if args.hasconfig
-fn cfg_play(p paramsparser.Params) ! {
+fn cfg_play(p paramsparser.Params) !${args.classname} {
     //THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED IN LINE WITH struct above
     mut mycfg := ${args.classname}{
         name: p.get_default('name', 'default')!
@@ -93,7 +93,7 @@ fn cfg_play(p paramsparser.Params) ! {
     if mycfg.password == '' && mycfg.secret == '' {
         return error('password or secret needs to be filled in for ${args.name}')
     }
-    set(mycfg)!
+    return mycfg
 }
 @end
 

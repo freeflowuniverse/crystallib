@@ -3,9 +3,15 @@
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.tfgrid3deployer
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.installers.threefold.griddriver
 
 
 fn main(){
+
+
+
+	// mut installer:= griddriver.get()!
+	// installer.install()!
 
 	mut tfgrid := tfgrid3deployer.get()!
 

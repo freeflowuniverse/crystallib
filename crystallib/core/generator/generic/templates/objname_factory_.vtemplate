@@ -45,7 +45,10 @@ pub fn get(args_ ArgsGet) !&${args.classname}  {
 		}
 		config_load()!
 	}
-	return ${args.name}_global[args.name] or { panic("bug") }
+	return ${args.name}_global[args.name] or { 
+            println(${args.name}_global)
+            panic("bug in get from factory: ") 
+        }
 }
 
 
@@ -72,7 +75,7 @@ fn config_load(args_ ArgsGet) ! {
 fn config_save(args_ ArgsGet) ! {
 	mut args := args_get(args_)
 	mut context:=base.context()!
-	context.hero_config_set("${args.name}",args.name,heroscript_default())!
+	context.hero_config_set("${args.name}",args.name,heroscript_default()!)!
 }
 
 
@@ -104,7 +107,7 @@ pub fn play(args_ PlayArgs) ! {
 
     @if args.hasconfig
     if args.heroscript == "" {
-        args.heroscript = heroscript_default()
+        args.heroscript = heroscript_default()!
     }
     @end
     mut plbook := args.plbook or {
@@ -116,7 +119,8 @@ pub fn play(args_ PlayArgs) ! {
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
-            cfg_play(p)!
+            mycfg:=cfg_play(p)!
+            set(mycfg)!
         }
     }
     @end

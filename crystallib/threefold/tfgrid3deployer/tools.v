@@ -15,5 +15,6 @@ fn resolve_network() !gridproxy.TFGridNet {
         .dev { gridproxy.TFGridNet.dev }
         .test { gridproxy.TFGridNet.test }
         .main { gridproxy.TFGridNet.main }
+        .qa { gridproxy.TFGridNet.qa }
     }
 }

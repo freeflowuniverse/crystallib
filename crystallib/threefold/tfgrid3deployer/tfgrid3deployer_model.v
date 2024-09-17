@@ -6,18 +6,21 @@ pub const version = '1.0.0'
 const singleton = false
 const default = true
 
-pub fn heroscript_default() string {
-    
+pub fn heroscript_default() !string {
+
     ssh_key := os.getenv_opt('SSH_KEY') or {''}
     mnemonic := os.getenv_opt('TFGRID_MNEMONIC') or {''}
-    network := (os.getenv_opt('TFGRID_NETWORK') or {"587"}).int()
+    network := os.getenv_opt('TFGRID_NETWORK') or {'main'} //main,test,dev,qa
     heroscript:="
-    !!mailclient.configure name:'default'
+    !!tfgrid3deployer.configure name:'default'
         ssh_key: '${ssh_key}'
         mnemonic: '${mnemonic}'
         network: ${network}
 
     "
+    if ssh_key.len==0 || mnemonic.len==0  || network.len==0 {
+        return error("please configure the tfgrid deployer or set SSH_KEY, TFGRID_MNEMONIC ")
+    }
     return heroscript
 
 }
@@ -26,6 +29,7 @@ pub enum Network {
     dev
     main
     test
+    qa
 }
 
 
@@ -38,11 +42,12 @@ pub mut:
 }
 
 
-fn cfg_play(p paramsparser.Params) ! {
+fn cfg_play(p paramsparser.Params) !TFGridDeployer {
     network_str := p.get_default('network', 'main')!
     network := match network_str {
         'dev' { Network.dev }
         'test' { Network.test }
+        'qa' { Network.qa }
         else { Network.main }
     }
 
@@ -51,7 +56,7 @@ fn cfg_play(p paramsparser.Params) ! {
         mnemonic: p.get_default('mnemonic', '')!
         network: network
     }
-    set(mycfg)!
+    return mycfg
 }
 
 fn obj_init(obj_ TFGridDeployer)!TFGridDeployer{

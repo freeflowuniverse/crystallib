@@ -26,6 +26,7 @@ fn (mut self TFDeployment) new_deployer() !grid.Deployer {
             .dev { grid.ChainNetwork.dev }
             .test { grid.ChainNetwork.test }
             .main { grid.ChainNetwork.main }
+            .qa { grid.ChainNetwork.qa }
         }
         self.deployer = grid.new_deployer(grid_client.mnemonic, network)!
     }
