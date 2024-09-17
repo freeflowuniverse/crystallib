@@ -16,7 +16,6 @@ pub mut:
 	public_ip6  bool
 	planetary   bool
 	mycelium    bool
-	network     ?NetworkSpecs
 	nodes       []int  // if set will chose a node from the list to deploy on
 }
 

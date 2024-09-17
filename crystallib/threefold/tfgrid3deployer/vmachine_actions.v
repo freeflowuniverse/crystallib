@@ -11,60 +11,121 @@ import encoding.base64
 import os
 
 
-pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)! VMachine {
+pub fn (mut self TFDeployment) vms_deploy(vms []VMRequirements)! VMachine {
     console.print_header('Starting deployment process.')
 
-	mut reqs := args_
+    // 1. Loop over all of the VMs
+    // 2. Get node for each VMs if not passed
+    // 3. Create network per node
+    // 4. Manage the VM IPs
+    // 5. Deploy each VM
 
-    mut deployer := self.new_deployer() or {
-        return error('Failed to initialize deployer: ${err}')
-    }
+    nodes := []int
 
-    mut node_id := get_node_id(reqs) or {
-        return error('Failed to determine node ID: ${err}')
-    }
-
-    mut network := args_.network or {
+    mut network := self.network or {
         NetworkSpecs{
             name: 'net' + rand.string(5),
-            ip_range: "10.249.0.0/16",
-            subnet: "10.249.0.0/24",
+            ip_range: "10.10.0.0/16",
         }
     }
 
-    wg_port := deployer.assign_wg_port(node_id)!
-    workloads := create_workloads(args_, network, wg_port)!
+    // Get the nodes of the deployment to create the network.
+    for vm in vms {
+        mut node_id := get_node_id(vm) or {
+            return error('Failed to determine node ID: ${err}')
+        }
 
-    console.print_header('Creating deployment.')
-    mut deployment := grid_models.new_deployment(
-        twin_id: deployer.twin_id,
-        description: 'VGridClient Deployment',
-        workloads: workloads,
-        signature_requirement: create_signature_requirement(deployer.twin_id),
-    )
-
-    console.print_header('Setting metadata and deploying workloads.')
-    deployment.add_metadata("vm", reqs.name)
-    contract_id := deployer.deploy(node_id, mut deployment, deployment.metadata, 0) or {
-        return error('Deployment failed: ${err}')
+        vm.nodes << node_id
+        nodes << node_id
     }
 
-    console.print_header('Deployment successful. Contract ID: ${contract_id}')
+    /*
+        1. Per node we need to:
+            - Get the wiregurd port
+            - Generate a wireguard private key
+            - Assign a subnet
+            - Assign the Peers
 
-    vm := VMachine{
-        tfchain_id: "${deployer.twin_id}${reqs.name}",
-        tfchain_contract_id: int(contract_id),
-		requirements: reqs
+            // Result will be like this
+            {
+                <nodeId>: {
+                    wg_port: int,
+                    keys: []string,
+                    subnet: string,
+                } 
+            }
+    */
+
+    mut wg_ports        := map[u32]int{}
+    mut wg_keys         := map[u32][]string{}
+    mut wg_subnet       := map[u32]string{}
+    mut node_endpoints  := map[u32]string{}
+
+    // Set the network data
+    for idx, node_id in nodes {
+        wg_port := self.deployer.assign_wg_port(node_id)!
+        keys := self.deployer.client.generate_wg_priv_key()! // The first index will be the private.
+        mut parts := network.ip_range.split("/")[0].split(".")
+        parts[2] = idx + 2
+        subnet := parts.join('.') + '/24'
+        wg_ports[node_id] = wg_port
+        wg_keys[node_id] = keys
+        wg_subnet[node_id] = subnet
+    }
+
+    // Set the Peers
+    for vm in vms {
 
     }
 
-    self.name = reqs.name
-    self.description = args_.description
-    self.vms << vm
+    workloads := create_workloads(reqs, network, wg_port)!
 
-    self.save()!
-    self.load(args_.name)!
-    return vm
+    mut network := models.Znet{
+		ip_range: '10.1.0.0/16'
+		subnet: '10.1.1.0/24'
+		wireguard_private_key: 'GDU+cjKrHNJS9fodzjFDzNFl5su3kJXTZ3ipPgUjOUE='
+		wireguard_listen_port: wg_port
+		peers: [
+			models.Peer{
+				subnet: '10.1.2.0/24'
+				wireguard_public_key: '4KTvZS2KPWYfMr+GbiUUly0ANVg8jBC7xP9Bl79Z8zM='
+				allowed_ips: ['10.1.2.0/24', '100.64.1.2/32']
+			},
+		]
+	}
+
+    // console.print_header('Creating deployment.')
+    // mut deployment := grid_models.new_deployment(
+    //     twin_id: self.deployer.twin_id,
+    //     description: 'VGridClient Deployment',
+    //     workloads: workloads,
+    //     signature_requirement: create_signature_requirement(self.deployer.twin_id),
+    // )
+
+    // console.print_header('Setting metadata and deploying workloads.')
+    // deployment.add_metadata("vm", reqs.name)
+    // // contract_id := self.deployer.deploy(node_id, mut deployment, deployment.metadata, 0) or {
+    // //     return error('Deployment failed: ${err}')
+    // // }
+
+    // contract_id := 154551
+
+    // console.print_header('Deployment successful. Contract ID: ${contract_id}')
+
+    // vm := VMachine{
+    //     tfchain_id: "${self.deployer.twin_id}${reqs.name}",
+    //     tfchain_contract_id: int(contract_id),
+	// 	requirements: reqs
+
+    // }
+
+    // self.name = reqs.name
+    // self.description = args_.description
+    // self.vms << vm
+
+    // self.save()!
+    // self.load()!
+    // return vm
 }
 
 fn get_node_id(args_ VMRequirements) !u32 {
