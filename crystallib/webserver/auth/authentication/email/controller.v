@@ -15,9 +15,6 @@ pub struct Controller {
 	callback string @[vweb_global]
 mut:
 	authenticator Authenticator @[vweb_global]
-	logger        &log.Logger = &log.Logger(&log.Log{
-	level: .debug
-})   @[vweb_global]
 }
 
 @[params]
@@ -28,7 +25,6 @@ pub struct ControllerParams {
 
 pub fn new_controller(params ControllerParams) Controller {
 	mut app := Controller{
-		logger: params.logger
 		authenticator: params.authenticator
 	}
 	return app
@@ -38,12 +34,8 @@ pub fn new_controller(params ControllerParams) Controller {
 @[POST]
 pub fn (mut app Controller) send_verification_mail() !vweb.Result {
 	config := json.decode(SendMailConfig, app.req.data)!
-	app.logger.debug('${email.agent}: received request to verify email')
 	app.authenticator.send_verification_mail(config) or { panic(err) }
-	app.logger.debug('${email.agent}: Sent verification email')
 	return app.ok('')
-	// app.logger.debug('${email.agent}: sent verification email')
-	// return app.html('timeout')
 }
 
 // route responsible for verifying email, email form should be posted here
@@ -54,7 +46,6 @@ pub fn (mut app Controller) is_verified() vweb.Result {
 	for {
 		if app.authenticator.is_authenticated(address) or { panic(err) } {
 			// returns success message once verified
-			app.logger.debug('${email.agent}: verified email')
 			return app.ok('ok')
 		}
 		time.sleep(2 * time.second)
@@ -65,8 +56,6 @@ pub fn (mut app Controller) is_verified() vweb.Result {
 // route responsible for verifying email, email form should be posted here
 @[POST]
 pub fn (mut app Controller) email_authentication() vweb.Result {
-	app.logger.debug('${email.agent}: received email authentication request')
-
 	config_ := json.decode(SendMailConfig, app.req.data) or {
 		app.set_status(422, 'Request payload does not follow anticipated formatting.')
 		return app.text('Request payload does not follow anticipated formatting.')
@@ -86,7 +75,6 @@ pub fn (mut app Controller) email_authentication() vweb.Result {
 	for {
 		if app.authenticator.is_authenticated(config.email) or { panic(err) } {
 			// returns success message once verified
-			app.logger.debug('${email.agent}: verified email')
 			return app.ok('ok')
 		}
 		time.sleep(2 * time.second)
@@ -97,7 +85,6 @@ pub fn (mut app Controller) email_authentication() vweb.Result {
 // route responsible for verifying email, email form should be posted here
 @[POST]
 pub fn (mut app Controller) verify() vweb.Result {
-	app.logger.debug('${email.agent}: received request to verify email')
 	config_ := json.decode(SendMailConfig, app.req.data) or {
 		app.set_status(422, 'Request payload does not follow anticipated formatting.')
 		return app.text('Request payload does not follow anticipated formatting.')

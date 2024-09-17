@@ -1,4 +1,4 @@
-module authentication
+module email
 
 import time
 import crypto.hmac
@@ -7,19 +7,19 @@ import encoding.hex
 import encoding.base64
 import freeflowuniverse.crystallib.clients.mailclient {MailClient}
 
-pub struct Authenticator {
+pub struct StatelessAuthenticator {
 pub:
 	secret string
 pub mut:
  	mail_client MailClient
 }
 
- pub fn new(authenticator Authenticator) !Authenticator {
+ pub fn new_stateless_authenticator(authenticator StatelessAuthenticator) !StatelessAuthenticator {
 	// TODO: do some checks
- 	return Authenticator {...authenticator}
+ 	return StatelessAuthenticator {...authenticator}
 }
 
-pub struct AuthentcationMail {
+pub struct AuthenticationMail {
 pub:
 	to string // email address being authentcated
  	from    string = 'email_authenticator@crystallib.tf'
@@ -28,11 +28,11 @@ pub:
 	callback string // callback url of authentication link
 }
 
-pub fn (mut a Authenticator) send_authentication_mail(mail AuthentcationMail) ! {
+pub fn (mut a StatelessAuthenticator) send_authentication_mail(mail AuthenticationMail) ! {
 	link := a.new_authentication_link(mail.to, mail.callback)!
 	button := '<a href="${link}">Click to authenticate</a>'
 
-	println('debugzo ${mail}')
+	println(a.mail_client)
  	// // send email with link in body
  	a.mail_client.send(
 		to: mail.to
@@ -43,7 +43,7 @@ pub fn (mut a Authenticator) send_authentication_mail(mail AuthentcationMail) ! 
 	) or { panic('Error resolving email address $err') }
 }
 
-fn (a Authenticator) new_authentication_link(email string, callback string) !string {
+fn (a StatelessAuthenticator) new_authentication_link(email string, callback string) !string {
 	// sign email address and expiration of authentication link
 	expiration := time.now().add(5 * time.minute)
  	data := '${email}.${expiration}' // data to be signed
@@ -65,9 +65,7 @@ pub:
 }
 
 // sends mail with login link
-pub fn (auth Authenticator) authenticate(attempt AuthenticationAttempt) ! {	
- 	println('Email Authenticator: Authenticating login attempt for ${attempt.email}')
-
+pub fn (auth StatelessAuthenticator) authenticate(attempt AuthenticationAttempt) ! {	
  	if time.now() > attempt.expiration {
  		return error('link expired')
  	}
@@ -81,8 +79,6 @@ pub fn (auth Authenticator) authenticate(attempt AuthenticationAttempt) ! {
  	).bytestr().bytes()
 
  	decoded_signature := base64.url_decode(attempt.signature)
- 	println('Email Authenticator: decoded attempt signature ${decoded_signature}')
- 	println('Email Authenticator: mirror signature ${signature_mirror}')
 
  	if !hmac.equal(decoded_signature, signature_mirror) {
  		return error('signature mismatch')

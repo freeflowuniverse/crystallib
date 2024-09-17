@@ -2,13 +2,13 @@ module heroweb
 
 import time
 import freeflowuniverse.crystallib.webserver.auth.jwt
-import freeflowuniverse.crystallib.security.authentication
+import freeflowuniverse.crystallib.webserver.auth.authentication.email as email_authentication
 import veb
 
 @['/register'; post]
 pub fn (mut app App) register(mut ctx Context) veb.Result {
 	email := ctx.form['email'] or { return ctx.text('Email is required') }
-	app.authenticator.send_authentication_mail(
+	app.db.authenticator.send_authentication_mail(
 		to: email
 		callback: '${app.base_url}/callback'
 	) or {
@@ -19,7 +19,7 @@ pub fn (mut app App) register(mut ctx Context) veb.Result {
 
 @['/callback/:email/:expiration/:signature']
 pub fn (mut app App) callback(mut ctx Context, email string, expiration string, signature string) veb.Result {
-	app.authenticator.authenticate(
+	app.db.authenticator.authenticate(
 		email: email
 		expiration: time.unix(expiration.i64())
 		signature: signature
@@ -27,12 +27,17 @@ pub fn (mut app App) callback(mut ctx Context, email string, expiration string, 
 		return ctx.text('${err}')
 	}
 	
-	id := app.authorizer.get_user_id(email: [email]) or {
-		app.authorizer.user_add(name: email, email: email) or {
+	println('debugzo1')
+	id := app.db.get_user_id(email: [email]) or {
+		println('debugzo2')
+		app.db.user_add(name: email, email: email) or {
 			return ctx.server_error('${err}')
 		}
 	}
+	println('debugzo3 ${id}')
 	token := jwt.create_token(sub: id.str())
+	signed_token := token.sign(app.jwt_secret)
+	ctx.set_cookie(name: 'access_token', value: signed_token, path: '/')
 	return ctx.redirect('/')
 }
 

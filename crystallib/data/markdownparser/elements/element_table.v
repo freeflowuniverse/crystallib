@@ -97,7 +97,7 @@ pub fn (mut self Table) parse() ! {
 	header.delete(0)
 
 	for h in header {
-		mut paragraph := self.paragraph_new(mut self.parent_doc_, h)
+		mut paragraph := self.paragraph_new(mut self.parent_doc(), h)
 		paragraph.process()!
 		self.header << paragraph
 	}
@@ -136,7 +136,7 @@ pub fn (mut self Table) parse() ! {
 			return error('wrongly formatted row.\n${self}\n${line}')
 		}
 		for cell in columns {
-			mut paragraph := self.paragraph_new(mut self.parent_doc_, cell.trim_space())
+			mut paragraph := self.paragraph_new(mut self.parent_doc(), cell.trim_space())
 			paragraph.process()!
 			row.cells << paragraph
 		}

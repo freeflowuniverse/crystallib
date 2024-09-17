@@ -20,7 +20,7 @@ pub mut:
 	acl_resolved map[u16]u8
 	cat          InfoType
 	slides       ?SlidesViewData
-	dagu 		 false //not used for now, is when we will run the hero actions in dagu
+	dagu 		 bool //not used for now, is when we will run the hero actions in dagu
 }
 
 pub enum InfoType {
@@ -34,7 +34,9 @@ pub enum InfoType {
 pub struct InfoPointerAddArgs {
 pub mut:
 	name        string
-	path        string
+	path_content        string
+	path_heroscript        string
+	cat        InfoType
 	acl         []string
 	description string
 	expiration  string
@@ -47,7 +49,9 @@ pub fn (mut self WebDB) infopointer_add(args InfoPointerAddArgs) !&InfoPointer {
 	}
 	mut new_infopointer := &InfoPointer{
 		name:        name
-		path:        args.path
+		path_content:        args.path_content
+		path_heroscript:        args.path_heroscript
+		cat:        args.cat
 		acl:         args.acl.map(texttools.name_fix)
 		description: args.description
 		expiration:  args.expiration
@@ -86,7 +90,7 @@ pub fn (mut db WebDB) infopointer_resolve(info_name string) ! {
 				}
 			}
 		}
-		if ace.user != '' {
+		if ace.user != 0 {
 			thisuser := db.users[ace.user] or { panic('bug') }
 			users[thisuser.id] = u8(max(users[thisuser.id] or { 0 }, ace.right.level()))
 		}

@@ -49,6 +49,10 @@
     user: 'Someone'
     right: 'read'
 
+
+!!webdb.acl_add
+    name: 'public'
+
 !!webdb.ace_add
     acl: 'public'
     right: 'read'

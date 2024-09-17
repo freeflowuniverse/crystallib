@@ -50,7 +50,6 @@ fn cfg_play(p paramsparser.Params) ! {
         mail_server: p.get('mail_server')!
         mail_username: p.get('mail_username')!
     }
-
     set(mycfg)!
 }
 

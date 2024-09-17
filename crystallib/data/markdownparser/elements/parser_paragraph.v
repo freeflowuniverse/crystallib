@@ -50,7 +50,9 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 				// console.print_debug(' -- no def: ${paragraph.children.last()}')
 				mut llast2 := paragraph.children.last()
 				if mut llast2 is Text {
-					llast2.content += llast.content + char_
+					llast2_content := llast2.content
+					llast2.content = llast2_content + llast.content + char_
+					// llast2.content += llast.content + char_
 				} else {
 					paragraph.text_new(mut paragraph.parent_doc(), llast.content + char_)
 				}
@@ -109,7 +111,8 @@ fn (mut paragraph Paragraph) paragraph_parse() ! {
 					paragraph.children.delete_last() // remove the link
 					paragraph.text_new(mut paragraph.parent_doc(), '')
 					llast = paragraph.children.last() // fetch last again
-					llast.content += c + char_ // need to add current content
+					llast_content := llast.content
+					llast.content = llast_content + c + char_ // need to add current content
 					parser.next()
 
 					char_ = ''

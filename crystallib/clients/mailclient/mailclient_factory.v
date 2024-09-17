@@ -93,15 +93,19 @@ pub mut:
 pub fn play(args_ InstallPlayArgs) ! {
     
     mut args:=args_
-
-    if args.heroscript == "" {
-        args.heroscript = heroscript_default()
-    }
+    println('debguzo1')
     mut plbook := args.plbook or {
-        playbook.new(text: args.heroscript)!
+        println('debguzo2')
+        heroscript := if args.heroscript == "" {
+            heroscript_default()
+        } else {
+            args.heroscript
+        }
+        playbook.new(text: heroscript)!
     }
-    
+
     mut install_actions := plbook.find(filter: 'mailclient.configure')!
+    println('debguzo3 ${install_actions}')
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
