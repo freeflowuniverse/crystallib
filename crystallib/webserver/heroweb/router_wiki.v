@@ -1,6 +1,6 @@
 module heroweb
 
-
+import veb
 
 @['/wiki']
 pub fn (app &App) hello_user(mut ctx Context, user string) veb.Result {

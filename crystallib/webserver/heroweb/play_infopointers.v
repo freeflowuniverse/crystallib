@@ -2,6 +2,7 @@
 module heroweb
 
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut db WebDB) play_infopointers(mut plbook playbook.PlayBook) ! {
@@ -34,7 +35,7 @@ pub fn (mut db WebDB) play_infopointers(mut plbook playbook.PlayBook) ! {
 			content_url_pull:=action.params.get_default_false('content_url_pull')
 			content_url_reset:=action.params.get_default_false('content_url_reset')
 
-			if hero_url.len > 0 {
+			if content_url.len > 0 {
 				content_path = gs.code_get(
 					pull: content_url_pull
 					reset: content_url_reset
@@ -54,7 +55,7 @@ pub fn (mut db WebDB) play_infopointers(mut plbook playbook.PlayBook) ! {
 				else { 
 					println('Invalid category')
 					// Handle the error or set a default value
-					info_type = InfoType.html // Default to html, for example
+					InfoType.html // Default to html, for example
 				}
 			}			
 

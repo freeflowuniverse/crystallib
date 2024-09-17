@@ -4,14 +4,14 @@ module heroweb
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
 
-pub fn (mut db WebDB)  play_auth(mut plbook playbook.PlayBook) !WebDB {
+pub fn (mut db WebDB) play_authorization (mut plbook playbook.PlayBook) !WebDB {
 
 	// Process all webdb actions
 
 	webdb_actions := plbook.find(filter: 'webdb.user_add')!
 	for action in webdb_actions {
 		db.user_add(
-			name:        action.params.get('name')!
+			name:        action.params.get_default('name', '')!
 			email:       action.params.get('email')!
 			description: action.params.get_default('description', '')!
 			profile:     action.params.get_default('profile', '')!
@@ -21,9 +21,18 @@ pub fn (mut db WebDB)  play_auth(mut plbook playbook.PlayBook) !WebDB {
 
 	webdb_actions2 := plbook.find(filter: 'webdb.group_add')!
 	for action in webdb_actions2 {
+
+		users := action.params.get_list_default('user_names', [])!
+		mut user_ids := []u16{}
+		for user in users {
+			user_ids << db.get_user_id(name: user, email: [user]) or {
+				continue
+			}
+		}
+
 		db.group_add(
 			name:   action.params.get('name')!
-			users:  action.params.get_default('users', '')!
+			user_ids: user_ids
 			groups: action.params.get_default('groups', '')!
 		) or { return error('Failed to add user: ${err}') }
 	}

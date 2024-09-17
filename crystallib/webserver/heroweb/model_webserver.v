@@ -1,16 +1,16 @@
 module heroweb
 
-//import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.webserver.auth.authentication.email {StatelessAuthenticator}
 import veb
 
 pub struct WebDB {
 pub mut:
-	users        map[string]&User
+	authenticator StatelessAuthenticator
+	users        map[u16]&User
 	groups       map[string]&Group
 	acls         map[string]&ACL
 	infopointers map[string]&InfoPointer
 }
-
 
 pub struct Context {
 	veb.Context

@@ -1,6 +1,6 @@
 module heroweb
 
-
+import veb
 
 @['/kanban']
 pub fn (app &App) kanban(mut ctx Context) veb.Result {

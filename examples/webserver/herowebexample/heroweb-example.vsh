@@ -1,7 +1,8 @@
-#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -n -w -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.webserver.heroweb
 import os
+import veb
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
@@ -29,5 +30,6 @@ os.chdir('${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/we
 // osal.execute_interactive('/Users/despiegk/code/git.ourworld.tf/tfgrid/info_tfgrid/heroscript/exporter/run.sh')!
 
 
-heroweb.new("~/code/github/freeflowuniverse/crystallib/examples/webserver/veb/herowebexample/heroscripts")!
+mut app := heroweb.new("~/code/github/freeflowuniverse/crystallib/examples/webserver/herowebexample/heroscripts")!
+veb.run[heroweb.App, heroweb.Context](mut app, 8090)
 

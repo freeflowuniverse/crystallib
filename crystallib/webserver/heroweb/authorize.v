@@ -1,6 +1,6 @@
 module heroweb
 
-import freeflowuniverse.crystallib.webserver.auth.jwt
+import veb
 
 // @['/fileserver/:path']
 // pub fn (mut app App) fileserver(mut ctx Context, path string) veb.Result {
@@ -14,7 +14,7 @@ import freeflowuniverse.crystallib.webserver.auth.jwt
 // 	return ctx.
 // }
 
-// middleware to set user id to context from jwt
+// // middleware to set user id to context from jwt
 // pub fn set_user(mut ctx Context) bool {
 //     // get the cookie
 //     cookie_value := ctx.get_cookie('access_token') or { 
@@ -22,7 +22,7 @@ import freeflowuniverse.crystallib.webserver.auth.jwt
 // 		return false
 // 	}
 
-// 	token := jwt.SignedJWT(cookie_value)
+// 	token := SignedJWT(cookie_value)
 // 	verified := token.verify(c.secret) or {
 //  		return error('Failed to verify jwt. ${err}')
 //  	}
