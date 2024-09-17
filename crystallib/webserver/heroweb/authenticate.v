@@ -27,12 +27,17 @@ pub fn (mut app App) callback(mut ctx Context, email string, expiration string, 
 		return ctx.text('${err}')
 	}
 	
+	println('debugzo1')
 	id := app.db.get_user_id(email: [email]) or {
+		println('debugzo2')
 		app.db.user_add(name: email, email: email) or {
 			return ctx.server_error('${err}')
 		}
 	}
+	println('debugzo3 ${id}')
 	token := jwt.create_token(sub: id.str())
+	signed_token := token.sign(app.jwt_secret)
+	ctx.set_cookie(name: 'access_token', value: signed_token, path: '/')
 	return ctx.redirect('/')
 }
 

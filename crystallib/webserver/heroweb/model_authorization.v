@@ -97,6 +97,7 @@ pub fn (mut self WebDB) user_add(args UserAddArgs) !u16 {
         profile: args.profile
         admin: args.admin
     }
+    println('new_user ${new_user}')
     return self.new_user(new_user)
 }
 
@@ -116,7 +117,7 @@ pub fn (mut self WebDB) new_user(user User) u16 {
 }
 
 pub fn (self WebDB) get_user_id(user User) ?u16 {
-    matches := self.users.values().filter(it.name == user.name || it.email == user.email)
+    matches := self.users.values().filter((it.name != '' && it.name == user.name) || it.email == user.email)
     if matches.len == 0 {return none}
     if matches.len == 1 {
         return matches[0].id
