@@ -16,7 +16,7 @@ pub mut:
 	public_ip6  bool
 	planetary   bool
 	mycelium    bool
-	nodes       []int  // if set will chose a node from the list to deploy on
+	nodes       []u32  // if set will chose a node from the list to deploy on
 }
 
 // NetworkInfo struct to represent network details
@@ -25,13 +25,14 @@ pub mut:
 	name     string
 	ip_range string
 	subnet   string
+	mycelium bool = true
 }
 
 // MachineModel struct to represent a machine and its associated details
 pub struct VMachine {
 pub mut:
 	tfchain_id          string
-	tfchain_contract_id int //TODO: make multiple entries
+	tfchain_contract_id u64 //TODO: make multiple entries
 	requirements VMRequirements
 }
 

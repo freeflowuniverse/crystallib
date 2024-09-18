@@ -46,19 +46,6 @@ pub fn new_deployment(name string) !TFDeployment {
     }
 }
 
-fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
-    console.print_header('Setting signature requirement.')
-    return grid_models.SignatureRequirement{
-        weight_required: 1,
-        requests: [
-            grid_models.SignatureRequest{
-                twin_id: u32(twin_id),
-                weight: 1,
-            },
-        ],
-    }
-}
-
 pub fn (mut self TFDeployment) vm_get(vm_name string)! VMachine {
     d := self.load()!
     println("d = ${d}")
@@ -148,4 +135,11 @@ fn (self TFDeployment) decode(data []u8) !TFDeployment {
     //ZDB & NAMES
 
     return result
+}
+
+// Set a new machine on the deployment.
+pub fn (mut self TFDeployment)add_machine(requirements VMRequirements){
+    self.vms << VMachine{
+        requirements: requirements
+    }
 }
