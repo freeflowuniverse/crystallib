@@ -2,16 +2,10 @@ module tfgrid3deployer
 
 import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import freeflowuniverse.crystallib.threefold.gridproxy
-import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.threefold.grid
-import freeflowuniverse.crystallib.data.encoder
 import freeflowuniverse.crystallib.ui.console
 import rand
-import json
-import encoding.base64
-import os
 
-pub fn (mut self TFDeployment) deploy()!{
+pub fn (mut self TFDeployment) deploy() ! {
 	console.print_header('Starting deployment process.')
 
 	// 1. Loop over all of the VMs
@@ -23,7 +17,7 @@ pub fn (mut self TFDeployment) deploy()!{
 	mut nodes := []u32{}
 	mut network := self.network or {
 		NetworkSpecs{
-			name:     'net' + rand.string(5)
+			name: 'net' + rand.string(5)
 			ip_range: '10.10.0.0/16'
 		}
 	}
@@ -140,7 +134,7 @@ pub fn (mut self TFDeployment) deploy()!{
 		wg_subnet[public_node] = subnet
 	}
 
-	for idx, node_id in nodes {
+	for node_id in nodes {
 		if node_id in hidden_nodes {
 			// List of peers
 			// if Public node -> the peers will point to the public node
@@ -149,19 +143,19 @@ pub fn (mut self TFDeployment) deploy()!{
 
 			if public_node != 0 {
 				peers << grid_models.Peer{
-					subnet:               wg_subnet[public_node]
+					subnet: wg_subnet[public_node]
 					wireguard_public_key: wg_keys[public_node][1]
-					allowed_ips:          [network.ip_range, '100.64.0.0/16']
-					endpoint:             endpoint
+					allowed_ips: [network.ip_range, '100.64.0.0/16']
+					endpoint: endpoint
 				}
 			}
 
 			mut network_workload := grid_models.Znet{
-				ip_range:              network.ip_range
-				subnet:                wg_subnet[node_id]
+				ip_range: network.ip_range
+				subnet: wg_subnet[node_id]
 				wireguard_private_key: wg_keys[node_id][0]
 				wireguard_listen_port: wg_ports[node_id]
-				peers:                 peers
+				peers: peers
 			}
 
 			if network.mycelium {
@@ -169,7 +163,7 @@ pub fn (mut self TFDeployment) deploy()!{
 			}
 
 			workloads[node_id] << network_workload.to_workload(
-				name:        network.name
+				name: network.name
 				description: 'VGridClient Network'
 			)
 
@@ -196,10 +190,10 @@ pub fn (mut self TFDeployment) deploy()!{
 			endpoint := '${node_endpoints[peer_id]}:${wg_ports[peer_id]}'
 
 			peers << grid_models.Peer{
-				subnet:               subnet
+				subnet: subnet
 				wireguard_public_key: wg_keys[peer_id][1]
-				allowed_ips:          allowed_ips
-				endpoint:             endpoint
+				allowed_ips: allowed_ips
+				endpoint: endpoint
 			}
 		}
 
@@ -209,26 +203,26 @@ pub fn (mut self TFDeployment) deploy()!{
 				routing_ip := wireguard_routing_ip(subnet)
 
 				peers << grid_models.Peer{
-					subnet:               subnet
+					subnet: subnet
 					wireguard_public_key: wg_keys[hidden_node_id][1]
-					allowed_ips:          [subnet, routing_ip]
-					endpoint:             ''
+					allowed_ips: [subnet, routing_ip]
+					endpoint: ''
 				}
 			}
 		}
 
 		mut network_workload := grid_models.Znet{
-			ip_range:              network.ip_range
-			subnet:                wg_subnet[node_id]
+			ip_range: network.ip_range
+			subnet: wg_subnet[node_id]
 			wireguard_private_key: wg_keys[node_id][0]
 			wireguard_listen_port: wg_ports[node_id]
-			peers:                 peers
-			mycelium:              grid_models.Mycelium{
+			peers: peers
+			mycelium: grid_models.Mycelium{
 				hex_key: rand.string(32).bytes().hex()
-				peers:   []
+				peers: []
 			}
 		}.to_workload(
-			name:        network.name
+			name: network.name
 			description: 'VGridClient Network'
 		)
 
@@ -236,6 +230,7 @@ pub fn (mut self TFDeployment) deploy()!{
 	}
 
 	// Creating the ZMachine workloads
+	mut used_ip_octets := map[u32][]u8{}
 	for vmachine in self.vms {
 		mut vm := vmachine.requirements
 		mut public_ip_name := ''
@@ -259,16 +254,20 @@ pub fn (mut self TFDeployment) deploy()!{
 				interfaces: [
 					grid_models.ZNetworkInterface{
 						network: network.name
-						ip: network.ip_range.split('/')[0]
+						ip: self.assign_private_ip(vm.nodes[0], wg_subnet[vm.nodes[0]], mut
+							used_ip_octets)!
 					},
 				]
 				public_ip: public_ip_name
 				planetary: vm.planetary
-				mycelium:  if vm.mycelium { grid_models.MyceliumIP{
-						network:  network.name
+				mycelium: if vm.mycelium {
+					grid_models.MyceliumIP{
+						network: network.name
 						hex_seed: rand.string(6).bytes().hex()
 					}
-				 } else { none }
+				} else {
+					none
+				}
 			}
 			flist: 'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist'
 			entrypoint: '/sbin/zinit init'
@@ -292,17 +291,16 @@ pub fn (mut self TFDeployment) deploy()!{
 	for node_id, workloads_value in workloads {
 		console.print_header('Creating deployment.')
 		mut deployment := grid_models.new_deployment(
-			twin_id: self.deployer.twin_id,
-			description: 'VGridClient Deployment',
-			workloads: workloads_value,
-			signature_requirement: create_signature_requirement(self.deployer.twin_id),
+			twin_id: self.deployer.twin_id
+			description: 'VGridClient Deployment'
+			workloads: workloads_value
+			signature_requirement: create_signature_requirement(self.deployer.twin_id)
 		)
 
 		console.print_header('Setting metadata and deploying workloads.')
-		deployment.add_metadata("vm", self.name)
-		contract_id := self.deployer.deploy(node_id, mut deployment, deployment.metadata, 0) or {
-			return error('Deployment failed: ${err}')
-		}
+		deployment.add_metadata('vm', self.name)
+		contract_id := self.deployer.deploy(node_id, mut deployment, deployment.metadata,
+			0) or { return error('Deployment failed: ${err}') }
 		contracts_map[node_id] = contract_id
 		console.print_header('Deployment successful. Contract ID: ${contract_id}')
 	}
@@ -327,14 +325,31 @@ fn get_node_id(args_ VMRequirements) !u32 {
 }
 
 fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
-    console.print_header('Setting signature requirement.')
-    return grid_models.SignatureRequirement{
-        weight_required: 1,
-        requests: [
-            grid_models.SignatureRequest{
-                twin_id: u32(twin_id),
-                weight: 1,
-            },
-        ],
-    }
+	console.print_header('Setting signature requirement.')
+	return grid_models.SignatureRequirement{
+		weight_required: 1
+		requests: [
+			grid_models.SignatureRequest{
+				twin_id: u32(twin_id)
+				weight: 1
+			},
+		]
+	}
+}
+
+fn (self TFDeployment) assign_private_ip(node_id u32, subnet string, mut used_ip_octets map[u32][]u8) !string {
+	ip := subnet.split('/')[0]
+	mut split_ip := ip.split('.')
+	last_octet := ip.split('.').last().u8()
+	for candidate := last_octet + 2; candidate < 255; candidate += 1 {
+		if candidate in used_ip_octets {
+			continue
+		}
+
+		split_ip[3] = '${candidate}'
+		used_ip_octets[node_id] << candidate
+		return split_ip.join('.')
+	}
+
+	return error('failed to assign private ip in subnet: ${subnet}')
 }
