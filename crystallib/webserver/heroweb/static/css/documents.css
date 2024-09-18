@@ -1,0 +1,94 @@
+/* Use PicoCSS's minimal baseline */
+@import url("https://unpkg.com/@picocss/pico@1.*/css/pico.min.css");
+
+/* Basic page layout */
+body {
+    padding: 1rem;
+    margin: 0 auto;
+}
+
+/* General styling for file rows */
+.file-row {
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.file-row h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 0.5rem;
+}
+
+/* Horizontal scrolling */
+.file-list {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0;
+    margin: 0;
+}
+
+.file-list::-webkit-scrollbar {
+    display: none; /* Hide scrollbars */
+}
+
+/* Document card styling */
+.file-item {
+    min-width: 200px;
+    max-width: 200px;
+    margin-right: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Thumbnail for document */
+.file-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+/* Title and description */
+.file-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.file-item p {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Navigation buttons for scrolling */
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 1.25rem;
+}
+
+.nav-button.left {
+    left: 0;
+}
+
+.nav-button.right {
+    right: 0;
+}
+
+.nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
