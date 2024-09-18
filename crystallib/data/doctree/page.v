@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.markdownparser.elements { Doc }
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.texttools.regext
 
 pub enum PageStatus {
 	unknown
@@ -63,6 +64,7 @@ pub fn (page Page) key() string {
 pub struct PageExportArgs {
 pub mut:
 	dest string @[required]
+	replacer ?regext.ReplaceInstructions
 }
 
 // save the page on the requested dest
@@ -83,7 +85,11 @@ pub fn (mut page Page) export(args_ PageExportArgs) !&Doc {
 	dirpath := p.parent()!
 	// mut mydoc := page.doc()!
 	mut mydoc := page.doc_process_link(dest: dirpath.path)!
-	p.write(mydoc.markdown()!)!
+	mut c:=mydoc.markdown()!
+	if args.replacer != none {
+		c=args.replacer or {panic("bug")}.replace(text:c)!
+	}
+	p.write(c)!
 	return mydoc
 }
 
