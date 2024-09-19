@@ -23,14 +23,14 @@ fn main(){
 
 	deployment.add_machine(
 		tfgrid3deployer.VMRequirements{
-			name: "my_vm",
+			name: "my_vm1",
 			cpu: 1,
 			memory: 2,
 			public_ip4: false,
 			public_ip6: false,
 			planetary: true,
 			mycelium: true,
-			nodes: [u32(11)]
+			nodes: [u32(168)]
 		},
 	)
 
@@ -43,7 +43,7 @@ fn main(){
 			public_ip6: false,
 			planetary: true,
 			mycelium: true,
-			// nodes: [u32(11)]
+			nodes: [u32(28)]
 		}
 	)
 

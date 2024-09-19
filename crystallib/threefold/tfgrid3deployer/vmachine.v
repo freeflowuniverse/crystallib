@@ -24,7 +24,6 @@ pub struct NetworkSpecs {
 pub mut:
 	name     string
 	ip_range string
-	subnet   string
 	mycelium bool = true
 }
 

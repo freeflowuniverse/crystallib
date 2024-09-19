@@ -21,3 +21,22 @@ pub fn nodefilter(specs VMRequirements)! []gridproxy_models.Node {
 	nodes := gp_client.get_nodes(myfilter)!
 	return nodes
 }
+
+
+pub fn get_access_node()!gridproxy_models.Node{
+	mut gpfilter := gridproxy.nodefilter()!
+	net := resolve_network()!
+
+	gpfilter.ipv4 = true
+	gpfilter.status = 'up'
+	gpfilter.healthy = true
+
+	mut gp_client := gridproxy.new(net: net, cache: true)!
+	access_nodes := gp_client.get_nodes(gpfilter)!
+
+	if access_nodes.len == 0 {
+		return error('Cannot find a public node to assign your deployment.')
+	}
+
+	return access_nodes[0]
+}
