@@ -144,6 +144,8 @@ pub struct ActionArgs {
 pub mut:
 	reload bool = true
 	msg    string // only relevant for commit
+	branch string
+	recursive bool
 }
 
 // commit the changes, message is needed, pull from remote, push to remote
@@ -172,7 +174,7 @@ pub fn (mut repo GitRepo) commit_pull(args_ ActionArgs) ! {
 // pulls remote content in, will fail if there are local changes
 pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	$if debug {
-		console.print_debug('  pull: ${repo.url_get(true)}')
+		console.print_debug('  pull: ${repo.url_get(true)} (branch: ${args_.branch})')
 	}
 	// repo.ssh_key_load()!
 	// defer {
@@ -184,6 +186,19 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 		repo.load()!
 		args.reload = false
 	}
+
+	
+	if args.branch != '' {
+		//console.print_debug(" - branch detected: '${repo.addr.branch}'")
+		if args.branch != repo.addr.branch  {
+			console.print_header(' branch switch ${repo.addr.branch} -> ${args.branch} for ${repo.addr.remote_url}')
+			repo.branch_switch(args.branch)!
+		}
+	}
+	// } else {
+	// 	print_backtrace()
+	// 	return error('branch should have been known for ${repo.addr.remote_url}')
+
 	// st := repo.status()!
 	// if st.need_commit {
 	// 	return error('Cannot pull repo: ${repo.path.path}, a commit is needed.\n${st}')
@@ -194,7 +209,15 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 		console.print_debug(' GIT PULL FAILED: ${cmd2}')
 		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
 	}
+	if args.recursive{
+		cmd3:="cd ${repo.path.path} && git submodule update --init --recursive"
+		osal.execute_silent(cmd3) or {
+			console.print_debug(' GIT RECURSIVE PULL FAILED: ${cmd3}')
+			return error('Cannot pull repo: ${repo.path}. Error was ${err}')
+		}		
+	}
 	repo.load()!
+
 	// repo.ssh_key_forget()!
 }
 

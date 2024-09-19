@@ -1,4 +1,4 @@
-# griddriver
+# zola
 
 
 
@@ -8,9 +8,9 @@ To get started
 
 
 
-import freeflowuniverse.crystallib.installers.something. griddriver
+import freeflowuniverse.crystallib.installers.something. zola
 
-mut installer:= griddriver.get()!
+mut installer:= zola.get()!
 
 installer.start()!
 
@@ -23,8 +23,8 @@ installer.start()!
 
 
 ```hero
-!!griddriver.install
-    homedir: '/home/user/griddriver'
+!!zola.install
+    homedir: '/home/user/zola'
     username: 'admin'
     password: 'secretpassword'
     title: 'Some Title'
