@@ -8,24 +8,23 @@ import rand
 
 struct DeploymentSetup {
 mut:
-	wg_ports   map[u32]u16
-	wg_keys    map[u32][]string
-	wg_subnet  map[u32]string
-	endpoints  map[u32]string
-	public_node u32
-	hidden_nodes []u32
+	wg_ports                  map[u32]u16
+	wg_keys                   map[u32][]string
+	wg_subnet                 map[u32]string
+	endpoints                 map[u32]string
+	public_node               u32
+	hidden_nodes              []u32
 	none_accessible_ip_ranges []string
-	workloads map[u32][]grid_models.Workload
-	nodes []u32
-	deployer  &grid.Deployer @[skip; str: skip]
-	network_name string
-	ip_range string
-	mycelium bool
-	contracts_map map[u32]u64
+	workloads                 map[u32][]grid_models.Workload
+	nodes                     []u32
+	deployer                  &grid.Deployer @[skip; str: skip]
+	network_name              string
+	ip_range                  string
+	mycelium                  bool
+	contracts_map             map[u32]u64
 }
 
-fn (mut self DeploymentSetup) collect_node_ids(mut machines []VMachine)!{
-	mut nodes := []u32{}
+fn (mut self DeploymentSetup) collect_node_ids(mut machines []VMachine) ! {
 	for mut machine in machines {
 		mut node_id := get_node_id(machine.requirements) or {
 			return error('Failed to determine node ID: ${err}')
@@ -35,15 +34,18 @@ fn (mut self DeploymentSetup) collect_node_ids(mut machines []VMachine)!{
 			machine.requirements.nodes << node_id
 		}
 
-		nodes << node_id
+		if node_id in self.nodes {
+			continue
+		}
+
+		self.nodes << node_id
 	}
-	self.nodes = nodes
 }
 
 fn get_node_id(req VMRequirements) !u32 {
 	if req.nodes.len == 0 {
 		console.print_header('Requesting the proxy to filter nodes.')
-		nodes := nodefilter(req)!  // Assuming this filters nodes based on requirements
+		nodes := nodefilter(req)! // Assuming this filters nodes based on requirements
 		if nodes.len == 0 {
 			return error('No suitable nodes found.')
 		}
@@ -78,7 +80,7 @@ fn (mut self DeploymentSetup) setup_network_workloads() ! {
 	}
 }
 
-fn (mut self DeploymentSetup) setup_wireguard_data()!{
+fn (mut self DeploymentSetup) setup_wireguard_data() ! {
 	// TODO: We need to set the extra node
 	console.print_header('Setting up network workload.')
 
@@ -117,7 +119,7 @@ fn (mut self DeploymentSetup) setup_wireguard_data()!{
 	}
 }
 
-fn (mut self DeploymentSetup)setup_access_node()!{
+fn (mut self DeploymentSetup) setup_access_node() ! {
 	console.print_header('No public nodes found based on your specs.')
 	console.print_header('Requesting the Proxy to assign a public node.')
 
@@ -136,7 +138,7 @@ fn (mut self DeploymentSetup)setup_access_node()!{
 	self.wg_ports[self.public_node] = wg_port
 	self.wg_keys[self.public_node] = keys
 	self.wg_subnet[self.public_node] = subnet
-	self.endpoints[self.public_node] = access_node.public_config.ipv4.split("/")[0]
+	self.endpoints[self.public_node] = access_node.public_config.ipv4.split('/')[0]
 }
 
 fn (mut self DeploymentSetup) calculate_subnet(idx int) !string {
@@ -149,10 +151,10 @@ fn (mut self DeploymentSetup) prepare_hidden_node_peers(node_id u32) ![]grid_mod
 	mut peers := []grid_models.Peer{}
 	if self.public_node != 0 {
 		peers << grid_models.Peer{
-			subnet: self.wg_subnet[self.public_node]
+			subnet:               self.wg_subnet[self.public_node]
 			wireguard_public_key: self.wg_keys[self.public_node][1]
-			allowed_ips: [self.ip_range, '100.64.0.0/16']
-			endpoint: '${self.endpoints[self.public_node]}:${self.wg_ports[self.public_node]}'
+			allowed_ips:          [self.ip_range, '100.64.0.0/16']
+			endpoint:             '${self.endpoints[self.public_node]}:${self.wg_ports[self.public_node]}'
 		}
 	}
 	return peers
@@ -173,10 +175,10 @@ fn (mut self DeploymentSetup) prepare_public_node_peers(node_id u32) ![]grid_mod
 		}
 
 		peers << grid_models.Peer{
-			subnet: subnet
+			subnet:               subnet
 			wireguard_public_key: self.wg_keys[peer_id][1]
-			allowed_ips: allowed_ips
-			endpoint: '${self.endpoints[peer_id]}:${self.wg_ports[peer_id]}'
+			allowed_ips:          allowed_ips
+			endpoint:             '${self.endpoints[peer_id]}:${self.wg_ports[peer_id]}'
 		}
 	}
 
@@ -186,10 +188,10 @@ fn (mut self DeploymentSetup) prepare_public_node_peers(node_id u32) ![]grid_mod
 			routing_ip := wireguard_routing_ip(subnet)
 
 			peers << grid_models.Peer{
-				subnet: subnet
+				subnet:               subnet
 				wireguard_public_key: self.wg_keys[hidden_node_id][1]
-				allowed_ips: [subnet, routing_ip]
-				endpoint: ''
+				allowed_ips:          [subnet, routing_ip]
+				endpoint:             ''
 			}
 		}
 	}
@@ -199,11 +201,11 @@ fn (mut self DeploymentSetup) prepare_public_node_peers(node_id u32) ![]grid_mod
 
 fn (mut self DeploymentSetup) set_network_workload(node_id u32, peers []grid_models.Peer, add_mycelium bool) ! {
 	mut network_workload := grid_models.Znet{
-		ip_range: self.ip_range
-		subnet: self.wg_subnet[node_id]
+		ip_range:              self.ip_range
+		subnet:                self.wg_subnet[node_id]
 		wireguard_private_key: self.wg_keys[node_id][0]
 		wireguard_listen_port: self.wg_ports[node_id]
-		peers: peers
+		peers:                 peers
 	}
 
 	if add_mycelium {
@@ -211,7 +213,7 @@ fn (mut self DeploymentSetup) set_network_workload(node_id u32, peers []grid_mod
 	}
 
 	self.workloads[node_id] << network_workload.to_workload(
-		name: self.network_name
+		name:        self.network_name
 		description: 'VGridClient network workload'
 	)
 }
@@ -247,59 +249,39 @@ fn (mut self DeploymentSetup) set_zmachine_workload(vm VMRequirements, public_ip
 	mut grid_client := get()!
 
 	zmachine_workload := grid_models.Zmachine{
-		network: grid_models.ZmachineNetwork{
+		network:          grid_models.ZmachineNetwork{
 			interfaces: [
 				grid_models.ZNetworkInterface{
 					network: self.network_name
-					ip: self.assign_private_ip(vm.nodes[0], mut used_ip_octets)!
+					ip:      self.assign_private_ip(vm.nodes[0], mut used_ip_octets)!
 				},
 			]
-			public_ip: public_ip_name
-			planetary: vm.planetary
-			mycelium: if vm.mycelium {
+			public_ip:  public_ip_name
+			planetary:  vm.planetary
+			mycelium:   if vm.mycelium {
 				grid_models.MyceliumIP{
-					network: self.network_name
+					network:  self.network_name
 					hex_seed: rand.string(6).bytes().hex()
 				}
 			} else {
 				none
 			}
 		}
-		flist: 'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist'
-		entrypoint: '/sbin/zinit init'
+		flist:            'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist'
+		entrypoint:       '/sbin/zinit init'
 		compute_capacity: grid_models.ComputeCapacity{
-			cpu: u8(vm.cpu)
+			cpu:    u8(vm.cpu)
 			memory: i64(vm.memory) * 1024 * 1024 * 1024
 		}
-		env: {
+		env:              {
 			'SSH_KEY': grid_client.ssh_key
 		}
 	}.to_workload(
-		name: vm.name
+		name:        vm.name
 		description: vm.description
 	)
 
 	self.workloads[vm.nodes[0]] << zmachine_workload
-}
-
-fn (mut self DeploymentSetup) finalize_deployment(deployment_name string) ! {
-	for node_id, workloads in self.workloads {
-		console.print_header('Creating deployment on node ${node_id}.')
-		mut deployment := grid_models.new_deployment(
-			twin_id: self.deployer.twin_id
-			description: 'VGridClient Deployment'
-			workloads: workloads
-			signature_requirement: self.create_signature_requirement()
-		)
-
-		deployment.add_metadata('vm', deployment_name)
-		contract_id := self.deployer.deploy(node_id, mut deployment, deployment.metadata, 0) or {
-			return error('Deployment failed on node ${node_id}: ${err}')
-		}
-
-		self.contracts_map[node_id] = contract_id
-		console.print_header('Deployment successful. Contract ID: ${contract_id}')
-	}
 }
 
 fn (mut self DeploymentSetup) assign_private_ip(node_id u32, mut used_ip_octets map[u32][]u8) !string {
@@ -320,15 +302,32 @@ fn (mut self DeploymentSetup) assign_private_ip(node_id u32, mut used_ip_octets 
 	return error('failed to assign private IP in subnet: ${self.wg_subnet[node_id]}')
 }
 
-fn (mut self DeploymentSetup) create_signature_requirement() grid_models.SignatureRequirement {
-	console.print_header('Setting signature requirement.')
-	return grid_models.SignatureRequirement{
-		weight_required: 1
-		requests: [
-			grid_models.SignatureRequest{
-				twin_id: u32(self.deployer.twin_id)
-				weight: 1
-			},
-		]
+fn (mut self DeploymentSetup) finalize_deployment(deployment_name string) ! {
+	for node_id, workloads in self.workloads {
+		console.print_header('Creating deployment on node ${node_id}.')
+		mut deployment := grid_models.new_deployment(
+			twin_id:               self.deployer.twin_id
+			description:           'VGridClient Deployment'
+			workloads:             workloads
+			signature_requirement: grid_models.SignatureRequirement{
+				weight_required: 1
+				requests:        [
+					grid_models.SignatureRequest{
+						twin_id: u32(self.deployer.twin_id)
+						weight:  1
+					},
+				]
+			}
+		)
+
+		deployment.add_metadata('deployment', deployment_name)
+
+		contract_id := self.deployer.deploy(node_id, mut deployment, deployment.metadata,
+			0) or { return error('Deployment failed on node ${node_id}: ${err}') }
+
+		// TODO: Fill the structs with the result.
+
+		self.contracts_map[node_id] = contract_id
+		console.print_header('Deployment successful. Contract ID: ${contract_id}')
 	}
 }

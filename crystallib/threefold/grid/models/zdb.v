@@ -2,7 +2,7 @@ module models
 
 import json
 
-type ZdbMode = string
+pub type ZdbMode = string
 
 pub struct ZdbModes {
 pub:

@@ -1,4 +1,3 @@
-
 module tfgrid3deployer
 
 import json
@@ -16,7 +15,7 @@ pub mut:
 	public_ip6  bool
 	planetary   bool
 	mycelium    bool
-	nodes       []u32  // if set will chose a node from the list to deploy on
+	nodes       []u32 // if set will chose a node from the list to deploy on
 }
 
 // NetworkInfo struct to represent network details
@@ -31,8 +30,8 @@ pub mut:
 pub struct VMachine {
 pub mut:
 	tfchain_id          string
-	tfchain_contract_id u64 //TODO: make multiple entries
-	requirements VMRequirements
+	tfchain_contract_id u64 // TODO: make multiple entries
+	requirements        VMRequirements
 }
 
 // Helper function to encode a VMachine
@@ -60,34 +59,33 @@ fn decode_vmachine(data []u8) !VMachine {
 	// 	description:         d.get_string()
 	// }
 	data_string := data.bytestr()
-    return json.decode(VMachine, data_string)
+	return json.decode(VMachine, data_string)
 }
 
 // check if the node where the machine runs on is up and running
 fn (self VMachine) check_node_up() !bool {
 	return true
-
 }
 
-//check on TFChain, RMB, ... if the VM is there and up and running
+// check on TFChain, RMB, ... if the VM is there and up and running
 fn (self VMachine) check_vm_up() !bool {
-return true
+	return true
 }
 
-//try to reach the machine over mycelium
+// try to reach the machine over mycelium
 fn (self VMachine) ping_mycelium() !bool {
-return true
+	return true
 }
 
 fn (self VMachine) healthcheck() ! {
-	//check we can ping, if not check vm is up, if not check node is up
-	//wherever we find the issue throw an error
+	// check we can ping, if not check vm is up, if not check node is up
+	// wherever we find the issue throw an error
 }
 
 // NetworkInfo struct to represent network details
 pub struct RecoverArgs {
 pub mut:
-	reinstall     bool //reinstall if needed and run heroscript
+	reinstall bool // reinstall if needed and run heroscript
 }
 
 fn (self VMachine) recover(args RecoverArgs) ! {
@@ -96,15 +94,13 @@ fn (self VMachine) recover(args RecoverArgs) ! {
 // NetworkInfo struct to represent network details
 pub struct DeployArgs {
 pub mut:
-	reset     bool //careful will delete existing machine if tjere
+	reset bool // careful will delete existing machine if tjere
 }
 
 fn (self VMachine) deploy(args DeployArgs) ! {
-	//check the machine is there, if yes and reset used then delete the machine before deploying a new one
-
+	// check the machine is there, if yes and reset used then delete the machine before deploying a new one
 }
 
 fn (self VMachine) delete(args DeployArgs) ! {
-	//delete myself, check on TFChain that deletion was indeed done
-
+	// delete myself, check on TFChain that deletion was indeed done
 }
