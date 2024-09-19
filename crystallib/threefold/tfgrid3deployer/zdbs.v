@@ -5,11 +5,12 @@ import freeflowuniverse.crystallib.data.encoder
 import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import freeflowuniverse.crystallib.ui.console
 
+@[params]
 pub struct ZDBRequirements {
 pub mut:
-	name        string
-	password    string
-	size        int
+	name        string              @[required]
+	password    string              @[required]
+	size        int                 @[required]
 	node_id     u32
 	description string
 	mode        grid_models.ZdbMode = 'user'
@@ -41,15 +42,15 @@ fn (mut self DeploymentSetup) setup_zdb_workloads(zdbs []ZDBResult) ! {
 
 		// Create the Zdb model with the size converted to bytes
 		zdb_model := grid_models.Zdb{
-			size:     u64(zdb.size) * 1024 * 1024 // Convert size from MB to bytes
-			mode:     zdb.mode
-			public:   zdb.public
+			size: u64(zdb.size) * 1024 * 1024 // Convert size from MB to bytes
+			mode: zdb.mode
+			public: zdb.public
 			password: zdb.password
 		}
 
 		// Generate a workload based on the Zdb model
 		zdb_workload := zdb_model.to_workload(
-			name:        zdb.name
+			name: zdb.name
 			description: zdb.description
 		)
 

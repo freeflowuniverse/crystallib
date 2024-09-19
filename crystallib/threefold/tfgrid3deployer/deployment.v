@@ -19,7 +19,7 @@ pub mut:
 	description string
 	vms         []VMachine
 	zdbs        []ZDBResult
-	webnames    []WebName
+	webnames    []WebNameResult
 	network     ?NetworkSpecs
 mut:
 	contracts []u64 // Set the deployed contracts on the deployment and save the full deployment to be able to delete the whole deployment when need.
@@ -40,9 +40,9 @@ pub fn new_deployment(name string) !TFDeployment {
 	deployer := grid.new_deployer(grid_client.mnemonic, network)!
 
 	return TFDeployment{
-		name:     name
+		name: name
 		deployer: deployer
-		kvstore:  KVStoreFS{}
+		kvstore: KVStoreFS{}
 	}
 }
 
@@ -50,7 +50,7 @@ pub fn (mut self TFDeployment) deploy() ! {
 	console.print_header('Starting deployment process.')
 	mut network_specs := self.network or {
 		NetworkSpecs{
-			name:     'net' + rand.string(5)
+			name: 'net' + rand.string(5)
 			ip_range: '10.10.0.0/16'
 		}
 	}
@@ -58,10 +58,10 @@ pub fn (mut self TFDeployment) deploy() ! {
 	self.network = network_specs
 
 	mut setup := DeploymentSetup{
-		deployer:     &self.deployer
+		deployer: &self.deployer
 		network_name: network_specs.name
-		ip_range:     network_specs.ip_range
-		mycelium:     network_specs.mycelium
+		ip_range: network_specs.ip_range
+		mycelium: network_specs.mycelium
 	}
 
 	setup.collect_node_ids(mut self.vms) or { return error('Failed to collect node IDs: ${err}') }
@@ -71,6 +71,7 @@ pub fn (mut self TFDeployment) deploy() ! {
 	setup.setup_network_workloads()!
 	setup.setup_vm_workloads(self.vms)!
 	setup.setup_zdb_workloads(self.zdbs)!
+	setup.setup_webname_workloads(mut self.webnames)!
 	setup.finalize_deployment(self.name)!
 
 	self.contracts = setup.contracts_map.values()
@@ -188,5 +189,12 @@ pub fn (mut self TFDeployment) add_machine(requirements VMRequirements) {
 pub fn (mut self TFDeployment) add_zdb(zdb ZDBRequirements) {
 	self.zdbs << ZDBResult{
 		requirements: zdb
+	}
+}
+
+// Set a new webname on the deployment.
+pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
+	self.webnames << WebNameResult{
+		requirements: requirements
 	}
 }

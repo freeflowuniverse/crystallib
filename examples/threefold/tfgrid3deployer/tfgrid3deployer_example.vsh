@@ -21,41 +21,13 @@ fn main(){
 	// 	ip_range: '10.10.0.0/16'
 	// }
 
-	deployment.add_machine(
-		tfgrid3deployer.VMRequirements{
-			name: "my_vm1",
-			cpu: 1,
-			memory: 2 // in GB,
-			public_ip4: false,
-			public_ip6: false,
-			planetary: true,
-			mycelium: true,
-			// nodes: [u32(11)]
-		},
-	)
+	deployment.add_machine(name: "my_vm1" cpu: 1 memory: 2 planetary: true mycelium: true  nodes: [u32(11), u32(28)])
 
-	deployment.add_machine(
-		tfgrid3deployer.VMRequirements{
-			name: "my_vm2",
-			cpu: 1,
-			memory: 2 // in GB,
-			public_ip4: false,
-			public_ip6: false,
-			planetary: true,
-			mycelium: true,
-			// nodes: [u32(28)]
-		}
-	)
+	// deployment.add_machine(name: "my_vm2", cpu: 1, memory: 2 planetary: true,mycelium: true)
 
-	deployment.add_zdb(
-		tfgrid3deployer.ZDBRequirements{
-			name: "my_zdb"
-			password: "my_passw&rd"
-			size: 2 // in GB
-			description: ""
-			// node_id: u32(28)
-		}
-	)
+	// deployment.add_zdb(name: "my_zdb", password: "my_passw&rd", size: 2)
+
+	// deployment.add_webname(name: 'mywebname', backend: 'http://37.27.132.47:8000')
 
 	deployment.deploy()!
 
