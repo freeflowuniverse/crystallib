@@ -4,6 +4,10 @@
     email: 'kristof@incubaid.com'
     admin: true
 
+!!webdb.user_add
+    name: 'Timur'
+    email: 'timur@incubaid.com'
+    admin: true
 
 !!webdb.user_add
     name: 'John Doe'
@@ -23,8 +27,7 @@
 
 !!webdb.group_add
     name: 'Developers'
-    users: 'john.doe@example.com,jane.smith@example.com'
-    groups: 'Frontend,Backend'
+    users: 'kristof, timur'
 
 !!webdb.group_add
     name: 'Frontend'
@@ -36,6 +39,14 @@
 
 
 !!webdb.acl_add
+    name: 'heroweb'
+
+!!webdb.ace_add
+    acl: 'heroweb'
+    group: 'Developers'
+    right: 'write'
+
+!!webdb.acl_add
     name: 'ProjectX_ACL'
 
 !!webdb.ace_add
@@ -43,12 +54,6 @@
     group: 'Developers'
     user: 'john.doe@example.com'
     right: 'write'
-
-!!webdb.ace_add
-    acl: 'ProjectX_ACL'
-    user: 'Someone'
-    right: 'read'
-
 
 !!webdb.acl_add
     name: 'public'
