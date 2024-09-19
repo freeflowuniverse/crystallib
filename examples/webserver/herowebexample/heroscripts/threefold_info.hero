@@ -2,7 +2,7 @@
 !!webdb.infopointer_add
     name: 'threefold_slides'
     hero_url: 'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/collections/slides_threefold_depin'
-    hero_url_pull: false
+    hero_url_pull: true
     hero_url_reset: false
     hero_path: '' // not needed here because comes from hero_url
     content_url: ''
@@ -48,3 +48,38 @@
         Lean more about ThreeFold Grid
     '    
 
+!!webdb.infopointer_add
+    name: 'example_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '
+
+!!webdb.infopointer_add
+    name: 'example2_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '
+
+!!webdb.infopointer_add
+    name: 'example3_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '
+
+!!webdb.infopointer_add
+    name: 'example4_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '
