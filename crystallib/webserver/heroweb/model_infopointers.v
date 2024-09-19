@@ -19,7 +19,7 @@ pub mut:
 	expiration   string
 	acl_resolved map[u16]u8
 	cat          InfoType
-	slides       ?SlidesViewData
+	// slides       ?SlidesViewData
 	dagu 		 bool //not used for now, is when we will run the hero actions in dagu
 }
 
@@ -69,16 +69,20 @@ pub fn (mut db WebDB) infopointer_resolve(info_name string) ! {
 	mut users := map[u16]u8{}
 
 	acl_name := info.acl[0]
+	println('debugzo acl name ${acl_name}')
 	mut acl := db.acls[acl_name] or { return error('ACL not found for InfoPointer ${info_name}') }
 
+	println('debugzo1 acl ${acl}')
 	for ace in acl.entries {
+		println('debugzo2 ace ${acl}')
 		if ace.group != '' {
+			println('debugzo3 group ${ace.group}')
 			group := db.groups[ace.group] or {
 				continue // Skip if group not found
 			}
-			for user_name in group.users {
-				thisuser := db.users[user_name] or { panic('bug') }
-				users[thisuser.id] = u8(max(users[thisuser.id] or { 0 }, ace.right.level()))
+			for id in group.users {
+				println('debugzo3 ${db.users[id]}')
+				users[id] = u8(max(users[id] or { 0 }, ace.right.level()))
 			}
 			for subgroup_name in group.groups {
 				subgroup := db.groups[subgroup_name] or {

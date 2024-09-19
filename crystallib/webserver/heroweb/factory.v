@@ -19,7 +19,7 @@ pub:
 }
 
 pub fn (app &App) index(mut ctx Context) veb.Result {
-	return ctx.text('Hello V! The secret key is "${app.secret_key}"')
+	return ctx.html($tmpl('./templates/dashboard.html'))
 }
 
 //the path is pointing to the instructions
@@ -27,7 +27,9 @@ pub fn new(path string) !&App {
 	mut app := &App{
 		db: WebDB{}
 	}
-	app.route_use('/protected/:path', handler: app.set_user)
+	app.use(handler: app.set_user)
+	app.route_use('/documents', handler: app.is_logged_in)
+	app.route_use('/documents/:path...', handler: app.is_logged_in)
 	app.mount_static_folder_at('${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
 
 	mut plbook := playbook.new(path: path)!
@@ -43,9 +45,7 @@ pub fn new(path string) !&App {
 		app.db.infopointer_run(key)!
 	}
 	
-
 	console.print_stdout(plbook.str())
-
 
 	return app
 }

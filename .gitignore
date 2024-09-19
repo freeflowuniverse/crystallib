@@ -21,3 +21,4 @@ zdb-index
 .trunk/
 .DS_Store
 .venv/
+dump.rdb

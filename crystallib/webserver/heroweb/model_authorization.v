@@ -51,12 +51,13 @@ pub mut:
 pub struct ACEAddArgs {
 pub mut:
     group string
-    user  string
+    user  u16
     right RightEnum
 }
 
 pub fn (mut self ACL) add(args ACEAddArgs) !ACE {
     mut new_ace := ACE{
+        user: args.user
         group: texttools.name_fix(args.group)
         right: args.right
     }
@@ -82,6 +83,14 @@ pub mut:
     admin       bool
 }
 
+// either registers user, or logs user in
+pub fn (mut self WebDB) register_login(email string) !u16 {
+    if self.users.values().any(email in it.email) {
+        return self.get_user_id(email: [email])!
+    }
+    return self.user_add(email: email)!
+}
+
 pub fn (mut self WebDB) user_add(args UserAddArgs) !u16 {
     name := texttools.name_fix(args.name)
     if self.users.values().any(name == it.name) {
@@ -92,12 +101,11 @@ pub fn (mut self WebDB) user_add(args UserAddArgs) !u16 {
     }
     mut new_user := &User{
         name: name
-        email: texttools.name_fix_list(args.email)
+        email: [texttools.email_fix(args.email)!]
         description: args.description
         profile: args.profile
         admin: args.admin
     }
-    println('new_user ${new_user}')
     return self.new_user(new_user)
 }
 
@@ -106,7 +114,6 @@ pub struct GroupAddArgs {
 pub mut:
     name   string
     user_ids  []u16
-    user_names  []string
     groups string
 }
 
@@ -131,17 +138,9 @@ pub fn (mut self WebDB) group_add(args GroupAddArgs) !&Group {
         return error('Group with name ${name} already exists')
     }
 
-    mut user_ids := args.user_ids.clone()
-    for user_name in args.user_names {
-        id := self.get_user_id(
-            name: texttools.name_fix(user_name)
-        ) or {continue}
-        user_ids << id
-    }
-
     mut new_group := &Group{
         name: name
-        users: user_ids
+        users: args.user_ids
         groups: texttools.name_fix_list(args.groups)
     }
     self.groups[name] = new_group
@@ -173,6 +172,7 @@ pub fn (mut self WebDB) acl_add(args_ ACLAddArgs) !&ACL {
     return new_acl
 }
 
+
 pub struct AuthorizationRequest {
 pub:
     right RightEnum 
@@ -188,6 +188,7 @@ pub fn (mut db WebDB) authorize(request AuthorizationRequest) !bool {
         return error('Access control for resource ${request.object} not found')
     }
 
+    println('debuzgorko ${db.infopointers[request.object].acl_resolved}')
     if request.subject !in db.infopointers[request.object].acl_resolved {
         return false
     }
@@ -195,12 +196,26 @@ pub fn (mut db WebDB) authorize(request AuthorizationRequest) !bool {
     return db.infopointers[request.object].acl_resolved[request.subject] >= u8(request.right)
 }
 
+pub fn (mut db WebDB) authorized_ptrs(subject u16, right RightEnum) ![]InfoPointer {
+    mut ptrs := []InfoPointer
+    for key, ptr in db.infopointers {
+        if db.authorize(
+            subject: subject
+            object: key
+            right: right
+        )! {
+            ptrs << ptr
+        }
+    }
+    return ptrs
+}
+
 // Example usage
 pub fn model_auth_example()!{
     mut db := WebDB{}
 
-    db.user_add(name: 'john', email: 'john@example.com') or { panic(err) }
-    db.group_add(name: 'admins', user_names: ['john']) or { panic(err) }
+    id := db.user_add(name: 'john', email: 'john@example.com') or { panic(err) }
+    db.group_add(name: 'admins', user_ids: [id]) or { panic(err) }
     db.acl_add(name: 'default', entries: [ACE{group: 'admins', right: .admin}]) or { panic(err) }
     db.infopointer_add(name: 'test', path_content: '/test', acl: ['default']) or { panic(err) }
     db.infopointer_resolve('test') or { panic(err) }

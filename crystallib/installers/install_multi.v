@@ -13,7 +13,8 @@ import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.lang.crystallib
 import freeflowuniverse.crystallib.installers.lang.nodejs
 import freeflowuniverse.crystallib.installers.lang.python
-//import freeflowuniverse.crystallib.installers.web.caddy
+import freeflowuniverse.crystallib.installers.web.zola
+import freeflowuniverse.crystallib.installers.web.tailwind
 import freeflowuniverse.crystallib.installers.hero.heroweb
 import freeflowuniverse.crystallib.installers.hero.herodev
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
@@ -58,6 +59,8 @@ pub fn names(args_ InstallArgs) []string {
 		rust
 		vlang
 		vscode
+		zola
+		tailwind
 		'
 	mut ns := texttools.to_array(names)
 	ns.sort()
@@ -155,6 +158,14 @@ pub fn install_multi(args_ InstallArgs) ! {
 				dserver.restart()!
 				// mut dagucl:=dserver.client()!
 			}
+			'zola' {
+				mut i2 := zola.get()!
+				i2.install()!				//will also install tailwind
+			}
+			'tailwind' {
+				mut i := tailwind.get()!
+				i.install()!
+			}						
 			else {
 				return error('cannot find installer for: ${item}')
 			}

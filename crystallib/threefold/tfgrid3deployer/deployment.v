@@ -46,6 +46,41 @@ pub fn new_deployment(name string) !TFDeployment {
     }
 }
 
+pub fn (mut self TFDeployment) deploy() ! {
+	console.print_header('Starting deployment process.')
+	mut network_specs := self.network or {
+		NetworkSpecs{
+			name: 'net' + rand.string(5)
+			ip_range: '10.10.0.0/16'
+		}
+	}
+
+	self.network = network_specs
+
+	mut setup := DeploymentSetup{
+		deployer: &self.deployer
+		network_name: network_specs.name
+		ip_range: network_specs.ip_range
+		mycelium: network_specs.mycelium
+	}
+
+	setup.collect_node_ids(mut self.vms) or {
+		return error('Failed to collect node IDs: ${err}')
+	}
+
+	console.print_header('Loaded nodes: ${setup.nodes}.')
+
+	setup.setup_network_workloads()!
+	setup.setup_vm_workloads(self.vms)!
+	setup.finalize_deployment(self.name)!
+
+	for mut vm in self.vms {
+		vm.tfchain_contract_id = setup.contracts_map[vm.requirements.nodes[0]]
+	}
+
+	self.save()!
+}
+
 pub fn (mut self TFDeployment) vm_get(vm_name string)! VMachine {
     d := self.load()!
     println("d = ${d}")
