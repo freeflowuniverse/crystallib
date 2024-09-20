@@ -122,9 +122,6 @@ fn generate_from_args(mut args GeneratorArgs) ! {
 			pathlib.template_write(templ_3, '${args.path}/${args.name}_model.v', true)!
 		}
 
-		mut templ_4 := $tmpl('templates/objname_runner_.vtemplate')
-		pathlib.template_write(templ_4, '${args.path}/${args.name}_runner_.v', true)!
-
 		mut templ_5 := $tmpl('templates/readme.md')
 		pathlib.template_write(templ_5, '${args.path}/readme.md', true)!
 

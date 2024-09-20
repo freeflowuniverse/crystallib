@@ -3,6 +3,6 @@
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
 mut ds := daguserver.get()!
-ds.install()
+ds.start()!
 
 println(ds)
