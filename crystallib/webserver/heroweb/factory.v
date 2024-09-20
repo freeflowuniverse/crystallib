@@ -8,57 +8,14 @@ import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.clients.mailclient
 import freeflowuniverse.crystallib.webserver.auth.jwt
-import freeflowuniverse.crystallib.webserver.log
+import freeflowuniverse.crystallib.webserver.log {Logger}
 import db.sqlite
-
-pub fn (app &App) index(mut ctx Context) veb.Result {
-	doc := Doc{
-        navbar: Navbar{
-            brand: NavItem{
-                href: "/",
-                text: "OurWorld",
-                class_name: "brand"
-            },
-            items: [
-                NavItem{
-                    href: "/about",
-                    text: "About Us",
-                    class_name: "nav-item"
-                },
-                NavItem{
-                    href: "/projects",
-                    text: "Projects",
-                    class_name: "nav-item"
-                },
-                NavItem{
-                    href: "/contact",
-                    text: "Contact",
-                    class_name: "nav-item"
-                }
-            ]
-        },
-        content: markdownparser.new(path: '${os.dir(@FILE)}/content/index.md') or {
-			return ctx.server_error(err.str())
-		}
-    }
-	return ctx.html($tmpl('./templates/index.html'))
-}
-
-pub fn (app &App) dashboard(mut ctx Context) veb.Result {
-	user := app.db.users[ctx.user_id]
-	return ctx.html($tmpl('./templates/dashboard.html'))
-}
 
 //the path is pointing to the instructions
 pub fn new(path string) !&App {
 	mut app := &App{
 		db: WebDB{
-		logger: log.new(
-			backend: log.new_backend(
-				db: 
-					sqlite.connect('${os.dir(@FILE)}/logger.sqlite')!
-				)!
-			)!
+			// Logger: log.new('${os.dir(@FILE)}/logger.sqlite')!
 		}
 	}
 
@@ -86,7 +43,7 @@ fn (mut app App) mount_middlewares() {
 
 	// must be authorized to fetch infopointers and pointed assets
 	app.route_use('/infopointer/:path...', handler: app.is_authorized)
-	app.route_use('/assets/:path...', handler: app.is_authorized)
+	app.route_use('/asset/:path...', handler: app.is_authorized)
 }
 
 fn (mut app App) play(path string) ! {
@@ -100,6 +57,7 @@ fn (mut app App) play(path string) ! {
 }
 
 fn (mut app App) run_infopointer_heroscripts() ! {
+	// QUESTION: we have some .mmd files in our collections, not sure what they do
 	app.static_mime_types['.mmd'] = 'txt/plain'
 	for key, ptr in app.db.infopointers{
 		app.db.infopointer_run(key)!
@@ -107,16 +65,17 @@ fn (mut app App) run_infopointer_heroscripts() ! {
 			continue
 		}
 
-		mut asset := pathlib.get(ptr.path_content)
-		if !asset.exists() {
-			return error('Asset ${ptr.name} does not exist on path ${ptr.path_content}')
-		}
-		if asset.is_file() {
-			app.serve_static('/assets/${ptr.name}.${asset.extension()}', asset.path)!
-		} else if asset.is_dir() {
-			app.mount_static_folder_at(asset.path, '/assets/${ptr.name}')!
-		} else {
-			return error('unsupported path ${asset}')
-		}
+		// QUESTION: this was serving files statically. Might there be a case where we nneed to reintroduce this?
+		// mut asset := pathlib.get(ptr.path_content)
+		// if !asset.exists() {
+		// 	return error('Asset ${ptr.name} does not exist on path ${ptr.path_content}')
+		// }
+		// if asset.is_file() {
+		// 	app.serve_static('/assets/${ptr.name}.${asset.extension()}', asset.path)!
+		// } else if asset.is_dir() {
+		// 	app.mount_static_folder_at(asset.path, '/assets/${ptr.name}')!
+		// } else {
+		// 	return error('unsupported path ${asset}')
+		// }
 	}
 }

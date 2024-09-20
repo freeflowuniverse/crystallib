@@ -5,9 +5,9 @@
     hero_url_reset: false
     content_path: '~/hero/www/info/tech'
     acl: 'heroweb'
-    cat: 'wiki'
+    cat: 'website'
     description: '
-        Wiki for technology of threedold
+        Website for technology of threedold
     '
 
 //will have 2 documents inside
