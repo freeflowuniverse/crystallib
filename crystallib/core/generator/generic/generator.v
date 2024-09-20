@@ -24,7 +24,7 @@ pub fn scan(path_ string) ! {
 	for mut p in plist.paths {
 		pparent := p.parent()!
 		// println("-- ${pparent}")
-		generate(pparent.path)!
+		play(pparent.path)!
 	}
 }
 
@@ -101,7 +101,7 @@ pub fn play(path string) ! {
 	}
 }
 
-pub fn generate_from_args(mut args GeneratorArgs) ! {
+fn generate_from_args(mut args GeneratorArgs) ! {
 	console.print_debug('generate code for path: ${args.path}')
 
 	if args.cat == .installer {

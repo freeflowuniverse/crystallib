@@ -1,17 +1,18 @@
 module generic
 
 import freeflowuniverse.crystallib.ui.console
+import os
 
-//ask all questions, set a .heroscript file in chosen path
+// ask all questions, set a .heroscript file in chosen path
 pub fn interative() ! {
 	mut myconsole := console.new()
 	mut args := GeneratorArgs{}
 
-	console.print_green(txt: 'Path: ${args.path}')
+	console.print_green('Path: ${args.path}')
 
 	yesno := myconsole.ask_yesno(description: 'Is this path ok?')!
 	if !yesno {
-			return error("can't continue without a valid path"")
+		return error("can't continue without a valid path")
 	}
 
 	mycat := myconsole.ask_dropdown(
@@ -86,37 +87,59 @@ pub fn interative() ! {
 		question:    'This will overwrite all files in your existing dir, be carefule?'
 	)!
 
-	return args
+	create_heroscript(args)!
 }
 
-
 pub fn create_heroscript(args GeneratorArgs) ! {
- mut script := ''
- if args.cat == .installer {
-  script += `
+	mut script := ''
+	if args.cat == .installer {
+		script = "
 !!hero_code.generate_installer
     name:'${args.name}'
     classname:'${args.classname}'
-    singleton:${if args.singleton { '1' } else { '0' }}
+    singleton:${if args.singleton {
+			'1'
+		} else {
+			'0'
+		}}
     templates:${if args.templates { '1' } else { '0' }}
-    default:${if args.default { '1' } else { '0' }}
+    default:${if args.default {
+			'1'
+		} else {
+			'0'
+		}}
     title:'${args.title}'
     supported_platforms:''
-    reset:${if args.reset { '1' } else { '0' }}
+    reset:${if args.reset {
+			'1'
+		} else {
+			'0'
+		}}
     startupmanager:${if args.startupmanager { '1' } else { '0' }}
-    build:${if args.build { '1' } else { '0' }}`
- } else {
-  script += `
+    build:${if args.build {
+			'1'
+		} else {
+			'0'
+		}}"
+	} else {
+		script = "
 !!hero_code.generate_client
     name:'${args.name}'
     classname:'${args.classname}'
-    singleton:${if args.singleton { '1' } else { '0' }}
+    singleton:${if args.singleton {
+			'1'
+		} else {
+			'0'
+		}}
     default:${if args.default { '1' } else { '0' }}
-    reset:${if args.reset { '1' } else { '0' }}`
- }
- if !os.exists(path: args.path) {
-  os.mkdir(path: args.path)!
- }
- mut file := os.write_file(path: '${args.path}/.heroscript', contents: script)!
-
+    reset:${if args.reset {
+			'1'
+		} else {
+			'0'
+		}}"
+	}
+	if !os.exists(args.path) {
+		os.mkdir(args.path)!
+	}
+	os.write_file('${args.path}/.heroscript', script)!
 }

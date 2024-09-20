@@ -74,10 +74,12 @@ pub fn (mut self TFDeployment) vm_deploy(args_ VMRequirements)! VMachine {
     vm := VMachine{
         tfchain_id: "${deployer.twin_id}${args_.name}",
         tfchain_contract_id: int(contract_id),
-        name: args_.name,
-        description: args_.description,
-        cpu: args_.cpu,
-        memory: args_.memory,
+        requirements: VMRequirements{
+            name: args_.name,
+            description: args_.description,
+            cpu: args_.cpu,
+            memory: args_.memory,
+        },
     }
 
     self.name = args_.name
@@ -256,7 +258,7 @@ fn (self TFDeployment) decode(data []u8) !TFDeployment {
         d.get_int()
         vm_data := d.get_bytes()
         mut dd := encoder.decoder_new(vm_data)
-        vm := decode_vmachine(mut dd)!
+        vm := decode_vmachine(dd.data)!
         result.vms << vm
     }
 
