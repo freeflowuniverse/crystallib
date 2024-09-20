@@ -2,7 +2,7 @@
 !!webdb.infopointer_add
     name: 'threefold_slides'
     hero_url: 'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/collections/slides_threefold_depin'
-    hero_url_pull: true
+    hero_url_pull: false
     hero_url_reset: false
     hero_path: '' // not needed here because comes from hero_url
     content_url: ''
@@ -23,10 +23,12 @@
     hero_url_reset: false
     content_path: '~/hero/www/info/tech'
     acl: 'public'
-    cat: 'wiki'
+    cat: 'html'
     description: '
         Wiki for technology of threedold
     '
+    topic: '1. threefold'
+    order: 1
 
 //will have 2 documents inside
 !!webdb.infopointer_add
