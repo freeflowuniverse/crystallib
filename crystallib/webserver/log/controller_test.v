@@ -1,4 +1,4 @@
-module analytics
+module log
 
 import json
 import vweb

@@ -117,16 +117,16 @@
                 let socket;
 
                 function sendInteraction(action, data) {
-                    fetch("/documents/pdf/@{slides.name}/analytics", {
+                    fetch("/analytics/@{slides.name}", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                            action: action,
-                            data: data,
+                            event: 'view',
                             timestamp: new Date().toISOString(),
-                            pdfUrl: url,
+                            object: url,
+                            message: 'page number' + data
                         }),
                     })
                         .then((response) => response.json())
@@ -159,7 +159,7 @@
                         page.render(renderContext);
                         updatePageInfo();
                         updateActiveThumbnail();
-                        sendInteraction("pageView", { page: pageNumber });
+                        sendInteraction("pageView", pageNumber);
 
                         // Send page change to WebSocket server
                         if (socket && socket.readyState === WebSocket.OPEN) {

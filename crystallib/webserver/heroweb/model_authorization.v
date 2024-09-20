@@ -180,20 +180,19 @@ pub:
     object string // object for which authorization is being attempted 
 }
 
-pub fn (mut db WebDB) authorize(request AuthorizationRequest) !bool {
-    db.infopointer_resolve(request.object)!
+pub fn (db WebDB) authorize(request AuthorizationRequest) !bool {
+    acl_resolved := db.infopointer_resolve(request.object)!
 
     if request.object !in db.infopointers {
         // QUESTION: expected behaviour?
         return error('Access control for resource ${request.object} not found')
     }
 
-    println('debuzgorko ${db.infopointers[request.object].acl_resolved}')
-    if request.subject !in db.infopointers[request.object].acl_resolved {
+    if request.subject !in acl_resolved {
         return false
     }
 
-    return db.infopointers[request.object].acl_resolved[request.subject] >= u8(request.right)
+    return acl_resolved[request.subject] >= u8(request.right)
 }
 
 pub fn (mut db WebDB) authorized_ptrs(subject u16, right RightEnum) ![]InfoPointer {

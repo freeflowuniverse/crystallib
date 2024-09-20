@@ -1,34 +1,14 @@
-
-!!webdb.infopointer_add
-    name: 'threefold_slides'
-    hero_url: 'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/collections/slides_threefold_depin'
-    hero_url_pull: false
-    hero_url_reset: false
-    hero_path: '' // not needed here because comes from hero_url
-    content_url: ''
-    content_url_pull: false
-    content_url_reset: false
-    content_path: '~/hero/var/collections/slides_threefold_depin/img'
-    acl: 'public'
-    cat: 'slides'
-    description: '
-        This is a set of slides for threefold depin project.
-    '
-    expiration: '2024-12-31'
-    
 !!webdb.infopointer_add
     name: 'tech'
     hero_url: 'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/heroscript/tech'
     hero_url_pull: false
     hero_url_reset: false
     content_path: '~/hero/www/info/tech'
-    acl: 'public'
-    cat: 'html'
+    acl: 'heroweb'
+    cat: 'wiki'
     description: '
         Wiki for technology of threedold
     '
-    topic: '1. threefold'
-    order: 1
 
 //will have 2 documents inside
 !!webdb.infopointer_add

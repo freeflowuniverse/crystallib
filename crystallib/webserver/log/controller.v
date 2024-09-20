@@ -1,4 +1,4 @@
-module analytics
+module log
 
 import vweb
 import db.sqlite

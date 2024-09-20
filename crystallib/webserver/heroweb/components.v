@@ -1,25 +1,9 @@
 module heroweb
 
+import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.webserver.auth.authentication.email {StatelessAuthenticator}
 import veb
-
-pub struct WebDB {
-pub mut:
-	authenticator StatelessAuthenticator
-	users        map[u16]&User
-	groups       map[string]&Group
-	acls         map[string]&ACL
-	infopointers map[string]&InfoPointer
-}
-
-pub struct Context {
-	veb.Context
-pub mut:
-	// In the context struct we store data that could be different
-	// for each request. Like a User struct or a session id
-	user_id       u16
-	session_id string
-}
 
 
 pub struct NavItem {
@@ -45,6 +29,7 @@ pub mut:
 pub struct Doc {
 pub mut:
     navbar Navbar
+    content elements.Doc
     markdown MarkdownContent
     title string
 }

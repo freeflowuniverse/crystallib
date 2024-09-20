@@ -23,11 +23,24 @@
 
     <!-- Main content -->
     <div class="main-content">
-        <!-- Header with user's email -->
-        <header class="header">
-            <h1>Dashboard</h1>
-            <div class="email">user@@example.com</div>
-        </header>
+        <nav>
+            <ul>
+              <li><strong>Acme Corp</strong></li>
+            </ul>
+            <ul>
+              <li>
+                <details class="dropdown">
+                  <summary>
+                    @{user.name}
+                  </summary>
+                  <ul dir="rtl">
+                    <li><a href="/settings">Settings</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </nav>
 
         <!-- Greeting message -->
         <section class="greeting">

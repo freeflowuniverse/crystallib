@@ -14,7 +14,7 @@ pub fn (mut app App) register(mut ctx Context) veb.Result {
 	) or {
 		return ctx.text('${err}')
 	}
-	return ctx.html("Check your email for the verification link")
+	return app.authentication_mail_sent(mut ctx, email)
 }
 
 @['/callback/:email/:expiration/:signature']
@@ -36,12 +36,5 @@ pub fn (mut app App) callback(mut ctx Context, email string, expiration string, 
 	signed_token := token.sign(app.jwt_secret)
 	
 	ctx.set_cookie(name: 'access_token', value: signed_token, path: '/')
-	return ctx.redirect('/')
-}
-
-
-@['/signin']
-pub fn (app &App) signin(mut ctx Context) veb.Result {
-	d:=$tmpl("templates/login.html")
-	return ctx.html(d)
+	return ctx.redirect('/view/assets')
 }
