@@ -1,4 +1,4 @@
-# griddriver
+# tailwind
 
 
 
@@ -8,9 +8,9 @@ To get started
 
 
 
-import freeflowuniverse.crystallib.installers.something. griddriver
+import freeflowuniverse.crystallib.installers.something. tailwind
 
-mut installer:= griddriver.get()!
+mut installer:= tailwind.get()!
 
 installer.start()!
 
@@ -23,8 +23,8 @@ installer.start()!
 
 
 ```hero
-!!griddriver.install
-    homedir: '/home/user/griddriver'
+!!tailwind.install
+    homedir: '/home/user/tailwind'
     username: 'admin'
     password: 'secretpassword'
     title: 'Some Title'

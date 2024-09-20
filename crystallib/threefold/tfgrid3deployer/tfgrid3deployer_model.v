@@ -19,7 +19,7 @@ pub fn heroscript_default() !string {
 
     "
     if ssh_key.len==0 || mnemonic.len==0  || network.len==0 {
-        return error("please configure the tfgrid deployer or set SSH_KEY, TFGRID_MNEMONIC ")
+        return error("please configure the tfgrid deployer or set SSH_KEY, TFGRID_MNEMONIC, and TFGRID_NETWORK.")
     }
     return heroscript
 

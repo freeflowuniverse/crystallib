@@ -3,17 +3,13 @@ module tailwind
 import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.core.pathlib
 import os
 
-@[params]
-pub struct InstallArgs {
-pub mut:
-	reset bool
-}
+pub const  version = '3.4.12'
 
-pub fn install(args_ InstallArgs) ! {
-	mut args := args_
-	version := '3.4.1'
+// checks if a certain version or above is installed
+fn installed() !bool {
 
 	res := os.execute('tailwind -h')
 	if res.exit_code == 0 {
@@ -24,17 +20,15 @@ pub fn install(args_ InstallArgs) ! {
 
 		v := texttools.version(r[0].all_after(' '))
 		if v < texttools.version(version) {
-			args.reset = true
+			return false
 		}
-	} else {
-		args.reset = true
-	}
+        return true
+    }
+    return false
+}
 
-	if args.reset == false {
-		return
-	}
-
-	console.print_header('install tailwind')
+pub fn install() ! {
+    console.print_header('install tailwind')
 
 	mut url := ''
 	if osal.is_linux_arm() {
@@ -59,6 +53,9 @@ pub fn install(args_ InstallArgs) ! {
 		cmdname: 'tailwind'
 		source: dest.path
 	)!
-
-	return
 }
+
+
+fn destroy() ! {
+}
+

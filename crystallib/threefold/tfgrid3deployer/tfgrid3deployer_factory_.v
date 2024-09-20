@@ -52,7 +52,7 @@ pub fn get(args_ ArgsGet) !&TFGridDeployer  {
 
 fn config_exists(args_ ArgsGet) bool {
     mut args := args_get(args_)
-    mut context:=base.context() or { panic("bug") }
+    mut context:=base.context() or { panic("bug")}
     return context.hero_config_exists("tfgrid3deployer",args.name)
 }
 

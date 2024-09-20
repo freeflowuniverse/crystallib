@@ -32,7 +32,9 @@ pub fn (mut gitstructure GitStructure) repo_get(args_ RepoGetArgs) !GitRepo {
 		if r2.addr.branch != '' {
 			st := r2.status()!
 			mut branchname := st.branch
-			// console.print_debug(" - branch detected: $branchname, branch on repo obj:'$r2.addr.branch'")
+			//console.print_debug(" - branch detected: $branchname, branch on repo obj:'$r2.addr.branch'")
+			// println(st)
+			// println(r2)
 			if st.branch != r2.addr.branch && args.pull {
 				console.print_header(' branch switch ${branchname} -> ${r2.addr.branch} for ${r2.addr.remote_url}')
 				r2.branch_switch(r2.addr.branch)!

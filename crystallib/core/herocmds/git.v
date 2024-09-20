@@ -2,6 +2,7 @@ module herocmds
 
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 import cli { Command, Flag }
 import os
 import crypto.md5
@@ -15,6 +16,7 @@ pub fn cmd_git(mut cmdroot Command) {
 		execute: cmd_git_execute
 		sort_commands: true
 	}
+
 
 	mut clone_command := Command{
 		sort_flags: true
@@ -79,8 +81,34 @@ pub fn cmd_git(mut cmdroot Command) {
 		description: 'Open visual studio code on found repos, will do for max 5.'
 	}
 
+	mut cmd_cd := Command{
+		sort_flags: true
+		name: 'cd'
+		execute: cmd_git_execute
+		description: 'cd to a git repo, use e.g. eval $(git cd -u https://github.com/threefoldfoundation/www_threefold_io)'
+	}
+
+	cmd_cd.add_flag(Flag{
+		flag: .string
+		required: false
+		name: 'url'
+		abbrev: 'u'
+		description: 'url for git cd operation, so we know where to cd to'
+	})
+
 	mut allcmdsref := [&list_command, &clone_command, &push_command, &pull_command, &commit_command,
 		&reload_command, &delete_command, &sourcetree_command, &editor_command]
+
+	for mut c in allcmdsref {
+		c.add_flag(Flag{
+			flag: .bool
+			required: false
+			name: 'silent'
+			abbrev: 's'
+			description: 'be silent.'
+		})	
+	}
+
 
 	mut allcmdscommit := [&push_command, &pull_command, &commit_command]
 
@@ -106,10 +134,30 @@ pub fn cmd_git(mut cmdroot Command) {
 		c.add_flag(Flag{
 			flag: .bool
 			required: false
+			name: 'reset'
+			description: 'force a pull and reset changes.'
+		})
+		c.add_flag(Flag{
+			flag: .bool
+			required: false
 			name: 'pull'
 			description: 'force a pull.'
 		})
-	}
+		c.add_flag(Flag{
+			flag: .bool
+			required: false
+			name: 'pullreset'
+			abbrev: 'pr'
+			description: 'force a pull and do a reset.'
+		})	
+		c.add_flag(Flag{
+			flag: .bool
+			required: false
+			name: 'recursive'
+			description: 'if we do a clone or a pull we also get the git submodules.'
+		})			
+	}		
+	
 
 	for mut c in allcmdsref {
 		c.add_flag(Flag{
@@ -127,6 +175,14 @@ pub fn cmd_git(mut cmdroot Command) {
 			abbrev: 'r'
 			description: 'name of repo'
 		})
+		c.add_flag(Flag{
+			flag: .string
+			required: false
+			name: 'branch'
+			abbrev: 'b'
+			description: 'branch of repo (optional)'
+		})
+
 
 		c.add_flag(Flag{
 			flag: .string
@@ -162,11 +218,18 @@ pub fn cmd_git(mut cmdroot Command) {
 		})
 		cmd_run.add_command(c)
 	}
-
+	cmd_run.add_command(cmd_cd)
 	cmdroot.add_command(cmd_run)
+	
 }
 
+
 fn cmd_git_execute(cmd Command) ! {
+
+	mut silent:= cmd.flags.get_bool('silent') or { false }
+	if silent || cmd.name == "cd"{
+		console.silent_set()
+	}
 	mut coderoot := cmd.flags.get_string('coderoot') or { '' }
 
 	if 'CODEROOT' in os.environ() && coderoot == '' {
@@ -182,36 +245,52 @@ fn cmd_git_execute(cmd Command) ! {
 
 	// create the filter for doing group actions, or action on 1 repo
 	mut filter := cmd.flags.get_string('filter') or { '' }
+	mut branch := cmd.flags.get_string('branch') or { '' }
 	mut repo := cmd.flags.get_string('repo') or { '' }
 	mut account := cmd.flags.get_string('account') or { '' }
 	mut provider := cmd.flags.get_string('provider') or { '' }
 
-	// check if we are in a git repo
-	if repo == '' && account == '' && provider == '' && filter == '' {
-		curdir := os.getwd()
-		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
-		mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
-		if parentpath.path != '' {
-			r0 := gs.repo_add(path: parentpath.path)!
-			repo = r0.addr.name
-			account = r0.addr.account
-			provider = r0.addr.provider
+
+	if cmd.name != "cd"{
+		// check if we are in a git repo
+		if repo == '' && account == '' && provider == '' && filter == '' {
+			curdir := os.getwd()
+			mut curdiro := pathlib.get_dir(path: curdir, create: false)!
+			mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
+			if parentpath.path != '' {
+				r0 := gs.repo_add(path: parentpath.path)!
+				repo = r0.addr.name
+				account = r0.addr.account
+				provider = r0.addr.provider
+			}
 		}
 	}
 
 	if cmd.name in gittools.gitcmds.split(',') {
-		gs.do(
+		mut pull:= cmd.flags.get_bool('pull') or { false }
+		mut reset:= cmd.flags.get_bool('reset') or { false }
+		mut recursive:= cmd.flags.get_bool('recursive') or { false }
+		if cmd.flags.get_bool('pullreset') or { false }{
+			pull=true
+			reset=true
+		}
+		mypath:=gs.do(
 			filter: filter
 			repo: repo
 			account: account
 			provider: provider
+			branch: branch
+			recursive: recursive
 			cmd: cmd.name
 			script: cmd.flags.get_bool('script') or { false }
-			pull: cmd.flags.get_bool('pull') or { false }
-			reset: cmd.flags.get_bool('reset') or { false }
+			pull: pull
+			reset: reset
 			msg: cmd.flags.get_string('message') or { '' }
 			url: cmd.flags.get_string('url') or { '' }
 		)!
+		if cmd.name=="cd"{ 
+			print("cd ${mypath}\n")
+		}
 		return
 	} else {
 		// console.print_debug(" Supported commands are: ${gittools.gitcmds}")

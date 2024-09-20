@@ -6,6 +6,12 @@ import freeflowuniverse.crystallib.data.encoder
 import freeflowuniverse.crystallib.ui.console
 import encoding.base64
 import os
+import compress.zlib
+import encoding.hex
+import x.crypto.chacha20
+import crypto.sha256
+import rand
+
 
 @[heap]
 pub struct TFDeployment {
@@ -15,66 +21,77 @@ pub mut:
     vms         []VMachine
     zdbs        []ZDB
     webnames    []WebName
+    network     ?NetworkSpecs
 mut:
-    deployer    ?grid.Deployer  @[skip; str: skip]
+    deployer    grid.Deployer   @[skip; str: skip]
+    kvstore     KVStoreFS       @[skip; str: skip]
 }
+ 
+pub fn new_deployment(name string) !TFDeployment {
+    mut grid_client := get()!
 
-fn (mut self TFDeployment) new_deployer() !grid.Deployer {
-    if self.deployer == none {
-        mut grid_client := get()!
-        network := match grid_client.network {
-            .dev { grid.ChainNetwork.dev }
-            .test { grid.ChainNetwork.test }
-            .main { grid.ChainNetwork.main }
-            .qa { grid.ChainNetwork.qa }
-        }
-        self.deployer = grid.new_deployer(grid_client.mnemonic, network)!
+    network := match grid_client.network {
+        .dev { grid.ChainNetwork.dev }
+        .qa { grid.ChainNetwork.qa }
+        .test { grid.ChainNetwork.test }
+        .main { grid.ChainNetwork.main }
     }
-    return self.deployer or { return error('Deployer not initialized') }
-}
 
-fn create_signature_requirement(twin_id int) grid_models.SignatureRequirement {
-    console.print_header('Setting signature requirement.')
-    return grid_models.SignatureRequirement{
-        weight_required: 1,
-        requests: [
-            grid_models.SignatureRequest{
-                twin_id: u32(twin_id),
-                weight: 1,
-            },
-        ],
+    deployer := grid.new_deployer(grid_client.mnemonic, network)!
+
+    return TFDeployment{
+        name: name
+        deployer: deployer
+        kvstore: KVStoreFS{}
     }
 }
 
-pub fn (mut self TFDeployment) vm_get(name string)! []VMachine {
-    d := self.load(name)!
-    return d.vms
+pub fn (mut self TFDeployment) vm_get(vm_name string)! VMachine {
+    d := self.load()!
+    println("d = ${d}")
+    // return d.vms
+    // Placeholder to change this later to return only vm.
+    return VMachine{}
 }
 
-pub fn (mut self TFDeployment) load(deployment_name string)! TFDeployment {
-    path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
-    filepath := "${path}${deployment_name}"
-    base64_string := os.read_file(filepath) or {
-        return error("Failed to open file due to: ${err}")
-    }
-    bytes := base64.decode(base64_string)
-    d := self.decode(bytes)!
-    return d
+pub fn (mut self TFDeployment) load()! TFDeployment {
+    value := self.kvstore.get(self.name)!
+    decrypted := self.decrypt(value)!
+    decompressed := self.decompress(decrypted)!
+    decoded := self.decode(decompressed)!
+    return decoded
 }
 
-fn (mut self TFDeployment) save()! {
-    dir_path := "${os.home_dir()}/hero/var/tfgrid/deploy/"
-    os.mkdir_all(dir_path)!
-    file_path := dir_path + self.name
+fn (mut self TFDeployment) save()!{
+    encoded_data := self.encode()!
+    self.kvstore.set(self.name, encoded_data)!
+}
 
-    encoded_data := self.encode() or {
-        return error('Failed to encode deployment data: ${err}')
-    }
-    base64_string := base64.encode(encoded_data)
+fn (self TFDeployment) compress(data []u8) ![]u8 {
+    return zlib.compress(data) or { error("Cannot compress the data due to: ${err}") }
+}
 
-    os.write_file(file_path, base64_string) or {
-        return error('Failed to write to file: ${err}')
-    }
+fn (self TFDeployment) decompress(data []u8) ![]u8 {
+    return zlib.decompress(data) or { error("Cannot decompress the data due to: ${err}") }
+}
+
+fn (self TFDeployment) encrypt(compressed []u8) ![]u8 {
+    key_hashed := sha256.hexhash(self.deployer.mnemonics)
+    name_hashed := sha256.hexhash(self.name)
+    key := hex.decode(key_hashed)!
+    nonce := hex.decode(name_hashed)![..12]
+    encrypted := chacha20.encrypt(key, nonce, compressed) or { return error("Cannot encrypt the data due to: ${err}") }
+    return encrypted
+}
+
+fn (self TFDeployment) decrypt(data []u8) ![]u8 {
+    key_hashed := sha256.hexhash(self.deployer.mnemonics)
+    name_hashed := sha256.hexhash(self.name)
+    key := hex.decode(key_hashed)!
+    nonce := hex.decode(name_hashed)![..12]
+
+    compressed := chacha20.decrypt(key, nonce, data) or { return error("Cannot decrypt the data due to: ${err}") }
+    return compressed
 }
 
 fn (self TFDeployment) encode() ![]u8 {
@@ -86,9 +103,13 @@ fn (self TFDeployment) encode() ![]u8 {
         vm_data := vm.encode()!
         b.add_int(vm_data.len)
         b.add_bytes(vm_data)
+        // zd.encode()
+        // k8s.encode() ...etc
     }
 
-    return b.data
+    compressed := self.compress(b.data)!
+    encrypted := self.encrypt(compressed)!
+    return encrypted
 }
 
 fn (self TFDeployment) decode(data []u8) !TFDeployment {
@@ -114,4 +135,11 @@ fn (self TFDeployment) decode(data []u8) !TFDeployment {
     //ZDB & NAMES
 
     return result
+}
+
+// Set a new machine on the deployment.
+pub fn (mut self TFDeployment)add_machine(requirements VMRequirements){
+    self.vms << VMachine{
+        requirements: requirements
+    }
 }
