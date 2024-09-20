@@ -15,7 +15,7 @@ import db.sqlite
 pub fn new(path string) !&App {
 	mut app := &App{
 		db: WebDB{
-			// Logger: log.new('${os.dir(@FILE)}/logger.sqlite')!
+			Logger: log.new('${os.dir(@FILE)}/logger.sqlite')!
 		}
 	}
 

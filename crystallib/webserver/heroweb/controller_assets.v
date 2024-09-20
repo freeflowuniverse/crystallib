@@ -28,23 +28,21 @@ pub fn (app &App) asset(mut ctx Context, paths string) veb.Result {
 	}
 
 	mut path := pathlib.get('${infoptr.path_content}${paths.all_after(name)}') 
-	println('debugzopath ${path}')
 
 	logger := log.new('logger.sqlite') or {
 		return ctx.server_error(err.str())
 	}
-	// if infoptr.cat == .website && ctx.req.url.ends_with('.html') {
-	// 	logger.new_log(log.Log{
-	// 		object: infoptr.name
-	// 		timestamp: time.now() 
-	// 		subject: ctx.user_id.str() 
-	// 		message: 'access path ${ctx.req.url}'
-	// 		event: 'view'
-	// 	}) or {
-	// 		return ctx.server_error(err.str())
-	// 	}
-	// }
-	// println('debugzopath ${infoptr}')
+	if infoptr.cat == .website && ctx.req.url.ends_with('.html') {
+		logger.new_log(log.Log{
+			object: infoptr.name
+			timestamp: time.now() 
+			subject: ctx.user_id.str() 
+			message: 'access path ${ctx.req.url}'
+			event: 'view'
+		}) or {
+			return ctx.server_error(err.str())
+		}
+	}
 
 	file := if path.is_file() {
 		path
@@ -54,8 +52,5 @@ pub fn (app &App) asset(mut ctx Context, paths string) veb.Result {
 			return ctx.server_error(err.str())
 		}
 	}
-	println('debugzopath2 ${file}')
-
-	// ctx.set_content_type('application/pdf')
 	return ctx.file(file.path)
 }
