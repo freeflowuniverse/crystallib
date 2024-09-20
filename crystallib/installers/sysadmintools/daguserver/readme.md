@@ -6,10 +6,12 @@
 
 ```yaml
 !!daguserver.install
-    homedir: '/home/user/daguserver'
+    homedir: '{HOME}/hero/var/dagu'
+    configpath: '{HOME}/.config/dagu/admin.yaml'
     username: 'admin'
     password: 'secretpassword'
-    title: 'Some Title'
+    secret: ''
+    title: 'My Hero DAG'
     host: 'localhost'
     port: 8888
 
