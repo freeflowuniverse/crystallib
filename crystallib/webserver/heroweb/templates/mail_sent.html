@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Mail Sent</title>
+    <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@@latest/css/pico.min.css">
+    <style>
+        /* Minimal custom styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+        p {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .button-group {
+            margin-top: 2rem;
+        }
+
+        /* Toast notifications */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;} 
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;} 
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        .toast.success {
+            background-color: green;
+        }
+
+        .toast.error {
+            background-color: red;
+        }
+    </style>
+    <script>
+        let canResend = true;
+
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById("toast");
+            toast.className = "toast " + (isSuccess ? "success" : "error");
+            toast.innerText = message;
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000); // Hide after 3 seconds
+        }
+
+        async function resendEmail() {
+            if (!canResend) {
+                showToast("Please wait 1 minute before resending.", false);
+                return;
+            }
+
+            // Simulate sending email with fetch
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        email: '@{email}', // Replace with actual user's email
+                    }),
+                });
+
+                if (response.ok) {
+                    showToast("Verification email resent to @{email}");
+                } else {
+                    throw new Error("Failed to resend email");
+                }
+            } catch (error) {
+                showToast("Error resending email. Please try again.", false);
+                return;
+            }
+
+            // Start 1-minute cooldown
+            canResend = false;
+            setTimeout(() => {
+                canResend = true;
+            }, 60000); // 1 minute (60,000 ms) cooldown
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Verification Email Sent</h1>
+        <p>Please check your inbox to verify your email address. If you didn't receive the email, check your spam folder or <a href="javascript:void(0);" onclick="resendEmail()">resend the verification email</a>.</p>
+        <div class="button-group">
+            <a href="https://mail.google.com" target="_blank" role="button" class="secondary">Go to Inbox</a>
+            <a href="javascript:void(0);" onclick="resendEmail()" role="button">Resend Email</a>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+</body>
+</html>
