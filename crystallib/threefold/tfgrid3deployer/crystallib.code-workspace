@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"name": "crystallib",
+			"path": "../.."
+		},
+		{
+			"name": "examples",
+			"path": "../../../examples"
+		},
+		{
+			"name": "aiprompts",
+			"path": "../../../aiprompts"
+		},
+		{
+			"path": "../../../cli/hero"
+		},
+		{
+			"path": "../../../vscodeplugin"
+		}
+	],
+	"settings": {}
+}

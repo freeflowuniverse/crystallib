@@ -1,6 +1,6 @@
 module grid
 
-import freeflowuniverse.crystallib.installers.tfgrid.griddriver
+import freeflowuniverse.crystallib.installers.threefold.griddriver
 import os
 
 fn testsuite_begin() ! {

@@ -1,0 +1,276 @@
+<!doctype html>
+<html>
+    <head>
+        <title>
+            PDF Presentation Viewer with Thumbnails and WebSocket Control
+        </title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css"
+        />
+        <style>
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                font-family: Arial, sans-serif;
+            }
+            #mainContainer {
+                display: flex;
+                flex: 1;
+                overflow: hidden;
+            }
+            #thumbnailContainer {
+                width: 200px;
+                overflow-y: auto;
+                background-color: #f0f0f0;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            .thumbnail {
+                width: 100%;
+                margin-bottom: 10px;
+                cursor: pointer;
+                border: 2px solid transparent;
+            }
+            .thumbnail.active {
+                border-color: #4caf50;
+            }
+            #viewerContainer {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #e0e0e0;
+                overflow: auto;
+            }
+            #viewer {
+                max-width: 100%;
+                max-height: 100%;
+            }
+            #viewer canvas {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+            #navigationControls {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+                background-color: #333;
+            }
+            .navButton {
+                background-color: #4caf50;
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 0 10px;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+            #pageInfo {
+                color: white;
+                font-size: 16px;
+                margin: 0 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="mainContainer">
+            <div id="thumbnailContainer"></div>
+            <div id="viewerContainer">
+                <div id="viewer" class="pdfViewer"></div>
+            </div>
+        </div>
+        <div id="navigationControls">
+            <button id="prevBtn" class="navButton">Previous</button>
+            <span id="pageInfo"></span>
+            <button id="nextBtn" class="navButton">Next</button>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        <script>
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const url = "@{slides.url}";
+                const name = "@{slides.name}";
+                const viewer = document.getElementById("viewer");
+                const thumbnailContainer =
+                    document.getElementById("thumbnailContainer");
+                const prevBtn = document.getElementById("prevBtn");
+                const nextBtn = document.getElementById("nextBtn");
+                const pageInfo = document.getElementById("pageInfo");
+
+                let pdf;
+                let currentPage = 1;
+                let totalPages;
+                let socket;
+
+                function sendInteraction(action, data) {
+                    fetch("/analytics/@{slides.name}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            event: 'view',
+                            timestamp: new Date().toISOString(),
+                            object: url,
+                            message: 'page number' + data
+                        }),
+                    })
+                        .then((response) => response.json())
+                        .then((data) =>
+                            console.log("Interaction logged:", data),
+                        )
+                        .catch((error) =>
+                            console.error("Error logging interaction:", error),
+                        );
+                }
+
+                function renderPage(pageNumber) {
+                    pdf.getPage(pageNumber).then(function (page) {
+                        const scale = 1.5;
+                        const viewport = page.getViewport({ scale: scale });
+
+                        const canvas = document.createElement("canvas");
+                        const context = canvas.getContext("2d");
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport,
+                        };
+
+                        viewer.innerHTML = "";
+                        viewer.appendChild(canvas);
+
+                        page.render(renderContext);
+                        updatePageInfo();
+                        updateActiveThumbnail();
+                        sendInteraction("pageView", pageNumber);
+
+                        // Send page change to WebSocket server
+                        if (socket && socket.readyState === WebSocket.OPEN) {
+                            socket.send(
+                                JSON.stringify({
+                                    action: "pageChanged",
+                                    page: pageNumber,
+                                }),
+                            );
+                        }
+                    });
+                }
+
+                function createThumbnails() {
+                    thumbnailContainer.innerHTML = "";
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.getPage(i).then(function (page) {
+                            const scale = 0.2;
+                            const viewport = page.getViewport({ scale: scale });
+
+                            const canvas = document.createElement("canvas");
+                            const context = canvas.getContext("2d");
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport,
+                            };
+
+                            page.render(renderContext);
+
+                            canvas.className = "thumbnail";
+                            canvas.setAttribute("data-page-number", i);
+                            canvas.onclick = function () {
+                                currentPage = i;
+                                renderPage(currentPage);
+                            };
+
+                            thumbnailContainer.appendChild(canvas);
+                        });
+                    }
+                }
+
+                function updatePageInfo() {
+                    pageInfo.textContent = `Page $${currentPage} of $${totalPages}`;
+                }
+
+                function updateActiveThumbnail() {
+                    const thumbnails = document.querySelectorAll(".thumbnail");
+                    thumbnails.forEach((thumbnail) => {
+                        thumbnail.classList.remove("active");
+                        if (
+                            parseInt(
+                                thumbnail.getAttribute("data-page-number"),
+                            ) === currentPage
+                        ) {
+                            thumbnail.classList.add("active");
+                        }
+                    });
+                }
+
+                function loadPDF() {
+                    pdfjsLib
+                        .getDocument(url)
+                        .promise.then(function (pdfDoc) {
+                            pdf = pdfDoc;
+                            totalPages = pdf.numPages;
+                            renderPage(currentPage);
+                            createThumbnails();
+                            sendInteraction("pdfLoaded", {
+                                totalPages: totalPages,
+                            });
+                        })
+                        .catch(function (error) {
+                            console.error("Error loading PDF:", error);
+                            sendInteraction("error", {
+                                message: error.message,
+                            });
+                        });
+                }
+
+                prevBtn.addEventListener("click", function () {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderPage(currentPage);
+                    }
+                });
+
+                nextBtn.addEventListener("click", function () {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderPage(currentPage);
+                    }
+                });
+
+                document.addEventListener("keydown", function (e) {
+                    if (e.key === "ArrowLeft" && currentPage > 1) {
+                        currentPage--;
+                        renderPage(currentPage);
+                    } else if (
+                        e.key === "ArrowRight" &&
+                        currentPage < totalPages
+                    ) {
+                        currentPage++;
+                        renderPage(currentPage);
+                    }
+                });
+
+                loadPDF();
+            });
+        </script>
+    </body>
+</html>

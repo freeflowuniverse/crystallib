@@ -13,7 +13,8 @@ pub fn new(zola_ Zola) !Zola {
 	}
 
 	if zola.install {
-		zolainstaller.install()!
+		mut i:=zolainstaller.get()!
+		i.install()!
 	}
 
 	if zola.path_build == '' {

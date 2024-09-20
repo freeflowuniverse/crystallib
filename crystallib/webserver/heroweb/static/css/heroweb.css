@@ -19,15 +19,6 @@
     --background-color-article: #242527;
 }
 
-/* Custom styles to enhance the nav bar */
-body > main {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    height: 100vh;
-    overflow: hidden;
-}
-
 nav {
     background-color: var(--nav-background);
     padding: 0rem 1rem;
@@ -88,7 +79,6 @@ navbar-right input[type="search"] {
     margin: 0;
 }
 
-/* Styles for theme icons */
 .theme-icons {
     display: flex;
     align-items: center;

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/pico_classless.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@1.*/css/pico.min.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside>
+        <nav>
+            <ul>
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="/documents">Documents</a></li>
+                <li><a href="#">Logout</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <nav>
+            <ul>
+              <li><strong>Acme Corp</strong></li>
+            </ul>
+            <ul>
+              <li>
+                <details class="dropdown">
+                  <summary>
+                    @{user.name}
+                  </summary>
+                  <ul dir="rtl">
+                    <li><a href="/settings">Settings</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </nav>
+
+        <!-- Greeting message -->
+        <section class="greeting">
+            <p>Welcome back, User!</p>
+        </section>
+
+        <!-- Main dashboard content -->
+        <section class="dashboard-content">
+            <p>This is your dashboard home. Navigate through the sidebar to manage your documents, settings, and more.</p>
+        </section>
+    </div>
+
+</body>
+</html>

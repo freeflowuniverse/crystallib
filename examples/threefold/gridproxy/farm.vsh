@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -n -w -enable-globals -cg run
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.ui.console

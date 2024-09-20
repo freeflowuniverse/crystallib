@@ -2,7 +2,7 @@ module gridproxy
 
 import freeflowuniverse.crystallib.clients.httpconnection
 import freeflowuniverse.crystallib.threefold.gridproxy.model
-import freeflowuniverse.crystallib.installers.tfgrid.griddriver
+//import freeflowuniverse.crystallib.installers.threefold.griddriver
 
 @[heap]
 pub struct GridProxyClient {
@@ -68,7 +68,6 @@ pub mut:
 // cache bool
 //```
 pub fn new(args GridProxyClientArgs) !&GridProxyClient {
-	griddriver.install()!
 	mut f := factory_get()
 	netstr := tfgrid_net_string(args.net)
 	if netstr !in gridproxy.factory.instances {

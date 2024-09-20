@@ -2238,7 +2238,7 @@ be faster, since there is no need for a re-compilation of a script, that has not
 An example `deploy.vsh`:
 
 ```v oksyntax
-#!/usr/bin/env -S v
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 // Note: The shebang line above, associates the .vsh file to V on Unix-like systems,
 // so it can be run just by specifying the path to the .vsh file, once it's made
@@ -2300,11 +2300,11 @@ Whilst V does normally not allow vsh scripts without the designated file extensi
 to circumvent this rule and have a file with a fully custom name and shebang. Whilst this feature
 exists it is only recommended for specific usecases like scripts that will be put in the path and
 should **not** be used for things like build or deploy scripts. To access this feature start the
-file with `#!/usr/bin/env -S v -raw-vsh-tmp-prefix tmp` where `tmp` is the prefix for
+file with `#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 the built executable. This will run in crun mode so it will only rebuild if changes to the script
 were made and keep the binary as `tmp.<scriptfilename>`. **Caution**: if this filename already
 exists the file will be overridden. If you want to rebuild each time and not keep this binary
-instead use `#!/usr/bin/env -S v -raw-vsh-tmp-prefix tmp run`.
+instead use `#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 # Appendices
 

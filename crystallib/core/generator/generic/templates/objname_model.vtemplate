@@ -1,36 +1,70 @@
 module ${args.name}
 import freeflowuniverse.crystallib.data.paramsparser
-
+import os
 
 pub const version = '1.14.3'
 const singleton = ${args.singleton}
 const default = ${args.default}
 
+@if args.hasconfig
 //TODO: THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED IN LINE TO STRUCT BELOW, IS STRUCTURED AS HEROSCRIPT
-const heroscript_default = "
-!!${args.name}.configure
-    homedir: '{HOME}/hero/var/${args.name}'
-    configpath: '{HOME}/.config/${args.name}/admin.yaml'
-    username: 'admin'
-    password: 'secretpassword'
-    secret: ''
-    title: 'My Hero DAG'
-    host: 'localhost'
-    port: 8888
+pub fn heroscript_default() !string {
+@if args.cat == .installer    
+    heroscript:="
+    !!${args.name}.configure 
+        name:'${args.name}'
+        homedir: '{HOME}/hero/var/${args.name}'
+        configpath: '{HOME}/.config/${args.name}/admin.yaml'
+        username: 'admin'
+        password: 'secretpassword'
+        secret: ''
+        title: 'My Hero DAG'
+        host: 'localhost'
+        port: 8888
 
-@if args.startupmanager
-// !!${args.name}.start
-// !!${args.name}.stop
-// !!${args.name}.restart
-// !!${args.name}.delete
-// !!${args.name}.check
+        "
+@else
+    heroscript:="
+    !!${args.name}.configure 
+        name:'${args.name}'
+        mail_from: 'info@@example.com'
+        mail_password: 'secretpassword'
+        mail_port: 587
+        mail_server: 'smtp-relay.brevo.com'
+        mail_username: 'kristof@@incubaid.com'
+
+        "
+
+//     mail_from := os.getenv_opt('MAIL_FROM') or {'info@@example.com'}
+//     mail_password := os.getenv_opt('MAIL_PASSWORD') or {'secretpassword'}
+//     mail_port := (os.getenv_opt('MAIL_PORT') or {"587"}).int()
+//     mail_server := os.getenv_opt('MAIL_SERVER') or {'smtp-relay.brevo.com'}
+//     mail_username := os.getenv_opt('MAIL_USERNAME') or {'kristof@@incubaid.com'}  
+//
+//     heroscript:="
+//     !!mailclient.configure name:'default'
+//         mail_from: '??{mail_from}'
+//         mail_password: '??{mail_password}'
+//         mail_port: ??{mail_port}
+//         mail_server: '??{mail_server}'
+//         mail_username: '??{mail_username}'
+//
+//     "
+//
+
 @end
-"
+
+    return heroscript
+
+}
+@end
 
 //THIS THE THE SOURCE OF THE INFORMATION OF THIS FILE, HERE WE HAVE THE CONFIG OBJECT CONFIGURED AND MODELLED
+@if args.cat == .installer
 pub struct ${args.classname} {
 pub mut:
     name string = 'default'
+@if args.hasconfig    
 	homedir    string
 	configpath string
 	username   string
@@ -39,11 +73,13 @@ pub mut:
 	title      string
 	host       string
 	port       int
+@end
 }
-
-fn cfg_play(p paramsparser.Params) ! {
+@if args.hasconfig
+fn cfg_play(p paramsparser.Params) !${args.classname} {
     //THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED IN LINE WITH struct above
     mut mycfg := ${args.classname}{
+        name: p.get_default('name', 'default')!
         homedir: p.get_default('homedir', '{HOME}/hero/var/${args.name}')!
         configpath: p.get_default('configpath', '{HOME}/hero/var/${args.name}/admin.yaml')!
         username: p.get_default('username', 'admin')!
@@ -57,6 +93,60 @@ fn cfg_play(p paramsparser.Params) ! {
     if mycfg.password == '' && mycfg.secret == '' {
         return error('password or secret needs to be filled in for ${args.name}')
     }
-
-    set(mycfg)!
+    return mycfg
 }
+@end
+
+@else
+
+pub struct ${args.classname} {
+pub mut:
+    name string = 'default'
+	mail_from    string
+	mail_password string @@[secret]
+	mail_port   int
+	mail_server   string
+	mail_username     string 
+}
+
+@if args.hasconfig
+fn cfg_play(p paramsparser.Params) ! {
+    //THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED IN LINE WITH struct above
+    mut mycfg := ${args.classname}{
+        name: p.get_default('name', 'default')!
+        mail_from: p.get('mail_from')!
+        mail_password: p.get('mail_password')!
+        mail_port: p.get_int_default('mail_port', 8888)!
+        mail_server: p.get('mail_server')!
+        mail_username: p.get('mail_username')!
+    }
+    set(mycfg)!
+}     
+@end
+
+@end
+
+fn obj_init(obj_ ${args.classname})!${args.classname}{
+    //never call get here, only thing we can do here is work on object itself
+    mut obj:=obj_
+    return obj
+}
+
+@if args.cat == .installer
+//called before start if done
+fn configure() ! {
+    @if args.cat == .installer
+	//mut installer := get()!
+    @else
+    //mut client := get()!
+    @end 
+@if args.templates
+	// mut mycode := ??tmpl('templates/atemplate.yaml')
+	// mut path := pathlib.get_file(path: cfg.configpath, create: true)!
+	// path.write(mycode)!
+	// console.print_debug(mycode)
+@end
+}
+@end
+
+

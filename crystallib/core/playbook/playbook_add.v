@@ -39,8 +39,13 @@ pub fn (mut plbook PlayBook) add(args_ PlayBookNewArgs) ! {
 			plbook.add(text: c, prio: args.prio, session: args_.session)!
 			return
 		} else if p.is_dir() {
-			mut ol := p.list(recursive: true, regex: [r'.*\.md$'])!
-			for mut p2 in ol.paths {
+			// get .md and .hero files from dir
+			mut ol0 := p.list(recursive: true, regex: [r'.*\.md$'])!
+			mut paths := ol0.paths.clone()
+			mut ol1 := p.list(recursive: true, regex: [r'.*\.hero$'])!
+			paths << ol1.paths
+			
+			for mut p2 in paths {
 				c2 := p2.read()!
 				plbook.add(text: c2, prio: args.prio, session: args_.session)!
 			}

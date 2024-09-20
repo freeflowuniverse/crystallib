@@ -1,15 +1,27 @@
+#!/bin/bash
+
 set -e
 cd ~/code/github/freeflowuniverse/crystallib/cli/hero
-v -enable-globals hero.v 
-chmod +x hero
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    export HEROPATH='/usr/local/bin/hero'
-elif [[ "$OSTYPE" == "darwin"* ]]; then
+export HEROPATH='/usr/local/bin/hero'    
+if [[ "$OSTYPE" == "darwin"* ]]; then
     export HEROPATH=$HOME/hero/bin/hero
+    # brew install libpq
+    prf="$HOME/.profile"
+    [ -f "$prf" ] && source "$prf"
+    # v -cg -enable-globals -w -cflags -static -cc gcc hero.v
+    v -gc none -cg -enable-globals -w -n hero.v
+else
+    v -cg -enable-globals -w -n hero.v
+    #v -cg -enable-globals -w -cflags -static -cc gcc hero.v
 fi
 
+
+chmod +x hero
+
+
 cp hero $HEROPATH
-rm hero
+cp hero /tmp/hero
+rm -f hero
 
 echo "**COMPILE OK**"
