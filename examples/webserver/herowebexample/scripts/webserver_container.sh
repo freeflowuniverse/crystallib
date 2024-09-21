@@ -38,4 +38,4 @@ bash /tmp/install.sh
 EOF
 
 # Attach to the container
-docker attach hero-container
+sudo docker attach hero-container
