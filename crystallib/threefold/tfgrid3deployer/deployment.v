@@ -72,15 +72,58 @@ pub fn (mut self TFDeployment) deploy() ! {
 	setup.setup_vm_workloads(self.vms)!
 	setup.setup_zdb_workloads(self.zdbs)!
 	setup.setup_webname_workloads(mut self.webnames)!
-	setup.finalize_deployment(self.name)!
+	self.finalize_deployment(setup)!
 
-	self.contracts = setup.contracts_map.values()
+	// self.contracts = setup.contracts_map.values()
 
-	for mut vm in self.vms {
-		vm.tfchain_contract_id = setup.contracts_map[vm.requirements.nodes[0]]
-	}
+	// for mut vm in self.vms {
+	// 	vm.tfchain_contract_id = setup.contracts_map[vm.requirements.nodes[0]]
+	// }
 
 	self.save()!
+}
+
+fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
+	// for name_contract in setup.name_contracts {
+	// 	name_contract_id := setup.deployer.client.create_name_contract(name_contract)!
+	// 	console.print_header('name contract ${name_contract} created with id ${name_contract_id}')
+
+	// 	setup.name_contract_map[name_contract] = name_contract_id
+	// }
+	mut dls := map[u32]&grid_models.Deployment{}
+	for node_id, workloads in setup.workloads {
+		console.print_header('Creating deployment on node ${node_id}.')
+		mut deployment := grid_models.new_deployment(
+			twin_id: setup.deployer.twin_id
+			description: 'VGridClient Deployment'
+			workloads: workloads
+			signature_requirement: grid_models.SignatureRequirement{
+				weight_required: 1
+				requests: [
+					grid_models.SignatureRequest{
+						twin_id: u32(setup.deployer.twin_id)
+						weight: 1
+					},
+				]
+			}
+		)
+
+		deployment.add_metadata('deployment', self.name)
+
+		dls[node_id] = &deployment
+		// contract_id := setup.deployer.deploy(node_id, mut deployment, deployment.metadata,
+		// 	0) or { return error('Deployment failed on node ${node_id}: ${err}') }
+
+		// TODO: Fill the structs with the result.
+
+		// setup.contracts_map[node_id] = contract_id
+		// console.print_header('Deployment successful. Contract ID: ${contract_id}')
+	}
+	console.print_header('Batch deploy')
+	name_contracts_map, ret_dls := self.deployer.batch_deploy(setup.name_contracts, mut
+		dls, none)!
+
+	// self.update_state(deployemnt)
 }
 
 pub fn (mut self TFDeployment) vm_get(vm_name string) !VMachine {

@@ -79,7 +79,7 @@ pub fn new_deployer(mnemonics string, chain_network ChainNetwork) !Deployer {
 	}
 }
 
-fn (mut d Deployer) handle_deploy(node_id u32, mut dl models.Deployment, hash_hex string) !u64 {
+fn (mut d Deployer) handle_deploy(node_id u32, mut dl models.Deployment, hash_hex string) ! {
 	signature := d.client.sign_deployment(hash_hex)!
 	dl.add_signature(d.twin_id, signature)
 	payload := dl.json_encode()
@@ -91,8 +91,7 @@ fn (mut d Deployer) handle_deploy(node_id u32, mut dl models.Deployment, hash_he
 	for wl in dl.workloads {
 		versions[wl.name] = 0
 	}
-	d.wait_deployment(node_id, dl.contract_id, versions)!
-	return dl.contract_id
+	d.wait_deployment(node_id, mut dl, versions)!
 }
 
 pub fn (mut d Deployer) update_deployment(node_id u32, mut dl models.Deployment, body string) ! {
@@ -116,7 +115,7 @@ pub fn (mut d Deployer) update_deployment(node_id u32, mut dl models.Deployment,
 
 	node_twin_id := d.client.get_node_twin(node_id)!
 	d.rmb_deployment_update(node_twin_id, payload)!
-	d.wait_deployment(node_id, dl.contract_id, new_versions)!
+	d.wait_deployment(node_id, mut dl, new_versions)!
 }
 
 // update_versions increments the deployment version
@@ -191,37 +190,47 @@ pub fn (mut d Deployer) deploy(node_id u32, mut dl models.Deployment, body strin
 	d.logger.info('ContractID: ${contract_id}')
 	dl.contract_id = contract_id
 
-	return d.handle_deploy(node_id, mut dl, hash_hex) or {
+	d.handle_deploy(node_id, mut dl, hash_hex) or {
 		d.logger.info('Rolling back...')
 		d.logger.info('deleting contract id: ${contract_id}')
 		d.client.cancel_contract(contract_id)!
 		return err
 	}
+	return dl.contract_id
 }
 
-pub fn (mut d Deployer) wait_deployment(node_id u32, contract_id u64, workload_versions map[string]u32) ! {
-	start := time.now()
+pub fn (mut d Deployer) wait_deployment(node_id u32, mut dl models.Deployment, workload_versions map[string]u32) ! {
+	mut start := time.now()
 	num_workloads := workload_versions.len
+	contract_id := dl.contract_id
+	mut last_state_ok := 0
 	for {
-		mut state_ok := 0
+		mut cur_state_ok := 0
 		changes := d.deployment_changes(node_id, contract_id)!
 		for wl in changes {
 			if wl.version == workload_versions[wl.name]
 				&& wl.result.state == models.result_states.ok {
-				state_ok++
+				cur_state_ok += 1
 			} else if wl.version == workload_versions[wl.name]
 				&& wl.result.state == models.result_states.error {
 				return error('failed to deploy deployment due error: ${wl.result.message}')
 			}
 		}
-		if state_ok == num_workloads {
+		if cur_state_ok > last_state_ok {
+			last_state_ok = cur_state_ok
+			start = time.now()
+		}
+
+		if cur_state_ok == num_workloads {
+			dl.workloads = changes
 			return
 		}
+
 		if (time.now() - start).minutes() > 5 {
 			return error('failed to deploy deployment: contractID: ${contract_id}, some workloads are not ready after wating 5 minutes')
 		} else {
 			d.logger.info('Waiting for deployment to become ready')
-			time.sleep(1 * time.second)
+			time.sleep(500 * time.millisecond)
 		}
 	}
 }
@@ -231,11 +240,8 @@ pub fn (mut d Deployer) get_deployment(contract_id u64, node_id u32) !models.Dep
 	payload := {
 		'contract_id': contract_id
 	}
-	res := d.rmb_deployment_get(
-		twin_id,
-		json.encode(payload)
-	) or {
-		return error("Node ${node_id} might be down.")
+	res := d.rmb_deployment_get(twin_id, json.encode(payload)) or {
+		return error('Node ${node_id} might be down.')
 	}
 	return json.decode(models.Deployment, res)
 }
@@ -254,4 +260,48 @@ pub fn (mut d Deployer) deployment_changes(node_id u32, contract_id u64) ![]mode
 
 	res := d.rmb_deployment_changes(twin_id, contract_id)!
 	return json.decode([]models.Workload, res)
+}
+
+pub fn (mut d Deployer) batch_deploy(name_contracts []string, mut dls map[u32]&models.Deployment, solution_provider ?u64) !(map[string]u64, map[u32]&models.Deployment) {
+	mut batch_create_contract_data := []griddriver.BatchCreateContractData{}
+	for name_contract in name_contracts {
+		batch_create_contract_data << griddriver.BatchCreateContractData{
+			name: name_contract
+		}
+	}
+
+	mut hash_map := map[u32]string{}
+	for node, dl in dls {
+		public_ips := dl.count_public_ips()
+		hash_hex := dl.challenge_hash().hex()
+		hash_map[node] = hash_hex
+		batch_create_contract_data << griddriver.BatchCreateContractData{
+			node: node
+			body: dl.metadata
+			hash: hash_hex
+			public_ips: public_ips
+			solution_provider_id: solution_provider
+		}
+	}
+
+	contract_ids := d.client.batch_create_contracts(batch_create_contract_data)!
+	mut name_contracts_map := map[string]u64{}
+	mut threads := []thread !{}
+	for idx, data in batch_create_contract_data {
+		contract_id := contract_ids[idx]
+		if data.name != '' {
+			name_contracts_map[data.name] = contract_id
+			continue
+		}
+
+		mut dl := dls[data.node]
+		dl.contract_id = contract_id
+		threads << spawn d.handle_deploy(data.node, mut dl, hash_map[data.node])
+	}
+
+	for th in threads {
+		th.wait() or { return error('deployment failed: ${err}') }
+	}
+
+	return name_contracts_map, dls
 }

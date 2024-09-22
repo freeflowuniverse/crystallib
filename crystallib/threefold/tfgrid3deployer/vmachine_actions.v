@@ -2,7 +2,6 @@ module tfgrid3deployer
 
 import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import freeflowuniverse.crystallib.threefold.grid
-import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.ui.console
 import rand
 
@@ -28,7 +27,6 @@ mut:
 }
 
 fn (mut self DeploymentSetup) collect_node_ids(mut machines []VMachine) ! {
-	mut nodes := []u32{}
 	for mut machine in machines {
 		mut node_id := get_node_id(machine.requirements) or {
 			return error('Failed to determine node ID: ${err}')
@@ -342,3 +340,12 @@ fn (mut self DeploymentSetup) finalize_deployment(deployment_name string) ! {
 		console.print_header('Deployment successful. Contract ID: ${contract_id}')
 	}
 }
+
+/*
+	TODO's:
+		- return result after deployment
+		- add roll back behavior
+		- cache node and user twin ids
+		- use batch calls for substrate
+		- send deployments to nodes concurrently
+*/
