@@ -86,8 +86,11 @@ pub fn (mut zinit Zinit) exists(name_ string) bool {
 }
 
 pub fn (mut zinit Zinit) stop(name string) ! {
+	println('zinit stop 0 ${name}')
 	mut p := zinit.get(name)!
+	println('zinit stop 2 ${name}')
 	p.stop()!
+	println('zinit stop 3 ${name}')
 }
 
 pub fn (mut zinit Zinit) start(name string) ! {
@@ -105,7 +108,6 @@ pub fn (mut self Zinit) load() ! {
 	mut res := os.execute(cmd)
 	if res.exit_code > 0 {
 		if res.output.contains('failed to connect') {
-			self.systemd_start()!
 			res = os.execute(cmd)
 			if res.exit_code > 0 {
 				$if debug {
@@ -135,4 +137,9 @@ pub fn (mut self Zinit) load() ! {
 			self.processes[name] = zp
 		}
 	}
+}
+
+
+pub fn (mut self Zinit) names() []string {
+	return self.processes.keys()
 }
