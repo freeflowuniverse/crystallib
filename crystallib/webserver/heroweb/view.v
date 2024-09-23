@@ -44,8 +44,8 @@ pub fn (app &App) index(mut ctx Context) veb.Result {
 	return ctx.html($tmpl('./templates/index.html'))
 }
 
-pub fn (app &App) dashboard(mut ctx Context) veb.Result {
+pub fn (app &App) view(mut ctx Context) veb.Result {
 	user := app.db.users[ctx.user_id]
-	return ctx.html($tmpl('./templates/dashboard.html'))
+	return ctx.html($tmpl('./templates/view.html'))
 }
 

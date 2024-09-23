@@ -1,13 +1,7 @@
-# Empowering Self-Sovereign Development
-Pioneering an ecosystem where startups can harness emerging technologies to reclaim their sovereignty while prioritizing environmental and social sustainability.
+# Welcome to OurWorld Platform
+OurWorld is a venture creator platform where enterprises come together to solve the world's biggest challenges. Access dashboards of innovative ventures working for the social and planetary good.
 
-## Our Mission
-To enable self-sovereign innovation by offering tools and frameworks that empower startups to take control of their development, in harmony with the environment and society.
+Our mission is to incubate ventures that foster environmental sustainability, decentralization, and community-driven innovation.
 
-## Our Vision
-A world where technology serves the greater good, enabling sustainable growth for both businesses and communities.
-
-## What We Do
-- Provide tools for decentralization.
-- Support environmental sustainability.
-- Foster community-driven innovation.
+## Get Started
+Login to access your venture dashboard and begin your journey toward making an impact.
