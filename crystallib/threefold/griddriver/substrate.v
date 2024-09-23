@@ -6,12 +6,18 @@ import json
 import freeflowuniverse.crystallib.ui.console
 
 pub fn (mut c Client) get_node_twin(node_id u64) !u32 {
+	if u32(node_id) in c.node_twin {
+		return c.node_twin[u32(node_id)]
+	}
+
 	res := os.execute("griddriver node-twin --substrate \"${c.substrate}\"  --node_id ${node_id}")
 	if res.exit_code != 0 {
 		return error(res.output)
 	}
 
-	return u32(strconv.parse_uint(res.output, 10, 32)!)
+	twin_id := u32(strconv.parse_uint(res.output, 10, 32)!)
+	c.node_twin[u32(node_id)] = twin_id
+	return twin_id
 }
 
 pub fn (mut c Client) get_user_twin() !u32 {
