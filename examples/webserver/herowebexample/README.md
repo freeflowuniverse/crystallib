@@ -24,6 +24,12 @@ We provide a script that first deploys Hero, Vlang and Crystallib on a Ubuntu Do
 
 ### Deploy with Makefile
 
-```
-make run
-```
+- Clone the repo
+  ```
+  git clone https://github.com/freeflowuniverse/crystallib
+  cd crystallib/examples/webserver/herowebexample
+  ```
+- Run the deployer
+  ```
+  make run
+  ```
