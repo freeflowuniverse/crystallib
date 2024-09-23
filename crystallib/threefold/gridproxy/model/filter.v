@@ -258,7 +258,7 @@ pub mut:
 	free_mru           OptionU64  = EmptyOption{}
 	free_sru           OptionU64  = EmptyOption{}
 	free_hru           OptionU64  = EmptyOption{}
-	free_ips           OptionU64  = EmptyOption{}
+	free_ips           ?u64
 	total_mru          OptionU64  = EmptyOption{}
 	total_sru          OptionU64  = EmptyOption{}
 	total_hru          OptionU64  = EmptyOption{}
@@ -280,10 +280,12 @@ pub mut:
 	rented             OptionBool = EmptyOption{}
 	available_for      OptionU64  = EmptyOption{}
 	farm_ids           []u64
+	node_ids           []u64
 	node_id            OptionU64 = EmptyOption{}
 	twin_id            OptionU64 = EmptyOption{}
 	certification_type string
 	has_gpu            OptionBool = EmptyOption{}
+	has_ipv6           ?bool
 	gpu_device_id      string
 	gpu_device_name    string
 	gpu_vendor_id      string
@@ -336,12 +338,15 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 			m['free_hru'] = p.free_hru.str()
 		}
 	}
-	match p.free_ips {
-		EmptyOption {}
-		u64 {
-			m['free_ips'] = p.free_ips.str()
-		}
+
+	if v := p.free_ips{
+		m['free_ips'] = v.str()
 	}
+
+	if v := p.has_ipv6{
+		m['has_ipv6'] = v.str()
+	}
+
 	match p.total_cru {
 		EmptyOption {}
 		u64 {
@@ -443,6 +448,9 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 	}
 	if p.farm_ids.len > 0 {
 		m['farm_ids'] = json.encode(p.farm_ids).all_after('[').all_before(']')
+	}
+	if p.node_ids.len > 0 {
+		m['node_ids'] = json.encode(p.node_ids).all_after('[').all_before(']')
 	}
 	match p.node_id {
 		EmptyOption {}

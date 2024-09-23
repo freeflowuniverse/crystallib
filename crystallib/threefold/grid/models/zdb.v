@@ -43,9 +43,9 @@ pub fn (mut z Zdb) challenge() string {
 
 pub struct ZdbResult {
 pub mut:
-	namespace string
-	ips       []string
-	port      u32
+	namespace string @[json: 'Namespace']
+	ips       []string @[json: 'IPs']
+	port      u32 @[json: 'Port']
 }
 
 pub fn (z Zdb) to_workload(args WorkloadArgs) Workload {

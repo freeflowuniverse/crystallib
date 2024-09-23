@@ -1,7 +1,6 @@
 module tfgrid3deployer
 
 import json
-import freeflowuniverse.crystallib.data.encoder
 
 // MachineNetworkReq struct to represent network access configuration
 @[params]
@@ -32,6 +31,12 @@ pub mut:
 	tfchain_id          string
 	tfchain_contract_id u64 // TODO: make multiple entries
 	requirements        VMRequirements
+	node_id             u32
+	planetary_ip        string
+	mycelium_ip         string
+	public_ip4          string
+	wireguard_ip        string
+	public_ip6          string
 }
 
 // Helper function to encode a VMachine
