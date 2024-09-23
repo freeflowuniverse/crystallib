@@ -39,7 +39,7 @@ pub fn (mut a StatelessAuthenticator) send_authentication_mail(mail Authenticati
  		subject: mail.subject
  		body_type: .html
  		body: $tmpl('./templates/mail.html')
-	) or { panic('Error resolving email address $err') }
+	) or { return error('Error resolving email address $err') }
 }
 
 fn (a StatelessAuthenticator) new_authentication_link(email string, callback string) !string {
