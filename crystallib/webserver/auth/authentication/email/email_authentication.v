@@ -30,16 +30,15 @@ pub:
 
 pub fn (mut a StatelessAuthenticator) send_authentication_mail(mail AuthenticationMail) ! {
 	link := a.new_authentication_link(mail.to, mail.callback)!
-	button := '<a href="${link}">Click to authenticate</a>'
+	button := '<a href="${link}" style="display:inline-block; padding:10px 20px; font-size:16px; color:white; background-color:#4CAF50; text-decoration:none; border-radius:5px;">Verify Email</a>'
 
-	println(a.mail_client)
- 	// // send email with link in body
+ 	// send email with link in body
  	a.mail_client.send(
 		to: mail.to
  		from: mail.from
  		subject: mail.subject
  		body_type: .html
- 		body: '${mail.body}\n${button}'
+ 		body: $tmpl('./templates/mail.html')
 	) or { panic('Error resolving email address $err') }
 }
 
