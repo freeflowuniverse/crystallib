@@ -117,7 +117,7 @@
                 let socket;
 
                 function sendInteraction(action, data) {
-                    fetch("/analytics/@{slides.name}", {
+                    fetch("@{slides.log_endpoint}", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",

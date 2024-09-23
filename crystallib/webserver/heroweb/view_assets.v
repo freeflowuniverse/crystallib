@@ -17,13 +17,14 @@ pub fn (app &App) view_asset(mut ctx Context, name string) veb.Result {
 	infoptr := app.db.infopointers[name]
 
 	if infoptr.cat == .website {
-		return ctx.redirect('/assets/${name}')
+		return ctx.redirect('/asset/${name}/index.html')
 	}
 
 	html := match infoptr.cat {
 		.pdf {
 			slides := Slides{
-				url:'/assets/${name}.pdf'
+				url:'/asset/${name}'
+				log_endpoint: '/log/${name}'
 				name: name
 			}
 			slides.html()

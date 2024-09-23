@@ -10,6 +10,7 @@ import veb
 pub struct App {
 	veb.StaticHandler
 	veb.Middleware[Context]
+	veb.Controller
 	jwt_secret string = jwt.create_secret()
 mut:
 	db WebDB
@@ -19,9 +20,9 @@ pub:
 }
 
 pub struct WebDB {
+	Logger
 pub mut:
 	authenticator StatelessAuthenticator
-	logger Logger
 	users        map[u16]&User
 	groups       map[string]&Group
 	acls         map[string]&ACL

@@ -52,6 +52,7 @@ pub fn (mut db WebDB) play_infopointers(mut plbook playbook.PlayBook) ! {
 				'slides' {  InfoType.slides }
 				'pdf' { InfoType.pdf }
 				'wiki' { InfoType.wiki }
+				'website' { InfoType.website }
 				else { 
 					println('Invalid category')
 					// Handle the error or set a default value

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Logs</title>
+    <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@@latest/css/pico.min.css">
+    <script>
+        let logs = [];  // To store the logs fetched from the server
+        let currentSortColumn = null;
+        let currentSortOrder = 'asc'; // 'asc' or 'desc'
+
+        // Function to fetch all logs from the server or based on form input
+        async function fetchLogs(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            // Get the filter values from the form (if any)
+            var object = document.getElementById("object").value;
+            var eventFilter = document.getElementById("event").value;
+            var subjectFilter = document.getElementById("subject").value;
+            var messageFilter = document.getElementById("message").value;
+
+            // Construct query parameters
+            var queryParams = "event=" + encodeURIComponent(eventFilter) + 
+                              "&subject=" + encodeURIComponent(subjectFilter) + 
+                              "&message=" + encodeURIComponent(messageFilter);
+
+            // Fetch logs from the server
+            var response = await fetch("/logs/" + encodeURIComponent(object) + "?" + queryParams);
+
+            // Handle response
+            if (response.ok) {
+                logs = await response.json();
+                displayLogs(logs);
+            } else {
+                document.getElementById("logs-table").innerHTML = "<tr><td colspan='5'>No logs found.</td></tr>";
+            }
+        }
+
+        // Function to display logs in the table
+        function displayLogs(logsToDisplay) {
+            var logsTable = document.getElementById("logs-table");
+            logsTable.innerHTML = ""; // Clear the table content
+
+            // Populate the table with logs data
+            logsToDisplay.forEach(function(log) {
+                var row = "<tr>" +
+                    "<td>" + log.timestamp + "</td>" +
+                    "<td>" + log.event + "</td>" +
+                    "<td>" + log.subject + "</td>" +
+                    "<td>" + log.object + "</td>" +
+                    "<td>" + log.message + "</td>" +
+                "</tr>";
+                logsTable.innerHTML += row;
+            });
+        }
+
+        // Function to sort the logs by the clicked column
+        function sortTable(column) {
+            // Determine sort order
+            if (currentSortColumn === column) {
+                currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortOrder = 'asc';  // Default to ascending order on a new column sort
+            }
+            currentSortColumn = column;
+
+            // Sort logs array
+            logs.sort(function(a, b) {
+                if (a[column] < b[column]) {
+                    return currentSortOrder === 'asc' ? -1 : 1;
+                }
+                if (a[column] > b[column]) {
+                    return currentSortOrder === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+
+            // Re-display sorted logs
+            displayLogs(logs);
+        }
+
+        // Fetch all logs when the page loads
+        window.onload = function() {
+            fetchLogs();
+        }
+    </script>
+</head>
+<body>
+    <main class="container">
+        <h1>View Logs</h1>
+
+        <!-- Form for filtering logs (optional) -->
+        <form onsubmit="fetchLogs(event)">
+            <div class="grid">
+                <div>
+                    <label for="object">Object</label>
+                    <input type="text" id="object" name="object" placeholder="Enter object name">
+                </div>
+                <div>
+                    <label for="event">Event</label>
+                    <input type="text" id="event" name="event" placeholder="Filter by event">
+                </div>
+                <div>
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" placeholder="Filter by subject">
+                </div>
+                <div>
+                    <label for="message">Message</label>
+                    <input type="text" id="message" name="message" placeholder="Filter by message">
+                </div>
+            </div>
+            <button type="submit">Search Logs</button>
+        </form>
+
+        <!-- Table to display logs -->
+        <table role="grid">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('timestamp')">Timestamp</th>
+                    <th onclick="sortTable('event')">Event</th>
+                    <th onclick="sortTable('subject')">Subject</th>
+                    <th onclick="sortTable('object')">Object</th>
+                    <th onclick="sortTable('message')">Message</th>
+                </tr>
+            </thead>
+            <tbody id="logs-table">
+                <!-- Logs will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
