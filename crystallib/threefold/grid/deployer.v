@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.threefold.grid.models
 import freeflowuniverse.crystallib.threefold.griddriver
 import freeflowuniverse.crystallib.ui.console
 
-
+@[heap]
 pub struct Deployer {
 pub:
 	mnemonics     string
@@ -303,12 +303,12 @@ pub fn (mut d Deployer) batch_deploy(name_contracts []string, mut dls map[u32]&m
 
 	for th in threads {
 		th.wait() or {
-			console.print_stderr("Rolling back: cancling the depolyed contracts: ${contract_ids} due to ${err}")
-			d.client.batch_cancel_contracts(contract_ids) or { 
-				return error("Faild to cancel contracts dut to: ${err}")
+			console.print_stderr('Rolling back: cancling the depolyed contracts: ${contract_ids} due to ${err}')
+			d.client.batch_cancel_contracts(contract_ids) or {
+				return error('Faild to cancel contracts dut to: ${err}')
 			}
 			return error('Deployment failed: ${err}')
-	 	}
+		}
 	}
 
 	return name_contracts_map, dls

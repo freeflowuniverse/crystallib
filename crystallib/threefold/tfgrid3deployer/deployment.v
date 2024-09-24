@@ -29,11 +29,11 @@ pub mut:
 mut:
 	// Set the deployed contracts on the deployment and save the full deployment to be able to delete the whole deployment when need.
 	contracts GridContracts
-	deployer  grid.Deployer @[skip; str: skip]
-	kvstore   KVStoreFS     @[skip; str: skip]
+	deployer  &grid.Deployer @[skip; str: skip]
+	kvstore   KVStoreFS      @[skip; str: skip]
 }
 
-fn get_deployer()!grid.Deployer{
+fn get_deployer() !grid.Deployer {
 	mut grid_client := get()!
 
 	network := match grid_client.network {
@@ -53,18 +53,20 @@ pub fn new_deployment(name string) !TFDeployment {
 		return error('Deployment with the same name is already exist.')
 	}
 
+	deployer := get_deployer()!
 	return TFDeployment{
 		name: name
-		kvstore:  KVStoreFS{}
-		deployer: get_deployer()!
+		kvstore: KVStoreFS{}
+		deployer: &deployer
 	}
 }
 
 pub fn get_deployment(name string) !TFDeployment {
+	mut deployer := get_deployer()!
 	mut dl := TFDeployment{
 		name: name
-		kvstore:  KVStoreFS{}
-		deployer: get_deployer()!
+		kvstore: KVStoreFS{}
+		deployer: &deployer
 	}
 	dl.load()!
 	return dl
@@ -80,7 +82,7 @@ pub fn (mut self TFDeployment) deploy() ! {
 
 	mut network_specs := self.network or {
 		NetworkSpecs{
-			name:     'net' + rand.string(5)
+			name: 'net' + rand.string(5)
 			ip_range: '10.10.0.0/16'
 		}
 	}
@@ -88,10 +90,10 @@ pub fn (mut self TFDeployment) deploy() ! {
 	self.network = network_specs
 
 	mut setup := DeploymentSetup{
-		deployer:     &self.deployer
+		deployer: self.deployer
 		network_name: network_specs.name
-		ip_range:     network_specs.ip_range
-		mycelium:     network_specs.mycelium
+		ip_range: network_specs.ip_range
+		mycelium: network_specs.mycelium
 	}
 
 	setup.setup_network_workloads(self.vms)!
@@ -112,13 +114,13 @@ fn (mut self TFDeployment) set_nodes() ! {
 		}
 
 		nodes := filter_nodes(
-			node_ids:  node_ids
-			healthy:   true
-			free_mru:  u64(vm.requirements.memory) * 1024 * 1024 * 1024
+			node_ids: node_ids
+			healthy: true
+			free_mru: u64(vm.requirements.memory) * 1024 * 1024 * 1024
 			total_cru: u64(vm.requirements.cpu)
-			free_ips:  if vm.requirements.public_ip4 { u64(1) } else { none }
-			has_ipv6:  if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
-			status:    'up'
+			free_ips: if vm.requirements.public_ip4 { u64(1) } else { none }
+			has_ipv6: if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
+			status: 'up'
 		)!
 
 		if nodes.len == 0 {
@@ -164,15 +166,15 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 	for node_id, workloads in setup.workloads {
 		console.print_header('Creating deployment on node ${node_id}.')
 		mut deployment := grid_models.new_deployment(
-			twin_id:               setup.deployer.twin_id
-			description:           'VGridClient Deployment'
-			workloads:             workloads
+			twin_id: setup.deployer.twin_id
+			description: 'VGridClient Deployment'
+			workloads: workloads
 			signature_requirement: grid_models.SignatureRequirement{
 				weight_required: 1
-				requests:        [
+				requests: [
 					grid_models.SignatureRequest{
 						twin_id: u32(setup.deployer.twin_id)
-						weight:  1
+						weight: 1
 					},
 				]
 			}
@@ -242,7 +244,7 @@ fn (mut self TFDeployment) update_state(name_contracts_map map[string]u64, dls m
 }
 
 pub fn (mut self TFDeployment) vm_get(vm_name string) !VMachine {
-	console.print_header("Getting ${vm_name} VM.")
+	console.print_header('Getting ${vm_name} VM.')
 	for vmachine in self.vms {
 		if vmachine.requirements.name == vm_name {
 			return vmachine
@@ -252,7 +254,7 @@ pub fn (mut self TFDeployment) vm_get(vm_name string) !VMachine {
 }
 
 pub fn (mut self TFDeployment) zdb_get(zdb_name string) !ZDBResult {
-	console.print_header("Getting ${zdb_name} Zdb.")
+	console.print_header('Getting ${zdb_name} Zdb.')
 	for zdb in self.zdbs {
 		if zdb.requirements.name == zdb_name {
 			return zdb
@@ -262,7 +264,7 @@ pub fn (mut self TFDeployment) zdb_get(zdb_name string) !ZDBResult {
 }
 
 pub fn (mut self TFDeployment) webname_get(wn_name string) !WebNameResult {
-	console.print_header("Getting ${wn_name} webname.")
+	console.print_header('Getting ${wn_name} webname.')
 	for wbn in self.webnames {
 		if wbn.requirements.name == wn_name {
 			return wbn
@@ -356,19 +358,102 @@ pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
 	}
 }
 
+// maps from node_id to deployment
+pub fn (mut self TFDeployment) list_deployments() !map[u32]&grid_models.Deployment {
+	mut contract_node := map[u64]u32{}
+	for vm in self.vms {
+		contract_node[vm.tfchain_contract_id] = vm.node_id
+	}
+	for zdb in self.zdbs {
+		contract_node[zdb.contract_id] = zdb.node_id
+	}
+	for wn in self.webnames {
+		contract_node[wn.node_contract_id] = wn.node_id
+	}
+
+	mut threads := []thread !grid_models.Deployment{}
+	mut dls := map[u32]&grid_models.Deployment{}
+	for contract_id, node_id in contract_node {
+		threads << spawn self.deployer.get_deployment(contract_id, node_id)
+	}
+
+	for th in threads {
+		dl := th.wait()!
+		node_id := contract_node[dl.contract_id]
+		dls[node_id] = &dl
+	}
+
+	return dls
+}
+
 fn (mut self TFDeployment) vm_delete(vm_name string) ! {
 	// delete myself, check on TFChain that deletion was indeed done
 	vm := self.vm_get(vm_name)!
-	mut dl := self.deployer.get_deployment(vm.tfchain_contract_id, vm.node_id) or {
-		return error("Couldn't get deployment workloads: ${err}")
+
+	// get all deployments
+	mut dls := self.list_deployments()!
+
+	// load network
+	mut network_handler := NetworkHandler{
+		deployer: self.deployer
 	}
 
-	for idx, workload in dl.workloads{
-		if workload.name == vm_name{
-			dl.workloads[idx], dl.workloads[dl.workloads.len - 1] = dl.workloads[dl.workloads.len - 1], dl.workloads[idx]
+	network_handler.load_network_state(dls)!
+
+	// remove vm workload
+	mut vm_dl := dls[vm.node_id]
+	mut public_ip_name := ''
+	for idx, workload in vm_dl.workloads {
+		if workload.name == vm_name {
+			zmachine := json.decode(grid_models.Zmachine, workload.data)!
+			public_ip_name = zmachine.network.public_ip
+			vm_dl.workloads[idx], vm_dl.workloads[vm_dl.workloads.len - 1] = vm_dl.workloads[vm_dl.workloads.len - 1], vm_dl.workloads[idx]
+			vm_dl.workloads.delete_last()
+			break
 		}
 	}
 
+	for idx, workload in vm_dl.workloads {
+		if workload.name == public_ip_name {
+			vm_dl.workloads[idx], vm_dl.workloads[vm_dl.workloads.len - 1] = vm_dl.workloads[vm_dl.workloads.len - 1], vm_dl.workloads[idx]
+			vm_dl.workloads.delete_last()
+			break
+		}
+	}
+
+	// decide if we want to remove the node
+	if vm_dl.workloads.len == 1 && vm_dl.workloads[0].type_ == grid_models.workload_types.network {
+		mut ipv4_nodes := 0
+		for _, endpoint in network_handler.endpoints {
+			if endpoint.split('.').len == 4 {
+				ipv4_nodes += 1
+			}
+		}
+
+		if network_handler.public_node == vm.node_id && (ipv4_nodes > 1
+			|| network_handler.hidden_nodes.len == 0
+			|| (network_handler.nodes.len == 2 && network_handler.hidden_nodes.len == 1)
+			|| (ipv4_nodes == 1 && network_handler.hidden_nodes.len > 0)) {
+			// we can remove the node
+			dls.delete(vm.node_id)
+			network_handler.remove_node(vm.node_id)!
+		}
+	}
+
+	// use network handler to prepare network
+	network_workloads := network_handler.generate_workloads()!
+
+	// replace deloyments network workloads with the ones coming from network handler
+	for node_id, mut dl in dls {
+		network_wl := network_workloads[node_id] or { continue }
+		for id, _ in dl.workloads {
+			if dl.workloads[id].name == network_wl.name {
+				dl.workloads[id] = network_wl
+			}
+		}
+	}
+
+	// TODO: update deployments
 	/*
 		what issues we face:
 			1. Delete the network workload if not needed
