@@ -1,4 +1,4 @@
-# caddy
+# zinit
 
 
 
@@ -8,9 +8,9 @@ To get started
 
 
 
-import freeflowuniverse.crystallib.installers.something. caddy
+import freeflowuniverse.crystallib.installers.something. zinit
 
-mut installer:= caddy.get()!
+mut installer:= zinit.get()!
 
 installer.start()!
 
@@ -23,8 +23,8 @@ installer.start()!
 
 
 ```hero
-!!caddy.install
-    homedir: '/home/user/caddy'
+!!zinit.install
+    homedir: '/home/user/zinit'
     username: 'admin'
     password: 'secretpassword'
     title: 'Some Title'

@@ -1,4 +1,4 @@
-module installers
+module ulist
 
 // import freeflowuniverse.crystallib.core.pathlib
 // import freeflowuniverse.crystallib.develop.gittools

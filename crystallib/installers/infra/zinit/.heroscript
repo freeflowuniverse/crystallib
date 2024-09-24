@@ -1,13 +1,13 @@
 
 !!hero_code.generate_installer
-    name:'daguserver'
-    classname:'DaguInstaller'
+    name:'zinit'
+    classname:'Zinit'
     singleton:1
-    templates:1
+    templates:0
     default:1
     title:''
     supported_platforms:''
     reset:0
     startupmanager:1
-	hasconfig:1
-    build:0
+	hasconfig:0
+    build:1
