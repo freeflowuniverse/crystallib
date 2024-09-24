@@ -328,9 +328,14 @@ fn (mut self DeploymentSetup) finalize_deployment(deployment_name string) ! {
 
 /*
 	TODO's:
-		- return result after deployment
-		- add roll back behavior
+		# TODO:
+		- add action methods e.g. delete, ping...
 		- cache node and user twin ids
+		- chainge the encoding/decoding behavior
+
+		# Done:
+		- return result after deployment
 		- use batch calls for substrate
 		- send deployments to nodes concurrently
+		- add roll back behavior
 */

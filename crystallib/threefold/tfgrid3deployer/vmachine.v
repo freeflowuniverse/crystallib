@@ -1,6 +1,9 @@
 module tfgrid3deployer
 
+import freeflowuniverse.crystallib.ui.console
 import json
+import os
+
 
 // MachineNetworkReq struct to represent network access configuration
 @[params]
@@ -67,24 +70,79 @@ fn decode_vmachine(data []u8) !VMachine {
 	return json.decode(VMachine, data_string)
 }
 
-// check if the node where the machine runs on is up and running
+// Call zos to get the zos version running on the node
 fn (self VMachine) check_node_up() !bool {
+	console.print_header("Pinging node: ${self.node_id}")
+	mut deployer := get_deployer()!
+	node_twin_id := deployer.client.get_node_twin(self.node_id) or { return error("faild to get the node twin ID due to: ${err}")}
+	deployer.client.get_zos_version(node_twin_id) or { return false }
+	console.print_header("Node ${self.node_id} is reachable.")
 	return true
 }
 
-// check on TFChain, RMB, ... if the VM is there and up and running
-fn (self VMachine) check_vm_up() !bool {
-	return true
+
+fn ping(ip string) bool{
+	res := os.execute('ping -c 1 -W 2 ${ip}')
+	return res.exit_code == 0
 }
 
-// try to reach the machine over mycelium
-fn (self VMachine) ping_mycelium() !bool {
-	return true
+// Ping the VM supported interfaces
+fn (self VMachine) check_vm_up() bool {
+
+	if self.requirements.public_ip4 {
+		console.print_header("Pinging public IPv4: ${self.public_ip4}")
+		pingable := ping(self.public_ip4)
+		if !pingable{
+			console.print_stderr("The public IPv4 isn't pingable.")
+		}
+		return pingable
+	}
+
+	if self.requirements.public_ip6 {
+		console.print_header("Pinging public IPv6: ${self.public_ip6}")
+		pingable := ping(self.public_ip6)
+		if !pingable{
+			console.print_stderr("The public IPv6 isn't pingable.")
+		}
+		return pingable
+	}
+
+	if self.requirements.planetary {
+		console.print_header("Pinging planetary IP: ${self.planetary_ip}")
+		pingable := ping(self.planetary_ip)
+		if !pingable{
+			console.print_stderr("The planetary IP isn't pingable.")
+		}
+		return pingable
+	}
+
+	if self.requirements.mycelium{
+		console.print_header("Pinging mycelium IP: ${self.mycelium_ip}")
+		pingable := ping(self.mycelium_ip)
+		if !pingable{
+			console.print_stderr("The mycelium IP isn't pingable.")
+		}
+		return pingable
+	}
+	return false
 }
 
-fn (self VMachine) healthcheck() ! {
-	// check we can ping, if not check vm is up, if not check node is up
-	// wherever we find the issue throw an error
+pub fn (self VMachine) healthcheck() !bool {
+	console.print_header("Doing a healthcheck on machine ${self.requirements.name}")
+
+	is_vm_up := self.check_node_up()!
+	if !is_vm_up{
+		console.print_stderr("The VM isn't reachable, pinging node ${self.node_id}")
+		is_node_up := self.check_node_up()!
+		if !is_node_up{
+			console.print_stderr("The VM node isn't reachable.")
+			return false
+		}
+		return false
+	}
+
+	console.print_header("The VM is up and reachable.")
+	return true
 }
 
 // NetworkInfo struct to represent network details
@@ -99,13 +157,10 @@ fn (self VMachine) recover(args RecoverArgs) ! {
 // NetworkInfo struct to represent network details
 pub struct DeployArgs {
 pub mut:
-	reset bool // careful will delete existing machine if tjere
+	reset bool // careful will delete existing machine if true
 }
 
 fn (self VMachine) deploy(args DeployArgs) ! {
 	// check the machine is there, if yes and reset used then delete the machine before deploying a new one
 }
 
-fn (self VMachine) delete(args DeployArgs) ! {
-	// delete myself, check on TFChain that deletion was indeed done
-}

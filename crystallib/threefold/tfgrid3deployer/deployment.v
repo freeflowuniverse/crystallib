@@ -33,7 +33,7 @@ mut:
 	kvstore   KVStoreFS     @[skip; str: skip]
 }
 
-pub fn new_deployment(name string) !TFDeployment {
+fn get_deployer()!grid.Deployer{
 	mut grid_client := get()!
 
 	network := match grid_client.network {
@@ -43,41 +43,35 @@ pub fn new_deployment(name string) !TFDeployment {
 		.main { grid.ChainNetwork.main }
 	}
 
+	return grid.new_deployer(grid_client.mnemonic, network)!
+}
+
+pub fn new_deployment(name string) !TFDeployment {
 	kvstore := KVStoreFS{}
+
 	if _ := kvstore.get(name) {
 		return error('Deployment with the same name is already exist.')
 	}
 
-	deployer := grid.new_deployer(grid_client.mnemonic, network)!
-
 	return TFDeployment{
-		name:     name
-		deployer: deployer
-		kvstore:  kvstore
+		name: name
+		kvstore:  KVStoreFS{}
+		deployer: get_deployer()!
 	}
 }
 
 pub fn get_deployment(name string) !TFDeployment {
-	mut grid_client := get()!
-
-	network := match grid_client.network {
-		.dev { grid.ChainNetwork.dev }
-		.qa { grid.ChainNetwork.qa }
-		.test { grid.ChainNetwork.test }
-		.main { grid.ChainNetwork.main }
-	}
-
-	deployer := grid.new_deployer(grid_client.mnemonic, network)!
-
 	mut dl := TFDeployment{
-		name:     name
-		deployer: deployer
+		name: name
 		kvstore:  KVStoreFS{}
+		deployer: get_deployer()!
 	}
-
 	dl.load()!
-
 	return dl
+}
+
+fn (mut self TFDeployment) update_deployment(setup DeploymentSetup) ! {
+	// self.deployer.update_deployment()!
 }
 
 pub fn (mut self TFDeployment) deploy() ! {
@@ -185,16 +179,9 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 		)
 
 		deployment.add_metadata('VGridClient/Deployment', self.name)
-
 		dls[node_id] = &deployment
-		// contract_id := setup.deployer.deploy(node_id, mut deployment, deployment.metadata,
-		// 	0) or { return error('Deployment failed on node ${node_id}: ${err}') }
-
-		// TODO: Fill the structs with the result.
-
-		// setup.contracts_map[node_id] = contract_id
-		// console.print_header('Deployment successful. Contract ID: ${contract_id}')
 	}
+
 	console.print_header('Batch deploying the deployment')
 	name_contracts_map, ret_dls := self.deployer.batch_deploy(setup.name_contracts, mut
 		dls, none)!
@@ -255,6 +242,7 @@ fn (mut self TFDeployment) update_state(name_contracts_map map[string]u64, dls m
 }
 
 pub fn (mut self TFDeployment) vm_get(vm_name string) !VMachine {
+	console.print_header("Getting ${vm_name} VM.")
 	for vmachine in self.vms {
 		if vmachine.requirements.name == vm_name {
 			return vmachine
@@ -264,6 +252,7 @@ pub fn (mut self TFDeployment) vm_get(vm_name string) !VMachine {
 }
 
 pub fn (mut self TFDeployment) zdb_get(zdb_name string) !ZDBResult {
+	console.print_header("Getting ${zdb_name} Zdb.")
 	for zdb in self.zdbs {
 		if zdb.requirements.name == zdb_name {
 			return zdb
@@ -273,6 +262,7 @@ pub fn (mut self TFDeployment) zdb_get(zdb_name string) !ZDBResult {
 }
 
 pub fn (mut self TFDeployment) webname_get(wn_name string) !WebNameResult {
+	console.print_header("Getting ${wn_name} webname.")
 	for wbn in self.webnames {
 		if wbn.requirements.name == wn_name {
 			return wbn
@@ -364,4 +354,34 @@ pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
 	self.webnames << WebNameResult{
 		requirements: requirements
 	}
+}
+
+fn (mut self TFDeployment) vm_delete(vm_name string) ! {
+	// delete myself, check on TFChain that deletion was indeed done
+	vm := self.vm_get(vm_name)!
+	mut dl := self.deployer.get_deployment(vm.tfchain_contract_id, vm.node_id) or {
+		return error("Couldn't get deployment workloads: ${err}")
+	}
+
+	for idx, workload in dl.workloads{
+		if workload.name == vm_name{
+			dl.workloads[idx], dl.workloads[dl.workloads.len - 1] = dl.workloads[dl.workloads.len - 1], dl.workloads[idx]
+		}
+	}
+
+	/*
+		what issues we face:
+			1. Delete the network workload if not needed
+			2. Remove the vm node peer from the other deployments if contract is deleted
+			3. Deploy an access node if the deleted contract was an access node
+
+
+			node1 := dl -> hidden
+			node2 := dl -> hidden
+			node3 := dl -> public // will delete it, we need to deploy another access node for node1 and node2
+
+			node1 := dl -> public // Assign node1 instead of node3 and delete node1
+			node2 := dl -> hidden
+			node3 := dl -> public // will delete it, we need to deploy another access node for node1 and node2
+ 	*/
 }
