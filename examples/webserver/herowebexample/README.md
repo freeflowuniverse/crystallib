@@ -29,7 +29,7 @@ We provide a script that first deploys Hero, Vlang and Crystallib on a Ubuntu Do
   git clone https://github.com/freeflowuniverse/crystallib
   cd crystallib/examples/webserver/herowebexample
   ```
-- Run the deployer
+- Deploy the webserver
   ```
-  make run
+  make webserver
   ```
