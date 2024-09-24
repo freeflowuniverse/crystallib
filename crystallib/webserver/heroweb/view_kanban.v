@@ -1,10 +1,10 @@
 module heroweb
 
 import veb
+import freeflowuniverse.crystallib.webserver.components
 
-@['/kanban']
-pub fn (app &App) kanban(mut ctx Context) veb.Result {
-	data := kanban_example()
-	d := $tmpl('templates/kanban.html')
-	return ctx.html(d)
+@['/view/kanban']
+pub fn (app &App) view_kanban(mut ctx Context) veb.Result {
+	component := components.kanban_example()
+	return ctx.html(component.html())
 }

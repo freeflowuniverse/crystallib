@@ -1,4 +1,4 @@
-module heroweb
+module components
 
 enum ColorEnum {
     white

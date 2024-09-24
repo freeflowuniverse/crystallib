@@ -1,6 +1,4 @@
-module heroweb
-
-import veb
+module components
 
 pub struct Slides {
 pub:

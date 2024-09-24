@@ -5,6 +5,16 @@ let currentSortDirection = {
   ascending: true,
 };
 
+// Icons for different kinds of assets
+const kindIcons = {
+  'html': '<i class="fas fa-code"></i>',
+  'slides': '<i class="fas fa-chalkboard-teacher"></i>',
+  'pdf': '<i class="fas fa-file-pdf"></i>',
+  'wiki': '<i class="fas fa-book"></i>',
+  'website': '<i class="fas fa-globe"></i>',
+  'folder': '<i class="fas fa-folder"></i>'
+};
+
 // Fetch documents when the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   fetchDocuments();
@@ -24,21 +34,25 @@ async function fetchDocuments() {
   }
 }
 
-// Populate table with document data
+// Populate table with document data and add icons for each kind
 function populateTable(data) {
   const tbody = document.getElementById("documentsBody");
   tbody.innerHTML = ""; // Clear the table body
 
   data.forEach((doc) => {
+    // Define the icon based on document kind
+    const iconHTML = kindIcons[doc.kind] || '';
+
     const row = `
       <tr>
+        <td>${iconHTML}</td> <!-- Add the icon column -->
         <td>${doc.order}</td>
         <td><a href="${doc.url}" target="_blank">${doc.title}</a></td>
         <td>${doc.description}</td>
         <td>${doc.tags}</td>
         <td>${doc.creator}</td>
         <td>${doc.date_created}</td>
-        <td>${doc.format}</td>
+        <td>${doc.kind}</td>
       </tr>
     `;
     tbody.insertAdjacentHTML("beforeend", row);
@@ -70,7 +84,7 @@ function sortTable(columnIndex) {
   rowsArray.forEach((row) => tbody.appendChild(row));
 }
 
-// Filter documents by tag or kind (format)
+// Filter documents by tag or kind (kind)
 function filterDocuments() {
   const filterType = document.getElementById("filterType").value;
   let filteredDocs = [];
@@ -81,9 +95,9 @@ function filterDocuments() {
       filteredDocs.push(...documents.filter((doc) => doc.tags === tag));
     });
   } else if (filterType === "kind") {
-    const uniqueFormats = [...new Set(documents.map((doc) => doc.format))];
-    uniqueFormats.forEach((format) => {
-      filteredDocs.push(...documents.filter((doc) => doc.format === format));
+    const uniquekinds = [...new Set(documents.map((doc) => doc.kind))];
+    uniquekinds.forEach((kind) => {
+      filteredDocs.push(...documents.filter((doc) => doc.kind === kind));
     });
   } else {
     filteredDocs = documents; // If 'all' is selected, show all documents

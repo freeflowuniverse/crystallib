@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PicoCSS Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@@1.5.6/css/pico.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/unpoly@@3.9.1/unpoly.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/unpoly@@3.9.1/unpoly.min.css">
+
     <style>
         /* Custom CSS for the dashboard grid layout */
         body {
@@ -15,12 +19,12 @@
         }
 
         body > nav {
-            padding: 1rem 2.5rem;
+            padding: 1rem 2.5rem !important;
         }
 
         .grid-container {
             display: grid;
-            grid-template-columns: 1fr 4fr;
+            grid-template-columns: 1fr 6fr;
             gap: 1rem;
             padding: 1rem;
             flex: 1;
@@ -33,7 +37,7 @@
             border-radius: 0.5rem;
         }
 
-        Main content area styling
+        /* Main content area styling */
         .main-content {
             background-color: var(--background-light);
             padding: 1rem;
@@ -70,8 +74,16 @@
             <li><strong>Dashboard</strong></li>
         </ul>
         <ul>
-            <li><a href="#settings">Settings</a></li>
-            <li><a href="#profile">Profile</a></li>
+            <li>
+                <details role="list">
+                    <summary aria-haspopup="listbox">@{component.user}</summary>
+                    <ul role="listbox">
+                        <li><a href="#profile">Profile</a></li>
+                        <li><a href="#settings">Settings</a></li>
+                        <li><a href="#logout">Logout</a></li>
+                    </ul>
+                </details>
+            </li>
         </ul>
     </nav>
 
@@ -79,10 +91,12 @@
     <div class="grid-container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <a href="#home">Home</a>
-            <a href="#analytics">Analytics</a>
-            <a href="#reports">Reports</a>
-            <a href="#settings">Settings</a>
+            <a href="#home" up-target=".main-content">Home</a>
+            <a href="/view/assets" up-target=".main-content">Assets</a>
+            <a href="/view/logs" up-target=".main-content">Analytics</a>
+            <a href="/view/kanban" up-target=".main-content">Kanban</a>
+            <a href="#reports" up-target=".main-content">Reports</a>
+            <a href="#settings" up-target=".main-content">Settings</a>
         </div>
 
         <!-- Main content area -->
