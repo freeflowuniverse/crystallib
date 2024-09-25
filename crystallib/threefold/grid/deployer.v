@@ -243,7 +243,7 @@ pub fn (mut d Deployer) get_deployment(contract_id u64, node_id u32) !models.Dep
 		'contract_id': contract_id
 	}
 	res := d.rmb_deployment_get(twin_id, json.encode(payload)) or {
-		return error('Node ${node_id} might be down.')
+		return error("faild to get deployment with contract id ${contract_id} due to: ${err}")
 	}
 	return json.decode(models.Deployment, res)
 }

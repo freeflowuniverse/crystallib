@@ -4,7 +4,6 @@ import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import freeflowuniverse.crystallib.threefold.gridproxy
 import freeflowuniverse.crystallib.threefold.grid
 import freeflowuniverse.crystallib.ui.console
-import rand
 import json
 
 struct NetworkHandler {
@@ -21,7 +20,7 @@ mut:
 	none_accessible_ip_ranges []string
 	mycelium                  bool
 
-	deployer &grid.Deployer @[skip; str: skip]
+	deployer &grid.Deployer 	@[skip; str: skip]
 }
 
 // TODO: maybe rename to fill_network or something similar
@@ -35,7 +34,6 @@ fn (mut self NetworkHandler) create_network(vmachines []VMachine) ! {
 
 	console.print_header('Loaded nodes: ${self.nodes}.')
 	self.setup_wireguard_data()!
-
 	self.setup_access_node()!
 }
 

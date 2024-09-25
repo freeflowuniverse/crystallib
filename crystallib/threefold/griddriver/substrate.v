@@ -86,7 +86,7 @@ pub fn (mut c Client) batch_create_contracts(contracts_data_ []BatchCreateContra
 			body = contract.body
 		}
 
-		contract.body = ""		
+		contract.body = ""
 	}
 
 	data := json.encode(contracts_data)

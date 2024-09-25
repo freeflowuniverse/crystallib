@@ -281,7 +281,7 @@ pub mut:
 	available_for      OptionU64  = EmptyOption{}
 	farm_ids           []u64
 	node_ids           []u64
-	node_id            OptionU64 = EmptyOption{}
+	node_id            ?u32
 	twin_id            OptionU64 = EmptyOption{}
 	certification_type string
 	has_gpu            OptionBool = EmptyOption{}
@@ -452,11 +452,8 @@ pub fn (p &NodeFilter) to_map() map[string]string {
 	if p.node_ids.len > 0 {
 		m['node_ids'] = json.encode(p.node_ids).all_after('[').all_before(']')
 	}
-	match p.node_id {
-		EmptyOption {}
-		u64 {
-			m['node_id'] = p.node_id.str()
-		}
+	if n := p.node_id{
+		m['node_id'] = n.str()
 	}
 	match p.twin_id {
 		EmptyOption {}

@@ -23,8 +23,8 @@ pub mut:
 	name        string
 	description string
 	vms         []VMachine
-	zdbs        []ZDBResult
-	webnames    []WebNameResult
+	zdbs        []ZDB
+	webnames    []WebName
 	network     ?NetworkSpecs
 mut:
 	// Set the deployed contracts on the deployment and save the full deployment to be able to delete the whole deployment when need.
@@ -32,6 +32,7 @@ mut:
 	deployer  &grid.Deployer @[skip; str: skip]
 	kvstore   KVStoreFS      @[skip; str: skip]
 }
+
 
 fn get_deployer() !grid.Deployer {
 	mut grid_client := get()!
@@ -68,12 +69,12 @@ pub fn get_deployment(name string) !TFDeployment {
 		kvstore: KVStoreFS{}
 		deployer: &deployer
 	}
-	dl.load()!
-	return dl
-}
 
-fn (mut self TFDeployment) update_deployment(setup DeploymentSetup) ! {
-	// self.deployer.update_deployment()!
+	dl.load() or {
+		return error("Faild to load the deployment due to: ${err}")
+	}
+
+	return dl
 }
 
 pub fn (mut self TFDeployment) deploy() ! {
@@ -89,18 +90,15 @@ pub fn (mut self TFDeployment) deploy() ! {
 
 	self.network = network_specs
 
-	mut setup := DeploymentSetup{
-		deployer: self.deployer
-		network_name: network_specs.name
-		ip_range: network_specs.ip_range
-		mycelium: network_specs.mycelium
-	}
+	mut setup := new_deployment_setup(
+		network_specs,
+		self.vms,
+		self.zdbs,
+		self.webnames,
+		mut self.deployer
+	)!
 
-	setup.setup_network_workloads(self.vms)!
-	setup.setup_vm_workloads(self.vms)!
-	setup.setup_zdb_workloads(self.zdbs)!
-	setup.setup_webname_workloads(mut self.webnames)!
-
+	// Check we are in which state
 	self.finalize_deployment(setup)!
 	self.save()!
 }
@@ -135,7 +133,7 @@ fn (mut self TFDeployment) set_nodes() ! {
 
 	for mut zdb in self.zdbs {
 		size := u64(zdb.requirements.size) * 1024 * 1024 * 1024
-		nodes := filter_nodes(free_sru: size, status: 'up', healthy: true)!
+		nodes := filter_nodes(free_sru: size, status: 'up', healthy: true, node_id: zdb.requirements.node_id)!
 
 		if nodes.len == 0 {
 			return error('Requested the Grid Proxy and no nodes found.')
@@ -145,7 +143,7 @@ fn (mut self TFDeployment) set_nodes() ! {
 	}
 
 	for mut webname in self.webnames {
-		nodes := filter_nodes(domain: true, status: 'up', healthy: true)!
+		nodes := filter_nodes(domain: true, status: 'up', healthy: true node_id: webname.requirements.node_id)!
 
 		if nodes.len == 0 {
 			return error('Requested the Grid Proxy and no nodes found.')
@@ -156,13 +154,9 @@ fn (mut self TFDeployment) set_nodes() ! {
 }
 
 fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
-	// for name_contract in setup.name_contracts {
-	// 	name_contract_id := setup.deployer.client.create_name_contract(name_contract)!
-	// 	console.print_header('name contract ${name_contract} created with id ${name_contract_id}')
+	mut new_deployments := map[u32]&grid_models.Deployment{}
+	old_deployments := self.list_deployments()!
 
-	// 	setup.name_contract_map[name_contract] = name_contract_id
-	// }
-	mut dls := map[u32]&grid_models.Deployment{}
 	for node_id, workloads in setup.workloads {
 		console.print_header('Creating deployment on node ${node_id}.')
 		mut deployment := grid_models.new_deployment(
@@ -181,14 +175,69 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 		)
 
 		deployment.add_metadata('VGridClient/Deployment', self.name)
-		dls[node_id] = &deployment
+		new_deployments[node_id] = &deployment
 	}
 
-	console.print_header('Batch deploying the deployment')
-	name_contracts_map, ret_dls := self.deployer.batch_deploy(setup.name_contracts, mut
-		dls, none)!
+	mut create_name_contracts := []string{}
+	mut create_deployments := map[u32]&grid_models.Deployment{}
+	mut delete_contracts := []u64{}
 
-	self.update_state(name_contracts_map, ret_dls)!
+	mut returned_deployments := map[u32]&grid_models.Deployment{}
+	mut name_contracts_map := setup.name_contract_map.clone()
+
+	// Update stage.
+	for node_id, mut dl in new_deployments{
+		mut deployment := *dl
+		if _ := old_deployments[node_id]{
+			self.deployer.update_deployment(node_id, mut deployment, dl.metadata)!
+			returned_deployments[node_id] = deployment
+		} else {
+			create_deployments[node_id] = deployment
+		}
+	}
+
+	// Cancel stage.
+	for contract_id in self.contracts.name{
+		if !setup.name_contract_map.values().contains(contract_id){
+			delete_contracts << contract_id
+		}
+	}
+
+	for node_id, deployment in old_deployments{
+		if _ := new_deployments[node_id] {continue}
+		delete_contracts << deployment.contract_id
+	}
+
+	if delete_contracts.len > 0{
+		self.deployer.client.batch_cancel_contracts(delete_contracts)!
+	}
+
+	// Create stage.
+	for contract_name, contract_id in setup.name_contract_map {
+		if contract_id == 0 {
+			create_name_contracts << contract_name
+			continue
+		}
+	}
+
+	if create_name_contracts.len > 0 {
+		console.print_header('Batch deploying the deployment')
+		created_name_contracts_map, ret_dls := self.deployer.batch_deploy(
+			create_name_contracts,
+			mut create_deployments,
+			none
+		)!
+
+		for node_id, deployment in ret_dls{
+			returned_deployments[node_id] = deployment
+		}
+
+		for contract_name, contract_id in created_name_contracts_map{
+			name_contracts_map[contract_name] = contract_id
+		}
+	}
+
+	self.update_state(name_contracts_map, returned_deployments)!
 }
 
 fn (mut self TFDeployment) update_state(name_contracts_map map[string]u64, dls map[u32]&grid_models.Deployment) ! {
@@ -215,7 +264,7 @@ fn (mut self TFDeployment) update_state(name_contracts_map map[string]u64, dls m
 		vm.mycelium_ip = res.mycelium_ip
 		vm.planetary_ip = res.planetary_ip
 		vm.wireguard_ip = res.ip
-		vm.tfchain_contract_id = dls[vm.node_id].contract_id
+		vm.contract_id = dls[vm.node_id].contract_id
 
 		if vm.requirements.public_ip4 || vm.requirements.public_ip6 {
 			ip_workload := workloads[vm.node_id]['${vm.requirements.name}_pubip']
@@ -253,7 +302,7 @@ pub fn (mut self TFDeployment) vm_get(vm_name string) !VMachine {
 	return error('Machine does not exist.')
 }
 
-pub fn (mut self TFDeployment) zdb_get(zdb_name string) !ZDBResult {
+pub fn (mut self TFDeployment) zdb_get(zdb_name string) !ZDB {
 	console.print_header('Getting ${zdb_name} Zdb.')
 	for zdb in self.zdbs {
 		if zdb.requirements.name == zdb_name {
@@ -263,7 +312,7 @@ pub fn (mut self TFDeployment) zdb_get(zdb_name string) !ZDBResult {
 	return error('Zdb does not exist.')
 }
 
-pub fn (mut self TFDeployment) webname_get(wn_name string) !WebNameResult {
+pub fn (mut self TFDeployment) webname_get(wn_name string) !WebName {
 	console.print_header('Getting ${wn_name} webname.')
 	for wbn in self.webnames {
 		if wbn.requirements.name == wn_name {
@@ -346,14 +395,14 @@ pub fn (mut self TFDeployment) add_machine(requirements VMRequirements) {
 
 // Set a new zdb on the deployment.
 pub fn (mut self TFDeployment) add_zdb(zdb ZDBRequirements) {
-	self.zdbs << ZDBResult{
+	self.zdbs << ZDB{
 		requirements: zdb
 	}
 }
 
 // Set a new webname on the deployment.
 pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
-	self.webnames << WebNameResult{
+	self.webnames << WebName{
 		requirements: requirements
 	}
 }
@@ -362,13 +411,19 @@ pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
 pub fn (mut self TFDeployment) list_deployments() !map[u32]&grid_models.Deployment {
 	mut contract_node := map[u64]u32{}
 	for vm in self.vms {
-		contract_node[vm.tfchain_contract_id] = vm.node_id
+		if vm.contract_id != 0{
+			contract_node[vm.contract_id] = vm.node_id
+		}
 	}
 	for zdb in self.zdbs {
-		contract_node[zdb.contract_id] = zdb.node_id
+		if zdb.contract_id != 0{
+			contract_node[zdb.contract_id] = zdb.node_id
+		}
 	}
 	for wn in self.webnames {
-		contract_node[wn.node_contract_id] = wn.node_id
+		if wn.node_contract_id != 0{
+			contract_node[wn.node_contract_id] = wn.node_id
+		}
 	}
 
 	mut threads := []thread !grid_models.Deployment{}

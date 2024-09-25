@@ -32,7 +32,7 @@ pub mut:
 pub struct VMachine {
 pub mut:
 	tfchain_id          string
-	tfchain_contract_id u64 // TODO: make multiple entries
+	contract_id 				u64
 	requirements        VMRequirements
 	node_id             u32
 	planetary_ip        string
@@ -47,7 +47,7 @@ fn (self VMachine) encode() ![]u8 {
 	// mut b := encoder.new()
 	// b.add_string(self.name)
 	// b.add_string(self.tfchain_id)
-	// b.add_int(self.tfchain_contract_id)
+	// b.add_int(self.contract_id)
 	// b.add_int(self.cpu)
 	// b.add_int(self.memory)
 	// b.add_string(self.description)
@@ -61,7 +61,7 @@ fn decode_vmachine(data []u8) !VMachine {
 	// return VMachine{
 	// 	name:                d.get_string()
 	// 	tfchain_id:          d.get_string()
-	// 	tfchain_contract_id: d.get_int()
+	// 	contract_id: d.get_int()
 	// 	cpu:                 d.get_int()
 	// 	memory:              d.get_int()
 	// 	description:         d.get_string()
