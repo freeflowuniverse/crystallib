@@ -16,6 +16,7 @@ pub fn (mut app App) assets(mut ctx Context) veb.Result {
 		title: it.name.title()
 		description: it.description
 		url: '/view/asset/${it.name}'
+		tags: it.tags
 		kind: it.cat.str()
 	})
 

@@ -14,6 +14,11 @@
     .filter-section {
       margin-bottom: 1rem;
     }
+    .tag {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -24,12 +29,12 @@
 
     <!-- Filter Section -->
     <section class="filter-section">
-      <label for="filterType">View by:</label>
-      <select id="filterType" onchange="filterDocuments()">
-        <option value="all">All</option>
-        <option value="tag">By Tag</option>
-        <option value="kind">By Kind</option>
-      </select>
+      <details class="dropdown">
+        <summary>Select tags...</summary>
+        <ul id="tagCheckboxes">
+          <!-- Checkboxes will be populated dynamically -->
+        </ul>
+      </details>
     </section>
 
     <!-- Table Container -->
@@ -45,9 +50,6 @@
           </tr>
         </thead>
         <tbody id="documentsBody">
-          @for row in table.rows
-            @{row.html()}
-          @end
           <!-- Data will be injected here via JavaScript -->
         </tbody>
       </table>

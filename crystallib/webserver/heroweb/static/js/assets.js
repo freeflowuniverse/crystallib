@@ -15,7 +15,6 @@ const kindIcons = {
   'folder': '<i class="fas fa-folder"></i>'
 };
 
-// Fetch documents when the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function () {
   fetchDocuments();
 });
@@ -29,6 +28,7 @@ async function fetchDocuments() {
     }
     documents = await response.json();
     populateTable(documents); // Populate the table with fetched documents
+    populateTagCheckboxes(); // Populate the tag filter dropdown with checkboxes
   } catch (error) {
     console.error('Error fetching documents:', error);
   }
@@ -43,20 +43,56 @@ function populateTable(data) {
     // Define the icon based on document kind
     const iconHTML = kindIcons[doc.kind] || '';
 
+    // Ensure tags are handled correctly (if it's an array, join into a string)
+    const tagHTML = Array.isArray(doc.tags)
+      ? doc.tags.map(tag => `<span class="tag" onclick="filterByClickedTag('${tag.trim()}')">${tag.trim()}</span>`).join(', ')
+      : '';
+
     const row = `
       <tr>
         <td>${iconHTML}</td> <!-- Add the icon column -->
-        <td>${doc.order}</td>
         <td><a href="${doc.url}" target="_blank">${doc.title}</a></td>
         <td>${doc.description}</td>
-        <td>${doc.tags}</td>
-        <td>${doc.creator}</td>
-        <td>${doc.date_created}</td>
+        <td>${tagHTML}</td>
         <td>${doc.kind}</td>
       </tr>
     `;
     tbody.insertAdjacentHTML("beforeend", row);
   });
+}
+
+// Populate tag checkboxes in the filter dropdown
+function populateTagCheckboxes() {
+  const tagCheckboxes = document.getElementById("tagCheckboxes");
+  const uniqueTags = [...new Set(documents.flatMap(doc => Array.isArray(doc.tags) ? doc.tags : []))];
+
+  tagCheckboxes.innerHTML = ''; // Clear any existing checkboxes
+  uniqueTags.forEach((tag) => {
+    const listItem = document.createElement("li");
+    const label = document.createElement("label");
+    label.innerHTML = `
+      <input type="checkbox" name="${tag}" value="${tag}" onchange="filterByTags()" />
+      ${tag}
+    `;
+    listItem.appendChild(label);
+    tagCheckboxes.appendChild(listItem);
+  });
+}
+
+// Filter documents by selected tags
+function filterByTags() {
+  const selectedTags = Array.from(document.querySelectorAll('#tagCheckboxes input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+  const filteredDocs = documents.filter(doc => selectedTags.every(tag => Array.isArray(doc.tags) && doc.tags.includes(tag)));
+  populateTable(filteredDocs);
+}
+
+// Filter documents when a tag is clicked in the table
+function filterByClickedTag(tag) {
+  const checkboxes = document.querySelectorAll('#tagCheckboxes input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = checkbox.value === tag;
+  });
+  filterByTags(); // Apply the filter
 }
 
 // Sort table based on column index
@@ -82,26 +118,4 @@ function sortTable(columnIndex) {
   });
 
   rowsArray.forEach((row) => tbody.appendChild(row));
-}
-
-// Filter documents by tag or kind (kind)
-function filterDocuments() {
-  const filterType = document.getElementById("filterType").value;
-  let filteredDocs = [];
-
-  if (filterType === "tag") {
-    const uniqueTags = [...new Set(documents.map((doc) => doc.tags))];
-    uniqueTags.forEach((tag) => {
-      filteredDocs.push(...documents.filter((doc) => doc.tags === tag));
-    });
-  } else if (filterType === "kind") {
-    const uniquekinds = [...new Set(documents.map((doc) => doc.kind))];
-    uniquekinds.forEach((kind) => {
-      filteredDocs.push(...documents.filter((doc) => doc.kind === kind));
-    });
-  } else {
-    filteredDocs = documents; // If 'all' is selected, show all documents
-  }
-
-  populateTable(filteredDocs);
 }
