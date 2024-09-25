@@ -7,6 +7,7 @@ import freeflowuniverse.crystallib.webserver.auth.authentication.email {Stateles
 import freeflowuniverse.crystallib.webserver.log {Logger}
 import veb
 
+@[heap]
 pub struct App {
 	veb.StaticHandler
 	veb.Middleware[Context]

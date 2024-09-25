@@ -66,6 +66,7 @@ pub fn (mut db WebDB) play_infopointers(mut plbook playbook.PlayBook) ! {
 				path_heroscript: hero_path
 				cat: cat_type
 	            acl: action.params.get_list('acl')!
+	            tags: action.params.get_list_default('tags', [])!
 	            description: action.params.get_default('description', '')!
 	            expiration: action.params.get_default('expiration', '')!
 	        ) or { return error('Failed to add InfoPointer: ${err}') }

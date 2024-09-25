@@ -19,17 +19,15 @@ pub fn new(path string) !&App {
 		}
 	}
 
-	// lets mount the middlewares the app should use
-	app.mount_middlewares()
-
-	app.mount_static_folder_at('${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
-
-
 	// lets play the heroscripts to setup the app
 	app.play(path)!
 
 	// lets run the heroscripts
 	app.run_infopointer_heroscripts()!
+	
+	// lets mount the middlewares the app should use
+	app.mount_middlewares()
+	app.mount_static_folder_at('${os.home_dir()}/code/github/freeflowuniverse/crystallib/crystallib/webserver/heroweb/static','/static')!
 
 	return app
 }

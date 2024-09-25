@@ -41,8 +41,7 @@ pub fn (app App) is_logged_in(mut ctx Context) bool {
 }
 
 // middleware to check if user is authorized to access an infopointer or asset
-pub fn (app App) is_authorized(mut ctx Context) bool {
-	println('running is authorized')
+pub fn (app &App) is_authorized(mut ctx Context) bool {
 	if !app.is_logged_in(mut ctx) {
 		return false
 	}
@@ -61,6 +60,7 @@ pub fn (app App) is_authorized(mut ctx Context) bool {
 
 	if infoptr_name !in app.db.infopointers {
 		ctx.res.set_status(.unauthorized)
+		ctx.redirect('/unauthorized')
 		return false
 	}
 
@@ -70,19 +70,16 @@ pub fn (app App) is_authorized(mut ctx Context) bool {
 		right: .read
 	) or {
 		// TODO: report error
-		// ctx.server_error(err.str())
+		ctx.server_error(err.str())
 		return false
 	} 
 	{
 		return true
 	} else {
-		// ctx.res.set_status(.unauthorized)
+		ctx.res.set_status(.unauthorized)
+		ctx.redirect('/unauthorized')
 		return false
 	}
-
-
-
-
-
+	ctx.server_error('This should never happen')
     return false
 }

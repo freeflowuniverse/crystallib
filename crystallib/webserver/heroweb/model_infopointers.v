@@ -54,6 +54,7 @@ pub mut:
 	path_heroscript        string
 	cat        InfoType
 	acl         []string
+	tags []string
 	description string
 	expiration  string
 }
@@ -69,6 +70,7 @@ pub fn (mut self WebDB) infopointer_add(args InfoPointerAddArgs) !&InfoPointer {
 		path_heroscript:        args.path_heroscript
 		cat:        args.cat
 		acl:         args.acl.map(texttools.name_fix)
+		tags:         args.tags.map(texttools.name_fix)
 		description: args.description
 		expiration:  args.expiration
 	}
