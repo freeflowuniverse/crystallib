@@ -61,7 +61,7 @@ pub fn (app &App) view_asset(mut ctx Context, name string) veb.Result {
 
 	infoptr := app.db.infopointers[name]
 
-	if infoptr.cat == .website {
+	if infoptr.cat in [.website, .wiki] {
 		return ctx.redirect('/asset/${name}/index.html')
 	}
 

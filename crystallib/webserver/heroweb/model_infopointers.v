@@ -43,6 +43,7 @@ pub enum InfoType {
 	wiki
 	website
 	folder
+	book
 }
 
 @[params]

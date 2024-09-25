@@ -223,23 +223,16 @@
                 }
 
                 function loadPDF() {
-                    pdfjsLib
-                        .getDocument(url)
-                        .promise.then(function (pdfDoc) {
-                            pdf = pdfDoc;
-                            totalPages = pdf.numPages;
-                            renderPage(currentPage);
-                            createThumbnails();
-                            sendInteraction("pdfLoaded", {
-                                totalPages: totalPages,
-                            });
-                        })
-                        .catch(function (error) {
-                            console.error("Error loading PDF:", error);
-                            sendInteraction("error", {
-                                message: error.message,
-                            });
-                        });
+                    pdfjsLib.getDocument({ url: url, disableStream: false }).promise.then(function(pdfDoc) {
+                    pdf = pdfDoc;
+                    totalPages = pdf.numPages;
+                    renderPage(currentPage);
+                    createThumbnails();
+                    sendInteraction("pdfLoaded", { totalPages: totalPages });
+                }).catch(function (error) {
+                    console.error("Error loading PDF:", error);
+                    sendInteraction("error", { message: error.message });
+                });
                 }
 
                 prevBtn.addEventListener("click", function () {
