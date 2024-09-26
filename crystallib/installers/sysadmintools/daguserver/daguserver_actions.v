@@ -60,7 +60,7 @@ fn startupcmd() ![]zinit.ZProcessNewArgs {
 
 	res << zinit.ZProcessNewArgs{
 		name: 'dagu'
-		cmd: 'dagu server'
+		cmd: 'dagu server --config /root/hero/cfg/dagu/admin.yaml'
 		env: {
 			'HOME': '/root'
 		}
