@@ -1,21 +1,22 @@
-<h1> Webserver Container - Manual Deployment </h1>
+<h1> Webserver Container Docs </h1>
 
 <h2>Table of Contents</h2>
 
 - [Introduction](#introduction)
-- [Steps](#steps)
+- [Deploy Webserver](#deploy-webserver)
+- [Update Webserver](#update-webserver)
 
 ---
 
 ## Introduction
 
-We provide the manual steps to deploy the Hero webserver on a Ubuntu container.
+We provide the steps to deploy the Hero webserver locally and test changes.
 
-## Steps
+## Deploy Webserver
 
 - Run the Ubuntu container with host networking and a specific name
     ```
-    sudo docker run -it --net=host --name=hero-container ubuntu:latest /bin/bash
+    sudo docker run -it --net=host --name=hero-container -v ~/dvol:/root/code ubuntu:latest /bin/bash
     ```
 - Create Directory .ssh in container
     ```
@@ -60,3 +61,7 @@ We provide the manual steps to deploy the Hero webserver on a Ubuntu container.
     # Run the example
     ~/code/github/freeflowuniverse/crystallib/examples/webserver/herowebexample/heroweb-example.vsh
     ```
+
+## Update Webserver
+
+You can update the content of the webserver in the crystallib subdirectory `/freeflowuniverse/crystallib/crystallib/webserver`.
