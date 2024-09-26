@@ -5,8 +5,8 @@ import json
 @[params]
 pub struct WebNameRequirements {
 pub mut:
-	name    				string @[required]
-	node_id 				?u32
+	name    string @[required]
+	node_id ?u32
 	// must be in the format ip:port if tls_passthrough is set, otherwise the format should be http://ip[:port]
 	backend         string @[required]
 	tls_passthrough bool

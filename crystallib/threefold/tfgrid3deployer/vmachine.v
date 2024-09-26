@@ -3,7 +3,7 @@ module tfgrid3deployer
 import freeflowuniverse.crystallib.ui.console
 import json
 import os
-
+import rand
 
 // MachineNetworkReq struct to represent network access configuration
 @[params]
@@ -23,23 +23,23 @@ pub mut:
 // NetworkInfo struct to represent network details
 pub struct NetworkSpecs {
 pub mut:
-	name     string
-	ip_range string
-	mycelium bool = true
+	name     string = 'net' + rand.string(5)
+	ip_range string = '10.10.0.0/16'
+	mycelium bool   = true
 }
 
 // MachineModel struct to represent a machine and its associated details
 pub struct VMachine {
 pub mut:
-	tfchain_id          string
-	contract_id 				u64
-	requirements        VMRequirements
-	node_id             u32
-	planetary_ip        string
-	mycelium_ip         string
-	public_ip4          string
-	wireguard_ip        string
-	public_ip6          string
+	tfchain_id   string
+	contract_id  u64
+	requirements VMRequirements
+	node_id      u32
+	planetary_ip string
+	mycelium_ip  string
+	public_ip4   string
+	wireguard_ip string
+	public_ip6   string
 }
 
 // Helper function to encode a VMachine
@@ -72,54 +72,54 @@ fn decode_vmachine(data []u8) !VMachine {
 
 // Call zos to get the zos version running on the node
 fn (self VMachine) check_node_up() !bool {
-	console.print_header("Pinging node: ${self.node_id}")
+	console.print_header('Pinging node: ${self.node_id}')
 	mut deployer := get_deployer()!
-	node_twin_id := deployer.client.get_node_twin(self.node_id) or { return error("faild to get the node twin ID due to: ${err}")}
+	node_twin_id := deployer.client.get_node_twin(self.node_id) or {
+		return error('faild to get the node twin ID due to: ${err}')
+	}
 	deployer.client.get_zos_version(node_twin_id) or { return false }
-	console.print_header("Node ${self.node_id} is reachable.")
+	console.print_header('Node ${self.node_id} is reachable.')
 	return true
 }
 
-
-fn ping(ip string) bool{
+fn ping(ip string) bool {
 	res := os.execute('ping -c 1 -W 2 ${ip}')
 	return res.exit_code == 0
 }
 
 // Ping the VM supported interfaces
 fn (self VMachine) check_vm_up() bool {
-
 	if self.requirements.public_ip4 {
-		console.print_header("Pinging public IPv4: ${self.public_ip4}")
+		console.print_header('Pinging public IPv4: ${self.public_ip4}')
 		pingable := ping(self.public_ip4)
-		if !pingable{
+		if !pingable {
 			console.print_stderr("The public IPv4 isn't pingable.")
 		}
 		return pingable
 	}
 
 	if self.requirements.public_ip6 {
-		console.print_header("Pinging public IPv6: ${self.public_ip6}")
+		console.print_header('Pinging public IPv6: ${self.public_ip6}')
 		pingable := ping(self.public_ip6)
-		if !pingable{
+		if !pingable {
 			console.print_stderr("The public IPv6 isn't pingable.")
 		}
 		return pingable
 	}
 
 	if self.requirements.planetary {
-		console.print_header("Pinging planetary IP: ${self.planetary_ip}")
+		console.print_header('Pinging planetary IP: ${self.planetary_ip}')
 		pingable := ping(self.planetary_ip)
-		if !pingable{
+		if !pingable {
 			console.print_stderr("The planetary IP isn't pingable.")
 		}
 		return pingable
 	}
 
-	if self.requirements.mycelium{
-		console.print_header("Pinging mycelium IP: ${self.mycelium_ip}")
+	if self.requirements.mycelium {
+		console.print_header('Pinging mycelium IP: ${self.mycelium_ip}')
 		pingable := ping(self.mycelium_ip)
-		if !pingable{
+		if !pingable {
 			console.print_stderr("The mycelium IP isn't pingable.")
 		}
 		return pingable
@@ -128,20 +128,20 @@ fn (self VMachine) check_vm_up() bool {
 }
 
 pub fn (self VMachine) healthcheck() !bool {
-	console.print_header("Doing a healthcheck on machine ${self.requirements.name}")
+	console.print_header('Doing a healthcheck on machine ${self.requirements.name}')
 
 	is_vm_up := self.check_node_up()!
-	if !is_vm_up{
+	if !is_vm_up {
 		console.print_stderr("The VM isn't reachable, pinging node ${self.node_id}")
 		is_node_up := self.check_node_up()!
-		if !is_node_up{
+		if !is_node_up {
 			console.print_stderr("The VM node isn't reachable.")
 			return false
 		}
 		return false
 	}
 
-	console.print_header("The VM is up and reachable.")
+	console.print_header('The VM is up and reachable.')
 	return true
 }
 
@@ -163,4 +163,3 @@ pub mut:
 fn (self VMachine) deploy(args DeployArgs) ! {
 	// check the machine is there, if yes and reset used then delete the machine before deploying a new one
 }
-

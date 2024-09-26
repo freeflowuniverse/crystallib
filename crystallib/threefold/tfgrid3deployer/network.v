@@ -20,12 +20,14 @@ mut:
 	none_accessible_ip_ranges []string
 	mycelium                  bool
 
-	deployer &grid.Deployer 	@[skip; str: skip]
+	deployer &grid.Deployer @[skip; str: skip]
 }
 
 // TODO: maybe rename to fill_network or something similar
 fn (mut self NetworkHandler) create_network(vmachines []VMachine) ! {
 	// Set nodes
+	self.nodes = []
+
 	for vmachine in vmachines {
 		if !self.nodes.contains(vmachine.node_id) {
 			self.nodes << vmachine.node_id
@@ -39,11 +41,11 @@ fn (mut self NetworkHandler) create_network(vmachines []VMachine) ! {
 
 fn (mut self NetworkHandler) generate_workload(node_id u32, peers []grid_models.Peer, add_mycelium bool) !grid_models.Workload {
 	mut network_workload := grid_models.Znet{
-		ip_range: self.ip_range
-		subnet: self.wg_subnet[node_id]
+		ip_range:              self.ip_range
+		subnet:                self.wg_subnet[node_id]
 		wireguard_private_key: self.wg_keys[node_id][0]
 		wireguard_listen_port: self.wg_ports[node_id]
-		peers: peers
+		peers:                 peers
 	}
 
 	if add_mycelium {
@@ -51,7 +53,7 @@ fn (mut self NetworkHandler) generate_workload(node_id u32, peers []grid_models.
 	}
 
 	return network_workload.to_workload(
-		name: self.network_name
+		name:        self.network_name
 		description: 'VGridClient network workload'
 	)
 }
@@ -60,17 +62,32 @@ fn (mut self NetworkHandler) prepare_hidden_node_peers(node_id u32) ![]grid_mode
 	mut peers := []grid_models.Peer{}
 	if self.public_node != 0 {
 		peers << grid_models.Peer{
-			subnet: self.wg_subnet[self.public_node]
+			subnet:               self.wg_subnet[self.public_node]
 			wireguard_public_key: self.wg_keys[self.public_node][1]
-			allowed_ips: [self.ip_range, '100.64.0.0/16']
-			endpoint: '${self.endpoints[self.public_node]}:${self.wg_ports[self.public_node]}'
+			allowed_ips:          [self.ip_range, '100.64.0.0/16']
+			endpoint:             '${self.endpoints[self.public_node]}:${self.wg_ports[self.public_node]}'
 		}
 	}
 	return peers
 }
 
 fn (mut self NetworkHandler) setup_access_node() ! {
-	if self.public_node != 0 || self.hidden_nodes.len < 1 || self.nodes.len == 1 {
+	// Case 1: Deployment on 28 which is hidden node
+	// - Setup access node
+	// Case 2: Deployment on 11 which is public node
+	// - Already have the access node
+	// Case 3: if the saved state has already public node.
+	// - Check the new deployment if its node is hidden take the saved one
+	// - if the access node is already set, that means we have set its values e.g. the wireguard port, keys
+
+	if self.hidden_nodes.len < 1 || self.nodes.len == 1 {
+		return
+	}
+
+	if self.public_node != 0 {
+		if !self.nodes.contains(self.public_node) {
+			self.nodes << self.public_node
+		}
 		return
 	}
 
@@ -111,10 +128,23 @@ fn (mut self NetworkHandler) setup_access_node() ! {
 fn (mut self NetworkHandler) setup_wireguard_data() ! {
 	// TODO: We need to set the extra node
 	console.print_header('Setting up network workload.')
+	self.hidden_nodes, self.none_accessible_ip_ranges = [], []
 
 	for idx, node_id in self.nodes {
-		console.print_header('Assign Wireguard port for node ${node_id}.')
+		// TODO: Check if there values don't re-generate
+		if _ := self.wg_ports[node_id] {
+			// The node already exists
+			if self.endpoints[node_id] == '' {
+				// The node is hidden
+				self.hidden_nodes << node_id
+				self.none_accessible_ip_ranges << self.wg_subnet[node_id]
+				self.none_accessible_ip_ranges << wireguard_routing_ip(self.wg_subnet[node_id])
+			}
+			continue
+		}
+
 		self.wg_ports[node_id] = self.deployer.assign_wg_port(node_id)!
+		console.print_header('Assign Wireguard port for node ${node_id}.')
 
 		console.print_header('Generate Wireguard keys for node ${node_id}.')
 		self.wg_keys[node_id] = self.deployer.client.generate_wg_priv_key()!
@@ -162,10 +192,10 @@ fn (mut self NetworkHandler) prepare_public_node_peers(node_id u32) ![]grid_mode
 		}
 
 		peers << grid_models.Peer{
-			subnet: subnet
+			subnet:               subnet
 			wireguard_public_key: self.wg_keys[peer_id][1]
-			allowed_ips: allowed_ips
-			endpoint: '${self.endpoints[peer_id]}:${self.wg_ports[peer_id]}'
+			allowed_ips:          allowed_ips
+			endpoint:             '${self.endpoints[peer_id]}:${self.wg_ports[peer_id]}'
 		}
 	}
 
@@ -175,10 +205,10 @@ fn (mut self NetworkHandler) prepare_public_node_peers(node_id u32) ![]grid_mode
 			routing_ip := wireguard_routing_ip(subnet)
 
 			peers << grid_models.Peer{
-				subnet: subnet
+				subnet:               subnet
 				wireguard_public_key: self.wg_keys[hidden_node_id][1]
-				allowed_ips: [subnet, routing_ip]
-				endpoint: ''
+				allowed_ips:          [subnet, routing_ip]
+				endpoint:             ''
 			}
 		}
 	}
@@ -192,7 +222,7 @@ fn (mut self NetworkHandler) calculate_subnet(idx int) !string {
 	return parts.join('.') + '/24'
 }
 
-fn (mut self NetworkHandler) load_network_state(dls map[u32]&grid_models.Deployment) ! {
+fn (mut self NetworkHandler) load_network_state(dls map[u32]grid_models.Deployment) ! {
 	// load network from deployments
 
 	mut network_name := ''
@@ -235,10 +265,11 @@ fn (mut self NetworkHandler) load_network_state(dls map[u32]&grid_models.Deploym
 
 	for subnet, endpoint in subnet_to_endpoint {
 		node_id := subnet_node[subnet]
-		self.endpoints[node_id] = endpoint.all_after_last(':')
 		if endpoint == '' {
 			self.hidden_nodes << node_id
+			continue
 		}
+		self.endpoints[node_id] = endpoint.all_before_last(':').trim('[]')
 	}
 
 	for subnet, public_key in subnet_to_public_key {

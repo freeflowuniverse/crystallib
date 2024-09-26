@@ -1,5 +1,6 @@
 // This file should only contains any functions, helpers that related to the deployment setup.
 module tfgrid3deployer
+
 import freeflowuniverse.crystallib.threefold.grid.models as grid_models
 import freeflowuniverse.crystallib.threefold.grid
 import freeflowuniverse.crystallib.ui.console
@@ -8,12 +9,12 @@ import rand
 // a struct that prepare the setup for the deployment
 struct DeploymentSetup {
 mut:
-	workloads                 map[u32][]grid_models.Workload
-	network_handler						NetworkHandler
+	workloads       map[u32][]grid_models.Workload
+	network_handler NetworkHandler
 
-	deployer          				&grid.Deployer @[skip; str: skip]
-	contracts_map     				map[u32]u64
-	name_contract_map 				map[string]u64
+	deployer          &grid.Deployer @[skip; str: skip]
+	contracts_map     map[u32]u64
+	name_contract_map map[string]u64
 }
 
 // Sets up a new deployment with network, VM, and ZDB workloads.
@@ -27,25 +28,23 @@ mut:
 // - dls: Modified DeploymentSetup struct with network, VM, and ZDB workloads set up
 // Returns:
 // - None
-fn new_deployment_setup(
-	network_specs NetworkSpecs,
+fn new_deployment_setup(network_specs NetworkSpecs,
 	vms []VMachine,
 	zdbs []ZDB,
 	webnames []WebName,
-	mut deployer grid.Deployer
-) !DeploymentSetup {
-	
+	old_deployments map[u32]grid_models.Deployment,
+	mut deployer grid.Deployer) !DeploymentSetup {
 	mut dls := DeploymentSetup{
-		deployer: deployer
+		deployer:        deployer
 		network_handler: NetworkHandler{
-			deployer: deployer
+			deployer:     deployer
 			network_name: network_specs.name
-			mycelium: network_specs.mycelium
-			ip_range: network_specs.ip_range
+			mycelium:     network_specs.mycelium
+			ip_range:     network_specs.ip_range
 		}
 	}
 
-	dls.setup_network_workloads(vms)!
+	dls.setup_network_workloads(vms, old_deployments)!
 	dls.setup_vm_workloads(vms)!
 	dls.setup_zdb_workloads(zdbs)!
 	dls.setup_webname_workloads(webnames)!
@@ -59,10 +58,14 @@ fn new_deployment_setup(
 // - st: Modified DeploymentSetup struct with network workloads set up
 // Returns:
 // - None
-fn (mut st DeploymentSetup) setup_network_workloads(vms []VMachine)!{
+fn (mut st DeploymentSetup) setup_network_workloads(vms []VMachine, old_deployments map[u32]grid_models.Deployment) ! {
+	println('old deployments: ${old_deployments}')
+	st.network_handler.load_network_state(old_deployments)!
+	println('Network handler: ${st.network_handler}')
 	st.network_handler.create_network(vms)!
 	data := st.network_handler.generate_workloads()!
-	for node_id, workload in data{
+
+	for node_id, workload in data {
 		st.workloads[node_id] << workload
 	}
 }
@@ -179,7 +182,7 @@ fn (mut self DeploymentSetup) set_zmachine_workload(vmachine VMachine, public_ip
 			interfaces: [
 				grid_models.ZNetworkInterface{
 					network: self.network_handler.network_name
-					ip:      self.assign_private_ip(vmachine.node_id, mut used_ip_octets)!
+					ip:      if vmachine.wireguard_ip.len > 0 {vmachine.wireguard_ip} else {self.assign_private_ip(vmachine.node_id, mut used_ip_octets)!}
 				},
 			]
 			public_ip:  public_ip_name

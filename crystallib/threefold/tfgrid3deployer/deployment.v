@@ -7,7 +7,6 @@ import compress.zlib
 import encoding.hex
 import x.crypto.chacha20
 import crypto.sha256
-import rand
 import json
 
 struct GridContracts {
@@ -25,14 +24,13 @@ pub mut:
 	vms         []VMachine
 	zdbs        []ZDB
 	webnames    []WebName
-	network     ?NetworkSpecs
+	network     NetworkSpecs
 mut:
 	// Set the deployed contracts on the deployment and save the full deployment to be able to delete the whole deployment when need.
 	contracts GridContracts
 	deployer  &grid.Deployer @[skip; str: skip]
 	kvstore   KVStoreFS      @[skip; str: skip]
 }
-
 
 fn get_deployer() !grid.Deployer {
 	mut grid_client := get()!
@@ -56,8 +54,8 @@ pub fn new_deployment(name string) !TFDeployment {
 
 	deployer := get_deployer()!
 	return TFDeployment{
-		name: name
-		kvstore: KVStoreFS{}
+		name:     name
+		kvstore:  KVStoreFS{}
 		deployer: &deployer
 	}
 }
@@ -65,14 +63,12 @@ pub fn new_deployment(name string) !TFDeployment {
 pub fn get_deployment(name string) !TFDeployment {
 	mut deployer := get_deployer()!
 	mut dl := TFDeployment{
-		name: name
-		kvstore: KVStoreFS{}
+		name:     name
+		kvstore:  KVStoreFS{}
 		deployer: &deployer
 	}
 
-	dl.load() or {
-		return error("Faild to load the deployment due to: ${err}")
-	}
+	dl.load() or { return error('Faild to load the deployment due to: ${err}') }
 
 	return dl
 }
@@ -80,23 +76,12 @@ pub fn get_deployment(name string) !TFDeployment {
 pub fn (mut self TFDeployment) deploy() ! {
 	console.print_header('Starting deployment process.')
 	self.set_nodes()!
+	old_deployment := self.list_deployments()!
 
-	mut network_specs := self.network or {
-		NetworkSpecs{
-			name: 'net' + rand.string(5)
-			ip_range: '10.10.0.0/16'
-		}
-	}
+	println("old_deployment ${old_deployment}")
 
-	self.network = network_specs
-
-	mut setup := new_deployment_setup(
-		network_specs,
-		self.vms,
-		self.zdbs,
-		self.webnames,
-		mut self.deployer
-	)!
+	mut setup := new_deployment_setup(self.network, self.vms, self.zdbs, self.webnames,
+		old_deployment, mut self.deployer)!
 
 	// Check we are in which state
 	self.finalize_deployment(setup)!
@@ -112,13 +97,13 @@ fn (mut self TFDeployment) set_nodes() ! {
 		}
 
 		nodes := filter_nodes(
-			node_ids: node_ids
-			healthy: true
-			free_mru: u64(vm.requirements.memory) * 1024 * 1024 * 1024
+			node_ids:  node_ids
+			healthy:   true
+			free_mru:  u64(vm.requirements.memory) * 1024 * 1024 * 1024
 			total_cru: u64(vm.requirements.cpu)
-			free_ips: if vm.requirements.public_ip4 { u64(1) } else { none }
-			has_ipv6: if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
-			status: 'up'
+			free_ips:  if vm.requirements.public_ip4 { u64(1) } else { none }
+			has_ipv6:  if vm.requirements.public_ip6 { vm.requirements.public_ip6 } else { none }
+			status:    'up'
 		)!
 
 		if nodes.len == 0 {
@@ -133,7 +118,12 @@ fn (mut self TFDeployment) set_nodes() ! {
 
 	for mut zdb in self.zdbs {
 		size := u64(zdb.requirements.size) * 1024 * 1024 * 1024
-		nodes := filter_nodes(free_sru: size, status: 'up', healthy: true, node_id: zdb.requirements.node_id)!
+		nodes := filter_nodes(
+			free_sru: size
+			status:   'up'
+			healthy:  true
+			node_id:  zdb.requirements.node_id
+		)!
 
 		if nodes.len == 0 {
 			return error('Requested the Grid Proxy and no nodes found.')
@@ -143,7 +133,12 @@ fn (mut self TFDeployment) set_nodes() ! {
 	}
 
 	for mut webname in self.webnames {
-		nodes := filter_nodes(domain: true, status: 'up', healthy: true node_id: webname.requirements.node_id)!
+		nodes := filter_nodes(
+			domain:  true
+			status:  'up'
+			healthy: true
+			node_id: webname.requirements.node_id
+		)!
 
 		if nodes.len == 0 {
 			return error('Requested the Grid Proxy and no nodes found.')
@@ -160,15 +155,15 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 	for node_id, workloads in setup.workloads {
 		console.print_header('Creating deployment on node ${node_id}.')
 		mut deployment := grid_models.new_deployment(
-			twin_id: setup.deployer.twin_id
-			description: 'VGridClient Deployment'
-			workloads: workloads
+			twin_id:               setup.deployer.twin_id
+			description:           'VGridClient Deployment'
+			workloads:             workloads
 			signature_requirement: grid_models.SignatureRequirement{
 				weight_required: 1
-				requests: [
+				requests:        [
 					grid_models.SignatureRequest{
 						twin_id: u32(setup.deployer.twin_id)
-						weight: 1
+						weight:  1
 					},
 				]
 			}
@@ -186,9 +181,9 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 	mut name_contracts_map := setup.name_contract_map.clone()
 
 	// Update stage.
-	for node_id, mut dl in new_deployments{
+	for node_id, mut dl in new_deployments {
 		mut deployment := *dl
-		if _ := old_deployments[node_id]{
+		if _ := old_deployments[node_id] {
 			self.deployer.update_deployment(node_id, mut deployment, dl.metadata)!
 			returned_deployments[node_id] = deployment
 		} else {
@@ -197,18 +192,20 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 	}
 
 	// Cancel stage.
-	for contract_id in self.contracts.name{
-		if !setup.name_contract_map.values().contains(contract_id){
+	for contract_id in self.contracts.name {
+		if !setup.name_contract_map.values().contains(contract_id) {
 			delete_contracts << contract_id
 		}
 	}
 
-	for node_id, deployment in old_deployments{
-		if _ := new_deployments[node_id] {continue}
+	for node_id, deployment in old_deployments {
+		if _ := new_deployments[node_id] {
+			continue
+		}
 		delete_contracts << deployment.contract_id
 	}
 
-	if delete_contracts.len > 0{
+	if delete_contracts.len > 0 {
 		self.deployer.client.batch_cancel_contracts(delete_contracts)!
 	}
 
@@ -220,19 +217,16 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 		}
 	}
 
-	if create_name_contracts.len > 0 {
+	if create_name_contracts.len > 0 || create_deployments.len > 0 {
 		console.print_header('Batch deploying the deployment')
-		created_name_contracts_map, ret_dls := self.deployer.batch_deploy(
-			create_name_contracts,
-			mut create_deployments,
-			none
-		)!
+		created_name_contracts_map, ret_dls := self.deployer.batch_deploy(create_name_contracts, mut
+			create_deployments, none)!
 
-		for node_id, deployment in ret_dls{
+		for node_id, deployment in ret_dls {
 			returned_deployments[node_id] = deployment
 		}
 
-		for contract_name, contract_id in created_name_contracts_map{
+		for contract_name, contract_id in created_name_contracts_map {
 			name_contracts_map[contract_name] = contract_id
 		}
 	}
@@ -408,26 +402,26 @@ pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
 }
 
 // maps from node_id to deployment
-pub fn (mut self TFDeployment) list_deployments() !map[u32]&grid_models.Deployment {
+pub fn (mut self TFDeployment) list_deployments() !map[u32]grid_models.Deployment {
 	mut contract_node := map[u64]u32{}
 	for vm in self.vms {
-		if vm.contract_id != 0{
+		if vm.contract_id != 0 {
 			contract_node[vm.contract_id] = vm.node_id
 		}
 	}
 	for zdb in self.zdbs {
-		if zdb.contract_id != 0{
+		if zdb.contract_id != 0 {
 			contract_node[zdb.contract_id] = zdb.node_id
 		}
 	}
 	for wn in self.webnames {
-		if wn.node_contract_id != 0{
+		if wn.node_contract_id != 0 {
 			contract_node[wn.node_contract_id] = wn.node_id
 		}
 	}
 
 	mut threads := []thread !grid_models.Deployment{}
-	mut dls := map[u32]&grid_models.Deployment{}
+	mut dls := map[u32]grid_models.Deployment{}
 	for contract_id, node_id in contract_node {
 		threads << spawn self.deployer.get_deployment(contract_id, node_id)
 	}
@@ -435,7 +429,7 @@ pub fn (mut self TFDeployment) list_deployments() !map[u32]&grid_models.Deployme
 	for th in threads {
 		dl := th.wait()!
 		node_id := contract_node[dl.contract_id]
-		dls[node_id] = &dl
+		dls[node_id] = dl
 	}
 
 	return dls
@@ -453,7 +447,7 @@ fn (mut self TFDeployment) vm_delete(vm_name string) ! {
 		deployer: self.deployer
 	}
 
-	network_handler.load_network_state(dls)!
+	// network_handler.load_network_state(dls)!
 
 	// remove vm workload
 	mut vm_dl := dls[vm.node_id]
