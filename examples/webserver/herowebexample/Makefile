@@ -1,3 +1,3 @@
 webserver:
-	chmod +s ./scripts/webserver_container.sh
-	bash ./scripts/webserver_container.sh
+	chmod +s ./webserver_scripts/webserver_container.sh
+	bash ./webserver_scripts/webserver_container.sh
