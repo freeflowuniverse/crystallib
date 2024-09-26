@@ -28,19 +28,14 @@ mut:
 // - dls: Modified DeploymentSetup struct with network, VM, and ZDB workloads set up
 // Returns:
 // - None
-fn new_deployment_setup(network_specs NetworkSpecs,
-	vms []VMachine,
-	zdbs []ZDB,
-	webnames []WebName,
-	old_deployments map[u32]grid_models.Deployment,
-	mut deployer grid.Deployer) !DeploymentSetup {
+fn new_deployment_setup(network_specs NetworkSpecs, vms []VMachine, zdbs []ZDB, webnames []WebName, old_deployments map[u32]grid_models.Deployment, mut deployer grid.Deployer) !DeploymentSetup {
 	mut dls := DeploymentSetup{
-		deployer:        deployer
+		deployer: deployer
 		network_handler: NetworkHandler{
-			deployer:     deployer
+			deployer: deployer
 			network_name: network_specs.name
-			mycelium:     network_specs.mycelium
-			ip_range:     network_specs.ip_range
+			mycelium: network_specs.mycelium
+			ip_range: network_specs.ip_range
 		}
 	}
 
@@ -48,7 +43,21 @@ fn new_deployment_setup(network_specs NetworkSpecs,
 	dls.setup_vm_workloads(vms)!
 	dls.setup_zdb_workloads(zdbs)!
 	dls.setup_webname_workloads(webnames)!
+	dls.match_versions(old_deployments)
 	return dls
+}
+
+fn (mut self DeploymentSetup) match_versions(old_dls map[u32]grid_models.Deployment) {
+	for node_id, dl in old_dls {
+		mut wl_versions := map[string]u32{}
+		for wl in dl.workloads {
+			wl_versions[wl.name] = wl.version
+		}
+
+		for mut wl in self.workloads[node_id] {
+			wl.version = wl_versions[wl.name]
+		}
+	}
 }
 
 // Sets up network workloads for the deployment setup.
@@ -59,10 +68,9 @@ fn new_deployment_setup(network_specs NetworkSpecs,
 // Returns:
 // - None
 fn (mut st DeploymentSetup) setup_network_workloads(vms []VMachine, old_deployments map[u32]grid_models.Deployment) ! {
-	println('old deployments: ${old_deployments}')
 	st.network_handler.load_network_state(old_deployments)!
-	println('Network handler: ${st.network_handler}')
 	st.network_handler.create_network(vms)!
+	println('Network handler: ${st.network_handler}')
 	data := st.network_handler.generate_workloads()!
 
 	for node_id, workload in data {
@@ -107,27 +115,27 @@ fn (mut self DeploymentSetup) setup_vm_workloads(machines []VMachine) ! {
 //
 // Each ZDB is processed to convert the requirements into a grid workload and associated with a healthy node.
 fn (mut self DeploymentSetup) setup_zdb_workloads(zdbs []ZDB) ! {
-	for zdb_result in zdbs {
+	for zdb in zdbs {
 		// Retrieve ZDB requirements from the result
-		mut req := zdb_result.requirements
+		mut req := zdb.requirements
 		console.print_header('Creating a ZDB workload for `${req.name}` DB.')
 
 		// Create the Zdb model with the size converted to bytes
 		zdb_model := grid_models.Zdb{
-			size:     u64(req.size) * 1024 * 1024 * 1024 // Convert size from MB to bytes
-			mode:     req.mode
-			public:   req.public
+			size: u64(req.size) * 1024 * 1024 * 1024 // Convert size from MB to bytes
+			mode: req.mode
+			public: req.public
 			password: req.password
 		}
 
 		// Generate a workload based on the Zdb model
 		zdb_workload := zdb_model.to_workload(
-			name:        req.name
+			name: req.name
 			description: req.description
 		)
 
 		// Append the workload to the node's workload list in the deployment setup
-		self.workloads[zdb_result.node_id] << zdb_workload
+		self.workloads[zdb.node_id] << zdb_workload
 	}
 }
 
@@ -154,11 +162,13 @@ fn (mut self DeploymentSetup) setup_webname_workloads(webnames []WebName) ! {
 
 		gw := grid_models.GatewayNameProxy{
 			tls_passthrough: req.tls_passthrough
-			backends:        [req.backend]
-			name:            gw_name
+			backends: [req.backend]
+			name: gw_name
 		}
 
-		self.workloads[wn.node_id] << gw.to_workload(name: gw_name)
+		self.workloads[wn.node_id] << gw.to_workload(
+			name: gw_name
+		)
 		self.name_contract_map[gw_name] = wn.name_contract_id
 	}
 }
@@ -176,37 +186,42 @@ fn (mut self DeploymentSetup) setup_webname_workloads(webnames []WebName) ! {
 // - Error if grid client is not available or if there are issues setting up the workload
 fn (mut self DeploymentSetup) set_zmachine_workload(vmachine VMachine, public_ip_name string, mut used_ip_octets map[u32][]u8) ! {
 	mut grid_client := get()!
+	mut env_map := vmachine.requirements.env.clone()
+	env_map['SSH_KEY'] = grid_client.ssh_key
 
 	zmachine_workload := grid_models.Zmachine{
-		network:          grid_models.ZmachineNetwork{
+		network: grid_models.ZmachineNetwork{
 			interfaces: [
 				grid_models.ZNetworkInterface{
 					network: self.network_handler.network_name
-					ip:      if vmachine.wireguard_ip.len > 0 {vmachine.wireguard_ip} else {self.assign_private_ip(vmachine.node_id, mut used_ip_octets)!}
+					ip: if vmachine.wireguard_ip.len > 0 {
+						used_ip_octets[vmachine.node_id] << vmachine.wireguard_ip.all_after_last('.').u8()
+						vmachine.wireguard_ip
+					} else {
+						self.assign_private_ip(vmachine.node_id, mut used_ip_octets)!
+					}
 				},
 			]
-			public_ip:  public_ip_name
-			planetary:  vmachine.requirements.planetary
-			mycelium:   if vmachine.requirements.mycelium {
+			public_ip: public_ip_name
+			planetary: vmachine.requirements.planetary
+			mycelium: if mycelium := vmachine.requirements.mycelium {
 				grid_models.MyceliumIP{
-					network:  self.network_handler.network_name
-					hex_seed: rand.string(6).bytes().hex()
+					network: self.network_handler.network_name
+					hex_seed: mycelium.hex_seed
 				}
 			} else {
 				none
 			}
 		}
-		flist:            'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist'
-		entrypoint:       '/sbin/zinit init'
+		flist: vmachine.requirements.flist
+		entrypoint: vmachine.requirements.entrypoint
 		compute_capacity: grid_models.ComputeCapacity{
-			cpu:    u8(vmachine.requirements.cpu)
+			cpu: u8(vmachine.requirements.cpu)
 			memory: i64(vmachine.requirements.memory) * 1024 * 1024 * 1024
 		}
-		env:              {
-			'SSH_KEY': grid_client.ssh_key
-		}
+		env: env_map
 	}.to_workload(
-		name:        vmachine.requirements.name
+		name: vmachine.requirements.name
 		description: vmachine.requirements.description
 	)
 

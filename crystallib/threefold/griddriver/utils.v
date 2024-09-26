@@ -26,3 +26,13 @@ pub fn (mut c Client) generate_wg_priv_key() ![]string {
 	}
 	return key
 }
+
+// returns priv, pub key separated by a space
+pub fn (mut c Client) generate_wg_public_key(key string) !string {
+	res := os.execute('griddriver generate-wg-public-key --key "${key}"')
+	public_key := res.output.split(' ')
+	if public_key.len != 1 {
+		return error('could not generate public key: ${res.output}')
+	}
+	return public_key[0]
+}

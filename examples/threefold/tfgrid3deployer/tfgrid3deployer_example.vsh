@@ -10,16 +10,18 @@ fn main(){
 	// mut installer:= griddriver.get()!
 	// installer.install()!
 
-	tfgrid3deployer.get()!
-	deployment_name := "my_deployment20"
+	v := tfgrid3deployer.get()!
+	println('cred: ${v}')
+	deployment_name := "my_deployment22"
 
-	mut deployment := tfgrid3deployer.new_deployment(deployment_name)!
-	// mut deployment := tfgrid3deployer.get_deployment(deployment_name)! 
+	// mut deployment := tfgrid3deployer.new_deployment(deployment_name)!
+	mut deployment := tfgrid3deployer.get_deployment(deployment_name)! 
 	// zos depolyments -> workloads, deployment1 -> node 11, deployment2 -> node 14
 
-	deployment.add_machine(name: "my_vm1" cpu: 1 memory: 2 planetary: true mycelium: true  nodes: [u32(11)])
-	deployment.add_machine(name: "my_vm2" cpu: 1 memory: 2 planetary: true mycelium: true  nodes: [u32(28)])
-	// deployment.add_zdb(name: "my_zdb", password: "my_passw&rd", size: 2)
+	// deployment.add_machine(name: "my_vm1" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(11)])
+	// deployment.add_machine(name: "my_vm2" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(11)])
+	// deployment.add_machine(name: "my_vm3" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(28)])
+	deployment.add_zdb(name: "my_zdb", password: "my_passw&rd", size: 2)
 	// deployment.add_webname(name: 'mywebname2', backend: 'http://37.27.132.47:8000')
 	// deployment.deploy()!
 

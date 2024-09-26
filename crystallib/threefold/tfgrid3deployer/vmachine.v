@@ -5,6 +5,11 @@ import json
 import os
 import rand
 
+@[params]
+pub struct Mycelium {
+	hex_seed string = rand.hex(12)
+}
+
 // MachineNetworkReq struct to represent network access configuration
 @[params]
 pub struct VMRequirements {
@@ -16,16 +21,11 @@ pub mut:
 	public_ip4  bool
 	public_ip6  bool
 	planetary   bool
-	mycelium    bool
+	mycelium    ?Mycelium
+	flist       string = 'https://hub.grid.tf/tf-official-vms/ubuntu-24.04-latest.flist'
+	entrypoint  string = '/sbin/zinit init'
+	env         map[string]string
 	nodes       []u32 // if set will chose a node from the list to deploy on
-}
-
-// NetworkInfo struct to represent network details
-pub struct NetworkSpecs {
-pub mut:
-	name     string = 'net' + rand.string(5)
-	ip_range string = '10.10.0.0/16'
-	mycelium bool   = true
 }
 
 // MachineModel struct to represent a machine and its associated details
@@ -89,7 +89,7 @@ fn ping(ip string) bool {
 
 // Ping the VM supported interfaces
 fn (self VMachine) check_vm_up() bool {
-	if self.requirements.public_ip4 {
+	if self.public_ip4 != '' {
 		console.print_header('Pinging public IPv4: ${self.public_ip4}')
 		pingable := ping(self.public_ip4)
 		if !pingable {
@@ -98,7 +98,7 @@ fn (self VMachine) check_vm_up() bool {
 		return pingable
 	}
 
-	if self.requirements.public_ip6 {
+	if self.public_ip6 != '' {
 		console.print_header('Pinging public IPv6: ${self.public_ip6}')
 		pingable := ping(self.public_ip6)
 		if !pingable {
@@ -107,7 +107,7 @@ fn (self VMachine) check_vm_up() bool {
 		return pingable
 	}
 
-	if self.requirements.planetary {
+	if self.planetary_ip != '' {
 		console.print_header('Pinging planetary IP: ${self.planetary_ip}')
 		pingable := ping(self.planetary_ip)
 		if !pingable {
@@ -116,7 +116,7 @@ fn (self VMachine) check_vm_up() bool {
 		return pingable
 	}
 
-	if self.requirements.mycelium {
+	if self.mycelium_ip != '' {
 		console.print_header('Pinging mycelium IP: ${self.mycelium_ip}')
 		pingable := ping(self.mycelium_ip)
 		if !pingable {
