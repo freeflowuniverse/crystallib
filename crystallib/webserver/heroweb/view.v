@@ -8,7 +8,7 @@ import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.clients.mailclient
 import freeflowuniverse.crystallib.webserver.auth.jwt
-import freeflowuniverse.crystallib.webserver.log
+import freeflowuniverse.crystallib.webserver.components
 import db.sqlite
 
 pub fn (app &App) index(mut ctx Context) veb.Result {
@@ -44,8 +44,11 @@ pub fn (app &App) index(mut ctx Context) veb.Result {
 	return ctx.html($tmpl('./templates/index.html'))
 }
 
-pub fn (app &App) dashboard(mut ctx Context) veb.Result {
+pub fn (app &App) view(mut ctx Context) veb.Result {
 	user := app.db.users[ctx.user_id]
-	return ctx.html($tmpl('./templates/dashboard.html'))
+    dashboard := components.Dashboard{
+        user: user.email[0]
+    }
+	return ctx.html(dashboard.html())
 }
 

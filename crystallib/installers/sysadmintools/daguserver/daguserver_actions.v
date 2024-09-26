@@ -132,10 +132,7 @@ fn destroy() ! {
 
         '
 
-	osal.exec(cmd: cmd, stdout: true, debug: false)!
-}
-
-fn obj_init() ! {
+	osal.execute_silent(cmd) or {}
 }
 
 fn start_pre() ! {

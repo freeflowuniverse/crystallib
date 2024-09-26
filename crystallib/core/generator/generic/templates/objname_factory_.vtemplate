@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.playbook
 
 @if args.cat == .installer
 import freeflowuniverse.crystallib.sysadmin.startupmanager
+import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.ui.console
 import time
 @end
@@ -135,6 +136,27 @@ pub fn play(args_ PlayArgs) ! {
 //////////////////////////# LIVE CYCLE MANAGEMENT FOR INSTALLERS ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+fn startupmanager_get(cat zinit.StartupManagerType) !startupmanager.StartupManager {
+	// unknown
+	// screen
+	// zinit
+	// tmux
+	// systemd
+    match cat{
+        .zinit{
+            console.print_debug("startupmanager: zinit")
+            return startupmanager.get(cat:.zinit)!
+        }
+        .systemd{
+            console.print_debug("startupmanager: systemd")
+            return startupmanager.get(cat:.systemd)!
+        }else{
+            console.print_debug("startupmanager: auto")
+            return startupmanager.get()!
+        }
+    }
+}
+
 @if args.hasconfig
 //load from disk and make sure is properly intialized
 pub fn (mut self ${args.classname}) reload() ! {
@@ -152,13 +174,21 @@ pub fn (mut self ${args.classname}) start() ! {
 
 	console.print_header('${args.name} start')
 
+    if ! installed()!{
+        install()!
+    }
+
 	configure()!
 
     start_pre()!
 
-	mut sm := startupmanager.get()!
-
     for zprocess in startupcmd()!{
+        mut sm:=startupmanager_get(zprocess.startuptype)!
+
+        console.print_debug('starting ${args.name} with ??{zprocess.startuptype}...')
+
+        sm.new(zprocess)!
+
     	sm.start(zprocess.name)!
     }
 
@@ -174,7 +204,7 @@ pub fn (mut self ${args.classname}) start() ! {
 
 }
 
-pub fn (mut self ${args.classname}) install_start(args RestartArgs) ! {
+pub fn (mut self ${args.classname}) install_start(args InstallArgs) ! {
     switch(self.name)
     self.install(args)!
     self.start()!
@@ -183,8 +213,8 @@ pub fn (mut self ${args.classname}) install_start(args RestartArgs) ! {
 pub fn (mut self ${args.classname}) stop() ! {
     switch(self.name)
     stop_pre()!
-    mut sm := startupmanager.get()!
     for zprocess in startupcmd()!{
+        mut sm:=startupmanager_get(zprocess.startuptype)!
     	sm.stop(zprocess.name)!
     }
     stop_post()!
@@ -198,10 +228,10 @@ pub fn (mut self ${args.classname}) restart() ! {
 
 pub fn (mut self ${args.classname}) running() !bool {
     switch(self.name)
-	mut sm := startupmanager.get()!
 
     //walk over the generic processes, if not running return
     for zprocess in startupcmd()!{
+        mut sm:=startupmanager_get(zprocess.startuptype)!
     	r:=sm.running(zprocess.name)!
         if r==false{
             return false

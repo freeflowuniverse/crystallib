@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+    <head>
+        <title>PDF Viewer</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css"
+        />
+        <style>
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+            #viewerContainer {
+                width: 80%;
+                margin: 0 auto;
+                transition: width 0.3s ease;
+                overflow-y: auto;
+                height: 100vh;
+            }
+            #viewerContainer.fullWidth {
+                width: 100%;
+            }
+            #viewer {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            #viewer canvas {
+                max-width: 100%;
+                height: auto !important;
+                margin-bottom: 20px;
+            }
+            #toggleWidthBtn {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 1000;
+            }
+        </style>
+    </head>
+    <body>
+        <button id="toggleWidthBtn">Toggle Full Width</button>
+        <div id="viewerContainer">
+            <div id="viewer" class="pdfViewer"></div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        <script>
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const url = "@{component.pdf_url}";
+                const viewer = document.getElementById("viewer");
+                const viewerContainer =
+                    document.getElementById("viewerContainer");
+                const toggleWidthBtn =
+                    document.getElementById("toggleWidthBtn");
+
+                let currentScale = 2;
+                let visiblePages = new Set();
+
+                function sendInteraction(action, data) {
+                    fetch("@{component.log_endpoint}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            event: 'view',
+                            timestamp: new Date().toISOString(),
+                            object: '@{component.name}',
+                            message: JSON.stringify(data)
+                        }),
+                    })
+                        .then((response) => response.json())
+                        .then((data) =>
+                            console.log("Interaction logged:", data),
+                        )
+                        .catch((error) =>
+                            console.error("Error logging interaction:", error),
+                        );
+                }
+
+                function updateVisiblePages() {
+                    const currentVisiblePages = new Set(
+                        Array.from(visiblePages),
+                    );
+                    sendInteraction("visiblePages", {
+                        pages: Array.from(currentVisiblePages),
+                    });
+                }
+
+                function renderPage(page) {
+                    if (!viewer) {
+                        console.error("Viewer element not found");
+                        return;
+                    }
+                    const viewport = page.getViewport({ scale: currentScale });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    viewer.appendChild(canvas);
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport,
+                    };
+
+                    canvas.setAttribute("data-page-number", page.pageNumber);
+
+                    // Create an intersection observer for this canvas
+                    const observer = new IntersectionObserver(
+                        (entries, observer) => {
+                            entries.forEach((entry) => {
+                                const pageNumber = parseInt(
+                                    entry.target.getAttribute(
+                                        "data-page-number",
+                                    ),
+                                );
+                                if (entry.isIntersecting) {
+                                    visiblePages.add(pageNumber);
+                                } else {
+                                    visiblePages.delete(pageNumber);
+                                }
+                                updateVisiblePages();
+                            });
+                        },
+                        { threshold: 0.1 },
+                    ); // 10% of the element is visible
+
+                    observer.observe(canvas);
+
+                    return page.render(renderContext);
+                }
+
+                function loadPDF() {
+                    pdfjsLib
+                        .getDocument(url)
+                        .promise.then(function (pdf) {
+                            for (
+                                let pageNum = 1;
+                                pageNum <= pdf.numPages;
+                                pageNum++
+                            ) {
+                                pdf.getPage(pageNum).then(renderPage);
+                            }
+                            sendInteraction("pdfLoaded", {
+                                totalPages: pdf.numPages,
+                            });
+                        })
+                        .catch(function (error) {
+                            console.error("Error loading PDF:", error);
+                            sendInteraction("error", {
+                                message: error.message,
+                            });
+                        });
+                }
+
+                if (viewer) {
+                    loadPDF();
+                } else {
+                    console.error("Viewer element not found");
+                }
+
+                if (toggleWidthBtn) {
+                    toggleWidthBtn.addEventListener("click", function () {
+                        viewerContainer.classList.toggle("fullWidth");
+                        sendInteraction("toggleWidth", {
+                            isFullWidth:
+                                viewerContainer.classList.contains("fullWidth"),
+                        });
+                    });
+                }
+
+                // Zoom controls
+                const zoomInBtn = document.createElement("button");
+                zoomInBtn.textContent = "Zoom In";
+                zoomInBtn.style.position = "fixed";
+                zoomInBtn.style.top = "50px";
+                zoomInBtn.style.left = "10px";
+                document.body.appendChild(zoomInBtn);
+
+                const zoomOutBtn = document.createElement("button");
+                zoomOutBtn.textContent = "Zoom Out";
+                zoomOutBtn.style.position = "fixed";
+                zoomOutBtn.style.top = "90px";
+                zoomOutBtn.style.left = "10px";
+                document.body.appendChild(zoomOutBtn);
+
+                function updateZoom(delta) {
+                    currentScale += delta;
+                    if (viewer) {
+                        viewer.innerHTML = "";
+                        visiblePages.clear();
+                        loadPDF();
+                    }
+                    sendInteraction("zoom", { newScale: currentScale });
+                }
+
+                zoomInBtn.addEventListener("click", () => updateZoom(0.2));
+                zoomOutBtn.addEventListener("click", () => updateZoom(-0.2));
+            });
+        </script>
+    </body>
+</html>

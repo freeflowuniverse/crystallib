@@ -6,17 +6,23 @@ pub const version = '1.67.0'
 const singleton = false
 const default = false
 
-const heroscript_default = "
-!!rclone.configure
-    name: 'default'
-    cat: 'b2' 
-    s3_account: ''
-    s3_key: ''
-    s3_secret: ''
-    hard_delete: false
-    endpoint: ''
+pub fn heroscript_default() !string {
 
-"
+    heroscript:="
+	!!rclone.configure
+		name: 'default'
+		cat: 'b2' 
+		s3_account: ''
+		s3_key: ''
+		s3_secret: ''
+		hard_delete: false
+		endpoint: ''
+        "
+
+    return heroscript
+
+}
+
 
 // THIS THE THE SOURCE OF THE INFORMATION OF THIS FILE, HERE WE HAVE THE CONFIG OBJECT CONFIGURED AND MODELLED
 pub struct RClone {
@@ -36,7 +42,7 @@ pub enum RCloneCat {
 	ftp
 }
 
-fn cfg_play(p paramsparser.Params) ! {
+fn cfg_play(p paramsparser.Params) !RClone {
 	mut mycfg := RClone{
 		name: p.get_default('name', 'default')!
 		cat: match p.get_default('cat', 'b2')! {
@@ -51,6 +57,13 @@ fn cfg_play(p paramsparser.Params) ! {
 		hard_delete: p.get_default_false('hard_delete')
 		endpoint: p.get_default('endpoint', '')!
 	}
-
-	set(mycfg)!
+	return mycfg
 }
+
+fn obj_init(obj_ RClone)!RClone{
+    mut obj:=obj_
+    return obj
+}
+
+
+

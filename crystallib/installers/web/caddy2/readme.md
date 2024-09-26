@@ -2,9 +2,27 @@
 
 
 
-## heroscript
+To get started
 
-```yaml
+```vlang
+
+
+
+import freeflowuniverse.crystallib.installers.something. caddy
+
+mut installer:= caddy.get()!
+
+installer.start()!
+
+
+
+
+```
+
+## example heroscript
+
+
+```hero
 !!caddy.install
     homedir: '/home/user/caddy'
     username: 'admin'

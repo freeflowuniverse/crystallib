@@ -1,4 +1,4 @@
-module heroweb
+module components
 
 struct Swimlane {
     pub:
@@ -18,13 +18,32 @@ pub:
     labels   string //comma separated
 }
 
+enum PriorityEnum {
+    critical
+    urgent
+    normal
+    low
+    no
+}
+
+fn priority_colorenum(prio PriorityEnum) ColorEnum {
+    return match prio {
+        .critical { .red }
+        .urgent { .red }
+        .normal { .green }
+        .low { .yellow }
+        .no { .white }
+    }
+}
+
+
 struct KanbanViewData {
 pub:
     swimlanes []Swimlane
     events    []Event
 }
 
-fn kanban_example() KanbanViewData  {
+pub fn kanban_example() KanbanViewData  {
     kanban_data := KanbanViewData{
         swimlanes: [
             Swimlane{
@@ -98,4 +117,8 @@ fn kanban_example() KanbanViewData  {
         ]
     }
     return kanban_data
+}
+
+pub fn (data KanbanViewData) html() string {
+	return $tmpl('templates/kanban.html')
 }

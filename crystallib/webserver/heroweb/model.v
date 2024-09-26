@@ -20,7 +20,7 @@ pub:
 }
 
 pub struct WebDB {
-	// Logger
+	Logger
 pub mut:
 	authenticator StatelessAuthenticator
 	users        map[u16]&User

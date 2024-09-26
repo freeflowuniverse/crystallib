@@ -17,6 +17,7 @@ struct Document {
 	date_created string
 	order int
 	format string
+	kind string
 }
 
 pub struct InfoPointer {
@@ -26,6 +27,7 @@ pub mut:
 	path_heroscript         string
     children     []InfoPointer //e.g. to create a folder, there can be a folder in a folder too (but there it stops)
 	acl          []string
+	tags []string
 	description  string
 	expiration   string
 	acl_resolved map[u16]u8
@@ -40,6 +42,7 @@ pub enum InfoType {
 	pdf
 	wiki
 	website
+	folder
 }
 
 @[params]

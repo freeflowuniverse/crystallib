@@ -71,7 +71,7 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 		name: args.name
 		description: args.description
 		cmd: args.cmd
-		restart: args.restart
+		restart: true
 		systemd: &systemd
 		info: SystemdProcessInfo{
 			unit: args.name
@@ -89,7 +89,12 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 
 	systemd.setinternal(mut sdprocess)!
 
+
 	sdprocess.write()!
+
+	if args.start && args.restart {
+		sdprocess.stop()!
+	}	
 
 	if args.start {
 		sdprocess.start()!

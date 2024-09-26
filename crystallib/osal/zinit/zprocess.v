@@ -20,6 +20,7 @@ pub mut:
 	start       bool = true
 	restart     bool = true // whether the process should be restarted on failure
 	description string // not used in zinit
+
 }
 
 pub enum ZProcessStatus {
@@ -31,6 +32,14 @@ pub enum ZProcessStatus {
 	blocked
 	spawned
 }
+
+pub enum StartupManagerType {
+	unknown
+	zinit
+	systemd
+	screen
+}
+
 
 @[params]
 pub struct ZProcessNewArgs {
@@ -46,6 +55,8 @@ pub mut:
 	start       bool = true
 	restart     bool = true // whether the process should be restarted on failure
 	description string // not used in zinit
+	startuptype StartupManagerType
+
 }
 
 pub fn (zp ZProcess) cmd() string {

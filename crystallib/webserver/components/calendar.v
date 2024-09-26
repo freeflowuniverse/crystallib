@@ -1,9 +1,9 @@
-module heroweb
+module components
 
 import net.urllib
 import time
 
-struct CalendarViewData {
+struct CalendarView {
 pub:
 	title string
     events []CalendarEvent
@@ -20,7 +20,7 @@ pub:
     link    string
 }
 
-fn (mut self CalendarViewData) validate() ! {
+fn (mut self CalendarView) validate() ! {
     if self.current_year < 2000 || self.current_year > 2060 {
         return error('Invalid year value (2000-2060)')
     }
@@ -70,7 +70,7 @@ fn (mut event CalendarEvent) validate() ! {
     
 }
 
-fn calendar_example() CalendarViewData {
+fn calendar_example() CalendarView {
     calendar_data := [
         CalendarEvent{
             subject: 'Team Meeting'
@@ -104,7 +104,7 @@ fn calendar_example() CalendarViewData {
         },
     ]
 
-	mut calendar := CalendarViewData{
+	mut calendar := CalendarView{
 		title: 'Upcoming Events'
 		events: calendar_data
 	}
@@ -113,7 +113,7 @@ fn calendar_example() CalendarViewData {
 }
 
 
-fn (mut self CalendarViewData) generate_calendar() string {
+fn (mut self CalendarView) generate_calendar() string {
     first_day := time.new(time.Time{
         year: self.current_year
         month: self.current_month
