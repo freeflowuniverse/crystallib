@@ -38,7 +38,7 @@ fn args_get (args_ ArgsGet) ArgsGet {
 pub fn get(args_ ArgsGet) !&DaguInstaller  {
     mut args := args_get(args_)
     if !(args.name in daguserver_global) {
-        if ! config_exists(){
+        if !config_exists(){
             if default{
                 config_save()!
             }
@@ -46,13 +46,10 @@ pub fn get(args_ ArgsGet) !&DaguInstaller  {
         config_load()!
     }
     return daguserver_global[args.name] or { 
-            println(daguserver_global)
-            panic("bug in get from factory: ") 
-        }
+        println(daguserver_global)
+        panic("bug in get from factory: ") 
+    }
 }
-
-
-
 
 fn config_exists(args_ ArgsGet) bool {
     mut args := args_get(args_)
@@ -166,19 +163,13 @@ pub fn (mut self DaguInstaller) start() ! {
     if ! installed()!{
         install()!
     }
-
     configure()!
-
     start_pre()!
 
+    mut sm:=startupmanager_get(.zinit)!
     for zprocess in startupcmd()!{
-        mut sm:=startupmanager_get(zprocess.startuptype)!
-
         console.print_debug('starting daguserver with ${zprocess.startuptype}...')
-
         sm.new(zprocess)!
-
-        sm.start(zprocess.name)!
     }
 
     start_post()!
@@ -207,6 +198,14 @@ pub fn (mut self DaguInstaller) stop() ! {
         sm.stop(zprocess.name)!
     }
     stop_post()!
+}
+
+pub fn (mut self DaguInstaller) delete() ! {
+    switch(self.name)
+    for zprocess in startupcmd()!{
+        mut sm:=startupmanager_get(zprocess.startuptype)!
+        sm.delete(zprocess.name)!
+    }
 }
 
 pub fn (mut self DaguInstaller) restart() ! {
@@ -248,6 +247,7 @@ pub fn (mut self DaguInstaller) destroy() ! {
     switch(self.name)
 
     self.stop()!
+    self.delete()!
     destroy()!
 }
 
