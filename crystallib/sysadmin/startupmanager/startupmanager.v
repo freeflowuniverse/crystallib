@@ -147,7 +147,10 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 		.zinit {
 			console.print_debug('zinit stop ${name}')
 			mut zinitfactory := zinit.new()!
-			zinitfactory.stop(name)!
+			zinitfactory.load()!
+        	if zinitfactory.exists(name) {
+				zinitfactory.stop(name)!
+			}
 		}
 		else {
 			panic('to implement, startup manager only support screen for now')
@@ -195,7 +198,10 @@ pub fn (mut sm StartupManager) delete(name string) ! {
 		}
 		.zinit {
 			mut zinitfactory := zinit.new()!
-			zinitfactory.delete(name)!
+			zinitfactory.load()!
+        	if zinitfactory.exists(name) {
+				zinitfactory.delete(name)!
+			}
 		}
 		else {
 			panic('to implement, startup manager only support screen & systemd for now')
@@ -262,7 +268,7 @@ pub fn (mut sm StartupManager) status(name string) !ProcessStatus {
 }
 
 pub fn (mut sm StartupManager) running(name string) !bool {	
-	if ! sm.exists(name)! {
+	if !sm.exists(name)! {
 		return false
 	}
 	mut s := sm.status(name)!
@@ -298,6 +304,7 @@ pub fn (mut sm StartupManager) exists(name string) !bool {
 		.zinit {
 			//console.print_debug("exists sm zinit check ${name}")
 			mut zinitfactory := zinit.new()!
+			zinitfactory.load()!
 			return zinitfactory.exists(name)
 		}		
 		else {

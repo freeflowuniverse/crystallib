@@ -129,7 +129,10 @@ pub fn (zp ZProcess) start() ! {
 pub fn (mut zp ZProcess) stop() ! {
 	console.print_header(' stop ${zp.name}')
 	st := zp.status()!
-	if st in [.unknown, .error, .killed] {
+
+	// QUESTION: removed error, since those can also be stopped
+	// otherwise fails to forget the zp when destroying
+	if st in [.unknown, .killed] {
 		return
 	}
 	mut client := new_rpc_client()
@@ -140,6 +143,7 @@ pub fn (mut zp ZProcess) stop() ! {
 pub fn (mut zp ZProcess) destroy() ! {
 	console.print_header(' destroy ${zp.name}')
 	zp.stop()!
+	// panic('ssssa')
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}
 	mut zinit_obj := new()!
@@ -149,6 +153,7 @@ pub fn (mut zp ZProcess) destroy() ! {
 	path1.delete()!
 	path2.delete()!
 	pathyaml.delete()!
+	println('debugzomajor destroyed ${zp.name}')
 }
 
 // how long to wait till the specified output shows up, timeout in sec
