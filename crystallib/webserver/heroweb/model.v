@@ -16,7 +16,7 @@ pub struct App {
 mut:
 	db WebDB
 pub:
-	base_url string = 'http://localhost:8090'
+	base_url string = 'https://test.ourworld.tf'
 	secret_key string = '1234'
 }
 
