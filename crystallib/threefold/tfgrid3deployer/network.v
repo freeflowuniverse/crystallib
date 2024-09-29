@@ -90,6 +90,7 @@ fn (mut self NetworkHandler) setup_access_node() ! {
 	// - if the access node is already set, that means we have set its values e.g. the wireguard port, keys
 
 	if self.hidden_nodes.len < 1 || self.nodes.len == 1 {
+		self.public_node = 0
 		return
 	}
 

@@ -28,7 +28,7 @@ pub mut:
 	nodes       []u32 // if set will chose a node from the list to deploy on
 }
 
-// MachineModel struct to represent a machine and its associated details
+// MachineModel struct to represent a machine and its associat	ed details
 pub struct VMachine {
 pub mut:
 	tfchain_id   string

@@ -212,15 +212,16 @@ pub fn (mut d Deployer) wait_deployment(node_id u32, mut dl models.Deployment, w
 		mut new_workloads := []models.Workload{}
 		changes := d.deployment_changes(node_id, contract_id)!
 		for wl in changes {
-			if wl.version == workload_versions[wl.name]
-				&& wl.result.state == models.result_states.ok {
-				cur_state_ok += 1
-				new_workloads << wl
-			} else if wl.version == workload_versions[wl.name]
-				&& wl.result.state == models.result_states.error {
-				return error('failed to deploy deployment due error: ${wl.result.message}')
+			if version := workload_versions[wl.name] {
+				if wl.version == version && wl.result.state == models.result_states.ok {
+					cur_state_ok += 1
+					new_workloads << wl
+				} else if wl.version == version && wl.result.state == models.result_states.error {
+					return error('failed to deploy deployment due error: ${wl.result.message}')
+				}
 			}
 		}
+
 		if cur_state_ok > last_state_ok {
 			last_state_ok = cur_state_ok
 			start = time.now()

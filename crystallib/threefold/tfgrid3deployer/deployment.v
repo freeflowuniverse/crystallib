@@ -12,8 +12,8 @@ import json
 struct GridContracts {
 pub mut:
 	name []u64
-	node []u64
-	rent []u64
+	node map[string]u64
+	rent map[string]u64
 }
 
 @[heap]
@@ -151,6 +151,8 @@ fn (mut self TFDeployment) set_nodes() ! {
 fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 	mut new_deployments := map[u32]&grid_models.Deployment{}
 	old_deployments := self.list_deployments()!
+	mut current_contracts := []u64{}
+	mut create_deployments := map[u32]&grid_models.Deployment{}
 
 	for node_id, workloads in setup.workloads {
 		console.print_header('Creating deployment on node ${node_id}.')
@@ -172,6 +174,9 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 		if d := old_deployments[node_id] {
 			deployment.version = d.version
 			deployment.contract_id = d.contract_id
+			current_contracts << d.contract_id
+		} else {
+			create_deployments[node_id] = &deployment
 		}
 
 		deployment.add_metadata('VGridClient/Deployment', self.name)
@@ -179,46 +184,15 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 	}
 
 	mut create_name_contracts := []string{}
-	mut create_deployments := map[u32]&grid_models.Deployment{}
 	mut delete_contracts := []u64{}
 
 	mut returned_deployments := map[u32]&grid_models.Deployment{}
 	mut name_contracts_map := setup.name_contract_map.clone()
 
-	// Update stage.
-	for node_id, mut dl in new_deployments {
-		mut deployment := *dl
-		if _ := old_deployments[node_id] {
-			self.deployer.update_deployment(node_id, mut deployment, dl.metadata)!
-			returned_deployments[node_id] = deployment
-		} else {
-			create_deployments[node_id] = deployment
-		}
-	}
-
-	// Cancel stage.
-	for contract_id in self.contracts.name {
-		if !setup.name_contract_map.values().contains(contract_id) {
-			delete_contracts << contract_id
-		}
-	}
-
-	for node_id, deployment in old_deployments {
-		if _ := new_deployments[node_id] {
-			continue
-		}
-		delete_contracts << deployment.contract_id
-	}
-
-	if delete_contracts.len > 0 {
-		self.deployer.client.batch_cancel_contracts(delete_contracts)!
-	}
-
 	// Create stage.
 	for contract_name, contract_id in setup.name_contract_map {
 		if contract_id == 0 {
 			create_name_contracts << contract_name
-			continue
 		}
 	}
 
@@ -236,6 +210,33 @@ fn (mut self TFDeployment) finalize_deployment(setup DeploymentSetup) ! {
 		}
 	}
 
+	// Cancel stage.
+	for contract_id in self.contracts.name {
+		if !setup.name_contract_map.values().contains(contract_id) {
+			delete_contracts << contract_id
+		}
+	}
+
+	for node_id, dl in old_deployments {
+		if _ := new_deployments[node_id] {
+			continue
+		}
+		delete_contracts << dl.contract_id
+	}
+
+	if delete_contracts.len > 0 {
+		self.deployer.client.batch_cancel_contracts(delete_contracts)!
+	}
+
+	// Update stage.
+	for node_id, mut dl in new_deployments {
+		mut deployment := *dl
+		if _ := old_deployments[node_id] {
+			self.deployer.update_deployment(node_id, mut deployment, dl.metadata)!
+			returned_deployments[node_id] = deployment
+		}
+	}
+
 	self.update_state(name_contracts_map, returned_deployments)!
 }
 
@@ -249,12 +250,13 @@ fn (mut self TFDeployment) update_state(name_contracts_map map[string]u64, dls m
 		}
 	}
 
+	self.contracts = GridContracts{}
 	for _, contract_id in name_contracts_map {
 		self.contracts.name << contract_id
 	}
 
-	for _, dl in dls {
-		self.contracts.node << dl.contract_id
+	for node_id, dl in dls {
+		self.contracts.node['${node_id}'] = dl.contract_id
 	}
 
 	for mut vm in self.vms {
@@ -412,6 +414,19 @@ pub fn (mut self TFDeployment) add_zdb(zdb ZDBRequirements) {
 	}
 }
 
+pub fn (mut self TFDeployment) remove_zdb(name string) ! {
+	l := self.zdbs.len
+	for id, zdb in self.zdbs {
+		if zdb.requirements.name == name {
+			self.zdbs[id], self.zdbs[l - 1] = self.zdbs[l - 1], self.zdbs[id]
+			self.zdbs.delete_last()
+			return
+		}
+	}
+
+	return error('zdb with name ${name} is not found')
+}
+
 // Set a new webname on the deployment.
 pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
 	self.webnames << WebName{
@@ -419,29 +434,27 @@ pub fn (mut self TFDeployment) add_webname(requirements WebNameRequirements) {
 	}
 }
 
-// maps from node_id to deployment
-pub fn (mut self TFDeployment) list_deployments() !map[u32]grid_models.Deployment {
-	mut contract_node := map[u64]u32{}
-	for vm in self.vms {
-		if vm.contract_id != 0 {
-			contract_node[vm.contract_id] = vm.node_id
-		}
-	}
-	for zdb in self.zdbs {
-		if zdb.contract_id != 0 {
-			contract_node[zdb.contract_id] = zdb.node_id
-		}
-	}
-	for wn in self.webnames {
-		if wn.node_contract_id != 0 {
-			contract_node[wn.node_contract_id] = wn.node_id
+pub fn (mut self TFDeployment) remove_webname(name string) ! {
+	l := self.webnames.len
+	for id, wn in self.webnames {
+		if wn.requirements.name == name {
+			self.webnames[id], self.webnames[l - 1] = self.webnames[l - 1], self.webnames[id]
+			self.webnames.delete_last()
+			return
 		}
 	}
 
+	return error('webname with name ${name} is not found')
+}
+
+// lists deployments used with vms, zdbs, and webnames
+pub fn (mut self TFDeployment) list_deployments() !map[u32]grid_models.Deployment {
 	mut threads := []thread !grid_models.Deployment{}
 	mut dls := map[u32]grid_models.Deployment{}
-	for contract_id, node_id in contract_node {
-		threads << spawn self.deployer.get_deployment(contract_id, node_id)
+	mut contract_node := map[u64]u32{}
+	for node_id, contract_id in self.contracts.node {
+		contract_node[contract_id] = node_id.u32()
+		threads << spawn self.deployer.get_deployment(contract_id, node_id.u32())
 	}
 
 	for th in threads {
