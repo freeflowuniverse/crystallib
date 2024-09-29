@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.osal.systemd
 import freeflowuniverse.crystallib.osal.zinit
 
 pub enum StartupManagerType {
+	unknown
 	screen
 	zinit
 	tmux
@@ -17,17 +18,20 @@ pub mut:
 	cat StartupManagerType
 }
 
+@[params]
 pub struct StartupManagerArgs {
 pub mut:
 	cat StartupManagerType
 }
 
-pub fn get() !StartupManager {
-	mut sm := StartupManager{}
-	if zinit.check() {
-		sm.cat = .zinit
-	} else if systemd.check()! {
-		sm.cat = .systemd
+pub fn get(args StartupManagerArgs) !StartupManager {
+	mut sm := StartupManager{cat:args.cat}
+	if args.cat == .unknown {
+		if zinit.check() {
+			sm.cat = .zinit
+		} else if systemd.check()! {
+			sm.cat = .systemd
+		}		
 	}
 	return sm
 }
@@ -48,6 +52,10 @@ pub fn get() !StartupManager {
 //```
 pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 	console.print_debug("startupmanager start:${args.name} cmd:'${args.cmd}' restart:${args.restart}")
+	mut mycat:=sm.cat
+	if args.startuptype == .systemd {
+		mycat = .systemd
+	}
 	match sm.cat {
 		.screen {
 			mut scr := screen.new(reset: false)!
@@ -67,7 +75,7 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 			)!
 		}
 		.zinit {
-			console.print_debug('  zinit start ${args.name}')
+			console.print_debug('zinit start ${args.name}')
 			mut zinitfactory := zinit.new()!
 			// pub struct ZProcessNewArgs {
 			// 	name      string            @[required]
@@ -99,17 +107,20 @@ pub fn (mut sm StartupManager) start(name string) ! {
 			return
 		}
 		.systemd {
-			console.print_debug('systemd start ${name}')
+			console.print_debug('systemd process start ${name}')
 			mut systemdfactory := systemd.new()!
 			if systemdfactory.exists(name) {
+				console.print_header("*************")
 				mut systemdprocess := systemdfactory.get(name)!
-				systemdprocess.stop()!
+				systemdprocess.start()!
+			}else{
+				return error('process in systemd with name ${name} not found')
 			}
 		}
 		.zinit {
-			console.print_debug('zinit start ${name}')
+			console.print_debug('zinit process start ${name}')
 			mut zinitfactory := zinit.new()!
-			zinitfactory.stop(name)!
+			zinitfactory.start(name)!
 		}
 		else {
 			panic('to implement, startup manager only support screen for now')
@@ -136,7 +147,10 @@ pub fn (mut sm StartupManager) stop(name string) ! {
 		.zinit {
 			console.print_debug('zinit stop ${name}')
 			mut zinitfactory := zinit.new()!
-			zinitfactory.stop(name)!
+			zinitfactory.load()!
+        	if zinitfactory.exists(name) {
+				zinitfactory.stop(name)!
+			}
 		}
 		else {
 			panic('to implement, startup manager only support screen for now')
@@ -184,7 +198,10 @@ pub fn (mut sm StartupManager) delete(name string) ! {
 		}
 		.zinit {
 			mut zinitfactory := zinit.new()!
-			zinitfactory.delete(name)!
+			zinitfactory.load()!
+        	if zinitfactory.exists(name) {
+				zinitfactory.delete(name)!
+			}
 		}
 		else {
 			panic('to implement, startup manager only support screen & systemd for now')
@@ -250,7 +267,10 @@ pub fn (mut sm StartupManager) status(name string) !ProcessStatus {
 	}
 }
 
-pub fn (mut sm StartupManager) running(name string) !bool {
+pub fn (mut sm StartupManager) running(name string) !bool {	
+	if !sm.exists(name)! {
+		return false
+	}
 	mut s := sm.status(name)!
 	return s == .active
 }
@@ -277,9 +297,16 @@ pub fn (mut sm StartupManager) exists(name string) !bool {
 			return scr.exists(name)
 		}
 		.systemd {
+			//console.print_debug("exists sm systemd ${name}")
 			mut systemdfactory := systemd.new()!
 			return systemdfactory.exists(name)
 		}
+		.zinit {
+			//console.print_debug("exists sm zinit check ${name}")
+			mut zinitfactory := zinit.new()!
+			zinitfactory.load()!
+			return zinitfactory.exists(name)
+		}		
 		else {
 			panic('to implement. startup manager only support screen & systemd for now')
 		}
@@ -297,6 +324,10 @@ pub fn (mut sm StartupManager) list() ![]string {
 			mut systemdfactory := systemd.new()!
 			return systemdfactory.names()
 		}
+		.zinit {
+			mut zinitfactory := zinit.new()!
+			return zinitfactory.names()
+		}		
 		else {
 			panic('to implement. startup manager only support screen & systemd for now')
 		}

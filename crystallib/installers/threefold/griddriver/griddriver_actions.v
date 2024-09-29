@@ -84,10 +84,10 @@ fn build() ! {
 }
 
 //get the Upload List of the files
-fn ulist() !installers.UList {
+fn ulist_get() !ulist.UList {
     //mut installer := get()!
     //optionally build a UList which is all paths which are result of building, is then used e.g. in upload
-    return installers.UList{}
+    return ulist.UList{}
 }
 
 //uploads to S3 server if configured

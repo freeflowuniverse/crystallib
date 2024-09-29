@@ -23,6 +23,7 @@ import freeflowuniverse.crystallib.installers.sysadmintools.prometheus
 import freeflowuniverse.crystallib.installers.sysadmintools.grafana
 import freeflowuniverse.crystallib.installers.sysadmintools.fungistor
 import freeflowuniverse.crystallib.installers.sysadmintools.garage_s3
+import freeflowuniverse.crystallib.installers.infra.zinit
 
 @[params]
 pub struct InstallArgs {
@@ -57,10 +58,11 @@ pub fn names(args_ InstallArgs) []string {
 		prometheus
 		rclone
 		rust
+		tailwind
 		vlang
 		vscode
+		zinit
 		zola
-		tailwind
 		'
 	mut ns := texttools.to_array(names)
 	ns.sort()
@@ -165,7 +167,11 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'tailwind' {
 				mut i := tailwind.get()!
 				i.install()!
-			}						
+			}	
+			'zinit' {
+				mut i := zinit.get()!
+				i.install()!
+			}									
 			else {
 				return error('cannot find installer for: ${item}')
 			}

@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.clients.b2
 import freeflowuniverse.crystallib.threefold.grid4.gridsimulator
 import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
+import freeflowuniverse.crystallib.medium.slides
 // import freeflowuniverse.crystallib.installers.base as base_install
 // import freeflowuniverse.crystallib.installers.infra.coredns
 
@@ -28,6 +29,7 @@ pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
 
 	farmingsimulator.play(mut plbook)!
 	gridsimulator.play(mut plbook)!
+	slides.play(mut plbook)!
 	// base_install(play(mut plbook)!
 	// coredns.play(mut plbook)!
 

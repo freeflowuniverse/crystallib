@@ -8,6 +8,18 @@ import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.texttools
 
 
+struct Document {
+	title string
+	description string
+	tags []string
+	url string
+	creator string
+	date_created string
+	order int
+	format string
+	kind string
+}
+
 pub struct InfoPointer {
 pub mut:
 	name         string
@@ -15,6 +27,7 @@ pub mut:
 	path_heroscript         string
     children     []InfoPointer //e.g. to create a folder, there can be a folder in a folder too (but there it stops)
 	acl          []string
+	tags []string
 	description  string
 	expiration   string
 	acl_resolved map[u16]u8
@@ -28,6 +41,9 @@ pub enum InfoType {
 	slides
 	pdf
 	wiki
+	website
+	folder
+	book
 }
 
 @[params]
@@ -38,6 +54,7 @@ pub mut:
 	path_heroscript        string
 	cat        InfoType
 	acl         []string
+	tags []string
 	description string
 	expiration  string
 }
@@ -53,6 +70,7 @@ pub fn (mut self WebDB) infopointer_add(args InfoPointerAddArgs) !&InfoPointer {
 		path_heroscript:        args.path_heroscript
 		cat:        args.cat
 		acl:         args.acl.map(texttools.name_fix)
+		tags:         args.tags.map(texttools.name_fix)
 		description: args.description
 		expiration:  args.expiration
 	}
@@ -64,24 +82,19 @@ pub fn (mut self WebDB) infopointer_add(args InfoPointerAddArgs) !&InfoPointer {
 	return new_infopointer
 }
 
-pub fn (mut db WebDB) infopointer_resolve(info_name string) ! {
+pub fn (db WebDB) infopointer_resolve(info_name string) !map[u16]u8 {
 	mut info := db.infopointers[info_name] or { return error('InfoPointer ${info_name} not found') }
 	mut users := map[u16]u8{}
 
 	acl_name := info.acl[0]
-	println('debugzo acl name ${acl_name}')
 	mut acl := db.acls[acl_name] or { return error('ACL not found for InfoPointer ${info_name}') }
 
-	println('debugzo1 acl ${acl}')
 	for ace in acl.entries {
-		println('debugzo2 ace ${acl}')
 		if ace.group != '' {
-			println('debugzo3 group ${ace.group}')
 			group := db.groups[ace.group] or {
 				continue // Skip if group not found
 			}
 			for id in group.users {
-				println('debugzo3 ${db.users[id]}')
 				users[id] = u8(max(users[id] or { 0 }, ace.right.level()))
 			}
 			for subgroup_name in group.groups {
@@ -100,7 +113,7 @@ pub fn (mut db WebDB) infopointer_resolve(info_name string) ! {
 		}
 	}
 
-	info.acl_resolved = &users
+	return users
 }
 
 //run the heroscript

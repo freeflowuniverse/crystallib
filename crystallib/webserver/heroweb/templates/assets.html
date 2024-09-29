@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Viewer</title>
+  <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@@1.*/css/pico.min.css">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .table-container {
+      margin: 2rem 0;
+    }
+    .filter-section {
+      margin-bottom: 1rem;
+    }
+    .tag {
+      cursor: pointer;
+      color: blue;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Documents</h1>
+    </header>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+      <details class="dropdown">
+        <summary>Select tags...</summary>
+        <ul id="tagCheckboxes">
+          <!-- Checkboxes will be populated dynamically -->
+        </ul>
+      </details>
+    </section>
+
+    <!-- Table Container -->
+    <section class="table-container">
+      <table role="grid" id="documentsTable">
+        <thead>
+          <tr>
+            <th></th> <!-- New column for icons -->
+            <th onclick="sortTable(1)">Title</th>
+            <th onclick="sortTable(2)">Description</th>
+            <th onclick="sortTable(3)">Tags</th>
+            <th onclick="sortTable(4)">Kind</th>
+          </tr>
+        </thead>
+        <tbody id="documentsBody">
+          <!-- Data will be injected here via JavaScript -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/static/js/assets.js"></script>
+</body>
+</html>

@@ -36,6 +36,10 @@ pub fn (mut self SystemdProcess) write() ! {
 	envs := envs_lst.join('\n')
 
 	servicecontent := $tmpl('templates/service.yaml')
+
+	println(self)
+	println(servicecontent)
+
 	p.write(servicecontent)!
 }
 

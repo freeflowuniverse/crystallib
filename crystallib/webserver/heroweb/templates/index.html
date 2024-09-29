@@ -6,32 +6,32 @@
         <title>@{doc.title}</title>
         <link rel="stylesheet" href="/static/css/pico_classless.css" />
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-        <link rel="stylesheet" href="/static/css/heroweb.css" />
+        <style>
+            body > main {
+                padding: 4rem 6rem;
+            }
+            h2 {
+                margin-top: 2rem;
+            }
+        </style>
     </head>
+   
     <body>
-        <textarea id="markdown-nav" style="display: none">@{doc.markdown.nav}</textarea>
-        <textarea id="markdown-input" style="display: none">@{doc.markdown.content}</textarea>
-        <nav>
-            <ul>
-                @for item in doc.navbar.items
-                <li><a href="@{item.href}" class="@{item.class_name}">@{item.text}</a></li>
-                @end
-                <navbar-right>
-                    <input type="search" name="search" placeholder="Search..." />
-                    <a href="#login">Login</a>
-                    <div id="theme-switcher-icons"></div>
-                </navbar-right>
-            </ul>
-        </nav>
         <main class="container">
-            <mynav id="mynav"></mynav>
-            <article id="markdown-output"></article>
-            <docnav>
-                <br />
-                <h5>@{doc.markdown.title}</h5>
-                <ul id="content-pointers"></ul>
-            </docnav>
+            <section>
+                @{doc.content.html() or {''}}
+            </section>
+            
+            <section>
+                <form action="/register" method="POST">
+                    <fieldset role="group">
+                      <input name="email" type="email" placeholder="Enter your email" autocomplete="email" />
+                      <input type="submit" value="Login" />
+                    </fieldset>
+                  </form>
+            </section>
         </main>
+
         @js '/static/js/heroweb.js'
     </body>
 </html>
