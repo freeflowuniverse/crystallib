@@ -392,6 +392,19 @@ pub fn (mut self TFDeployment) add_machine(requirements VMRequirements) {
 	}
 }
 
+pub fn (mut self TFDeployment) remove_machine(name string) ! {
+	l := self.vms.len
+	for id, vm in self.vms {
+		if vm.requirements.name == name {
+			self.vms[id], self.vms[l - 1] = self.vms[l - 1], self.vms[id]
+			self.vms.delete_last()
+			return
+		}
+	}
+
+	return error('vm with name ${name} is not found')
+}
+
 // Set a new zdb on the deployment.
 pub fn (mut self TFDeployment) add_zdb(zdb ZDBRequirements) {
 	self.zdbs << ZDB{

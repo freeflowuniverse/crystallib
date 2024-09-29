@@ -251,7 +251,6 @@ fn (mut self NetworkHandler) load_network_state(dls map[u32]grid_models.Deployme
 	mut network_name := ''
 	mut subnet_node := map[string]u32{}
 	mut subnet_to_endpoint := map[string]string{}
-	mut subnet_to_public_key := map[string]string{}
 	for node_id, dl in dls {
 		mut znet := grid_models.Znet{}
 		for wl in dl.workloads {

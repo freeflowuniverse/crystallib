@@ -103,7 +103,8 @@ pub fn (mut d Deployer) update_deployment(node_id u32, mut dl models.Deployment,
 	// update deployment
 	old_dl := d.get_deployment(dl.contract_id, node_id)!
 	if !is_deployment_up_to_date(old_dl, dl) {
-		return error('deployment is up to date')
+		console.print_header('deployment with contract id ${dl.contract_id} is already up-to-date')
+		return
 	}
 
 	new_versions := d.update_versions(old_dl, mut dl)
@@ -203,16 +204,18 @@ pub fn (mut d Deployer) deploy(node_id u32, mut dl models.Deployment, body strin
 
 pub fn (mut d Deployer) wait_deployment(node_id u32, mut dl models.Deployment, workload_versions map[string]u32) ! {
 	mut start := time.now()
-	num_workloads := workload_versions.len
+	num_workloads := dl.workloads.len
 	contract_id := dl.contract_id
 	mut last_state_ok := 0
 	for {
 		mut cur_state_ok := 0
+		mut new_workloads := []models.Workload{}
 		changes := d.deployment_changes(node_id, contract_id)!
 		for wl in changes {
 			if wl.version == workload_versions[wl.name]
 				&& wl.result.state == models.result_states.ok {
 				cur_state_ok += 1
+				new_workloads << wl
 			} else if wl.version == workload_versions[wl.name]
 				&& wl.result.state == models.result_states.error {
 				return error('failed to deploy deployment due error: ${wl.result.message}')
@@ -224,7 +227,7 @@ pub fn (mut d Deployer) wait_deployment(node_id u32, mut dl models.Deployment, w
 		}
 
 		if cur_state_ok == num_workloads {
-			dl.workloads = changes
+			dl.workloads = new_workloads
 			return
 		}
 

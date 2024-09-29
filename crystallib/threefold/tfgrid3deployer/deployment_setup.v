@@ -51,11 +51,11 @@ fn (mut self DeploymentSetup) match_versions(old_dls map[u32]grid_models.Deploym
 	for node_id, dl in old_dls {
 		mut wl_versions := map[string]u32{}
 		for wl in dl.workloads {
-			wl_versions[wl.name] = wl.version
+			wl_versions['${wl.name}:${wl.type_}'] = wl.version
 		}
 
 		for mut wl in self.workloads[node_id] {
-			wl.version = wl_versions[wl.name]
+			wl.version = wl_versions['${wl.name}:${wl.type_}']
 		}
 	}
 }
