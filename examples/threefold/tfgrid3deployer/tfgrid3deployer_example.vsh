@@ -7,8 +7,8 @@ import freeflowuniverse.crystallib.installers.threefold.griddriver
 
 
 fn main(){
-	// mut installer:= griddriver.get()!
-	// installer.install()!
+	mut installer:= griddriver.get()!
+	installer.install(reset:true)!
 
 	v := tfgrid3deployer.get()!
 	println('cred: ${v}')
