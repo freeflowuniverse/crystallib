@@ -59,7 +59,7 @@ to call in code
 ```v
 import freeflowuniverse.crystallib.core.generator.installer
 
-installer.scan("~/github/freeflowuniverse/crystallib/crystallib")!
+installer.scan("~/code/github/freeflowuniverse/crystallib/crystallib")!
 
 
 ```
