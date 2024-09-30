@@ -110,7 +110,7 @@ pub fn (mut sm StartupManager) start(name string) ! {
 			console.print_debug('systemd process start ${name}')
 			mut systemdfactory := systemd.new()!
 			if systemdfactory.exists(name) {
-				console.print_header("*************")
+				//console.print_header("*************")
 				mut systemdprocess := systemdfactory.get(name)!
 				systemdprocess.start()!
 			}else{

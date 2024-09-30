@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "../crystallib"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../aiprompts"
+		},
+		{
+			"path": "../cli/hero"
+		}
+	],
+	"settings": {}
+}

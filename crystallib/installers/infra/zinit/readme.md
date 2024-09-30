@@ -7,7 +7,6 @@ To get started
 ```vlang
 
 
-
 import freeflowuniverse.crystallib.installers.something. zinit
 
 mut installer:= zinit.get()!
@@ -20,7 +19,6 @@ installer.start()!
 ```
 
 ## example heroscript
-
 
 ```hero
 !!zinit.install

@@ -264,7 +264,7 @@ pub fn (mut self ${args.classname}) build() ! {
 pub fn (mut self ${args.classname}) destroy() ! {
     switch(self.name)
 @if args.startupmanager
-    self.stop()!
+    self.stop() or {}
 @end
     destroy()!
 }

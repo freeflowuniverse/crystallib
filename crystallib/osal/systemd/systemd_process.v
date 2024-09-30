@@ -67,6 +67,7 @@ pub fn (mut self SystemdProcess) refresh() ! {
 }
 
 pub fn (mut self SystemdProcess) delete() ! {
+	console.print_header("Process systemd: ${self.name} delete.")
 	self.stop()!
 	if os.exists(self.servicefile_path()) {
 		os.rm(self.servicefile_path())!
@@ -75,11 +76,12 @@ pub fn (mut self SystemdProcess) delete() ! {
 
 pub fn (mut self SystemdProcess) stop() ! {
 	cmd := '
+	set +ex
 	systemctl daemon-reload
 	systemctl disable ${self.name}
 	systemctl stop ${self.name}
 	'
-	_ = osal.execute_silent(cmd)!
+	_ = osal.exec(cmd:cmd,stdout:false, debug: false,ignore_error:false)!
 	self.systemd.load()!
 }
 

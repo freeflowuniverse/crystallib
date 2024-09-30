@@ -200,3 +200,13 @@ pub fn cmd_path(cmd string) !string {
 	}
 	return error("can't do find path for cmd: ${cmd}")
 }
+
+
+pub fn cmd_delete(cmd string) ! {
+	res := cmd_path(cmd) or {""}
+	if res.len>0{
+		if os.exists(res){
+			os.rm(res)!
+		}		
+	}
+}
