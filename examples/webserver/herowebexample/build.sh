@@ -1,2 +1,2 @@
-cd ~/github/freeflowuniverse/crystallib/examples/webserver/veb/herowebexample
+cd ~/code/github/freeflowuniverse/crystallib/examples/webserver/veb/herowebexample
 v -prod heroweb.vsh

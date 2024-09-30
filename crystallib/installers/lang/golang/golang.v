@@ -67,15 +67,24 @@ pub fn install(args_ InstallArgs) ! {
 		expand_dir: expand_dir
 	)!
 
-	mut go_dest := '/usr/local/go'
-	if os.exists(go_dest) {
-		os.rmdir_all(go_dest) or {
-			return error('could be I have no permission to delete old go install,\ndo: sudo rm -rf /usr/local/go')
+	mut go_delete_path := '/usr/local/go'
+	if os.exists(go_delete_path) {
+		os.rmdir_all(go_delete_path) or {
+			return error('could be I have no permission to delete old go install,\ndo: sudo rm -rf ${go_delete_path}')
 		}
 	}
-	go_dest = '${osal.usr_local_path()!}/go'
+
+	if osal.is_osx() {
+		//TODO: check golang is installed in brew if yes only then delete
+		cmd:='brew uninstall golang'
+		osal.execute_silent(cmd) or {}
+	}
+
+	go_dest := '${osal.usr_local_path()!}/go'
 	os.mv('${expand_dir}/go', go_dest)!
 	os.rmdir_all(expand_dir)!
 
 	osal.profile_path_add(path: '${go_dest}/bin', todelete: 'go/bin')!
+
+	console.print_debug("go installed in ${go_dest}")
 }
