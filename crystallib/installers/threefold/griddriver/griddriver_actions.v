@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 
 import freeflowuniverse.crystallib.develop.gittools
 import freeflowuniverse.crystallib.installers
+import freeflowuniverse.crystallib.installers.ulist
 import freeflowuniverse.crystallib.installers.lang.golang
 
 
@@ -26,7 +27,13 @@ fn installed() !bool {
 }
 
 fn install() ! {
-    console.print_header('install griddriver')
+    //console.print_header('install griddriver')
+	build()!
+}
+
+
+fn build() ! {
+    console.print_header('build griddriver')
 	golang.install()!
 
 	path := gittools.code_get(
@@ -38,47 +45,15 @@ fn install() ! {
 	set -ex
 	cd ${path}
 	go env -w CGO_ENABLED="0"
-	go build -o ${path}/griddriver/bin/griddriver
+	go build -o /tmp/griddriver
 	echo build ok
 	'
 	osal.execute_stdout(cmd)!
 	osal.cmd_add(
 		cmdname: 'griddriver'
-		source: '${path}/griddriver/bin/griddriver'
+		source: '/tmp/griddriver'
 	)!
-
 	console.print_header('build griddriver OK')
-}
-
-
-fn build() ! {
-    //mut installer := get()!
-    //url := 'https://github.com/threefoldtech/griddriver'
-
-    // make sure we install base on the node
-    // if osal.platform() != .ubuntu {
-    //     return error('only support ubuntu for now')
-    // }
-    // golang.install()!
-
-    // console.print_header('build griddriver')
-
-    // gitpath := gittools.code_get(coderoot: '/tmp/builder', url: url, reset: true, pull: true)!
-
-    // cmd := '
-    // cd ${gitpath}
-    // source ~/.cargo/env
-    // exit 1 #todo
-    // '
-    // osal.execute_stdout(cmd)!
-    //
-    // //now copy to the default bin path
-    // mut binpath := dest.file_get('...')!
-    // adds it to path
-    // osal.cmd_add(
-    //     cmdname: 'griddriver2'
-    //     source: binpath.path
-    // )!   
 
 }
 

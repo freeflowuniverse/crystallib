@@ -3,14 +3,12 @@ module models
 import freeflowuniverse.crystallib.threefold.grid
 import log
 
-
-
 // ContractMetaData struct to represent a deployment metadata.
 pub struct ContractMetaData {
-	pub mut:
-		type_           string @[json: "type"]
-		name 						string
-		project_name  	string @[json: "projectName"]
+pub mut:
+	type_        string @[json: 'type']
+	name         string
+	project_name string @[json: 'projectName']
 }
 
 // // GridMachinesModel struct to represent multiple machines in the grid

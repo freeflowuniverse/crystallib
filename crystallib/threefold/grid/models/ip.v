@@ -18,7 +18,7 @@ pub fn (p PublicIP) challenge() string {
 
 // PublicIPResult result returned by publicIP reservation
 struct PublicIPResult {
-mut:
+pub mut:
 	ip      string
 	ip6     string
 	gateway string
