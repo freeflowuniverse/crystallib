@@ -33,7 +33,7 @@ pub fn (app App) set_user(mut ctx Context) bool {
 pub fn (app App) is_logged_in(mut ctx Context) bool {
     // get the cookie
 	if ctx.user_id == 0 { 
-		ctx.redirect('/signin')
+		ctx.redirect('${app.base_url}/signin')
 		return false
 	}
 
@@ -42,18 +42,20 @@ pub fn (app App) is_logged_in(mut ctx Context) bool {
 
 // middleware to check if user is authorized to access an infopointer or asset
 pub fn (app &App) is_authorized(mut ctx Context) bool {
-	if !app.is_logged_in(mut ctx) {
-		return false
-	}
+	// if !app.is_logged_in(mut ctx) {
+	// 	return false
+	// }
 
-	if ctx.user_id == 0 {
-		panic('this should never happen as user must be logged in to reach this stage')
-	}
+	// if ctx.user_id == 0 {
+	// 	panic('this should never happen as user must be logged in to reach this stage')
+	// }
+
+
 
 	infoptr_name := if ctx.req.url.starts_with('/asset/') {
-		ctx.req.url.all_after('/asset/').all_before('/')
+		ctx.req.url.all_after('/asset/').all_before('/').all_before('?')
 	} else if ctx.req.url.starts_with('/infopointer/') {
-		ctx.req.url.all_after('/infopointer/').all_before('/')
+		ctx.req.url.all_after('/infopointer/').all_before('/').all_before('?')
 	} else {
 		panic('this should never happen')
 	}

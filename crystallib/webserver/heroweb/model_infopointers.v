@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.medium.slides
 
 
 struct Document {
@@ -82,6 +83,17 @@ pub fn (mut self WebDB) infopointer_add(args InfoPointerAddArgs) !&InfoPointer {
 	return new_infopointer
 }
 
+pub fn (db WebDB) public_right(info_name string) !RightEnum {
+	mut info := db.infopointers[info_name] or { return error('InfoPointer ${info_name} not found') }
+	acl_name := info.acl[0]
+	mut acl := db.acls[acl_name] or { return error('ACL not found for InfoPointer ${info_name}') }
+	public_ace := acl.entries.filter(it.group == 'public')
+	if public_ace.len == 0 {
+		return .block
+	}
+	return public_ace[0].right
+}
+
 pub fn (db WebDB) infopointer_resolve(info_name string) !map[u16]u8 {
 	mut info := db.infopointers[info_name] or { return error('InfoPointer ${info_name} not found') }
 	mut users := map[u16]u8{}
@@ -126,7 +138,11 @@ pub fn (mut db WebDB) infopointer_run(info_name string) ! {
 
 	mut plbook := playbook.new(path: info.path_heroscript)!
 
-	playcmds.run(mut plbook, info.dagu)!
+	if info.cat == .slides && !info.path_content.ends_with('.pdf') {
+		db.slides[info_name] = slides.play(mut plbook)!
+	} else {
+		playcmds.run(mut plbook, info.dagu)!
+	}
 
 	console.print_stdout(plbook.str())	
 }
