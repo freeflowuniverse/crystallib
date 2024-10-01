@@ -16,7 +16,6 @@ __global (
 )
 
 /////////FACTORY
-
 @[params]
 pub struct ArgsGet{
 pub mut:
@@ -85,7 +84,7 @@ pub mut:
     plbook     ?playbook.PlayBook 
     reset      bool
 
-    start      bool
+    start      bool = true
     stop       bool
     restart    bool
     delete     bool
@@ -109,8 +108,11 @@ pub fn play(args_ PlayArgs) ! {
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
-            mycfg:=cfg_play(p)!
+            mut mycfg:=cfg_play(p)!
             set(mycfg)!
+            if args.start {
+                mycfg.install_start()!
+            }
         }
     }
 
