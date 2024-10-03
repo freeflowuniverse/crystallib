@@ -57,7 +57,7 @@ pub fn (mut db WebDB) play_authorization (mut plbook playbook.PlayBook) !WebDB {
 	    mut acl := db.acls[acl_name] or { return error('ACL ${acl_name} not found') }
 	        
 		group := texttools.name_fix(action.params.get_default('group', '')!)
-		if group != '' && group !in db.groups {
+		if (group != '' && group != 'public') && group !in db.groups {
 			return error('Group with name ${group} not found')
 		}
 

@@ -2,9 +2,10 @@ module slides
 
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.data.doctree
 import os
 
-pub fn play(mut plbook playbook.PlayBook) !SlidesViewData {
+pub fn play(mut plbook playbook.PlayBook) !&SlidesViewData {
     mut slides_data := SlidesViewData{}
     
     // Find and process the slides.define action
@@ -28,31 +29,27 @@ pub fn play(mut plbook playbook.PlayBook) !SlidesViewData {
         slides_data.slides << slide
     }
 
-    slide_actions_coll := plbook.find(filter: 'slides.add_collection')!
+    mut slide_actions_coll := plbook.find(filter: 'slides.add_collection')!
 	mut gs := gittools.get()!
 
-    for action in slide_actions_coll {
-        mut p := action.params
-		url:=p.get_default("url","")!
-		pull:=p.get_default_false("pull")
-		reset:=p.get_default_false("reset")
-		mut path:=p.get_default("path","")!
-		if url.len > 0 {
-			path = gs.code_get(
-				pull: pull
-				reset: reset
-				url: url
-				reload: true
-			)!
-		}
-		if ! os.exists(path){
-			return error("can't find path ${path} for slides ${plbook}")
-		}
-		if ! (path in slides_data.paths){
-			slides_data.paths<<path
-		}	
+    mut tree := doctree.new(
+		name: 'slides'
+	)!
 
+    for mut action in slide_actions_coll {
+       mut p := action.params
+        url := p.get_default('url', '')!
+        reset := p.get_default_false('reset')
+        pull := p.get_default_false('pull')
+        tree.scan(
+            git_url:   url
+            git_reset: reset
+            git_pull:  pull
+        )!
+        tree.export(dest: '~/hero/var/collections/')!
+        action.done = true
     }
 
-    return slides_data
+
+    return &slides_data
 }

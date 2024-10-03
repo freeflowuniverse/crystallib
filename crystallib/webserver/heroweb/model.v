@@ -1,6 +1,7 @@
 module heroweb
 
 import freeflowuniverse.crystallib.data.markdownparser
+import freeflowuniverse.crystallib.medium.slides
 import freeflowuniverse.crystallib.webserver.auth.jwt
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.webserver.auth.authentication.email {StatelessAuthenticator}
@@ -28,6 +29,7 @@ pub mut:
 	groups       map[string]&Group
 	acls         map[string]&ACL
 	infopointers map[string]&InfoPointer
+	slides map[string]&slides.SlidesViewData
 }
 
 pub struct Context {

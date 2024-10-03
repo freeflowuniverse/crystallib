@@ -5,15 +5,15 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.develop.gittools
 import os
 
-struct Slide {
-mut:
+pub struct Slide {
+pub mut:
 	name  string //is the filename
 	title string
 	notes string
 }
 
-struct SlidesViewData {
-mut:
+pub struct SlidesViewData {
+pub mut:
 	name  string
 	title string
 	slides []Slide

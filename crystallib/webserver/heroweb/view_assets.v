@@ -65,21 +65,36 @@ pub fn (app &App) view_asset(mut ctx Context, name string) veb.Result {
 		return ctx.redirect('/asset/${name}/index.html')
 	}
 
+	// if infoptr.cat == .pdf {
+	// 	return app.asset(mut ctx, name)
+	// }
+
 	html := match infoptr.cat {
-		.pdf {
-			comp := components.PDFViewer{
-				name: name
-				pdf_url: '/asset/${name}'
-				log_endpoint: '/log/${name}'
-			}
-			comp.html()
-		} .slides {
-			slides := components.Slides{
-				url:'/asset/${name}'
-				log_endpoint: '/log/${name}'
-				name: name
+		.slides {
+			slides := if infoptr.path_content.ends_with('.pdf') { 
+				components.Slides{
+					url:'/asset/${name}'
+					log_endpoint: '/log/${name}'
+					name: name
+					format: .pdf
+				}
+			} else { components.Slides{
+					url:'/asset/${name}'
+					log_endpoint: '/log/${name}'
+					name: name
+					format: .png
+					data: app.db.slides[name]
+				}
 			}
 			slides.html()
+		}
+		.pdf {
+			viewer := components.PDFViewer{
+				pdf_url:'/asset/${name}'
+				log_endpoint: '/log/${name}'
+				name: name
+			}
+			viewer.html()
 		} else {
 				return ctx.server_error('unsupported infoptr category ${infoptr.cat}')
 			}

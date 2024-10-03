@@ -181,6 +181,10 @@ pub:
 }
 
 pub fn (db WebDB) authorize(request AuthorizationRequest) !bool {
+    // public right is greater than requested right
+    if u8(db.public_right(request.object)!) >= u8(request.right) {
+        return true
+    }
     acl_resolved := db.infopointer_resolve(request.object)!
 
     if request.object !in db.infopointers {

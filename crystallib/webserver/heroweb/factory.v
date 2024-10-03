@@ -10,10 +10,14 @@ import freeflowuniverse.crystallib.clients.mailclient
 import freeflowuniverse.crystallib.webserver.auth.jwt
 import freeflowuniverse.crystallib.webserver.log {Logger}
 import db.sqlite
+import encoding.hex
 
 //the path is pointing to the instructions
 pub fn new(path string) !&App {
+	secret_hex := os.getenv('JWT_SECRET')
+
 	mut app := &App{
+		jwt_secret: hex.decode(secret_hex)!.bytestr()
 		db: WebDB{
 			Logger: log.new('${os.dir(@FILE)}/logger.sqlite')!
 		}
