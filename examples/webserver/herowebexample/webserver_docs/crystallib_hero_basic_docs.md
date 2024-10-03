@@ -1,16 +1,15 @@
-<h1> Webserver Container Docs </h1>
+<h1> Crystallib and Hero Basic Docs </h1>
 
 <h2>Table of Contents</h2>
 
 - [Introduction](#introduction)
 - [Deploy Webserver](#deploy-webserver)
-- [Update Webserver](#update-webserver)
 
 ---
 
 ## Introduction
 
-We provide the steps to deploy the Hero webserver locally and test changes.
+We provide the steps to prepare a Docker Ubuntu container to work with Hero and Crystallib.
 
 ## Deploy Webserver
 
@@ -48,7 +47,7 @@ We provide the steps to deploy the Hero webserver locally and test changes.
     git clone https://github.com/freeflowuniverse/crystallib
     cd crystallib
 
-    # Download and run installation scripts
+    # Download and run installation scripts for Crystallib and Hero
 
     curl https://raw.githubusercontent.com/freeflowuniverse/crystallib/development/scripts/install_hero.sh > /tmp/hero_install.sh
 
@@ -58,10 +57,8 @@ We provide the steps to deploy the Hero webserver locally and test changes.
 
     bash /tmp/install.sh
 
-    # Run the example
-    ~/code/github/freeflowuniverse/crystallib/examples/webserver/herowebexample/heroweb-example.vsh
+    echo
+    echo "Crystallib and Hero are set up on your Docker container."
+    echo
+
     ```
-
-## Update Webserver
-
-You can update the content of the webserver in the crystallib subdirectory `/freeflowuniverse/crystallib/crystallib/webserver`.
