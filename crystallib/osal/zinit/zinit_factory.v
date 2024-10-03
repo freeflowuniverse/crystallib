@@ -13,7 +13,6 @@ pub fn new()! Zinit {
 		mut z := Zinit{
 		path: pathlib.get_dir(path: '/etc/zinit', create: true)!
 		pathcmds: pathlib.get_dir(path: '/etc/zinit/cmds', create: true)!
-		pathtests: pathlib.get_dir(path: '/etc/zinit/tests', create: true)!
 		}
 		zinit_global_manager << z
 		z.load()!

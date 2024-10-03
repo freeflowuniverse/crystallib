@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+//import freeflowuniverse.crystallib.osal.systemd
 
 @if args.build
 import freeflowuniverse.crystallib.installers.ulist
@@ -172,21 +173,37 @@ fn stop_post()!{
 @end
 
 fn destroy() ! {
-	//mut installer := get()!	
-	// cmd:="
-	// 	systemctl disable ${args.name}_scheduler.service
-	// 	systemctl disable ${args.name}.service
-	// 	systemctl stop ${args.name}_scheduler.service
-	// 	systemctl stop ${args.name}.service
 
-	// 	systemctl list-unit-files | grep ${args.name}
+	// mut systemdfactory := systemd.new()!
+	// systemdfactory.destroy("zinit")!
 
-	// 	pkill -9 -f ${args.name}
+	// osal.process_kill_recursive(name:'zinit')!
+	// osal.cmd_delete('zinit')!
 
-	// 	ps aux | grep ${args.name}
+    // osal.package_remove('
+    //    podman
+    //    conmon
+    //    buildah
+    //    skopeo
+    //    runc
+    // ')!
 
-	// 	"
-	
-	// osal.exec(cmd: cmd, stdout:true, debug: false)!
+    // //will remove all paths where go/bin is found
+    // osal.profile_path_add_remove(paths2delete:"go/bin")!
+
+    // osal.rm("
+    //    podman
+    //    conmon
+    //    buildah
+    //    skopeo
+    //    runc
+    //    /var/lib/containers
+    //    /var/lib/podman
+    //    /var/lib/buildah
+    //    /tmp/podman
+    //    /tmp/conmon
+    // ")!
+
+
 }
 

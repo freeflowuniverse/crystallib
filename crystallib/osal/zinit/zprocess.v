@@ -11,7 +11,9 @@ pub:
 	name string = 'default'
 pub mut:
 	cmd         string // command to start
-	test        string // command line to test service is running
+	cmd_stop         string // command to stop (optional)
+	cmd_test        string // command line to test service is running
+	workdir		string // where to execute the commands
 	status      ZProcessStatus
 	pid         int
 	after       []string // list of service we depend on
@@ -46,9 +48,9 @@ pub struct ZProcessNewArgs {
 pub mut:
 	name        string            @[required]
 	cmd         string            @[required]
-	test        string // command line to test service is running
-	status      ZProcessStatus
-	pid         int
+	cmd_stop         string // command to stop (optional)
+	cmd_test        string // command line to test service is running
+	workdir		string // where to execute the commands
 	after       []string // list of service we depend on
 	env         map[string]string
 	oneshot     bool
@@ -59,46 +61,64 @@ pub mut:
 
 }
 
-pub fn (zp ZProcess) cmd() string {
-	p := '/etc/zinit/cmd/${zp.name}.sh'
-	if os.exists(p) {
-		return "bash -c \"${p}\""
+pub fn (zp ZProcess) cmd() !string {
+	mut zinitobj := new()!
+	mut path := zinitobj.path.file_get_new("${zp.name}.sh")!
+	if path.exists() {
+		return "bash -c \"${path.path}\""
 	} else {
 		if zp.cmd.contains('\n') {
-			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
+			return error('cmd cannot have \\n and not have cmd file on disk on ${path.path}')
 		}
 		if zp.cmd == '' {
-			panic('cmd cannot be empty')
+			return error('cmd cannot be empty')
 		}
 	}
 	return '${zp.cmd}'
 }
 
-pub fn (zp ZProcess) cmdtest() string {
-	p := '/etc/zinit/tests/${zp.name}.sh'
-	if os.exists(p) {
-		return "bash -c \"${p}\""
+pub fn (zp ZProcess) cmdtest() !string {
+	mut zinitobj := new()!
+	mut path := zinitobj.path.file_get_new("${zp.name}_test.sh")!
+	if path.exists() {
+		return "bash -c \"${path.path}\""
 	} else {
-		if zp.test.contains('\n') {
-			panic('cmd cannot have \\n and not have cmd file on disk on ${p}')
+		if zp.cmd_test.contains('\n') {
+			return error('cmd test cannot have \\n and not have cmd file on disk on ${path.path}')
 		}
-		if zp.test == '' {
-			panic('cmd cannot be empty')
+		if zp.cmd_test == '' {
+			return error('cmd test cannot be empty')
 		}
 	}
-	return '${zp.test}'
+	return '${zp.cmd_test}'
+}
+
+pub fn (zp ZProcess) cmdstop() !string {
+	mut zinitobj := new()!
+	mut path := zinitobj.path.file_get_new("${zp.name}_stop.sh")!
+	if path.exists() {
+		return "bash -c \"${path.path}\""
+	} else {
+		if zp.cmd_stop.contains('\n') {
+			return error('cmd stop cannot have \\n and not have cmd file on disk on ${path.path}')
+		}
+		if zp.cmd_stop == '' {
+			return error('cmd stop cannot be empty')
+		}
+	}
+	return '${zp.cmd_stop}'
 }
 
 // return the configuration as needs to be given to zinit
-fn (zp ZProcess) config_content() string {
+fn (zp ZProcess) config_content() !string {
 	mut out := "
-exec: \"${zp.cmd()}\"
+exec: \"${zp.cmd()!}\"
 signal:
   stop: SIGKILL
 log: ring
 "
-	if zp.test.len > 0 {
-		out += "test: \"${zp.cmdtest()}\"\n"
+	if zp.cmd_test.len > 0 {
+		out += "test: \"${zp.cmdtest()!}\"\n"
 	}
 	if zp.oneshot {
 		out += 'oneshot: true\n'
@@ -130,6 +150,12 @@ pub fn (mut zp ZProcess) stop() ! {
 	console.print_header(' stop ${zp.name}')
 	st := zp.status()!
 
+	//check if there is stop cmd, if yes use it when stopping
+	mut zinitobj := new()!
+	mut path := zinitobj.path.file_get_new("${zp.name}_stop.sh")!
+	if path.exists() {
+		osal.execute_silent("bash -c \"${path.path}\"")!
+	}
 	// QUESTION: removed error, since those can also be stopped
 	// otherwise fails to forget the zp when destroying
 	if st in [.unknown, .killed] {
@@ -143,15 +169,17 @@ pub fn (mut zp ZProcess) stop() ! {
 pub fn (mut zp ZProcess) destroy() ! {
 	console.print_header(' destroy ${zp.name}')
 	zp.stop()!
-	// panic('ssssa')
+	// return error('ssssa')
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}
 	mut zinit_obj := new()!
-	mut path1 := zinit_obj.pathcmds.file_get_new(zp.name + '.sh')!
-	mut path2 := zinit_obj.pathtests.file_get_new(zp.name + '.sh')!
+	mut path1 := zinit_obj.pathcmds.file_get_new("${zp.name}.sh")!
+	mut path2 := zinit_obj.pathcmds.file_get_new("${zp.name}_stop.sh")!
+	mut path3 := zinit_obj.pathcmds.file_get_new("${zp.name}_test.sh")!
 	mut pathyaml := zinit_obj.path.file_get_new(zp.name + '.yaml')!
 	path1.delete()!
 	path2.delete()!
+	path3.delete()!
 	pathyaml.delete()!
 }
 
@@ -248,7 +276,7 @@ pub fn (mut zp ZProcess) status() !ZProcessStatus {
 	// 	zp.status = .error
 	// }else{
 	// 	console.print_debug(st)
-	// 	panic("status not implemented yet")
+	// 	return error("status not implemented yet")
 	// }
 	return zp.status
 }

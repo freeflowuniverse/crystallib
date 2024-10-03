@@ -5,6 +5,20 @@ import freeflowuniverse.crystallib.osal.screen
 import freeflowuniverse.crystallib.osal.systemd
 import freeflowuniverse.crystallib.osal.zinit
 
+// // TODO: check if using this interface would simplify things
+// pub interface StartupManagerI {
+// 	new(args zinit.ZProcessNewArgs)!
+// 	start(name string)!
+// 	stop(name string)!
+// 	restart(name string)!
+// 	delete(name string)!
+// 	status(name string) !ProcessStatus
+// 	running(name string) !bool
+// 	output(name string) !string
+// 	exists(name string) !bool
+// 	list_services() ![]string
+// }
+
 pub enum StartupManagerType {
 	unknown
 	screen
@@ -38,9 +52,10 @@ pub fn get(args StartupManagerArgs) !StartupManager {
 
 // launch a new process
 //```
-// name      string            @[required]
-// cmd       string            @[required]
-// test    string 		//command line to test service is running
+// name        string            @[required]
+// cmd         string            @[required]
+// cmd_stop    string
+// cmd_test    string 		//command line to test service is running
 // status  ZProcessStatus
 // pid     int
 // after   []string 	//list of service we depend on
@@ -56,7 +71,7 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 	if args.startuptype == .systemd {
 		mycat = .systemd
 	}
-	match sm.cat {
+	match mycat {
 		.screen {
 			mut scr := screen.new(reset: false)!
 			console.print_debug('screen')
@@ -69,7 +84,7 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 				cmd: args.cmd
 				name: args.name
 				description: args.description
-				start: true
+				start: args.start
 				restart: args.restart
 				env: args.env
 			)!
@@ -80,6 +95,8 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 			// pub struct ZProcessNewArgs {
 			// 	name      string            @[required]
 			// 	cmd       string            @[required]
+			// 	cmd_stop       string
+			// 	cmd_test       string
 			// 	cmd_file  bool // if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
 			// 	test      string
 			// 	test_file bool
@@ -94,11 +111,11 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 			panic('to implement, startup manager only support screen & systemd for now')
 		}
 	}
-	if args.start {
-		sm.start(args.name)!
-	} else if args.restart {
-		sm.restart(args.name)!
-	}
+	// if args.start {
+	// 	sm.start(args.name)!
+	// } else if args.restart {
+	// 	sm.restart(args.name)!
+	// }
 }
 
 pub fn (mut sm StartupManager) start(name string) ! {
@@ -110,7 +127,7 @@ pub fn (mut sm StartupManager) start(name string) ! {
 			console.print_debug('systemd process start ${name}')
 			mut systemdfactory := systemd.new()!
 			if systemdfactory.exists(name) {
-				console.print_header("*************")
+				//console.print_header("*************")
 				mut systemdprocess := systemdfactory.get(name)!
 				systemdprocess.start()!
 			}else{
@@ -317,7 +334,7 @@ pub fn (mut sm StartupManager) exists(name string) !bool {
 pub fn (mut sm StartupManager) list() ![]string {
 	match sm.cat {
 		.screen {
-			mut scr := screen.new(reset: false) or { panic("can't get screen") }
+			//mut scr := screen.new(reset: false) or { panic("can't get screen") }
 			panic('implement')
 		}
 		.systemd {

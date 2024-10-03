@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.data.ourtime
 import os
+import json
 
 @[heap]
 pub struct Zinit {
@@ -12,7 +13,6 @@ pub mut:
 	processes map[string]ZProcess
 	path      pathlib.Path
 	pathcmds  pathlib.Path
-	pathtests pathlib.Path
 }
 
 // will delete the process if it exists while starting
@@ -35,41 +35,61 @@ pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
 	mut zp := ZProcess{
 		name: args.name
 		cmd: args.cmd
+		cmd_test: args.cmd_test
+		cmd_stop: args.cmd_stop
+		env: args.env.move()
+		after:args.after
+		start:args.start
+		restart:args.restart
+		oneshot:args.oneshot
+		workdir: args.workdir
+
 	}
 
-	// means we can load the special cmd
-	mut pathcmd := zinit.pathcmds.file_get_new(args.name + '.sh')!
+	zinit.cmd_write(args.name,args.cmd,"",{},args.workdir)!
+	zinit.cmd_write(args.name,args.cmd_test,"_test",{},args.workdir)!
+	zinit.cmd_write(args.name,args.cmd_stop,"_stop",{},args.workdir)!
 
-	zp.cmd = 'echo === START ======== ${ourtime.now().str()} === \n' + texttools.dedent(zp.cmd) +
-		'\n'
-	pathcmd.write(zp.cmd)!
-	pathcmd.chmod(0x770)!
-	zp.cmd = '/bin/bash -c ${pathcmd.path}'
+    mut json_path := zinit.pathcmds.file_get_new('${args.name}.json')!
+    json_content := json.encode(args)
+    json_path.write(json_content)!	
 
-	if args.test.len > 0 {
-		if args.test.contains('\n') {
-			// means we can load the special cmd
-			mut pathcmd2 := zinit.pathtests.file_get_new(args.name + '.sh')!
-			args.test = texttools.dedent(args.test)
-			pathcmd2.write(args.test)!
-			pathcmd2.chmod(0x770)!
-			zp.test = '/bin/bash -c ${pathcmd2.path}'
-		}
-	}
-
-	zp.oneshot = args.oneshot
-	zp.env = args.env.move()
-	zp.after = args.after
 	mut pathyaml := zinit.path.file_get_new(zp.name + '.yaml')!
 	// console.print_debug('debug zprocess path yaml: ${pathyaml}')
-	pathyaml.write(zp.config_content())!
-	if args.start {
+	pathyaml.write(zp.config_content()!)!
+	if zp.start {
 		zp.start()!
 	}
 	zinit.processes[args.name] = zp
 
 	return zp
 }
+
+fn (mut zinit Zinit) cmd_write(name string,cmd string, cat string, env map[string]string,workdir string) !string {
+	if cmd.trim_space()==""{
+		return""
+	}
+	mut zinitobj := new()!
+	mut pathcmd := zinitobj.path.file_get_new("${name}${cat}.sh")!
+	mut cmd_out:="set -e"
+	if cat==""{
+		cmd_out += 'echo === START ======== ${ourtime.now().str()} === \n'
+	}
+	if cat=="_stop" {
+		for key,val in env{
+			cmd_out+="${key}=${val}\n"
+		}
+
+	}
+	if workdir.trim_space()!=""{
+		cmd_out+="cd ${ workdir.trim_space()}\n"
+	}
+	cmd_out+=texttools.dedent(cmd) + '\n'
+	pathcmd.write(cmd_out)!
+	pathcmd.chmod(0x770)!
+	return '/bin/bash -c ${pathcmd.path}'
+}
+
 
 pub fn (mut zinit Zinit) get(name_ string) !ZProcess {
 	name := texttools.name_fix(name_)
@@ -86,11 +106,9 @@ pub fn (mut zinit Zinit) exists(name_ string) bool {
 }
 
 pub fn (mut zinit Zinit) stop(name string) ! {
-	println('zinit stop 0 ${name}')
 	mut p := zinit.get(name)!
-	println('zinit stop 2 ${name}')
+
 	p.stop()!
-	println('zinit stop 3 ${name}')
 }
 
 pub fn (mut zinit Zinit) start(name string) ! {

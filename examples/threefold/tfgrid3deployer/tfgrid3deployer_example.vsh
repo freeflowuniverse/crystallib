@@ -8,34 +8,34 @@ import freeflowuniverse.crystallib.installers.threefold.griddriver
 
 fn main(){
 	mut installer:= griddriver.get()!
-	installer.install(reset:true)!
+	installer.install()!
 
-	v := tfgrid3deployer.get()!
-	println('cred: ${v}')
-	deployment_name := "my_deployment27"
+	// v := tfgrid3deployer.get()!
+	// println('cred: ${v}')
+	// deployment_name := "my_deployment27"
 
-	// mut deployment := tfgrid3deployer.new_deployment(deployment_name)!
-	mut deployment := tfgrid3deployer.get_deployment(deployment_name)! 	
-	// deployment.add_machine(name: "my_vm1" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(11)])
-	// deployment.add_machine(name: "my_vm3" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(11)])
-	// deployment.add_machine(name: "my_vm3" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(28)])
-	// deployment.add_zdb(name: "my_zdb", password: "my_passw&rd", size: 2)
-	// deployment.add_webname(name: 'mywebname2', backend: 'http://37.27.132.47:8000')
-	// deployment.deploy()!
+	// // mut deployment := tfgrid3deployer.new_deployment(deployment_name)!
+	// mut deployment := tfgrid3deployer.get_deployment(deployment_name)! 	
+	// // deployment.add_machine(name: "my_vm1" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(11)])
+	// // deployment.add_machine(name: "my_vm3" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(11)])
+	// // deployment.add_machine(name: "my_vm3" cpu: 1 memory: 2 planetary: true mycelium: tfgrid3deployer.Mycelium{}  nodes: [u32(28)])
+	// // deployment.add_zdb(name: "my_zdb", password: "my_passw&rd", size: 2)
+	// // deployment.add_webname(name: 'mywebname2', backend: 'http://37.27.132.47:8000')
+	// // deployment.deploy()!
 
-	// deployment.add_machine(name: "my_vm2" cpu: 2 memory: 3 planetary: true mycelium: true  nodes: [u32(28)])
-	// deployment.deploy()!
+	// // deployment.add_machine(name: "my_vm2" cpu: 2 memory: 3 planetary: true mycelium: true  nodes: [u32(28)])
+	// // deployment.deploy()!
 
-	deployment.remove_machine("my_vm1")!
-	// deployment.remove_webname("mywebname2")!
-	// deployment.remove_zdb("my_zdb")!
-	// deployment.deploy()!
+	// deployment.remove_machine("my_vm1")!
+	// // deployment.remove_webname("mywebname2")!
+	// // deployment.remove_zdb("my_zdb")!
+	// // deployment.deploy()!
 
-	// deployment.vm_get("my_vm1")!
+	// // deployment.vm_get("my_vm1")!
 
-	// // deployment.remove_machine(name: "my_vm121")
-	// // deployment.update_machine(name: "my_vm121")
-	println("deployment: ${deployment}")
+	// // // deployment.remove_machine(name: "my_vm121")
+	// // // deployment.update_machine(name: "my_vm121")
+	// println("deployment: ${deployment}")
 
 	// If not sent: The client will create a network for the deployment.
 	// deployment.network = NetworkSpecs{

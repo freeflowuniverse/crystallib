@@ -72,7 +72,6 @@ pub fn load_env_file(file_path string) ! {
 		if !line.contains('=') {
 			continue
 		}
-		parts := line.split('=')
 		key := line.all_before('=').trim_space()
 		value := line.all_after('=').trim_space()
 		os.setenv(key, value, true)

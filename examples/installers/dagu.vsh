@@ -6,10 +6,11 @@ import freeflowuniverse.crystallib.installers.infra.zinit
 
 //make sure zinit is there and running, will restart it if needed
 mut z:=zinit.get()!
+z.destroy()!
 z.start()!
 
-mut ds := daguserver.get()!
-ds.destroy()!
-ds.start()!
+// mut ds := daguserver.get()!
+// ds.destroy()!
+// ds.start()!
 
 // println(ds)

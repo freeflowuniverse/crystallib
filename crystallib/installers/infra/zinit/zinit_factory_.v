@@ -4,7 +4,6 @@ module zinit
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.core.playbook
 
-
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.ui.console
@@ -23,12 +22,9 @@ pub mut:
     name string = "default"
 }
 
-
 pub fn get(args_ ArgsGet) !&Zinit  {
     return &Zinit{}
 }
-
-
 
 
 
@@ -58,8 +54,6 @@ fn startupmanager_get(cat zinit.StartupManagerType) !startupmanager.StartupManag
 }
 
 
-
-
 pub fn (mut self Zinit) start() ! {
     switch(self.name)
     if self.running()!{
@@ -68,27 +62,38 @@ pub fn (mut self Zinit) start() ! {
 
     console.print_header('zinit start')
 
+    println("0000")
+
     if ! installed()!{
         install()!
     }
 
+    println("003333")
+
     configure()!
+
+    println("000222")
 
     start_pre()!
 
     for zprocess in startupcmd()!{
-        mut sm:=startupmanager_get(zprocess.startuptype)!
+        mut sm:= startupmanager_get(zprocess.startuptype)!
 
-        console.print_debug('starting zinit with @{zprocess.startuptype}...')
+        console.print_debug('starting zinit with ${zprocess.startuptype}...')
 
         sm.new(zprocess)!
 
-        sm.start(zprocess.name)!
+        println("11111")
+
+        // sm.start(zprocess.name)!
     }
+
+    println("222222")
 
     start_post()!
 
     for _ in 0 .. 50 {
+        println("4444")
         if self.running()! {
             return
         }
@@ -147,7 +152,6 @@ pub fn (mut self Zinit) install(args InstallArgs) ! {
     }    
 }
 
-
 pub fn (mut self Zinit) build() ! {
     switch(self.name)
     build()!
@@ -155,7 +159,6 @@ pub fn (mut self Zinit) build() ! {
 
 pub fn (mut self Zinit) destroy() ! {
     switch(self.name)
-
     self.stop()!
     destroy()!
 }

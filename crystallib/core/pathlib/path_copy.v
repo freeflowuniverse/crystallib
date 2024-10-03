@@ -24,6 +24,9 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 		args.rsync = true
 	}
 	path.check()
+	if !path.exists(){
+		return error("can't find path for copy operation on ${path.path}")
+	}
 	if args.rsync == true {
 		rsync(
 			source: path.path
@@ -34,10 +37,11 @@ pub fn (mut path Path) copy(args_ CopyArgs) ! {
 			ignore_default: args.ignore_default
 		)!
 	} else {
+
 		mut dest := get(args.dest)
 		if dest.exists() {
 			if !(path.cat in [.file, .dir] && dest.cat in [.file, .dir]) {
-				return error('Source or Destination path is not file or directory.\n\n${path.path}-${path.cat}---${dest.path}-${dest.cat}')
+				return error('Source or Destination path is not file or directory.\n\n${path.path} cat:${path.cat}---${dest.path} cat:${dest.cat}')
 			}
 			if path.cat == .dir && dest.cat == .file {
 				return error("Can't copy directory to file")

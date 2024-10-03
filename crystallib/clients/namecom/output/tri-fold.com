@@ -1,0 +1,1 @@
+ns("tri-fold.com", "tfgw-devnet-02.tri-fold.com.", 300)

@@ -1,6 +1,30 @@
 # postgresql
 
-see the clients.postgresql for much more functionality
+
+
+To get started
+
+```vlang
+
+
+import freeflowuniverse.crystallib.installers.db.postgresql
+
+mut installer:= postgresql.get()!
+
+installer.start()!
+
+
+
+
+```
+
+## example heroscript
+
+```hero
+!!postgresql.install
+    path: ''
+    passwd: 'asecret'
+```
 
 
 ## use psql
@@ -20,10 +44,12 @@ psql -U "root" -h localhost
 //e.g. in server configure function
 
 import freeflowuniverse.crystallib.installers.db.postgresql
-mut db := postgresql.get(server.config.postgresql_name)!
+
+mut mydbinstaller:=postgresql.get()!
+mydbinstaller.start()!
 
 // now create the DB
-db.db_create('gitea')!
+mydbinstaller.db_create('gitea')!
 
 
 ```

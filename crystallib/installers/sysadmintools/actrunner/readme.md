@@ -2,14 +2,14 @@
 
 ## OSX
 
-to use with podman
+to use with herocontainers
 
-- https://podman-desktop.io/docs/migrating-from-docker/using-the-docker_host-environment-variable
+- https://herocontainers-desktop.io/docs/migrating-from-docker/using-the-docker_host-environment-variable
 
 could export the path
 
 ```bash
-export DOCKER_HOST=unix:///Users/despiegk1/.local/share/containers/podman/machine/qemu/podman.sock
+export DOCKER_HOST=unix:///Users/despiegk1/.local/share/containers/herocontainers/machine/qemu/herocontainers.sock
 
 #had to install docker to get some docker tools, but was not running it
 brew install --cask docker

@@ -3,7 +3,9 @@ module installers
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.develapps.vscode
 import freeflowuniverse.crystallib.installers.develapps.chrome
-import freeflowuniverse.crystallib.installers.virt.podman
+import freeflowuniverse.crystallib.installers.virt.podman as podman_installer
+import freeflowuniverse.crystallib.installers.virt.buildah as buildah_installer
+
 import freeflowuniverse.crystallib.installers.virt.lima
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.core.texttools
@@ -54,7 +56,7 @@ pub fn names(args_ InstallArgs) []string {
 		lima
 		mycelium
 		nodejs
-		podman
+		herocontainers
 		prometheus
 		rclone
 		rust
@@ -94,7 +96,8 @@ pub fn install_multi(args_ InstallArgs) ! {
 				rust.install(reset: args.reset)!
 			}
 			'golang' {
-				golang.install(reset: args.reset)!
+				mut g := golang.get()!
+				g.install(reset: args.reset)!
 			}
 			'vlang' {
 				vlang.install(reset: args.reset)!
@@ -129,8 +132,16 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'lima' {
 				lima.install(reset: args.reset, uninstall: args.uninstall)!
 			}
-			'podman' {
-				podman.install(reset: args.reset, uninstall: args.uninstall)!
+			'herocontainers' {
+				mut podman_installer0:= podman_installer.get()!
+				mut buildah_installer0:= buildah_installer.get()!
+
+				if args.reset{
+					podman_installer0.destroy()! //will remove all
+					buildah_installer0.destroy()! //will remove all
+				}
+				podman_installer0.install()!
+				buildah_installer0.install()!
 			}
 			'prometheus' {
 				prometheus.install(reset: args.reset, uninstall: args.uninstall)!

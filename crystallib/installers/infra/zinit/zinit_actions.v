@@ -7,6 +7,7 @@ import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.installers.ulist
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.osal.systemd
 
 
 import os
@@ -22,9 +23,9 @@ fn installed() !bool {
 		if r.len != 1 {
 			return error("couldn't parse zinit version.\n${res.output}")
 		}
-		if texttools.version(version) == texttools.version(r[0].all_after_first('zinit v')) {			
+		if texttools.version(version) == texttools.version(r[0].all_after_first('zinit v')) {
 			return true
-		} 
+		}
     }
     console.print_debug(res.str())
 	return false
@@ -100,10 +101,11 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
         name: 'zinit'
         cmd: '/usr/local/bin/zinit init'
         startuptype:.systemd
+		start: true
         restart:true
     }
     return res
-    
+
 }
 
 fn running() !bool {
@@ -113,38 +115,28 @@ fn running() !bool {
 }
 
 fn start_pre()!{
-    
+
 }
 
 fn start_post()!{
-    
+
 }
 
 fn stop_pre()!{
-    
+
 }
 
 fn stop_post()!{
-    
+
 }
 
 
 fn destroy() ! {
-    //mut installer := get()!    
-    // cmd:="
-    //     systemctl disable zinit_scheduler.service
-    //     systemctl disable zinit.service
-    //     systemctl stop zinit_scheduler.service
-    //     systemctl stop zinit.service
 
-    //     systemctl list-unit-files | grep zinit
+	mut systemdfactory := systemd.new()!
+	systemdfactory.destroy("zinit")!
 
-    //     pkill -9 -f zinit
+	osal.process_kill_recursive(name:'zinit')!
+	osal.cmd_delete('zinit')!
 
-    //     ps aux | grep zinit
-
-    //     "
-    
-    // osal.exec(cmd: cmd, stdout:true, debug: false)!
 }
-
