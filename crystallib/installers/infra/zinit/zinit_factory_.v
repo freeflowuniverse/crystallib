@@ -77,7 +77,7 @@ pub fn (mut self Zinit) start() ! {
     start_pre()!
 
     for zprocess in startupcmd()!{
-        mut sm:=startupmanager_get(zprocess.startuptype)!
+        mut sm:= startupmanager_get(zprocess.startuptype)!
 
         console.print_debug('starting zinit with ${zprocess.startuptype}...')
 
@@ -85,7 +85,7 @@ pub fn (mut self Zinit) start() ! {
 
         println("11111")
 
-        sm.start(zprocess.name)!
+        // sm.start(zprocess.name)!
     }
 
     println("222222")

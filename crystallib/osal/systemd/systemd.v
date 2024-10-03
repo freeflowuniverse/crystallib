@@ -60,7 +60,7 @@ fn (mut systemd Systemd) load() ! {
 			unit: item.unit
 			info: item
 		}
-		systemd.setinternal(mut sdprocess)!
+		systemd.setinternal(mut sdprocess)
 	}
 
 	systemd.status=.ok
@@ -116,12 +116,10 @@ pub fn (mut systemd Systemd) new(args_ SystemdProcessNewArgs) !SystemdProcess {
 	}
 	sdprocess.env = args.env.move()
 
-	systemd.setinternal(mut sdprocess)!
-
-
 	sdprocess.write()!
+	systemd.setinternal(mut sdprocess)
 
-	if args.start && args.restart {
+	if args.start || args.restart {
 		sdprocess.stop()!
 	}	
 
@@ -137,7 +135,7 @@ pub fn (mut systemd Systemd) names() []string {
 	return r
 }
 
-fn (mut systemd Systemd) setinternal(mut sdprocess SystemdProcess) ! {
+fn (mut systemd Systemd) setinternal(mut sdprocess SystemdProcess)  {
 	sdprocess.name = name_fix(sdprocess.info.unit)
 	systemd.processes = systemd.processes.filter(it.name != sdprocess.name)
 	systemd.processes << &sdprocess
@@ -167,16 +165,15 @@ pub fn (mut systemd Systemd) exists(name_ string) bool {
 }
 
 pub fn (mut systemd Systemd) destroy(name_ string) ! {
-	if systemd.exists(name_){
-		mut pr:=systemd.get(name_)!
-		pr.delete()!
+	for i, mut pr in systemd.processes{
+		if name_fix(pr.name) == name_fix(name_){
+			pr.delete()!
+			systemd.processes[i] = systemd.processes[systemd.processes.len-1]
+			systemd.processes.delete_last()
+			break
+		}
 	}
 }
-
-
-
-
-
 
 fn name_fix(name_ string) string {
 	mut name := texttools.name_fix(name_)

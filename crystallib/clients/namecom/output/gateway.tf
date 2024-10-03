@@ -1,0 +1,1 @@
+ns("gateway.tf", "tfgw-testnet-01.gateway.tf.", 300)

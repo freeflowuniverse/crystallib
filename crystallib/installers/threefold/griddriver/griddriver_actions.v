@@ -4,26 +4,29 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 
 import freeflowuniverse.crystallib.develop.gittools
-import freeflowuniverse.crystallib.installers
 import freeflowuniverse.crystallib.installers.ulist
 import freeflowuniverse.crystallib.installers.lang.golang
+import freeflowuniverse.crystallib.core.texttools
+import os
 
 
 // checks if a certain version or above is installed
 fn installed() !bool {
-    //THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
-    // res := os.execute('${osal.profile_path_source_and()} griddriver version')
-    // if res.exit_code != 0 {
-    //     return false
-    // }
-    // r := res.output.split_into_lines().filter(it.trim_space().len > 0)
-    // if r.len != 1 {
-    //     return error("couldn't parse griddriver version.\n${res.output}")
-    // }
-    // if texttools.version(version) > texttools.version(r[0]) {
-    //     return false
-    // }
-    return false
+    res := os.execute('${osal.profile_path_source_and()} griddriver --version')
+    if res.exit_code != 0 {
+        return false
+    }
+
+    r := res.output.split(' ')
+    if r.len != 3 {
+        return error("couldn't parse griddriver version.\n${res.output}")
+    }
+
+    if texttools.version(version) > texttools.version(r[2]) {
+        return false
+    }
+
+    return true
 }
 
 fn install() ! {
@@ -34,7 +37,8 @@ fn install() ! {
 
 fn build() ! {
     console.print_header('build griddriver')
-	golang.install()!
+	mut installer:= golang.get()!
+    installer.install()!
 
 	path := gittools.code_get(
 		url: 'https://github.com/threefoldtech/web3gw/tree/development_integration/griddriver'
@@ -45,7 +49,7 @@ fn build() ! {
 	set -ex
 	cd ${path}
 	go env -w CGO_ENABLED="0"
-	go build -o /tmp/griddriver
+	go build -ldflags="-X \'main.version=$(git describe --tags --abbrev=0)\'" -o /tmp/griddriver .
 	echo build ok
 	'
 	osal.execute_stdout(cmd)!

@@ -77,3 +77,9 @@ info returns like:
     }]
 ```
 
+## work with profiles
+
+```v
+osal.profile_path_add_remove(paths2delete:"go/bin",paths2add:"~/hero/bin,~/usr/local/bin")!
+```
+

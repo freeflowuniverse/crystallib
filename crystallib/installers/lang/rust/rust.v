@@ -52,7 +52,7 @@ pub fn install(args_ InstallArgs) ! {
 		osal.execute_stdout("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y")!
 	}
 
-	osal.profile_path_add(path: '${os.home_dir()}/.cargo/bin')!
+	osal.profile_path_add_remove(paths2add: '${os.home_dir()}/.cargo/bin')!
 
 	return
 }

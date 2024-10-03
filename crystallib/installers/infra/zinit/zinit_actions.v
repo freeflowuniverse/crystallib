@@ -101,6 +101,7 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
         name: 'zinit'
         cmd: '/usr/local/bin/zinit init'
         startuptype:.systemd
+		start: true
         restart:true
     }
     return res

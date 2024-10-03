@@ -1,0 +1,1 @@
+txt("fair-swap.org", "v=DMARC1; p=reject; rua=mailto:dmarc@threefold.io", "300")

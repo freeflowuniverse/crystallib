@@ -1,0 +1,13 @@
+
+!!hero_code.generate_installer
+    name:'postgresql'
+    classname:'Postgresql'
+    singleton:1
+    templates:1
+    default:1
+    title:''
+    supported_platforms:'linux'
+    reset:0
+    startupmanager:1
+	hasconfig:1
+    build:0

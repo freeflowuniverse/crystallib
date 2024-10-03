@@ -44,7 +44,8 @@ pub fn (mut self SystemdProcess) write() ! {
 }
 
 pub fn (mut self SystemdProcess) start() ! {
-	self.write()!
+	console.print_header('starting systemd process: ${self.name}')
+	// self.write()!
 	cmd := '
 	systemctl daemon-reload
 	systemctl enable ${self.name}
