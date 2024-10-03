@@ -1,1 +1,0 @@
-cname("threefoldtoken.com", "d6dda5f530721588ad084a378a992e1f.867a03e224d9042e151a03d96a8d21f5.comodoca.com", 300)

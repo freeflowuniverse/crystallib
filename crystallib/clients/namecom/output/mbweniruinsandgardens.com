@@ -1,1 +1,0 @@
-txt("mbweniruinsandgardens.com", "v=spf1 include:_spf.google.com ~all", "3600")

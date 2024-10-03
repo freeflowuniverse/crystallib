@@ -1,1 +1,0 @@
-txt("tfambassador.com", "v=spf1 a mx ~all", "300")
