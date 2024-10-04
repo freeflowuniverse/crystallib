@@ -1,4 +1,4 @@
-module heroweb
+module components
 
 import freeflowuniverse.crystallib.data.markdownparser
 import freeflowuniverse.crystallib.data.markdownparser.elements
@@ -26,7 +26,7 @@ pub mut:
     title string
 }
 
-pub struct Doc {
+pub struct View {
 pub mut:
     navbar Navbar
     content elements.Doc
@@ -34,7 +34,11 @@ pub mut:
     title string
 }
 
-fn model_web_example() Doc {
+pub fn (view View) html() string {
+    return $tmpl('./templates/view.html')
+}
+
+fn model_web_example() View {
     
     example_main:=$tmpl("templates/example_main.md")
     example_nav:=$tmpl("templates/example_nav.md")
@@ -49,7 +53,7 @@ fn model_web_example() Doc {
         ]
     }
 
-    markdown_content := MarkdownContent{nav: example_nav, content: example_main, title: 'MyDoc'}
+    markdown_content := MarkdownContent{nav: example_nav, content: example_main, title: 'MyView'}
 
-    return Doc{navbar: navbar, markdown: markdown_content, title: 'An Example Index Page'}
+    return View{navbar: navbar, markdown: markdown_content, title: 'An Example Index Page'}
 }
