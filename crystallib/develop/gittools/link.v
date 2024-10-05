@@ -10,7 +10,7 @@ pub:
 	reset     bool   // means we will reset changes, they will be overwritten
 }
 
-//TODO: needs to be fixed, the source should be e.g. a url, abve is not conclusive can be multiple same names
+// QUESTION: is git link necessary?
 
 // // link a source to a destination, source is where the data is, where we link to
 // // the source or dest can be a path or git url, when starting with http or git then we consider it to be a git url
