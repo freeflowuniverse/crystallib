@@ -1,13 +1,13 @@
 #!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
-import freeflowuniverse.crystallib.develop.gittools2 as gittools
+import freeflowuniverse.crystallib.develop.gittools
 
 // resets all for all git configs & caches
 // gittools.reset()!
 
 mut gs_default := gittools.get()!
 
-gs_default.list()!
+gs_default.repos_print()!
 // println(gs_default)
 
 // coderoot := '/tmp/code_test'

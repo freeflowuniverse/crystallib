@@ -1,4 +1,4 @@
-module gittools2
+module gittools
 
 import crypto.md5
 import os
@@ -31,7 +31,6 @@ pub mut:
 	provider      string // e.g. github.com  (remote all https/git/...), github.com gets replaced to github in short
 	account       string // name of the account
 	name          string // is the name of the repository
-	key           string // the key is $coderoot:$provider:$account:$reponame
 	status_remote GitRepoStatusRemote
 	status_local  GitRepoStatusLocal
 	config        GitRepoConfig

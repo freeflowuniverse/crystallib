@@ -9,7 +9,6 @@ import freeflowuniverse.crystallib.core.pathlib
 @[heap]
 pub struct GitAddr {
 pub mut:
-	gs   &GitStructure @[skip]
 	provider   string
 	account    string
 	name       string // is the name of the repository

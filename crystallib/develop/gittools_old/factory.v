@@ -1,11 +1,26 @@
-module gittools2
-import freeflowuniverse.crystallib.core.base
+module gittools
 
+import crypto.md5
+import os
+import json
+import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.core.base
+// import freeflowuniverse.crystallib.ui.console
 
 __global (
-	gsinstances shared map[string]&GitStructure
+	gsinstances shared map[string]GitStructure
 )
 
+@[heap; params]
+pub struct GitStructureConfig {
+pub mut:
+	key string
+	multibranch bool
+	coderoot        string // where will the code be checked out, root of code, if not specified comes from context
+	light       bool = true // if set then will clone only last history for all branches		
+	log         bool   // means we log the git statements
+	singlelayer bool   // all repo's will be on 1 level
+}
 
 // configure the gitstructure .
 // .
@@ -50,14 +65,10 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 
 	// console.print_debug("GET GS:\n$args")
 
-	mut key:="default"
-	if ! args.coderoot == '' {
-		key = md5.hexhash(args.coderoot)
-	}
-
+	gkey:=gitstructure_key(args.coderoot)
 	rlock gsinstances {
-		if key in gsinstances {
-			mut gs := gsinstances[key] or { panic('bug') }
+		if gkey in gsinstances {
+			mut gs := gsinstances[gkey] or { panic('bug') }
 			if args.reload {
 				gs.load()!
 			}
@@ -74,18 +85,16 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	mut config := json.decode(GitStructureConfig, datajson)!
 
 	mut gs := GitStructure{
-		key:key
 		config: config
 		coderoot: pathlib.get_dir(path: config.coderoot, create: true) or {
 			panic('this should never happen: ${err}')
 		}
 	}
 
-	mut done:=[]string{}
-	gs.load_recursive(coderoot.path,done)!
+	gs.load()!
 
 	lock gsinstances {
-		gsinstances[gs.key] = &gs
+		gsinstances[gitstructure_config_key(args.coderoot)] = gs
 	}
 
 	// println(gs.config)
@@ -95,8 +104,17 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 
 
 
-
 ////////CACHE
+
+pub fn cachereset(coderoot string) ! {
+	mut c := base.context()!
+	mut redis := c.redis()!
+	keys := redis.keys(gitstructure_cache_key(coderoot))!
+	for key in keys {
+		// console.print_debug(key)
+		redis.del(key)!
+	}
+}	
 
 
 pub fn configreset() ! {
@@ -112,7 +130,7 @@ pub fn configreset() ! {
 // reset all caches and configs, for all git repo's .
 // can't harm, will just reload everything
 pub fn cachereset() ! {
-	key_check := 'git:repos:**'
+	key_check := 'git:cache:**'
 	mut c := base.context()!
 	mut redis := c.redis()!	
 	keys := redis.keys(key_check)!
