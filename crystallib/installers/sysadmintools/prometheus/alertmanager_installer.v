@@ -50,7 +50,7 @@ pub fn install_alertmanager(args_ InstallArgs) ! {
 			binpath.copy(dest: '/root/hero/prometheus/${abin}', delete: true, rsync: false)!
 		}
 
-		osal.profile_path_add(path: '/root/hero/prometheus')!
+		osal.profile_path_add_remove(paths2add: '/root/hero/prometheus')!
 	}
 
 	// if args.restart {

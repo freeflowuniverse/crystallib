@@ -2,7 +2,7 @@ host: "${cfg.host}"                          # default: 127.0.0.1
 port: ${cfg.port}
 
 # path to the DAGs directory
-dags: ${cfg.homedir}/dags
+dags: ${cfg.dagsdir}
 
 # Web UI Color & Title
 # navbarColor: <ui header color>                               # header color for web UI (e.g. "#ff0000")
@@ -16,10 +16,10 @@ isAuthToken: true                                    # enables API token
 authToken: ${cfg.secret}
 
 # Base Config
-baseConfig: ${cfg.configpath}
+# baseConfig: 
 
 # Working Directory
-#workDir: ${cfg.homedir}/working                        # default: DAG location
+# workDir:                       # default: DAG location
 
 # SSL Configuration
 # tls:

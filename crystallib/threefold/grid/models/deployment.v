@@ -58,6 +58,7 @@ pub fn (requirement SignatureRequirement) challenge() string {
 // deployment is given to each Zero-OS who needs to deploy something
 // the zero-os'es will only take out what is relevant for them
 // if signature not done on the main Deployment one, nothing will happen
+@[heap]
 pub struct Deployment {
 pub mut:
 	// increments for each new interation of this model

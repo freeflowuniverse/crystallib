@@ -1,48 +1,73 @@
 module gittools
 
-// import freeflowuniverse.crystallib.core.texttools
+import os
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
-import os
 
-@[heap]
-pub struct GitStructure {
-pub mut:
-	config   GitStructureConfig // configuration settings
-	rootpath pathlib.Path = pathlib.get('${os.home_dir()}/code') // path to root code directory
-	repos    []&GitRepo // repositories in gitstructure
-	loaded   bool
+
+
+//reload all info from disk & remote ssh
+// use kwarg: reload: true to make sure we reload everything
+pub fn (mut gitstructure GitStructure) load(args StatusUpdateArgs) ! {
+	mut done:=[]string{}
+	gitstructure.load_recursive(gitstructure.coderoot.path,args, mut done)!
 }
 
-fn (gs GitStructure) cache_key() string {
-	return gitstructure_cache_key(gs.name())
+// load git structure recursively
+fn (mut gitstructure GitStructure) load_recursive(path1 string, args StatusUpdateArgs, mut done []string) ! {
+	console.print_debug("gitstructure recursive load: $path1")
+	path1o := pathlib.get(path1)
+	relpath := path1o.path_relative(gitstructure.coderoot.path)!
+	if relpath.count('/') > 4 {
+		return
+	}
+
+	items := os.ls(path1) or {
+		return error('cannot load gitstructure because cannot find ${path1}')
+	}
+	mut pathnew := ''
+	for item in items {
+		pathnew = os.join_path(path1, item)
+		if os.is_dir(pathnew) {
+			if os.exists(os.join_path(pathnew, '.git')) {
+				mut repo := gitstructure.repo_init_from_path_(pathnew)!
+				repo.status_update(reload:args.reload)!				
+				p := repo.path()!
+				if repo.key() in done || p in done {
+					return error('loading of repo goes wrong found double.\npath:${p}\nkey:${repo.key}')
+				}
+				done << p
+				done << repo.key()
+				gitstructure.repos[repo.key()] = &repo
+				continue
+			}
+			if item.starts_with('.') {
+				continue
+			}
+			if item.starts_with('_') {
+				continue
+			}
+			gitstructure.load_recursive(pathnew, args, mut done)!
+		}
+	}
 }
 
-pub fn (gs GitStructure) name() string {
-	return gs.config.name
-}
 
-// remove cache
-pub fn (gs GitStructure) cache_reset() ! {
+pub fn (mut gitstructure GitStructure) cachereset() ! {
 	mut c := base.context()!
 	mut redis := c.redis()!
-	key_check := gs.cache_key()
-	keys := redis.keys(key_check + ':*')!
+	keys := redis.keys("git:repos:${gitstructure.key}:**")!
 	for key in keys {
 		redis.del(key)!
 	}
 }
 
-pub fn (mut gitstructure GitStructure) list(args ReposGetArgs) ! {
-	// texttools.print_clear()
-	console.print_debug(' #### overview of repositories:')
-	console.print_debug('')
-	gitstructure.repos_print(args)!
-	console.print_debug('')
-}
 
-fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
+
+
+//get the repo init from a known path
+fn (mut gitstructure GitStructure) repo_init_from_path_(path string) !GitRepo {
 	// find parent with .git
 	// console.print_debug(" - load from path: $path")
 	mypath := pathlib.get_dir(path: path, create: false)!
@@ -52,125 +77,20 @@ fn (mut gitstructure GitStructure) repo_from_path(path string) !GitRepo {
 	if parentpath.path == '' {
 		return error('cannot find .git in parent starting from: ${path}')
 	}
-	mut ga := GitAddr{
-		gsconfig: &gitstructure.config
-	}
+	
+	gl:=gitstructure.gitlocation_from_path(mypath.path)!
+
 	mut r := GitRepo{
 		gs: &gitstructure
-		addr: &ga
-		path: parentpath
+		status_remote:GitRepoStatusRemote{}
+		status_local :GitRepoStatusLocal{}
+		config :GitRepoConfig{}
+		provider: gl.provider
+		account: gl.account
+		name: gl.name		
+
 	}
-	r.load_from_path()!
 	return r
 }
 
-// add repository to gitstructure
-pub fn (mut gs GitStructure) repo_add(args GSCodeGetFromUrlArgs) !&GitRepo {
-	// console.print_debug('repo_add:${args}')
-	if args.path.len > 0 {
-		mut repo := gs.repo_from_path(args.path)!
-		gs.repo_add_(&repo)!
-		return &repo
-	}
-	mut locator := gs.locator_new(args.url)!
-	if args.branch.len > 0 {
-		// repo.branch_switch(args.branch)!
-		locator.addr.branch = args.branch
-	}
-	// console.print_debug('got locator ${locator}')
-	mut repo := gs.repo_get(locator: locator, reset: false, pull: false)!
-	// console.print_debug('got repo ${repo}')
-	if args.sshkey.len > 0 {
-		repo.ssh_key_set(args.sshkey)!
-	}
-	if args.reload {
-		repo.load()!
-	}
-	if args.reset {
-		repo.remove_changes()!
-	}
-	if args.pull {
-		repo.pull()!
-	}
-	gs.repo_add_(&repo)!
-	return &repo
-}
 
-pub struct GSCodeGetFromUrlArgs {
-pub mut:
-	path   string
-	url    string
-	branch string
-	sshkey string
-	pull   bool // will pull if this is set
-	reset  bool // this means will pull and reset all changes
-	reload bool // reload the cache	
-}
-
-// will get repo starting from url, if the repo does not exist, only then will pull .
-// if pull is set on true, will then pull as well .
-// url examples: .
-// ```
-// https://github.com/threefoldtech/tfgrid-sdk-ts
-// https://github.com/threefoldtech/tfgrid-sdk-ts.git
-// git@github.com:threefoldtech/tfgrid-sdk-ts.git
-//
-// # to specify a branch and a folder in the branch
-// https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
-//
-// args:
-// path   string
-// url    string
-// branch string
-// sshkey string
-// pull   bool // will pull if this is set
-// reset  bool // this means will pull and reset all changes
-// reload bool // reload the cache
-// ```
-pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
-	mut args := args_
-	console.print_header('code get url:${args.url} or path:${args.path}')
-	mut myrepo := gs.repo_add(args)!
-	// console.print_debug(args.str())
-	if myrepo.addr.remote_url.len > 0 {
-		console.print_debug('repo url ${myrepo.addr.remote_url}')
-	} else {
-		console.print_debug('repo obj\n${myrepo.addr}')
-	}
-
-	if args.reset {
-		myrepo.remove_changes()!
-	}
-	if args.pull || args.reset {
-		myrepo.pull()!
-	}
-
-	mut locator := gs.locator_new(args.url)!
-	// console.print_debug('got locator ${locator}')
-
-	s := locator.path_on_fs()!
-	console.print_debug('repo path ${s.path}')
-	return s.path
-}
-
-pub fn (mut gitstructure GitStructure) check() ! {
-	mut done := []string{}
-	for r in gitstructure.keys() {
-		if r in done {
-			return error('found double repo with key:${r}')
-		}
-		done << r
-	}
-}
-
-fn (mut gs GitStructure) keys() []string {
-	mut repokeys := gs.repos.map(it.addr.key())
-	return repokeys
-}
-
-fn (mut gs GitStructure) repo_add_(repo &GitRepo) ! {
-	if repo.key() in gs.keys() {
-		return
-	}
-	gs.repos << repo
-}

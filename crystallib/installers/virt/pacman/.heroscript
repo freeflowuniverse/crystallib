@@ -1,0 +1,13 @@
+
+!!hero_code.generate_installer
+    name:'pacman'
+    classname:'PacmanInstaller'
+    singleton:1
+    templates:0
+    default:1
+    title:''
+    supported_platforms:'ubuntu'
+    reset:0
+    startupmanager:0
+	hasconfig:0
+    build:0

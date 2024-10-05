@@ -223,7 +223,6 @@ module doctree
 // 				console.print_debug('Including page ${include.content} into ${page.path.path}')
 // 			}
 // 			mut page_to_include := page.tree.page_get(include.content) or {
-// 				console.print_debug('debugzo')
 // 				msg := "include:'${include.content}' not found for page:${page.path.path}"
 // 				if mut p := page.tree.collections[collection.name] {
 // 					p.error(

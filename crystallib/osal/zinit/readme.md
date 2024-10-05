@@ -20,7 +20,8 @@ fn do() ! {
 	// name      string            @[required]
 	// cmd       string            @[required]
 	// cmd_file  bool  //if we wanna force to run it as a file which is given to bash -c  (not just a cmd in zinit)
-	// test      string
+	// cmd_stop      string
+	// cmd_test      string
 	// test_file bool
 	// after     []string
 	// env       map[string]string

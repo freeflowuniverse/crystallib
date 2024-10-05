@@ -114,8 +114,8 @@ pub fn (mut auth Authenticator) send_verification_mail(config SendMailConfig) ! 
 		password: auth.config.password
 	)!
 
-	client.send(mail) or { panic('Error resolving email address') }
-	client.quit() or { panic('Could not close connection to server') }
+	client.send(mail) or { return error('Error resolving email address') }
+	client.quit() or { return error('Could not close connection to server') }
 }
 
 // sends mail with login link

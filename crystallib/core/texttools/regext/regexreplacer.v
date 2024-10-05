@@ -108,6 +108,32 @@ pub fn (mut ri ReplaceInstructions) add(replacelist []string) ! {
 	}
 }
 
+// a text input file where each line has one of the following
+//  - regex start with ^R see https://github.com/vlang/v/blob/master/vlib/regex/README.md .
+//  - case insensitive string find start with ^S (will internally convert to regex).
+//  - just a string, this is a literal find (case sensitive) .
+// example input
+// '''
+// ^Rregex:replacewith
+// ^Rregex:^Rregex2:replacewith
+// ^Sfindstr:replacewith
+// findstr:findstr:replacewith
+// findstr:^Rregex2:replacewith
+// ^Sfindstr:^Sfindstr2::^Rregex2:replacewith
+// ''''
+pub fn (mut ri ReplaceInstructions) add_from_text(txt string) ! {
+	mut replacelist:=[]string{}
+	for line in txt.split_into_lines(){
+		if line.trim_space() == ""{
+			continue
+		}
+		if line.contains(":"){
+			replacelist	<< line
+		}
+	}
+	ri.add(replacelist)!
+}
+
 @[params]
 pub struct ReplaceArgs {
 pub mut:

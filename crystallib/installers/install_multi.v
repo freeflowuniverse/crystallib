@@ -3,7 +3,9 @@ module installers
 import freeflowuniverse.crystallib.installers.base
 import freeflowuniverse.crystallib.installers.develapps.vscode
 import freeflowuniverse.crystallib.installers.develapps.chrome
-import freeflowuniverse.crystallib.installers.virt.podman
+import freeflowuniverse.crystallib.installers.virt.podman as podman_installer
+import freeflowuniverse.crystallib.installers.virt.buildah as buildah_installer
+
 import freeflowuniverse.crystallib.installers.virt.lima
 import freeflowuniverse.crystallib.installers.net.mycelium
 import freeflowuniverse.crystallib.core.texttools
@@ -13,7 +15,8 @@ import freeflowuniverse.crystallib.installers.lang.vlang
 import freeflowuniverse.crystallib.installers.lang.crystallib
 import freeflowuniverse.crystallib.installers.lang.nodejs
 import freeflowuniverse.crystallib.installers.lang.python
-//import freeflowuniverse.crystallib.installers.web.caddy
+import freeflowuniverse.crystallib.installers.web.zola
+import freeflowuniverse.crystallib.installers.web.tailwind
 import freeflowuniverse.crystallib.installers.hero.heroweb
 import freeflowuniverse.crystallib.installers.hero.herodev
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
@@ -22,6 +25,7 @@ import freeflowuniverse.crystallib.installers.sysadmintools.prometheus
 import freeflowuniverse.crystallib.installers.sysadmintools.grafana
 import freeflowuniverse.crystallib.installers.sysadmintools.fungistor
 import freeflowuniverse.crystallib.installers.sysadmintools.garage_s3
+import freeflowuniverse.crystallib.installers.infra.zinit
 
 @[params]
 pub struct InstallArgs {
@@ -52,12 +56,15 @@ pub fn names(args_ InstallArgs) []string {
 		lima
 		mycelium
 		nodejs
-		podman
+		herocontainers
 		prometheus
 		rclone
 		rust
+		tailwind
 		vlang
 		vscode
+		zinit
+		zola
 		'
 	mut ns := texttools.to_array(names)
 	ns.sort()
@@ -89,7 +96,8 @@ pub fn install_multi(args_ InstallArgs) ! {
 				rust.install(reset: args.reset)!
 			}
 			'golang' {
-				golang.install(reset: args.reset)!
+				mut g := golang.get()!
+				g.install(reset: args.reset)!
 			}
 			'vlang' {
 				vlang.install(reset: args.reset)!
@@ -124,8 +132,16 @@ pub fn install_multi(args_ InstallArgs) ! {
 			'lima' {
 				lima.install(reset: args.reset, uninstall: args.uninstall)!
 			}
-			'podman' {
-				podman.install(reset: args.reset, uninstall: args.uninstall)!
+			'herocontainers' {
+				mut podman_installer0:= podman_installer.get()!
+				mut buildah_installer0:= buildah_installer.get()!
+
+				if args.reset{
+					podman_installer0.destroy()! //will remove all
+					buildah_installer0.destroy()! //will remove all
+				}
+				podman_installer0.install()!
+				buildah_installer0.install()!
 			}
 			'prometheus' {
 				prometheus.install(reset: args.reset, uninstall: args.uninstall)!
@@ -155,6 +171,18 @@ pub fn install_multi(args_ InstallArgs) ! {
 				dserver.restart()!
 				// mut dagucl:=dserver.client()!
 			}
+			'zola' {
+				mut i2 := zola.get()!
+				i2.install()!				//will also install tailwind
+			}
+			'tailwind' {
+				mut i := tailwind.get()!
+				i.install()!
+			}	
+			'zinit' {
+				mut i := zinit.get()!
+				i.install()!
+			}									
 			else {
 				return error('cannot find installer for: ${item}')
 			}

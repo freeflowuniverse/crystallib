@@ -53,6 +53,16 @@ pub fn (self ListItem) pug() !string {
 }
 
 pub fn (self ListItem) html() !string {
-	panic('implement')
-	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
+	mut out := ''
+
+	// If there is any specific formatting or processing for list item content, handle it here.
+	// For now, we just escape the content to avoid any HTML injection vulnerabilities.
+	// out = html_escape(self.content)
+
+	// Add any child elements (such as nested lists) to the list item if they exist.
+	for child in self.children {
+		out += child.html()!
+	}
+
+	return out
 }

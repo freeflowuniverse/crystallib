@@ -63,7 +63,6 @@ pub fn new(args_ BizModelArgs) !BizModel {
 
 	simulator_set(bizmodel)
 	bizmodel.load()!
-
 	return bizmodel
 }
 
@@ -93,3 +92,18 @@ pub fn (mut self BizModel) load() ! {
 
 	self.play(mut plbook)!
 }
+
+@[params]
+pub struct BookGenerateArgs{
+pub mut:
+	open bool
+}
+
+pub fn (mut self BizModel) book_generate(args BookGenerateArgs) ! {
+	console.print_debug('SIMULATOR MDBOOK Generate')
+
+
+
+}
+
+

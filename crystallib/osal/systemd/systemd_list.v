@@ -66,8 +66,9 @@ pub fn process_list() ![]SystemdProcessInfo {
 			'loaded' { unit.load_state = .loaded }
 			'not-found' { unit.load_state = .not_found }
 			'error' { unit.load_state = .error }
+			'bad-setting' { unit.load_state = .error }
 			'masked' { unit.load_state = .masked }
-			else { return error('could not find right load state for systemd') }
+			else { return error('could not find right load state for systemd ${unit.load_state}') }
 		}
 		match item.active {
 			'active' { unit.active_state = .active }
@@ -75,7 +76,7 @@ pub fn process_list() ![]SystemdProcessInfo {
 			'activating' { unit.active_state = .activating }
 			'deactivating' { unit.active_state = .deactivating }
 			'failed' { unit.active_state = .failed }
-			else { return error('could not find right active state for systemd') }
+			else { return error('could not find right active state for systemd ${unit.load_state}') }
 		}
 		match item.sub {
 			'start' { unit.sub_state = .start }

@@ -31,7 +31,7 @@ fi
 echo "Removing binaries from ~/hero/bin..."
 rm -f ~/hero/bin/lima*
 rm -f ~/hero/bin/docker*
-rm -f ~/hero/bin/podman*
+rm -f ~/hero/bin/herocontainers*
 rm -f ~/hero/bin/kube*
 
 # Remove Lima VMs

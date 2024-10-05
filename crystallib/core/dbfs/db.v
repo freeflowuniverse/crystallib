@@ -2,6 +2,7 @@ module dbfs
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools
+import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.crypt.aes_symmetric
 import encoding.base64
 // import freeflowuniverse.crystallib.ui.console
@@ -145,7 +146,7 @@ pub fn (mut db DB) set(args_ SetArgs) !u32 {
 		args.id = db.parent.incr()!
 		pathsrc = db.path_get(args.id)!
 	}
-	// console.print_debug(pathsrc)
+	console.print_debug("keydb ${pathsrc}")
 	if db.config.encrypted {
 		args.valueb = aes_symmetric.encrypt(args.valueb, db.secret()!)
 		pathsrc.write(base64.encode(args.valueb))!

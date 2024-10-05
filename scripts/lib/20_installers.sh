@@ -33,7 +33,7 @@ function hero_build {
     freeflow_dev_env_install
 
     echo " - compile hero"
-    ~/code/github/freeflowuniverse/crystallib/cli/hero/compile_debug.sh
+    ~/code/github/freeflowuniverse/crystallib/cli/hero/compile.sh
     source ~/.profile
 
     hero init -d

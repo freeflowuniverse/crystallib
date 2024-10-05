@@ -3,7 +3,6 @@ module bizmodel
 import freeflowuniverse.crystallib.core.playbook { PlayBook }
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.threefold.grid4.cloudslices
 import freeflowuniverse.crystallib.biz.spreadsheet
 
 pub fn play(mut plbook PlayBook) ! {
@@ -44,7 +43,7 @@ pub fn (mut self BizModel) play(mut plbook PlayBook) ! {
 
 	simulator_set(self)
 
-	// println(self.sheet)
+	println(self.sheet)
 
 	// if true{
 	// 	panic("arym")

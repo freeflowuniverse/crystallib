@@ -1,6 +1,8 @@
 # GitTools
 
 
+>>>> TODO: need to update 
+
 > can change coderoot with: ```export CODEROOT="/tmp/codetest"```
 
 Are good tools to allow you to work with GIT in a programatic way

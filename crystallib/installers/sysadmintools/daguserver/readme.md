@@ -2,9 +2,27 @@
 
 
 
-## heroscript
+To get started
 
-```yaml
+```vlang
+
+
+
+import freeflowuniverse.crystallib.installers.something. daguserver
+
+mut installer:= daguserver.get()!
+
+installer.start()!
+
+
+
+
+```
+
+## example heroscript
+
+
+```hero
 !!daguserver.install
     homedir: '/home/user/daguserver'
     username: 'admin'

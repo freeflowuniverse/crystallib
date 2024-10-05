@@ -73,18 +73,22 @@ pub fn context_new(args_ ContextConfigArgs) !&Context {
 
 pub fn context_get(id u32) !&Context {
 	context_current = id
+
 	if id in contexts {
 		return contexts[id] or { panic('bug') }
 	}
+
 	mut mycontext := Context{
 		config: ContextConfig{
 			id: id
 		}
 	}
+
 	if mycontext.cfg_redis_exists()! {
 		mycontext.load()!
 		return &mycontext
 	}
+
 	mut mycontext2 := context_new(id: id)!
 	return mycontext2
 }

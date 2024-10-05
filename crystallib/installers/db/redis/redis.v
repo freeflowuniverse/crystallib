@@ -68,7 +68,6 @@ fn configure(args InstallArgs) ! {
 
 pub fn check(args InstallArgs) bool {
 	res := os.execute('redis-cli -c -p ${args.port} ping > /dev/null 2>&1')
-	console.print_debug('redis ping ok.')
 	if res.exit_code == 0 {
 		return true
 	}

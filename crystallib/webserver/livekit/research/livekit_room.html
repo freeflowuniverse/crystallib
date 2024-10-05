@@ -1,0 +1,101 @@
+<!-- templates/livekit_room.html -->
+<div id="livekit-room">
+    <!-- Elements for displaying and managing room -->
+    <div id="video-container"></div>
+    <div id="controls-container">
+      <!-- Audio and Video toggles -->
+      <label>
+        <input type="checkbox" id="audio-toggle" 
+        @if lk.audio 
+            checked
+        @end
+        > Audio
+      </label>
+      <label>
+        <input type="checkbox" id="video-toggle"
+        @if lk.video 
+            checked
+        @end
+    > Video
+      </label>
+      <!-- Screen share toggle -->
+      <label>
+        <input type="checkbox" id="screen-toggle"
+        @if lk.screen
+        checked
+        @end
+        > Screen Share
+      </label>
+    </div>
+  </div>
+  
+  <script>
+    // Room options passed from the VLang struct
+    const roomOptions = {
+      autoSubscribe: @{lk.options.auto_subscribe},
+      adaptiveStream: @{lk.options.adaptive_stream},
+      dynacast: @{lk.options.dynacast},
+      videoCaptureDefaults: {
+        deviceId: '@{lk.options.video_capture_defaults.device_id}',
+        resolution: '@{lk.options.video_capture_defaults.resolution}'
+      },
+      publishDefaults: {
+        dtx: @{lk.options.publish_defaults.dtx},
+        simulcast: @{lk.options.publish_defaults.simulcast},
+        videoCodec: '@{lk.options.publish_defaults.video_codec}'
+      }
+    };
+  
+    async function initializeLiveKitRoom() {
+      const serverUrl = '@{lk.server_url}';
+      const token = '@{lk.token}';
+      const connect = @{lk.connect};
+      const audioEnabled = document.getElementById('audio-toggle').checked;
+      const videoEnabled = document.getElementById('video-toggle').checked;
+      const screenEnabled = document.getElementById('screen-toggle').checked;
+  
+      if (connect && serverUrl && token) {
+        try {
+          const room = new LiveKit.Room(roomOptions);
+  
+          // Set up event listeners if needed
+          room.on('connected', () => {
+            console.log('Connected to room');
+          });
+  
+          room.on('disconnected', () => {
+            console.log('Disconnected from room');
+          });
+  
+          // Connect to the LiveKit room with the options
+          await room.connect(serverUrl, token, {
+            autoSubscribe: roomOptions.autoSubscribe,
+            audio: audioEnabled,
+            video: videoEnabled,
+            screen: screenEnabled
+          });
+  
+          // Save room instance for further use
+          window.livekitRoom = room;
+          
+          // Attach video elements (implementation depends on your needs)
+          const videoContainer = document.getElementById('video-container');
+          room.localParticipant.on('trackPublished', (publication) => {
+            if (publication.track.kind === 'video') {
+              videoContainer.appendChild(publication.track.attach());
+            }
+          });
+  
+        } catch (error) {
+          console.error('Error connecting to LiveKit room:', error);
+        }
+      } else {
+        console.warn('Server URL or token is missing, cannot connect to LiveKit room.');
+      }
+    }
+  
+    // Initialize LiveKit Room on load
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeLiveKitRoom();
+    });
+  </script>

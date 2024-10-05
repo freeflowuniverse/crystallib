@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.baobab.generator
 import freeflowuniverse.crystallib.core.codemodel { Struct }
 import freeflowuniverse.crystallib.core.codeparser
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.ui.console
 import os
 
 const actors_dir = '${os.dir(os.dir(@FILE))}/actors'

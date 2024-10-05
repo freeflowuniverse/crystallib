@@ -78,3 +78,45 @@ pub fn package_install(name_ string) ! {
 		return error('Only ubuntu, alpine and osx supported for now')
 	}
 }
+
+
+
+// Remove a package using the appropriate command for each platform
+pub fn package_remove(name_ string) ! {
+    names := texttools.to_array(name_)
+    name := names.join(' ')
+    console.print_header('package remove: ${name}')
+    platform_ := platform()
+    cpu := cputype()
+
+    if platform_ == .osx {
+        if cpu == .arm {
+            exec(cmd: 'arch --arm64 brew uninstall ${name}') or {
+                return error('Could not remove package: ${name}\nerror:\n${err}')
+            }
+        } else {
+            exec(cmd: 'brew uninstall ${name}') or {
+                return error('Could not remove package: ${name}\nerror:\n${err}')
+            }
+        }
+    } else if platform_ == .ubuntu {
+        exec(
+            cmd: '
+            export TERM=xterm
+            export DEBIAN_FRONTEND=noninteractive
+            apt remove -y ${name} --allow-change-held-packages
+			apt autoremove -y
+            '
+        ) or { return error('Could not remove package: ${name}\nerror:\n${err}') }
+    } else if platform_ == .alpine {
+        exec(cmd: 'apk del ${name}') or {
+            return error('Could not remove package: ${name}\nerror:\n${err}')
+        }
+    } else if platform_ == .arch {
+        exec(cmd: 'pacman --noconfirm -R ${name}') or {
+            return error('Could not remove package: ${name}\nerror:\n${err}')
+        }
+    } else {
+        return error('Only ubuntu, alpine and osx supported for now')
+    }
+}

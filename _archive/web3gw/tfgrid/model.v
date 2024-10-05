@@ -264,6 +264,7 @@ pub mut:
 }
 
 // available options for filtering nodes
+@[params]
 pub struct NodeFilter {
 pub mut:
 	status             ?string @[json: 'Status']
@@ -288,7 +289,7 @@ pub mut:
 	dedicated          ?bool   @[json: 'Dedicated']
 	rentable           ?bool   @[json: 'Rentable']
 	rented             ?bool   @[json: 'Rented']
-	healthy          	 ?bool   @[json: 'healthy']
+	healthy            ?bool   @[json: 'healthy']
 	rented_by          ?u64    @[json: 'RentedBy']
 	available_for      ?u64    @[json: 'AvailableFor']
 	node_id            ?u64    @[json: 'NodeID']

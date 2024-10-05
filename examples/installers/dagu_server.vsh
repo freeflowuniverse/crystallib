@@ -4,8 +4,8 @@ import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
 //will call the installer underneith
 
-mut dserver:=daguserver.new()! 
-dserver.install()! 
+mut dserver:=daguserver.new()!
+dserver.install()!
 dserver.restart()!
 
 println("DAGU installed & running")
@@ -25,7 +25,7 @@ mut dagucl:=dserver.client()!
 
 
 mut mydag:=dagucl.dag_new(
-	name:"test11"	
+	nameswhere:"test11"
 )
 
 // nr                int     @[required]

@@ -122,7 +122,7 @@ Be the mother for our errors.
 	c.write('
 # Additional pages
 
-A normal user can ignore these pages, they are just to get links to work.
+You can ignore these pages, they are just to get links to work.
 
 	')!
 	mut src_path := pathlib.get_dir(path: '${book.path_build.path}/src')!

@@ -79,5 +79,5 @@ bash doc.sh
 ## build hero
 
 - linux as done by github actions, nothing to do
-- osx: `~/code/github/despiegk/env_web/configure/b2_threefold_hero_upload.vsh  (kristof has the code)`
+- osx: ``
 

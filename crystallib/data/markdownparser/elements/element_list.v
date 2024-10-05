@@ -111,8 +111,52 @@ pub fn (self List) pug() !string {
 }
 
 pub fn (self List) html() !string {
-	panic('implement')
-	// return '<h${self.depth}>${self.content}</h${self.depth}>\n\n'
+	mut out := ''
+
+	// Determine the type of list based on `ListCat`
+	match self.cat {
+		.bullet {
+			out += '<ul>\n'
+		}
+		.star {
+			out += '<ul style="list-style-type:star;">\n'
+		}
+		.nr {
+			out += '<ol>\n'
+		}
+	}
+
+	// Iterate over the children to generate the list items
+	for child in self.children {
+		if child is ListItem {
+			// Generate indentation for sublist items
+			mut h := ''
+			for _ in 0 .. child.indent * 4 {
+				h += ' '  // Add spacing for indentation
+			}
+
+			mut pre := ''
+			if self.cat == .nr && child.order != none {
+				pre = '<li value="${child.order}">'
+			} else {
+				pre = '<li>'
+			}
+
+			out += '${h}${pre}${child.html()!}</li>\n'
+		}
+	}
+
+	// Close the list based on the type
+	match self.cat {
+		.bullet, .star {
+			out += '</ul>\n'
+		}
+		.nr {
+			out += '</ol>\n'
+		}
+	}
+
+	return out
 }
 
 pub fn line_is_list(line string) bool {

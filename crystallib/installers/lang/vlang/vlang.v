@@ -10,7 +10,7 @@ import freeflowuniverse.crystallib.develop.gittools
 
 pub fn install(args_ InstallArgs) ! {
 	mut args := args_
-	version := '0.4.7'
+	version := '0.4.8'
 	console.print_header('install vlang (reset: ${args.reset})')
 	res := os.execute('${osal.profile_path_source_and()} v --version')
 	if res.exit_code == 0 {

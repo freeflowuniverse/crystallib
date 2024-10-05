@@ -110,7 +110,7 @@ pub fn parse_container_state(state string) !ContainerStatus {
 	if state.contains('stopped') {
 		return ContainerStatus.down
 	}
-	return error('Could not find podman container status: ${state}')
+	return error('Could not find herocontainers container status: ${state}')
 }
 
 pub fn clear_str(s string) string {

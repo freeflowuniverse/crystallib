@@ -13,7 +13,7 @@ mut ds := daguserver.get()!
 println(ds)
 ```
 
-the files are in ~/github/freeflowuniverse/crystallib/examples for crystallib
+the files are in ~/code/github/freeflowuniverse/crystallib/examples for crystallib
 
 ## important instructions
 

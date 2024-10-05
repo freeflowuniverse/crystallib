@@ -14,7 +14,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 	mut pull := false
 
 	// check if any actions for doctree, if not then nothing to do here
-	dtactions := plbook.find(filter: 'doctree.')!
+	//dtactions := plbook.find(filter: 'doctree.')!
 	// if dtactions.len == 0 {
 	// 	console.print_debug("can't find doctree.add statements, nothing to do")
 	// 	return
@@ -62,9 +62,10 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 	for mut action in plbook.find(filter: 'book:export')! {
 		mut p := action.params
 		build_path := p.get('path')!
+		toreplace := p.get_default('replace', "")!
 		reset2 := p.get_default_false('reset')
 		production2 := p.get_default_true('production')
-		tree.export(dest: build_path, reset: reset2, production: production2)!
+		tree.export(dest: build_path, reset: reset2, production: production2,toreplace:toreplace)!
 		action.done = true
 	}
 
@@ -73,6 +74,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		name := p.get('name')!
 		url := p.get('url')!
 		title := p.get_default('title', name)!
+		toreplace := p.get_default('replace', "")!
 		publish_path := p.get_default('publish_path', '${publishroot}/${name}')!
 		build_path := p.get_default('build_path', '${buildroot}/${name}')!
 		printbook := p.get_default_false('printbook')
@@ -80,7 +82,7 @@ pub fn play_mdbook(mut plbook playbook.PlayBook) ! {
 		production := p.get_default_false('production')
 		reset3 := p.get_default_true('reset')
 
-		tree.export(dest: build_path, reset: reset3)!
+		tree.export(dest: build_path, reset: reset3,toreplace:toreplace)!
 
 		mut mdbooks := mdbook.get()!
 

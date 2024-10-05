@@ -1,4 +1,5 @@
 module doctree
+import freeflowuniverse.crystallib.core.texttools.regext
 
 @[heap]
 pub struct Tree {
@@ -10,6 +11,7 @@ pub mut:
 	state       TreeState
 	// context context.Context
 	cid string = '000'
+	replacer ?regext.ReplaceInstructions
 }
 
 pub enum TreeState {

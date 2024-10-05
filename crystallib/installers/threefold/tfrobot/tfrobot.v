@@ -39,7 +39,8 @@ pub fn install(args_ InstallArgs) ! {
 }
 
 pub fn build() ! {
-	golang.install()!
+	mut g := golang.get()!
+	g.install()!
 	console.print_header('build tfrobot')
 	mut dest_on_os := '${os.home_dir()}/hero/bin'
 	if osal.is_linux() {

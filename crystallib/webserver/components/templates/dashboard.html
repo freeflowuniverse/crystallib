@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicoCSS Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@@1.5.6/css/pico.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/unpoly@@3.9.1/unpoly.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/unpoly@@3.9.1/unpoly.min.css">
+
+    <style>
+        /* Custom CSS for the dashboard grid layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+
+        body > nav {
+            padding: 1rem 2.5rem !important;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 6fr;
+            gap: 1rem;
+            padding: 1rem;
+            flex: 1;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            background-color: var(--background-dark);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Main content area styling */
+        .main-content {
+            background-color: var(--background-light);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Make sure the grid layout is responsive */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            color: var(--color);
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: var(--primary);
+            color: var(--background-light);
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top navigation -->
+    <nav class="container-fluid">
+        <ul>
+            <li><strong>Dashboard</strong></li>
+        </ul>
+        <ul>
+            <li>
+                <details role="list">
+                    <summary aria-haspopup="listbox">@{component.user}</summary>
+                    <ul role="listbox">
+                        <li><a href="#profile">Profile</a></li>
+                        <li><a href="#settings">Settings</a></li>
+                        <li><a href="#logout">Logout</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Dashboard Layout: Sidebar and Main Content -->
+    <div class="grid-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <a href="#home" up-target=".main-content">Home</a>
+            <a href="/view/assets" up-target=".main-content">Assets</a>
+            <a href="/view/logs" up-target=".main-content">Analytics</a>
+            <a href="/view/kanban" up-target=".main-content">Kanban</a>
+            <a href="#reports" up-target=".main-content">Reports</a>
+            <a href="#settings" up-target=".main-content">Settings</a>
+        </div>
+
+        <!-- Main content area -->
+        <main class="main-content">
+            <h2>Welcome to the Dashboard</h2>
+            <p>This is your main content area. You can add widgets, graphs, or any other components you need for your dashboard here.</p>
+        </main>
+    </div>
+
+</body>
+</html>

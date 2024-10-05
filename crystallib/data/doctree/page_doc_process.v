@@ -36,9 +36,9 @@ pub fn (mut page Page) doc_process() ! {
 	if nrmacros > 0 {
 		// we know that there was a change in the structure, need to re-process
 		c := mydoc.markdown()!
-		console.print_header('UUUUUU')
-		console.print_debug(c)
-		console.print_header('--->UUUUUU')
+		// console.print_header('UUUUUU')
+		// console.print_debug(c)
+		// console.print_header('--->UUUUUU')
 		// if true{
 		// 	panic("ssrf3")
 		// }
