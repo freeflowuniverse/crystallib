@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveKit Room</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/static/css/global.css">
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+    <style>
+        .main {
+            height: 100%;
+        }
+        .center-content {
+            display: grid;
+            place-items: center;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <main class="main" data-lk-theme="default">
+        <div id="preJoinContainer" class="center-content">
+            <div id="preJoinForm">
+                <!-- Pre-Join form will be dynamically inserted here -->
+            </div>
+        </div>
+        <div id="videoConferenceContainer" style="display: none;">
+            <!-- Video conference UI will be inserted here -->
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const CONN_DETAILS_ENDPOINT = '/api/connection-details';
+            const SHOW_SETTINGS_MENU = true;  // Placeholder for environment variable
+            let preJoinChoices = undefined;
+            let connectionDetails = undefined;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const roomName = urlParams.get('roomName') || 'defaultRoom';
+            const region = urlParams.get('region') || undefined;
+            const codec = urlParams.get('codec') || 'vp9';
+            const hq = urlParams.get('hq') === 'true';
+
+            function encodePassphrase(passphrase) {
+                return btoa(passphrase);
+            }
+
+            function decodePassphrase(encodedPassphrase) {
+                return atob(encodedPassphrase);
+            }
+
+            function handlePreJoinSubmit(values) {
+                preJoinChoices = values;
+                fetchConnectionDetails();
+            }
+
+            async function fetchConnectionDetails() {
+                try {
+                    const url = new URL(CONN_DETAILS_ENDPOINT, window.location.origin);
+                    url.searchParams.append('roomName', roomName);
+                    url.searchParams.append('participantName', preJoinChoices.username);
+                    if (region) {
+                        url.searchParams.append('region', region);
+                    }
+
+                    const connectionDetailsResp = await fetch(url.toString());
+                    connectionDetails = await connectionDetailsResp.json();
+
+                    startVideoConference();
+                } catch (error) {
+                    console.error('Error fetching connection details:', error);
+                }
+            }
+
+            function createPreJoinForm() {
+                const formContainer = document.getElementById('preJoinForm');
+                formContainer.innerHTML = `
+                    <form id="preJoinFormInner">
+                        <label>Username: <input id="username" type="text" required></label>
+                        <label>Enable Video: <input id="videoEnabled" type="checkbox" checked></label>
+                        <label>Enable Audio: <input id="audioEnabled" type="checkbox" checked></label>
+                        <button type="submit">Join</button>
+                    </form>
+                `;
+
+                const form = document.getElementById('preJoinFormInner');
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const values = {
+                        username: document.getElementById('username').value,
+                        videoEnabled: document.getElementById('videoEnabled').checked,
+                        audioEnabled: document.getElementById('audioEnabled').checked,
+                    };
+                    handlePreJoinSubmit(values);
+                });
+            }
+
+            function startVideoConference() {
+                document.getElementById('preJoinContainer').style.display = 'none';
+                document.getElementById('videoConferenceContainer').style.display = 'block';
+
+                const e2eePassphrase = decodePassphrase(location.hash.substring(1));
+                const roomOptions = {
+                    videoCaptureDefaults: {
+                        resolution: hq ? LivekitClient.VideoPresets.h2160 : LivekitClient.VideoPresets.h720,
+                    },
+                    publishDefaults: {
+                        videoCodec: codec,
+                    },
+                    adaptiveStream: { pixelDensity: 'screen' },
+                    dynacast: true,
+                };
+
+                const room = new LivekitClient.Room(roomOptions);
+                const connectOptions = { autoSubscribe: true };
+
+                room.connect(connectionDetails.serverUrl, connectionDetails.participantToken, connectOptions)
+                    .then(() => {
+                        console.log('Connected to room:', roomName);
+                        if (preJoinChoices.videoEnabled) {
+                            room.localParticipant.enableCameraAndMicrophone();
+                        }
+                    })
+                    .catch((error) => console.error('Error connecting to room:', error));
+                
+                room.on(LivekitClient.RoomEvent.Disconnected, () => {
+                    console.log('Disconnected from room');
+                    window.location.href = '/';
+                });
+            }
+
+            createPreJoinForm();
+        });
+    </script>
+</body>
+</html>

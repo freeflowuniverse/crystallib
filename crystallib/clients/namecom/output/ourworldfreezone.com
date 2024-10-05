@@ -1,1 +1,0 @@
-a("ourworldfreezone.com", "75.126.104.228", 300)

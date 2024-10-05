@@ -1,1 +1,0 @@
-a("beach-resort-zanzibar.com", "185.206.122.62", 300)

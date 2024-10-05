@@ -22,3 +22,4 @@ zdb-index
 .DS_Store
 .venv/
 dump.rdb
+output/
