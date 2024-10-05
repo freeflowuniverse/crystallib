@@ -59,7 +59,7 @@ fn (mut gitstructure GitStructure) load_recursive(path1 string, args StatusUpdat
 pub fn (mut gitstructure GitStructure) cachereset() ! {
 	mut c := base.context()!
 	mut redis := c.redis()!
-	keys := redis.keys("git:${gitstructure.key}:**")!
+	keys := redis.keys("git:repos:${gitstructure.key}:**")!
 	for key in keys {
 		redis.del(key)!
 	}

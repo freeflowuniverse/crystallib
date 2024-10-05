@@ -4,7 +4,7 @@ import freeflowuniverse.crystallib.core.base
 import json
 
 fn ( repo GitRepo) cache_key() string {
-	return 'git:${repo.key}:${repo.provider}:${repo.account}:${repo.name}'
+	return 'git:repos:${repo.key}:${repo.provider}:${repo.account}:${repo.name}'
 }
 
 // remove cache
@@ -143,3 +143,8 @@ pub fn (repo GitRepo) check() ! {
 	}
 }
 
+// relative path inside the gitstructure, pointing to the repo
+pub fn (repo GitRepo) path_relative() string {
+	mut mypath:=repo.patho()!
+	return mypath.path_relative(repo.gs.coderoot.path) or { panic('couldnt get relative path') }
+}

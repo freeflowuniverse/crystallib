@@ -102,7 +102,7 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 pub fn configreset() ! {
 	mut c := base.context()!
 	mut redis := c.redis()!
-	key_check := 'git:*'
+	key_check := 'git:config:*'
 	keys := redis.keys(key_check)!
 	for key in keys {
 		redis.del(key)!
@@ -112,7 +112,7 @@ pub fn configreset() ! {
 // reset all caches and configs, for all git repo's .
 // can't harm, will just reload everything
 pub fn cachereset() ! {
-	key_check := 'git:**'
+	key_check := 'git:repos:**'
 	mut c := base.context()!
 	mut redis := c.redis()!	
 	keys := redis.keys(key_check)!
