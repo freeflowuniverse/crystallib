@@ -1,54 +1,38 @@
 module postgresql
 
 import freeflowuniverse.crystallib.osal
-import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.texttools
-import freeflowuniverse.crystallib.core.pathlib
-//import freeflowuniverse.crystallib.osal.systemd
+import freeflowuniverse.crystallib.osal.zinit
 
 
-import os
-
-
-// checks if a certain version or above is installed
 fn installed() !bool {
-    //THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
-    // res := os.execute('${osal.profile_path_source_and()} postgresql version')
-    // if res.exit_code != 0 {
-    //     return false
-    // }
-    // r := res.output.split_into_lines().filter(it.trim_space().len > 0)
-    // if r.len != 1 {
-    //     return error("couldn't parse postgresql version.\n${res.output}")
-    // }
-    // if texttools.version(version) > texttools.version(r[0]) {
-    //     return false
-    // }
-    return false
+    return true
 }
 
 fn install() ! {
-    //console.print_header('install postgresql')
-    //mut cfg := get()!
+    osal.execute_silent("podman pull docker.io/library/postgres:latest")!
 }
 
 
 fn startupcmd () ![]zinit.ZProcessNewArgs{
+    mut cfg := get()!
     mut res := []zinit.ZProcessNewArgs{}
-	// cmd := "bash -c \"
-	// cd ${cfg.path}
-	// docker compose up 
-	// \""    
+
+    cmd:="
+    mkdir -p ${cfg.path}
+    podman run -d \
+        --name ${cfg.name} \
+        -e POSTGRES_USER=root \
+        -e POSTGRES_PASSWORD=\"${cfg.passwd}\" \
+        -v ${cfg.path}:/var/lib/postgresql/data \
+        -p 5432:5432 \
+        postgres:latest    
+    "
 
     res << zinit.ZProcessNewArgs{
         name: 'postgresql'
-        cmd: 'docker compose up'
-        cmd_stop: 'docker compose down'
-        env: {
-            'HOME': cfg.path
-        }    
+        cmd: cmd
+        workdir: cfg.path
     }
-
     return res
     
 }
@@ -78,6 +62,17 @@ fn stop_post()!{
 
 
 fn destroy() ! {
+    mut cfg := get()!
+    osal.rm("
+        ${cfg.path}
+        /etc/postgresql/
+        /etc/postgresql-common/
+        /var/lib/postgresql/
+        /etc/systemd/system/multi-user.target.wants/postgresql
+        /lib/systemd/system/postgresql.service
+        /lib/systemd/system/postgresql@.service
+    ")!
+
     c := '
 
     #dont die
@@ -90,16 +85,8 @@ fn destroy() ! {
     sudo apt-get purge -y postgresql* pgdg-keyring
 
     # Remove all data and configurations
-    sudo rm -rf /etc/postgresql/
-    sudo rm -rf /etc/postgresql-common/
-    sudo rm -rf /var/lib/postgresql/
     sudo userdel -r postgres
     sudo groupdel postgres
-
-    # Remove systemd service files
-    sudo rm -f /etc/systemd/system/multi-user.target.wants/postgresql
-    sudo rm -f /lib/systemd/system/postgresql.service
-    sudo rm -f /lib/systemd/system/postgresql@.service
 
     # Reload systemd configurations and reset failed systemd entries
     sudo systemctl daemon-reload

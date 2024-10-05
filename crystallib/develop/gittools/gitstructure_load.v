@@ -14,9 +14,9 @@ pub fn (mut gitstructure GitStructure) load() ! {
 	gitstructure.repos.clear()
 	mut done := []string{}
 	// path which git repos will be recursively loaded
-	git_path := gitstructure.rootpath
-	if !(os.exists(gitstructure.rootpath.path)) {
-		os.mkdir_all(gitstructure.rootpath.path)!
+	git_path := gitstructure.coderoot
+	if !(os.exists(gitstructure.coderoot.path)) {
+		os.mkdir_all(gitstructure.coderoot.path)!
 	}
 	gitstructure.load_recursive(git_path.path, mut done)!
 	for mut repo in gitstructure.repos {
@@ -38,9 +38,9 @@ fn (mut gitstructure GitStructure) reload() ! {
 // 	gitstructure.cache_reset()!
 // 	mut done := []string{}
 // 	// path which git repos will be recursively loaded
-// 	git_path := gitstructure.rootpath
-// 	if !(os.exists(gitstructure.rootpath.path)) {
-// 		os.mkdir_all(gitstructure.rootpath.path)!
+// 	git_path := gitstructure.coderoot
+// 	if !(os.exists(gitstructure.coderoot.path)) {
+// 		os.mkdir_all(gitstructure.coderoot.path)!
 // 	}
 // 	gitstructure.load_recursive(git_path.path, mut done)!
 // 	for mut repo in gitstructure.repos {		
@@ -62,7 +62,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 // pub fn (mut gs GitStructure) reload() ! {
 
 // 	mut done := []string{}
-// 	gs.load_recursive(gs.rootpath.path, mut done)!
+// 	gs.load_recursive(gs.coderoot.path, mut done)!
 // 	// mut threads := []thread{}
 // 	for mut repo in gs.repos {
 // 		// threads<<spawn repo_refresh(repo.addr,repo.path.path)
@@ -78,7 +78,7 @@ fn (mut gitstructure GitStructure) reload() ! {
 fn (mut gitstructure GitStructure) load_recursive(path1 string, mut done []string) ! {
 	// $if debug{console.print_debug("gitstructure recursive load: $path1")}
 	path1o := pathlib.get(path1)
-	relpath := path1o.path_relative(gitstructure.rootpath.path)!
+	relpath := path1o.path_relative(gitstructure.coderoot.path)!
 	if relpath.count('/') > 4 {
 		return
 	}

@@ -63,9 +63,9 @@ pub mut:
 
 pub fn (zp ZProcess) cmd() !string {
 	mut zinitobj := new()!
-	mut path := zinitobj.path.file_get_new("${zp.name}.sh")!
+	mut path := zinitobj.pathcmds.file_get_new("${zp.name}_start.sh")!
 	if path.exists() {
-		return "bash -c \"${path.path}\""
+		return "bash -c \'${path.path}\'"
 	} else {
 		if zp.cmd.contains('\n') {
 			return error('cmd cannot have \\n and not have cmd file on disk on ${path.path}')
@@ -79,7 +79,7 @@ pub fn (zp ZProcess) cmd() !string {
 
 pub fn (zp ZProcess) cmdtest() !string {
 	mut zinitobj := new()!
-	mut path := zinitobj.path.file_get_new("${zp.name}_test.sh")!
+	mut path := zinitobj.pathcmds.file_get_new("${zp.name}_test.sh")!
 	if path.exists() {
 		return "bash -c \"${path.path}\""
 	} else {
@@ -95,7 +95,7 @@ pub fn (zp ZProcess) cmdtest() !string {
 
 pub fn (zp ZProcess) cmdstop() !string {
 	mut zinitobj := new()!
-	mut path := zinitobj.path.file_get_new("${zp.name}_stop.sh")!
+	mut path := zinitobj.pathcmds.file_get_new("${zp.name}_stop.sh")!
 	if path.exists() {
 		return "bash -c \"${path.path}\""
 	} else {
@@ -173,7 +173,7 @@ pub fn (mut zp ZProcess) destroy() ! {
 	mut client := new_rpc_client()
 	client.forget(zp.name) or {}
 	mut zinit_obj := new()!
-	mut path1 := zinit_obj.pathcmds.file_get_new("${zp.name}.sh")!
+	mut path1 := zinit_obj.pathcmds.file_get_new("${zp.name}_start.sh")!
 	mut path2 := zinit_obj.pathcmds.file_get_new("${zp.name}_stop.sh")!
 	mut path3 := zinit_obj.pathcmds.file_get_new("${zp.name}_test.sh")!
 	mut pathyaml := zinit_obj.path.file_get_new(zp.name + '.yaml')!

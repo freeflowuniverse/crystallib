@@ -46,7 +46,7 @@ pub fn (mut zinit Zinit) new(args_ ZProcessNewArgs) !ZProcess {
 
 	}
 
-	zinit.cmd_write(args.name,args.cmd,"",{},args.workdir)!
+	zinit.cmd_write(args.name,args.cmd,"_start",{},args.workdir)!
 	zinit.cmd_write(args.name,args.cmd_test,"_test",{},args.workdir)!
 	zinit.cmd_write(args.name,args.cmd_stop,"_stop",{},args.workdir)!
 
@@ -70,20 +70,20 @@ fn (mut zinit Zinit) cmd_write(name string,cmd string, cat string, env map[strin
 		return""
 	}
 	mut zinitobj := new()!
-	mut pathcmd := zinitobj.path.file_get_new("${name}${cat}.sh")!
-	mut cmd_out:="set -e"
-	if cat==""{
+	mut pathcmd := zinitobj.pathcmds.file_get_new("${name}${cat}.sh")!
+	mut cmd_out:="#!/bin/bash\nset -e\n\n"
+	
+	if cat=="_start"{
 		cmd_out += 'echo === START ======== ${ourtime.now().str()} === \n'
 	}
-	if cat=="_stop" {
-		for key,val in env{
-			cmd_out+="${key}=${val}\n"
-		}
-
+	for key,val in env{
+		cmd_out+="${key}=${val}\n"
 	}
+
 	if workdir.trim_space()!=""{
 		cmd_out+="cd ${ workdir.trim_space()}\n"
 	}
+	
 	cmd_out+=texttools.dedent(cmd) + '\n'
 	pathcmd.write(cmd_out)!
 	pathcmd.chmod(0x770)!

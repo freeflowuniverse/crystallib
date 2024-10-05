@@ -104,7 +104,6 @@ pub fn (mut sm StartupManager) new(args zinit.ZProcessNewArgs) ! {
 			// 	env       map[string]string
 			// 	oneshot   bool
 			// }
-
 			zinitfactory.new(args)!
 		}
 		else {

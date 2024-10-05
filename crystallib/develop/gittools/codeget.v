@@ -6,14 +6,63 @@ import crypto.md5
 
 @[params]
 pub struct CodeGetFromUrlArgs {
+	GSCodeGetFromUrlArgs
 pub mut:
 	coderoot          string
 	gitstructure_name string = 'default'
-	url               string
-	pull              bool // will pull if this is set
-	reset             bool // this means will pull and reset all changes
-	reload            bool // reload the cache
 }
+
+pub fn (self CodeGetFromUrlArgs) gs_code_get_args() !GSCodeGetFromUrlArgs{
+    mut gs_args := GSCodeGetFromUrlArgs{
+		path: self.path
+        url: self.url
+        branch: self.branch
+        tag: self.tag
+        sshkey: self.sshkey
+        pull: self.pull
+        reset: self.reset
+        reload: self.reload
+    }
+    if gs_args.url == '' {
+        return error('URL is required for ${self}')
+    }
+    return gs_args
+}
+
+
+pub struct GSCodeGetFromUrlArgs {
+pub mut:
+	path    string
+	url    string
+	branch string
+	tag string
+	sshkey string
+	pull   bool // will pull if this is set
+	reset  bool // this means will pull and reset all changes
+	reload bool // reload the cache	
+}
+
+pub fn (self GSCodeGetFromUrlArgs) str() string{
+	mut msg:='code get args url:\'${self.url}\''
+	if args.path!=""{
+		msg='code get args: path:\'${self.path}\''
+	}
+	if args.branch!=""{
+		msg+=" branch:\'${self.branch}\'"
+	}
+	if args.tag!=""{
+		msg+=" tag:\'${self.tag}\'"
+	}
+	if args.pull{
+		msg+=" pull"
+	}	
+	if args.reset{
+		msg+=" reset"
+	}	
+	return msg
+}
+
+
 
 // will get repo starting from url, if the repo does not exist, only then will pull .
 // if pull is set on true, will then pull as well .
@@ -29,6 +78,8 @@ pub mut:
 // coderoot          string
 // gitstructure_name string = 'default' // optional, if not mentioned is default, tmp is another good one
 // url               string
+// tag               string
+// branch            string
 // pull   bool // will pull if this is set
 // reset  bool // this means will pull and reset all changes
 // reload bool // reload the cache
@@ -43,7 +94,7 @@ pub fn code_get(args CodeGetFromUrlArgs) !string {
 	} else {
 		gs = get(name: args.gitstructure_name)!
 	}
-	return gs.code_get(url: args.url, pull: args.pull, reset: args.reset, reload: args.reload)
+	return gs.code_get(url: args.url, pull: args.pull, reset: args.reset, reload: args.reload,tag:args.tag, branch:args.branch)
 }
 
 pub fn repo_get(args CodeGetFromUrlArgs) !GitRepo {

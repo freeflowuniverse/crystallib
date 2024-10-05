@@ -7,7 +7,6 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.develop.vscode
 import freeflowuniverse.crystallib.develop.sourcetree
-import json
 
 @[heap]
 pub struct GitRepo {
@@ -15,32 +14,26 @@ pub struct GitRepo {
 pub mut:
 	gs   &GitStructure @[skip; str: skip]
 	addr &GitAddr
+	status &GitRepoStatus
 	path pathlib.Path
 }
 
-pub struct GitRepoStatus {
-pub mut:
-	need_commit bool
-	need_push   bool
-	need_pull   bool
-	branch      string
-	remote_url  string
-}
 
 pub fn (repo GitRepo) key() string {
 	return repo.addr.key()
 }
 
-fn (repo GitRepo) cache_delete() ! {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	redis.del(repo.addr.cache_key_status())!
-	redis.del(repo.cache_key_path())!
+fn ( repo GitRepo) cache_key() string {
+	return '${gitstructure_key(repo.gs.coderoot.path)}:${repo.addr.provider}:${repo.addr.account}:${repo.addr.name}'
 }
 
-fn (repo GitRepo) cache_key_path() string {
-	return repo.addr.cache_key_path(repo.path.path)
+// remove cache
+pub fn (repo GitRepo) cache_delete() ! {
+	mut c := base.context()!
+	mut redis := c.redis()!	
+	redis.del(repo.cache_key())!
 }
+
 
 pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	repo.path.check() // could be that path changed
@@ -68,56 +61,6 @@ pub fn (mut repo GitRepo) load() !GitRepoStatus {
 	return st
 }
 
-fn (repo GitRepo) status_exists() !bool {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	mut data := redis.get(repo.addr.cache_key_status()) or { return false }
-	if data.len == 0 {
-		return false
-	}
-	return true
-}
-
-fn (mut repo GitRepo) status_set(st GitRepoStatus) ! {
-	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
-		|| repo.addr.branch == '' {
-		locator := repo.gs.locator_new(st.remote_url)!
-		repo.addr = locator.addr
-		repo.addr.branch = st.branch
-		// console.print_debug(repo)
-	}
-}
-
-pub fn (mut repo GitRepo) status() !GitRepoStatus {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	mut cache_key := ''
-	if repo.addr.provider == '' || repo.addr.account == '' || repo.addr.name == ''
-		|| repo.addr.branch == '' {
-		// means we don't know the addr data yet, need to see in redis if we can find the key
-		cache_key = redis.get(repo.cache_key_path())!
-	} else {
-		// we can calculate the key
-		cache_key = repo.addr.cache_key_status()
-	}
-	// console.print_debug("cache_key: $cache_key")
-	mut data := ''
-	if cache_key.len > 0 {
-		data = redis.get(cache_key)!
-	}
-	// console.print_debug("data: $data")
-	if data.len == 0 {
-		repo.load()!
-		data = redis.get(repo.addr.cache_key_status())!
-		if data == '' {
-			panic('bug, redis should not be empty now.\n${repo.addr.cache_key_status()}')
-		}
-	}
-	st := json.decode(GitRepoStatus, data)!
-	repo.status_set(st)!
-	return st
-}
-
 pub fn (mut repo GitRepo) need_pull() !bool {
 	s := repo.status()!
 	return s.need_pull
@@ -125,7 +68,7 @@ pub fn (mut repo GitRepo) need_pull() !bool {
 
 // relative path inside the gitstructure, pointing to the repo
 pub fn (repo GitRepo) path_relative() string {
-	return repo.path.path_relative(repo.gs.rootpath.path) or { panic('couldnt get relative path') } // TODO: check if works well
+	return repo.path.path_relative(repo.gs.coderoot.path) or { panic('couldnt get relative path') } // TODO: check if works well
 }
 
 // pulls remote content in, will reset changes
@@ -145,6 +88,7 @@ pub mut:
 	reload bool = true
 	msg    string // only relevant for commit
 	branch string
+	tag string
 	recursive bool
 }
 
@@ -191,10 +135,11 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	if args.branch != '' {
 		//console.print_debug(" - branch detected: '${repo.addr.branch}'")
 		if args.branch != repo.addr.branch  {
-			console.print_header(' branch switch ${repo.addr.branch} -> ${args.branch} for ${repo.addr.remote_url}')
+			console.print_header(' branch pull ${repo.addr.branch} -> ${args.branch} for ${repo.addr.remote_url}')
 			repo.branch_switch(args.branch)!
 		}
 	}
+
 	// } else {
 	// 	print_backtrace()
 	// 	return error('branch should have been known for ${repo.addr.remote_url}')
@@ -209,6 +154,15 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 		console.print_debug(' GIT PULL FAILED: ${cmd2}')
 		return error('Cannot pull repo: ${repo.path}. Error was ${err}')
 	}
+
+	if args.tag != '' {
+		console.print_header("tag pull: '${args.tag}' for ${repo.addr.remote_url} ")
+		cmd := 'cd ${repo.path.path} && git checkout ${args.tag}'
+		osal.execute_silent(cmd) or {
+			return error('Cannot pull tag ${args.tag} for  repo: ${repo.path.path}. \nError was ${err}')
+		}
+	}
+
 	if args.recursive{
 		cmd3:="cd ${repo.path.path} && git submodule update --init --recursive"
 		osal.execute_silent(cmd3) or {
@@ -221,17 +175,17 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	// repo.ssh_key_forget()!
 }
 
-pub fn (mut repo GitRepo) rev() !string {
-	// $if debug {
-	// 	console.print_debug('   - REV: ${repo.url_get(true)}')
-	// }
-	cmd2 := 'cd ${repo.path.path} && git rev-parse HEAD'
-	res := osal.execute_silent(cmd2) or {
-		console.print_debug(' GIT REV FAILED: ${cmd2}')
-		return error('Cannot rev repo: ${repo.path}. Error was ${err}')
-	}
-	return res.trim_space()
-}
+// pub fn (mut repo GitRepo) rev() !string {
+// 	// $if debug {
+// 	// 	console.print_debug('   - REV: ${repo.url_get(true)}')
+// 	// }
+// 	cmd2 := 'cd ${repo.path.path} && git rev-parse HEAD'
+// 	res := osal.execute_silent(cmd2) or {
+// 		console.print_debug(' GIT REV FAILED: ${cmd2}')
+// 		return error('Cannot rev repo: ${repo.path}. Error was ${err}')
+// 	}
+// 	return res.trim_space()
+// }
 
 pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
 	mut args := args_
@@ -387,38 +341,3 @@ pub fn (repo GitRepo) sourcetree() ! {
 pub fn (repo GitRepo) vscode() ! {
 	vscode.open(path: repo.path.path)!
 }
-
-// // check if sshkey for a repo exists in the homedir/.ssh
-// // we check on name, if nameof repo is same as name of key we will load
-// // will return true if the key did exist, which means we need to connect over ssh !!!
-// fn (repo GitRepo) ssh_key_load() !bool {
-// 	key_path := repo.ssh_key_path()
-// 	if !os.exists(key_path) {
-// 		// tried local path to where we are, no key as well
-// 		return false
-// 	}
-// 	// panic('implement')
-// 	// exists means the key has been loaded
-// 	// nrkeys is how many keys were loaded in sshagent in first place
-// 	// exists, nrkeys := sshagent.key_loaded(repo.addr.name)
-// 	// // console.print_debug(' >>> $repo.addr.name $nrkeys, $exists')
-
-// 	// if (!exists) || nrkeys > 0 {
-// 	// 	// means we did not find the key but there were other keys loaded
-// 	// 	// only choice we have now is to reset and use this key
-// 	// 	sshagent.reset()!
-// 	// 	sshagent.key_load(key_path)!
-// 	// 	return true
-// 	// } else if exists && nrkeys == 1 {
-// 	// 	// means the right key was loaded
-// 	// 	return true
-// 	// } else {
-// 	// 	// did not find the key nothing to do
-// 	// 	return false
-// 	// }
-// 	return true
-// }
-
-// pub fn (repo GitRepo) ssh_key_forget() ! {
-// 	// sshagent.key_unload(repo.ssh_key_path())!
-// }

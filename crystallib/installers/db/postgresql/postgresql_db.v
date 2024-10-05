@@ -3,18 +3,19 @@ module postgresql
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.core.texttools
 import db.pg
 
 pub fn (mut server Postgresql) path_config() !pathlib.Path {
-	return pathlib.get_dir(path: '${args.path}/config', create: true)!
+	return pathlib.get_dir(path: '${server.path}/config', create: true)!
 }	
 
 pub fn (mut server Postgresql) path_data() !pathlib.Path {
-	return pathlib.get_dir(path: '${args.path}/data', create: true)!
+	return pathlib.get_dir(path: '${server.path}/data', create: true)!
 }	
 
 pub fn (mut server Postgresql) path_export() !pathlib.Path {
-	return pathlib.get_dir(path: '${args.path}/exports', create: true)!
+	return pathlib.get_dir(path: '${server.path}/exports', create: true)!
 }	
 
 pub fn (mut server Postgresql) db() !pg.DB {
