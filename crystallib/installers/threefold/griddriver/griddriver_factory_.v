@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.playbook
 
 
 import freeflowuniverse.crystallib.sysadmin.startupmanager
+import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.ui.console
 import time
 
@@ -34,6 +35,27 @@ pub fn get(args_ ArgsGet) !&GridDriverInstaller  {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////# LIVE CYCLE MANAGEMENT FOR INSTALLERS ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+fn startupmanager_get(cat zinit.StartupManagerType) !startupmanager.StartupManager {
+    // unknown
+    // screen
+    // zinit
+    // tmux
+    // systemd
+    match cat{
+        .zinit{
+            console.print_debug("startupmanager: zinit")
+            return startupmanager.get(cat:.zinit)!
+        }
+        .systemd{
+            console.print_debug("startupmanager: systemd")
+            return startupmanager.get(cat:.systemd)!
+        }else{
+            console.print_debug("startupmanager: auto")
+            return startupmanager.get()!
+        }
+    }
+}
 
 
 

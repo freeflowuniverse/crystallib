@@ -49,6 +49,7 @@ pub mut:
 	msg      string
 	url      string
 	branch      string
+	tag string
 	recursive bool
 	pull     bool
 	script   bool = true // run non interactive
@@ -65,6 +66,7 @@ pub mut:
 // provider string
 // msg      string
 // url      string
+// tag      string
 // pull     bool
 // script   bool = true // run non interactive
 // reset    bool = true // means we will lose changes (only relevant for clone, pull)
@@ -127,7 +129,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 			g.remove_changes()!
 		}		
 		if args.cmd == 'pull' || args.pull {
-			g.pull(branch:args.branch,recursive:args.recursive)!
+			g.pull(branch:args.branch,recursive:args.recursive,tag:args.tag)!
 		}
 		if args.cmd == 'push' {
 			st := g.status()!

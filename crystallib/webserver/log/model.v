@@ -3,6 +3,8 @@ module log
 import time
 
 pub struct Log {
+	id          int         @[primary; sql: serial]
+pub:
 	timestamp time.Time
 pub mut:
 	event   string

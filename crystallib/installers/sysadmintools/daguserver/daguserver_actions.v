@@ -57,12 +57,14 @@ fn install() ! {
 
 fn startupcmd() ![]zinit.ZProcessNewArgs {
 	mut res := []zinit.ZProcessNewArgs{}
+	mut cfg := get()!
 
 	res << zinit.ZProcessNewArgs{
 		name: 'dagu'
 		cmd: 'dagu server'
 		env: {
-			'HOME': '/root'
+			'HOME ': os.home_dir()
+			'DAGU_HOME ': cfg.configpath //config for dagu is called admin.yml and is in this dir
 		}
 	}
 
@@ -70,7 +72,8 @@ fn startupcmd() ![]zinit.ZProcessNewArgs {
 		name: 'dagu_scheduler'
 		cmd: 'dagu scheduler'
 		env: {
-			'HOME': '/root'
+			'HOME ': os.home_dir()
+			'DAGU_HOME ': cfg.configpath
 		}
 	}
 
@@ -91,7 +94,7 @@ fn configure() ! {
 	}
 
 	mut mycode := $tmpl('templates/dagu.yaml')
-	mut path := pathlib.get_file(path: cfg.configpath, create: true)!
+	mut path := pathlib.get_file(path: '${cfg.configpath}/admin.yaml', create: true)!
 	path.write(mycode)!
 	console.print_debug(mycode)
 }
@@ -109,10 +112,10 @@ fn running() !bool {
 	conn.default_header.add(.content_type, 'application/json')
 	console.print_debug("curl -X 'GET' '${url}'/tags --oauth2-bearer ${cfg.secret}")
 	r := conn.get_json_dict(prefix: 'tags', debug: false) or { return false }
-	// println(r)
+	println(r)
 	// if true{panic("ssss")}
 	tags := r['Tags'] or { return false }
-	// console.print_debug(tags)
+	console.print_debug(tags)
 	console.print_debug('Dagu is answering.')
 	return true
 }
@@ -132,10 +135,7 @@ fn destroy() ! {
 
         '
 
-	osal.exec(cmd: cmd, stdout: true, debug: false)!
-}
-
-fn obj_init() ! {
+	osal.execute_silent(cmd) or {}
 }
 
 fn start_pre() ! {

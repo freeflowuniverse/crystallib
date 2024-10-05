@@ -22,7 +22,6 @@ pub struct IndexerConfig {
 
 pub fn new_indexer(db_path string, config IndexerConfig) !Indexer {
 	if config.reset {
-		println('debugzorko ${db_path}')
 		reset(db_path)!
 	}
 

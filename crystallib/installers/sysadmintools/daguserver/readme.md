@@ -2,16 +2,32 @@
 
 
 
-## heroscript
+To get started
 
-```yaml
+```vlang
+
+
+
+import freeflowuniverse.crystallib.installers.something. daguserver
+
+mut installer:= daguserver.get()!
+
+installer.start()!
+
+
+
+
+```
+
+## example heroscript
+
+
+```hero
 !!daguserver.install
-    homedir: '{HOME}/hero/var/dagu'
-    configpath: '{HOME}/.config/dagu/admin.yaml'
+    homedir: '/home/user/daguserver'
     username: 'admin'
     password: 'secretpassword'
-    secret: ''
-    title: 'My Hero DAG'
+    title: 'Some Title'
     host: 'localhost'
     port: 8888
 

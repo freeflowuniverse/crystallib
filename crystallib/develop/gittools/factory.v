@@ -14,9 +14,9 @@ __global (
 @[heap; params]
 pub struct GitStructureConfig {
 pub mut:
-	name        string = 'default'
+	key string
 	multibranch bool
-	root        string // where will the code be checked out, root of code, if not specified comes from context
+	coderoot        string // where will the code be checked out, root of code, if not specified comes from context
 	light       bool = true // if set then will clone only last history for all branches		
 	log         bool   // means we log the git statements
 	singlelayer bool   // all repo's will be on 1 level
@@ -25,7 +25,7 @@ pub mut:
 // configure the gitstructure .
 // .
 // multibranch bool .
-// root        string // where will the code be checked out .
+// coderoot        string // where will the code be checked out .
 // light       bool = true // if set then will clone only last history for all branches		 .
 // log         bool   // means we log the git statements .
 // .
@@ -35,24 +35,26 @@ pub mut:
 pub fn new(config_ GitStructureConfig) !GitStructure {
 	mut config := config_
 
-	datajson := json.encode(config)
-	mut c := base.context()!
-
-	if config.root == '' {
-		config.root = c.config.coderoot
+	if config.coderoot == '' {
+		config.coderoot = '${os.home_dir()}/code'
+		config.key = "default"
+	}else{
+		config.key = md5.hexhash(config.coderoot)
 	}
 
+	datajson := json.encode(config)
+	mut c := base.context()!
+	
 	mut redis := c.redis()!
-	redis.set(gitstructure_config_key(config.name), datajson)!
+	redis.set(gitstructure_config_key(config.coderoot), datajson)!
 
-	return get(name: config.name)
+	return get(coderoot:config.coderoot)
 }
 
 @[params]
 pub struct GitStructureGetArgs {
 pub mut:
 	coderoot string
-	name     string = 'default'
 	reload   bool
 }
 
@@ -60,59 +62,39 @@ pub mut:
 //  - reload  	bool .
 pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	mut args := args_
-	mut c := base.context()!
+
 	// console.print_debug("GET GS:\n$args")
 
-	if args.coderoot.len > 0 {
-		args.name = md5.hexhash(args.coderoot)
-		new(name: args.name, root: args.coderoot)!
-	}
-
-	gitname := '${c.id()}_${args.name}'
+	gkey:=gitstructure_key(args.coderoot)
 	rlock gsinstances {
-		if c.id() in gsinstances {
-			mut gs := gsinstances[gitname] or { panic('bug') }
+		if gkey in gsinstances {
+			mut gs := gsinstances[gkey] or { panic('bug') }
 			if args.reload {
 				gs.load()!
 			}
 			return gs
 		}
 	}
+
+	mut c := base.context()!
 	mut redis := c.redis()!
-	mut datajson := redis.get(gitstructure_config_key(args.name))!
+	mut datajson := redis.get(gitstructure_config_key(args.coderoot))!
 	if datajson == '' {
-		if args.name == 'default' {
-			new()!
-			datajson = redis.get(gitstructure_config_key(args.name))!
-		} else {
-			return error("can't find gitstructure with name ${args.name}")
-		}
+		return error("can't find gitstructure for coderoot: '${args.coderoot}'")
 	}
 	mut config := json.decode(GitStructureConfig, datajson)!
 
-	mut mycontext := base.context()!
-
-	if config.root == '' {
-		config.root = mycontext.config.coderoot
-	}
-
-	if config.root == '' {
-		config.root = '${os.home_dir()}/code'
-	}
-
 	mut gs := GitStructure{
 		config: config
-		rootpath: pathlib.get_dir(path: config.root, create: true) or {
+		coderoot: pathlib.get_dir(path: config.coderoot, create: true) or {
 			panic('this should never happen: ${err}')
 		}
 	}
 
-	if os.exists(config.root) {
-		gs.load()!
-	}
+	gs.load()!
 
 	lock gsinstances {
-		gsinstances[gitname] = gs
+		gsinstances[gitstructure_config_key(args.coderoot)] = gs
 	}
 
 	// println(gs.config)
@@ -120,17 +102,20 @@ pub fn get(args_ GitStructureGetArgs) !GitStructure {
 	return gs
 }
 
+
+
 ////////CACHE
 
-pub fn cachereset() ! {
+pub fn cachereset(coderoot string) ! {
 	mut c := base.context()!
 	mut redis := c.redis()!
-	key_check := 'git:cache:*'
-	keys := redis.keys(key_check)!
+	keys := redis.keys(gitstructure_cache_key(coderoot))!
 	for key in keys {
+		// console.print_debug(key)
 		redis.del(key)!
 	}
-}
+}	
+
 
 pub fn configreset() ! {
 	mut c := base.context()!
@@ -144,25 +129,14 @@ pub fn configreset() ! {
 
 // reset all caches and configs, for all git repo's .
 // can't harm, will just reload everything
-pub fn reset() ! {
-	cachereset()!
+pub fn cachereset() ! {
+	key_check := 'git:cache:**'
+	mut c := base.context()!
+	mut redis := c.redis()!	
+	keys := redis.keys(key_check)!
+	for key in keys {
+		redis.del(key)!
+	}
 	configreset()!
 }
 
-fn cache_delete(name string) ! {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	keys := redis.keys(gitstructure_cache_key(name))!
-	for key in keys {
-		// console.print_debug(key)
-		redis.del(key)!
-	}
-}
-
-fn gitstructure_cache_key(name string) string {
-	return 'git:cache:${name}'
-}
-
-fn gitstructure_config_key(name string) string {
-	return 'git:config:${name}'
-}

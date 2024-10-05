@@ -55,7 +55,7 @@ pub fn install_prometheus(args_ InstallArgs) ! {
 			binpath.copy(dest: '/root/hero/prometheus/${adir}', delete: true, rsync: false)!
 		}
 
-		osal.profile_path_add(path: '/root/hero/prometheus')!
+		osal.profile_path_add_remove(paths2add: '/root/hero/prometheus')!
 	}
 
 	// if args.restart {

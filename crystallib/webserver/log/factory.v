@@ -1,18 +1,18 @@
 module log
 
+import db.sqlite
+
 pub struct Logger {
-pub mut:
-	backend DBBackend
+	db_path string
+	// DBBackend
 }
 
-@[params]
-pub struct LoggerConfig {
-pub:
-	backend ?DBBackend
-}
-
-pub fn new(config LoggerConfig) !Logger {
+pub fn new(db_path string) !Logger {
+	db := sqlite.connect(db_path)!
+	sql db {
+		create table Log
+	} or { panic(err) }
 	return Logger{
-		backend: config.backend or { new_backend()! }
+		db_path: db_path
 	}
 }

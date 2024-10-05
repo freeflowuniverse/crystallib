@@ -1,0 +1,1 @@
+../../../../../../etc/zinit/cmds/postgresql_start.sh
