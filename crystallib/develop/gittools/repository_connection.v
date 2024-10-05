@@ -2,12 +2,21 @@ module gittools
 
 import os
 
+// get the url for the git repo, in http or ssh format
+fn (repo GitRepo) url_get(http bool) string {
+	if http {
+		return repo.addr.url_http_get()
+	} else {
+		return repo.addr.url_ssh_get()
+	}
+}
+
 // make sure we use ssh instead of https in the config file
 // will return true if it changed
 // http true means we will change to http method
 // http false means we will change to ssh method
 fn (repo GitRepo) connection_change(http bool) !bool {
-	path2 := repo.path()!
+	path2 := repo.path.path
 	if !os.exists(path2) {
 		// nothing to do
 		return false
@@ -37,11 +46,7 @@ fn (repo GitRepo) connection_change(http bool) !bool {
 				// means nothing to do
 				return false
 			}
-			mut urlnew:=repo.url_get()!
-			if http{
-				urlnew=repo.url_http_get()!
-			}
-			line2 = line[0..pos] + 'url = ' + urlnew
+			line2 = line[0..pos] + 'url = ' + repo.url_get(http)
 			found = true
 		} else {
 			line2 = line
