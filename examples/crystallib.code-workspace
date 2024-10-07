@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../cli/hero"
+		},
+		{
+			"path": "../vscodeplugin"
 		}
 	],
 	"settings": {}

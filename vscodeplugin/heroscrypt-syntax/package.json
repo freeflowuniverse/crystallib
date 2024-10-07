@@ -10,7 +10,7 @@
       "languages": [{
         "id": "heroscript",
         "aliases": ["HeroScript", "heroscript"],
-        "extensions": [".hero"],
+        "extensions": [".hero",".heroscript"],
         "configuration": "./language-configuration.json"
       }],
       "grammars": [{
