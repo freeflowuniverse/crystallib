@@ -11,7 +11,8 @@ pub mut:
 }
 
 pub fn new() !CloudHypervisorFactory {
-	cloudhypervisorinstaller.install()!
+	mut inst := cloudhypervisorinstaller.get()!
+	inst.install()!
 	return CloudHypervisorFactory{}
 }
 

@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.develop.gittools
 
 mut gs_default := gittools.get()!
 
-gs_default.repos_print()!
+gs_default.list()!
 // println(gs_default)
 
 // coderoot := '/tmp/code_test'
