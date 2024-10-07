@@ -11,7 +11,6 @@ pub fn (mut zp ZProcess) load() ! {
 		return error('there should be a file ${zp.name}.yaml in /etc/zinit')
 	}
 
-<<<<<<< HEAD
 	// if zinitobj.pathcmds.file_exists(zp.name) {
 	// 	// means we can load the special cmd
 	// 	mut pathcmd := zinitobj.pathcmds.file_get(zp.name)!
@@ -22,13 +21,11 @@ pub fn (mut zp ZProcess) load() ! {
 	// 	mut pathtest := zinitobj.path.file_get(zp.name)!
 	// 	zp.test = pathtest.read()!
 	// }
-=======
 	if zinitobj.pathcmds.file_exists(zp.name) {
 		// means we can load the special cmd
 		mut pathcmd := zinitobj.pathcmds.file_get(zp.name)!
 		zp.cmd = pathcmd.read()!
 	}
->>>>>>> 39dfdd87745fe4a4c69e740c28566db188388051
 
 	mut pathyaml := zinitobj.path.file_get_new(zp.name + '.yaml')!
 	contentyaml := pathyaml.read()!
