@@ -19,7 +19,7 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
     db_user := "root"
     cmd:="
     mkdir -p ${cfg.path}
-    podman run -d \
+    podman run \
         --name ${cfg.name} \
         -e POSTGRES_USER=${db_user} \
         -e POSTGRES_PASSWORD=\"${cfg.passwd}\" \
@@ -41,7 +41,9 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
 
 fn running() !bool {
     mut mydb := get()!
-    mydb.check() or {return false}
+    mydb.check() or {
+        return false
+    }
     return true
 }
 
@@ -64,40 +66,43 @@ fn stop_post()!{
 
 
 fn destroy() ! {
-    mut cfg := get()!
-    osal.rm("
-        ${cfg.path}
-        /etc/postgresql/
-        /etc/postgresql-common/
-        /var/lib/postgresql/
-        /etc/systemd/system/multi-user.target.wants/postgresql
-        /lib/systemd/system/postgresql.service
-        /lib/systemd/system/postgresql@.service
-    ")!
+    mut mydb := get()!
+    mydb.destroy()!
 
-    c := '
+    // mut cfg := get()!
+    // osal.rm("
+    //     ${cfg.path}
+    //     /etc/postgresql/
+    //     /etc/postgresql-common/
+    //     /var/lib/postgresql/
+    //     /etc/systemd/system/multi-user.target.wants/postgresql
+    //     /lib/systemd/system/postgresql.service
+    //     /lib/systemd/system/postgresql@.service
+    // ")!
 
-    #dont die
-    set +e
+    // c := '
 
-    # Stop the PostgreSQL service
-    sudo systemctl stop postgresql
+    // #dont die
+    // set +e
 
-    # Purge PostgreSQL packages
-    sudo apt-get purge -y postgresql* pgdg-keyring
+    // # Stop the PostgreSQL service
+    // sudo systemctl stop postgresql
 
-    # Remove all data and configurations
-    sudo userdel -r postgres
-    sudo groupdel postgres
+    // # Purge PostgreSQL packages
+    // sudo apt-get purge -y postgresql* pgdg-keyring
 
-    # Reload systemd configurations and reset failed systemd entries
-    sudo systemctl daemon-reload
-    sudo systemctl reset-failed
+    // # Remove all data and configurations
+    // sudo userdel -r postgres
+    // sudo groupdel postgres
 
-    echo "PostgreSQL has been removed completely"
+    // # Reload systemd configurations and reset failed systemd entries
+    // sudo systemctl daemon-reload
+    // sudo systemctl reset-failed
 
-    '
-    osal.exec(cmd: c)!
+    // echo "PostgreSQL has been removed completely"
+
+    // '
+    // osal.exec(cmd: c)!
 }
 
 

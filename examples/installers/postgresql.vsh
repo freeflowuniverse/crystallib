@@ -10,6 +10,6 @@ mut db:= postgresql.get()!
 // db.destroy()!
 db.start()!
 
-db.db_create('works2')!
-db.stop()!
-db.start()!
+// db.db_create('my_new_db')!
+// db.stop()!
+// db.start()!
