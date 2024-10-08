@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import db.pg
+import os
 
 pub fn (mut server Postgresql) path_config() !pathlib.Path {
 	return pathlib.get_dir(path: '${server.path}/config', create: true)!
@@ -29,10 +30,21 @@ pub fn (mut server Postgresql) db() !pg.DB {
 }	
 
 pub fn (mut server Postgresql) check() ! {
-	mut db := server.db()!
-	db.exec('SELECT version();') or {
-        return error("postgresql could not do select version")
-	}    
+	cmd := "podman healthcheck run ${server.name}"
+	result := os.execute(cmd)
+
+	if result.exit_code != 0 {
+        return error("Postgresql container isn't healthy: ${result.output}")
+	}
+
+	container_id := "podman container inspect default --format {{.Id}}"
+	container_id_result := os.execute(container_id)
+	if container_id_result.exit_code != 0 {
+        return error("Cannot get the container ID: ${result.output}")
+	}
+
+	server.container_id = container_id
+	console.print_header("Container ID: ${container_id_result.output}")
 }
 
 pub fn (mut server Postgresql) db_exists(name_ string) !bool {

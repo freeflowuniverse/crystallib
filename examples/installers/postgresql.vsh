@@ -7,9 +7,9 @@ import freeflowuniverse.crystallib.installers.db.postgresql
 
 mut db:= postgresql.get()!
 
-//db.destroy()!
+// db.destroy()!
 db.start()!
 
-// db.db_create('works')!
-// db.stop()!
-// db.start()!
+db.db_create('works2')!
+db.stop()!
+db.start()!

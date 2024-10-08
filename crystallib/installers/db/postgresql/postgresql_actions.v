@@ -16,22 +16,24 @@ fn install() ! {
 fn startupcmd () ![]zinit.ZProcessNewArgs{
     mut cfg := get()!
     mut res := []zinit.ZProcessNewArgs{}
-
+    db_user := "root"
     cmd:="
     mkdir -p ${cfg.path}
     podman run -d \
         --name ${cfg.name} \
-        -e POSTGRES_USER=root \
+        -e POSTGRES_USER=${db_user} \
         -e POSTGRES_PASSWORD=\"${cfg.passwd}\" \
         -v ${cfg.path}:/var/lib/postgresql/data \
         -p 5432:5432 \
-        postgres:latest    
+        --health-cmd=\"pg_isready -U ${db_user}\" \
+        postgres:latest
     "
 
     res << zinit.ZProcessNewArgs{
         name: 'postgresql'
         cmd: cmd
         workdir: cfg.path
+        startuptype: .zinit
     }
     return res
     
