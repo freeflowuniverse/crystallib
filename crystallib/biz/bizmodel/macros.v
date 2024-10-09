@@ -14,12 +14,12 @@ pub fn playmacro(action playbook.Action) !string {
 	mut sim:=get(bizname)!
 
 	if action.name == 'employee_wiki' {
-		console.print_green('playmacro node_wiki')
+		console.print_green('playmacro employee_wiki')
 		mut id := p.get_default('id', '')!
 		if id !in sim.employees {
 			id = p.get_default('name', '')!
-			if id !in sim.employees {
-				return error('employee with name <${id}> not found')
+			if ! (id in sim.employees) {
+				return error('employee with name \'${id}\' not found')
 			}
 		}
 		employee := sim.employees[id] or { panic("bug") }
