@@ -8,6 +8,7 @@ __global (
 	bizmodels shared map[string]BizModel
 )
 
+@[heap]
 pub struct SubItem {
 pub mut:
 	name    string
@@ -58,7 +59,7 @@ pub fn get(name string) !BizModel {
 pub fn getset(name string) BizModel {
 	lock bizmodels {
 		if ! (name in bizmodels) {
-			set(biz_model_example(name))			
+			set(biz_model_example(name))		
 		}
 		return bizmodels[name] or { panic("bug") }
 	}
@@ -66,7 +67,6 @@ pub fn getset(name string) BizModel {
 }
 
 pub fn set(bizmodel BizModel) {
-
 	lock bizmodels {
 		bizmodels[bizmodel.name] = bizmodel
 	}
@@ -97,6 +97,10 @@ fn main() {
 	nr_new :=100000 //make small changes, the garbage collector should keep it clean
 
 	fill_biz_models(nr)
+
+	println("wait 0.5 sec")
+	//lets make sure garbage collector works
+	time.sleep(0.5 * time.second)	
 	
 	memory_usage_1 := get_memory_usage()
 	println('Memory usage after creating ${nr} BizModels: ${memory_usage_1} KB')
@@ -104,21 +108,9 @@ fn main() {
 
 	for _ in 0 .. nr_new {
 		currentnr:=rand.intn(nr-1) or {panic(err)}
-		mut new_model:= get("bm${currentnr}")!
-		//new_model.intlist = new_model.intlist.map(it + rand.intn(10) or { 0 })		
-		new_model.intstr = new_model.intstr.map(it + rand.string(2))
-		mut new_model2:= get("bm${currentnr}")!
-		assert new_model2.intstr != new_model.intstr //should be different because was not a reference
-		set(new_model)
-		mut new_model3:= get("bm${currentnr}")!
-		assert new_model3.intstr == new_model.intstr //should be different because was not a reference
-
+		//println(currentnr)
+		set(biz_model_example("bm${currentnr}")) //will keep on overwriting
 	}
-
-	rlock bizmodels{
-		//check we have enough bizmodels in mem
-		assert bizmodels.len == nr
-	}	
 
 	println("wait 1 sec")
 	//lets make sure garbage collector works
@@ -129,5 +121,5 @@ fn main() {
 	println('Memory usage after creating ${nr_new} random BizModels: ${memory_usage_2} KB')
 	println('Time taken: ${sw.elapsed().milliseconds()} ms')
 
-	println("QUESTION: why does memory go up?, we didn't add to the memory should have been equal...")
+	println("QUESTION: this seems ok, memory doesn't go up much\nDon't understand why the globals_example does increase.")
 }
