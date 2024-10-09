@@ -17,7 +17,10 @@ pub fn playmacro(action playbook.Action) !string {
 		console.print_green('playmacro node_wiki')
 		id := p.get_default('id', '')!
 		if id !in sim.employees {
-			return error('employee with id <${id}> not found')
+			id := p.get_default('name', '')!
+			if id !in sim.employees {
+				return error('employee with name <${id}> not found')
+			}
 		}
 		employee := sim.employees[id] or { panic("bug") }
 
