@@ -7,7 +7,9 @@ import freeflowuniverse.crystallib.ui.console
 pub fn playmacro(action playbook.Action) !string {
 	p := action.params
 
-	bizname:=action.params.get("bizname")!
+	bizname:=action.params.get("bizname") or {
+		return error("Can't find param:'bizname' for action: ${action.name}, please specify as bizname: ...")
+	}
 
 	mut sim:=get(bizname)!
 
@@ -40,7 +42,8 @@ pub fn playmacro(action playbook.Action) !string {
 			]
 			alignments: [.left, .left]
 		}.markdown()!
-		return $tmpl('./templates/employee.md')
+		mut t:=$tmpl('./templates/employee.md')
+		return t
 	}
 
 	return error("couldn't find macro '${action.name}' for bizmodel.")

@@ -7,7 +7,8 @@ import freeflowuniverse.crystallib.biz.spreadsheet
 pub struct BizModel {
 pub mut:
 	name string
-	sheet     spreadsheet.Sheet
+	sheet     &spreadsheet.Sheet
 	employees map[string]&Employee
+	costcenters map[string]&Costcenter
 }
 

@@ -19,7 +19,7 @@ pub fn play_macro(action playbook.Action) !string {
 	}
 	console.print_green('macro: ${action.actor}:${action.name}')
 	console.print_debug('${action}')
-	if action.actor == 'sheet' {
+	if action.actor == 'sheet' || action.actor == 'spreadsheet'{
 		return spreadsheet.playmacro(action) or {return "Macro error: ${action.actor}:${action.name}\n${err}"}
 	} else if action.actor == 'tfgridsimulation_farming' {
 		return farmingsimulator.playmacro(action) or {return "Macro error: ${action.actor}:${action.name}\n${err}"}

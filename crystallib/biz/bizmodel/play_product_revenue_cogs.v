@@ -349,7 +349,7 @@ fn (mut m BizModel) revenue_recurring_action(action Action) ! {
 
 
 fn (mut sim BizModel) revenue_total() ! {
-
+	//println("revtotal")
 	sim.sheet.group2row(
 		name: 'revenue_total'
 		include: ['revtotal']

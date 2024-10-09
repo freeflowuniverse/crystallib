@@ -11,3 +11,11 @@ pub:
 	indexation           f64
 	cost_center          string
 }
+
+
+pub struct Costcenter {
+pub:
+	name                 string
+	description          string
+	department           string
+}

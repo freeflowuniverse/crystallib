@@ -37,7 +37,7 @@ pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
 
 	play_mdbook(mut plbook)!
 
-	plbook.empty_check()!
+	//plbook.empty_check()!
 
 	console.print_header('Actions concluded succesfully.')
 }
