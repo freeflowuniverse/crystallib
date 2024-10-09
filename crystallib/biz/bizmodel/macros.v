@@ -15,9 +15,9 @@ pub fn playmacro(action playbook.Action) !string {
 
 	if action.name == 'employee_wiki' {
 		console.print_green('playmacro node_wiki')
-		id := p.get_default('id', '')!
+		mut id := p.get_default('id', '')!
 		if id !in sim.employees {
-			id := p.get_default('name', '')!
+			id = p.get_default('name', '')!
 			if id !in sim.employees {
 				return error('employee with name <${id}> not found')
 			}
