@@ -14,20 +14,20 @@ Other financial flows can be mentioned here as well.
 
 
 ```js
-!!costs.define
+!!bizmodel.cost_define bizname:'test'
     name:'rental'
     descr:'Office Rental in BE.'  
     cost:'5000'
     indexation:'2%'
     type:'office'
 
-!!costs.define
+!!bizmodel.cost_define bizname:'test'
     name:'oneoff'
     descr:'Event in Z.'  
     cost_one:'3:50000'
     type:'event'
 
-!!costs.define
+!!bizmodel.cost_define bizname:'test'
     name:'cloud'
     descr:'Datacenter and Cloud Costs'  
     cost:'2000eur'

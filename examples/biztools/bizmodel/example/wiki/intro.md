@@ -6,47 +6,47 @@
 <!-- period is in months, 3 means every quarter -->
 
 
-!!bizmodel.graph_bar_row rowname:revenue_total unit:million title:'A Title' title_sub:'Sub'
+!!!spreadsheet.graph_bar_row rowname:revenue_total unit:million title:'A Title' title_sub:'Sub' sheetname:'test'
 
 Unit is in Million USD.
 
-!!bizmodel.graph_bar_row rowname:revenue_total unit:million
+!!!spreadsheet.graph_bar_row rowname:revenue_total unit:million sheetname:'test'
 
-!!bizmodel.graph_line_row rowname:revenue_total unit:million
+!!!spreadsheet.graph_line_row rowname:revenue_total unit:million sheetname:'test'
 
-!!bizmodel.graph_pie_row rowname:revenue_total unit:million size:'80%'
+!!!spreadsheet.graph_pie_row rowname:revenue_total unit:million size:'80%' sheetname:'test'
 
 ## FUNDING
 
-!!bizmodel.sheet_wiki includefilter:'funding'
+!!!spreadsheet.sheet_wiki includefilter:'funding' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'REVENUE' includefilter:rev
+!!!spreadsheet.sheet_wiki title:'REVENUE' includefilter:rev sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'Revenue Total' includefilter:'revtotal'
+!!!spreadsheet.sheet_wiki title:'Revenue Total' includefilter:'revtotal' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'REVENUE' includefilter:'revtotal2'
+!!!spreadsheet.sheet_wiki title:'REVENUE' includefilter:'revtotal2' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'COGS' includefilter:'cogs'
+!!!spreadsheet.sheet_wiki title:'COGS' includefilter:'cogs' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'Margin' includefilter:'margin'
+!!!spreadsheet.sheet_wiki title:'Margin' includefilter:'margin' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'HR Teams' includefilter:'hrnr'
+!!!spreadsheet.sheet_wiki title:'HR Teams' includefilter:'hrnr' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'HR Costs' includefilter:'hrcost'
+!!!spreadsheet.sheet_wiki title:'HR Costs' includefilter:'hrcost' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'COSTS' includefilter:'ocost'
+!!!spreadsheet.sheet_wiki title:'COSTS' includefilter:'ocost' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'HR Costs' includefilter:'hrcost'
+!!!spreadsheet.sheet_wiki title:'HR Costs' includefilter:'hrcost' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'P&L Overview' includefilter:'pl' 
+!!!spreadsheet.sheet_wiki title:'P&L Overview' includefilter:'pl' sheetname:'test'
 
-!!bizmodel.sheet_wiki title:'P&L Overview' includefilter:'pl' 
+!!!spreadsheet.sheet_wiki title:'P&L Overview' includefilter:'pl' sheetname:'test'
 
 ## Some Details
 
 > show how we can do per month
 
-!!bizmodel.sheet_wiki includefilter:'pl' period_months:1
+!!!spreadsheet.sheet_wiki includefilter:'pl' period_months:1 sheetname:'test'
 
 
 

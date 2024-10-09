@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.core.playcmds
 import freeflowuniverse.crystallib.core.playbook
@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.data.doctree
 import os
 
-//import freeflowuniverse.crystallib.biz.bizmodel
+// import freeflowuniverse.crystallib.biz.bizmodel
 // import freeflowuniverse.crystallib.data.knowledgetree
 // import freeflowuniverse.crystallib.biz.spreadsheet
 // import cli { Command }
@@ -15,23 +15,23 @@ import os
 const wikipath = os.dir(@FILE) + '/wiki'
 const summarypath = os.dir(@FILE) + '/wiki/summary.md'
 
-//just run the doctree & mdbook and it should 
+// just run the doctree & mdbook and it should
 
-//load the doctree, these are all collections
+// load the doctree, these are all collections
 mut tree := doctree.new(name: 'main')!
-tree.scan(path:wikipath)!	
-tree.export(dest: "/tmp/buildroot/tree", reset: true)!
+tree.scan(path: wikipath)!
+tree.export(dest: '/tmp/buildroot/tree', reset: true)!
 
-mut mdbooks := mdbook.get()!
-mdbooks.generate(
-	doctree_path: "/tmp/buildroot/tree"
-	name:         "bizmodelexample"
-	title:        "bizmodelexample"
-	summary_path:  summarypath
-	build_path:   "/tmp/buildroot/html"
-)!
+// mut mdbooks := mdbook.get()!
+// mdbooks.generate(
+// 	doctree_path: "/tmp/buildroot/tree"
+// 	name:         "bizmodelexample"
+// 	title:        "bizmodelexample"
+// 	summary_path:  summarypath
+// 	build_path:   "/tmp/buildroot/html"
+// )!
 
-mdbook.book_open("bizmodelexample")!
+// mdbook.book_open("bizmodelexample")!
 
 // mut c := context.new()!
 

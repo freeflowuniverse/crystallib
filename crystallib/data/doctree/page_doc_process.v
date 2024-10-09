@@ -26,7 +26,9 @@ pub fn (mut page Page) doc_process() ! {
 			if element.action.actiontype == .macro {
 				content := playmacros.play_macro(element.action)!
 				// console.print_debug("macro content for action '${element.action.name}': content\n ${content}")
-				nrmacros += 1
+				if content.len>0{
+					nrmacros += 1
+				}				
 				if content.len > 0 {
 					element.content = content
 				}
