@@ -1,5 +1,6 @@
 - [bizmodel](bizmodel_example/bizmodel.md)
     - [Revenue](bizmodel_example/revenue.md)
+    - [Result](overview/intro.md)
 - [parameters](bizmodel_example/params.md)
     - [revenue_params](bizmodel_example/params/revenue_params.md)
     - [funding_params](bizmodel_example/params/funding_params.md)
