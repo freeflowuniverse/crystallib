@@ -25,7 +25,7 @@ pub fn getset(name string) !&BizModel {
 				name:name
 				// currencies: cs
 			}		
-			set(bizmodel)
+			bizmodels[bizmodel.name] = &bizmodel
 			
 		}
 		return bizmodels[name] or { panic("bug") }

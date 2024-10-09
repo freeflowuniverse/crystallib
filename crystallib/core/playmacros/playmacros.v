@@ -11,6 +11,7 @@ pub fn play(mut plbook playbook.PlayBook) ! {
 	console.print_green('play actions (simulators)')
 	farmingsimulator.play(mut plbook)!
 	gridsimulator.play(mut plbook)!
+	bizmodel.play(mut plbook)!
 }
 
 pub fn play_macro(action playbook.Action) !string {

@@ -13,8 +13,8 @@ const wikipath = os.dir(@FILE) + '/wiki'
 const summarypath = os.dir(@FILE) + '/wiki/summary.md'
 
 //execute the actions so we have the info populated
-mut plb:=playbook.new(path: wikipath)!
-playcmds.run(mut plb,false)!
+// mut plb:=playbook.new(path: wikipath)!
+// playcmds.run(mut plb,false)!
 
 buildpath:="${os.home_dir()}/hero/var/mdbuild/bizmodel"
 

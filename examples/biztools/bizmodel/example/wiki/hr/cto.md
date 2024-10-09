@@ -2,4 +2,4 @@
 
 !!!bizmodel.employee_wiki bizname:'test' name:'despiegk'
 
-!!include bizmodel_example:cto_description.md
+!!wiki.include page:cto_description.md

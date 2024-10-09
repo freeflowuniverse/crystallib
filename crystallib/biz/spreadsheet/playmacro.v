@@ -109,6 +109,6 @@ pub fn playmacro(action Action) !string {
 		}
 	}
 
-	content += '\n<BR>'
+	content += '\n<BR>\n'
 	return content
 }

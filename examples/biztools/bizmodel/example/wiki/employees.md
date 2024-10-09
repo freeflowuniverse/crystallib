@@ -2,4 +2,4 @@
 
 - [CTO](bizmodel_example:cto.md)
 
-!!include cto.md
+!!wiki.include page:cto.md
