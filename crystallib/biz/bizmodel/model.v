@@ -1,9 +1,21 @@
 module bizmodel
+import freeflowuniverse.crystallib.biz.spreadsheet
+
+
+pub struct BizModel {
+pub mut:
+	name string
+	sheet     &spreadsheet.Sheet
+	employees map[string]&Employee
+	departments map[string]&Department
+	costcenters map[string]&Costcenter
+}
 
 pub struct Employee {
 pub:
 	name                 string
 	description          string
+	title 				 string
 	department           string
 	cost                 string
 	cost_percent_revenue f64
@@ -13,6 +25,15 @@ pub:
 	page 				 string
 }
 
+pub struct Department {
+pub:
+	name                 string
+	description          string
+	page 				 string
+	title 				 string	
+	order 				 int
+}
+
 
 pub struct Costcenter {
 pub:
@@ -20,3 +41,4 @@ pub:
 	description          string
 	department           string
 }
+

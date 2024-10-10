@@ -1,12 +1,8 @@
-# Employees
+# Hr Overview
 
 
-## 
 
-## Engineering
+!!!bizmodel.employees_wiki bizname:'test' 
 
-!!!bizmodel.department_wiki department:engineering bizname:'test' 
 
-- [CTO](bizmodel_example:cto.md)
-
-!!wiki.include page:cto.md
+> note: Nr People like 0:5,20:5 means, month 0 (start) is 5, month 20 its 5 people

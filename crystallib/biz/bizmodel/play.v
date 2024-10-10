@@ -15,7 +15,7 @@ pub fn play(mut plbook PlayBook) ! {
 		return
 	}
 
-	knownactions:= ["revenue_define","revenue_recurring_define","employee_define",	
+	knownactions:= ["revenue_define","revenue_recurring_define","employee_define","department_define",	
 						"funding_define","costcenter_define","cost_define"]
 
 	for action in actions4 {
@@ -52,7 +52,7 @@ pub fn play(mut plbook PlayBook) ! {
 	//now we have processed the macro's, we can calculate the totals
 	rlock bizmodels {
 		for _,mut sim in bizmodels{
-			sim.hr_total()!
+			//sim.hr_total()!
 			sim.cost_total()!
 			sim.revenue_total()!
 			sim.funding_total()!
@@ -77,6 +77,9 @@ pub fn play(mut plbook PlayBook) ! {
 		match action.name {
 			"cost_define" {
 				sim.cost_define_action(action)!
+			}
+			"department_define" {				
+				sim.department_define_action(action)!
 			}
 			"employee_define" {
 				sim.employee_define_action(action)!

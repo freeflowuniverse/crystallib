@@ -16,6 +16,8 @@ pub fn playmacro(action playbook.Action) !string {
 
 	if action.name == 'employee_wiki' {
 		return employee_wiki(p,sim)!
+	} else if action.name == 'employees_wiki' {
+		return employees_wiki(p,sim)!
 	} else if action.name == 'department_wiki' {
 		return department_wiki(p,sim)!
 	}
@@ -61,6 +63,28 @@ fn employee_wiki (p paramsparser.Params, sim BizModel)!string{
 	theme := 'dark' 
 	mut t:=$tmpl('./templates/employee.md')
 	return t
+}
+
+
+fn employees_wiki (p paramsparser.Params, sim BizModel)!string{
+
+    mut deps := []Department{}
+	for _,dep in sim.departments{
+		deps << dep
+	}
+    deps.sort(a.order < b.order)
+
+	mut employee_names :=  map[string]string{}
+	for _,empl in sim.employees{
+		employee_names[empl.name] = empl.name
+		if empl.page.len>0{
+			employee_names[empl.name] = "[${empl.name}](${empl.page})"
+		}
+	}
+	mut t:=$tmpl('./templates/departments.md')
+
+	return t
+
 }
 
 fn department_wiki (p paramsparser.Params, sim BizModel)!string{

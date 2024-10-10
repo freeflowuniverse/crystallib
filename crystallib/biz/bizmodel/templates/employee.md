@@ -1,25 +1,28 @@
-# ${employee.name}
+# @{employee.name}
 
-**Description:**  
 
-`${employee.description}`
+`@{employee.description}`
 
-**Department:**  
+> department:  `@{employee.department}`
 
-`${employee.department}`
+**Cost To The Company:**  
 
-**Cost:**  
+`@{employee.cost}`
 
-`${employee.cost}`
+
+@if (employee.cost_percent_revenue > 0.0)
 
 **Cost Percent Revenue:**  
 
-`${employee.cost_percent_revenue}%`
+`@{employee.cost_percent_revenue}%`
 
-@if (employee.nrpeople > 1)
+@end
+
+
+@if (employee.nrpeople.len > 1)
 
 **Number of People in this group** 
 
-`${employee.nrpeople}`
+`@{employee.nrpeople}`
 
 @end

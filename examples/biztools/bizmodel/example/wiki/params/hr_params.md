@@ -18,17 +18,20 @@ possible parameters
 !!bizmodel.employee_define  bizname:'test'
     sid:2
     descr:'Senior Engineer' 
-    cost:'1:12000,12:14000'
+    cost:'1:12000,12:14000' //cost is always per person
     department:'engineering'
     nrpeople:'0:5,20:5'
 
 !!bizmodel.employee_define  bizname:'test'
     name:'despiegk'
+    title: 'CTO and crazy inventor.'
     sid:3
     descr:'CTO'  
-    cost:'12000EUR' indexation:'10%' 
-    department:'engineering'
+    cost:'12000EUR'  //the salary is the cost independent of the fulltime status
+    indexation:'10%' 
+    department:'coordination'
     page:'cto.md'
+    fulltime: "50%" //100% means yes
 
 !!bizmodel.employee_define  bizname:'test'
     descr:'Senior Architect'  

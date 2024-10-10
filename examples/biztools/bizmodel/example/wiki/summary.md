@@ -8,7 +8,6 @@
     - [costs_params](bizmodel_example/params/costs_params.md)
     - [rows overview](bizmodel_example/rows_overview.md)
 - [employees](bizmodel_example/employees.md)
-  - [CTO](bizmodel_example/cto.md)
 - [debug](bizmodel_example/debug.md)
   - [worksheet](bizmodel_example/worksheet.md)
 

@@ -13,6 +13,7 @@ level = @book.args.foldlevel
 
 [output.html]
 no-section-label = true
+additional-css = ["css/general.css"]
 additional-js = ["mermaid.min.js", "mermaid-init.js", "echarts.min.js"]
 default-theme = "light"
 mathjax-support = true

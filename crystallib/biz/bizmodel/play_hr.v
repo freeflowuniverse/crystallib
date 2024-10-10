@@ -124,6 +124,30 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 }
 
 
-fn (mut sim BizModel) hr_total() ! {
+
+fn (mut m BizModel) department_define_action(action Action) ! {
+	mut name := action.params.get_default('name', '')!
+	mut descr := action.params.get_default('descr', '')!
+	if descr.len == 0 {
+		descr = action.params.get_default('description','')!
+	}
+	
+	department := Department{
+		name: name
+		description: descr
+		title: action.params.get_default('title', '')!
+		page: action.params.get_default('page', '')!
+	}
+
+	//println(department)
+
+	if name != '' {
+		m.departments[name] = &department
+	}
+
 
 }
+
+// fn (mut sim BizModel) hr_total() ! {
+
+// }
