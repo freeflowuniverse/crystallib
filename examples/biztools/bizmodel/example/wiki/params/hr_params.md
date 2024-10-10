@@ -28,6 +28,7 @@ possible parameters
     descr:'CTO'  
     cost:'12000EUR' indexation:'10%' 
     department:'engineering'
+    page:'cto.md'
 
 !!bizmodel.employee_define  bizname:'test'
     descr:'Senior Architect'  

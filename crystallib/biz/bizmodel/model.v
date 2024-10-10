@@ -10,6 +10,7 @@ pub:
 	nrpeople             string
 	indexation           f64
 	cost_center          string
+	page 				 string
 }
 
 

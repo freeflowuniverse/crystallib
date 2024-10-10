@@ -33,9 +33,10 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 	// }
 	// mut cost_growth := action.params.get_default('cost_growth', '')!
 	// growth := action.params.get_default('growth', '1:1')!
-	department := action.params.get_default('department', 'unknown department')!
-	cost_percent_revenue := action.params.get_percentage_default('cost_percent_revenue',
-		'0%')!
+	department := action.params.get_default('department', '')!
+	page := action.params.get_default('page', '')!
+	
+	cost_percent_revenue := action.params.get_percentage_default('cost_percent_revenue','0%')!
 	nrpeople := action.params.get_default('nrpeople', '1')!
 
 	indexation := action.params.get_percentage_default('indexation', '0%')!
@@ -94,7 +95,7 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 		m.sheet.row_delete('tmp3')
 	}
 	employee := Employee{
-		name: if name != '' { name } else { descr }
+		name: name
 		description: descr
 		department: department
 		cost: cost
@@ -102,18 +103,21 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 		nrpeople: nrpeople
 		indexation: indexation
 		cost_center: cost_center
+		page: page
 	}
+
+	//println(employee)
+
 	// todo: use existing id gen
 
-	mut sid := action.params.get_default('sid', '')!
-	if sid != '' {
+	if name != '' {
 		// sid = smartid.sid_new('')!
 		// // TODO: this isn't necessary if sid_new works correctly
 		// // but lets keep it in here for now until we test smartid
 		// for (sid in m.employees) {
 		// 	sid = smartid.sid_new('')!
 		// }
-		m.employees[sid] = &employee
+		m.employees[name] = &employee
 	}
 
 

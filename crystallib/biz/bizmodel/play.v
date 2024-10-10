@@ -21,7 +21,7 @@ pub fn play(mut plbook PlayBook) ! {
 	for action in actions4 {
 		//biz name needs to be specified in the the bizmodel hero actions
 		bizname:=action.params.get("bizname") or { 
-			return error("Can't find param: 'bizname' for bizmodel macro, is a requirement argument.")
+			return error("Can't find param: 'bizname' for ${action.actor}.${action.name} macro, is a requirement argument.")
 		 }
 		mut sim:=getset(bizname)!
 
