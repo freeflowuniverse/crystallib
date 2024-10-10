@@ -5,92 +5,95 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
 
-
-
-//reload all info from disk & remote ssh
-// use kwarg: reload: true to make sure we reload everything
+// Reload all information from disk & remote SSH.
+// Use kwarg: reload: true to ensure everything is reloaded.
 pub fn (mut gitstructure GitStructure) load(args StatusUpdateArgs) ! {
-	mut done:=[]string{}
-	gitstructure.load_recursive(gitstructure.coderoot.path,args, mut done)!
+	mut processed_paths := []string{}
+	gitstructure.load_recursive(gitstructure.coderoot.path, args, mut processed_paths)!
 }
 
-// load git structure recursively
-fn (mut gitstructure GitStructure) load_recursive(path1 string, args StatusUpdateArgs, mut done []string) ! {
-	console.print_debug("gitstructure recursive load: $path1")
-	path1o := pathlib.get(path1)
-	relpath := path1o.path_relative(gitstructure.coderoot.path)!
+// Load git structure recursively from the specified path.
+fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdateArgs, mut processed_paths []string) ! {
+	console.print_debug('gitstructure recursive load: ${path}')
+
+	path_object := pathlib.get(path)
+	relpath := path_object.path_relative(gitstructure.coderoot.path)!
+
+	// Limit the recursion depth to avoid excessive loading
 	if relpath.count('/') > 4 {
 		return
 	}
 
-	items := os.ls(path1) or {
-		return error('cannot load gitstructure because cannot find ${path1}')
-	}
-	mut pathnew := ''
+	// List items in the current directory
+	items := os.ls(path) or { return error('cannot load gitstructure because cannot find ${path}') }
+
 	for item in items {
-		pathnew = os.join_path(path1, item)
-		if os.is_dir(pathnew) {
-			if os.exists(os.join_path(pathnew, '.git')) {
-				mut repo := gitstructure.repo_init_from_path_(pathnew)!
-				repo.status_update(reload:args.reload)!				
-				p := repo.path()!
-				if repo.key() in done || p in done {
-					return error('loading of repo goes wrong found double.\npath:${p}\nkey:${repo.key}')
+		current_path := os.join_path(path, item)
+
+		// Check if the current item is a directory
+		if os.is_dir(current_path) {
+			if os.exists(os.join_path(current_path, '.git')) {
+				// Initialize repository from the current path
+				mut repo := gitstructure.repo_init_from_path_(current_path)!
+				repo.status_update(reload: args.reload)!
+
+				key_ := repo.key()
+				path_ := repo.path()!
+
+				if processed_paths.contains(key_) || processed_paths.contains(path_) {
+					return error('loading of repo failed due to duplication.\npath: ${repo.path()!}\nkey: ${repo.key()}')
 				}
-				done << p
-				done << repo.key()
+				// Track processed paths
+				processed_paths << repo.path()!
+				processed_paths << repo.key()
 				gitstructure.repos[repo.key()] = &repo
 				continue
 			}
-			if item.starts_with('.') {
+			// Skip hidden directories
+			if item.starts_with('.') || item.starts_with('_') {
 				continue
 			}
-			if item.starts_with('_') {
-				continue
-			}
-			gitstructure.load_recursive(pathnew, args, mut done)!
+			// Recurse into subdirectories
+			gitstructure.load_recursive(current_path, args, mut processed_paths)!
 		}
 	}
 }
 
-
+// Reset the cache for the current git structure
 pub fn (mut gitstructure GitStructure) cachereset() ! {
-	mut c := base.context()!
-	mut redis := c.redis()!
-	keys := redis.keys("git:repos:${gitstructure.key}:**")!
+	mut context := base.context()!
+	mut redis := context.redis()!
+	keys := redis.keys('git:repos:${gitstructure.key}:**')!
+
+	// Delete all cached keys
 	for key in keys {
 		redis.del(key)!
 	}
 }
 
-
-
-
-//get the repo init from a known path
+// Initialize the repository from a known path
 fn (mut gitstructure GitStructure) repo_init_from_path_(path string) !GitRepo {
-	// find parent with .git
-	// console.print_debug(" - load from path: $path")
+	// Find the parent directory containing .git
 	mypath := pathlib.get_dir(path: path, create: false)!
-	mut parentpath := mypath.parent_find('.git') or {
+	mut parent_path := mypath.parent_find('.git') or {
 		return error('cannot find .git in parent starting from: ${path}')
 	}
-	if parentpath.path == '' {
+
+	if parent_path.path == '' {
 		return error('cannot find .git in parent starting from: ${path}')
 	}
-	
-	gl:=gitstructure.gitlocation_from_path(mypath.path)!
 
-	mut r := GitRepo{
-		gs: &gitstructure
-		status_remote:GitRepoStatusRemote{}
-		status_local :GitRepoStatusLocal{}
-		config :GitRepoConfig{}
-		provider: gl.provider
-		account: gl.account
-		name: gl.name		
+	// Get GitLocation from the path
+	gl := gitstructure.gitlocation_from_path(mypath.path)!
 
+	// Initialize GitRepo struct
+	return GitRepo{
+		gs:            &gitstructure
+		status_remote: GitRepoStatusRemote{}
+		status_local:  GitRepoStatusLocal{}
+		config:        GitRepoConfig{}
+		provider:      gl.provider
+		account:       gl.account
+		name:          gl.name
 	}
-	return r
 }
-
-

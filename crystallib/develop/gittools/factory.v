@@ -1,4 +1,5 @@
 module gittools
+
 import freeflowuniverse.crystallib.core.base
 import crypto.md5
 import os
@@ -9,71 +10,57 @@ __global (
 	gsinstances shared map[string]&GitStructure
 )
 
-
-// configure the gitstructure .
-// .
-// multibranch bool .
-// coderoot        string // where will the code be checked out .
-// light       bool = true // if set then will clone only last history for all branches		 .
-// log         bool   // means we log the git statements .
-// .
-// has also support for os.environ variables .
-// - MULTIBRANCH .
-// - DIR_CODE , default: ${os.home_dir()}/code/ .
+// Retrieve or create a new GitStructure instance with the given configuration.
 pub fn getset(args_ GitStructureConfig) !&GitStructure {
 	mut args := args_
+	mut key := ''
 
-	mut key:=""
+	// Generate the coderoot and key.
 	args.coderoot, key = gitstructure_key(args.coderoot)
 
-	if key in gsinstances {	
-		return get(coderoot:args_.coderoot)
+	// Return existing instance if already created.
+	if key in gsinstances {
+		return get(coderoot: args.coderoot)!
 	}
 
+	// Store the configuration in Redis.
 	datajson := json.encode(args)
 	mut c := base.context()!
-	
 	mut redis := c.redis()!
 	redis.set(gitstructure_config_key(key), datajson)!
 
-	return get(coderoot:args_.coderoot)
+	return get(GitStructureGetArgs{ coderoot: args_.coderoot })!
 }
 
-pub fn default() !&GitStructure {
+// Create a new GitStructure instance based on the provided arguments.
+pub fn new(args_ GitStructureGetArgs) !&GitStructure {
+	mut args := args_
+	mut key := ''
 
-	mut args:=GitStructureConfig{}
-	mut key:=""
+	// Generate the coderoot and key.
 	args.coderoot, key = gitstructure_key(args.coderoot)
 
+	// Store the arguments in Redis.
 	datajson := json.encode(args)
 	mut c := base.context()!
-	
 	mut redis := c.redis()!
 	redis.set(gitstructure_config_key(key), datajson)!
 
-	return get()
+	return get(args_)
 }
 
-
-@[params]
-pub struct GitStructureGetArgs {
-pub mut:
-	coderoot string
-	reload   bool
-}
-
-// params: .
-//  - reload  	bool .
+// Retrieve a GitStructure instance based on the given arguments.
 pub fn get(args_ GitStructureGetArgs) !&GitStructure {
 	mut args := args_
+	mut key := ''
 
-	// console.print_debug("GET GS:\n$args")
-	mut key:=""
+	// Generate the coderoot and key.
 	args.coderoot, key = gitstructure_key(args.coderoot)
-
 	rlock gsinstances {
 		if key in gsinstances {
-			mut gs := gsinstances[key] or { panic('bug') }
+			mut gs := gsinstances[key] or {
+				panic('Unexpected error: key not found in gsinstances')
+			}
 			if args.reload {
 				gs.load()!
 			}
@@ -81,17 +68,21 @@ pub fn get(args_ GitStructureGetArgs) !&GitStructure {
 		}
 	}
 
+	// Retrieve the configuration from Redis.
 	mut c := base.context()!
 	mut redis := c.redis()!
 	mut datajson := redis.get(gitstructure_config_key(key))!
+
 	if datajson == '' {
-		return error("can't find gitstructure for coderoot: '${args.coderoot}'")
+		return error("Unable to find git structure for coderoot: '${args.coderoot}'")
 	}
+
 	mut config := json.decode(GitStructureConfig, datajson)!
 
+	// Create and load the GitStructure instance.
 	mut gs := &GitStructure{
-		key:key
-		config: config
+		key:      key
+		config:   config
 		coderoot: pathlib.get_dir(path: args.coderoot, create: true)!
 	}
 	gs.load()!
@@ -100,55 +91,48 @@ pub fn get(args_ GitStructureGetArgs) !&GitStructure {
 		gsinstances[gs.key] = gs
 	}
 
-	// println(gs.config)
-
 	return gs
 }
 
-
-
-
-////////CACHE
-
-
+// Reset the configuration cache for Git structures.
 pub fn configreset() ! {
 	mut c := base.context()!
 	mut redis := c.redis()!
 	key_check := 'git:config:*'
 	keys := redis.keys(key_check)!
+
 	for key in keys {
 		redis.del(key)!
 	}
 }
 
-// reset all caches and configs, for all git repo's .
-// can't harm, will just reload everything
+// Reset all caches and configurations for all Git repositories.
 pub fn cachereset() ! {
 	key_check := 'git:repos:**'
 	mut c := base.context()!
-	mut redis := c.redis()!	
+	mut redis := c.redis()!
 	keys := redis.keys(key_check)!
+
 	for key in keys {
 		redis.del(key)!
 	}
 	configreset()!
 }
 
-
- fn gitstructure_config_key(coderoothashed string) string {
-
+// Generate the Redis key for the given coderoot.
+fn gitstructure_config_key(coderoothashed string) string {
 	return 'git:config:${coderoothashed}'
+}
 
- }
-
-//return coderoot, key
-fn gitstructure_key(coderoot_ string) (string, string){
+// Return the coderoot and its corresponding key.
+fn gitstructure_key(coderoot_ string) (string, string) {
 	mut coderoot := coderoot_
- 	mut key := "default"
+	mut key := 'default'
+
 	if coderoot == '' {
-		coderoot = '${os.home_dir()}/code'		
-	}else{
+		coderoot = '${os.home_dir()}/code'
+	} else {
 		key = md5.hexhash(coderoot)
 	}
-	return coderoot,key
+	return coderoot, key
 }

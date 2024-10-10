@@ -7,43 +7,13 @@ import os
 
 pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree,cd'
 
-@[params]
-pub struct ReposActionsArgs {
-pub mut:
-	cmd      string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
-	filter   string // if used will only show the repo's which have the filter string inside
-	repo     string
-	account  string
-	provider string
-	msg      string
-	url      string
-	branch      string
-	tag string
-	recursive bool
-	pull     bool
-	script   bool = true // run non interactive
-	reset    bool = true // means we will lose changes (only relevant for clone, pull)
-}
-
-// do group actions on repo
-// args
-//```
-// cmd      string // clone,commit,pull,push,delete,reload,list,edit,sourcetree,cd
-// filter   string // if used will only show the repo's which have the filter string inside
-// repo     string
-// account  string
-// provider string
-// msg      string
-// url      string
-// tag      string
-// pull     bool
-// script   bool = true // run non interactive
-// reset    bool = true // means we will lose changes (only relevant for clone, pull)
-//```
+// Perform group actions on repositories based on the provided arguments.
+// The arguments allow filtering, specifying repositories, and performing git commands like clone, pull, push, etc.
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	mut args := args_
-	console.print_debug('git do ${args}')	
+	console.print_debug('git do ${args}')
 
+	// If no repo, account, provider, or filter is provided, try to find current git repo based on working directory
 	if args.repo == '' && args.account == '' && args.provider == '' && args.filter == '' {
 		curdir := os.getwd()
 		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
@@ -60,86 +30,93 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 
 	mut ui := gui.new()!
 
-	if args.cmd == 'reload' {
-		console.print_header(' - reload gitstructure ${gs.key}')
-		gs.load()!
-		return ''
-	}
-
-	if args.cmd == 'list' {
-		gs.repos_print(
-			filter: args.filter
-			name: args.repo
-			account: args.account
-			provider: args.provider
-		)!
-		return ''
+	match args.cmd {
+		'reload' {
+			console.print_header(' - reload gitstructure ${gs.key}')
+			gs.load()!
+			return ''
+		}
+		'list' {
+			gs.repos_print(
+				filter:   args.filter
+				name:     args.repo
+				account:  args.account
+				provider: args.provider
+			)!
+			return ''
+		}
+		else {}
 	}
 
 	mut repos := gs.repos_get(
-		filter: args.filter
-		name: args.repo
-		account: args.account
+		filter:   args.filter
+		name:     args.repo
+		account:  args.account
 		provider: args.provider
 	)!
 
+	// Handle commands that work with a specified URL
 	if args.url.len > 0 {
 		mut locator := gs.gitlocation_from_url(args.url)!
-		if args.branch.len>0{
-			locator.branch=args.branch
+		if args.branch.len > 0 {
+			locator.branch = args.branch
 		}
-		//console.print_debug(locator)
-		mut g := gs.repo_get_from_locator( locator)!
+		mut g := gs.repo_get_from_locator(locator)!
 		g.load()!
 		if args.cmd == 'cd' {
 			return g.path()!
 		}
 		if args.reset {
 			g.remove_changes()!
-		}		
+		}
 		if args.cmd == 'pull' || args.pull {
-			g.pull(branch:args.branch,recursive:args.recursive,tag:args.tag)!
+			g.pull(branch: args.branch, recursive: args.recursive, tag: args.tag)!
 		}
 		if args.cmd == 'push' {
-			if g.need_commit() {
+			if g.need_commit()! {
 				if args.msg.len == 0 {
-					return error('please specify message with -m ...')
+					return error('please specify a commit message with -m ...')
 				}
 				g.commit(msg: args.msg)!
 			}
 			g.push()!
 		}
-		if args.cmd == 'pull' || args.cmd == 'clone' || args.cmd == 'push' {
-			gpath:=g.path()!
-			console.print_debug('git do ok, on path ${gpath}')				
+		if args.cmd in ['pull', 'clone', 'push'] {
+			gpath := g.path()!
+			console.print_debug('git do ok, on path ${gpath}')
 			return gpath
 		}
 		repos = [g]
 	}
 
-	if args.cmd in 'sourcetree,edit'.split(',') {
+	// Handle commands related to 'sourcetree' and 'edit'
+	if args.cmd in ['sourcetree', 'edit'] {
 		if repos.len == 0 {
-			return error('please specify at least 1 repo for cmd:${args.cmd}')
+			return error('please specify at least 1 repo for cmd: ${args.cmd}')
 		}
 		if repos.len > 4 {
-			return error('more than 4 repo found for cmd:${args.cmd}')
+			return error('more than 4 repos found for cmd: ${args.cmd}')
 		}
 		for r in repos {
-			if args.cmd == 'edit' {
-				r.vscode()!
-			}
-			if args.cmd == 'sourcetree' {
-				r.sourcetree()!
+			match args.cmd {
+				'edit' {
+					r.open_vscode()!
+				}
+				'sourcetree' {
+					r.sourcetree()!
+				}
+				else {}
 			}
 		}
 		return ''
 	}
 
-	if args.cmd in 'pull,push,commit,delete'.split(',') {
+	// Handle commands related to 'pull', 'push', 'commit', and 'delete'
+	if args.cmd in ['pull', 'push', 'commit', 'delete'] {
 		gs.repos_print(
-			filter: args.filter
-			name: args.repo
-			account: args.account
+			filter:   args.filter
+			name:     args.repo
+			account:  args.account
 			provider: args.provider
 		)!
 
@@ -152,15 +129,15 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 			return ''
 		}
 
-		// check on repos who needs what
+		// Check which repositories need actions
 		for mut g in repos {
 			g.load()!
-			need_commit = g.need_commit() || need_commit
+			need_commit = g.need_commit()! || need_commit
 			if args.cmd == 'push' && need_commit {
 				need_push = true
 			}
-			need_pull = args.cmd in 'pull,push'.split(',') // always do pull when push and pull
-			need_push = args.cmd == 'push' && (g.need_push() || need_push)
+			need_pull = args.cmd in ['pull', 'push'] // always do pull when push and pull
+			need_push = args.cmd == 'push' && (g.need_push()! || need_push)
 		}
 
 		mut ok := false
@@ -182,45 +159,42 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 			if args.script {
 				ok = true
 			} else {
-				ok = ui.ask_yesno(question: 'Is above ok?')!
+				ok = ui.ask_yesno(question: 'Is the above action okay?')!
 			}
 		}
 		if args.cmd == 'delete' {
 			if args.script {
 				ok = true
 			} else {
-				ok = ui.ask_yesno(question: 'Is it ok to delete above repos? (DANGEROUS)')!
+				ok = ui.ask_yesno(
+					question: 'Is it okay to delete the selected repositories? (DANGEROUS)'
+				)!
 			}
 		}
 
-		if ok == false {
-			return error('cannot continue with action, you asked me to stop.\n${args}')
+		if !ok {
+			return error('Action stopped as per request.\n${args}')
 		}
 
 		mut changed := false
 
+		// Perform required actions on repositories
 		for mut g in repos {
-			need_commit_repo := (g.need_commit() || need_commit)
-				&& args.cmd in 'commit,pull,push'.split(',')
-			need_pull_repo := args.cmd in 'pull,push'.split(',') // always do pull when push and pull
-			need_push_repo := args.cmd in 'push'.split(',') && (g.need_push() || need_push)
-			// console.print_debug(" --- git_do ${g.name} ${st.need_commit} ${st.need_pull}  ${st.need_push}")		
-
-			if need_commit_repo {
+			if g.need_commit()! && args.cmd in ['commit', 'pull', 'push'] {
 				mut msg := args.msg
 				if msg.len == 0 {
 					if args.script {
-						return error('message needs to be specified for commit.')
+						return error('Commit message needs to be specified.')
 					}
 					msg = ui.ask_question(
-						question: 'commit message for repo: ${g.account}/${g.name} '
+						question: 'Commit message for repo: ${g.account}/${g.name} '
 					)!
 				}
 				console.print_header(' - commit ${g.account}/${g.name}')
 				g.commit(msg: msg, reload: true)!
 				changed = true
 			}
-			if need_pull_repo {
+			if need_pull {
 				if args.reset {
 					console.print_header(' - remove changes ${g.account}/${g.name}')
 					g.remove_changes()!
@@ -229,7 +203,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 				g.pull()!
 				changed = true
 			}
-			if need_push_repo {
+			if need_push {
 				console.print_header(' - push ${g.account}/${g.name}')
 				g.push()!
 				changed = true
@@ -241,23 +215,17 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		}
 
 		if changed {
-			// console.clear()
 			console.print_header('\nCompleted required actions.\n')
-
 			gs.repos_print(
-				filter: args.filter
-				name: args.repo
-				account: args.account
+				filter:   args.filter
+				name:     args.repo
+				account:  args.account
 				provider: args.provider
 			)!
 		}
 
 		return ''
 	}
-	// end for the commit, pull, push, delete
 
-	$if debug {
-		print_backtrace()
-	}
-	return error('did not find cmd: ${args.cmd}')
+	return error('Unknown command: ${args.cmd}')
 }

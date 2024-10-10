@@ -1,39 +1,59 @@
-
 module gittools
+
 import freeflowuniverse.crystallib.ui.console
 
-// Print repositories based on certain criteria
-pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
-	console.print_debug(' #### overview of repositories:')
-	console.print_debug('')
-	mut r := [][]string{}
-	for _, g in gitstructure.repos_get(args)! {
-		mut s := ''
-		if g.need_commit() {
-			s += 'COMMIT,'
-		}
-		if g.need_pull() {
-			s += 'PULL,'
-		}
-		if g.need_push() {
-			s += 'PUSH,'
-		}
-		s = s.trim(',')
-		if g.status_local.tag.len>0{
-			r << [' - ${g.path_relative()!}', '[[${g.status_local.tag}]]', s]
-		}else{
-			r << [' - ${g.path_relative()!}', '[${g.status_local.branch}]', s]
-		}
-		
+// Check and return the status of a repository (whether it needs a commit, pull, or push)
+fn get_repo_status(g GitRepo) !string {
+	mut statuses := []string{}
+	if g.need_commit()! {
+		statuses << 'COMMIT'
 	}
+	if g.need_pull() {
+		statuses << 'PULL'
+	}
+	if g.need_push()! {
+		statuses << 'PUSH'
+	}
+	return statuses.join(', ')
+}
+
+// Format repository information for display, including path, tag/branch, and status
+fn format_repo_info(g GitRepo) ![]string {
+	status := get_repo_status(g)!
+	tag_or_branch := if g.status_local.tag.len > 0 {
+		'[[${g.status_local.tag}]]' // Display tag if it exists
+	} else {
+		'[${g.status_local.branch}]' // Otherwise, display branch
+	}
+	return [' - ${g.path_relative()!}', tag_or_branch, status]
+}
+
+// Print repositories based on the provided criteria, showing their statuses
+pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
+	console.print_debug(' #### Overview of repositories:')
+	console.print_debug('')
+
+	mut repo_data := [][]string{}
+
+	// Collect repository information based on the provided criteria
+	for _, repo in gitstructure.repos_get(args)! {
+		repo_data << format_repo_info(repo)!
+	}
+
+	// Clear the console and start printing the formatted repository information
 	console.clear()
 	console.print_lf(1)
-	if args.str().len > 0 {
-		console.print_header('repositories: ${gitstructure.coderoot.path} [${args.str()}]')
+
+	// Display header with optional argument filtering information
+	header := if args.str().len > 0 {
+		'Repositories: ${gitstructure.coderoot.path} [${args.str()}]'
 	} else {
-		console.print_header('repositories: ${gitstructure.coderoot.path}')
+		'Repositories: ${gitstructure.coderoot.path}'
 	}
+	console.print_header(header)
+
+	// Print the repository information in a formatted array
 	console.print_lf(1)
-	console.print_array(r, '  ', true)
+	console.print_array(repo_data, '  ', true) // true -> aligned for better readability
 	console.print_lf(5)
 }

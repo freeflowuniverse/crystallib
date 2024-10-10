@@ -2,58 +2,64 @@ module gittools
 
 import os
 
-// make sure we use ssh instead of https in the config file
-// will return true if it changed
-// http true means we will change to http method
-// http false means we will change to ssh method
+// Ensure that the repository uses SSH instead of HTTPS in the config file.
+// Returns true if the connection method was changed.
 fn (repo GitRepo) connection_change(http bool) !bool {
+	// Get the repository path
 	path2 := repo.path()!
+
+	// Check if the path exists, if not, there's nothing to change
 	if !os.exists(path2) {
-		// nothing to do
 		return false
 	}
 
+	// Build the path to the .git/config file
 	pathconfig := os.join_path(path2, '.git', 'config')
+
+	// Verify the config file exists
 	if !os.exists(pathconfig) {
-		return error("connection change failed, path: '${path2}' is not a git dir, missed a .git/config file. Could not change git to ssh repo.")
+		return error("Connection change failed: '${path2}' is not a valid git directory. Missing .git/config file.")
 	}
+
+	// Read the content of the config file
 	content := os.read_file(pathconfig) or {
-		return error('Failed to load config ${pathconfig} for sshconfig')
+		return error('Failed to load config file ${pathconfig}')
 	}
 
 	mut result := []string{}
-	mut line2 := ''
-	mut found := false
+	mut modified := false
+
+	// Process each line in the config file
 	for line in content.split_into_lines() {
-		// see if we can find the line which has the url
-		pos := line.index('url =') or { 0 }
-		if pos > 0 {
-			url := line.split('=')[1].trim(' ')
-			if url.starts_with('git') && http == false {
-				// means nothing to do
+		if line.contains('url =') {
+			// Extract the URL part
+			mut url := line.split('=')[1].trim(' ')
+
+			// If the URL already matches the desired scheme, no change needed
+			if (url.starts_with('git') && !http) || (url.starts_with('http') && http) {
 				return false
 			}
-			if url.starts_with('http') && http {
-				// means nothing to do
-				return false
-			}
-			mut urlnew:=repo.url_get()!
-			if http{
-				urlnew=repo.url_http_get()!
-			}
-			line2 = line[0..pos] + 'url = ' + urlnew
-			found = true
+
+			// Get the new URL based on the desired connection type (SSH or HTTP)
+			url_new := if http { repo.url_http_get()! } else { repo.url_get()! }
+
+			// Update the line with the new URL
+			result << 'url = ' + url_new
+			modified = true
 		} else {
-			line2 = line
+			// Keep the line unchanged
+			result << line
 		}
-		result << line2
 	}
 
-	if found {
+	// If a URL change was made, write the modified config file
+	if modified {
 		os.write_file(pathconfig, result.join_lines()) or {
-			return error('Failed to write config ${pathconfig} in change to ssh')
+			return error('Failed to write updated config to ${pathconfig}')
 		}
 		return true
 	}
+
+	// No changes were made
 	return false
 }

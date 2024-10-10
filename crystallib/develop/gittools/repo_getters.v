@@ -1,22 +1,6 @@
 module gittools
 
-//import freeflowuniverse.crystallib.ui.console
-
-
-//are the getters they do not take into consideration any manipulation of tags or branches (pull, reset, ...)
-
-
-// get a list of repo's which are in line to the args
-//
-@[params]
-pub struct ReposGetArgs {
-pub mut:
-	filter   string // if used will only show the repo's which have the filter string inside
-	name     string
-	account  string
-	provider string //e.g. github
-}
-
+// Helper method to convert `ReposGetArgs` to a string representation
 pub fn (a ReposGetArgs) str() string {
 	mut out := ''
 	if a.filter.len > 0 {
@@ -34,170 +18,117 @@ pub fn (a ReposGetArgs) str() string {
 	return out.trim_space()
 }
 
+// Retrieve a list of repositories based on the provided arguments (filter, name, account, provider)
 pub fn (mut gitstructure GitStructure) repos_get(args_ ReposGetArgs) ![]&GitRepo {
 	mut args := ReposGetArgs{
 		...args_
 	}
-	// console.print_debug(args)
 	mut res := []&GitRepo{}
-	// repos.sort()
-	// console.print_debug(repos.join("\n"))
-	for _,r in gitstructure.repos {
+
+	// Loop through repositories and filter based on the provided arguments
+	for _, r in gitstructure.repos {
 		relpath := r.path_relative()!
-		if args.filter != '' {
-			if relpath.contains(args.filter) {
-				// console.print_debug("MATCH: $args.filter")
-				res << r
-			}
+		// Check filter first
+		if args.filter != '' && relpath.contains(args.filter) {
+			res << r
 			continue
 		}
-		if args.name.len > 0 && args.name != r.name {
-			continue // means no match
-		}
-		if args.account.len > 0 && args.account != r.account {
-			continue // means no match
-		}
-		if args.provider.len > 0 && args.provider != r.provider {
-			continue // means no match
-		}
-		res << r
-	}
 
-	// console.print_debug(res)
-	// if true{panic("s")}
+		// Filter by name, account, and provider
+		if (args.name.len == 0 || args.name.to_lower() == r.name.to_lower())
+			&& (args.account.len == 0 || args.account.to_lower() == r.account.to_lower())
+			&& (args.provider.len == 0 || args.provider.to_lower() == r.provider.to_lower()) {
+			res << r
+		}
+	}
 
 	return res
 }
 
-
+// Retrieve a single repository based on the provided arguments
 pub fn (mut gitstructure GitStructure) repo_get(args ReposGetArgs) !&GitRepo {
+	if args.name.len == 0 {
+		return error('The repository name should be passed.')
+	}
 
 	res := gitstructure.repos_get(args)!
+	// res[0].vscode()
+	// res[0].url_ssh_get()
+	// res[0].path()
+	// res[0].need_push()
+
+	// res[0]
+
 	if res.len == 0 {
-		return error('cannot find repo with locator.\n${args}')
+		return error('Cannot find repository with the given locator.\n${args}')
 	}
 	if res.len > 1 {
 		repos := res.map('- ${it.account}.${it.name}').join_lines()
-		return error('Found more than 1 repo for \n${args}\n${repos}')
+		return error('Found more than one repository for \n${args}\n${repos}')
 	}
-	return res[0] or { panic('bug') }
+	// mut repo = 
+	// repo. 
+	return res[0] or { panic('bug: unexpected empty result') }
 }
 
-
+// Check if a repository exists based on the provided arguments
 pub fn (mut gitstructure GitStructure) repo_exists(args ReposGetArgs) !bool {
 	res := gitstructure.repos_get(args)!
 	if res.len == 0 {
 		return false
 	}
 	if res.len > 1 {
-		return error('Found more than 1 repo with locator (exist).\n${args}\n${res}')
+		return error('Found more than one repository with the given locator.\n${args}')
 	}
 	return true
 }
 
-
-
+// Retrieve a repository based on the GitLocation
 pub fn (mut gitstructure GitStructure) repo_get_from_locator(l GitLocation) !&GitRepo {
-
-	return gitstructure.repo_get(name: l.name, account: l.account,provider:l.provider)!
-
+	return gitstructure.repo_get(name: l.name, account: l.account, provider: l.provider)!
 }
 
+// Check if a repository exists based on the GitLocation
 pub fn (mut gitstructure GitStructure) repo_exists_from_locator(l GitLocation) !bool {
-
-	return gitstructure.repo_exists(name: l.name, account: l.account,provider:l.provider)!
-
+	return gitstructure.repo_exists(name: l.name, account: l.account, provider: l.provider)!
 }
 
-
-
-// will get repo starting from url, if the repo does not exist, only then will pull .
-// if pull is set on true, will then pull as well .
-// url examples: .
-// ```
-// https://github.com/threefoldtech/tfgrid-sdk-ts
-// https://github.com/threefoldtech/tfgrid-sdk-ts.git
-// git@github.com:threefoldtech/tfgrid-sdk-ts.git
-//
-// # to specify a branch and a folder in the branch
-// https://github.com/threefoldtech/tfgrid-sdk-ts/tree/development/docs
-//
-// args:
-// path   string
-// url    string
-// branch string
-// sshkey string
-// pull   bool // will pull if this is set
-// reset  bool // this means will pull and reset all changes
-// reload bool // reload the cache
-// ```
-// will return the path of the location 
+// Get repository from URL, pull if necessary, and return the path
 pub fn (mut gs GitStructure) code_get(args GSCodeGetFromUrlArgs) !string {
+	mut gl := GitLocation{}
 
-	mut gl:=GitLocation{}
-
-	if args.path.len>0{
-		gl=gs.gitlocation_from_path(args.path)!
+	// Get the GitLocation from path or URL
+	if args.path.len > 0 {
+		gl = gs.gitlocation_from_path(args.path)!
 	}
-	if args.url.len>0{
-		gl=gs.gitlocation_from_url(args.url)!
-	}	
-
-
-	if ! gs.repo_exists(provider:gl.provider, account:gl.account, name:gl.name)!{
-		panic("implement clone...")
-		
-	}
-	mut r:=gs.repo_get(provider:gl.provider, account:gl.account, name:gl.name)!
-
-
-	//TODO: IMPORTANT NEED TO CHECK DEPENDING SITUATION WHAT TO DO
-	if args.reload{
-		panic("implement")
-	}	
-	if args.reset{
-		panic("implement")
-	}
-	if args.branch.len>0{
-		//TODO check what to do
-		panic("implement")
-	}
-	if args.tag.len>0{
-		panic("implement")
+	if args.url.len > 0 {
+		gl = gs.gitlocation_from_url(args.url)!
 	}
 
-	if args.pull{
-		panic("implement")
+	// Check if the repository exists; if not, clone it
+	if !gs.repo_exists(provider: gl.provider, account: gl.account, name: gl.name)! {
+		panic('Repository does not exist, cloning is not yet implemented.')
 	}
 
+	mut r := gs.repo_get(provider: gl.provider, account: gl.account, name: gl.name)!
+	// println(r)
 
+	// Handle reload, reset, branch, and tag if specified
+	if args.reload {
+		panic('Reload functionality is not yet implemented.')
+	}
+	if args.reset {
+		panic('Reset functionality is not yet implemented.')
+	}
+	if args.branch.len > 0 {
+		panic('Branch handling is not yet implemented.')
+	}
+	if args.tag.len > 0 {
+		panic('Tag handling is not yet implemented.')
+	}
+	if args.pull {
+		panic('Pull functionality is not yet implemented.')
+	}
 
 	return gl.patho()!.path
-
 }
-
-
-// @[params]
-// pub struct GitRepoGetArgs {
-// pub mut:
-// 	gitstructure_name string = 'default'
-// 	path              string
-// }
-
-// // look for git dir at (.git location), .
-// // if path not specified will take current path, .
-// // will give error if we can't find the .git location .
-// // will then opern repo from that location
-// //```
-// // params:
-// // 		path string
-// // 		coderoot string
-// //```
-// pub fn git_repo_get(args_ GitRepoGetArgs) !GitRepo {
-// 	mut args := args_
-// 	path := git_dir_get(path: args.path)!
-// 	mut gs := get(name: args.gitstructure_name) or {
-// 		return error("Could not load gittools for ${args.gitstructure_name}'\n${err}")
-// 	}
-// 	return gs.repo_from_path(path)
-// }
