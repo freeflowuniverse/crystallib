@@ -236,8 +236,14 @@ pub fn (mut self Postgresql) install(args InstallArgs) ! {
 
 pub fn (mut self Postgresql) destroy() ! {
     switch(self.name)
-    self.stop() or {}
-    destroy()!
+    self.stop() or {
+        println('faild to stop: ${err}')
+    }
+    
+    for zprocess in startupcmd()!{
+        mut sm:= startupmanager_get(zprocess.startuptype)!
+        sm.delete(zprocess.name)!
+    }
 }
 
 

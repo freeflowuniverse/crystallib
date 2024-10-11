@@ -24,6 +24,7 @@ pub mut:
     name string = 'default'
 	path   string
 	passwd string
+    container_id string
 }
 
 fn cfg_play(p paramsparser.Params) !Postgresql {

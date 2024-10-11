@@ -5,18 +5,18 @@
 This company is a cloud company ...
 
 ```js
-!!revenue.define 
+!!bizmodel.revenue_define bizname:'test'
     descr:'OEM Deals'  
     revenue_time:'10:1000000EUR,15:3333,20:1200000'
     cogs_perc: '1:5%,20:10%'  
 
-!!revenue.define 
+!!bizmodel.revenue_define bizname:'test'
     descr:'License Deals'  
     revenue_growth:'10:1000,20:1100'
     cogs_perc: '10%'  
     rev_delay_month: 1
 
-!!revenue.define 
+!!bizmodel.revenue_define bizname:'test'
     descr:'3NODE License Sales 1 Time'  
     //means revenue is 100 month 1, 200 month 60
     revenue_item:'1:100,60:200'
@@ -46,7 +46,7 @@ if currency not specified then is always in USD
 
 ```js
 
-!!revenue.recurring_define 
+!!bizmodel.revenue_recurring_define bizname:'test'
     name: '3node_lic'
     descr:'3NODE License Sales Recurring Basic'  
     revenue_setup:'1:100,60:50'

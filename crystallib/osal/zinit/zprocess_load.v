@@ -8,7 +8,9 @@ pub fn (mut zp ZProcess) load() ! {
 		$if debug {
 			print_backtrace()
 		}
-		return error('there should be a file ${zp.name}.yaml in /etc/zinit')
+		mut pathyaml := zinitobj.path.file_get_new(zp.name + '.yaml')!
+		content := zp.config_content()!
+		pathyaml.write(content)!
 	}
 
 	// if zinitobj.pathcmds.file_exists(zp.name) {

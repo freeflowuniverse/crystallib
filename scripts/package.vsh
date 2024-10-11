@@ -8,6 +8,8 @@ import os
 
 mypath:=base.bash_installers_package()!
 
+println("package done")
+
 // println(" - testing the packaging...")
 
 

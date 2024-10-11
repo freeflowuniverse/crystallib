@@ -118,7 +118,7 @@ pub mut:
 }
 
 // internal function used by to year and by to quarter
-fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
+fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
 	mut args := args_
 	mut sheetname := args.name
 	if sheetname == '' {
@@ -202,7 +202,7 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !Sheet {
 //   tagsfilter []string
 // tags if set will see that there is at least one corresponding tag per row
 // rawsfilter is list of names of rows which will be included
-pub fn (mut s Sheet) toyear(args ToYearQuarterArgs) !Sheet {
+pub fn (mut s Sheet) toyear(args ToYearQuarterArgs) !&Sheet {
 	mut args2 := args
 	args2.period_months = 12
 	return s.tosmaller(args2)
@@ -215,7 +215,7 @@ pub fn (mut s Sheet) toyear(args ToYearQuarterArgs) !Sheet {
 //   tagsfilter []string
 // tags if set will see that there is at least one corresponding tag per row
 // rawsfilter is list of names of rows which will be included
-pub fn (mut s Sheet) toquarter(args ToYearQuarterArgs) !Sheet {
+pub fn (mut s Sheet) toquarter(args ToYearQuarterArgs) !&Sheet {
 	mut args2 := args
 	args2.period_months = 3
 	return s.tosmaller(args2)
