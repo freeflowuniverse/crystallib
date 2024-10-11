@@ -35,6 +35,8 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 	// growth := action.params.get_default('growth', '1:1')!
 	department := action.params.get_default('department', '')!
 	page := action.params.get_default('page', '')!
+
+	
 	
 	cost_percent_revenue := action.params.get_percentage_default('cost_percent_revenue','0%')!
 	nrpeople := action.params.get_default('nrpeople', '1')!
@@ -104,6 +106,7 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 		indexation: indexation
 		cost_center: cost_center
 		page: page
+		fulltime_perc : action.params.get_percentage_default('fulltime', '100%')!
 	}
 
 	//println(employee)

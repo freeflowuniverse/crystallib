@@ -23,6 +23,7 @@ pub:
 	indexation           f64
 	cost_center          string
 	page 				 string
+	fulltime_perc			 f64
 }
 
 pub struct Department {
