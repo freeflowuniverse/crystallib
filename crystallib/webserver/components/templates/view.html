@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PicoCSS Dashboard</title>
-    <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@@1.5.6/css/pico.min.css">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2/css/pico.min.css"
+    >
     <script src="https://cdn.jsdelivr.net/npm/unpoly@@3.9.2/unpoly.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/unpoly@@3.9.2/unpoly.min.css">
     <style>
@@ -15,28 +18,39 @@
             flex-direction: column;
             height: 100vh;
             margin: 0;
-            background-color: #1d1f27; /* Dark background for a modern look */
         }
 
-        body > nav {
-            padding: 1rem 2.5rem;
-            background-color: #2c2e38; /* Darker nav bar */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        body > header {
+            display: grid;
+            grid-template-columns: 1fr 4fr;
+            gap: 2rem;
+            padding: 0rem 2rem;
+        }
+
+        body > header > :nth-child(1) {
+            align-content: center;
+            justify-self: center;
+        }
+
+        body > header > :nth-child(2) {
+            align-content: center;
+            justify-self: end;
+        }
+
+        th, td {
+            background-color: inherit;
         }
 
         .grid-container {
             display: grid;
             grid-template-columns: 1fr 4fr;
             gap: 2rem;
-            padding: 2rem;
+            padding: 0rem 2rem 2rem 2rem;
             flex: 1;
         }
 
         /* Sidebar styling */
         .sidebar {
-            background-color: #2c2e38;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
             color: white;
         }
 
@@ -57,10 +71,18 @@
 
         /* Main content area styling */
         .main-content {
-            background-color: #2c2e38;
             padding: 2rem;
             border-radius: 0.5rem;
             color: #c9c9d1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Ensure the table section fits within the available space and allows scrolling */
+        #table-section {
+            flex: 1;
+            max-height: 45vh; /* Adjust height as needed */
+            overflow-y: auto;
         }
 
         /* Responsive adjustments */
@@ -90,21 +112,21 @@
 </head>
 
 <body>
-
     <!-- Top navigation -->
     @{view.navbar.html()}
 
     <!-- Dashboard Layout: Sidebar and Main Content -->
     <div class="grid-container">
         <!-- Sidebar -->
-        @{view.sidebar.html()}
+        <article>
+            @{view.sidebar.html()}
+        </article>
 
         <!-- Main content area -->
-        <div class="main-content">
-        @{view.main.html()}
-        </div>
+        <article class="main-content">
+            @{view.main.html()}
+        </article>
     </div>
-
 </body>
 
 </html>

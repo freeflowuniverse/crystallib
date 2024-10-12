@@ -1,10 +1,24 @@
-<!-- Top navigation -->
-<nav class="container-fluid">
-    <ul>
-        <li><strong>Dashboard</strong></li>
-    </ul>
-    <ul>
-        <li><a href="#settings">Settings</a></li>
-        <li><a href="#profile">Profile</a></li>
-    </ul>
-</nav>
+<header>
+    <!-- Logo -->
+    <a href="/">
+        @{navbar.logo.html()}
+    </a>
+    <nav>
+        <ul>
+            <li>
+                @if navbar.user_label != ''
+                <details class="dropdown">
+                    <summary>@{navbar.user_label}</summary>
+                    <ul>
+                        <li><a href="#profile">Profile</a></li>
+                        <li><a href="#settings">Settings</a></li>
+                        <li><a href="#logout">Logout</a></li>
+                    </ul>
+                </details>
+                @else 
+                    <button>Log In</button>
+                @endif
+            </li>
+        </ul>
+    </nav>
+</header>

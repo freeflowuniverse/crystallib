@@ -16,7 +16,18 @@ pub mut:
 pub struct Navbar {
 pub mut:
     brand NavItem
+    logo Image
     items []NavItem
+    user_label string // the label of the user button
+}
+
+pub struct Image {
+pub:
+    source string
+}
+
+pub fn (image Image) html() string {
+    return '<img src="${image.source}" alt="Logo" style="height: 40px;">'
 }
 
 pub struct Sidebar {}
