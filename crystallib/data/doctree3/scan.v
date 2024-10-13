@@ -56,7 +56,7 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 	if tree.is_collection_dir(path) {
 		collection_name := tree.get_collection_name(mut path)!
 
-		tree.collection_new(
+		tree.new_collection(
 			path: path.path
 			name: collection_name
 			heal: args.heal

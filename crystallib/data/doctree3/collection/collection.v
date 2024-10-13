@@ -9,12 +9,7 @@ import freeflowuniverse.crystallib.data.doctree3.pointer
 // look if we can find page in the local collection is collection name not specified
 // if collectionname specified will look for page in that specific collection
 pub fn (collection Collection) page_get(name_ string) !&Page {
-	collection_name, name := name_parse(name_)!
-	// console.print_debug(" page get: '${collection_name}' '${name}'")
-	// if collection_name.len > 0 && collection_name != collection.name {
-	// 	// get the page from tree with $collection:$page
-	// 	return collection.tree.page_get(name_)!
-	// }
+	_, name := name_parse(name_)!
 	return collection.pages[name] or {
 		return ObjNotFound{
 			collection: collection.name
@@ -44,7 +39,7 @@ pub fn (collection Collection) file_get(name_ string) !&File {
 }
 
 pub fn (collection Collection) page_exists(name string) bool {
-	collection_name, pname := name_parse(name) or { panic('bug') }
+	_, pname := name_parse(name) or { panic('bug') }
 	// if collection_name.len > 0 && collection_name != collection.name {
 	// 	return collection.tree.page_exists(name)
 	// }
