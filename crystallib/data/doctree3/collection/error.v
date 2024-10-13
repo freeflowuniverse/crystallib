@@ -53,7 +53,7 @@ pub fn (err ObjNotFound) msg() string {
 }
 
 // write errors.md in the collection, this allows us to see what the errors are
-fn (collection Collection) errors_report(dest_ string) ! {
+pub fn (collection Collection) errors_report(dest_ string) ! {
 	// console.print_debug("====== errors report: ${dest_} : ${collection.errors.len}\n${collection.errors}")
 	mut dest := pathlib.get_file(path: dest_, create: true)!
 	if collection.errors.len == 0 {

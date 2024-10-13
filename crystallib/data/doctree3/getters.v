@@ -3,6 +3,12 @@ module doctree3
 import freeflowuniverse.crystallib.data.doctree3.collection
 import freeflowuniverse.crystallib.data.doctree3.pointer
 
+pub fn (tree Tree) collection_get(name string) !&collection.Collection {
+	col := tree.collections[name] or { return error('collection ${name} not found') }
+
+	return col
+}
+
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
 pub fn (tree Tree) page_get(pointerstr string) !&collection.Page {
