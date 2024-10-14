@@ -2,7 +2,6 @@ module doctree3
 
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
-import os
 import freeflowuniverse.crystallib.core.texttools.regext
 
 @[params]
@@ -45,7 +44,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 	}
 
 	for _, mut collection in tree.collections {
-		tree.export_collection(mut collection,
+		collection.export(
 			path_src: path_src
 			path_edit: path_edit
 			reset: args.reset

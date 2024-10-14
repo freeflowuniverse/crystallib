@@ -4,33 +4,66 @@ import freeflowuniverse.crystallib.conversiontools.imagemagick
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.data.doctree3.pointer
+import freeflowuniverse.crystallib.data.doctree3.collection.page { Page }
+import freeflowuniverse.crystallib.data.doctree3.collection.file { File }
+import freeflowuniverse.crystallib.core.texttools
 
-// format of name is $collectionname:$pagename or $pagename
-// look if we can find page in the local collection is collection name not specified
-// if collectionname specified will look for page in that specific collection
-pub fn (collection Collection) page_get(name_ string) !&Page {
-	_, name := name_parse(name_)!
+pub enum CollectionState {
+	init
+	initdone
+	scanned
+	fixed
+	ok
+}
+
+@[heap]
+pub struct Collection {
+pub:
+	name string
+pub mut:
+	title  string
+	pages  map[string]&Page // markdown pages in collection
+	files  map[string]&File
+	images map[string]&File
+	path   Path
+	errors []CollectionError
+	state  CollectionState
+	// tree   &Tree             @[str: skip]
+	heal bool = true
+}
+
+@[params]
+pub struct CollectionNewArgs {
+mut:
+	name string @[required]
+	path string @[required]
+	heal bool = true // healing means we fix images, if selected will automatically load, remove stale links
+	load bool = true
+}
+
+// get a new collection
+pub fn new(args_ CollectionNewArgs) !Collection {
+	mut args := args_
+	args.name = texttools.name_fix(args.name)
+
+	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist
+	mut collection := Collection{
+		name: args.name
+		// tree: tree
+		path: pp
+		heal: args.heal
+	}
+
+	if args.load {
+		collection.scan()!
+	}
+
+	return collection
+}
+
+// gets page with specified name from collection
+pub fn (collection Collection) page_get(name string) !&Page {
 	return collection.pages[name] or {
-		return ObjNotFound{
-			collection: collection.name
-			name: name_
-		}
-	}
-}
-
-pub fn (collection Collection) image_get(name_ string) !&File {
-	_, name := name_parse(name_)!
-	return collection.images[name] or {
-		return ObjNotFound{
-			collection: collection.name
-			name: name
-		}
-	}
-}
-
-pub fn (collection Collection) file_get(name_ string) !&File {
-	_, name := name_parse(name_)!
-	return collection.files[name] or {
 		return ObjNotFound{
 			collection: collection.name
 			name: name
@@ -39,43 +72,36 @@ pub fn (collection Collection) file_get(name_ string) !&File {
 }
 
 pub fn (collection Collection) page_exists(name string) bool {
-	_, pname := name_parse(name) or { panic('bug') }
-	// if collection_name.len > 0 && collection_name != collection.name {
-	// 	return collection.tree.page_exists(name)
-	// }
-	_ := collection.page_get(pname) or {
-		if err is ObjNotFound {
-			return false
-		} else {
-			panic(err) // catch unforseen errors
+	return name in collection.pages
+}
+
+// gets image with specified name from collection
+pub fn (collection Collection) image_get(name string) !&File {
+	return collection.images[name] or {
+		return ObjNotFound{
+			collection: collection.name
+			name: name
 		}
 	}
-	return true
 }
 
 pub fn (collection Collection) image_exists(name string) bool {
-	_ := collection.image_get(name) or {
-		if err is ObjNotFound {
-			return false
-		} else {
-			panic(err)
+	return name in collection.images
+}
+
+// gets file with specified name form collection
+pub fn (collection Collection) file_get(name string) !&File {
+	return collection.files[name] or {
+		return ObjNotFound{
+			collection: collection.name
+			name: name
 		}
 	}
-	return true
 }
 
 pub fn (collection Collection) file_exists(name string) bool {
-	_ := collection.file_get(name) or {
-		if err is ObjNotFound {
-			return false
-		} else {
-			panic(err)
-		}
-	}
-	return true
+	return name in collection.files
 }
-
-///////////////////////////////////////////////////////////
 
 // remember the file, so we know if we have duplicates
 // also fixes the name
@@ -88,15 +114,17 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 		path_normalize: collection.heal
 		needs_to_exist: true
 	)!
+
 	p = ptr.path
+	if ptr.is_file_video_html() {
+		collection.file_new(mut p)!
+		return
+	}
+
 	if ptr.is_image() {
 		if collection.heal && imagemagick.installed() {
-			mut image := imagemagick.image_new(mut p) or {
-				panic('Cannot get new image:\n${p}\n${err}')
-			}
-			$if debug {
-				console.print_debug('downsizing image ${p.path}')
-			}
+			mut image := imagemagick.image_new(mut p)
+
 			imagemagick.downsize(path: p.path)!
 			// after downsize it could be the path has been changed, need to set it on the file
 			if p.path != image.path.path {
@@ -104,54 +132,41 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 				p.check()
 			}
 		}
-		if collection.image_exists(ptr.pointer.name) {
-			mut filedouble := collection.image_get(ptr.pointer.name) or {
-				panic('if image exists, I should be able to get it. \n${err}')
-			}
-			mut pathdouble := filedouble.path.path
-			mut pathsource := p.path
-			if pathsource.len < pathdouble.len + 1 {
-				// nothing to be done, because the already existing file is shortest or equal
-				return
-			}
-			// file double is the one who already existed, need to change the path and can delete original
-			filedouble.path = filedouble.path
-			filedouble.init()
-			if collection.heal {
-				p.delete()!
-			}
-			return
-		} else {
-			// means the its a new one, lets add it, first see if it needs to be downsized
+
+		// TODO: what are we trying to do?
+		if !collection.image_exists(ptr.pointer.name) {
 			collection.image_new(mut p)!
 		}
-	} else if ptr.is_file_video_html() {
-		// now we are working on non image
-		// if collection.file_exists(ptr.pointer.name) {
-		// 	mut filedouble := collection.file_get(ptr.pointer.name)!
-		// 	mut pathdouble := filedouble.path
-		// 	collection.error(path: pathdouble, msg: 'duplicate file', cat: .image_double)
-		// } else {
-		// }
 
-		// file existence is checked in file_new
-		collection.file_new(mut ptr.path)!
-	} else {
-		panic('unknown obj type, bug')
+		mut image_file := collection.image_get(ptr.pointer.name)!
+		mut image_file_path := image_file.path.path
+		if p.path.len <= image_file_path.len {
+			// nothing to be done, because the already existing file is shortest or equal
+			return
+		}
+		// file double is the one who already existed, need to change the path and can delete original
+		// TODO: this is clearly a bug
+		image_file.path = image_file.path
+		image_file.init()!
+		if collection.heal {
+			p.delete()!
+		}
+
+		return
 	}
+
+	return error('unsupported file type: ${ptr.pointer.extension}')
 }
 
 // add a page to the collection, specify existing path
 // the page will be parsed as markdown
 pub fn (mut collection Collection) page_new(mut p Path) ! {
-	$if debug {
-		console.print_debug('collection: ${collection.name} page new: ${p.path}')
-	}
 	mut ptr := pointer.pointerpath_new(
 		path: p.path
 		path_normalize: collection.heal
-		needs_to_exist: false
+		needs_to_exist: true
 	)!
+
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
 	if collection.page_exists(ptr.pointer.name) {
@@ -162,28 +177,25 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		)
 		return
 	}
-	mut page := Page{
+
+	new_page := page.new(
 		pathrel: p.path_relative(collection.path.path)!.trim('/')
 		name: ptr.pointer.name
 		path: p
-		readonly: false
-		// tree: collection.tree
 		collection_name: collection.name
-	}
-	console.print_debug(page.key())
-	collection.pages[ptr.pointer.name] = &page
+	)!
+
+	collection.pages[ptr.pointer.name] = &new_page
 }
 
 // add a file to the collection, specify existing path
 pub fn (mut collection Collection) file_new(mut p Path) ! {
-	$if debug {
-		console.print_debug('collection: ${collection.name} file new: ${p.path}')
-	}
 	mut ptr := pointer.pointerpath_new(
 		path: p.path
 		path_normalize: collection.heal
 		needs_to_exist: true
 	)!
+
 	// in case heal is true pointerpath_new can normalize the path
 	p = ptr.path
 	if collection.file_exists(ptr.pointer.name) {
@@ -195,59 +207,40 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 		return
 	}
 
-	mut ff := &File{
-		path: p
-		collection: &collection
-	}
-	ff.init()
-	collection.files[ptr.pointer.name] = ff
+	mut new_file := file.new(path: p, collection_path: collection.path)!
+	collection.files[ptr.pointer.name] = &new_file
 }
 
 // add a image to the collection, specify existing path
 pub fn (mut collection Collection) image_new(mut p Path) ! {
-	$if debug {
-		console.print_debug('collection: ${collection.name} image new: ${p.path}')
-	}
 	mut ptr := pointer.pointerpath_new(
 		path: p.path
 		path_normalize: collection.heal
 		needs_to_exist: true
 	)!
-	if ptr.pointer.name.starts_with('.') {
-		panic('should not start with . \n${p}')
-	}
+
 	// in case heal is true pointerpath_new can normalize the path
-	p = ptr.path
 	if collection.image_exists(ptr.pointer.name) {
 		// remove this one
-		mut file_double := collection.image_get(p.name())!
+		// TODO: why remove, what if this is a whole other image, but has the same name???
+		mut file_double := collection.image_get(ptr.path.name())!
 		mut path_double := file_double.path
-		if p.path.len > path_double.path.len {
-			p.delete()!
+		if ptr.path.path.len > path_double.path.len {
+			ptr.path.delete()!
 		} else {
 			path_double.delete()!
-			file_double.path = p // reset the path so the shortest one remains
+			file_double.path = ptr.path // reset the path so the shortest one remains
 		}
 		return
 	}
-	mut ff := &File{
-		path: p
-		collection: &collection
-	}
-	ff.init()
-	collection.images[ptr.pointer.name] = ff
-}
 
-// go over all pages, fix the links, check the images are there
-// pub fn (mut collection Collection) fix() ! {
-// 	$if debug {
-// 		console.print_debug('collection fix: ${collection.name}')
-// 	}
-// 	for _, mut page in collection.pages {
-// 		page.fix()!
-// 	}
-// 	collection.errors_report('${collection.path.path}/errors.md')!
-// }
+	mut image_file := &File{
+		path: ptr.path
+		collection_path: collection.path
+	}
+	image_file.init()!
+	collection.images[ptr.pointer.name] = image_file
+}
 
 // return all pagenames for a collection
 pub fn (collection Collection) pagenames() []string {

@@ -42,7 +42,7 @@ pub fn (mut tree Tree) process_macros() ! {
 	// now get specific actions which need to return content
 	for _, mut collection in tree.collections {
 		for _, mut page in collection.pages {
-			page.doc_process()!
+			page.process_macros()!
 		}
 	}
 }

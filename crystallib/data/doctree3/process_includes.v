@@ -1,9 +1,9 @@
 module doctree3
 
-import freeflowuniverse.crystallib.data.doctree3.collection
+import freeflowuniverse.crystallib.data.doctree3.collection.page
 import freeflowuniverse.crystallib.data.doctree3.pointer
 
-fn (tree Tree) process_page_includes_recursive(mut current_page collection.Page, mut vis map[string]bool) ! {
+fn (tree Tree) process_page_includes_recursive(mut current_page page.Page, mut vis map[string]bool) ! {
 	vis[current_page.key()] = true
 
 	current_collection_name := current_page.collection_name
@@ -69,6 +69,7 @@ fn (tree Tree) process_page_includes_recursive(mut current_page collection.Page,
 		mut include_doc := include_page.doc()!
 
 		action_element.content = include_doc.markdown()!
+		current_doc.changed = true
 	}
 }
 

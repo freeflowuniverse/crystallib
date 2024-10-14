@@ -1,102 +1,96 @@
 module collection
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.ui.console
 
 // walk over one specific collection, find all files and pages
 pub fn (mut collection Collection) scan() ! {
-	$if debug {
-		console.print_header('load collection: ${collection.name} - ${collection.path.path}')
-	}
 	collection.scan_directory(mut collection.path)!
-	$if debug {
-		console.print_debug('scan done')
-	}
 }
 
 // path is the full path
 fn (mut collection Collection) scan_directory(mut p pathlib.Path) ! {
-	$if debug {
-		console.print_debug('scan ${p.path}')
-	}
-	mut pl := p.list(recursive: false)!
-	for mut p_in in pl.paths {
-		if p_in.exists() == false {
-			// links are ignored in p.list()
-			// this should probably only happen if file was deleted midway
-			// between list() call and the exists() call
-			collection.error(path: p_in, msg: 'probably a broken link', cat: .unknown)
-			continue // means broken link
-		}
-		p_name := p_in.name()
-		if p_name.starts_with('.') {
-			continue
-		} else if p_name.starts_with('_') {
+	mut entry_list := p.list(recursive: false)!
+	for mut entry in entry_list.paths {
+		if !entry.exists() {
+			collection.error(
+				path: entry
+				msg: 'Entry ${entry.name()} does not exists'
+				cat: .unknown
+			)
 			continue
 		}
 
-		// Q: list ignores links, this can't happen, no?
-		// Q: a path can't b both, a link and a file, no? maybe it was intended to be ||
-		if mut p_in.is_link() && p_in.is_file() {
-			link_real_path := p_in.realpath() // this is with the symlink resolved
+		if mut entry.is_link() {
+			link_real_path := entry.realpath() // this is with the symlink resolved
 			collection_abs_path := collection.path.absolute()
-			if p_in.extension_lower() == 'md' {
+			if entry.extension_lower() == 'md' {
 				// means we are linking pages,this should not be done, need or change
 				collection.error(
-					path: p_in
-					msg: 'a markdown file should not be linked'
+					path: entry
+					msg: 'Markdown files (${entry.path}) must not be linked'
 					cat: .unknown
 				)
 				continue
 			}
+
 			if !link_real_path.starts_with(collection_abs_path) {
 				// means we are not in the collection so we need to copy
-				p_in.unlink()! // will transform link to become the file or dir it points too
-				assert !p_in.is_link()
+				entry.unlink()! // will transform link to become the file or dir it points too
 			} else {
-				p_in.relink()! // will check that the link is on the file with the shortest path
+				// TODO: why do we need this?
+				entry.relink()! // will check that the link is on the file with the shortest path
 			}
 		}
-		if p_in.cat == .linkfile {
-			// means we link to a file which is in the folder, so can be loaded later, nothing to do here
+
+		if collection.should_skip_entry(mut entry) {
 			continue
 		}
 
-		if p_in.is_dir() {
-			if p_name.starts_with('gallery_') {
-				// TODO: need to be implemented by macro
-				continue
-				// } else if p_name == 'collections' {
-				// 	p_in.delete()!
-				// 	continue
+		if entry.is_dir() {
+			collection.scan_directory(mut entry)!
+			continue
+		}
+
+		ext := entry.extension().to_lower()
+		if ext != '' {
+			// only process files which do have extension
+			if ext == 'md' {
+				collection.page_new(mut entry)!
 			} else {
-				collection.scan_directory(mut p_in)!
-			}
-		} else {
-			if p_name.to_lower() == 'defs.md' {
-				continue
-			} else if p_name.contains('.test') {
-				p_in.delete()!
-				continue
-				// } else if p_name.starts_with('_'){
-				//  && !(p_name.starts_with('_sidebar'))
-				// 	&& !(p_name.starts_with('_glossary')) && !(p_name.starts_with('_navbar')) {
-				// 	// console.print_debug('SKIP: $item')
-				// continue
-			} else if p_in.path.starts_with('sidebar') {
-				continue
-			} else {
-				ext := p_in.extension().to_lower()
-				if ext != '' {
-					// only process files which do have extension
-					if ext == 'md' {
-						// p_in.sids_replace(collection.tree.cid)! // replace all found id:*** //TODO: kristof check
-						collection.page_new(mut p_in)!
-					} else {
-						collection.file_image_remember(mut p_in)!
-					}
-				}
+				collection.file_image_remember(mut entry)!
 			}
 		}
 	}
+}
+
+fn (mut c Collection) should_skip_entry(mut entry pathlib.Path) bool {
+	entry_name := entry.name()
+
+	// entries that start with . or _ are ignored
+	if entry_name.starts_with('.') || entry_name.starts_with('_') {
+		return true
+	}
+
+	if entry.cat == .linkfile {
+		// means we link to a file which is in the folder, so can be loaded later, nothing to do here
+		return true
+	}
+
+	if entry.is_dir() && entry_name.starts_with('gallery_') {
+		return true
+	}
+
+	if entry_name.to_lower() == 'defs.md' {
+		return true
+	}
+
+	if entry_name.contains('.test') {
+		return true
+	}
+
+	if entry.path.starts_with('sidebar') {
+		return true
+	}
+
+	return false
 }
