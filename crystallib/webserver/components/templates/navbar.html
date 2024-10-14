@@ -5,20 +5,11 @@
     </a>
     <nav>
         <ul>
+            @for item in navbar.items
             <li>
-                @if navbar.user_label != ''
-                <details class="dropdown">
-                    <summary>@{navbar.user_label}</summary>
-                    <ul>
-                        <li><a href="#profile">Profile</a></li>
-                        <li><a href="#settings">Settings</a></li>
-                        <li><a href="#logout">Logout</a></li>
-                    </ul>
-                </details>
-                @else 
-                    <button>Log In</button>
-                @endif
+                @{item.html()}
             </li>
+            @end
         </ul>
     </nav>
 </header>

@@ -1,6 +1,5 @@
 <div class="sidebar">
-    <a href="#home">Home</a>
-    <a href="#analytics">Analytics</a>
-    <a href="#reports">Reports</a>
-    <a href="#settings">Settings</a>
+    @for item in sidebar.items
+        <a href="@{item.href}">@{item.text}</a>
+    @end
 </div>

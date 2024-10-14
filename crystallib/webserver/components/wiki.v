@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.data.markdownparser.elements
 
 pub struct Wiki {
 pub:
+	static_url string
 	summary_path string
 	content_path string
 }
