@@ -1,10 +1,9 @@
 module gittools
 
-// import freeflowuniverse.crystallib.core.texttools
+import os
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
-import os
 
 // Reload all information from disk & remote SSH.
 // Use kwarg: reload: true to ensure everything is reloaded.

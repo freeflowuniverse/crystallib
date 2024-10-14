@@ -1,14 +1,13 @@
 module gittools
 
+import freeflowuniverse.crystallib.core.base
 import crypto.md5
 import os
 import json
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.core.base
-// import freeflowuniverse.crystallib.ui.console
 
 __global (
-	gsinstances shared map[string]GitStructure
+	gsinstances shared map[string]&GitStructure
 )
 
 // Retrieve or create a new GitStructure instance with the given configuration.
@@ -28,7 +27,7 @@ pub fn getset(args_ GitStructureConfig) !&GitStructure {
 	datajson := json.encode(args)
 	mut c := base.context()!
 	mut redis := c.redis()!
-	redis.set(gitstructure_config_key(config.name), datajson)!
+	redis.set(gitstructure_config_key(key), datajson)!
 
 	return get(GitStructureGetArgs{ coderoot: args_.coderoot })!
 }
@@ -86,9 +85,10 @@ pub fn get(args_ GitStructureGetArgs) !&GitStructure {
 		config:   config
 		coderoot: pathlib.get_dir(path: args.coderoot, create: true)!
 	}
+	gs.load()!
 
 	lock gsinstances {
-		gsinstances[gitname] = gs
+		gsinstances[gs.key] = gs
 	}
 
 	return gs
