@@ -1,66 +1,157 @@
-# GitTools
+### README.md
 
-`gittools` is a V language library designed to manage and interact with Git repositories efficiently. It provides functionalities to handle repository statuses, caching, and remote operations, making it an essential tool for developers working with Git.
+# GitTools for VLang
+
+GitTools is a powerful Git management library written in VLang, designed to help developers manage Git repositories efficiently. This library provides functionalities such as cloning, pulling, pushing repositories, managing multiple Git structures, and caching repository information.
 
 ## Features
 
-- **Repository Management**: Easily access and manage multiple Git repositories.
-- **Status Updates**: Retrieve and update the status of local and remote branches.
-- **Caching**: Save and load repository data using Redis for quick access.
-- **URL Generation**: Generate SSH and HTTP URLs for Git repositories.
-- **Branch and Tag Handling**: Fetch branch and tag information from repositories.
+- Clone Git repositories using SSH or HTTP.
+- Commit, push, and pull changes from repositories.
+- Manage multiple Git structures with customizable settings.
+- Caching using Redis for faster repository operations.
+- Automatically reload and reset repositories as needed.
+- Supports advanced Git operations (branches, tags, submodules).
 
-## Usage
+## Installation
 
-Here’s a simple example demonstrating how to use the `gittools` package:
+### Prerequisites
+- **VLang**: Make sure you have VLang installed. If not, follow the [VLang installation guide](https://vlang.io/getting-started).
+- **Redis**: Redis is used for caching repository information. Install Redis from [redis.io](https://redis.io/download).
+
+### Steps
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/gittools-vlang.git
+   cd gittools-vlang
+   ```
+
+2. Build the project:
+   ```bash
+   v build .
+   ```
+
+3. Run tests to verify:
+   ```bash
+   v test .
+   ```
+
+## Usage Example
 
 ```v
-#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+import gittools
 
-import freeflowuniverse.crystallib.develop.gittools
+fn main() {
+    // Define the Git root directory and URL
+    git_root := '/path/to/git/root'
+    repo_url := 'https://github.com/yourusername/yourrepository.git'
 
-// Reset all configurations and caches
-// gittools.cachereset()!
+    // Initialize GitStructure and clone the repo
+    args := gittools.CodeGetFromUrlArgs{
+        coderoot: git_root
+        url: repo_url
+        branch: 'main'
+        pull: true
+    }
 
-// Initialize the Git structure with the coderoot path
-mut gs_default := gittools.get(coderoot: "~/code")!
+    result := gittools.code_get(args) or {
+        eprintln('Error getting the repo: $err')
+        return
+    }
 
-// Print all repositories in the specified coderoot
-gs_default.repos_print()!
+    println('Repo successfully cloned to: $result')
 
-// Example of getting the path of a specific repository
-mut path := gittools.code_get(
-    coderoot: "~/code",
-    url:      "https://github.com/despiegk/ourworld_data"
-)!
+    // Load the GitStructure and list repositories
+    mut git_structure := gittools.getset(gittools.GitStructureConfig{
+        coderoot: git_root
+    }) or {
+        eprintln('Error loading git structure: $err')
+        return
+    }
 
-// List all repositories again
-gs_default.list()!
-
-// Print the exact path of the repository
-println("Repository path: $path")
+    git_structure.repos_print(gittools.ReposGetArgs{}) or {
+        eprintln('Error listing repositories: $err')
+    }
+}
 ```
 
-## API Reference
+### Detailed API Overview
 
-### `GitRepo`
+#### 1. `CodeGetFromUrlArgs`
+Arguments to pull a repository from a URL.
 
-#### Methods
+| Field            | Type     | Description                                                 |
+|------------------|----------|-------------------------------------------------------------|
+| `coderoot`       | `string` | Root directory for code storage.                            |
+| `url`            | `string` | The Git repository URL.                                     |
+| `branch`         | `string` | The branch to clone (optional).                             |
+| `pull`           | `bool`   | Whether to pull the latest changes after cloning (optional).|
+| `reset`          | `bool`   | Whether to reset the repository to the latest changes.      |
 
-- `key()`: Returns a unique key for the Git repository.
-- `cache_key()`: Generates a cache key for the repository.
-- `cache_delete()`: Removes the repository from the cache.
-- `path()`: Returns the filesystem path to the repository.
-- `patho()`: Returns a rich path object for the repository.
-- `redis_save()`: Saves the repository data to Redis.
-- `redis_load()`: Loads the repository data from Redis.
-- `status_update(args StatusUpdateArgs)`: Updates the repository status based on the provided arguments.
-- `load()`: Loads repository information from the local Git configuration.
-- `check()`: Validates the repository fields and path.
-- `path_relative()`: Gets the relative path inside the Git structure.
+#### 2. `GitStructureConfig`
+Configure the Git structure, providing root paths, and controlling logging and history depth.
 
-### Usage Scenarios
+| Field            | Type     | Description                                                 |
+|------------------|----------|-------------------------------------------------------------|
+| `coderoot`       | `string` | The root directory for all repositories.                    |
+| `light`          | `bool`   | If true, shallow clones are used for repositories.          |
+| `log`            | `bool`   | Enable or disable logging of Git commands.                  |
 
-- Use `gittools.get()` to initialize your Git structure.
-- Call `repos_print()` to view all repositories managed by the library.
-- Use `code_get()` to retrieve a specific repository by its URL.
+#### 3. `gittools.getset()`
+Sets up and returns a GitStructure based on the configuration.
+
+#### 4. `gittools.code_get()`
+Clones or updates a repository based on the provided arguments.
+
+#### 5. `gittools.repos_print()`
+Prints all repositories within the GitStructure.
+
+### Tests
+
+To run tests:
+
+```bash
+v test .
+```
+
+The test suite ensures that the core functionalities of cloning, pulling, pushing, and repository management work as expected.
+
+### Example Usage (As a standalone V file)
+```v
+import gittools
+
+fn main() {
+    // Define Git root directory and repo URL
+    coderoot := '/home/user/git_repos'
+    repo_url := 'https://github.com/user/myrepo.git'
+
+    // Initialize the arguments for code_get
+    args := gittools.CodeGetFromUrlArgs{
+        coderoot: coderoot
+        url: repo_url
+        branch: 'main'
+        pull: true
+    }
+
+    // Clone or pull the repository
+    result := gittools.code_get(args) or {
+        eprintln('Failed to get repository: $err')
+        return
+    }
+
+    println('Repository cloned or updated at: $result')
+
+    // Example of listing repositories under the GitStructure
+    mut git_structure := gittools.getset(gittools.GitStructureConfig{
+        coderoot: coderoot
+    }) or {
+        eprintln('Failed to load GitStructure: $err')
+        return
+    }
+
+    git_structure.repos_print(gittools.ReposGetArgs{}) or {
+        eprintln('Failed to list repositories: $err')
+    }
+}
+```

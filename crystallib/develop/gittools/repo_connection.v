@@ -6,7 +6,7 @@ import os
 // Returns true if the connection method was changed.
 fn (repo GitRepo) connection_change(http bool) !bool {
 	// Get the repository path
-	path2 := repo.path()!
+	path2 := repo.get_path()!
 
 	// Check if the path exists, if not, there's nothing to change
 	if !os.exists(path2) {

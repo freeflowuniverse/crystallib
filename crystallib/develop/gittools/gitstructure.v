@@ -37,16 +37,16 @@ fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdate
 				mut repo := gitstructure.repo_init_from_path_(current_path)!
 				repo.status_update(reload: args.reload)!
 
-				key_ := repo.key()
-				path_ := repo.path()!
+				key_ := repo.get_key()
+				path_ := repo.get_path()!
 
 				if processed_paths.contains(key_) || processed_paths.contains(path_) {
-					return error('loading of repo failed due to duplication.\npath: ${repo.path()!}\nkey: ${repo.key()}')
+					return error('loading of repo failed due to duplication.\npath: ${path_}\nkey: ${key_}')
 				}
 				// Track processed paths
-				processed_paths << repo.path()!
-				processed_paths << repo.key()
-				gitstructure.repos[repo.key()] = &repo
+				processed_paths << path_
+				processed_paths << key_
+				gitstructure.repos[key_] = &repo
 				continue
 			}
 			// Skip hidden directories

@@ -29,7 +29,7 @@ pub fn (mut gs GitStructure) gitlocation_from_path(path string) !GitLocation {
 
 // Get GitLocation from a URL
 pub fn (mut gs GitStructure) gitlocation_from_url(url string) !GitLocation {
-	mut urllower := url.to_lower().trim_space()
+	mut urllower := url.trim_space()
 	if urllower == '' {
 		return error('url cannot be empty')
 	}
@@ -71,7 +71,7 @@ pub fn (mut gs GitStructure) gitlocation_from_url(url string) !GitLocation {
 	// Extract provider, account, and name
 	provider := if parts[0] == 'github.com' { 'github' } else { parts[0] }
 	account := parts[1]
-	name := parts[2]
+	name := parts[2].replace('.git', '')
 
 	return GitLocation{
 		provider: provider

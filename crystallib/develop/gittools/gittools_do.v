@@ -48,7 +48,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		else {}
 	}
 
-	mut repos := gs.repos_get(
+	mut repos := gs.get_repos(
 		filter:   args.filter
 		name:     args.repo
 		account:  args.account
@@ -61,32 +61,34 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		if args.branch.len > 0 {
 			locator.branch = args.branch
 		}
-		mut g := gs.repo_get_from_locator(locator)!
-		g.load()!
+
+		mut repo := gs.repo_get_from_locator(locator)!
+		repo_path := repo.get_path()!
+		repo.load()!
+
 		if args.cmd == 'cd' {
-			return g.path()!
+			return repo_path
 		}
 		if args.reset {
-			g.remove_changes()!
+			repo.remove_changes()!
 		}
 		if args.cmd == 'pull' || args.pull {
-			g.pull(branch: args.branch, recursive: args.recursive, tag: args.tag)!
+			repo.pull(branch: args.branch, recursive: args.recursive, tag: args.tag)!
 		}
 		if args.cmd == 'push' {
-			if g.need_commit()! {
+			if repo.need_commit()! {
 				if args.msg.len == 0 {
 					return error('please specify a commit message with -m ...')
 				}
-				g.commit(msg: args.msg)!
+				repo.commit(msg: args.msg)!
 			}
-			g.push()!
+			repo.push()!
 		}
 		if args.cmd in ['pull', 'clone', 'push'] {
-			gpath := g.path()!
-			console.print_debug('git do ok, on path ${gpath}')
-			return gpath
+			console.print_debug('git do ok, on path ${repo_path}')
+			return repo_path
 		}
-		repos = [g]
+		repos = [repo]
 	}
 
 	// Handle commands related to 'sourcetree' and 'edit'

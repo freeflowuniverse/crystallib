@@ -73,9 +73,9 @@ pub fn get(args_ GitStructureGetArgs) !&GitStructure {
 	mut redis := c.redis()!
 	mut datajson := redis.get(gitstructure_config_key(key))!
 
-	if datajson == '' {
-		return error("Unable to find git structure for coderoot: '${args.coderoot}'")
-	}
+	// if datajson == '' {
+	// 	return error("Unable to find git structure for coderoot: '${args.coderoot}'")
+	// }
 
 	mut config := json.decode(GitStructureConfig, datajson)!
 

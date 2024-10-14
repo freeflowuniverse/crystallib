@@ -3,29 +3,34 @@ module gittools
 import freeflowuniverse.crystallib.ui.console
 
 // Check and return the status of a repository (whether it needs a commit, pull, or push)
-fn get_repo_status(g GitRepo) !string {
+fn get_repo_status(gr GitRepo) !string {
+	mut repo := gr
 	mut statuses := []string{}
-	if g.need_commit()! {
+
+	if repo.need_commit()! {
 		statuses << 'COMMIT'
 	}
-	if g.need_pull() {
+	if repo.need_pull()! {
 		statuses << 'PULL'
 	}
-	if g.need_push()! {
+	if repo.need_push()! {
 		statuses << 'PUSH'
 	}
 	return statuses.join(', ')
 }
 
 // Format repository information for display, including path, tag/branch, and status
-fn format_repo_info(g GitRepo) ![]string {
-	status := get_repo_status(g)!
-	tag_or_branch := if g.status_local.tag.len > 0 {
-		'[[${g.status_local.tag}]]' // Display tag if it exists
+fn format_repo_info(repo GitRepo) ![]string {
+	status := get_repo_status(repo)!
+
+	tag_or_branch := if repo.status_local.tag.len > 0 {
+		'[[${repo.status_local.tag}]]' // Display tag if it exists
 	} else {
-		'[${g.status_local.branch}]' // Otherwise, display branch
+		'[${repo.status_local.branch}]' // Otherwise, display branch
 	}
-	return [' - ${g.path_relative()!}', tag_or_branch, status]
+
+	relative_path := repo.get_relative_path()!
+	return [' - ${relative_path}', tag_or_branch, status]
 }
 
 // Print repositories based on the provided criteria, showing their statuses
@@ -36,7 +41,7 @@ pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
 	mut repo_data := [][]string{}
 
 	// Collect repository information based on the provided criteria
-	for _, repo in gitstructure.repos_get(args)! {
+	for _, repo in gitstructure.get_repos(args)! {
 		repo_data << format_repo_info(repo)!
 	}
 

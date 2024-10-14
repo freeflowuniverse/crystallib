@@ -9,29 +9,11 @@ import time
 import os
 import freeflowuniverse.crystallib.osal.sshagent
 
-fn (repo GitRepo) key() string {
-	return '${repo.gs.key}:${repo.provider}:${repo.account}:${repo.name}'
-}
-
-fn (repo GitRepo) cache_key() string {
-	return 'git:repos:${repo.gs.key}:${repo.provider}:${repo.account}:${repo.name}'
-}
-
-// Remove cache
-fn (repo GitRepo) cache_delete() ! {
-	mut context := base.context()!
-	mut redis := context.redis()!
-	redis.del(repo.cache_key())!
-}
-
-pub fn (repo GitRepo) path() !string {
-	return '${repo.gs.coderoot.path}/${repo.provider}/${repo.account}/${repo.name}'
-}
 
 // Return rich path object from our library crystal lib
 pub fn (repo GitRepo) patho() !pathlib.Path {
 	repo.check()!
-	return pathlib.get_dir(path: repo.path()!, create: false)!
+	return pathlib.get_dir(path: repo.get_path()!, create: false)!
 }
 
 // Save repo to redis cache
@@ -39,14 +21,16 @@ fn (repo GitRepo) redis_save() ! {
 	mut context := base.context()!
 	mut redis := context.redis()!
 	repo_json := json.encode(repo)
-	redis.set(repo.cache_key(), repo_json)!
+	cache_key := repo.get_cache_key()
+	redis.set(cache_key, repo_json)!
 }
 
 // Get repo from redis cache
 fn (mut repo GitRepo) redis_load() ! {
 	mut context := base.context()!
 	mut redis := context.redis()!
-	repo_json := redis.get(repo.cache_key())!
+	cache_key := repo.get_cache_key()
+	repo_json := redis.get(cache_key)!
 	if repo_json.len > 0 {
 		repo = json.decode(GitRepo, repo_json)!
 	}
@@ -64,8 +48,8 @@ pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
 
 // Load repo information
 fn (mut repo GitRepo) load() ! {
-	console.print_debug('load ${repo.key()}')
-	path := repo.path()!
+	console.print_debug('load ${repo.get_key()}')
+	path := repo.get_path()!
 
 	// Fetch local branch or see if detached
 	cmd_result := osal.execute_silent('git -C ${path} rev-parse --abbrev-ref HEAD') or {
@@ -101,7 +85,11 @@ fn (mut repo GitRepo) load() ! {
 		if line.trim_space() != '' {
 			parts := line.split(' ')
 			if parts.len == 2 {
-				branch_name := parts[0].trim_space()
+				mut branch_name := string(parts[0].trim_space())
+				if branch_name.contains('origin/'){
+					branch_name = branch_name.replace('origin/', '')
+				}
+
 				commit_hash := parts[1].trim_space()
 				repo.status_remote.branches[branch_name] = commit_hash
 
@@ -135,7 +123,7 @@ fn (mut repo GitRepo) load() ! {
 
 // Check if repo path exists and validate fields
 pub fn (repo GitRepo) check() ! {
-	path_string := repo.path()!
+	path_string := repo.get_path()!
 	if repo.gs.coderoot.path == '' {
 		return error('Coderoot cannot be empty')
 	}
@@ -152,12 +140,6 @@ pub fn (repo GitRepo) check() ! {
 	if !os.exists(path_string) {
 		return error('Path does not exist: ${path_string}')
 	}
-}
-
-// Relative path inside the gitstructure, pointing to the repo
-pub fn (repo GitRepo) path_relative() !string {
-	mut mypath := repo.patho()!
-	return mypath.path_relative(repo.gs.coderoot.path) or { panic("couldn't get relative path") }
 }
 
 // Create GitLocation from the path within the Git repository
@@ -180,56 +162,6 @@ pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
 		path:     path
 	}
 }
-
-// Determine if the repo needs to pull based on status_remote and status_local information
-pub fn (repo GitRepo) need_pull() bool {
-	return repo.status_remote.latest_commit != repo.status_local.ref
-}
-
-// Determine if the repo needs to push based on the existence of local changes
-pub fn (repo GitRepo) need_push() !bool {
-	staged_changes := repo.get_staged_changes()!
-	unstaged_changes := repo.get_unstaged_changes()!
-	println(staged_changes)
-	println(unstaged_changes)
-
-	is_not_empty_ref := repo.status_local.ref != ''
-	println('epo.status_local.ref: ${repo.status_local.ref}')
-	println('repo.status_remote.latest_commit: ${repo.status_remote.latest_commit}')
-	println('repo.status_remote.latest_commit: ${repo.status_local}')
-
-	println('repo: ${repo.status_remote}')
-	is_not_same_commit  := repo.status_local.ref != repo.status_remote.latest_commit
-	return is_not_empty_ref && is_not_same_commit
-}
-
-pub fn (repo GitRepo) need_commit() !bool {
-	return repo.get_staged_changes()!.len > 0
-}
-
-// New function to check if there are changes that need to be added
-pub fn (repo GitRepo) has_changes() !bool {
-	repo_path := repo.path()!
-	
-	// Check for untracked files
-	untracked_result := osal.execute_silent('git -C ${repo_path} ls-files --others --exclude-standard') or {
-		return error('Failed to check for untracked files: ${err}')
-	}
-
-	// If there are untracked files, return true
-	if untracked_result.len > 0 {
-		return true
-	}
-
-	// Check for modified files
-	modified_result := osal.execute_silent('git -C ${repo_path} status --porcelain') or {
-		return error('Failed to check git status: ${err}')
-	}
-
-	// If there are modified files, return true
-	return modified_result.len > 0
-}
-
 
 fn (self GitRepo) path_account() !pathlib.Path {
 	self.check()!

@@ -40,70 +40,20 @@ pub fn (mut repo GitRepo) commit_pull(args_ ActionArgs) ! {
 	repo.pull(args)!
 }
 
-// Pulls remote content, failing if there are local changes
-pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
-	repo.switch_branch_if_needed(args_)!
-
-	cmd := 'cd ${repo.path()!} && git pull'
-	osal.execute_silent(cmd) or {
-		return error('Cannot pull repo: ${repo.path}. Error: ${err}')
-	}
-
-	if args_.tag != '' {
-		repo.checkout_tag(args_.tag)!
-	}
-
-	if args_.recursive {
-		repo.update_submodules()!
-	}
-
-	repo.load()!
-}
-
-// Helper function to switch branches if needed
-fn (mut repo GitRepo) switch_branch_if_needed(args_ ActionArgs) ! {
-	if args_.branch != '' && args_.branch != repo.status_local.branch {
-		console.print_header('Switching branch from ${repo.status_local.branch} to ${args_.branch} for ${repo.status_local.url}')
-		repo.branch_switch(args_.branch)!
-	}
-}
-
 // Checkout specific tag
 fn (mut repo GitRepo) checkout_tag(tag string) ! {
-	cmd := 'cd ${repo.path()!} && git checkout ${tag}'
+	cmd := 'cd ${repo.get_path()!} && git checkout ${tag}'
 	osal.execute_silent(cmd) or {
-		return error('Cannot checkout tag ${tag} for repo: ${repo.path()!}. Error: ${err}')
+		return error('Cannot checkout tag ${tag} for repo: ${repo.get_path()!}. Error: ${err}')
 	}
 }
 
 // Update submodules
 fn (mut repo GitRepo) update_submodules() ! {
-	cmd := 'cd ${repo.path()!} && git submodule update --init --recursive'
+	cmd := 'cd ${repo.get_path()!} && git submodule update --init --recursive'
 	osal.execute_silent(cmd) or {
-		return error('Cannot update submodules for repo: ${repo.path()!}. Error: ${err}')
+		return error('Cannot update submodules for repo: ${repo.get_path()!}. Error: ${err}')
 	}
-}
-
-pub fn (repo GitRepo) get_unstaged_changes() ![]string {
-	repo.check()!
-	repo_path := repo.path()!
-
-	unstaged_result := osal.execute_silent('git -C ${repo_path} ls-files --other --modified --exclude-standard') or {
-		return error('Failed to check for unstaged changes: ${err}')
-	}
-
-	return unstaged_result.split('\n').filter(it.len > 0)
-}
-
-pub fn (repo GitRepo) get_staged_changes() ![]string {
-	repo.check()!
-	repo_path := repo.path()!
-
-	staged_result := osal.execute_silent('git -C ${repo_path} diff --name-only --staged') or {
-		return error('Failed to check for staged changes: ${err}')
-	}
-
-	return staged_result.split('\n').filter(it.len > 0)
 }
 
 pub fn (mut repo GitRepo) display_current_status() ! {
@@ -126,42 +76,16 @@ pub fn (mut repo GitRepo) display_current_status() ! {
 	}
 }
 
-pub fn (mut repo GitRepo) add_changes() ! {
-	repo.check()!
-	cmd := 'cd ${repo.path()!} && git add . -A'
-	osal.execute_silent(cmd) or {
-		return error('Failed to add changes: ${err}')
-	}
-	repo.display_current_status()!
-}
-
-pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
-	mut args := repo.reload_if_needed(args_)!
-	if repo.need_commit()! {
-		if args.msg == '' {
-			return error('Cannot commit; message is empty for ${repo}')
-		}
-		repo_path := repo.path()!
-		cmd := 'cd ${repo_path} && git commit -m "${args.msg}"'
-		osal.execute_silent(cmd) or {
-			return error('Cannot commit repo: ${repo_path}. Error: ${err}')
-		}
-		console.print_green('Changes committed successfully.')
-	} else {
-		console.print_stderr('No changes to commit.')
-	}
-	repo.load()!
-}
 
 // Removes all changes from the repo; be cautious
 pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 	repo.reload_if_needed(args_)!
 	if repo.need_commit()! {
-		console.print_header('Removing changes in ${repo.path()!}')
-		cmd := 'cd ${repo.path()!} && git reset HEAD --hard && git clean -xfd'
+		console.print_header('Removing changes in ${repo.get_path()!}')
+		cmd := 'cd ${repo.get_path()!} && git reset HEAD --hard && git clean -xfd'
 		res := osal.exec(cmd: cmd, raise_error: false)!
 		if res.exit_code > 0 {
-			console.print_header('Could not remove changes; will re-clone ${repo.path()!}')
+			console.print_header('Could not remove changes; will re-clone ${repo.get_path()!}')
 			mut p := repo.patho()!
 			p.delete()! // remove path, this will re-clone the full thing
 			// Uncomment to re-clone the repo
@@ -171,58 +95,22 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 	repo.load()!
 }
 
-pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
-	repo.reload_if_needed(args_)!
-	if repo.need_push()! {
-		url := repo.url_get()!
-		console.print_debug('Pushing changes to ${url}')
-		cmd := 'cd ${repo.path()!} && git push'
-		osal.execute_silent(cmd) or {
-			return error('Cannot push repo: ${repo.path()!}. Error: ${err}')
-		}
-	}
-	repo.load()!
-}
-
-pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
-	repo.load()!
-	if repo.need_commit()! || repo.need_push()! {
-		return error('Cannot switch branches in ${repo.path()!} due to uncommitted changes.')
-	}
-	repo.fetch_all()!
-	cmd := 'cd ${repo.path()!} && git checkout ${branchname}'
-	osal.execute_silent(cmd) or {
-		return error('Cannot switch branch in ${repo.path()!}. Error: ${err}')
-	}
-	repo.pull(reload: true)!
-}
-
 pub fn (mut repo GitRepo) fetch_all() ! {
-	cmd := 'cd ${repo.path()!} && git fetch --all'
+	cmd := 'cd ${repo.get_path()!} && git fetch --all'
 	osal.execute_silent(cmd) or {
-		return error('Cannot fetch repo: ${repo.path()!}. Error: ${err}')
+		return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
 	}
 	repo.load()!
-}
-
-// Deletes the Git repository
-pub fn (mut repo GitRepo) delete() ! {
-	if !os.exists(repo.path()!) {
-		return
-	} else {
-		panic('Implement deletion logic here.') // Implement the deletion logic
-	}
-	repo.cache_delete()!
 }
 
 // Opens SourceTree for the Git repo
 pub fn (repo GitRepo) sourcetree() ! {
-	sourcetree.open(path: repo.path()!)!
+	sourcetree.open(path: repo.get_path()!)!
 }
 
 // Opens Visual Studio Code for the repo
 pub fn (repo GitRepo) open_vscode() ! {
-	path := repo.path()!
+	path := repo.get_path()!
 	mut vs_code := vscode.new(path)
 	vs_code.open()!
 }

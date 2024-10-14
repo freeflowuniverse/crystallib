@@ -2,17 +2,6 @@ module gittools
 
 import freeflowuniverse.crystallib.core.pathlib
 
-// GitStructure holds information about repositories in a memory structure.
-@[heap]
-pub struct GitStructure {
-pub mut:
-	key      string              // Unique key for the git structure (hash of the path or default is $home/code)
-	config   GitStructureConfig  // Configuration settings
-	coderoot pathlib.Path        // Root directory for the code
-	repos    map[string]&GitRepo // Map of repositories in the git structure
-	loaded   bool                // Indicates if directories have been walked and cached in redis
-}
-
 // GitStructureConfig defines configuration settings for a GitStructure instance.
 @[params]
 pub struct GitStructureConfig {
@@ -22,17 +11,6 @@ pub mut:
 	log      bool // If true, logs git commands/statements
 }
 
-// GitRepo holds information about a single Git repository.
-pub struct GitRepo {
-pub mut:
-	gs            &GitStructure @[skip] // Reference to the parent GitStructure
-	provider      string              // e.g., github.com, shortened to 'github'
-	account       string              // Git account name
-	name          string              // Repository name
-	status_remote GitRepoStatusRemote // Remote repository status
-	status_local  GitRepoStatusLocal  // Local repository status
-	config        GitRepoConfig       // Repository-specific configuration
-}
 
 // GitRepoStatusRemote holds remote status information for a repository.
 pub struct GitRepoStatusRemote {
@@ -124,15 +102,6 @@ pub mut:
 	branch    string // Branch name to clone
 }
 
-// ReposGetArgs defines the parameters for retrieving repositories based on criteria.
-@[params]
-pub struct ReposGetArgs {
-pub mut:
-	filter   string // Filter for repository names
-	name     string // Specific repository name
-	account  string // Git account name
-	provider string // Git provider (e.g., GitHub)
-}
 
 // GitStructureGetArgs holds parameters for retrieving a GitStructure instance.
 @[params]
@@ -140,16 +109,6 @@ pub struct GitStructureGetArgs {
 pub mut:
 	coderoot string // Root directory for the code
 	reload   bool   // If true, reloads the GitStructure from disk
-}
-
-@[params]
-pub struct ActionArgs {
-pub mut:
-	reload    bool = true
-	msg       string // only relevant for commit
-	branch    string
-	tag       string
-	recursive bool
 }
 
 @[params]
