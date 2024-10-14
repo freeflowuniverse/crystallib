@@ -45,7 +45,8 @@ fn build() ! {
 
     console.print_header('build youki')
 
-    gitpath := gittools.code_get(coderoot: '/tmp/youki', url: url, reset: true, pull: true, tag:'v0.4.1')!
+    //, tag:'v0.4.1'
+    gitpath := gittools.code_get(coderoot: '/tmp/youki', url: url, reset: true, pull: true)!
 
     cmd := '
     cd ${gitpath}

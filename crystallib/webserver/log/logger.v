@@ -22,15 +22,15 @@ pub fn (logger Logger) filter_logs(filter LogFilter) ![]Log {
 
 	mut matchers := []string{}
 	if filter.event != '' {
-		matchers << 'event == ${filter.event}'
+		matchers << "event == '${filter.event}'"
 	}
     
 	if filter.subject != '' {
-		matchers << 'subject == ${filter.subject}'
+		matchers << "subject == '${filter.subject}'"
 	}
 
 	if filter.object != '' {
-		matchers << 'object == ${filter.object}'
+		matchers << "object == '${filter.object}'"
 	}
 
 	if matchers.len > 0 {

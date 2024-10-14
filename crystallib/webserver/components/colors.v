@@ -23,6 +23,7 @@ fn color_css_class_get(colortype ColorEnum) string {
         .blue { "blue"}
     }
 }
+
 fn color_css_get(colortype ColorEnum) string {
     return match colortype {
         .white { "#f2f2f2;"}

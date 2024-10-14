@@ -1,0 +1,15 @@
+<header>
+    <!-- Logo -->
+    <a href="/">
+        @{navbar.logo.html()}
+    </a>
+    <nav>
+        <ul>
+            @for item in navbar.items
+            <li>
+                @{item.html()}
+            </li>
+            @end
+        </ul>
+    </nav>
+</header>

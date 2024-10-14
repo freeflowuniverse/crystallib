@@ -150,12 +150,6 @@ pub fn (mut zp ZProcess) stop() ! {
 	console.print_header(' stop ${zp.name}')
 	st := zp.status()!
 
-	//check if there is stop cmd, if yes use it when stopping
-	mut zinitobj := new()!
-	mut path := zinitobj.path.file_get_new("${zp.name}_stop.sh")!
-	if path.exists() {
-		osal.execute_silent("bash -c \"${path.path}\"")!
-	}
 	// QUESTION: removed error, since those can also be stopped
 	// otherwise fails to forget the zp when destroying
 	if st in [.unknown, .killed] {

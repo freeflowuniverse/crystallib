@@ -39,7 +39,7 @@ pub fn new(args_ SimulatorArgs) !Simulator {
 	mut sh := spreadsheet.sheet_new(name: 'tffarmingsim_${args.name}')!
 	mut sim := Simulator{
 		name: args.name
-		sheet: &sh
+		sheet: sh
 		args: args
 		// params: args
 		// currencies: cs

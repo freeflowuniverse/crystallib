@@ -19,10 +19,10 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		mut curdiro := pathlib.get_dir(path: curdir, create: false)!
 		mut parentpath := curdiro.parent_find('.git') or { pathlib.Path{} }
 		if parentpath.path != '' {
-			gitlocation := gs.gitlocation_from_path(parentpath.path)!
-			args.repo = gitlocation.name
-			args.account = gitlocation.account
-			args.provider = gitlocation.provider
+			r0 := gs.repo_from_path(parentpath.path)!
+			args.repo = r0.addr.name
+			args.account = r0.addr.account
+			args.provider = r0.addr.provider
 		}
 	}
 
@@ -53,7 +53,7 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 		name:     args.repo
 		account:  args.account
 		provider: args.provider
-	)!
+	)
 
 	// Handle commands that work with a specified URL
 	if args.url.len > 0 {
@@ -192,16 +192,16 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 						question: 'Commit message for repo: ${g.account}/${g.name} '
 					)!
 				}
-				console.print_header(' - commit ${g.account}/${g.name}')
+				console.print_header(' - commit ${g.addr.account}/${g.addr.name}')
 				g.commit(msg: msg, reload: true)!
 				changed = true
 			}
 			if need_pull {
 				if args.reset {
-					console.print_header(' - remove changes ${g.account}/${g.name}')
+					console.print_header(' - remove changes ${g.addr.account}/${g.addr.name}')
 					g.remove_changes()!
 				}
-				console.print_header(' - pull ${g.account}/${g.name}')
+				console.print_header(' - pull ${g.addr.account}/${g.addr.name}')
 				g.pull()!
 				changed = true
 			}

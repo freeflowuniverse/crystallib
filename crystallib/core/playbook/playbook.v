@@ -5,6 +5,7 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.paramsparser
 import crypto.blake2b
 
+@[heap]
 pub struct PlayBook {
 pub mut:
 	actions    []&Action

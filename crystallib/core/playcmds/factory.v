@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.virt.hetzner
 import freeflowuniverse.crystallib.clients.b2
+import freeflowuniverse.crystallib.biz.bizmodel
 import freeflowuniverse.crystallib.threefold.grid4.gridsimulator
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
@@ -29,13 +30,14 @@ pub fn run(mut plbook playbook.PlayBook, dagu bool) ! {
 
 	farmingsimulator.play(mut plbook)!
 	gridsimulator.play(mut plbook)!
+	bizmodel.play(mut plbook)!
 	slides.play(mut plbook)!
 	// base_install(play(mut plbook)!
 	// coredns.play(mut plbook)!
 
 	play_mdbook(mut plbook)!
 
-	// plbook.empty_check()!
+	//plbook.empty_check()!
 
 	console.print_header('Actions concluded succesfully.')
 }

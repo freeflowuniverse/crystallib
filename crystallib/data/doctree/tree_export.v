@@ -1,6 +1,7 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
+
 import freeflowuniverse.crystallib.ui.console
 import os
 import freeflowuniverse.crystallib.core.texttools.regext
@@ -13,7 +14,8 @@ pub mut:
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
 	production     bool = true
-	toreplace string 
+	toreplace string
+	runactions bool
 }
 
 // export all collections to chosen directory .
@@ -29,10 +31,10 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		tree.replacer=ri
 	}
 
-	tree.process_includes()! // process definitions (will also do defs
+	tree.process_includes()!
 
 	tree.process_macros()!
-
+	
 	console.print_header('EXPORT DEBUG')
 
 	// mut c:=tree.collections['tfgridsimulation_farming'] or {panic("aaaa")}
