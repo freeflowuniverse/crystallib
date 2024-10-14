@@ -11,26 +11,6 @@
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     </head>
     <style>
-      /* Custom properties for theming */
-:root {
-    --nav-background: #f1f3f5;
-    --nav-text: #495057;
-    --nav-hover: #1971c2;
-    --nav-input-border: #ced4da;
-    --nav-input-background: #f8f9fa;
-    --theme-icon-hover: #e9ecef;
-    /* --background-color-article: #fffffff8; */
-}
-
-[data-theme="dark"] {
-    --nav-background: #3c4149b9;
-    --nav-text: #e0e0e0;
-    --nav-hover: #4dabf7;
-    --nav-input-border: #495057;
-    --nav-input-background: #2a2e33;
-    --theme-icon-hover: #2a2e33;
-    /* --background-color-article: #242527; */
-}
 
 /* Custom styles to enhance the nav bar */
 body > main {
@@ -42,7 +22,6 @@ body > main {
 }
 
 nav {
-    background-color: var(--nav-background);
     padding: 0rem 1rem;
     width: 100%; /* Ensure nav takes full width */
 }
@@ -63,13 +42,8 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    color: var(--nav-text);
     font-weight: 500;
     transition: color 0.3s ease;
-}
-
-nav ul li a:hover {
-    color: var(--nav-hover);
 }
 
 .brand {
@@ -93,7 +67,6 @@ navbar-right input[type="search"] {
     border: 1px solid var(--nav-input-border);
     border-radius: 1rem;
     background-color: var(--nav-input-background);
-    color: var(--nav-text);
     font-size: 0.8rem;
     line-height: 1;
     height: 2rem;
@@ -126,10 +99,9 @@ navbar-right input[type="search"] {
 
 mynav {
     flex: 1;
-    min-width: 200px;
+    min-width: 225px;
     max-width: 250px;
     overflow-y: auto;
-    color: var(--nav-text);
     padding-top: 1.3rem;
     font-size: 0.8rem;
 }
@@ -155,7 +127,13 @@ mynav ul li {
 
 mynav ul li a {
     text-decoration: none;
-    color: inherit;
+    color: var(--nav-text);
+}
+
+/* Highlight active link */
+mynav ul li a.active {
+    color: var(--nav-active);  /* Highlight the active link */
+    font-weight: bold;
 }
 
 mynav ul li.open > ul {
@@ -371,19 +349,33 @@ function addNavEventListeners() {
         if (nestedList) {
             // Add a visual cue for items with children
             const arrow = document.createElement("span");
-            arrow.textContent = "▶"; // You can use any symbol or icon here
+            arrow.textContent = "▶";
             arrow.classList.add("arrow");
             item.insertBefore(arrow, item.firstChild);
 
             // Add click event listener to toggle the nested list
-            item.addEventListener("click", (event) => {
-                event.stopPropagation(); // Prevent event from bubbling up
+            item.addEventListener("click", function (event) {
+                // Prevent collapsing when clicking inside sub-items
+                if (event.target.tagName === 'A') return;
+
+                event.stopPropagation();
                 item.classList.toggle("open");
-                arrow.textContent = item.classList.contains("open") ? "▼" : "▶"; // Change the arrow direction
+                arrow.textContent = item.classList.contains("open") ? "▼" : "▶";
             });
         }
     });
+
+    // Ensure parent dropdowns stay open leading to the active page
+    const activeLink = document.querySelector("mynav a.active");
+    if (activeLink) {
+        let parent = activeLink.closest("li");
+        while (parent) {
+            parent.classList.add("open");
+            parent = parent.closest("ul").closest("li");
+        }
+    }
 }
+
 document.addEventListener("DOMContentLoaded", () => {
     initializeMarkdownConverter("markdown-input", "markdown-output", "content-pointers");
     initializeMarkdownConverter("markdown-nav", "mynav");  // Ensure to convert markdown in the summary as well
@@ -391,13 +383,27 @@ document.addEventListener("DOMContentLoaded", () => {
     addSummaryLinkListeners();  // Add link listeners for summary
 });
 
-// Function to add event listeners to summary links
 function addSummaryLinkListeners() {
     const summaryLinks = document.querySelectorAll("mynav a");
 
     summaryLinks.forEach(link => {
         link.addEventListener("click", function(event) {
             event.preventDefault();  // Prevent the default link click behavior
+
+            // Mark clicked link as active
+            summaryLinks.forEach(l => l.classList.remove("active"));
+            link.classList.add("active");
+
+            // Collapse all dropdowns
+            const allItems = document.querySelectorAll("mynav ul li");
+            allItems.forEach(item => item.classList.remove("open"));
+
+            // Keep the clicked item's parent and ancestors open
+            let parent = link.closest("li");
+            while (parent) {
+                parent.classList.add("open");
+                parent = parent.closest("ul").closest("li");
+            }
 
             const markdownFile = link.getAttribute("href");  // Get the markdown file path from the link
 
