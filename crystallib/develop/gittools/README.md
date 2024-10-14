@@ -1,157 +1,59 @@
-### README.md
+# Git Repository Management with Gittools
 
-# GitTools for VLang
+This project demonstrates the use of the `gittools` and `osal` modules from the `freeflowuniverse/crystallib` library to automate basic Git operations such as cloning a repository, creating branches, committing changes, and pushing them to a remote repository.
 
-GitTools is a powerful Git management library written in VLang, designed to help developers manage Git repositories efficiently. This library provides functionalities such as cloning, pulling, pushing repositories, managing multiple Git structures, and caching repository information.
+The script provides functionalities like:
+- Cloning or retrieving an existing repository.
+- Creating and checking out new branches.
+- Detecting file changes, adding them to staging, and committing.
+- Pushing changes to a remote repository.
+- Pulling changes from a remote repository.
 
-## Features
+### Example Workflow
 
-- Clone Git repositories using SSH or HTTP.
-- Commit, push, and pull changes from repositories.
-- Manage multiple Git structures with customizable settings.
-- Caching using Redis for faster repository operations.
-- Automatically reload and reset repositories as needed.
-- Supports advanced Git operations (branches, tags, submodules).
-
-## Installation
-
-### Prerequisites
-- **VLang**: Make sure you have VLang installed. If not, follow the [VLang installation guide](https://vlang.io/getting-started).
-- **Redis**: Redis is used for caching repository information. Install Redis from [redis.io](https://redis.io/download).
-
-### Steps
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/gittools-vlang.git
-   cd gittools-vlang
-   ```
-
-2. Build the project:
-   ```bash
-   v build .
-   ```
-
-3. Run tests to verify:
-   ```bash
-   v test .
-   ```
-
-## Usage Example
+The following example workflow is included in the script:
 
 ```v
-import gittools
+// Initializes the Git structure.
+coderoot := '~/code'
+mut gs_default := gittools.new(coderoot: coderoot)!
 
-fn main() {
-    // Define the Git root directory and URL
-    git_root := '/path/to/git/root'
-    repo_url := 'https://github.com/yourusername/yourrepository.git'
+// Retrieve the repository or clone it if necessary.
+mut repo := gs_default.get_repo(name: 'repo3')!
 
-    // Initialize GitStructure and clone the repo
-    args := gittools.CodeGetFromUrlArgs{
-        coderoot: git_root
-        url: repo_url
-        branch: 'main'
-        pull: true
-    }
+// Create a new branch and a Python file with the current Unix timestamp in the name.
+runtime := time.now().unix()
+branch_name := "testing_${runtime}"
+repo_path := repo.get_path()!
+file_name := create_new_file(repo_path, runtime)!
 
-    result := gittools.code_get(args) or {
-        eprintln('Error getting the repo: $err')
-        return
-    }
+// Create a new branch, checkout, add changes, commit, and push.
+repo.create_branch(branch_name: branch_name, checkout: false)!
+repo.checkout_branch(branch_name: branch_name, pull: false)!
 
-    println('Repo successfully cloned to: $result')
-
-    // Load the GitStructure and list repositories
-    mut git_structure := gittools.getset(gittools.GitStructureConfig{
-        coderoot: git_root
-    }) or {
-        eprintln('Error loading git structure: $err')
-        return
-    }
-
-    git_structure.repos_print(gittools.ReposGetArgs{}) or {
-        eprintln('Error listing repositories: $err')
-    }
+if repo.has_changes() {
+    repo.add_changes()!
+    repo.commit(msg: 'feat: Added ${file_name} file.')!
+    repo.push()!
 }
+
+// Checkout back to the base branch and pull changes.
+repo.checkout_branch(checkout_to_base_branch: true, pull: true)!
 ```
 
-### Detailed API Overview
+## Tests
 
-#### 1. `CodeGetFromUrlArgs`
-Arguments to pull a repository from a URL.
+The project includes several unit tests to ensure that the functionality works correctly.
 
-| Field            | Type     | Description                                                 |
-|------------------|----------|-------------------------------------------------------------|
-| `coderoot`       | `string` | Root directory for code storage.                            |
-| `url`            | `string` | The Git repository URL.                                     |
-| `branch`         | `string` | The branch to clone (optional).                             |
-| `pull`           | `bool`   | Whether to pull the latest changes after cloning (optional).|
-| `reset`          | `bool`   | Whether to reset the repository to the latest changes.      |
-
-#### 2. `GitStructureConfig`
-Configure the Git structure, providing root paths, and controlling logging and history depth.
-
-| Field            | Type     | Description                                                 |
-|------------------|----------|-------------------------------------------------------------|
-| `coderoot`       | `string` | The root directory for all repositories.                    |
-| `light`          | `bool`   | If true, shallow clones are used for repositories.          |
-| `log`            | `bool`   | Enable or disable logging of Git commands.                  |
-
-#### 3. `gittools.getset()`
-Sets up and returns a GitStructure based on the configuration.
-
-#### 4. `gittools.code_get()`
-Clones or updates a repository based on the provided arguments.
-
-#### 5. `gittools.repos_print()`
-Prints all repositories within the GitStructure.
-
-### Tests
-
-To run tests:
+To run the tests, use the following command in the project root:
 
 ```bash
-v test .
+v -enable-globals test crystallib/develop/gittools
 ```
 
-The test suite ensures that the core functionalities of cloning, pulling, pushing, and repository management work as expected.
+This will run all the test cases and provide feedback on whether they pass or fail.
 
-### Example Usage (As a standalone V file)
-```v
-import gittools
+## Notes
 
-fn main() {
-    // Define Git root directory and repo URL
-    coderoot := '/home/user/git_repos'
-    repo_url := 'https://github.com/user/myrepo.git'
-
-    // Initialize the arguments for code_get
-    args := gittools.CodeGetFromUrlArgs{
-        coderoot: coderoot
-        url: repo_url
-        branch: 'main'
-        pull: true
-    }
-
-    // Clone or pull the repository
-    result := gittools.code_get(args) or {
-        eprintln('Failed to get repository: $err')
-        return
-    }
-
-    println('Repository cloned or updated at: $result')
-
-    // Example of listing repositories under the GitStructure
-    mut git_structure := gittools.getset(gittools.GitStructureConfig{
-        coderoot: coderoot
-    }) or {
-        eprintln('Failed to load GitStructure: $err')
-        return
-    }
-
-    git_structure.repos_print(gittools.ReposGetArgs{}) or {
-        eprintln('Failed to list repositories: $err')
-    }
-}
-```
+- This project is highly dependent on proper configuration of Git in your environment.
+- Ensure that SSH keys or access tokens are properly set up for pushing and pulling to/from the remote repository.
