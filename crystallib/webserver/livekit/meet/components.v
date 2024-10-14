@@ -7,13 +7,27 @@ pub fn (meet Meet) html() string {
 	return $tmpl('./templates/meet.html')
 }
 
-pub struct Room {}
+pub struct Room {
+pub:
+	name string
+}
 
 pub fn (room Room) html() string {
 	dollar := '$'
 	return $tmpl('./templates/room.html')
 }
 
+pub struct Lobby {
+pub:
+	rooms []Room
+	meetings []Meeting
+}
+
+pub struct Meeting {}
+
+pub fn (lobby Lobby) html() string {
+	return $tmpl('./templates/lobby.html')
+}
 // pub struct LiveKitRoom {
 //     pub mut:
 //         server_url           string

@@ -55,6 +55,7 @@ pub fn update_templates() !{
 		fixed = fixed.replace('@', '@@') // escape templating syntax
 		fixed = fixed.replace('#{app.static_url}', '@{app.static_url}')
 		fixed = fixed.replace('$', '@{dollar}')
+		fixed = fixed.replace('@@{dollar}', '@{dollar}')
 		path.write(fixed)!
 	}
 }

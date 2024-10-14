@@ -4,104 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LiveKit Meeting</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="/static/css/global.css">
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2/css/pico.min.css"
+    >
     <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
-    <style>
-        /* Insert Home.module.css styles here */
-        .main {
-            position: relative;
-            display: grid;
-            gap: 1rem;
-            justify-content: center;
-            place-content: center;
-            justify-items: center;
-            overflow: auto;
-            flex-grow: 1;
-        }
-
-        .tabContainer {
-            margin: auto;
-            width: 100%;
-            max-width: 500px;
-            padding-inline: 2rem;
-        }
-
-        .tabSelect {
-            display: flex;
-            justify-content: stretch;
-            gap: 0.125rem;
-            padding: 0.125rem;
-            margin: 0 auto 1.5rem;
-        }
-
-        .tabSelect > * {
-            width: 100%;
-        }
-
-        .tabContent {
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            gap: 0.75rem;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 0.5rem;
-        }
-    </style>
 </head>
 <body>
-    <main data-lk-theme="default">        
-        <div id="tabContainer" class="tabContainer">
-            <div id="demoTab" class="tabContent">
-                <p>Create a room and start a video conference with OurWorld Meet.</p>
-                <button id="startMeetingBtn" class="lk-button" style="margin-top: 1rem;">Start Meeting</button>
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                    <div style="display: flex; flex-direction: row; gap: 1rem;">
-                        <input id="useE2EE" type="checkbox">
-                        <label for="useE2EE">Enable end-to-end encryption</label>
+    <main class="container" data-lk-theme="default">
+        <article>
+            <section>
+                <p>Create or join a video conference with OurWorld Meet.</p>
+                <form id="meetingForm">
+                    <div class="grid">
+                        <input id="roomName" type="text" placeholder="Room Name">
                     </div>
-                    <div id="passphraseContainer" style="display: none; flex-direction: row; gap: 1rem;">
+                    <div id="passphraseContainer">
                         <label for="passphrase">Passphrase</label>
-                        <input id="passphrase" type="password" />
+                        <input id="passphrase" type="password">
                     </div>
-                </div>
-            </div>
-            
-            <div id="customTab" class="tabContent" style="display: none;">
-                <form id="customForm">
-                    <p>Connect LiveKit Meet with a custom server using LiveKit Cloud or LiveKit Server.</p>
-                    <input id="serverUrl" name="serverUrl" type="url" placeholder="LiveKit Server URL: wss://*.livekit.cloud" required>
-                    <textarea id="token" name="token" placeholder="Token" required rows="5"></textarea>
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        <div style="display: flex; flex-direction: row; gap: 1rem;">
-                            <input id="customE2EE" type="checkbox">
-                            <label for="customE2EE">Enable end-to-end encryption</label>
+
+                    <details>
+                        <summary>Customize (optional)</summary>
+                        <div>
+                            <input id="serverUrl" name="serverUrl" type="url" placeholder="LiveKit Server URL: wss://*.livekit.cloud">
+                            <textarea id="token" name="token" placeholder="Token" rows="5"></textarea>
                         </div>
-                        <div id="customPassphraseContainer" style="display: none; flex-direction: row; gap: 1rem;">
-                            <label for="customPassphrase">Passphrase</label>
-                            <input id="customPassphrase" type="password" />
-                        </div>
-                    </div>
-                    <hr style="width: 100%; border-color: rgba(255, 255, 255, 0.15); margin-block: 1rem;">
-                    <button class="lk-button" type="submit" style="width: 100%;">Connect</button>
+                    </details>
+
+                    <button type="button" id="startMeetingBtn">Start Meeting</button>
                 </form>
-            </div>
-        </div>
+            </section>
+        </article>
     </main>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let sharedPassphrase = generateRandomString(64);
 
-            const demoTabBtn = document.getElementById('demoTabBtn');
-            const customTabBtn = document.getElementById('customTabBtn');
-            const demoTab = document.getElementById('demoTab');
-            const customTab = document.getElementById('customTab');
             const startMeetingBtn = document.getElementById('startMeetingBtn');
-            const useE2EE = document.getElementById('useE2EE');
             const passphraseContainer = document.getElementById('passphraseContainer');
             const passphraseInput = document.getElementById('passphrase');
-            const customForm = document.getElementById('customForm');
             const customE2EE = document.getElementById('customE2EE');
             const customPassphraseContainer = document.getElementById('customPassphraseContainer');
             const customPassphraseInput = document.getElementById('customPassphrase');
@@ -116,48 +59,20 @@
             }
 
             function encodePassphrase(passphrase) {
-                // Placeholder function for passphrase encoding
                 return btoa(passphrase);
             }
 
-            demoTabBtn.addEventListener('click', () => {
-                demoTab.style.display = 'block';
-                customTab.style.display = 'none';
-            });
-
-            customTabBtn.addEventListener('click', () => {
-                demoTab.style.display = 'none';
-                customTab.style.display = 'block';
-            });
-
-            useE2EE.addEventListener('change', () => {
-                passphraseContainer.style.display = useE2EE.checked ? 'flex' : 'none';
-            });
-
-            customE2EE.addEventListener('change', () => {
-                customPassphraseContainer.style.display = customE2EE.checked ? 'flex' : 'none';
-            });
-
             startMeetingBtn.addEventListener('click', () => {
-                const roomId = generateRandomString(10); // Simulate room ID generation
-                if (useE2EE.checked) {
-                    const encodedPassphrase = encodePassphrase(passphraseInput.value || sharedPassphrase);
-                    window.location.href = `/view/meet/rooms/room?roomName=@{dollar}{roomId}#@{dollar}{encodedPassphrase}`;
-                } else {
-                    window.location.href = `/view/meet/rooms/room?roomName=@{dollar}{roomId}`;
+                let roomName = document.getElementById('roomName').value.trim();
+                if (!roomName) {
+                    roomName = generateRandomString(10);
                 }
-            });
 
-            customForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const formData = new FormData(customForm);
-                const serverUrl = formData.get('serverUrl');
-                const token = formData.get('token');
-                if (customE2EE.checked) {
-                    const encodedPassphrase = encodePassphrase(customPassphraseInput.value || sharedPassphrase);
-                    window.location.href = `/custom/?liveKitUrl=@{dollar}{serverUrl}&token=@{dollar}{token}#@{dollar}{encodedPassphrase}`;
+                if (true) {
+                    const encodedPassphrase = encodePassphrase(passphraseInput.value || sharedPassphrase);
+                    window.location.href = `/view/meet/room?roomName=@{dollar}{roomName}#@{dollar}{encodedPassphrase}`;
                 } else {
-                    window.location.href = `/custom/?liveKitUrl=@{dollar}{serverUrl}&token=@{dollar}{token}`;
+                    window.location.href = `/view/meet/room?roomName=@{dollar}{roomName}`;
                 }
             });
         });
