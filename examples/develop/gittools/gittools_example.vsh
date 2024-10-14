@@ -43,7 +43,7 @@ repo.create_branch(branch_name: branch_name, checkout: false) or {
 
 // Checkout to the created branch
 println('Checkout to \'${branch_name}\' branch...')
-repo.checkout_branch(branch_name: branch_name, pull: true) or {
+repo.checkout_branch(branch_name: branch_name, pull: false) or {
 	error("Couldn't checkout to branch ${branch_name} due to: ${err}")
 }
 

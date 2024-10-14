@@ -190,6 +190,7 @@ pub fn (mut repo GitRepo) checkout_branch(args_ RepositoryArgs) ! {
 
 	cmd := 'git -C ${repo_path} checkout ${args.branch_name}'
 	osal.exec(cmd: cmd) or { return error('Cannot checkout branch in ${repo_path}. Error: ${err}') }
+	repo.status_local.branch = args.branch_name
 	console.print_green('Switched to branch ${args.branch_name} successfully.')
 
 	if args.pull {

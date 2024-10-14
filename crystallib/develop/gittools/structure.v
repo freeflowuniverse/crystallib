@@ -89,6 +89,7 @@ pub fn (mut gitstructure GitStructure) clone(args ReposGetArgs) !&GitRepo {
 
 	// Set the parent directory where the repository should be cloned
 	parent_dir := repo.get_parent_dir()!
+	repo.name = args.name
 	cmd := 'git -C ${parent_dir} clone ${args.url} ${args.name}'
 	osal.exec(cmd: cmd) or {
 		return error('Cannot clone the repository due to: ${err}')

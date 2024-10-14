@@ -1,151 +1,347 @@
 module tests
 
-import gittools
-import freeflowuniverse.crystallib.core.base
+import freeflowuniverse.crystallib.develop.gittools
+import freeflowuniverse.crystallib.osal
 import os
+import time
 
-fn setup() ! {
-    // Setup Redis or any required state before the test
-    mut c := base.context()!
-    mut redis := c.redis()!
-    redis.flushall()! // Clear Redis cache
-
-    // Ensure the temporary directories exist
-    os.mkdir_all('/tmp/code/github/Ay-User')!
+struct GittoolsTests {
+    coderoot  string
+    repo_dir  string
+    repo_url  string
+    repo_name string
 }
 
-fn teardown() {
-    // Clean up after tests if needed
-    os.rmdir_all('/tmp/code/github/Ay-User') or {}
+// Creates a new Python file with 'Hello, World!' content in the specified repository path.
+// The file name includes a timestamp to ensure uniqueness.
+//
+// Args:
+// - repo_path (string): Path to the repository where the new file will be created.
+// - runtime (i64): Unix timestamp used to generate a unique file name.
+//
+// Returns:
+// - string: Name of the newly created file.
+fn create_new_file(repo_path string, runtime i64)! string {
+	coded_now := time.now().unix()
+	file_name := 'hello_world_${coded_now}.py'
+	osal.execute_silent("echo \"print('Hello, World!')\" > ${repo_path}/${file_name}")!
+	return file_name
 }
 
-fn test_gitstructure_initialization() ! {
-    // Test initializing a GitStructure
-    coderoot := '/tmp/code/github/Ay-User'
-    // os.mkdir_all(coderoot)! // Ensure the coderoot directory exists
-    mut git_structure := gittools.getset(gittools.GitStructureConfig{
-        coderoot: coderoot
-    }) or {
-        assert false, 'Error initializing GitStructure: ${err}'
-        return
+// Sets up a GittoolsTests instance with predefined values for repository setup.
+//
+// Returns:
+// - GittoolsTests: Struct containing information about the repo setup.
+fn setup_repo() !GittoolsTests {   
+    ts := GittoolsTests{
+        coderoot: '/tmp/code',
+        repo_dir: '/tmp/code/github/Mahmoud-Emad',
+        repo_url: 'https://github.com/Mahmoud-Emad/repo2.git',
+        repo_name: 'repo3',
     }
-
-    // Verify the structure is correctly initialized
-    assert git_structure.config.coderoot == coderoot
-    assert git_structure.key != '' // A key should be generated
+    os.mkdir_all(ts.repo_dir)! 
+    return ts
 }
 
-fn test_code_get_from_url() ! {
-    // Test cloning a repository from a URL
-    repo_url := 'https://github.com/vlang/v.git'
-    coderoot := '/tmp/code/github/Ay-User'
-    os.mkdir_all(coderoot)! // Ensure the directory exists
-
-    args := gittools.CodeGetFromUrlArgs{
-        coderoot: coderoot
-        url: repo_url
-        branch: 'master'
-        pull: true
-    }
-
-    result := gittools.code_get(args) or {
-        assert false, 'Failed to clone the repository: ${err}'
-        return
-    }
-
-    assert os.exists(result), 'The repository should be cloned to $result'
+// Removes the directory structure created during repository setup.
+//
+// Raises:
+// - Error: If the directory cannot be removed.
+fn remove_setup()! {
+    repo_setup := setup_repo()!
+    os.rmdir_all(repo_setup.coderoot)!
 }
 
-// fn test_repo_status_needs_commit() ! {
-//     // Test if a repo needs commit (mocked)
-//     coderoot := '/tmp/git_test_status'
-//     repo_url := 'https://github.com/vlang/v.git'
-//     os.mkdir_all(coderoot)! // Ensure the directory exists
+// Test to clone a repository and verify that it exists locally.
+//
+// Steps:
+// - Setup repository directory.
+// - Clone the repository from the specified URL.
+// - Verify that the repository name is correct.
+// - Check if the repository path exists locally.
+[test]
+fn test_clone_repo() {
+    repo_setup := setup_repo()!
 
-//     args := gittools.CodeGetFromUrlArgs{
-//         coderoot: coderoot
-//         url: repo_url
-//         pull: true
-//     }
+    mut gs := gittools.new(coderoot: repo_setup.coderoot)!
+    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    
+    assert repo.name == "repo3"
+    repo_path := repo.get_path()!
+    assert os.exists(repo_path) == true
+    
+    remove_setup()!
+}
 
-//     // Clone the repository first
-//     gittools.code_get(args) or {
-//         assert false, 'Failed to clone the repository: ${err}'
-//         return
-//     }
+// Test to create a new branch in the repository and verify that the branch was not checked out by default.
+//
+// Steps:
+// - Setup repository directory.
+// - Clone the repository.
+// - Create a new branch.
+// - Verify that the branch is not checked out.
+[test]
+fn test_create_branch() {
+    repo_setup := setup_repo()!
+    
+    mut gs := gittools.new(coderoot: repo_setup.coderoot)!
+    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    
+    assert repo.name == "repo3"
+    repo_path := repo.get_path()!
+    assert os.exists(repo_path) == true
 
-//     // Load GitStructure
-//     mut git_structure := gittools.getset(gittools.GitStructureConfig{
-//         coderoot: coderoot
-//     }) or {
-//         assert false, 'Error loading GitStructure: ${err}'
-//         return
-//     }
+    runtime := time.now().unix()
+    branch_name := "testing_${runtime}"
+    
+    repo.create_branch(branch_name: branch_name, checkout: false)!
+    assert repo.status_local.branch != branch_name 
+    
+    remove_setup()!
+}
 
-//     // Retrieve the repository and check its status
-//     mut repo := git_structure.repo_get(gittools.ReposGetArgs{
-//         name: 'v'
-//     }) or {
-//         assert false, 'Error retrieving the repository: ${err}'
-//         return
-//     }
+// Test to create and then check out a branch in the repository.
+//
+// Steps:
+// - Setup repository directory.
+// - Clone the repository.
+// - Create a new branch and checkout.
+// - Verify the branch was checked out.
+[test]
+fn test_checkout_branch() {
+    repo_setup := setup_repo()!
+    
+    mut gs := gittools.new(coderoot: repo_setup.coderoot)!
+    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    
+    assert repo.name == "repo3"
+    repo_path := repo.get_path()!
+    assert os.exists(repo_path) == true
 
-//     // Modify the repository to trigger a commit need
-//     os.write_file('${repo.get_path()!}/README.md', 'Test change') or {
-//         assert false, 'Failed to modify the repo: ${err}'
-//         return
-//     }
+    runtime := time.now().unix()
+    branch_name := "testing_${runtime}"
+    
+    repo.create_branch(branch_name: branch_name, checkout: false)!
+    assert repo.status_local.branch != branch_name 
+    
+    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    assert repo.status_local.branch == branch_name 
+    
+    remove_setup()!
+}
 
-//     assert repo.need_commit()!, 'Repository should need a commit after modification'
-// }
+// Test to verify the detection of changes in the repository after creating a new file.
+//
+// Steps:
+// - Setup repository directory.
+// - Clone the repository.
+// - Create a new branch and checkout.
+// - Create a new file and verify the repository has changes.
+[test]
+fn test_has_changes() {
+    repo_setup := setup_repo()!
+    
+    mut gs := gittools.new(coderoot: repo_setup.coderoot)!
+    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    
+    assert repo.name == "repo3"
+    repo_path := repo.get_path()!
+    assert os.exists(repo_path) == true
 
-// fn test_repo_push_pull_actions() ! {
-//     // Mock test for repository push and pull (we won't perform actual git commands here)
-//     coderoot := '/tmp/git_test_actions'
-//     repo_url := 'https://github.com/vlang/v.git'
-//     os.mkdir_all(coderoot)! // Ensure the directory exists
+    runtime := time.now().unix()
+    branch_name := "testing_${runtime}"
+    
+    repo.create_branch(branch_name: branch_name, checkout: false)!
+    assert repo.status_local.branch != branch_name 
+    
+    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    assert repo.status_local.branch == branch_name
 
-//     args := gittools.CodeGetFromUrlArgs{
-//         coderoot: coderoot
-//         url: repo_url
-//         pull: true
-//     }
+    file := create_new_file(repo_path, runtime)!
 
-//     gittools.code_get(args) or {
-//         assert false, 'Failed to clone the repository: ${err}'
-//         return
-//     }
+    assert repo.has_changes()! == true
+    
+    remove_setup()!
+}
 
-//     mut git_structure := gittools.getset(gittools.GitStructureConfig{
-//         coderoot: coderoot
-//     }) or {
-//         assert false, 'Error loading GitStructure: ${err}'
-//         return
-//     }
+// Test to add changes to the repository and verify that staged and unstaged changes are tracked correctly.
+//
+// Steps:
+// - Setup repository directory.
+// - Clone the repository.
+// - Create a new branch and checkout.
+// - Create a new file and add changes.
+// - Verify unstaged and staged changes before and after adding the changes.
+[test]
+fn test_add_changes() {
+    repo_setup := setup_repo()!
+    
+    mut gs := gittools.new(coderoot: repo_setup.coderoot)!
+    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    
+    assert repo.name == "repo3"
+    repo_path := repo.get_path()!
+    assert os.exists(repo_path) == true
 
-//     mut repo := git_structure.repo_get(gittools.ReposGetArgs{
-//         name: 'v'
-//     }) or {
-//         assert false, 'Error retrieving the repository: ${err}'
-//         return
-//     }
+    runtime := time.now().unix()
+    branch_name := "testing_${runtime}"
+    
+    repo.create_branch(branch_name: branch_name, checkout: false)!
+    assert repo.status_local.branch != branch_name 
+    
+    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    assert repo.status_local.branch == branch_name
 
-//     // Perform pull action
-//     repo.pull(gittools.ActionArgs{}) or {
-//         assert false, 'Failed to pull the repository: ${err}'
-//         return
-//     }
+    file := create_new_file(repo_path, runtime)!
 
-//     // Perform commit and push (mocked commit message)
-//     repo.commit(gittools.ActionArgs{
-//         msg: 'Test commit'
-//     }) or {
-//         assert false, 'Failed to commit changes: ${err}'
-//         return
-//     }
+    assert repo.has_changes()! == true
 
-//     repo.push(gittools.ActionArgs{}) or {
-//         assert false, 'Failed to push the repository: ${err}'
-//         return
-//     }
-// }
+    mut staged_changes := repo.get_staged_changes()!
+    assert staged_changes.len == 0
+
+    mut unstaged_changes := repo.get_unstaged_changes()!
+    assert unstaged_changes.len != 0
+
+    repo.add_changes()!
+
+    staged_changes = repo.get_staged_changes()!
+    assert staged_changes.len != 0
+
+    unstaged_changes = repo.get_unstaged_changes()!
+    assert unstaged_changes.len == 0
+
+    remove_setup()!
+}
+
+// Test to commit changes to the repository and verify that staged and unstaged changes are tracked correctly.
+//
+// Steps:
+// - Setup repository directory.
+// - Clone the repository.
+// - Create a new branch and checkout.
+// - Create a new file and add changes.
+// - Verify unstaged and staged changes before and after adding the changes.
+// - Commit the changes.
+// - Verify unstaged and staged changes before and after adding the changes.
+[test]
+fn test_commit_changes() {
+    repo_setup := setup_repo()!
+    
+    mut gs := gittools.new(coderoot: repo_setup.coderoot)!
+    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    
+    assert repo.name == "repo3"
+    repo_path := repo.get_path()!
+    assert os.exists(repo_path) == true
+
+    runtime := time.now().unix()
+    branch_name := "testing_${runtime}"
+    
+    repo.create_branch(branch_name: branch_name, checkout: false)!
+    assert repo.status_local.branch != branch_name 
+    
+    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    assert repo.status_local.branch == branch_name
+
+    file_name := create_new_file(repo_path, runtime)!
+
+    assert repo.has_changes()! == true
+
+    mut staged_changes := repo.get_staged_changes()!
+    assert staged_changes.len == 0
+
+    mut unstaged_changes := repo.get_unstaged_changes()!
+    assert unstaged_changes.len != 0
+
+    repo.add_changes()!
+
+    staged_changes = repo.get_staged_changes()!
+    assert staged_changes.len != 0
+
+    unstaged_changes = repo.get_unstaged_changes()!
+    assert unstaged_changes.len == 0
+
+    assert repo.need_commit()! == true
+    commit_msg := 'feat: Added ${file_name} file.'
+	repo.commit(msg: commit_msg)!
+
+    staged_changes = repo.get_staged_changes()!
+    assert staged_changes.len == 0
+
+    unstaged_changes = repo.get_unstaged_changes()!
+    assert unstaged_changes.len == 0
+
+    remove_setup()!
+}
+
+// Test to push changes to the repository and verify that staged and unstaged changes are tracked correctly.
+//
+// Steps:
+// - Setup repository directory.
+// - Clone the repository.
+// - Create a new branch and checkout.
+// - Create a new file and add changes.
+// - Verify unstaged and staged changes before and after adding the changes.
+// - Commit the changes.
+// - Verify unstaged and staged changes before and after adding the changes.
+// - Push the changes.
+// - Verify unstaged and staged changes before and after adding the changes.
+[test]
+fn test_push_changes() {
+    repo_setup := setup_repo()!
+    
+    mut gs := gittools.new(coderoot: repo_setup.coderoot)!
+    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    
+    assert repo.name == "repo3"
+    repo_path := repo.get_path()!
+    assert os.exists(repo_path) == true
+
+    runtime := time.now().unix()
+    branch_name := "testing_${runtime}"
+    
+    repo.create_branch(branch_name: branch_name, checkout: false)!
+    assert repo.status_local.branch != branch_name 
+    
+    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    assert repo.status_local.branch == branch_name
+
+    file_name := create_new_file(repo_path, runtime)!
+
+    assert repo.has_changes()! == true
+
+    mut staged_changes := repo.get_staged_changes()!
+    assert staged_changes.len == 0
+
+    mut unstaged_changes := repo.get_unstaged_changes()!
+    assert unstaged_changes.len != 0
+
+    repo.add_changes()!
+
+    staged_changes = repo.get_staged_changes()!
+    assert staged_changes.len != 0
+
+    unstaged_changes = repo.get_unstaged_changes()!
+    assert unstaged_changes.len == 0
+
+    assert repo.need_commit()! == true
+    commit_msg := 'feat: Added ${file_name} file.'
+	repo.commit(msg: commit_msg)!
+
+    staged_changes = repo.get_staged_changes()!
+    assert staged_changes.len == 0
+
+    unstaged_changes = repo.get_unstaged_changes()!
+    assert unstaged_changes.len == 0
+
+    assert repo.need_push()! == true
+    repo.push()!
+
+    staged_changes = repo.get_staged_changes()!
+    assert staged_changes.len == 0
+
+    unstaged_changes = repo.get_unstaged_changes()!
+    assert unstaged_changes.len == 0
+
+    remove_setup()!
+}

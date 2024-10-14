@@ -52,7 +52,8 @@ fn (mut repo GitRepo) load() ! {
 	path := repo.get_path()!
 
 	// Fetch local branch or see if detached
-	cmd_result := osal.execute_silent('git -C ${path} rev-parse --abbrev-ref HEAD') or {
+	cmd := 'git -C ${path} rev-parse --abbrev-ref HEAD'
+	cmd_result := osal.execute_silent(cmd) or {
 		return error('Failed to fetch branch info: ${err}')
 	}
 
