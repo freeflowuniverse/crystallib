@@ -90,5 +90,5 @@ pub fn (p Pointer) is_image() bool {
 }
 
 pub fn (p Pointer) is_file_video_html() bool {
-	return p.cat == .image || p.cat == .file || p.cat == .video
+	return p.cat == .file || p.cat == .video || p.cat == .html
 }
