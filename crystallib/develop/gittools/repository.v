@@ -223,6 +223,17 @@ pub fn (mut repo GitRepo) create_tag(args_ RepositoryArgs) ! {
 	}
 }
 
+// Create a new branch in the repository.
+pub fn (mut repo GitRepo) is_tag_exists(args_ RepositoryArgs) !bool {
+	repo.fetch_all()!
+	repo.load()!
+	repo_path := repo.get_path()!
+	mut cmd := 'git -C ${repo_path} show ${args_.tag_name}'
+
+	osal.exec(cmd: cmd) or { return false }
+	return true
+}
+
 // Remove cache
 fn (repo GitRepo) delete_cache() ! {
 	mut context := base.context() or { return error('Cannot get the context due to: ${err}') }

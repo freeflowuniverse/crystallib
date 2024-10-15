@@ -78,6 +78,7 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 		return error('The repository name must be provided.')
 	}
 
+
 	repositories := gitstructure.get_repos(args)!
 
 	if repositories.len == 0 {
@@ -85,6 +86,8 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 			return error('Cannot clone the repository, no URL provided: ${args.url}')
 		}
 
+		println('repo before clone: ${repositories}')
+		println('gitstructure: ${gitstructure}')
 		if args.clone {
 			return gitstructure.clone(args)!
 		}
@@ -97,6 +100,7 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 	}
 
 	mut repo := repositories[0]
+	println('repo before clone: ${repo}')
 
 	if args_.pull{
 		repo.pull()!

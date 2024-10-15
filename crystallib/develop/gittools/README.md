@@ -51,8 +51,11 @@ The project includes several unit tests to ensure that the functionality works c
 To run the tests, use the following command in the project root:
 
 ```bash
-v -enable-globals test crystallib/develop/gittools
+v -enable-globals test crystallib/develop/gittools/tests/branches_tags_test.v 
 ```
+
+**PS: This command will only run the `branches_tags_test` file. You must change the filename if you want to run a different file.**
+> Running all tests simultaneously is not currently available because Vlang does not support running all tests in multiple threads.
 
 This will run all the test cases and provide feedback on whether they pass or fail.
 

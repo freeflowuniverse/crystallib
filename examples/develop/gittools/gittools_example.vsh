@@ -91,8 +91,14 @@ repo.create_tag(tag_name: tag_name, checkout: false) or {
 	error("Couldn't create tag due to: ${err}")
 }
 
-// Push the created tag
+// Push the created tag.
 println('Pushing the tag...')
 repo.push(push_tag: true) or {
 	error('Cannot push the tag due to: ${err}')
+}
+
+// Check if the created tag exists.
+println('Check if the created tag exists...')
+repo.is_tag_exists(tag_name: tag_name) or {
+	println("Tag isn't exists.")
 }
