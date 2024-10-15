@@ -38,28 +38,6 @@ pub mut:
 	remote_check_period int // Seconds to wait between remote checks (0 = check every time)
 }
 
-// CodeGetFromUrlArgs holds the parameters for retrieving code from a URL into a GitStructure.
-@[params]
-pub struct CodeGetFromUrlArgs {
-	GSCodeGetFromUrlArgs
-pub mut:
-	coderoot          string
-	gitstructure_name string = 'default'
-}
-
-// GSCodeGetFromUrlArgs defines the parameters for retrieving code from a URL.
-pub struct GSCodeGetFromUrlArgs {
-pub mut:
-	path   string // Local path
-	url    string // Remote repository URL
-	branch string // Branch name
-	tag    string // Tag name
-	sshkey string // SSH key for access
-	pull   bool   // If true, pulls changes from the remote repository
-	reset  bool   // If true, resets changes before pulling
-	reload bool   // If true, reloads the cache
-}
-
 // GitLocation uniquely identifies a Git repository, its online URL, and its location in the filesystem.
 @[heap]
 pub struct GitLocation {
@@ -72,34 +50,6 @@ pub mut:
 	path     string // Path in the repository (not the filesystem)
 	anker    string // Position in a file
 }
-
-// ReposActionsArgs defines the arguments for performing actions on repositories.
-@[params]
-pub struct ReposActionsArgs {
-pub mut:
-	cmd       string // Command to execute (clone, commit, pull, push, etc.)
-	filter    string // Filter for repository names
-	repo      string // Specific repository name
-	account   string // Git account name
-	provider  string // Git provider (e.g., GitHub)
-	msg       string // Commit message
-	url       string // Remote repository URL
-	branch    string // Branch name
-	tag       string // Tag name
-	recursive bool   // If true, performs action recursively
-	pull      bool   // If true, pulls changes from the remote repository
-	script    bool = true // Non-interactive mode
-	reset     bool = true // If true, discards local changes before pulling
-}
-
-// CloneArgs holds the parameters for cloning a repository.
-@[params]
-pub struct CloneArgs {
-pub mut:
-	forcehttp bool   // If true, forces use of HTTP instead of SSH
-	branch    string // Branch name to clone
-}
-
 
 // GitStructureGetArgs holds parameters for retrieving a GitStructure instance.
 @[params]

@@ -18,62 +18,60 @@ pub mut:
 	config        GitRepoConfig       // Repository-specific configuration
 }
 
-// Arguments used when performing actions on a repository, such as branch operations or commits.
+// Arguments used when performing repository operations like branch management or commits.
 @[params]
 pub struct RepositoryArgs {
 pub mut:
-	branch_name             string // The name of the branch to act on
-	checkout                bool   // Whether to checkout to the branch
-	pull                    bool   // Whether to pull after checking out
-	checkout_to_base_branch  bool   // Whether to checkout to the base branch (e.g., main)
+	branch_name             string // The branch to act on.
+	tag_name                string // The tag to act on.
+	checkout                bool   // Whether to checkout the branch.
+	pull                    bool   // Whether to pull after checkout.
+	checkout_to_base_branch bool   // Whether to checkout to the base branch (e.g., main).
 }
 
-// Arguments used for various actions like push, pull, or commit.
+// ActionArgs defines parameters for performing Git actions like commit, push, or pull.
 @[params]
 pub struct ActionArgs {
 pub mut:
-	reload    bool   = true // Whether to reload the repository status
-	msg       string        // The commit message
-	branch    string        // The branch name
-	tag       string        // The tag to checkout
-	recursive bool          // Whether to perform recursive operations (e.g., updating submodules)
+	reload    bool   = true // Whether to reload the repository status.
+	msg       string        // The commit message.
+	branch    string        // The branch to act on.
+	tag       string        // The tag to checkout.
+	recursive bool          // Perform recursive actions (e.g., update submodules).
+	push_tag  bool          // Determine whether the user needs to push the tags or not.
 }
 
-// Checks if there are any unstaged or untracked changes in the repository.
-// Returns true if changes are present, false otherwise.
+// Check if there are any unstaged or untracked changes in the repository.
 pub fn (repo GitRepo) has_changes() !bool {
 	repo.check()!
-	untracked_result := repo.get_unstaged_changes()!
-	return untracked_result.len > 0
+	untracked_changes := repo.get_unstaged_changes()!
+	return untracked_changes.len > 0
 }
 
-// Stages all changes in the repository.
-// Executes the Git command to add all changes and returns an error if the command fails.
+// Stage all changes in the repository.
 pub fn (mut repo GitRepo) add_changes() ! {
 	repo.check()!
 	repo_path := repo.get_path()!
-	cmd := 'cd ${repo_path} && git add . -A'
+	cmd := 'git -C ${repo_path} add . -A'
 	osal.exec(cmd: cmd) or { return error('Cannot add to repo: ${repo_path}. Error: ${err}') }
 	console.print_green('Changes added successfully.')
 }
 
-// Checks if there are staged changes that need to be committed.
-// Returns true if there are staged changes, false otherwise.
+// Check if there are staged changes to commit.
 pub fn (repo GitRepo) need_commit() !bool {
 	repo.check()!
 	return repo.get_staged_changes()!.len > 0
 }
 
-// Commits the staged changes in the repository with a specified commit message.
-// Returns an error if the commit message is empty or if the command fails.
+// Commit the staged changes with the provided commit message.
 pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
 	mut args := repo.reload_if_needed(args_)!
 	if repo.need_commit()! {
 		if args.msg == '' {
-			return error('Cannot commit; message is empty for ${repo}')
+			return error('Commit message is empty.')
 		}
 		repo_path := repo.get_path()!
-		cmd := 'cd ${repo_path} && git commit -m "${args.msg}"'
+		cmd := 'git -C ${repo_path} commit -m "${args.msg}"'
 		osal.exec(cmd: cmd) or { return error('Cannot commit repo: ${repo_path}. Error: ${err}') }
 		console.print_green('Changes committed successfully.')
 	} else {
@@ -82,21 +80,15 @@ pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
 	repo.load()!
 }
 
-// Determines if the repository needs to push changes based on local and remote commits.
-// Returns true if there are local changes that need to be pushed, false otherwise.
+// Check if the repository has changes that need to be pushed.
 pub fn (mut repo GitRepo) need_push() !bool {
 	repo.check()!
-	last_remote_commit := repo.get_last_remote_commit() or {
-		return error('Cannot get the last remote commit due to: ${err}')
-	}
-	last_local_commit := repo.get_last_local_commit() or {
-		return error('Cannot get the last local commit due to: ${err}')
-	}
+	last_remote_commit := repo.get_last_remote_commit() or { return error('Failed to get last remote commit: ${err}') }
+	last_local_commit := repo.get_last_local_commit() or { return error('Failed to get last local commit: ${err}') }
 	return last_local_commit != last_remote_commit
 }
 
-// Pushes local changes to the remote repository.
-// Executes the Git command to push changes and returns an error if the command fails.
+// Push local changes to the remote repository.
 pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 	if repo.need_push()! {
 		repo.reload_if_needed(args_)!
@@ -104,19 +96,20 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 		url := repo.get_repo_url()!
 		console.print_header('Pushing changes to ${url}')
 
-		is_base_branch := args_.branch == repo.get_base_branch()!
+		base_branch := repo.get_base_branch()!
 		mut cmd := ''
 
-		// If the current branch is the base branch (like 'main' or 'master')
-		if is_base_branch {
-			cmd = 'git -C ${repo_path} push'
+		if args_.branch == base_branch {
+			'git -C ${repo_path} push'
 		} else {
-			// Push the current local branch to the remote branch of the same name
-			// Using 'git push origin HEAD' ensures the current branch is pushed
-			cmd = 'git -C ${repo_path} push origin HEAD'
+			'git -C ${repo_path} push origin HEAD'
 		}
 
-		osal.exec(cmd: cmd) or { return error('Cannot push repo: ${repo_path}. Error: ${err}') }
+		if args_.push_tag{
+			cmd = 'git -C ${repo_path} push --tags'
+		}
+
+		osal.exec(cmd: cmd) or { return error('Failed to push due to: ${err}') }
 		console.print_green('Changes pushed successfully.')
 		repo.load()!
 	} else {
@@ -125,31 +118,27 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 	}
 }
 
-// Checks if the repository needs to pull updates from the remote.
-// Returns true if the remote has new changes compared to the local repository.
+// Check if a pull is needed (if remote has new changes).
 pub fn (mut repo GitRepo) need_pull() !bool {
 	repo.get_last_remote_commit(fetch: true)!
 	return repo.status_remote.latest_commit != repo.status_local.latest_commit
 }
 
-// Pulls remote content, failing if there are local changes that are not committed.
-// Executes the pull command and handles recursive submodule updates if needed.
+// Pull remote content into the repository.
 pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	branch_args := RepositoryArgs{
 		branch_name: args_.branch
+		tag_name: args_.tag
 	}
 
-	if repo.need_checkout_branch(branch_args)! {
-		repo.checkout_branch(branch_args)!
+	if repo.need_checkout(branch_args)! {
+		repo.checkout(branch_args)!
 	}
 
 	repo_path := repo.get_path()!
 	cmd := 'git -C ${repo_path} pull'
 	osal.exec(cmd: cmd) or { return error('Cannot pull repo: ${repo_path}. Error: ${err}') }
 
-	if args_.tag != '' {
-		repo.checkout_tag(args_.tag)!
-	}
 
 	if args_.recursive {
 		repo.update_submodules()!
@@ -159,55 +148,79 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	console.print_green('Changes pulled successfully.')
 }
 
-// Helper function to determine if a branch checkout is needed.
-fn (mut repo GitRepo) need_checkout_branch(args_ RepositoryArgs) !bool {
-	if args_.branch_name.len == 0 {
-		return error('The branch name is required.')
-	}
-	return args_.branch_name != repo.status_local.branch
+// Determine if the repository needs to checkout to a different branch.
+fn (mut repo GitRepo) need_checkout(args_ RepositoryArgs) !bool {
+	return args_.branch_name != repo.status_local.branch || args_.tag_name != repo.status_local.tag
 }
 
-// Checks out the specified branch in the repository, optionally pulling the latest changes.
-// Returns an error if the checkout fails or if there are uncommitted changes.
-pub fn (mut repo GitRepo) checkout_branch(args_ RepositoryArgs) ! {
+// Checkout a branch in the repository.
+pub fn (mut repo GitRepo) checkout(args_ RepositoryArgs) ! {
 	mut args := args_
-	if !args.checkout_to_base_branch && args.branch_name.len == 0 {
-		return error('The branch name is required.')
+	if args.branch_name.len > 0 && args.tag_name.len > 0 {
+		return error('You can only specify either the branch name nor tag name.')
 	}
 
 	repo.load()!
 	repo_path := repo.get_path()!
 
 	if repo.need_commit()! {
-		return error('Cannot checkout branch in ${repo_path} due to uncommitted changes.')
+		return error('Cannot checkout branch due to uncommitted changes in ${repo_path}.')
 	}
 
 	repo.fetch_all()!
 
 	if args.checkout_to_base_branch {
-		// Get the base branch of the repo
-		args.branch_name = repo.get_base_branch()!
+		repo.status_local.branch = repo.get_base_branch()!
+	}
+	
+	if args.branch_name.len > 0 {
+		repo.status_local.branch = args.branch_name
 	}
 
-	cmd := 'git -C ${repo_path} checkout ${args.branch_name}'
-	osal.exec(cmd: cmd) or { return error('Cannot checkout branch in ${repo_path}. Error: ${err}') }
-	repo.status_local.branch = args.branch_name
-	console.print_green('Switched to branch ${args.branch_name} successfully.')
+	if args.tag_name.len > 0 {
+		repo.status_local.tag = args.tag_name
+	}
+
+	checkout_to := if args.tag_name.len > 0 {repo.status_local.tag} else {repo.status_local.branch}
+
+	cmd := 'git -C ${repo_path} checkout ${checkout_to}'
+	osal.exec(cmd: cmd) or { return error('Cannot checkout branch: ${repo_path}. Error: ${err}') }
+	console.print_green('Switched to branch ${repo.status_local.branch} successfully.')
 
 	if args.pull {
-		console.print_green('Pulling the branch ${args.branch_name} changes.')
 		repo.pull(reload: true)!
 	}
 }
 
-// Creates a new branch in the repository.
-// Optionally checks out the branch after creation.
+// Create a new branch in the repository.
 pub fn (mut repo GitRepo) create_branch(args_ RepositoryArgs) ! {
 	repo_path := repo.get_path()!
-	base_command := if args_.checkout { 'checkout -b' } else { 'branch -c' }
-	cmd := 'git -C ${repo_path} ${base_command} ${args_.branch_name}'
-	osal.exec(cmd: cmd) or { return error('Cannot create branch in ${repo_path}. Error: ${err}') }
+	cmd := if args_.checkout { 'checkout -b' } else { 'branch -c' }
+	full_cmd := 'git -C ${repo_path} ${cmd} ${args_.branch_name}'
+	osal.exec(cmd: full_cmd) or { return error('Cannot create branch: ${repo_path}. Error: ${err}') }
 	console.print_green('Branch ${args_.branch_name} created successfully.')
+
+	if args_.checkout{
+		repo.status_local.branch = args_.branch_name
+		repo.status_local.tag = ''
+	}
+}
+
+// Create a new branch in the repository.
+pub fn (mut repo GitRepo) create_tag(args_ RepositoryArgs) ! {
+	repo_path := repo.get_path()!
+	mut cmd := 'git -C ${repo_path} tag ${args_.tag_name}'
+
+	osal.exec(cmd: cmd) or { return error('Cannot create tag: ${repo_path}. Error: ${err}') }
+	console.print_green('Tag ${args_.tag_name} created successfully.')
+
+	if args_.checkout{
+		cmd = 'git -C ${repo_path} checkout ${args_.tag_name}'
+		osal.exec(cmd: cmd) or { return error('Cannot checkout to tag: ${args_.tag_name}. Error: ${err}') }
+		console.print_green('Tag ${args_.branch_name} activated.')
+		repo.status_local.branch = ''
+		repo.status_local.tag = args_.tag_name
+	}
 }
 
 // Remove cache
@@ -236,34 +249,25 @@ fn (mut repo GitRepo) load() ! {
 	console.print_debug('load ${repo.get_key()}')
 	path := repo.get_path()!
 
-	// Load local branch info
 	repo.load_local_branch_info(path)!
-
-	// Load remote repository info
 	repo.load_remote_info(path)!
 
-	// Fill in check timestamps for local and remote
 	repo.status_local.last_check = int(time.now().unix())
 	repo.status_remote.last_check = int(time.now().unix())
 }
 
 // Helper to load local branch or tag info
 fn (mut repo GitRepo) load_local_branch_info(path string) ! {
-	// Fetch commits hash and set it as the latest commit
 	repo.get_last_local_commit()!
-
-	// Fetch local branch or detached head
 	cmd_result := osal.execute_silent('git -C ${path} rev-parse --abbrev-ref HEAD') or {
 		return error('Failed to fetch branch info: ${err}')
 	}
 
 	branch_or_head := cmd_result.trim_space()
 	if branch_or_head == 'HEAD' {
-		// Detached head: fetch tag if any
 		repo.status_local.detached = true
 		repo.status_local.tag = osal.execute_silent('git -C ${path} describe --tags --exact-match') or { '' }.trim_space()
 	} else {
-		// Not detached: set branch name
 		repo.status_local.detached = false
 		repo.status_local.branch = branch_or_head
 	}
@@ -276,13 +280,8 @@ fn (mut repo GitRepo) load_remote_info(path string) ! {
 		return error('Failed to fetch remote URL: ${err}')
 	}
 
-	// Load last remote commit
 	repo.get_last_remote_commit(fetch: true)!
-
-	// Fetch and process remote branches
 	repo.load_remote_branches(path)!
-
-	// Fetch and process remote tags
 	repo.load_remote_tags(path)!
 }
 
@@ -326,5 +325,104 @@ fn (mut repo GitRepo) load_remote_tags(path string) ! {
 				repo.status_remote.tags[tag_name] = commit_hash
 			}
 		}
+	}
+}
+
+// Create GitLocation from the path within the Git repository
+pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
+	if path.starts_with('/') || path.starts_with('~') {
+		return error('Path must be relative, cannot start with / or ~')
+	}
+
+	mut git_path := gs.patho()!
+	if !os.exists(git_path.path) {
+		return error('Path does not exist inside the repository: ${git_path.path}')
+	}
+
+	return GitLocation{
+		provider: gs.provider
+		account:  gs.account
+		name:     gs.name
+		branch:   gs.status_local.branch
+		tag:      gs.status_local.tag
+		path:     path
+	}
+}
+
+// Check if repo path exists and validate fields
+pub fn (repo GitRepo) check() ! {
+	path_string := repo.get_path()!
+	if repo.gs.coderoot.path == '' {
+		return error('Coderoot cannot be empty')
+	}
+	if repo.provider == '' {
+		return error('Provider cannot be empty')
+	}
+	if repo.account == '' {
+		return error('Account cannot be empty')
+	}
+	if repo.name == '' {
+		return error('Name cannot be empty')
+	}
+
+	if !os.exists(path_string) {
+		return error('Path does not exist: ${path_string}')
+	}
+}
+
+pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
+	// Check current time vs last check, if needed (check period) then load
+	repo.redis_load()! // Ensure we have the situation from redis
+	current_time := int(time.now().unix())
+	if args.reload || repo.config.remote_check_period == 0
+		|| current_time - repo.status_remote.last_check >= repo.config.remote_check_period {
+		repo.load()!
+	}
+}
+
+pub fn (mut repo GitRepo) fetch_all() ! {
+	cmd := 'cd ${repo.get_path()!} && git fetch --all'
+	osal.execute_silent(cmd) or {
+		return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
+	}
+	repo.load()!
+}
+
+// Removes all changes from the repo; be cautious
+pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
+	repo.reload_if_needed(args_)!
+	if repo.need_commit()! {
+		console.print_header('Removing changes in ${repo.get_path()!}')
+		cmd := 'cd ${repo.get_path()!} && git reset HEAD --hard && git clean -xfd'
+		res := osal.exec(cmd: cmd, raise_error: false)!
+		if res.exit_code > 0 {
+			console.print_header('Could not remove changes; will re-clone ${repo.get_path()!}')
+			mut p := repo.patho()!
+			p.delete()! // remove path, this will re-clone the full thing
+			// Uncomment to re-clone the repo
+			// repo.load_from_url()!
+		}
+	}
+	repo.load()!
+}
+
+
+
+// Helper method to reload the repo if needed
+fn (mut repo GitRepo) reload_if_needed(args_ ActionArgs) !ActionArgs {
+	mut args := args_
+	if args.reload {
+		repo.load()!
+		args.reload = false
+	}
+	return args
+}
+
+
+// Update submodules
+fn (mut repo GitRepo) update_submodules() ! {
+	cmd := 'cd ${repo.get_path()!} && git submodule update --init --recursive'
+	osal.execute_silent(cmd) or {
+		return error('Cannot update submodules for repo: ${repo.get_path()!}. Error: ${err}')
 	}
 }

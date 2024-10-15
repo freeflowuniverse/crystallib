@@ -28,6 +28,9 @@ pub mut:
 	account  string // Git account associated with the repository.
 	provider string // Git provider (e.g., GitHub).
 	clone    bool   // Clone the repository if it doesn't exist locally.
+	pull     bool   // Pull the last changes.
+	reset    bool   // Reset the changes.
+	reload   bool   // Reload the repo.
 	url      string // Repository URL, used if cloning is needed.
 }
 
@@ -91,6 +94,21 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 	if repositories.len > 1 {
 		repos := repositories.map('- ${it.account}.${it.name}').join_lines()
 		return error('Found more than one repository for \n${args}\n${repos}')
+	}
+
+	mut repo := repositories[0]
+
+	if args_.pull{
+		repo.pull()!
+	}
+
+	if args_.reset{
+		// TODO: Implement this logic
+		// repo.reset()!
+	}
+
+	if args_.reload{
+		repo.load()!
 	}
 
 	return repositories[0]

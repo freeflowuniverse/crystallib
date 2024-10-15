@@ -108,7 +108,7 @@ fn test_create_branch() {
 // - Create a new branch and checkout.
 // - Verify the branch was checked out.
 [test]
-fn test_checkout_branch() {
+fn test_checkout() {
     repo_setup := setup_repo()!
     
     mut gs := gittools.new(coderoot: repo_setup.coderoot)!
@@ -124,7 +124,7 @@ fn test_checkout_branch() {
     repo.create_branch(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
-    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    repo.checkout(branch_name: branch_name, pull: false)!
     assert repo.status_local.branch == branch_name 
     
     remove_setup()!
@@ -154,7 +154,7 @@ fn test_has_changes() {
     repo.create_branch(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
-    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    repo.checkout(branch_name: branch_name, pull: false)!
     assert repo.status_local.branch == branch_name
 
     file := create_new_file(repo_path, runtime)!
@@ -189,7 +189,7 @@ fn test_add_changes() {
     repo.create_branch(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
-    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    repo.checkout(branch_name: branch_name, pull: false)!
     assert repo.status_local.branch == branch_name
 
     file := create_new_file(repo_path, runtime)!
@@ -240,7 +240,7 @@ fn test_commit_changes() {
     repo.create_branch(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
-    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    repo.checkout(branch_name: branch_name, pull: false)!
     assert repo.status_local.branch == branch_name
 
     file_name := create_new_file(repo_path, runtime)!
@@ -303,7 +303,7 @@ fn test_push_changes() {
     repo.create_branch(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
-    repo.checkout_branch(branch_name: branch_name, pull: false)!
+    repo.checkout(branch_name: branch_name, pull: false)!
     assert repo.status_local.branch == branch_name
 
     file_name := create_new_file(repo_path, runtime)!

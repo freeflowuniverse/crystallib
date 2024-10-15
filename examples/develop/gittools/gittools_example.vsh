@@ -29,9 +29,10 @@ mut repo := gs_default.get_repo(name: 'repo3')!
 // mut repo := gs_default.get_repo(name: 'repo3' clone: true, url: 'https://github.com/Mahmoud-Emad/repo2.git')!
 
 runtime := time.now().unix()
-branch_name := "testing_${runtime}"
+branch_name := "branch_${runtime}"
+tag_name := "tag_${runtime}"
 repo_path := repo.get_path()!
-file_name := create_new_file(repo_path, runtime)!
+mut file_name := create_new_file(repo_path, runtime)!
 
 // Create a new branch to add our changes on it.
 // We can simply checkout to the newly created branch, but we need to test the checkout method functionalty.
@@ -43,7 +44,7 @@ repo.create_branch(branch_name: branch_name, checkout: false) or {
 
 // Checkout to the created branch
 println('Checkout to \'${branch_name}\' branch...')
-repo.checkout_branch(branch_name: branch_name, pull: false) or {
+repo.checkout(branch_name: branch_name, pull: false) or {
 	error("Couldn't checkout to branch ${branch_name} due to: ${err}")
 }
 
@@ -80,15 +81,18 @@ if repo.need_pull()! {
 }
 
 // Checkout to the base branch 
-repo.checkout_branch(checkout_to_base_branch: true, pull: true) or {
+repo.checkout(checkout_to_base_branch: true, pull: true) or {
 	error("Couldn't checkout to branch ${branch_name} due to: ${err}")
 }
 
+// Create a new tag and add some changes on it then push it to the remote.
+println('Creating a new \'${tag_name}\' tag...')
+repo.create_tag(tag_name: tag_name, checkout: false) or {
+	error("Couldn't create tag due to: ${err}")
+}
 
-// Uncomment for additional functionality
-// println(repo.status_local)
-// repo.open_vscode()!
-// url := repo.need_commit()!
-// println("need_commit: ${url}")
-// gs_default.repos_print()!
-// println("Repository path: ${path}")
+// Push the created tag
+println('Pushing the tag...')
+repo.push(push_tag: true) or {
+	error('Cannot push the tag due to: ${err}')
+}

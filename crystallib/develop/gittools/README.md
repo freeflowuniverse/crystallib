@@ -29,7 +29,7 @@ file_name := create_new_file(repo_path, runtime)!
 
 // Create a new branch, checkout, add changes, commit, and push.
 repo.create_branch(branch_name: branch_name, checkout: false)!
-repo.checkout_branch(branch_name: branch_name, pull: false)!
+repo.checkout(branch_name: branch_name, pull: false)!
 
 if repo.has_changes() {
     repo.add_changes()!
@@ -38,7 +38,10 @@ if repo.has_changes() {
 }
 
 // Checkout back to the base branch and pull changes.
-repo.checkout_branch(checkout_to_base_branch: true, pull: true)!
+repo.checkout(checkout_to_base_branch: true, pull: true)!
+
+// Create tag from the base branch
+repo.create_tag(tag_name: tag_name)!
 ```
 
 ## Tests
