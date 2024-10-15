@@ -1,7 +1,5 @@
 module gittools
 
-import freeflowuniverse.crystallib.core.pathlib
-
 // GitStructureConfig defines configuration settings for a GitStructure instance.
 @[params]
 pub struct GitStructureConfig {

@@ -173,6 +173,10 @@ fn (self GitRepo) path_account() !pathlib.Path {
 
 // url_get returns the URL of a git address
 fn (self GitRepo) url_get() !string {
+	if self.status_remote.url.len != 0 {
+		return self.status_remote.url
+	}
+
 	if sshagent.loaded() {
 		return self.url_ssh_get()!
 	} else {

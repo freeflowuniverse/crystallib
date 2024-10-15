@@ -40,22 +40,3 @@ pub fn (self GSCodeGetFromUrlArgs) str() string {
 
 	return msg
 }
-
-// Retrieves a repository starting from the URL. If the repo does not exist, it will pull only if needed.
-pub fn code_get(args CodeGetFromUrlArgs) !string {
-	mut gs := get(GitStructureGetArgs{
-		coderoot: args.coderoot
-		reload: args.reload
-	})!
-
-	gs = getset(coderoot: args.coderoot)!
-
-	return gs.code_get(
-		url:    args.url
-		pull:   args.pull
-		reset:  args.reset
-		reload: args.reload
-		tag:    args.tag
-		branch: args.branch
-	)
-}
