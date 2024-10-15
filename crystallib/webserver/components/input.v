@@ -1,5 +1,43 @@
 module components
 
+pub struct Input {
+pub:
+	id string
+	name string
+	label string
+	placeholder string
+	required bool
+	typ string
+}
+
+pub fn (input Input) html() string {
+
+	mut tags := []string{}
+	if input.typ != '' {
+		tags << 'type="${input.typ}"'
+	}
+	if input.required {
+		tags << 'required'
+	}
+	if input.id != ''{
+		tags << 'id="${input.id}"'
+	}
+	if input.name != '' {
+		tags << 'name="${input.name}"'
+	}
+	if input.placeholder != '' {
+		tags << 'name="${input.placeholder}"'
+	}
+
+	mut str := '<input ${tags.join(' ')}>'
+
+	if input.label != '' {
+		str = '<label for="${input.name}">${input.label}\n${str}</label>'
+	}
+	
+	return str
+}
+
 pub struct Dropdown{
 pub:
 	label string
