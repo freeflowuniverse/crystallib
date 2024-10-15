@@ -46,82 +46,6 @@ pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
 	}
 }
 
-// Load repo information
-fn (mut repo GitRepo) load() ! {
-	console.print_debug('load ${repo.get_key()}')
-	path := repo.get_path()!
-
-	// Fetch local branch or see if detached
-	cmd := 'git -C ${path} rev-parse --abbrev-ref HEAD'
-	cmd_result := osal.execute_silent(cmd) or {
-		return error('Failed to fetch branch info: ${err}')
-	}
-
-	if cmd_result.trim_space() == 'HEAD' {
-		repo.status_local.detached = true
-		// If detached, get the tag and fill it in GitRepoStatusLocal property
-		tag_result := osal.execute_silent('git -C ${path} describe --tags --exact-match') or { '' }
-		repo.status_local.tag = tag_result.trim_space()
-	} else {
-		// If not detached, fill in branch
-		repo.status_local.detached = false
-		repo.status_local.branch = cmd_result.trim_space()
-	}
-
-	// Fetch local ref (commit hash)
-	ref_result := osal.execute_silent('git -C ${path} rev-parse HEAD') or {
-		return error('Failed to fetch commit hash: ${err}')
-	}
-	repo.status_local.ref = ref_result.trim_space()
-
-	// Set the latest local commit
-	repo.status_local.latest_commit = ref_result.trim_space()
-
-	// Fetch all remote branches and refs (hashes) and fill into GitRepoStatusRemote
-	branches_result := osal.execute_silent('git -C ${path} branch -r --format "%(refname:lstrip=2) %(objectname)"') or {
-		return error('Failed to fetch remote branches: ${err}')
-	}
-
-	for line in branches_result.split('\n') {
-		if line.trim_space() != '' {
-			parts := line.split(' ')
-			if parts.len == 2 {
-				mut branch_name := string(parts[0].trim_space())
-				if branch_name.contains('origin/'){
-					branch_name = branch_name.replace('origin/', '')
-				}
-
-				commit_hash := parts[1].trim_space()
-				repo.status_remote.branches[branch_name] = commit_hash
-
-				// Set the latest remote commit for the current branch
-				if branch_name == repo.status_local.branch {
-					repo.status_remote.latest_commit = commit_hash
-				}
-			}
-		}
-	}
-
-	// Fetch all remote tags and refs (hashes) and fill into GitRepoStatusRemote
-	tags_result := osal.execute_silent('git -C ${path} show-ref --tags') or { '' }
-
-	for line in tags_result.split('\n') {
-		if line.trim_space() != '' {
-			parts := line.split(' ')
-			if parts.len == 2 {
-				commit_hash := parts[0].trim_space()
-				tag_name := parts[1].all_after('refs/tags/').trim_space()
-				repo.status_remote.tags[tag_name] = commit_hash
-			}
-		}
-	}
-
-	// Fill in all dates of checks (remote & local)
-	repo.status_local.last_check = int(time.now().unix())
-	repo.status_remote.last_check = int(time.now().unix())
-}
-
-
 // Check if repo path exists and validate fields
 pub fn (repo GitRepo) check() ! {
 	path_string := repo.get_path()!
@@ -171,41 +95,10 @@ fn (self GitRepo) path_account() !pathlib.Path {
 	return pathlib.get_dir(path: path_string, create: true) or { panic("couldn't get directory") }
 }
 
-// url_get returns the URL of a git address
-fn (self GitRepo) url_get() !string {
-	if self.status_remote.url.len != 0 {
-		return self.status_remote.url
-	}
-
-	if sshagent.loaded() {
-		return self.url_ssh_get()!
-	} else {
-		return self.url_http_get()!
-	}
-}
-
-fn (self GitRepo) url_ssh_get() !string {
-	self.check()!
-	mut provider := self.provider
-	if provider == 'github' {
-		provider = 'github.com'
-	}
-	return 'git@${provider}:${self.account}/${self.name}.git'
-}
-
-fn (self GitRepo) url_http_get() !string {
-	self.check()!
-	mut provider := self.provider
-	if provider == 'github' {
-		provider = 'github.com'
-	}
-	return 'https://${provider}/${self.account}/${self.name}'
-}
-
 // Return HTTP URL with branch inside
 fn (self GitRepo) url_http_with_branch_get() !string {
 	self.check()!
-	u := self.url_http_get()!
+	u := self.get_http_url()!
 	// TODO: prob not ok because this is branch of what can be found on the filesystem
 	if self.status_local.branch != '' {
 		return '${u}/tree/${self.status_local.branch}'

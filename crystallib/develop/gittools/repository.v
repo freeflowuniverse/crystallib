@@ -4,11 +4,12 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.osal
 import os
+import time
 
 // GitRepo holds information about a single Git repository.
 pub struct GitRepo {
 pub mut:
-	gs            &GitStructure @[skip] // Reference to the parent GitStructure
+	gs            &GitStructure @[skip;str: skip] // Reference to the parent GitStructure
 	provider      string              // e.g., github.com, shortened to 'github'
 	account       string              // Git account name
 	name          string              // Repository name
@@ -100,7 +101,7 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 	if repo.need_push()! {
 		repo.reload_if_needed(args_)!
 		repo_path := repo.get_path()!
-		url := repo.url_get()!
+		url := repo.get_repo_url()!
 		console.print_header('Pushing changes to ${url}')
 
 		is_base_branch := args_.branch == repo.get_base_branch()!
@@ -228,4 +229,102 @@ pub fn (mut repo GitRepo) delete() ! {
 	cmd := 'rm -rf ${repo_path}'
 	osal.exec(cmd: cmd) or { return error('Cannot execute the delete command due to: ${err}') }
 	repo.load()!
+}
+
+// Load repo information
+fn (mut repo GitRepo) load() ! {
+	console.print_debug('load ${repo.get_key()}')
+	path := repo.get_path()!
+
+	// Load local branch info
+	repo.load_local_branch_info(path)!
+
+	// Load remote repository info
+	repo.load_remote_info(path)!
+
+	// Fill in check timestamps for local and remote
+	repo.status_local.last_check = int(time.now().unix())
+	repo.status_remote.last_check = int(time.now().unix())
+}
+
+// Helper to load local branch or tag info
+fn (mut repo GitRepo) load_local_branch_info(path string) ! {
+	// Fetch commits hash and set it as the latest commit
+	repo.get_last_local_commit()!
+
+	// Fetch local branch or detached head
+	cmd_result := osal.execute_silent('git -C ${path} rev-parse --abbrev-ref HEAD') or {
+		return error('Failed to fetch branch info: ${err}')
+	}
+
+	branch_or_head := cmd_result.trim_space()
+	if branch_or_head == 'HEAD' {
+		// Detached head: fetch tag if any
+		repo.status_local.detached = true
+		repo.status_local.tag = osal.execute_silent('git -C ${path} describe --tags --exact-match') or { '' }.trim_space()
+	} else {
+		// Not detached: set branch name
+		repo.status_local.detached = false
+		repo.status_local.branch = branch_or_head
+	}
+}
+
+// Helper to load remote branch and tag information
+fn (mut repo GitRepo) load_remote_info(path string) ! {
+	// Fetch repo URL
+	repo.status_remote.url = osal.execute_silent('git -C ${path} config --get remote.origin.url') or {
+		return error('Failed to fetch remote URL: ${err}')
+	}
+
+	// Load last remote commit
+	repo.get_last_remote_commit(fetch: true)!
+
+	// Fetch and process remote branches
+	repo.load_remote_branches(path)!
+
+	// Fetch and process remote tags
+	repo.load_remote_tags(path)!
+}
+
+// Helper to load remote branches
+fn (mut repo GitRepo) load_remote_branches(path string) ! {
+	branches_result := osal.execute_silent('git -C ${path} branch -r --format "%(refname:lstrip=2) %(objectname)"') or {
+		return error('Failed to fetch remote branches: ${err}')
+	}
+
+	for line in branches_result.split('\n') {
+		if line.trim_space() != '' {
+			parts := line.split(' ')
+			if parts.len == 2 {
+				branch_name := parts[0].trim_space().replace('origin/', '')
+				commit_hash := parts[1].trim_space()
+
+				// Update remote branches info
+				repo.status_remote.branches[branch_name] = commit_hash
+
+				// Set the latest remote commit if it matches the current branch
+				if branch_name == repo.status_local.branch {
+					repo.status_remote.latest_commit = commit_hash
+				}
+			}
+		}
+	}
+}
+
+// Helper to load remote tags
+fn (mut repo GitRepo) load_remote_tags(path string) ! {
+	tags_result := osal.execute_silent('git -C ${path} show-ref --tags') or { '' }
+
+	for line in tags_result.split('\n') {
+		if line.trim_space() != '' {
+			parts := line.split(' ')
+			if parts.len == 2 {
+				commit_hash := parts[0].trim_space()
+				tag_name := parts[1].all_after('refs/tags/').trim_space()
+
+				// Update remote tags info
+				repo.status_remote.tags[tag_name] = commit_hash
+			}
+		}
+	}
 }

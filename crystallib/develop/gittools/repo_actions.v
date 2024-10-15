@@ -7,7 +7,7 @@ import freeflowuniverse.crystallib.develop.sourcetree
 import os
 
 fn (repo GitRepo) get_clone_cmd(args CloneArgs) !string {
-	url := if args.forcehttp { repo.url_http_get()! } else { repo.url_get()! }
+	url := if args.forcehttp { repo.get_http_url()! } else { repo.get_repo_url()! }
 	light := if repo.gs.config.light { ' --depth 1 --no-single-branch' } else { '' }
 	path := repo.path_account()!
 

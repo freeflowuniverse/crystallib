@@ -1,6 +1,7 @@
 module gittools
 
 import freeflowuniverse.crystallib.osal
+import freeflowuniverse.crystallib.osal.sshagent
 import os
 
 // LastCommitArgs holds the parameters for fetching the last commit.
@@ -32,7 +33,8 @@ pub fn (mut repo GitRepo) get_last_remote_commit(args_ LastCommitArgs) !string {
 	// Fetch and get the last commit hash for the branch.
 	cmd := 'git -C ${repo_path} fetch && git -C ${repo_path} rev-parse ${branch_name}'
 	last_commit := osal.execute_silent(cmd)!
-	repo.status_remote.latest_commit = string(last_commit).trim_space()
+	commit_hash := string(last_commit).trim_space()
+	repo.status_remote.latest_commit = commit_hash
 	return last_commit
 }
 
@@ -43,7 +45,14 @@ pub fn (mut repo GitRepo) get_last_remote_commit(args_ LastCommitArgs) !string {
 // - Throws an error if the repository status check fails.
 pub fn (mut repo GitRepo) get_last_local_commit() !string {
 	repo.check()!
-	return repo.status_local.latest_commit
+	repo_path := repo.get_path()!
+	mut commit_hash := osal.execute_silent('git -C ${repo_path} rev-parse HEAD') or {
+		return error('Failed to fetch commit hash: ${err}')
+	}
+	commit_hash = commit_hash.trim_space()
+	repo.status_local.ref = commit_hash
+	repo.status_local.latest_commit = commit_hash
+	return commit_hash
 }
 
 // Retrieves a list of unstaged changes in the repository.
@@ -133,4 +142,35 @@ pub fn (repo GitRepo) get_parent_dir() !string {
 		return error('Parent directory does not exist: ${parent_dir}')
 	}
 	return parent_dir
+}
+
+// url_get returns the URL of a git address
+fn (self GitRepo) get_repo_url() !string {
+	if self.status_remote.url.len != 0 {
+		return self.status_remote.url
+	}
+	
+	if sshagent.loaded() {
+		return self.get_ssh_url()!
+	} else {
+		return self.get_http_url()!
+	}
+}
+
+fn (self GitRepo) get_ssh_url() !string {
+	self.check()!
+	mut provider := self.provider
+	if provider == 'github' {
+		provider = 'github.com'
+	}
+	return 'git@${provider}:${self.account}/${self.name}.git'
+}
+
+fn (self GitRepo) get_http_url() !string {
+	self.check()!
+	mut provider := self.provider
+	if provider == 'github' {
+		provider = 'github.com'
+	}
+	return 'https://${provider}/${self.account}/${self.name}'
 }
