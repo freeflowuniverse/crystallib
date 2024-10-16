@@ -1,18 +1,53 @@
-
 module stellar
+
 import os
 
-
 @[params]
-pub struct SignersAddArgs{
+pub struct SignersAddArgs {
 pub mut:
-	name string //name to get source account from
+	name    string // name to get source account from
 	pubkeys []string
 }
 
-pub fn (mut client StellarClient) signers_add(args SignersAddArgs) ! {
+@[params]
+pub struct AddSignerArgs {
+pub:
+	source_account_name string
+	address             string
+	weight              int
+}
 
-	jsondata:='
+pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
+	if args.weight == 0 {
+		return error('a signer weight of 0 will remove signer. use remove_signer method to remove signer')
+	}
+
+	account_keys := client.account_keys_get(args.source_account_name)!
+	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.address} --signer-weight ${args.weight} --network ${client.network}'
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('transaction failed: ${result.output}')
+	}
+}
+
+@[params]
+pub struct RemoveSignerArgs {
+pub:
+	source_account_name string
+	address             string
+}
+
+pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) ! {
+	account_keys := client.account_keys_get(args.source_account_name)!
+	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.address} --signer-weight 0 --network ${client.network}'
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('transaction failed: ${result.output}')
+	}
+}
+
+pub fn (mut client StellarClient) signers_add(args SignersAddArgs) ! {
+	jsondata := '
 	{
 		"source_account": "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DRQSV5HRTJNBGKZ2G24AN4IQS",
 		"operations": [
@@ -42,7 +77,7 @@ pub fn (mut client StellarClient) signers_add(args SignersAddArgs) ! {
 		}
 	}
 	'
-	xdrpath:="/tmp/add-multiple-signers.xdr"
+	xdrpath := '/tmp/add-multiple-signers.xdr'
 	os.write_file(xdrpath, jsondata)!
 	result := os.execute('stellar xdr from-json --input add-multiple-signers.json --output ${xdrpath}  --network ${client.network}')
 	if result.exit_code != 0 {
@@ -58,11 +93,8 @@ pub fn (mut client StellarClient) signers_add(args SignersAddArgs) ! {
 		return error('Failed to submit transaction: ${result3.output}')
 	}
 
-	//TODO: now check the status of the account to see if the signing has been added
+	// TODO: now check the status of the account to see if the signing has been added
 
 	os.rm(xdrpath)!
-	os.rm("signed-${xdrpath}")!
-
+	os.rm('signed-${xdrpath}')!
 }
-
-
