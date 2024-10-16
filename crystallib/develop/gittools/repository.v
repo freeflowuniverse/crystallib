@@ -64,8 +64,8 @@ pub fn (repo GitRepo) need_commit() !bool {
 }
 
 // Commit the staged changes with the provided commit message.
-pub fn (mut repo GitRepo) commit(args_ ActionArgs) ! {
-	mut args := repo.reload_if_needed(args_)!
+pub fn (mut repo GitRepo) commit(args ActionArgs) ! {
+	repo.reload_if_needed(args)!
 	if repo.need_commit()! {
 		if args.msg == '' {
 			return error('Commit message is empty.')
@@ -90,8 +90,8 @@ pub fn (mut repo GitRepo) need_push() !bool {
 
 // Push local changes to the remote repository.
 pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
-	if repo.need_push()! {
-		repo.reload_if_needed(args_)!
+	repo.reload_if_needed(args_)!
+	if repo.need_push()! {		
 		repo_path := repo.get_path()!
 		url := repo.get_repo_url()!
 		console.print_header('Pushing changes to ${url}')
@@ -419,15 +419,6 @@ pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
 
 
 
-// Helper method to reload the repo if needed
-fn (mut repo GitRepo) reload_if_needed(args_ ActionArgs) !ActionArgs {
-	mut args := args_
-	if args.reload {
-		repo.load()!
-		args.reload = false
-	}
-	return args
-}
 
 
 // Update submodules
