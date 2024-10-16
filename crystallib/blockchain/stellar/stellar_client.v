@@ -21,6 +21,7 @@ pub mut:
 
 @[params]
 pub struct StellarClientConfig {
+pub:
 	network         string
 	default_assetid string // contract id of the asset
 	default_from    string
@@ -32,6 +33,7 @@ pub fn new_stellar_client(config StellarClientConfig) !StellarClient {
 		network: config.network
 		default_assetid: config.default_assetid
 		default_from: config.default_from
+		default_account: config.default_account
 	}
 	if cl.default_assetid == '' {
 		cl.default_assetid = cl.default_assetid_get()!
@@ -42,8 +44,8 @@ pub fn new_stellar_client(config StellarClientConfig) !StellarClient {
 @[params]
 pub struct AddKeysArgs {
 pub:
-	source_account_name 	?string
-	secret 	string
+	source_account_name ?string
+	secret              string
 }
 
 pub fn (mut client StellarClient) add_keys(args AddKeysArgs) ! {
@@ -72,14 +74,14 @@ pub fn (mut client StellarClient) account_new(name string) !StellarAccountKeys {
 
 pub fn (mut client StellarClient) account_keys_get(name string) !StellarAccountKeys {
 	// Get the public key
-	address_result := os.execute('stellar keys address ${name} --network ${client.network}')
+	address_result := os.execute('stellar keys address ${name} --quiet')
 	if address_result.exit_code != 0 {
 		return error('Failed to get public key: ${address_result.output}')
 	}
 	public_key := address_result.output.trim_space()
 
 	// Get the secret key
-	show_result := os.execute('stellar keys show ${name} --network ${client.network} --quiet')
+	show_result := os.execute('stellar keys show ${name} --quiet')
 	if show_result.exit_code != 0 {
 		return error('Failed to get secret key: ${show_result.output}')
 	}
@@ -154,8 +156,8 @@ pub fn (mut client StellarClient) balance_check(params CheckBalanceParams) !stri
 @[params]
 pub struct MergeArgs {
 pub:
-	source_account_name	?string
-	address 	string
+	source_account_name ?string
+	address             string
 }
 
 pub fn (mut client StellarClient) merge_accounts(args MergeArgs) ! {

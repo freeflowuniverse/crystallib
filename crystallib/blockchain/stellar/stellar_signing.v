@@ -14,7 +14,7 @@ pub struct AddSignerArgs {
 pub:
 	source_account_name ?string
 	address             string
-	weight              int
+	weight              int = 1
 }
 
 pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
