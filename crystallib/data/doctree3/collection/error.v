@@ -2,6 +2,7 @@ module collection
 
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.ui.console
+import freeflowuniverse.crystallib.data.doctree3.collection.data
 
 pub enum CollectionErrorCat {
 	unknown
@@ -38,6 +39,24 @@ pub fn (mut collection Collection) error(args CollectionError) {
 	}
 
 	console.print_stderr(args.msg)
+}
+
+pub fn (mut c Collection) add_page_multi_error(multierr data.PageMultiError) {
+	for err in multierr.errs {
+		cat := match err.cat {
+			.file_not_found { CollectionErrorCat.file_not_found }
+			.image_not_found { CollectionErrorCat.page_not_found }
+			.page_not_found { CollectionErrorCat.page_not_found }
+			.def { CollectionErrorCat.def }
+			else { CollectionErrorCat.unknown }
+		}
+
+		c.error(
+			path: err.path
+			msg: err.msg
+			cat: cat
+		)
+	}
 }
 
 pub struct ObjNotFound {

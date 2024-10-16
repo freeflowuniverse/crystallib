@@ -4,8 +4,7 @@ import freeflowuniverse.crystallib.conversiontools.imagemagick
 import freeflowuniverse.crystallib.core.pathlib { Path }
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.data.doctree3.pointer
-import freeflowuniverse.crystallib.data.doctree3.collection.page { Page }
-import freeflowuniverse.crystallib.data.doctree3.collection.file { File }
+import freeflowuniverse.crystallib.data.doctree3.collection.data
 import freeflowuniverse.crystallib.core.texttools
 
 pub enum CollectionState {
@@ -22,14 +21,13 @@ pub:
 	name string
 pub mut:
 	title  string
-	pages  map[string]&Page // markdown pages in collection
-	files  map[string]&File
-	images map[string]&File
+	pages  map[string]&data.Page // markdown pages in collection
+	files  map[string]&data.File
+	images map[string]&data.File
 	path   Path
 	errors []CollectionError
 	state  CollectionState
-	// tree   &Tree             @[str: skip]
-	heal bool = true
+	heal   bool = true
 }
 
 @[params]
@@ -49,7 +47,6 @@ pub fn new(args_ CollectionNewArgs) !Collection {
 	mut pp := pathlib.get_dir(path: args.path)! // will raise error if path doesn't exist
 	mut collection := Collection{
 		name: args.name
-		// tree: tree
 		path: pp
 		heal: args.heal
 	}
@@ -62,7 +59,7 @@ pub fn new(args_ CollectionNewArgs) !Collection {
 }
 
 // gets page with specified name from collection
-pub fn (collection Collection) page_get(name string) !&Page {
+pub fn (collection Collection) page_get(name string) !&data.Page {
 	return collection.pages[name] or {
 		return ObjNotFound{
 			collection: collection.name
@@ -76,7 +73,7 @@ pub fn (collection Collection) page_exists(name string) bool {
 }
 
 // gets image with specified name from collection
-pub fn (collection Collection) image_get(name string) !&File {
+pub fn (collection Collection) image_get(name string) !&data.File {
 	return collection.images[name] or {
 		return ObjNotFound{
 			collection: collection.name
@@ -90,7 +87,7 @@ pub fn (collection Collection) image_exists(name string) bool {
 }
 
 // gets file with specified name form collection
-pub fn (collection Collection) file_get(name string) !&File {
+pub fn (collection Collection) file_get(name string) !&data.File {
 	return collection.files[name] or {
 		return ObjNotFound{
 			collection: collection.name
@@ -178,8 +175,7 @@ pub fn (mut collection Collection) page_new(mut p Path) ! {
 		return
 	}
 
-	new_page := page.new(
-		pathrel: p.path_relative(collection.path.path)!.trim('/')
+	new_page := data.new_page(
 		name: ptr.pointer.name
 		path: p
 		collection_name: collection.name
@@ -207,7 +203,11 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 		return
 	}
 
-	mut new_file := file.new(path: p, collection_path: collection.path)!
+	mut new_file := data.new_file(
+		path: p
+		collection_path: collection.path
+		collection_name: collection.name
+	)!
 	collection.files[ptr.pointer.name] = &new_file
 }
 
@@ -234,7 +234,7 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 		return
 	}
 
-	mut image_file := &File{
+	mut image_file := &data.File{
 		path: ptr.path
 		collection_path: collection.path
 	}

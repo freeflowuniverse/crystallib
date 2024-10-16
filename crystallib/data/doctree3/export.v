@@ -3,6 +3,9 @@ module doctree3
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools.regext
+import freeflowuniverse.crystallib.data.doctree3.collection.data
+import freeflowuniverse.crystallib.data.doctree3.collection
+import freeflowuniverse.crystallib.core.texttools
 
 @[params]
 pub struct TreeExportArgs {
@@ -43,6 +46,8 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		path_src.empty()!
 	}
 
+	tree.process_pages_links()!
+
 	for _, mut collection in tree.collections {
 		collection.export(
 			path_src: path_src
@@ -53,5 +58,80 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 			production: args.production
 			replacer: tree.replacer
 		)!
+	}
+}
+
+fn (mut t Tree) process_pages_links() ! {
+	for _, mut c in t.collections {
+		for _, mut p in c.pages {
+			// ask page to modify doc
+			t.process_page_links(mut p, mut c)!
+		}
+	}
+}
+
+fn (mut t Tree) process_page_links(mut page data.Page, mut c collection.Collection) ! {
+	// find the links, and for each link check if collection is same, is not need to copy
+	for link in page.get_doc_links()! {
+		mut name := texttools.name_fix_keepext(link.filename)
+		mut site := texttools.name_fix(link.site)
+		if site == '' {
+			site = page.collection_name
+		}
+
+		pointername := '${site}:${name}'
+
+		mut collection_path := '.'
+		if link.cat == .image {
+			// console.print_debug('POINTER IMAGE: ' + pointername)
+			mut linkimage := t.image_get(pointername) or {
+				c.error(
+					path: page.path
+					msg: 'linked image not found: ${pointername}'
+					cat: .image_not_found
+				)
+
+				continue
+			}
+
+			if linkimage.collection_name != page.collection_name {
+				collection_path = '../${linkimage.collection_name}'
+			}
+
+			mut out := ''
+			if link.extra.trim_space() == '' {
+				out = '![${link.description}](${collection_path}/img/${linkimage.file_name()})'
+			} else {
+				out = '![${link.description}](${collection_path}/img/${linkimage.file_name()} ${link.extra})'
+			}
+
+			page.set_element_content_no_reparse(link.id, out)!
+			page.reprocess_element(link.id)!
+		}
+
+		if link.cat == .page {
+			mut linkpage := t.page_get(pointername) or {
+				c.error(
+					path: page.path
+					msg: 'page not found: ${pointername}'
+					cat: .page_not_found
+				)
+
+				continue
+			}
+
+			if linkpage.collection_name != page.collection_name {
+				collection_path = '../${linkpage.collection_name}'
+			}
+
+			// this is to remember the pages which are linked
+			if pointername !in page.get_linked_pages()! {
+				page.add_linked_page(pointername)
+			}
+
+			mut out := '[${link.description}](${collection_path}/${linkpage.name}.md)'
+			page.set_element_content_no_reparse(link.id, out)!
+			page.reprocess_element(link.id)!
+		}
 	}
 }

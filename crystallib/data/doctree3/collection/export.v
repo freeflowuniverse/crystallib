@@ -22,7 +22,7 @@ pub fn (mut c Collection) export(args CollectionExportArgs) ! {
 		c.path.link('${args.path_edit.path}/${c.name}', true)!
 	}
 
-	mut cfile := pathlib.get_file(path: dir_src.path + '/.collection', create: true)! // will auto safe it
+	mut cfile := pathlib.get_file(path: dir_src.path + '/.collection', create: true)! // will auto save it
 	cfile.write("name:${c.name} src:'${c.path.path}'")!
 
 	c.export_pages(
@@ -47,7 +47,7 @@ pub mut:
 	replacer       ?regext.ReplaceInstructions
 }
 
-pub fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
+fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
 	for _, mut page in c.pages {
 		dest := if args.keep_structure {
 			relpath := page.path.path.trim_string_left(c.path.path)
@@ -56,7 +56,7 @@ pub fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
 			'${args.dir_src.path}/${page.name}.md'
 		}
 
-		c.export_page(mut page, dest: dest, replacer: args.replacer)!
+		page.export(dest: dest, replacer: args.replacer)!
 	}
 }
 
@@ -79,7 +79,7 @@ fn (mut c Collection) export_images(dir_src pathlib.Path, reset bool) ! {
 }
 
 fn (mut c Collection) export_linked_pages(dir_src pathlib.Path) ! {
-	collection_linked_pages := c.get_collection_linked_pages(mut c)!
+	collection_linked_pages := c.get_collection_linked_pages()!
 	mut linked_pages_file := pathlib.get_file(path: dir_src.path + '/.linkedpages', create: true)!
 	linked_pages_file.write(collection_linked_pages.join_lines())!
 }
@@ -87,8 +87,7 @@ fn (mut c Collection) export_linked_pages(dir_src pathlib.Path) ! {
 fn (mut c Collection) get_collection_linked_pages() ![]string {
 	mut linked_pages_set := map[string]bool{}
 	for _, mut page in c.pages {
-		mut mydoc := page.doc()!
-		for linked_page in mydoc.linked_pages {
+		for linked_page in page.get_linked_pages()! {
 			linked_pages_set[linked_page] = true
 		}
 	}

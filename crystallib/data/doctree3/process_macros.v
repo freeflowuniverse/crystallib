@@ -1,6 +1,6 @@
 module doctree3
 
-import freeflowuniverse.crystallib.data.markdownparser.elements { Action }
+import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.core.playmacros
@@ -12,15 +12,15 @@ pub mut:
 	name  string
 }
 
-pub fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&Action {
+pub fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&elements.Action {
 	// console.print_green('get actions for tree: name:${tree.name}')
-	mut args := args_
-	mut res := []&Action{}
+	mut res := []&elements.Action{}
 	for _, mut collection in tree.collections {
 		// console.print_green("export collection: name:${name}")		
 		for _, mut page in collection.pages {
-			mut mydoc := page.doc()!
-			res << mydoc.actionpointers(actor: args.actor, name: args.name)
+			// mut mydoc := page.doc()!
+			// res << mydoc.actionpointers(actor: args.actor, name: args.name)
+			res << page.get_all_actions()!
 		}
 	}
 	return res

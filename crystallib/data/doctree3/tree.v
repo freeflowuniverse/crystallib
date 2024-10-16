@@ -2,7 +2,7 @@ module doctree3
 
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.doctree3.collection
-import freeflowuniverse.crystallib.data.doctree3.collection.page
+import freeflowuniverse.crystallib.data.doctree3.collection.data
 import freeflowuniverse.crystallib.core.texttools.regext
 
 __global (
@@ -21,7 +21,7 @@ pub:
 	name string
 pub mut:
 	collections map[string]&collection.Collection
-	defs        map[string]&page.Page // TODO: what are defs?
+	defs        map[string]&data.Page // TODO: what are defs?
 	state       TreeState
 	// context context.Context
 	cid      string = '000'
