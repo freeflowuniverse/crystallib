@@ -37,12 +37,12 @@ pub fn (mut tree Tree) process_macros() ! {
 		plbook.actions << &element_action.action
 	}
 
-	playmacros.play(mut plbook)!
+	playmacros.play_actions(mut plbook)!
 
 	// now get specific actions which need to return content
 	for _, mut collection in tree.collections {
 		for _, mut page in collection.pages {
-			page.process_macros()!
+			page.process_macros()! //calls play_macro in playmacros...
 		}
 	}
 }

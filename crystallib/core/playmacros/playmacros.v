@@ -7,7 +7,8 @@ import freeflowuniverse.crystallib.threefold.grid4.farmingsimulator
 import freeflowuniverse.crystallib.biz.bizmodel
 import freeflowuniverse.crystallib.biz.spreadsheet
 
-pub fn play(mut plbook playbook.PlayBook) ! {
+
+pub fn play_actions(mut plbook playbook.PlayBook) ! {
 	console.print_green('play actions (simulators)')
 	farmingsimulator.play(mut plbook)!
 	gridsimulator.play(mut plbook)!
