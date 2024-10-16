@@ -12,7 +12,7 @@ pub mut:
 @[params]
 pub struct AddSignerArgs {
 pub:
-	source_account_name string
+	source_account_name ?string
 	address             string
 	weight              int
 }
@@ -22,7 +22,13 @@ pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
 		return error('a signer weight of 0 will remove signer. use remove_signer method to remove signer')
 	}
 
-	account_keys := client.account_keys_get(args.source_account_name)!
+	mut account_name := client.default_account
+
+	if v := args.source_account_name {
+		account_name = v
+	}
+
+	account_keys := client.account_keys_get(account_name)!
 	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.address} --signer-weight ${args.weight} --network ${client.network}'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
@@ -33,12 +39,18 @@ pub fn (mut client StellarClient) add_signer(args AddSignerArgs) ! {
 @[params]
 pub struct RemoveSignerArgs {
 pub:
-	source_account_name string
+	source_account_name ?string
 	address             string
 }
 
 pub fn (mut client StellarClient) remove_signer(args RemoveSignerArgs) ! {
-	account_keys := client.account_keys_get(args.source_account_name)!
+	mut account_name := client.default_account
+
+	if v := args.source_account_name {
+		account_name = v
+	}
+
+	account_keys := client.account_keys_get(account_name)!
 	cmd := 'stellar tx new set-options --source-account ${account_keys.secret_key} --signer ${args.address} --signer-weight 0 --network ${client.network}'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {

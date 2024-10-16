@@ -42,12 +42,18 @@ pub fn new_stellar_client(config StellarClientConfig) !StellarClient {
 @[params]
 pub struct AddKeysArgs {
 pub:
-	name   string
-	secret string
+	source_account_name 	?string
+	secret 	string
 }
 
 pub fn (mut client StellarClient) add_keys(args AddKeysArgs) ! {
-	cmd := 'SOROBAN_SECRET_KEY=${args.secret} stellar keys add ${args.name} --secret-key'
+	mut account_name := client.default_account
+
+	if v := args.source_account_name {
+		account_name = v
+	}
+
+	cmd := 'SOROBAN_SECRET_KEY=${args.secret} stellar keys add ${account_name} --secret-key'
 	result := os.execute(cmd)
 	if result.exit_code != 0 {
 		return error('Failed to add keys: ${result.output}')
@@ -143,4 +149,26 @@ pub fn (mut client StellarClient) balance_check(params CheckBalanceParams) !stri
 		return error('Failed to check balance: ${result.output}')
 	}
 	return result.output.trim_space()
+}
+
+@[params]
+pub struct MergeArgs {
+pub:
+	source_account_name	?string
+	address 	string
+}
+
+pub fn (mut client StellarClient) merge_accounts(args MergeArgs) ! {
+	mut account_name := client.default_account
+
+	if v := args.source_account_name {
+		account_name = v
+	}
+
+	account_keys := client.account_keys_get(account_name)!
+	cmd := 'stellar tx new account-merge --source-account ${account_keys.secret_key} --account ${args.address} --network ${client.network}'
+	result := os.execute(cmd)
+	if result.exit_code != 0 {
+		return error('Failed to add keys: ${result.output}')
+	}
 }
