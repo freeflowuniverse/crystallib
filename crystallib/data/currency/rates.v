@@ -26,7 +26,7 @@ struct ResponseBody {
 // 		crypto_codes = crypto_codes.replace(i, '')
 // 	}
 
-// 	mut response := http.get('https://api.exchangerate.host/latest?base=USD&symbols=$crypto_codes&source=crypto') or {return error("Failed to get crypto http response: $err")}
+// 	mut response := http.get('https://api.exchangerate.host/latest?base=USD&symbols=USDT,TFT&source=crypto --header 'apikey: '') or {return error("Failed to get crypto http response: $err")}
 
 // 	response = http.get('https://api.exchangerate.host/latest?base=USD&symbols=$fiat_codes') or {return error("Failed to get fiat http response: $err")}
 // 	fiat_decoded := json.decode(ResponseBody, response.body) or {return error("Failed to decode fiat json: $err")}
@@ -39,14 +39,15 @@ struct ResponseBody {
 // - an array of crypto codes e.g ['TERRA']
 // e.g.
 pub fn rates_get(cur_array []string, crypto bool) ! {
+	panic("not implemented,api changed")
 	// http.CommonHeader.authorization: 'Bearer $h.auth.auth_token'
 	mut conn := httpconnection.new(
 		name: 'example'
-		url: 'https://api.exchangerate.host/'
+		url: 'https://api.apilayer.com/exchangerates_data/'
 		cache: true
 	)!
 	// do the cache on the connection
-	conn.cache.expire_after = 7200 // make the cache expire_after 2h
+	conn.cache.expire_after = 3600 * 24 * 2 // make the cache expire_after 2 days
 	mut cur_codes := cur_array.str()
 	for i in ["'", '[', ']', ' '] {
 		cur_codes = cur_codes.replace(i, '')
@@ -72,29 +73,5 @@ pub fn rates_get(cur_array []string, crypto bool) ! {
 	}
 }
 
-// can give actions string, if empty will just set TFT at 0.015
-pub fn defaults_set() {
-	mut c1 := Currency{
-		name: 'TFT'
-		usdval: 0.015
-	}
-	currencies['TFT'] = c1
-	mut c2 := Currency{
-		name: ''
-		usdval: 0.0
-	}
-	lock {
-		currencies[''] = c2
-	}
-}
 
-pub fn default_set(cur string, usdval f64) {
-	cur2 := cur.trim_space().to_upper()
-	mut c1 := Currency{
-		name: cur2
-		usdval: usdval
-	}
-	lock {
-		currencies[cur2] = c1
-	}
-}
+

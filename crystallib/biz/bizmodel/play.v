@@ -15,7 +15,7 @@ pub fn play(mut plbook PlayBook) ! {
 		return
 	}
 
-	knownactions:= ["revenue_define","revenue_recurring_define","employee_define","department_define",	
+	knownactions:= ["revenue_define","employee_define","department_define",	
 						"funding_define","costcenter_define","cost_define"]
 
 	for action in actions4 {
@@ -33,9 +33,6 @@ pub fn play(mut plbook PlayBook) ! {
 		match action.name {			
 			"revenue_define" {				
 				sim.revenue_action(action)!
-			}
-			"revenue_recurring_define" {
-				sim.revenue_recurring_action(action)!
 			}
 			"funding_define" {
 				sim.funding_define_action(action)!

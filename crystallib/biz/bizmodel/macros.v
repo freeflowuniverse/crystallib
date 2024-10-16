@@ -20,6 +20,8 @@ pub fn playmacro(action playbook.Action) !string {
 		return employees_wiki(p,sim)!
 	} else if action.name == 'department_wiki' {
 		return department_wiki(p,sim)!
+	}else if action.name == 'revenues_wiki' {
+		return revenues_wiki(p,mut sim)!
 	}
 
 	return error("couldn't find macro '${action.name}' for bizmodel.")
@@ -89,5 +91,26 @@ fn employees_wiki (p paramsparser.Params, sim BizModel)!string{
 
 fn department_wiki (p paramsparser.Params, sim BizModel)!string{
 	return ""
+
+}
+
+fn revenues_wiki (p paramsparser.Params, mut sim BizModel)!string{
+
+    mut revs := map[string]string{}
+
+	// for name,_ in sim.products{
+	// 	myrow:=sim.sheet.row_get('${name}_rev_total') or { panic("bug in revenues_wiki macro") }
+	// 	println(myrow)
+	// }
+
+	// if true{
+	// 	panic("s")
+	// }
+
+	mut t:=$tmpl('./templates/revenue_overview.md')
+
+	//title:'REVENUE FOR ${name1.to_lower().replace("_"," ")}' 
+
+	return t
 
 }
