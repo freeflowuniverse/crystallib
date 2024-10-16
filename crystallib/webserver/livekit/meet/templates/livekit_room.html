@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LiveKit Video Conference</title>
+  <script src="https://unpkg.com/livekit-client"></script>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #app {
+      height: 100%;
+      width: 100%;
+    }
+    #video-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+    video {
+      width: 320px;
+      height: 240px;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <main id="app" style="height: 100%;">
+    <div id="pre-join" style="display: grid; place-items: center; height: 100%;">
+      <form id="pre-join-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="videoEnabled">Enable Video:</label>
+        <input type="checkbox" id="videoEnabled" name="videoEnabled" checked>
+        <label for="audioEnabled">Enable Audio:</label>
+        <input type="checkbox" id="audioEnabled" name="audioEnabled" checked>
+        <button type="submit">Join</button>
+      </form>
+    </div>
+    <div id="conference" style="display: none;">
+      <div id="video-container"></div>
+      <button id="leave">Leave Conference</button>
+    </div>
+  </main>
+
+  <script>
+    const CONN_DETAILS_ENDPOINT = '/api/connection-details';
+    const videoContainer = document.getElementById('video-container');
+    let room; // LiveKit Room instance
+    let localParticipant; // Local participant object
+    let connectionDetails;
+
+    // Request media access (camera and microphone)
+    async function getMediaStream(videoEnabled, audioEnabled) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: videoEnabled,
+          audio: audioEnabled,
+        });
+
+        return stream;
+      } catch (error) {
+        console.error('Error accessing media devices:', error);
+        alert('Camera and/or microphone access is required to join the conference.');
+        throw error;
+      }
+    }
+
+    // Fetch connection details from your server
+    async function fetchConnectionDetails(roomName, username) {
+      try {
+        const url = new URL(CONN_DETAILS_ENDPOINT, window.location.origin);
+        url.searchParams.append('roomName', roomName);
+        url.searchParams.append('participantName', username);
+
+        const response = await fetch(url.toString());
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching connection details:', error);
+        throw error;
+      }
+    }
+
+    // Attach video stream to video element
+    function attachStreamToElement(stream, element) {
+      element.srcObject = stream;
+      element.autoplay = true;
+      element.playsInline = true;
+    }
+
+    // Join the conference room
+    async function joinRoom(username, videoEnabled, audioEnabled) {
+      connectionDetails = await fetchConnectionDetails('your-room-name', username);
+
+      if (connectionDetails) {
+        // Initialize LiveKit room
+        const roomOptions = {
+          videoCaptureDefaults: {
+            resolution: livekit.VideoPresets.h720,
+          },
+          publishDefaults: {
+            videoSimulcastLayers: [livekit.VideoPresets.h540, livekit.VideoPresets.h216],
+          },
+          adaptiveStream: { pixelDensity: 'screen' },
+        };
+
+        room = new livekit.Room(roomOptions);
+        const stream = await getMediaStream(videoEnabled, audioEnabled);
+
+        // Publish the local video/audio tracks to the room
+        const localTracks = await livekit.createLocalTracks({
+          video: videoEnabled,
+          audio: audioEnabled,
+        });
+
+        try {
+          await room.connect(connectionDetails.serverUrl, connectionDetails.participantToken);
+          localParticipant = room.localParticipant;
+          await localParticipant.publishTracks(localTracks);
+
+          // Display local video
+          const localVideoElement = document.createElement('video');
+          attachStreamToElement(stream, localVideoElement);
+          videoContainer.appendChild(localVideoElement);
+
+          setupRoomEventListeners(room);
+        } catch (error) {
+          console.error('Error joining room:', error);
+        }
+      }
+    }
+
+    // Set up room event listeners (e.g., when participants connect/disconnect)
+    function setupRoomEventListeners(room) {
+      room.on('participant-connected', (participant) => {
+        participant.on('track-subscribed', (track) => {
+          if (track.kind === 'video') {
+            const videoElement = track.attach();
+            videoContainer.appendChild(videoElement);
+          }
+        });
+      });
+
+      room.on('participant-disconnected', (participant) => {
+        console.log('Participant '+ participant.identity +' disconnected');
+      });
+    }
+
+    // Pre-join form submit handler
+    document.getElementById('pre-join-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const videoEnabled = document.getElementById('videoEnabled').checked;
+      const audioEnabled = document.getElementById('audioEnabled').checked;
+
+      // Hide pre-join screen and show conference screen
+      document.getElementById('pre-join').style.display = 'none';
+      document.getElementById('conference').style.display = 'block';
+
+      // Join the LiveKit room
+      await joinRoom(username, videoEnabled, audioEnabled);
+    });
+
+    // Leave room and clean up
+    document.getElementById('leave').addEventListener('click', () => {
+      room.disconnect();
+      document.getElementById('conference').style.display = 'none';
+      document.getElementById('pre-join').style.display = 'block';
+      videoContainer.innerHTML = ''; // Clear video elements
+    });
+  </script>
+</body>
+</html>

@@ -10,7 +10,7 @@ pub fn (app &App) index(mut ctx Context) veb.Result {
 @['/rooms/room']
 pub fn (app &App) room(mut ctx Context) veb.Result {
 	dollar := '$'
-	return ctx.html($tmpl('./templates/room.html'))
+	return ctx.html($tmpl('./templates/rooms/room.html'))
 }
 
 pub fn (app &App) custom(mut ctx Context) veb.Result {

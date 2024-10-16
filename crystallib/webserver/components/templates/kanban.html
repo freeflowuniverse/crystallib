@@ -1,66 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanban Board</title>
-    <link rel="stylesheet" href="https://unpkg.com/@@picocss/pico@@1.*/css/pico.min.css" />
-    <style>
-        /* Custom styles for the kanban layout */
-        .kanban-board {
-            display: flex;
-            gap: 1rem;
-            justify-content: space-around;
-            padding: 1rem;
-        }
-        .swimlane {
-            background-color: var(--primary-background-color);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            flex: 1;
-            min-width: 200px;
-            max-width: 300px;
-        }
-        .event-card {
-            background-color: var(--card-bg, #f0f0f0);
-            border: 1px solid var(--card-border, #ddd);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .event-meta {
-            font-size: 0.8rem;
-            color: #666;
-        }
-        .event-labels {
-            margin-top: 0.5rem;
-        }
-        .event-labels .label {
-            background-color: #007bff;
-            color: #fff;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            margin-right: 0.25rem;
-            display: inline-block;
-            font-size: 0.75rem;
-        }
-        /* Priority-based colors */
-        .priority-high {
-            border-left: 4px solid red;
-        }
-        .priority-medium {
-            border-left: 4px solid orange;
-        }
-        .priority-low {
-            border-left: 4px solid green;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Kanban Board</h1>
-    </header>
-    <main>
+<main>
         <style>
             /* Custom styles for the kanban layout */
             .kanban-board {
@@ -70,7 +8,6 @@
                 padding: 1rem;
             }
             .swimlane {
-                background-color: var(--primary-background-color);
                 padding: 1rem;
                 border-radius: 0.5rem;
                 flex: 1;
@@ -78,7 +15,6 @@
                 max-width: 300px;
             }
             .event-card {
-                background-color: var(--card-bg, #f0f0f0);
                 border: 1px solid var(--card-border, #ddd);
                 border-radius: 0.5rem;
                 padding: 1rem;
@@ -86,7 +22,6 @@
             }
             .event-meta {
                 font-size: 0.8rem;
-                color: #666;
             }
             .event-labels {
                 margin-top: 0.5rem;
@@ -113,7 +48,7 @@
         </style>
         <div id="kanban-board" class="kanban-board">
             @for swimlane in data.swimlanes
-            <div class="swimlane" style="background-color: @swimlane.color;">
+            <div class="swimlane">
                 <h3>@swimlane.name</h3>
                 @for event in data.events.filter(it.swimlane == swimlane.name)
                 <div class="event-card priority-@event.priority">
@@ -131,6 +66,4 @@
             </div>
             @end
         </div>    
-    </main>
-</body>
-</html>
+</main>

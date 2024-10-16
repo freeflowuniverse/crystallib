@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveKit Meeting</title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2/css/pico.min.css"
+    >
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+</head>
+<body>
+    <main class="container" data-lk-theme="default">
+        <article>
+            <section>
+                <p>Create or join a video conference with OurWorld Meet.</p>
+                <form id="meetingForm">
+                    <div class="grid">
+                        <input id="roomName" type="text" placeholder="Room Name">
+                    </div>
+                    <div id="passphraseContainer">
+                        <label for="passphrase">Passphrase</label>
+                        <input id="passphrase" type="password">
+                    </div>
+
+                    <details>
+                        <summary>Customize (optional)</summary>
+                        <div>
+                            <input id="serverUrl" name="serverUrl" type="url" placeholder="LiveKit Server URL: wss://*.livekit.cloud">
+                            <textarea id="token" name="token" placeholder="Token" rows="5"></textarea>
+                        </div>
+                    </details>
+
+                    <button type="button" id="startMeetingBtn">Start Meeting</button>
+                </form>
+            </section>
+        </article>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let sharedPassphrase = generateRandomString(64);
+
+            const startMeetingBtn = document.getElementById('startMeetingBtn');
+            const passphraseContainer = document.getElementById('passphraseContainer');
+            const passphraseInput = document.getElementById('passphrase');
+            const customE2EE = document.getElementById('customE2EE');
+            const customPassphraseContainer = document.getElementById('customPassphraseContainer');
+            const customPassphraseInput = document.getElementById('customPassphrase');
+
+            function generateRandomString(length) {
+                let result = '';
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                for (let i = 0; i < length; i++) {
+                    result += characters.charAt(Math.floor(Math.random() * characters.length));
+                }
+                return result;
+            }
+
+            function encodePassphrase(passphrase) {
+                return btoa(passphrase);
+            }
+
+            startMeetingBtn.addEventListener('click', () => {
+                let roomName = document.getElementById('roomName').value.trim();
+                if (!roomName) {
+                    roomName = generateRandomString(10);
+                }
+
+                if (true) {
+                    const encodedPassphrase = encodePassphrase(passphraseInput.value || sharedPassphrase);
+                    window.location.href = `/view/meet/room?roomName=@{dollar}{roomName}#@{dollar}{encodedPassphrase}`;
+                } else {
+                    window.location.href = `/view/meet/room?roomName=@{dollar}{roomName}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
