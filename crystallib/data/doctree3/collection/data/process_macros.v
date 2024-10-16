@@ -1,4 +1,4 @@
-module page
+module data
 
 import freeflowuniverse.crystallib.core.playmacros
 import freeflowuniverse.crystallib.data.markdownparser.elements { Action }

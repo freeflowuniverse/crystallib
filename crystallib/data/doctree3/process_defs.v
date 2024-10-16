@@ -1,15 +1,17 @@
 module doctree3
 
+import freeflowuniverse.crystallib.data.doctree3.collection.data
+
 pub fn (mut tree Tree) process_defs() ! {
 	for _, mut collection in tree.collections {
 		for _, mut page in collection.pages {
-			aliases, def_errs := page.process_aliases()!
-			for err in def_errs {
-				collection.error(
-					path: page.path
-					msg: 'error processing page ${page.path} aliases: ${err}'
-					cat: .def
-				)
+			aliases := page.process_aliases() or {
+				if err is data.PageMultiError {
+					collection.add_page_multi_error(err)
+					continue
+				}
+
+				return err
 			}
 
 			for alias in aliases {
@@ -20,14 +22,13 @@ pub fn (mut tree Tree) process_defs() ! {
 
 	for _, mut collection in tree.collections {
 		for _, mut page in collection.pages {
-			def_errs := page.process_def_pointers(tree.defs)!
+			page.process_def_pointers(tree.defs) or {
+				if err is data.PageMultiError {
+					collection.add_page_multi_error(err)
+					continue
+				}
 
-			for err in def_errs {
-				collection.error(
-					path: page.path
-					msg: 'error processing page ${page.path} deffs: ${err}'
-					cat: .def
-				)
+				return err
 			}
 		}
 	}

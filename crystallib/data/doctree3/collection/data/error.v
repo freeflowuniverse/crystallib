@@ -1,7 +1,6 @@
-module page
+module data
 
 import freeflowuniverse.crystallib.core.pathlib { Path }
-import freeflowuniverse.crystallib.ui.console
 
 pub enum PageErrorCat {
 	unknown
@@ -15,6 +14,10 @@ pub struct PageMultiError {
 	Error
 pub mut:
 	errs []PageError
+}
+
+pub fn (err PageMultiError) msg() string {
+	return 'Failed in processing page with one or multiple errors: ${err.errs}'
 }
 
 pub struct PageError {

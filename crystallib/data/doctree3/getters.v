@@ -1,8 +1,7 @@
 module doctree3
 
 import freeflowuniverse.crystallib.data.doctree3.collection
-import freeflowuniverse.crystallib.data.doctree3.collection.page
-import freeflowuniverse.crystallib.data.doctree3.collection.file
+import freeflowuniverse.crystallib.data.doctree3.collection.data
 import freeflowuniverse.crystallib.data.doctree3.pointer
 
 pub fn (tree Tree) collection_get(name string) !&collection.Collection {
@@ -13,7 +12,7 @@ pub fn (tree Tree) collection_get(name string) !&collection.Collection {
 
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (tree Tree) page_get(pointerstr string) !&page.Page {
+pub fn (tree Tree) page_get(pointerstr string) !&data.Page {
 	// console.print_debug("page get:${pointerstr}")
 	p := pointer.pointer_new(pointerstr)!
 	if p.name == '' || p.collection == '' {
@@ -52,7 +51,7 @@ pub fn (tree Tree) page_get(pointerstr string) !&page.Page {
 
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (tree Tree) image_get(pointerstr string) !&file.File {
+pub fn (tree Tree) image_get(pointerstr string) !&data.File {
 	p := pointer.pointer_new(pointerstr)!
 	// console.print_debug("collection:'$p.collection' name:'$p.name'")
 
@@ -86,7 +85,7 @@ pub fn (tree Tree) image_get(pointerstr string) !&file.File {
 
 // get the file from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (tree Tree) file_get(pointerstr string) !&file.File {
+pub fn (tree Tree) file_get(pointerstr string) !&data.File {
 	p := pointer.pointer_new(pointerstr)!
 
 	col := tree.collections[p.collection] or { return CollectionNotFound{} }

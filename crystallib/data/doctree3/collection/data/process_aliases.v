@@ -1,4 +1,4 @@
-module page
+module data
 
 import freeflowuniverse.crystallib.core.texttools
 
@@ -27,7 +27,7 @@ pub fn (mut page Page) process_aliases() ![]string {
 
 			alias = texttools.name_fix(alias).replace('_', '')
 			if alias in aliases {
-				errs << PageError{
+				errs.errs << PageError{
 					path: page.path
 					msg: 'def ${alias} already exists in page ${page.path.path}'
 					cat: .def

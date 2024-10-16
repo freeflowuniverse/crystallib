@@ -1,9 +1,9 @@
 module doctree3
 
-import freeflowuniverse.crystallib.data.doctree3.collection.page
+import freeflowuniverse.crystallib.data.doctree3.collection.data
 import freeflowuniverse.crystallib.data.doctree3.pointer
 
-fn (tree Tree) process_page_includes_recursive(mut current_page page.Page, mut vis map[string]bool) ! {
+fn (tree Tree) process_page_includes_recursive(mut current_page data.Page, mut vis map[string]bool) ! {
 	vis[current_page.key()] = true
 
 	current_collection_name := current_page.collection_name
@@ -11,12 +11,10 @@ fn (tree Tree) process_page_includes_recursive(mut current_page page.Page, mut v
 		return error('collection with name ${current_collection_name} not found')
 	}
 
-	mut current_doc := current_page.doc()!
-	mut include_action_elements := current_doc.actionpointers(actor: 'wiki', name: 'include')
-
-	for mut action_element in include_action_elements {
+	include_action_elements := current_page.get_include_actions()!
+	for action_element in include_action_elements {
 		include_action := action_element.action
-		action_element.action_processed = true
+		current_page.set_action_element_to_processed(action_element.id)!
 
 		mut page_pointer_str := include_action.params.get('page') or {
 			current_collection.error(
@@ -59,17 +57,15 @@ fn (tree Tree) process_page_includes_recursive(mut current_page page.Page, mut v
 		if vis[include_page.key()] {
 			include_collection.error(
 				path: current_page.path
-				msg: 'recursive include: ${page_pointer_str} for include action: ${include_action}'
-				cat: .include
+				msg: 'circular include: ${page_pointer_str} for include action: ${include_action}'
+				cat: .circular_import
 			)
 			continue
 		}
 
 		tree.process_page_includes_recursive(mut include_page, mut vis)!
-		mut include_doc := include_page.doc()!
-
-		action_element.content = include_doc.markdown()!
-		current_doc.changed = true
+		include_markdown := include_page.get_markdown()!
+		current_page.set_element_content_no_reparse(action_element.id, include_markdown)!
 	}
 }
 

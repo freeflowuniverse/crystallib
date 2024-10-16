@@ -1,6 +1,4 @@
-module page
-
-// TODO: use a custom error for pages not finding defs
+module data
 
 // processes def pointers, returns list of encountered errors
 pub fn (mut page Page) process_def_pointers(tree_defs map[string]&Page) ! {

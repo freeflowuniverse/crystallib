@@ -1,7 +1,6 @@
-module file
+module data
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.doctree3.collection.page { Page }
 import os
 
 pub enum FileStatus {
@@ -26,6 +25,7 @@ pub mut:
 	state           FileStatus
 	pages_linked    []&Page // pointer to pages which use this file
 	ftype           FileType
+	collection_name string
 }
 
 @[params]
@@ -35,14 +35,16 @@ pub:
 	collection_path pathlib.Path
 	pathrel         string
 	path            pathlib.Path
+	collection_name string       @[required]
 }
 
-pub fn new(args NewFileArgs) !File {
+pub fn new_file(args NewFileArgs) !File {
 	mut f := File{
 		name: args.name
 		path: args.path
 		collection_path: args.collection_path
 		pathrel: args.pathrel
+		collection_name: args.collection_name
 	}
 
 	f.init()!
