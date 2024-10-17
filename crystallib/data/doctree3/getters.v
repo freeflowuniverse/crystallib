@@ -4,146 +4,65 @@ import freeflowuniverse.crystallib.data.doctree3.collection
 import freeflowuniverse.crystallib.data.doctree3.collection.data
 import freeflowuniverse.crystallib.data.doctree3.pointer
 
-pub fn (tree Tree) collection_get(name string) !&collection.Collection {
+pub fn (tree Tree) get_collection(name string) !&collection.Collection {
 	col := tree.collections[name] or { return error('collection ${name} not found') }
 
 	return col
 }
 
-// get the page from pointer string: $tree:$collection:$name or
-// $collection:$name or $name
-pub fn (tree Tree) page_get(pointerstr string) !&data.Page {
-	// console.print_debug("page get:${pointerstr}")
-	p := pointer.pointer_new(pointerstr)!
-	if p.name == '' || p.collection == '' {
-		return ObjNotFound{
-			info: 'bad pointer, name or collection should not be empty:\n${pointerstr}'
-			collection: p.collection
-			name: p.name
+pub fn (tree Tree) get_collection_with_pointer(p pointer.Pointer) !&collection.Collection {
+	return tree.get_collection(p.collection) or {
+		return CollectionNotFound{
+			pointer: p
+			msg: '${err}'
 		}
 	}
-
-	col := tree.collections[p.collection] or { return CollectionNotFound{} }
-
-	new_page := col.pages[p.name] or { return ObjNotFound{} }
-
-	return new_page
-
-	// // console.print_debug(p)
-	// mut res := []&Page{}
-	// for _, collection in tree.collections {
-	// 	if p.collection == collection.name {
-	// 		if collection.page_exists(p.name) {
-	// 			res << collection.page_get(p.name) or { panic('BUG') }
-	// 		}
-	// 	}
-	// }
-	// if res.len == 1 {
-	// 	return res[0]
-	// } else {
-	// 	return NoOrTooManyObjFound{
-	// 		tree: &tree
-	// 		pointer: p
-	// 		nr: res.len
-	// 	}
-	// }
 }
 
 // get the page from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (tree Tree) image_get(pointerstr string) !&data.File {
+pub fn (tree Tree) get_page(pointerstr string) !&data.Page {
 	p := pointer.pointer_new(pointerstr)!
-	// console.print_debug("collection:'$p.collection' name:'$p.name'")
+	col := tree.get_collection_with_pointer(p)!
+	new_page := col.get_page(p.name)!
 
-	col := tree.collections[p.collection] or { return CollectionNotFound{
-		pointer: p
-	} }
+	return new_page
+}
 
-	image := col.images[p.name] or { return ObjNotFound{} }
+// get the page from pointer string: $tree:$collection:$name or
+// $collection:$name or $name
+pub fn (tree Tree) get_image(pointerstr string) !&data.File {
+	p := pointer.pointer_new(pointerstr)!
+	col := tree.get_collection_with_pointer(p)!
+	image := col.get_image(p.name)!
 
 	return image
-	// mut res := []&File{}
-	// for _, collection in tree.collections {
-	// 	// console.print_debug(collection.name)
-	// 	if p.collection == collection.name {
-	// 		// console.print_debug("in collection")
-	// 		if collection.image_exists(pointerstr) {
-	// 			res << collection.image_get(pointerstr) or { panic('BUG') }
-	// 		}
-	// 	}
-	// }
-	// if res.len == 1 {
-	// 	return res[0]
-	// } else {
-	// 	return NoOrTooManyObjFound{
-	// 		tree: &tree
-	// 		pointer: p
-	// 		nr: res.len
-	// 	}
-	// }
 }
 
 // get the file from pointer string: $tree:$collection:$name or
 // $collection:$name or $name
-pub fn (tree Tree) file_get(pointerstr string) !&data.File {
+pub fn (tree Tree) get_file(pointerstr string) !&data.File {
 	p := pointer.pointer_new(pointerstr)!
-
-	col := tree.collections[p.collection] or { return CollectionNotFound{} }
-
-	new_file := col.files[p.name] or { return ObjNotFound{} }
+	col := tree.get_collection_with_pointer(p)!
+	new_file := col.get_file(p.name)!
 
 	return new_file
-	// mut res := []&File{}
-	// for _, collection in tree.collections {
-	// 	if p.collection == collection.name {
-	// 		if collection.file_exists(pointerstr) {
-	// 			res << collection.file_get(pointerstr) or { panic('BUG') }
-	// 		}
-	// 	}
-	// }
-	// if res.len == 1 {
-	// 	return res[0]
-	// } else {
-	// 	return NoOrTooManyObjFound{
-	// 		tree: &tree
-	// 		pointer: p
-	// 		nr: res.len
-	// 	}
-	// }
 }
 
-// exists or too many
-pub fn (tree Tree) page_exists(name string) bool {
-	_ := tree.page_get(name) or {
-		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
-			return false
-		} else {
-			panic(err)
-		}
-	}
-	return true
+pub fn (tree Tree) page_exists(pointerstr string) bool {
+	p := pointer.pointer_new(pointerstr) or { return false }
+	col := tree.get_collection_with_pointer(p) or { return false }
+	return col.page_exists(p.name)
 }
 
-// exists or too many
-pub fn (tree Tree) image_exists(name string) bool {
-	_ := tree.image_get(name) or {
-		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
-			return false
-		} else {
-			panic(err)
-		}
-	}
-	return true
+pub fn (tree Tree) image_exists(pointerstr string) bool {
+	p := pointer.pointer_new(pointerstr) or { return false }
+	col := tree.get_collection_with_pointer(p) or { return false }
+	return col.image_exists(p.name)
 }
 
-// exists or too many
-pub fn (tree Tree) file_exists(name string) bool {
-	_ := tree.file_get(name) or {
-		if err is CollectionNotFound || err is ObjNotFound || err is NoOrTooManyObjFound {
-			return false
-		} else {
-			panic(err)
-		}
-	}
-	return true
+pub fn (tree Tree) file_exists(pointerstr string) bool {
+	p := pointer.pointer_new(pointerstr) or { return false }
+	col := tree.get_collection_with_pointer(p) or { return false }
+	return col.file_exists(p.name)
 }

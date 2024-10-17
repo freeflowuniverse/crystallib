@@ -12,7 +12,7 @@ pub mut:
 	name  string
 }
 
-pub fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&elements.Action {
+fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&elements.Action {
 	// console.print_green('get actions for tree: name:${tree.name}')
 	mut res := []&elements.Action{}
 	for _, mut collection in tree.collections {
@@ -28,7 +28,7 @@ pub fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&elements.Action {
 
 // adds all action elements to a playbook, calls playmacros.play on the playbook,
 // which processes the macros, then reprocesses every page with the actions' new content
-pub fn (mut tree Tree) process_macros() ! {
+fn (mut tree Tree) process_actions_and_macros() ! {
 	console.print_green('process actions & macros for tree:\'${tree.name}\'')
 
 	// first process the generic actions, which can be executed as is
@@ -42,7 +42,7 @@ pub fn (mut tree Tree) process_macros() ! {
 	// now get specific actions which need to return content
 	for _, mut collection in tree.collections {
 		for _, mut page in collection.pages {
-			page.process_macros()! //calls play_macro in playmacros...
+			page.process_macros()! // calls play_macro in playmacros...
 		}
 	}
 }

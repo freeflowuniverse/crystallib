@@ -69,13 +69,14 @@ fn (tree Tree) process_page_includes_recursive(mut current_page data.Page, mut v
 	}
 }
 
-pub fn (mut tree Tree) process_includes() ! {
+fn (mut tree Tree) process_includes() ! {
 	tree.process_defs()! // process definitions, always first definitions	
 
 	for _, mut collection in tree.collections {
 		for _, mut page in collection.pages {
 			mut vis := map[string]bool{}
-			tree.process_page_includes_recursive(mut page, mut vis)!
+			mut p := page
+			tree.process_page_includes_recursive(mut p, mut vis)!
 		}
 	}
 }

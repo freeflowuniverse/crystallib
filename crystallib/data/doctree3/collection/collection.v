@@ -58,48 +58,6 @@ pub fn new(args_ CollectionNewArgs) !Collection {
 	return collection
 }
 
-// gets page with specified name from collection
-pub fn (collection Collection) page_get(name string) !&data.Page {
-	return collection.pages[name] or {
-		return ObjNotFound{
-			collection: collection.name
-			name: name
-		}
-	}
-}
-
-pub fn (collection Collection) page_exists(name string) bool {
-	return name in collection.pages
-}
-
-// gets image with specified name from collection
-pub fn (collection Collection) image_get(name string) !&data.File {
-	return collection.images[name] or {
-		return ObjNotFound{
-			collection: collection.name
-			name: name
-		}
-	}
-}
-
-pub fn (collection Collection) image_exists(name string) bool {
-	return name in collection.images
-}
-
-// gets file with specified name form collection
-pub fn (collection Collection) file_get(name string) !&data.File {
-	return collection.files[name] or {
-		return ObjNotFound{
-			collection: collection.name
-			name: name
-		}
-	}
-}
-
-pub fn (collection Collection) file_exists(name string) bool {
-	return name in collection.files
-}
-
 // remember the file, so we know if we have duplicates
 // also fixes the name
 fn (mut collection Collection) file_image_remember(mut p Path) ! {
@@ -135,7 +93,7 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 			collection.image_new(mut p)!
 		}
 
-		mut image_file := collection.image_get(ptr.pointer.name)!
+		mut image_file := collection.get_image(ptr.pointer.name)!
 		mut image_file_path := image_file.path.path
 		if p.path.len <= image_file_path.len {
 			// nothing to be done, because the already existing file is shortest or equal
@@ -223,7 +181,7 @@ pub fn (mut collection Collection) image_new(mut p Path) ! {
 	if collection.image_exists(ptr.pointer.name) {
 		// remove this one
 		// TODO: why remove, what if this is a whole other image, but has the same name???
-		mut file_double := collection.image_get(ptr.path.name())!
+		mut file_double := collection.get_image(ptr.path.name())!
 		mut path_double := file_double.path
 		if ptr.path.path.len > path_double.path.len {
 			ptr.path.delete()!

@@ -110,6 +110,12 @@ pub fn (mut page Page) get_doc_links() ![]Link {
 	return links
 }
 
+fn (mut page Page) get_element(element_id int) !Element {
+	return page.element_cache[element_id] or {
+		return error('no element found with id ${element_id}')
+	}
+}
+
 // TODO: this should not be allowed (giving access to modify page content to any caller)
 pub fn (mut page Page) get_all_actions() ![]&Action {
 	mut actions := []&Action{}

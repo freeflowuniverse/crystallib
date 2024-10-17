@@ -4,8 +4,8 @@ import freeflowuniverse.crystallib.core.pathlib
 import rand
 
 fn test_process_def_pointers() {
-	// create three pages
-	// one of them with def pointers to the other two
+	// create a page with def pointers to two different pages
+	// set def links on page.
 	// processed page should have links to the other two pages
 	mut page1_path := pathlib.get_file(path: '/tmp/page1', create: true)!
 	alias1, alias2 := rand.string(5).to_upper(), rand.string(5).to_upper()
@@ -13,19 +13,11 @@ fn test_process_def_pointers() {
 	page1_path.write(page1_content)!
 	mut page1 := new_page(name: 'page1', path: page1_path, collection_name: 'col1')!
 
-	mut page2_path := pathlib.get_file(path: '/tmp/page2', create: true)!
-	mut page2 := new_page(name: 'page2', path: page2_path, collection_name: 'col1')!
-	page2.alias = 'page2 alias'
+	mut defs := map[string][]string{}
+	defs['${alias1.to_lower()}'] = ['col2:page2', 'page2 alias']
+	defs['${alias2.to_lower()}'] = ['col3:page3', 'my page3 alias']
 
-	mut page3_path := pathlib.get_file(path: '/tmp/page3', create: true)!
-	mut page3 := new_page(name: 'page3', path: page2_path, collection_name: 'col2')!
-	page3.alias = 'my page3 alias'
+	page1.set_def_links(defs)!
 
-	mut defs := map[string]&Page{}
-	defs['${alias1.to_lower()}'] = &page2
-	defs['${alias2.to_lower()}'] = &page3
-
-	page1.process_def_pointers(defs)!
-
-	assert page1.get_markdown()! == '[page2 alias](col1:page2.md)\n[my page3 alias](col2:page3.md)'
+	assert page1.get_markdown()! == '[page2 alias](col2:page2.md)\n[my page3 alias](col3:page3.md)'
 }

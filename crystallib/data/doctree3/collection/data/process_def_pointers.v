@@ -1,29 +1,34 @@
 module data
 
-// processes def pointers, returns list of encountered errors
-pub fn (mut page Page) process_def_pointers(tree_defs map[string]&Page) ! {
-	mut errs := PageMultiError{}
+// returns all page def elements (similar to *DEF)
+pub fn (mut page Page) get_def_names() ![]string {
+	mut defnames := map[string]bool{}
+	mut doc := page.doc()!
+	for defitem in doc.defpointers() {
+		defname := defitem.nameshort
+		defnames[defname] = true
+	}
+
+	return defnames.keys()
+}
+
+// removes the def content, and generates a link to the page
+pub fn (mut page Page) set_def_links(def_data map[string][]string) ! {
 	mut doc := page.doc()!
 	for mut defitem in doc.defpointers() {
 		defname := defitem.nameshort
-		mut def_page := tree_defs[defname] or {
-			errs.errs << PageError{
-				path: page.path
-				msg: 'def ${defname} not found in page: ${page.path.path}'
-				cat: .def
-			}
-			continue
+
+		v := def_data[defname] or { continue }
+		if v.len != 2 {
+			return error('invalid def data length: expected 2, found ${v.len}')
 		}
 
-		defitem.pagekey = def_page.key()
-		defitem.pagename = def_page.alias
+		defitem.pagekey = v[0]
+		defitem.pagename = v[1]
+
 		defitem.process_link()!
 	}
 
 	doc.process()!
 	page.changed = true
-
-	if errs.errs.len > 0 {
-		return errs
-	}
 }

@@ -63,8 +63,6 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 			load: true
 		)!
 
-		// TODO: should return here since a collection explores all the directories in it's path,
-		// meaning that if there are other directories in collection, they would have been already explored
 		return
 	}
 
