@@ -65,7 +65,7 @@ pub fn (repo GitRepo) need_commit() !bool {
 
 // Commit the staged changes with the provided commit message.
 pub fn (mut repo GitRepo) commit(args ActionArgs) ! {
-	repo.reload_if_needed(args)!
+	repo.update_status()!
 	if repo.need_commit()! {
 		if args.msg == '' {
 			return error('Commit message is empty.')
@@ -90,7 +90,7 @@ pub fn (mut repo GitRepo) need_push() !bool {
 
 // Push local changes to the remote repository.
 pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
-	repo.reload_if_needed(args_)!
+	repo.update_status()!
 	if repo.need_push()! {		
 		repo_path := repo.get_path()!
 		url := repo.get_repo_url()!
@@ -381,7 +381,7 @@ pub fn (repo GitRepo) check() ! {
 	}
 }
 
-pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
+pub fn (mut repo GitRepo) update_status(args StatusUpdateArgs) ! {
 	// Check current time vs last check, if needed (check period) then load
 	repo.redis_load()! // Ensure we have the situation from redis
 	current_time := int(time.now().unix())
@@ -401,7 +401,7 @@ pub fn (mut repo GitRepo) fetch_all() ! {
 
 // Removes all changes from the repo; be cautious
 pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
-	repo.reload_if_needed(args_)!
+	repo.update_status()!
 	if repo.need_commit()! {
 		console.print_header('Removing changes in ${repo.get_path()!}')
 		cmd := 'cd ${repo.get_path()!} && git reset HEAD --hard && git clean -xfd'

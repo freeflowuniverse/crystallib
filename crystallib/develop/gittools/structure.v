@@ -190,7 +190,7 @@ fn (mut gitstructure GitStructure) load_recursive(path string, args StatusUpdate
 			if os.exists(os.join_path(current_path, '.git')) {
 				// Initialize the repository from the current path.
 				mut repo := gitstructure.repo_init_from_path_(current_path)!
-				repo.status_update(reload: args.reload)!
+				repo.update_status()!
 
 				key_ := repo.get_key()
 				path_ := repo.get_path()!
