@@ -144,6 +144,7 @@ pub fn update_templates() !{
 
 @[params]
 pub struct RunParams {
+pub:
 	port int = 8080
 }
 
