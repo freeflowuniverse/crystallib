@@ -1,7 +1,7 @@
 module spreadsheet
 
 import freeflowuniverse.crystallib.data.paramsparser
-import freeflowuniverse.crystallib.ui.console
+//import freeflowuniverse.crystallib.ui.console
 
 @[heap]
 pub struct Row {
@@ -52,7 +52,7 @@ pub mut:
 //  tags []string e.g. ["hr","hrdev"] attach a tag to a row, can be used later to group
 // smart exptrapolation is 3:2,10:5 means end month 3 we start with 2, it grows to 5 on end month 10
 pub fn (mut s Sheet) row_new(args_ RowNewParams) !&Row {
-	mut args := args_
+	mut args := args_	
 	if args.aggregatetype == .unknown {
 		args.aggregatetype = .sum
 	}
@@ -122,7 +122,7 @@ pub fn (r Row) look_forward_avg(colnr_ int, nrcols_ int) !f64 {
 	return avg
 }
 
-pub fn (r Row) min() int {
+pub fn (r Row) min() f64 {
 	mut v := 9999999999999.0
 	for cell in r.cells {
 		// console.print_debug(cell.val)
@@ -130,8 +130,20 @@ pub fn (r Row) min() int {
 			v = cell.val
 		}
 	}
-	return int(v)
+	return v
 }
+
+pub fn (r Row) max() f64 {
+	mut v := 0.0
+	for cell in r.cells {
+		// console.print_debug(cell.val)
+		if cell.val > v {
+			v = cell.val
+		}
+	}
+	return v
+}
+
 
 // apply the namefilter, include & exclude filter, if match return true
 pub fn (row Row) filter(args_ RowGetArgs) !bool {
@@ -164,4 +176,9 @@ pub fn (row Row) filter(args_ RowGetArgs) !bool {
 		}
 	}
 	return ok
+}
+
+
+pub fn (mut row Row) delete() {
+	row.sheet.delete(row.name)
 }

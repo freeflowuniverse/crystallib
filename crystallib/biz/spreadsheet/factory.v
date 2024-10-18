@@ -23,16 +23,12 @@ pub mut:
 // 	nrcol int = 60
 // 	visualize_cur bool //if we want to show e.g. $44.4 in a cell or just 44.4
 pub fn sheet_new(args SheetNewArgs) !&Sheet {
-	// if args.currencies==none{panic("should define currencies")}
-	// mut cs := args.currencies or { currency.new() }
-	curr2 := currencies[args.curr]
 	mut sh := Sheet{
 		nrcol: args.nrcol
 		params: SheetParams{
 			visualize_cur: args.visualize_cur
 		}
-		// currencies: cs
-		currency: curr2
+		currency: currency.get(args.curr)!
 		name: args.name
 	}
 	sheet_set(&sh)

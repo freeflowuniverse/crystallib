@@ -1,15 +1,15 @@
 # currency handling
 
-Allows us to get currencies from the internet
 
-## offline
+```v
 
-if you need to work offline e.g. for development do
+import freeflowuniverse.crystallib.data.currency
 
-```bash
-export OFFLINE=1
+mut a:=amount_get('20 k tft')!
+assert a.currency.usdval == 0.01
+assert a.usd() == 20.0*0.01*1000
+
+mut c:=get("USD")! //to get a currency
+
 ```
 
-## example
-
-> TODO:...

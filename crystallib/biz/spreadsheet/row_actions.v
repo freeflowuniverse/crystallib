@@ -58,20 +58,19 @@ pub mut:
 //
 pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 	mut args := args_
-	if args.aggregatetype == .unknown {
-		args.aggregatetype = r.aggregatetype
+	if args.name == ""{
+		args.name = r.name
+		r.sheet.delete(r.name)
 	}
-	mut row_result := r
-	if args.name.len > 0 {
-		mut r3 := r.sheet.row_new(
-			name: args.name
-			aggregatetype: args.aggregatetype
-			descr: args.descr
-			subgroup: args.subgroup
-			tags: args.tags
+
+	mut row_result := r.copy(
+			name:args.name,
+			tags:args.tags,
+			descr:args.descr,
+			subgroup:args.subgroup,
+			aggregatetype:args.aggregatetype
 		)!
-		row_result = *r3
-	}
+
 	mut prevval := 0.0
 	for x in 0 .. r.sheet.nrcol {
 		row_result.cells[x].empty = false
@@ -139,7 +138,7 @@ pub fn (mut r Row) action(args_ RowActionArgs) !&Row {
 	if args.delaymonths > 0 {
 		row_result.delay(args.delaymonths)!
 	}
-	return &row_result
+	return row_result
 }
 
 // pub fn (mut r Row) add(name string, r2 Row) !&Row {

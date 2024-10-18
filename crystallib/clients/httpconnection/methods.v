@@ -1,17 +1,17 @@
-/*
-METHODS NOTES
- * Our target to wrap the default http methods used in V to be cached using redis
- * By default cache enabled in all Request, if you need to disable cache, set req.cache_disable true
- *
- * Flow will be:
- * 1 - Check cache if enabled try to get result from cache
- * 2 - Check result
- * 3 - Do request, if needed
- * 4 - Set in cache if enabled or invalidate cache
- * 5 - Return result
+// /*
+// METHODS NOTES
+//  * Our target to wrap the default http methods used in V to be cached using redis
+//  * By default cache enabled in all Request, if you need to disable cache, set req.cache_disable true
+//  *
+//  * Flow will be:
+//  * 1 - Check cache if enabled try to get result from cache
+//  * 2 - Check result
+//  * 3 - Do request, if needed
+//  * 4 - Set in cache if enabled or invalidate cache
+//  * 5 - Return result
 
- Suggestion: Send function now enough to do what we want, no need to any post*, get* additional functions
-*/
+//  Suggestion: Send function now enough to do what we want, no need to any post*, get* additional functions
+// */
 
 module httpconnection
 

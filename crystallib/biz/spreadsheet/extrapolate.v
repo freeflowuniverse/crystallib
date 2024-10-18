@@ -11,6 +11,7 @@ import freeflowuniverse.crystallib.ui.console
 // if the smartstr, is empty then will use existing values in the row to extra/intra polate, the empty values will be filled in
 pub fn (mut r Row) extrapolate(smartstr string) ! {
 	// put the values in the row
+	//console.print_debug("extrapolate: ${smartstr}")
 	for mut part in smartstr.split(',') {
 		part = part.trim_space()
 		if part.contains(':') {
@@ -60,7 +61,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			// console.print_debug(" yincr:$yincr")
 			for xx in (xlast + 1) .. x {
 				yy += yincr
-				r.cells[xx].set('${yy}')!
+				r.cells[xx].set('${yy:.2f}')!
 			}
 			xlast = x
 			xlastval = xnewval
@@ -77,7 +78,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 			xlastval = r.cells[x].val
 			continue
 		}
-		r.cells[x].set('${xlastval}')!
+		r.cells[x].set('${xlastval:.2f}')!
 	}
 
 	// console.print_debug("ROW:$r")
@@ -87,6 +88,7 @@ pub fn (mut r Row) extrapolate(smartstr string) ! {
 // something like 3:2,10:5 means end month 3 we set 2, month 10 5
 // there i no interpolation, all other fields are set on 0
 pub fn (mut r Row) smartfill(smartstr string) ! {
+	//console.print_debug("smartfill: ${smartstr}")
 	for mut part in smartstr.split(',') {
 		part = part.trim_space()
 		if part.contains(':') {

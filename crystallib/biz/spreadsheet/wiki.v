@@ -63,7 +63,6 @@ pub fn (mut s Sheet) wiki(args_ RowGetArgs) !string {
 		mut rowname := row.name
 		if row.description.len > 0 {
 			names_width = sheet.rows_description_width_max()
-
 			rowname = row.description
 		}
 		if args.rowname_show && names_width > 0 {
