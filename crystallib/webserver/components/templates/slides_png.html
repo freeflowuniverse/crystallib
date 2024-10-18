@@ -191,33 +191,67 @@
                 }
             }
 
-            async function loadSlide(pageNumber) {
-                try {
-                    loadingIndicator.style.display = 'block';
-                    animateEllipses();
-                    const slideName = slidesList[pageNumber - 1].name;
-                    const file_data = await fetchFile(slidesName + '_' + slideName, '/asset/' + slidesName + '/' + slideName);
-                    const blob = new Blob([file_data]);
-                    const url = URL.createObjectURL(blob);
+            // Function to log slide views
+    function logSlideView(slideName) {
+        const logEndpoint = `/log/@{s.name}`;
 
-                    viewer.innerHTML = '';
-                    const img = document.createElement('img');
-                    img.src = url;
-                    viewer.appendChild(img);
+        // Construct the log payload
+        const logData = {
+            event: "view",
+            subject: "user",
+            object: "@{s.name}",
+            message: JSON.stringify({
+                page: slideName,
+                duration: 0 // Assuming you want to start with a duration of 0
+            }),
+        };
 
-                    updatePageInfo();
-                    updateActiveThumbnail();
-                } catch (error) {
-                    console.error('Error loading slide:', error);
-                } finally {
-                    loadingIndicator.style.display = 'none';
-                }
+        // Send the log via a POST request
+        fetch(logEndpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(logData),
+        }).then(response => {
+            if (!response.ok) {
+                console.error("Failed to log slide view");
             }
+        }).catch(error => {
+            console.error("Error sending log:", error);
+        });
+    }
+
+    async function loadSlide(pageNumber) {
+        try {
+            loadingIndicator.style.display = 'block';
+            animateEllipses();
+            const slideName = slidesList[pageNumber - 1].name;
+            const file_data = await fetchFile(slidesName + '_' + slideName, '@{s.url}/' + slideName);
+            const blob = new Blob([file_data]);
+            const url = URL.createObjectURL(blob);
+
+            viewer.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = url;
+            viewer.appendChild(img);
+
+            updatePageInfo();
+            updateActiveThumbnail();
+
+            // Log the slide view
+            logSlideView(slideName);
+        } catch (error) {
+            console.error('Error loading slide:', error);
+        } finally {
+            loadingIndicator.style.display = 'none';
+        }
+    }
 
             function createThumbnails() {
                 thumbnailContainer.innerHTML = '';
                 slidesList.forEach((slide, index) => {
-                    fetchFile(slidesName + '_' + slide.name, '/asset/' + slidesName + '/' + slide.name).then(file_data => {
+                    fetchFile(slidesName + '_' + slide.name, '@{s.url}/' + slide.name).then(file_data => {
                         const blob = new Blob([file_data]);
                         const url = URL.createObjectURL(blob);
 

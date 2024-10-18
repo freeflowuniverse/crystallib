@@ -11,8 +11,7 @@
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     </head>
     <style>
-
-/* Custom styles to enhance the nav bar */
+        /* Custom styles to enhance the nav bar */
 body > main {
     display: flex;
     flex-wrap: wrap;
@@ -42,7 +41,7 @@ nav ul li {
 
 nav ul li a {
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 400; /* Reduced font-weight */
     transition: color 0.3s ease;
 }
 
@@ -161,39 +160,47 @@ article li,
 article blockquote,
 article table {
     font-size: 0.8rem;
-    line-height: 1.2; /* Reduce line height to decrease space between lines */
-    margin-bottom: 0.6rem; /* Reduce margin to decrease space between paragraphs */
+    line-height: 1.4; /* Increased line height */
+    font-weight: 300; /* Reduce font weight to normal */
+    margin-bottom: 0.8rem; /* Slightly increase space between paragraphs */
 }
 
 article table {
-    line-height: 0.9;
+    line-height: 1.1;
 }
 
 article ul li {
-    line-height: 1;
-    margin-bottom: 0.1rem; /* Reduce margin to decrease space between list items */
+    line-height: 1.2; /* Slightly increase line height */
+    margin-bottom: 0.3rem; /* Adjust margin */
 }
 
-article h1 h2 h3 h4 h5 {
+article h1,
+article h2 {
+    font-weight: 600; /* Reduce font-weight for headers */
+}
+article h3,
+article h4,
+article h5 {
     margin-top: 0rem;
+    font-weight: 500; /* Reduce font-weight for headers */
 }
 
 article h1 {
     font-size: 1.6rem;
-    margin-bottom: 0.5rem; /* Reduce space after header */
+    margin-bottom: 0.7rem; /* Slightly increase space after header */
 }
 
 article h2 {
     font-size: 1.2rem;
-    margin-bottom: 0.4rem; /* Reduce space after header */
+    margin-bottom: 0.6rem;
 }
 article h3 {
     font-size: 1rem;
-    margin-bottom: 0.3rem; /* Reduce space after header */
+    margin-bottom: 0.5rem;
 }
 article h4 {
     font-size: 0.8rem;
-    margin-bottom: 0.2rem; /* Reduce space after header */
+    margin-bottom: 0.4rem;
 }
 
 docnav {
@@ -250,7 +257,6 @@ docnav ul li {
         justify-content: flex-end; /* Align icons to the right on mobile */
     }
 }
-
     </style>
     <body>
         <textarea id="markdown-nav" style="display: none">
@@ -273,182 +279,209 @@ docnav ul li {
         <script>
             // Define the static_url variable to hold the base URL for static assets and pages
             const static_url = "@{wiki.static_url}"; // Update with the correct URL
-
-            function convertMarkdown(inputId, outputId, pointersListId = "") {
-    const markdownInputElement = document.getElementById(inputId);
-    if (!markdownInputElement) return;
-    
-    let markdownInput = markdownInputElement.value;
-    
-    // Prepend static_url to image sources in the markdown if they are relative (not starting with http, /, or ./)
-    markdownInput = markdownInput.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
-
-    // Prepend static_url to relative page links in the markdown if they are relative (not starting with http, /, or ./)
-    markdownInput = markdownInput.replace(/\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
-
-    const htmlOutput = marked.parse(markdownInput);
-
-    const htmlOutputElement = document.getElementById(outputId);
-    if (!htmlOutputElement) return;
-    htmlOutputElement.innerHTML = htmlOutput;
-
-    // Add IDs to headers if they don't have one
-    const headers = htmlOutputElement.querySelectorAll("h1, h2");
-    headers.forEach((header, index) => {
-        if (!header.id) {
-            header.id = `header-@{dollar}{index}`;
-        }
-    });
-
-    // Generate content pointers if pointersListId is provided
-    if (pointersListId) {
-        const pointersList = document.getElementById(pointersListId);
-        if (!pointersList) return;
-        pointersList.innerHTML = "";
-        headers.forEach((header) => {
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            a.href = `#@{dollar}{header.id}`;
-            a.textContent = header.textContent;
-            li.appendChild(a);
-            pointersList.appendChild(li);
-        });
-
-        // Add event listener to scroll to the section
-        pointersList.querySelectorAll("a").forEach((anchor) => {
-            anchor.addEventListener("click", (event) => {
-                event.preventDefault();
-                const targetId = anchor.getAttribute("href").substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: "smooth" });
-                }
-            });
-        });
-    }
-}
-
-function initializeMarkdownConverter(inputId, outputId, pointersListId) {
-    // Convert markdown immediately on page load
-    convertMarkdown(inputId, outputId, pointersListId);
-
-    // Add event listener to input for real-time conversion
-    const inputElement = document.getElementById(inputId);
-    if (inputElement) {
-        inputElement.addEventListener("input", () => {
-            convertMarkdown(inputId, outputId, pointersListId);
-        });
-    }
-}
-
-function addNavEventListeners() {
-    const navItems = document.querySelectorAll("mynav ul li");
-
-    navItems.forEach((item) => {
-        const nestedList = item.querySelector("ul");
-        if (nestedList) {
-            // Add a visual cue for items with children
-            const arrow = document.createElement("span");
-            arrow.textContent = "▶";
-            arrow.classList.add("arrow");
-            item.insertBefore(arrow, item.firstChild);
-
-            // Add click event listener to toggle the nested list
-            item.addEventListener("click", function (event) {
-                // Prevent collapsing when clicking inside sub-items
-                if (event.target.tagName === 'A') return;
-
-                event.stopPropagation();
-                item.classList.toggle("open");
-                arrow.textContent = item.classList.contains("open") ? "▼" : "▶";
-            });
-        }
-    });
-
-    // Ensure parent dropdowns stay open leading to the active page
-    const activeLink = document.querySelector("mynav a.active");
-    if (activeLink) {
-        let parent = activeLink.closest("li");
-        while (parent) {
-            parent.classList.add("open");
-            parent = parent.closest("ul").closest("li");
-        }
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    initializeMarkdownConverter("markdown-input", "markdown-output", "content-pointers");
-    initializeMarkdownConverter("markdown-nav", "mynav");  // Ensure to convert markdown in the summary as well
-    addNavEventListeners();
-    addSummaryLinkListeners();  // Add link listeners for summary
-});
-
-function addSummaryLinkListeners() {
-    const summaryLinks = document.querySelectorAll("mynav a");
-
-    summaryLinks.forEach(link => {
-        link.addEventListener("click", function(event) {
-            event.preventDefault();  // Prevent the default link click behavior
-
-            // Mark clicked link as active
-            summaryLinks.forEach(l => l.classList.remove("active"));
-            link.classList.add("active");
-
-            // Collapse all dropdowns
-            const allItems = document.querySelectorAll("mynav ul li");
-            allItems.forEach(item => item.classList.remove("open"));
-
-            // Keep the clicked item's parent and ancestors open
-            let parent = link.closest("li");
-            while (parent) {
-                parent.classList.add("open");
-                parent = parent.closest("ul").closest("li");
-            }
-
-            const markdownFile = link.getAttribute("href");  // Get the markdown file path from the link
-
-            // Fetch the markdown content
-            fetch(markdownFile)
-                .then(response => {
+        
+            // Function to log page views
+            function logPageView(page) {
+                const logEndpoint = `/log/@{wiki.name}`;
+        
+                // Construct the log payload
+                const logData = {
+                    event: "view",
+                    subject: "user",
+                    object: "@{wiki.name}",
+                    message: JSON.stringify({
+                        page: page,
+                        duration: 0 // Assuming you want to start with a duration of 0
+                    }),
+                };
+        
+                // Send the log via a POST request
+                fetch(logEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(logData),
+                }).then(response => {
                     if (!response.ok) {
-                        throw new Error("Failed to fetch markdown file");
+                        console.error("Failed to log page view");
                     }
-                    return response.text();  // Get the markdown content as text
-                })
-                .then(markdown => {
-                    // Prepend static_url to image and relative links in the fetched markdown
-                    markdown = prependStaticUrl(markdown);
-
-                    // Convert the fetched markdown to HTML using marked.js
-                    const htmlContent = marked.parse(markdown);
-
-                    // Update the main content area with the new HTML
-                    const outputElement = document.getElementById("markdown-output");
-                    outputElement.innerHTML = htmlContent;
-
-                    // Optionally scroll to the top of the content area after update
-                    outputElement.scrollIntoView({ behavior: "smooth" });
-                })
-                .catch(error => {
-                    console.error("Error fetching the markdown file:", error);
+                }).catch(error => {
+                    console.error("Error sending log:", error);
                 });
-        });
-    });
-}
-
-// Function to prepend static_url to image and relative links
-function prependStaticUrl(markdown) {
-    const static_url = "@{wiki.static_url}";  // Your actual static URL
-
-    // Prepend static_url to image sources if they are relative (not starting with http, /, or ./)
-    markdown = markdown.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
-
-    // Prepend static_url to relative page links if they are relative (not starting with http, /, or ./)
-    markdown = markdown.replace(/\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
-
-    return markdown;
-}
-            // Rest of your theme-related code remains unchanged
+            }
+        
+            function convertMarkdown(inputId, outputId, pointersListId = "") {
+                const markdownInputElement = document.getElementById(inputId);
+                if (!markdownInputElement) return;
+        
+                let markdownInput = markdownInputElement.value;
+        
+                // Prepend static_url to image sources in the markdown if they are relative (not starting with http, /, or ./)
+                markdownInput = markdownInput.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+        
+                // Prepend static_url to relative page links in the markdown if they are relative (not starting with http, /, or ./)
+                markdownInput = markdownInput.replace(/\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+        
+                const htmlOutput = marked.parse(markdownInput);
+        
+                const htmlOutputElement = document.getElementById(outputId);
+                if (!htmlOutputElement) return;
+                htmlOutputElement.innerHTML = htmlOutput;
+        
+                // Add IDs to headers if they don't have one
+                const headers = htmlOutputElement.querySelectorAll("h1, h2");
+                headers.forEach((header, index) => {
+                    if (!header.id) {
+                        header.id = `header-@{dollar}{index}`;
+                    }
+                });
+        
+                // Generate content pointers if pointersListId is provided
+                if (pointersListId) {
+                    const pointersList = document.getElementById(pointersListId);
+                    if (!pointersList) return;
+                    pointersList.innerHTML = "";
+                    headers.forEach((header) => {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = `#@{dollar}{header.id}`;
+                        a.textContent = header.textContent;
+                        li.appendChild(a);
+                        pointersList.appendChild(li);
+                    });
+        
+                    // Add event listener to scroll to the section
+                    pointersList.querySelectorAll("a").forEach((anchor) => {
+                        anchor.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            const targetId = anchor.getAttribute("href").substring(1);
+                            const targetElement = document.getElementById(targetId);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: "smooth" });
+                            }
+                        });
+                    });
+                }
+            }
+        
+            function initializeMarkdownConverter(inputId, outputId, pointersListId) {
+                // Convert markdown immediately on page load
+                convertMarkdown(inputId, outputId, pointersListId);
+        
+                // Add event listener to input for real-time conversion
+                const inputElement = document.getElementById(inputId);
+                if (inputElement) {
+                    inputElement.addEventListener("input", () => {
+                        convertMarkdown(inputId, outputId, pointersListId);
+                    });
+                }
+            }
+        
+            function addSummaryLinkListeners() {
+                const summaryLinks = document.querySelectorAll("mynav a");
+        
+                summaryLinks.forEach(link => {
+                    link.addEventListener("click", function(event) {
+                        event.preventDefault();  // Prevent the default link click behavior
+        
+                        // Mark clicked link as active
+                        summaryLinks.forEach(l => l.classList.remove("active"));
+                        link.classList.add("active");
+        
+                        // Collapse all dropdowns
+                        const allItems = document.querySelectorAll("mynav ul li");
+                        allItems.forEach(item => item.classList.remove("open"));
+        
+                        // Keep the clicked item's parent and ancestors open
+                        let parent = link.closest("li");
+                        while (parent) {
+                            parent.classList.add("open");
+                            parent = parent.closest("ul").closest("li");
+                        }
+        
+                        const markdownFile = link.getAttribute("href");  // Get the markdown file path from the link
+        
+                        // Log the page view
+                        logPageView(markdownFile);
+        
+                        // Fetch the markdown content
+                        fetch(markdownFile)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Failed to fetch markdown file");
+                                }
+                                return response.text();  // Get the markdown content as text
+                            })
+                            .then(markdown => {
+                                // Prepend static_url to image and relative links in the fetched markdown
+                                markdown = prependStaticUrl(markdown);
+        
+                                // Convert the fetched markdown to HTML using marked.js
+                                const htmlContent = marked.parse(markdown);
+        
+                                // Update the main content area with the new HTML
+                                const outputElement = document.getElementById("markdown-output");
+                                outputElement.innerHTML = htmlContent;
+        
+                                // Optionally scroll to the top of the content area after update
+                                outputElement.scrollIntoView({ behavior: "smooth" });
+                            })
+                            .catch(error => {
+                                console.error("Error fetching the markdown file:", error);
+                            });
+                    });
+                });
+            }
+        
+            function prependStaticUrl(markdown) {
+                // Prepend static_url to image and relative links
+                markdown = markdown.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+                markdown = markdown.replace(/\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+                return markdown;
+            }
+        
+            document.addEventListener("DOMContentLoaded", () => {
+                initializeMarkdownConverter("markdown-input", "markdown-output", "content-pointers");
+                initializeMarkdownConverter("markdown-nav", "mynav");  // Ensure to convert markdown in the summary as well
+                addSummaryLinkListeners();
+                addNavEventListeners();  // Ensure nav items behave correctly
+            });
+        
+            function addNavEventListeners() {
+                const navItems = document.querySelectorAll("mynav ul li");
+        
+                navItems.forEach((item) => {
+                    const nestedList = item.querySelector("ul");
+                    if (nestedList) {
+                        // Add a visual cue for items with children
+                        const arrow = document.createElement("span");
+                        arrow.textContent = "▶";
+                        arrow.classList.add("arrow");
+                        item.insertBefore(arrow, item.firstChild);
+        
+                        // Add click event listener to toggle the nested list
+                        item.addEventListener("click", function (event) {
+                            // Prevent collapsing when clicking inside sub-items
+                            if (event.target.tagName === 'A') return;
+        
+                            event.stopPropagation();
+                            item.classList.toggle("open");
+                            arrow.textContent = item.classList.contains("open") ? "▼" : "▶";
+                        });
+                    }
+                });
+        
+                // Ensure parent dropdowns stay open leading to the active page
+                const activeLink = document.querySelector("mynav a.active");
+                if (activeLink) {
+                    let parent = activeLink.closest("li");
+                    while (parent) {
+                        parent.classList.add("open");
+                        parent = parent.closest("ul").closest("li");
+                    }
+                }
+            }
         </script>
     </body>
 </html>
