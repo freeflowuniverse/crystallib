@@ -1,7 +1,7 @@
 module data
 
 import freeflowuniverse.crystallib.core.pathlib
-import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Doc, Element, Link }
+import freeflowuniverse.crystallib.data.markdownparser.elements { Action, Doc, Element }
 import freeflowuniverse.crystallib.data.markdownparser
 
 pub enum PageStatus {
@@ -28,7 +28,6 @@ pub struct NewPageArgs {
 pub:
 	name            string       @[required]
 	path            pathlib.Path @[required]
-	readonly        bool
 	collection_name string       @[required]
 }
 
@@ -89,25 +88,9 @@ pub fn (mut page Page) get_linked_pages() ![]string {
 	return doc.linked_pages
 }
 
-pub fn (mut page Page) add_linked_page(linked_page string) {
-	page.doc.linked_pages << linked_page
-}
-
 pub fn (mut page Page) get_markdown() !string {
 	mut doc := page.doc()!
 	return doc.markdown()!
-}
-
-pub fn (mut page Page) get_doc_links() ![]Link {
-	mut links := []Link{}
-	mut doc := page.doc()!
-	for element in doc.children_recursive() {
-		if element is Link {
-			links << *element
-		}
-	}
-
-	return links
 }
 
 fn (mut page Page) get_element(element_id int) !Element {
@@ -143,15 +126,6 @@ pub fn (mut page Page) get_include_actions() ![]Action {
 	return actions
 }
 
-pub fn (mut page Page) set_element_content(element_id int, content string) ! {
-	mut element := page.element_cache[element_id] or {
-		return error('page ${page.path} doc has no element with id ${element_id}')
-	}
-	element.content = content
-
-	page.reparse_doc()!
-}
-
 pub fn (mut page Page) set_action_element_to_processed(element_id int) ! {
 	mut element := page.element_cache[element_id] or {
 		return error('page ${page.path} doc has no element with id ${element_id}')
@@ -160,6 +134,7 @@ pub fn (mut page Page) set_action_element_to_processed(element_id int) ! {
 	if mut element is Action {
 		element.action_processed = true
 		page.changed = true
+		return
 	}
 
 	return error('element with id ${element_id} is not an action')
@@ -172,12 +147,4 @@ pub fn (mut page Page) set_element_content_no_reparse(element_id int, content st
 
 	element.content = content
 	page.changed = true
-}
-
-pub fn (mut page Page) reprocess_element(element_id int) ! {
-	mut element := page.element_cache[element_id] or {
-		return error('page ${page.path} doc has no element with id ${element_id}')
-	}
-	element.processed = false
-	element.process()!
 }

@@ -38,11 +38,10 @@ pub fn (mut tree Tree) export(args TreeExportArgs) ! {
 		path_src.empty()!
 	}
 
-	tree.process_includes()! // process definitions (will also do defs
-	tree.process_actions_and_macros()!
-
-	paths := tree.generate_paths()!
-	tree.process_pages_links(paths)!
+	tree.process_defs()!
+	tree.process_includes()!
+	tree.process_actions_and_macros()! // process other actions and macros
+	tree.decode_links()!
 
 	for _, mut collection in tree.collections {
 		collection.export(
@@ -73,7 +72,9 @@ fn (mut t Tree) generate_paths() !map[string]string {
 	return paths
 }
 
-fn (mut t Tree) process_pages_links(paths map[string]string) ! {
+// links are decoded from pointers to actual paths, e.g. from col1:page1.md to col1/page1.md
+fn (mut t Tree) decode_links() ! {
+	paths := t.generate_paths()!
 	for _, mut c in t.collections {
 		for _, mut p in c.pages {
 			not_found := p.process_links(paths)!

@@ -17,8 +17,15 @@ pub mut:
 	name       string // is name without extension, all namefixed (lowercase...)
 	cat        PointerCat
 	extension  string // e.g. jpg
-	error      string // if there is an error on the pointer, then will be visible in this property
-	tree       string
+}
+
+@[params]
+pub struct NewPointerArgs {
+pub:
+	// pointer string (e.g. col:page.md)
+	text string
+	// used if text does not have collection information
+	collection string
 }
 
 // will return a clean pointer to a page, image or file
@@ -28,62 +35,57 @@ pub mut:
 // 	or mypage.md
 //
 //```
-pub fn pointer_new(txt_ string) !Pointer {
-	mut p := Pointer{}
-	mut txt := txt_.trim_space().replace('\\', '/').replace('//', '/')
+pub fn pointer_new(args NewPointerArgs) !Pointer {
+	mut txt := args.text.trim_space().replace('\\', '/').replace('//', '/')
 
 	// take colon parts out
-	nrcolon := txt.count(':')
-	splitted_colons := txt.split(':')
-	if nrcolon > 2 {
-		return error("pointer can only have 2 ':' inside. ${txt}")
-	} else if nrcolon == 1 {
-		p.collection = texttools.name_fix_keepext(splitted_colons[0].all_after_last('/'))
-		p.name = texttools.name_fix_keepext(splitted_colons[1].all_after_last('/'))
-	} else {
-		p.name = texttools.name_fix_keepext(splitted_colons[0].all_after_last('/'))
+	split_colons := txt.split(':')
+	if split_colons.len > 2 {
+		return error("pointer can only have 1 ':' inside. ${txt}")
 	}
-	// console.print_debug("pointer new: ${txt} ${nrcolon}\n$p")
-	splitted := p.name.split('.')
-	if splitted.len == 0 {
-		// no extension so needs to be markdown
-		p.cat = .page
-	} else {
-		// now need to check if we find imagename		
-		p.extension = splitted.last().to_lower()
-		if p.extension == 'md' || p.extension == '' {
-			p.cat = .page
-		} else if p.extension in ['jpg', 'jpeg', 'svg', 'gif', 'png'] {
-			p.cat = .image
-		} else if p.extension in ['mp4', 'mov'] {
-			p.cat = .image
-		} else {
-			p.cat = .file
+
+	mut collection_name := args.collection
+	mut file_name := ''
+	if split_colons.len == 2 {
+		collection_name = texttools.name_fix_keepext(split_colons[0].all_after_last('/'))
+		file_name = texttools.name_fix_keepext(split_colons[1].all_after_last('/'))
+	}
+
+	if collection_name == '' {
+		return error('provided args do not have collection information: ${args}')
+	}
+
+	if split_colons.len == 1 {
+		file_name = texttools.name_fix_keepext(split_colons[0].all_after_last('/'))
+	}
+
+	split_file_name := file_name.split('.')
+	file_name_no_extension := split_file_name[0]
+	mut extension := 'md'
+	if split_file_name.len > 1 {
+		extension = split_file_name[1]
+	}
+
+	mut file_cat := PointerCat.page
+	match extension {
+		'md' {
+			file_cat = .page
 		}
-		p.name = splitted[0]
+		'jpg', 'jpeg', 'svg', 'gif', 'png', 'mp4', 'mov' {
+			file_cat = .image
+		}
+		else {
+			file_cat = .file
+		}
 	}
 
-	if p.cat == .image || p.cat == .page {
-		p.name = p.name.trim_right('_')
+	return Pointer{
+		name: file_name_no_extension
+		collection: collection_name
+		extension: extension
+		cat: file_cat
 	}
-
-	return p
 }
-
-// represents the pointer in minimal string format
-// pub fn (p Pointer) str() string {
-// 	mut out := ''
-// 	if p.collection.len > 0 {
-// 		out = '${p.collection}:${p.name}'
-// 	} else {
-// 		out = p.name
-// 	}
-
-// 	if p.extension.len > 0 {
-// 		out += '.${p.extension}'
-// 	}
-// 	return out
-// }
 
 pub fn (p Pointer) is_image() bool {
 	return p.cat == .image
@@ -91,4 +93,8 @@ pub fn (p Pointer) is_image() bool {
 
 pub fn (p Pointer) is_file_video_html() bool {
 	return p.cat == .file || p.cat == .video || p.cat == .html
+}
+
+pub fn (p Pointer) str() string {
+	return '${p.collection}:${p.name}.${p.extension}'
 }

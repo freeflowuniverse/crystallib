@@ -12,20 +12,6 @@ pub mut:
 	name  string
 }
 
-fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&elements.Action {
-	// console.print_green('get actions for tree: name:${tree.name}')
-	mut res := []&elements.Action{}
-	for _, mut collection in tree.collections {
-		// console.print_green("export collection: name:${name}")		
-		for _, mut page in collection.pages {
-			// mut mydoc := page.doc()!
-			// res << mydoc.actionpointers(actor: args.actor, name: args.name)
-			res << page.get_all_actions()!
-		}
-	}
-	return res
-}
-
 // adds all action elements to a playbook, calls playmacros.play on the playbook,
 // which processes the macros, then reprocesses every page with the actions' new content
 fn (mut tree Tree) process_actions_and_macros() ! {
@@ -45,4 +31,18 @@ fn (mut tree Tree) process_actions_and_macros() ! {
 			page.process_macros()! // calls play_macro in playmacros...
 		}
 	}
+}
+
+fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&elements.Action {
+	// console.print_green('get actions for tree: name:${tree.name}')
+	mut res := []&elements.Action{}
+	for _, mut collection in tree.collections {
+		// console.print_green("export collection: name:${name}")		
+		for _, mut page in collection.pages {
+			// mut mydoc := page.doc()!
+			// res << mydoc.actionpointers(actor: args.actor, name: args.name)
+			res << page.get_all_actions()!
+		}
+	}
+	return res
 }

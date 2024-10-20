@@ -64,13 +64,14 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 	$if debug {
 		console.print_debug('file or image remember: ${p.path}')
 	}
-	mut ptr := pointer.pointerpath_new(
-		path: p.path
-		path_normalize: collection.heal
-		needs_to_exist: true
+
+	p.path_normalize()!
+
+	mut ptr := pointer.pointer_new(
+		collection: collection.name
+		text: p.name()
 	)!
 
-	p = ptr.path
 	if ptr.is_file_video_html() {
 		collection.file_new(mut p)!
 		return
@@ -89,11 +90,11 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 		}
 
 		// TODO: what are we trying to do?
-		if !collection.image_exists(ptr.pointer.name) {
+		if !collection.image_exists(ptr.name) {
 			collection.image_new(mut p)!
 		}
 
-		mut image_file := collection.get_image(ptr.pointer.name)!
+		mut image_file := collection.get_image(ptr.name)!
 		mut image_file_path := image_file.path.path
 		if p.path.len <= image_file_path.len {
 			// nothing to be done, because the already existing file is shortest or equal
@@ -110,52 +111,50 @@ fn (mut collection Collection) file_image_remember(mut p Path) ! {
 		return
 	}
 
-	return error('unsupported file type: ${ptr.pointer.extension}')
+	return error('unsupported file type: ${ptr.extension}')
 }
 
 // add a page to the collection, specify existing path
 // the page will be parsed as markdown
 pub fn (mut collection Collection) page_new(mut p Path) ! {
-	mut ptr := pointer.pointerpath_new(
-		path: p.path
-		path_normalize: collection.heal
-		needs_to_exist: true
+	p.path_normalize()!
+	mut ptr := pointer.pointer_new(
+		collection: collection.name
+		text: p.name()
 	)!
 
-	// in case heal is true pointerpath_new can normalize the path
-	p = ptr.path
-	if collection.page_exists(ptr.pointer.name) {
+	// in case heal is true pointer_new can normalize the path
+	if collection.page_exists(ptr.name) {
 		collection.error(
 			path: p
-			msg: 'Can\'t add ${p.path}: a page named ${ptr.pointer.name} already exists in the collection'
+			msg: 'Can\'t add ${p.path}: a page named ${ptr.name} already exists in the collection'
 			cat: .page_double
 		)
 		return
 	}
 
 	new_page := data.new_page(
-		name: ptr.pointer.name
+		name: ptr.name
 		path: p
 		collection_name: collection.name
 	)!
 
-	collection.pages[ptr.pointer.name] = &new_page
+	collection.pages[ptr.name] = &new_page
 }
 
 // add a file to the collection, specify existing path
 pub fn (mut collection Collection) file_new(mut p Path) ! {
-	mut ptr := pointer.pointerpath_new(
-		path: p.path
-		path_normalize: collection.heal
-		needs_to_exist: true
+	p.path_normalize()!
+	mut ptr := pointer.pointer_new(
+		collection: collection.name
+		text: p.name()
 	)!
 
-	// in case heal is true pointerpath_new can normalize the path
-	p = ptr.path
-	if collection.file_exists(ptr.pointer.name) {
+	// in case heal is true pointer_new can normalize the path
+	if collection.file_exists(ptr.name) {
 		collection.error(
 			path: p
-			msg: 'Can\'t add ${p.path}: a file named ${ptr.pointer.name} already exists in the collection'
+			msg: 'Can\'t add ${p.path}: a file named ${ptr.name} already exists in the collection'
 			cat: .file_double
 		)
 		return
@@ -166,38 +165,38 @@ pub fn (mut collection Collection) file_new(mut p Path) ! {
 		collection_path: collection.path
 		collection_name: collection.name
 	)!
-	collection.files[ptr.pointer.name] = &new_file
+	collection.files[ptr.name] = &new_file
 }
 
 // add a image to the collection, specify existing path
 pub fn (mut collection Collection) image_new(mut p Path) ! {
-	mut ptr := pointer.pointerpath_new(
-		path: p.path
-		path_normalize: collection.heal
-		needs_to_exist: true
+	p.path_normalize()!
+	mut ptr := pointer.pointer_new(
+		collection: collection.name
+		text: p.name()
 	)!
 
-	// in case heal is true pointerpath_new can normalize the path
-	if collection.image_exists(ptr.pointer.name) {
+	// in case heal is true pointer_new can normalize the path
+	if collection.image_exists(ptr.name) {
 		// remove this one
 		// TODO: why remove, what if this is a whole other image, but has the same name???
-		mut file_double := collection.get_image(ptr.path.name())!
+		mut file_double := collection.get_image(p.name())!
 		mut path_double := file_double.path
-		if ptr.path.path.len > path_double.path.len {
-			ptr.path.delete()!
+		if p.path.len > path_double.path.len {
+			p.delete()!
 		} else {
 			path_double.delete()!
-			file_double.path = ptr.path // reset the path so the shortest one remains
+			file_double.path = p // reset the path so the shortest one remains
 		}
 		return
 	}
 
 	mut image_file := &data.File{
-		path: ptr.path
+		path: p
 		collection_path: collection.path
 	}
 	image_file.init()!
-	collection.images[ptr.pointer.name] = image_file
+	collection.images[ptr.name] = image_file
 }
 
 // return all pagenames for a collection
