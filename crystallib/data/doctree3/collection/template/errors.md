@@ -2,8 +2,9 @@
 
 @for error in collection.errors
 
-## @error.cat 
+## @error.cat
 
-@error.msg
+path: @error.path.path
+msg: @error.msg
 
 @end

@@ -71,8 +71,14 @@ pub fn pointer_new(args NewPointerArgs) !Pointer {
 		'md' {
 			file_cat = .page
 		}
-		'jpg', 'jpeg', 'svg', 'gif', 'png', 'mp4', 'mov' {
+		'jpg', 'jpeg', 'svg', 'gif', 'png' {
 			file_cat = .image
+		}
+		'html' {
+			file_cat = .html
+		}
+		'mp4', 'mov' {
+			file_cat = .video
 		}
 		else {
 			file_cat = .file

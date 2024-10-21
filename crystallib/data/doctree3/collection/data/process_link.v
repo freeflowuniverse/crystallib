@@ -4,11 +4,11 @@ import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.data.markdownparser.elements
 import freeflowuniverse.crystallib.data.doctree3.pointer
 
+// Note: doc should not get reparsed after invoking this method
 pub fn (mut page Page) process_links(paths map[string]string) ![]string {
-	mut not_found := []string{}
+	mut not_found := map[string]bool{}
 	mut doc := page.doc()!
-	mut children := doc.children_recursive()
-	for mut element in children {
+	for mut element in doc.children_recursive() {
 		if mut element is elements.Link {
 			mut name := texttools.name_fix_keepext(element.filename)
 			mut site := texttools.name_fix(element.site)
@@ -19,8 +19,12 @@ pub fn (mut page Page) process_links(paths map[string]string) ![]string {
 
 			ptr := pointer.pointer_new(text: pointerstr, collection: page.collection_name)!
 			mut path := paths[ptr.str()] or {
-				not_found << ptr.str()
+				not_found[ptr.str()] = true
 				continue
+			}
+
+			if ptr.cat == .page && ptr.str() !in doc.linked_pages {
+				doc.linked_pages << ptr.str()
 			}
 
 			if ptr.collection == page.collection_name {
@@ -46,5 +50,5 @@ pub fn (mut page Page) process_links(paths map[string]string) ![]string {
 		}
 	}
 
-	return not_found
+	return not_found.keys()
 }

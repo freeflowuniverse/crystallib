@@ -2,10 +2,13 @@ module doctree3
 
 import freeflowuniverse.crystallib.data.doctree3.collection
 import freeflowuniverse.crystallib.data.doctree3.collection.data
+import freeflowuniverse.crystallib.ui.console
 
 // process definitions (!!wiki.def actions, elements.Def elements)
 // this must be done before processing includes.
 fn (mut tree Tree) process_defs() ! {
+	console.print_green('Processing tree defs')
+
 	for _, mut col in tree.collections {
 		for _, mut page in col.pages {
 			mut p := page

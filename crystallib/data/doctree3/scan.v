@@ -41,7 +41,6 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 		)!
 	}
 
-	// TODO: why < 3?
 	if args.path.len == 0 {
 		return error('Path needs to be provided.')
 	}

@@ -3,8 +3,10 @@ module doctree3
 // import freeflowuniverse.crystallib.data.doctree3.collection.data
 import freeflowuniverse.crystallib.data.doctree3.pointer
 import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.ui.console
 
 fn (mut tree Tree) process_includes() ! {
+	console.print_green('Processing page includes')
 	graph := tree.generate_pages_graph()!
 
 	mut indegree := map[string]int{}

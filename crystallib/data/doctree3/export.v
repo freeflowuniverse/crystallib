@@ -41,12 +41,15 @@ pub fn (mut tree Tree) export(args TreeExportArgs) ! {
 	tree.process_defs()!
 	tree.process_includes()!
 	tree.process_actions_and_macros()! // process other actions and macros
-	tree.decode_links()!
 
+	file_paths := tree.generate_paths()!
+
+	console.print_green('exporting collections')
 	for _, mut collection in tree.collections {
 		collection.export(
 			path_src: path_src
 			path_edit: path_edit
+			file_paths: file_paths
 			reset: args.reset
 			keep_structure: args.keep_structure
 			exclude_errors: args.exclude_errors
@@ -60,27 +63,17 @@ fn (mut t Tree) generate_paths() !map[string]string {
 	mut paths := map[string]string{}
 	for _, col in t.collections {
 		for _, page in col.pages {
-			// check how get_page works
 			paths['${col.name}:${page.name}.md'] = '${col.name}/${page.name}.md'
 		}
 
 		for _, image in col.images {
 			paths['${col.name}:${image.file_name()}'] = '${col.name}/img/${image.file_name()}'
 		}
+
+		for _, file in col.files {
+			paths['${col.name}:${file.file_name()}'] = '${col.name}/img/${file.file_name()}'
+		}
 	}
 
 	return paths
-}
-
-// links are decoded from pointers to actual paths, e.g. from col1:page1.md to col1/page1.md
-fn (mut t Tree) decode_links() ! {
-	paths := t.generate_paths()!
-	for _, mut c in t.collections {
-		for _, mut p in c.pages {
-			not_found := p.process_links(paths)!
-			for item in not_found {
-				c.error(path: p.path, msg: 'linked item ${item} not found')
-			}
-		}
-	}
 }

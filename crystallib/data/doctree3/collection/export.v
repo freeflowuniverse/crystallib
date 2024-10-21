@@ -3,12 +3,14 @@ module collection
 import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.core.texttools.regext
 import os
+import freeflowuniverse.crystallib.data.doctree3.pointer
 
 @[params]
 pub struct CollectionExportArgs {
 pub mut:
 	path_src       pathlib.Path                @[required]
 	path_edit      pathlib.Path                @[required]
+	file_paths     map[string]string
 	reset          bool = true
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
@@ -27,6 +29,7 @@ pub fn (mut c Collection) export(args CollectionExportArgs) ! {
 
 	c.export_pages(
 		dir_src: dir_src
+		file_paths: args.file_paths
 		keep_structure: args.keep_structure
 		replacer: args.replacer
 	)!
@@ -43,10 +46,12 @@ pub fn (mut c Collection) export(args CollectionExportArgs) ! {
 pub struct ExportPagesArgs {
 pub mut:
 	dir_src        pathlib.Path
+	file_paths     map[string]string
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	replacer       ?regext.ReplaceInstructions
 }
 
+// creates page file, processes page links, then writes page
 fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
 	for _, mut page in c.pages {
 		dest := if args.keep_structure {
@@ -56,7 +61,30 @@ fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
 			'${args.dir_src.path}/${page.name}.md'
 		}
 
-		page.export(dest: dest, replacer: args.replacer)!
+		not_found := page.process_links(args.file_paths)!
+		for pointer_str in not_found {
+			ptr := pointer.pointer_new(text: pointer_str)!
+			cat := match ptr.cat {
+				.page {
+					CollectionErrorCat.page_not_found
+				}
+				.image {
+					CollectionErrorCat.image_not_found
+				}
+				else {
+					CollectionErrorCat.file_not_found
+				}
+			}
+			c.error(path: page.path, msg: '${ptr.cat} ${ptr.str()} not found', cat: cat)
+		}
+
+		mut dest_path := pathlib.get_file(path: dest, create: true)!
+		mut markdown := page.get_markdown()!
+		if mut replacer := args.replacer {
+			markdown = replacer.replace(text: markdown)!
+		}
+
+		dest_path.write(markdown)!
 	}
 }
 

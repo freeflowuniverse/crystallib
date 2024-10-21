@@ -15,7 +15,7 @@ pub mut:
 // adds all action elements to a playbook, calls playmacros.play on the playbook,
 // which processes the macros, then reprocesses every page with the actions' new content
 fn (mut tree Tree) process_actions_and_macros() ! {
-	console.print_green('process actions & macros for tree:\'${tree.name}\'')
+	console.print_green('Processing actions and macros')
 
 	// first process the generic actions, which can be executed as is
 	mut plbook := playbook.new()!
@@ -39,8 +39,6 @@ fn (mut tree Tree) get_actions(args_ MacroGetArgs) ![]&elements.Action {
 	for _, mut collection in tree.collections {
 		// console.print_green("export collection: name:${name}")		
 		for _, mut page in collection.pages {
-			// mut mydoc := page.doc()!
-			// res << mydoc.actionpointers(actor: args.actor, name: args.name)
 			res << page.get_all_actions()!
 		}
 	}
