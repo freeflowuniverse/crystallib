@@ -52,4 +52,7 @@ pub mut:
 	description          string
 	order 				 int
 	has_revenue		 bool
+	has_items bool 
+	has_oneoffs bool
+	nr_months_recurring int
 }

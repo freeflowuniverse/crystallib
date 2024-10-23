@@ -163,7 +163,10 @@ pub fn exec(cmd Command) !Job {
 		return job
 	}
 	if !cmd.async {
-		job.execute_retry()!
+		job.execute_retry() or { 
+			//println(err)
+			return err
+		}
 	}
 	return job
 }
@@ -171,11 +174,16 @@ pub fn exec(cmd Command) !Job {
 // execute the job and wait on result
 // will retry as specified
 pub fn (mut job Job) execute_retry() ! {
-	for _ in 0 .. job.cmd.retry + 1 {
-		job.execute()!
-		job.wait()!
-		if job.status != .running {
-			job.close()!
+	for x in 0 .. job.cmd.retry + 1 {
+		job.execute() or {
+			if x == job.cmd.retry {
+				//println(job)		
+				return err
+			}
+		}
+		//println(job)
+		if job.status == .done {
+			//means we could execute we can stop
 			return
 		}
 	}
@@ -232,6 +240,7 @@ pub fn (mut job Job) wait() ! {
 		}
 		time.sleep(10 * time.millisecond)
 	}
+	job.close()!
 }
 
 // process (read std.err and std.out of process)

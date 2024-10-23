@@ -48,7 +48,13 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 	}	
 	m.products[name] = &product
 
-	nr_months_recurring := action.params.get_int_default('nr_months_recurring', 60)!
+	mut nr_months_recurring := action.params.get_int_default('nr_months_recurring', 60)!
+
+	if nr_months_recurring==0{
+		nr_months_recurring=1
+	}
+
+	product.nr_months_recurring = nr_months_recurring
 
 	mut revenue := m.sheet.row_new(
 		name: '${name}_revenue'
@@ -64,6 +70,7 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		growth: action.params.get_default('revenue_setup', '0:0')!
 		tags: 'rev name:${name}'
 		descr: 'Setup Sales price for ${name2}'
+		aggregatetype:.avg
 	)!
 
 	mut revenue_setup_delay := action.params.get_int_default('revenue_setup_delay', 0)!
@@ -73,6 +80,7 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		growth: action.params.get_default('revenue_monthly', '0:0')!
 		tags: 'rev name:${name}'
 		descr: 'Monthly Sales price for ${name2}'
+		aggregatetype:.avg
 	)!
 
 	mut revenue_monthly_delay := action.params.get_int_default('revenue_monthly_delay', 1)!
@@ -86,11 +94,17 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		extrapolate:false
 	)!
 
+	if revenue.max()>0 || cogs.max()>0 {
+		product.has_oneoffs=true
+	}
+
+
 	mut cogs_perc := m.sheet.row_new(
 		name: '${name}_cogs_perc'
 		growth: action.params.get_default('cogs_perc', '0')!
 		tags: 'rev  name:${name}'
 		descr: 'COGS as percent of revenue for ${name2}'
+		aggregatetype:.avg
 	)!
 
 
@@ -99,6 +113,7 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		growth: action.params.get_default('cogs_setup', '0:0')!
 		tags: 'rev name:${name}'
 		descr: 'COGS for ${name2} Setup'
+		aggregatetype:.avg
 	)!
 
 	mut cogs_setup_delay := action.params.get_int_default('cogs_setup_delay', 1)!
@@ -108,6 +123,7 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		growth: action.params.get_default('cogs_setup_perc', '0')!
 		tags: 'rev  name:${name}'
 		descr: 'COGS as percent of revenue for ${name2} Setup'
+		aggregatetype:.avg
 	)!
 
 	mut cogs_monthly := m.sheet.row_new(
@@ -115,6 +131,7 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		growth: action.params.get_default('cogs_monthly', '0:0')!
 		tags: 'rev name:${name}'
 		descr: 'Cost of Goods (COGS) for ${name2} Monthly'
+		aggregatetype:.avg
 	)!
 
 	mut cogs_monthly_delay := action.params.get_int_default('cogs_monthly_delay', 1)!
@@ -124,15 +141,28 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 		growth: action.params.get_default('cogs_monthly_perc', '0')!
 		tags: 'rev  name:${name}'
 		descr: 'COGS as percent of revenue for ${name2} Monthly'
+		aggregatetype:.avg
 	)!
+
+
+	// if true{
+	// 	println(cogs_setup_perc)
+	// 	println(cogs_monthly_perc)
+	// 	panic("sdsd")
+	// }
+
 
 	mut nr_sold := m.sheet.row_new(
 		name: '${name}_nr_sold'
 		growth: action.params.get_default('nr_sold', '0')!
 		tags: 'rev  name:${name}'
 		descr: 'nr of items sold/month for ${name2}'
+		aggregatetype:.avg
 	)!
 
+	if nr_sold.max()>0{
+		product.has_items=true
+	}
 
 	//CALCULATE THE TOTAL (multiply with nr sold)
 
@@ -175,27 +205,49 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 			name:'${name}_cogs_monthly_recurring',
 			descr:'COGS recurring for ${name2}',
 			nrmonths: nr_months_recurring
-		)!				
+		)!	
+
+		nr_sold_recurring := nr_sold.recurring(
+			name:'${name}_nr_sold_recurring',
+			descr:'Nr products active because of recurring for ${name2}',
+			nrmonths: nr_months_recurring
+			aggregatetype:.max
+
+		)!	
+		// if true{
+		// 	println(nr_sold_recurring)
+		// 	panic('sd')
+		// }					
 	}
 
 	//cogs as percentage of revenue
 	mut cogs_setup_from_perc:=cogs_setup_perc.action(action:.multiply,rows:[revenue_setup_total],
-		name:"cogs_setup_from_perc")!
+		name:"${name}_cogs_setup_from_perc")!
 	mut cogs_monthly_from_perc:=cogs_monthly_perc.action(action:.multiply,rows:[revenue_monthly_total],
-		name:"cogs_monthly_from_perc")!
-	mut cogs_from_perc:=cogs_perc.action(action:.multiply,rows:[revenue],name:"cogs_from_perc")!
+		name:"${name}_cogs_monthly_from_perc")!
 
+	// if true{
+	// 	println(revenue_setup_total)
+	// 	println(cogs_setup_perc)
+	// 	println(cogs_setup_from_perc)
+	// 	println("montlhy")
+	// 	println(revenue_monthly_total)
+	// 	println(cogs_monthly_perc)
+	// 	println(cogs_monthly_from_perc)
+	// 	panic("sdsd")
+	// }
+	
+	//mut cogs_from_perc:=cogs_perc.action(action:.multiply,rows:[revenue],name:"cogs_from_perc")!
 
 
 	//DEAL WITH MAINTENANCE
 
-	//make sum of all past revenue (all one off revenue)
+	//make sum of all past revenue (all one off revenue, needed to calculate maintenance)
 	mut temp_past := revenue.recurring(
 		nrmonths: nr_months_recurring
 		name:"temp_past"
 		//delaymonths:4
 	)!
-
 
 	mut maintenance_month_perc := action.params.get_percentage_default('maintenance_month_perc', "0%")!
 
@@ -227,9 +279,14 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 	)!
 
 
+	if revenue_total.max()>0.0 || cogs_total.max()>0.0{
+		product.has_revenue
+	}
+
 	revenue_total = revenue_total.action(
 		action: .add
-		rows: [revenue, revenue_monthly_total,revenue_setup_total, maintenance_month]
+		rows: [revenue, revenue_monthly_total,revenue_setup_total, 
+			maintenance_month]
 	)!
 
 	if revenue_total.max()>0{
@@ -238,13 +295,20 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 
 	cogs_total = cogs_total.action(
 		action: .add
-		rows: [cogs,cogs_monthly_total,cogs_setup_total,cogs_setup_from_perc,cogs_monthly_from_perc,cogs_from_perc]
+		rows: [cogs,cogs_monthly_total,cogs_setup_total,
+				cogs_setup_from_perc,cogs_monthly_from_perc]
 	)!	
 
 
 	// if true{
-	// 	println(action)
-	// 	println(m.sheet)
+	// 	//println(m.sheet)
+	// 	println(revenue_total)
+	// 	println(cogs_total)
+	// 	println(cogs)
+	// 	println(cogs_monthly_total)
+	// 	println(cogs_setup_total)
+	// 	println(cogs_setup_from_perc)
+	// 	println(cogs_monthly_from_perc)
 	// 	panic("sdsd")
 		
 	// }
@@ -252,19 +316,34 @@ fn (mut m BizModel) revenue_action(action Action) ! {
 }
 
 
+// revenue_total calculates and aggregates the total revenue and cost of goods sold (COGS) for the business model
 fn (mut sim BizModel) revenue_total() ! {
 
+	// Create a new row in the sheet to represent the total revenue across all products
 	sim.sheet.group2row(
 		name: 'revenue_total'
-		tags: 'revtotal'
+		tags: ''
 		descr: 'total revenue.'
 	)!	
 
+	// Create a new row in the sheet to represent the total COGS across all products
 	sim.sheet.group2row(
 		name: 'cogs_total'
-		tags: 'cogstotal'
+		tags: ''
 		descr: 'total cogs.'
 	)!	
 
+	// Note: The following commented-out code block seems to be for debugging or future implementation
+	// It demonstrates how to create a smaller version of the sheet with specific filters
+	// if true{
+	// 	// name          string
+	// 	// namefilter    []string // only include the exact names as specified for the rows
+	// 	// includefilter []string // matches for the tags
+	// 	// excludefilter []string // matches for the tags
+	// 	// period_months int = 12
+	// 	mut r:=sim.sheet.tosmaller(name:"tmp",includefilter:["cogstotal"],period_months:12)!
+	// 	println(r)
+	// 	panic("sdsd")
+	// }	
 
 }

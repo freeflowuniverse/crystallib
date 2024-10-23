@@ -29,7 +29,7 @@ pub mut:
 	title_sub     string
 	size          string
 	rowname_show  bool = true // show the name of the row
-	descr_show bool = false 
+	descr_show bool
 	description   string
 }
 

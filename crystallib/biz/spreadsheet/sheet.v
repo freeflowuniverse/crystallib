@@ -118,7 +118,7 @@ pub mut:
 }
 
 // internal function used by to year and by to quarter
-fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
+pub fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
 	mut args := args_
 	mut sheetname := args.name
 	if sheetname == '' {

@@ -8,6 +8,7 @@ pub enum PingResult {
 	ok
 	timeout // timeout from ping
 	unknownhost // means we don't know the hostname its a dns issue
+
 }
 
 @[params]
@@ -22,20 +23,21 @@ pub mut:
 // if reached in timout result will be True
 // address is e.g. 8.8.8.8
 // ping means we check if the destination responds
-pub fn ping(args PingArgs) PingResult {
+pub fn ping(args PingArgs) !PingResult {
 	platform_ := platform()
 	mut cmd := 'ping'
 	if args.address.contains(':') {
 		cmd = 'ping6'
 	}
 	if platform_ == .osx {
-		cmd += ' -c ${args.count} -W ${args.timeout * 1000} ${args.address}'
+		cmd += ' -c ${args.count} ${args.address}'
 	} else if platform_ == .ubuntu {
 		cmd += ' -c ${args.count} -w ${args.timeout} ${args.address}'
 	} else {
-		panic('Unsupported platform for ping')
+		return error ('Unsupported platform for ping')
 	}
-	_ := exec(cmd: cmd, retry: args.retry, timeout: 0, stdout: false) or {
+	r := exec(cmd: cmd, retry: args.retry, timeout: 0, stdout: false) or {
+		//println("ping failed.error.\n${err}")
 		if err.code() == 9999 {
 			return .timeout
 		}
@@ -43,16 +45,19 @@ pub fn ping(args PingArgs) PingResult {
 			return match err.code() {
 				2 { .timeout }
 				68 { .unknownhost }
-				else { panic(err.msg()) }
+				else { 
+					//println("${err} ${err.code()}")
+					error("can't ping on osx (${err.code()})\n${err}") 
+					}
 			}
 		} else if platform_ == .ubuntu {
 			return match err.code() {
 				1 { .timeout }
 				2 { .unknownhost }
-				else { panic(err.msg()) }
+				else { error("can't ping on ubuntu (${err.code()})\n${err}") }
 			}
 		} else {
-			panic(err.msg())
+			panic("bug, should never get here")
 		}
 	}
 	return .ok

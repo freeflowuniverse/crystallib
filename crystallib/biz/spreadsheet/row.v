@@ -150,31 +150,33 @@ pub fn (row Row) filter(args_ RowGetArgs) !bool {
 	mut ok := false
 	mut args := args_
 
-	if args.namefilter.len == 0 && args.rowname != '' {
-		args.namefilter = [args.rowname]
+	if args.rowname != '' {
+		if ! (args.rowname in args.namefilter){
+			args.namefilter << args.rowname
+		}
 	}
 
 	if args.namefilter.len == 0 && args.includefilter.len == 0 && args.excludefilter.len == 0 {
+		//this means we match all
 		return true
 	}
 
-	if args.namefilter.len > 0 || args.includefilter.len > 0 || args.excludefilter.len > 0 {
-		if args.includefilter.len > 0 || args.excludefilter.len > 0 {
-			tagstofilter := paramsparser.parse(row.tags)!
-			ok = tagstofilter.filter_match(
-				include: args.includefilter
-				exclude: args.excludefilter
-			)!
-		}
-		for name1 in args.namefilter {
-			if name1.to_lower() == row.name.to_lower() {
-				ok = true
-			}
-		}
-		if ok == false {
-			return false
+	if args.includefilter.len > 0 || args.excludefilter.len > 0 {
+		tagstofilter := paramsparser.parse(row.tags)!
+		ok = tagstofilter.filter_match(
+			include: args.includefilter
+			exclude: args.excludefilter
+		)!
+	}
+	for name1 in args.namefilter {
+		if name1.to_lower() == row.name.to_lower() {
+			ok = true
 		}
 	}
+	if ok == false {
+		return false
+	}
+	
 	return ok
 }
 
