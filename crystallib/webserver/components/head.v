@@ -1,5 +1,15 @@
 module components
 
+pub struct Head {
+pub:
+	title string
+	links []Link
+	scripts []Script
+}
+
+pub fn (head Head) html() string {
+	return $tmpl('./templates/head.html')
+}
 
 pub struct Link {
 	rel string
