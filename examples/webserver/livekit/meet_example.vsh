@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -n -w -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -n -w -cg -enable-globals
 
 import os
 import freeflowuniverse.crystallib.osal
@@ -22,4 +22,6 @@ mut app := meet.new(
 	livekit_api_secret: os.getenv('LIVEKIT_API_SECRET')
 )
 
-app.run()
+app.run(
+	port: 8081
+)

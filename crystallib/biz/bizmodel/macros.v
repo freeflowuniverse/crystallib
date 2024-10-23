@@ -107,10 +107,11 @@ fn revenues_wiki (p paramsparser.Params, mut sim BizModel)!string{
 	// 	panic("s")
 	// }
 
-	mut t:=$tmpl('./templates/revenue_overview.md')
+	panic('fix template below')
+	// mut t:=$tmpl('./templates/revenue_overview.md')
 
 	//title:'REVENUE FOR ${name1.to_lower().replace("_"," ")}' 
 
-	return t
+	// return t
 
 }
