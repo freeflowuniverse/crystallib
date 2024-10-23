@@ -36,5 +36,8 @@ pub fn (self Paragraph) pug() !string {
 
 fn (self Paragraph) html() !string {
 	mut out := self.DocBase.html()! // the children should have all the content
+	if self.children.len == 1 {
+		return '<p>${out}</p>'
+	}
 	return out
 }
