@@ -7,11 +7,10 @@ import freeflowuniverse.crystallib.core.texttools.regext
 @[params]
 pub struct TreeExportArgs {
 pub mut:
-	dest           string @[required]
+	destination    string @[required]
 	reset          bool = true
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
-	production     bool = true
 	toreplace      string
 }
 
@@ -19,23 +18,16 @@ pub mut:
 // all names will be in name_fixed mode .
 // all images in img/
 pub fn (mut tree Tree) export(args TreeExportArgs) ! {
-	console.print_header('export tree: name:${tree.name} to ${args.dest}')
+	console.print_header('export tree: name:${tree.name} to ${args.destination}')
 	if args.toreplace.len > 0 {
 		mut ri := regext.regex_instructions_new()
 		ri.add_from_text(args.toreplace)!
 		tree.replacer = ri
 	}
 
-	mut path_src := pathlib.get_dir(path: '${args.dest}/src', create: true)!
-	mut path_edit := pathlib.get_dir(path: '${args.dest}/.edit', create: true)!
-	if !args.production {
-		if args.reset {
-			path_edit.empty()!
-		}
-	}
-
+	mut dest_path := pathlib.get_dir(path: args.destination, create: true)!
 	if args.reset {
-		path_src.empty()!
+		dest_path.empty()!
 	}
 
 	tree.process_defs()!
@@ -47,13 +39,11 @@ pub fn (mut tree Tree) export(args TreeExportArgs) ! {
 	console.print_green('exporting collections')
 	for _, mut collection in tree.collections {
 		collection.export(
-			path_src: path_src
-			path_edit: path_edit
+			destination: dest_path
 			file_paths: file_paths
 			reset: args.reset
 			keep_structure: args.keep_structure
 			exclude_errors: args.exclude_errors
-			production: args.production
 			replacer: tree.replacer
 		)!
 	}

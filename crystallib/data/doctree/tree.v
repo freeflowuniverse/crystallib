@@ -18,14 +18,15 @@ pub enum TreeState {
 @[heap]
 pub struct Tree {
 pub:
-	name string
+	name          string
+	fail_on_error bool
 pub mut:
 	collections map[string]&collection.Collection
-	defs        map[string]&data.Page // TODO: what are defs?
+	defs        map[string]&data.Page
 	state       TreeState
 	// context context.Context
 	cid      string = '000'
-	replacer ?regext.ReplaceInstructions // TODO: what is replacer?
+	replacer ?regext.ReplaceInstructions
 }
 
 // the unique key to remember a tree .
@@ -37,7 +38,8 @@ pub fn (tree Tree) key() string {
 @[params]
 pub struct TreeArgsGet {
 pub mut:
-	name string = 'default'
+	name          string = 'default'
+	fail_on_error bool
 }
 
 // new creates a new tree and stores it in global map
@@ -46,6 +48,7 @@ pub fn new(args_ TreeArgsGet) !&Tree {
 	args.name = texttools.name_fix(args.name)
 	mut t := Tree{
 		name: args.name
+		fail_on_error: args.fail_on_error
 	}
 	tree_set(t)
 	return &t

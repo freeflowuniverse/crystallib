@@ -31,7 +31,7 @@ fn (mut tree Tree) process_page_def_actions(mut p data.Page, mut c collection.Co
 			path: p.path
 			msg: 'a page can have at most one def action'
 			cat: .def
-		)
+		)!
 	}
 
 	if def_actions.len == 0 {
@@ -45,7 +45,7 @@ fn (mut tree Tree) process_page_def_actions(mut p data.Page, mut c collection.Co
 				path: p.path
 				msg: 'alias ${alias} is already used'
 				cat: .def
-			)
+			)!
 			continue
 		}
 
@@ -59,7 +59,7 @@ fn (mut tree Tree) replace_page_defs_with_links(mut p data.Page, mut c collectio
 	mut def_data := map[string][]string{}
 	for def in defs {
 		referenced_page := tree.defs[def] or {
-			c.error(path: p.path, msg: 'def ${def} is not defined', cat: .def)
+			c.error(path: p.path, msg: 'def ${def} is not defined', cat: .def)!
 			continue
 		}
 

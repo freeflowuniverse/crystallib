@@ -8,21 +8,16 @@ import freeflowuniverse.crystallib.data.doctree.pointer
 @[params]
 pub struct CollectionExportArgs {
 pub mut:
-	path_src       pathlib.Path                @[required]
-	path_edit      pathlib.Path                @[required]
+	destination    pathlib.Path                @[required]
 	file_paths     map[string]string
 	reset          bool = true
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
-	production     bool = true
 	replacer       ?regext.ReplaceInstructions
 }
 
 pub fn (mut c Collection) export(args CollectionExportArgs) ! {
-	dir_src := pathlib.get_dir(path: args.path_src.path + '/' + c.name, create: true)!
-	if !args.production {
-		c.path.link('${args.path_edit.path}/${c.name}', true)!
-	}
+	dir_src := pathlib.get_dir(path: args.destination.path + '/' + c.name, create: true)!
 
 	mut cfile := pathlib.get_file(path: dir_src.path + '/.collection', create: true)! // will auto save it
 	cfile.write("name:${c.name} src:'${c.path.path}'")!
@@ -75,7 +70,7 @@ fn (mut c Collection) export_pages(args ExportPagesArgs) ! {
 					CollectionErrorCat.file_not_found
 				}
 			}
-			c.error(path: page.path, msg: '${ptr.cat} ${ptr.str()} not found', cat: cat)
+			c.error(path: page.path, msg: '${ptr.cat} ${ptr.str()} not found', cat: cat)!
 		}
 
 		mut dest_path := pathlib.get_file(path: dest, create: true)!

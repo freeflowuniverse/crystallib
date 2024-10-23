@@ -62,6 +62,7 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 			name: collection_name
 			heal: args.heal
 			load: true
+			fail_on_error: tree.fail_on_error
 		)!
 
 		return
@@ -85,10 +86,11 @@ pub fn (mut tree Tree) scan(args_ TreeScannerArgs) ! {
 @[params]
 pub struct CollectionNewArgs {
 mut:
-	name string @[required]
-	path string @[required]
-	heal bool = true // healing means we fix images, if selected will automatically load, remove stale links
-	load bool = true
+	name          string @[required]
+	path          string @[required]
+	heal          bool = true // healing means we fix images, if selected will automatically load, remove stale links
+	load          bool = true
+	fail_on_error bool
 }
 
 // get a new collection
@@ -106,6 +108,7 @@ pub fn (mut tree Tree) add_collection(args_ CollectionNewArgs) !&collection.Coll
 		// tree: tree
 		path: pp
 		heal: args.heal
+		fail_on_error: args.fail_on_error
 	}
 	if args.load {
 		new_collection.scan()!

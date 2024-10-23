@@ -65,7 +65,7 @@ fn (mut tree Tree) process_includes() ! {
 			path: page.path
 			msg: 'page ${key} is in an include cycle'
 			cat: .circular_import
-		)
+		)!
 	}
 }
 
@@ -96,7 +96,7 @@ fn (mut tree Tree) generate_pages_graph() !map[string]map[string]bool {
 						path: current_page.path
 						msg: 'failed to get page pointer for include ${element.action.heroscript()}: ${err}'
 						cat: .include
-					)
+					)!
 					continue
 				}
 
@@ -105,7 +105,7 @@ fn (mut tree Tree) generate_pages_graph() !map[string]map[string]bool {
 						path: current_page.path
 						msg: 'failed to get page for include ${element.action.heroscript()}: ${err}'
 						cat: .include
-					)
+					)!
 					continue
 				}
 

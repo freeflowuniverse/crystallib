@@ -23,7 +23,7 @@ fn (mut collection Collection) scan_directory(mut p Path) ! {
 				path: entry
 				msg: 'Entry ${entry.name()} does not exists'
 				cat: .unknown
-			)
+			)!
 			continue
 		}
 
@@ -36,7 +36,7 @@ fn (mut collection Collection) scan_directory(mut p Path) ! {
 					path: entry
 					msg: 'Markdown files (${entry.path}) must not be linked'
 					cat: .unknown
-				)
+				)!
 				continue
 			}
 
@@ -170,7 +170,7 @@ pub fn (mut collection Collection) add_page(mut p Path) ! {
 			path: p
 			msg: 'Can\'t add ${p.path}: a page named ${ptr.name} already exists in the collection'
 			cat: .page_double
-		)
+		)!
 		return
 	}
 
@@ -199,7 +199,7 @@ pub fn (mut collection Collection) add_file(mut p Path) ! {
 			path: p
 			msg: 'Can\'t add ${p.path}: a file named ${ptr.name} already exists in the collection'
 			cat: .file_double
-		)
+		)!
 		return
 	}
 
@@ -227,7 +227,7 @@ pub fn (mut collection Collection) add_image(mut p Path) ! {
 			path: p
 			msg: 'Can\'t add ${p.path}: a file named ${ptr.name} already exists in the collection'
 			cat: .image_double
-		)
+		)!
 		return
 	}
 

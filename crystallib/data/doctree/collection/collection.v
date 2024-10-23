@@ -6,24 +6,25 @@ import freeflowuniverse.crystallib.core.texttools
 
 @[heap]
 pub struct Collection {
-pub:
-	name string @[required]
 pub mut:
-	path   Path                  @[required]
-	pages  map[string]&data.Page
-	files  map[string]&data.File
-	images map[string]&data.File
-	errors []CollectionError
-	heal   bool = true
+	name          string                @[required]
+	path          Path                  @[required]
+	fail_on_error bool
+	heal          bool = true
+	pages         map[string]&data.Page
+	files         map[string]&data.File
+	images        map[string]&data.File
+	errors        []CollectionError
 }
 
 @[params]
 pub struct CollectionNewArgs {
 mut:
-	name string @[required]
-	path string @[required]
-	heal bool = true // healing means we fix images, if selected will automatically load, remove stale links
-	load bool = true
+	name          string @[required]
+	path          string @[required]
+	heal          bool = true // healing means we fix images, if selected will automatically load, remove stale links
+	load          bool = true
+	fail_on_error bool
 }
 
 // get a new collection
@@ -36,6 +37,7 @@ pub fn new(args_ CollectionNewArgs) !Collection {
 		name: args.name
 		path: pp
 		heal: args.heal
+		fail_on_error: args.fail_on_error
 	}
 
 	if args.load {

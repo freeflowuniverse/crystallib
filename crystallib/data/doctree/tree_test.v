@@ -16,17 +16,17 @@ fn test_write_tree() {
 	// read tree1
 	mut tree1 := new(name: doctree.tree_name)!
 	tree1.scan(path: doctree.collections_path)!
-	tree1.export(dest: write_dir1.path)!
+	tree1.export(destination: write_dir1.path)!
 
 	// create tree2 from the written tree
 	mut tree2 := new(name: doctree.tree_name)!
 	tree2.scan(path: write_dir1.path)!
-	tree2.export(dest: write_dir2.path)!
+	tree2.export(destination: write_dir2.path)!
 
 	// write tree2 another time to compare the output of the two
 	mut tree3 := new(name: doctree.tree_name)!
 	tree3.scan(path: write_dir2.path)!
-	tree3.export(dest: write_dir3.path)!
+	tree3.export(destination: write_dir3.path)!
 
 	// assert the 1e tree matches the third one
 	assert tree1.collections.len == tree3.collections.len
