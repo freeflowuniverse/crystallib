@@ -2,6 +2,7 @@ module gittools
 
 // import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.ui.console
 import os
@@ -150,6 +151,11 @@ pub fn (mut gs GitStructure) code_get(args_ GSCodeGetFromUrlArgs) !string {
 
 	s := locator.path_on_fs()!
 	console.print_debug('repo path ${s.path}')
+
+	osal.exec(
+		cmd: 'git checkout ${myrepo.addr.branch}'
+		work_folder: s.path
+	)!
 	return s.path
 }
 
