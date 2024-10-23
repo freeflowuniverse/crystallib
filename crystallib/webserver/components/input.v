@@ -74,3 +74,14 @@ pub:
 pub fn (option Opt) html() string {
     return '<option value="${option.value}">${option.content}</option>'
 }
+
+pub struct SearchBar {
+pub:
+	route string
+}
+
+pub fn (input SearchBar) html() string {
+	return '<form id="search-form" action="${input.route}" method="GET" up-target="#table">
+      <input type="search" name="search" placeholder="Search documents" value="" up-delay="0.2s" up-autosubmit>
+    </form>'
+}

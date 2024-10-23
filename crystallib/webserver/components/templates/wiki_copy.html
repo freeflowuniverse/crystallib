@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@{wiki.title}</title>
         <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2.0.6/css/pico.classless.min.css"
@@ -259,33 +260,35 @@ docnav ul li {
     </style>
     <body>
         <textarea id="markdown-nav" style="display: none">
-@{layout.summary}
+@{summary}
         </textarea>
 
         <textarea id="markdown-input" style="display: none">
 
+@{index}
         </textarea>
         <main class="container">
             <mynav id="mynav"> </mynav>
-            <article id="markdown-output">
-                @{layout.main}
-            </article>
+            <article id="markdown-output"></article>
             <docnav>
                 <br />
                 <h5>Doc</h5>
                 <ul id="content-pointers"></ul>
             </docnav>
         </main>
-        <!-- <script>
+        <script>
             // Define the static_url variable to hold the base URL for static assets and pages
+            const static_url = "@{wiki.static_url}"; // Update with the correct URL
         
             // Function to log page views
             function logPageView(page) {
+                const logEndpoint = `/log/@{wiki.name}`;
         
                 // Construct the log payload
                 const logData = {
                     event: "view",
                     subject: "user",
+                    object: "@{wiki.name}",
                     message: JSON.stringify({
                         page: page,
                         duration: 0 // Assuming you want to start with a duration of 0
@@ -518,6 +521,6 @@ docnav ul li {
                     }
                 }
             }
-        </script> -->
+        </script>
     </body>
 </html>
