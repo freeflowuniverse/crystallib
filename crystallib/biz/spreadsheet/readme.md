@@ -48,7 +48,7 @@ export OFFLINE=1
 Properties to use in heroscript
 
 - rowname       string   - if specified then its one name
-- namefilter    []string - only include the exact names as secified for the rows
+- namefilter    []string - only include the exact names as specified for the rows
 - includefilter []string - to use with tags filter e.g. ['location:belgium_*'] //would match all words starting with belgium
 - excludefilter []string
 - period_type   PeriodType       - year, month, quarter
@@ -59,4 +59,5 @@ Properties to use in heroscript
 - title_sub     string
 - size          string
 - rowname_show  bool = true - show the name of the row
+- descr_show    bool = false - show the description of the row, if this is on then rowname_show will be put on 0
 - description   string	

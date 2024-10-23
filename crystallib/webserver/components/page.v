@@ -4,6 +4,7 @@ pub struct Page {
 pub:
 	heading PageHeading
 	content IComponent
+	scripts []Script
 }
 
 pub fn (page Page) html() string {

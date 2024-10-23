@@ -11,7 +11,7 @@ pub mut:
 	rows     map[string]&Row
 	nrcol    int = 60
 	params   SheetParams
-	currency currency.Currency
+	currency currency.Currency = currency.get("USD")!
 }
 
 pub struct SheetParams {
@@ -118,7 +118,7 @@ pub mut:
 }
 
 // internal function used by to year and by to quarter
-fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
+pub fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
 	mut args := args_
 	mut sheetname := args.name
 	if sheetname == '' {
@@ -136,7 +136,6 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
 		nrcol: nrcol_new
 		visualize_cur: s.params.visualize_cur
 		curr: s.currency.name
-		// currencies: s.currencies
 	)!
 	for _, row in s.rows {
 		// QUESTION: how to parse period_months
@@ -156,7 +155,8 @@ fn (s Sheet) tosmaller(args_ ToYearQuarterArgs) !&Sheet {
 			name: row.name
 			aggregatetype: row.aggregatetype
 			tags: row.tags
-			growth: '1:0.0'
+			growth: '0:0.0'
+			descr: row.description
 		)!
 		for x in 0 .. nrcol_new {
 			mut newval := 0.0
@@ -283,4 +283,12 @@ pub fn (mut s Sheet) cell_get(row string, col int) !&Cell {
 		return error('could not find cell from col:${col} for row name: ${row}')
 	}
 	return &c
+}
+
+
+// find row, report error if not found
+pub fn (mut s Sheet) delete(name string) {
+	if name in s.rows {
+		s.rows.delete(name)
+	}
 }

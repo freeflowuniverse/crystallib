@@ -1,6 +1,6 @@
 module components
 
-import freeflowuniverse.crystallib.medium.slides
+import freeflowuniverse.crystallib.webserver.components.slides
 import json
 
 pub struct Slides {

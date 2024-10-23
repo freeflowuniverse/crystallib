@@ -64,8 +64,8 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 		name: 'hr_cost_${name}'
 		growth: cost
 		tags: 'department:${department} hrcost'
-		descr: '"cost to company per function for department ${department}'
-		subgroup: 'HR cost.'
+		descr: 'Department ${department}'
+		subgroup: 'HR cost per department.'
 	)!
 	costpeople_row.action(action: .reverse)!
 
@@ -75,7 +75,7 @@ fn (mut m BizModel) employee_define_action(action Action) ! {
 			name: 'nrpeople_${name}'
 			growth: nrpeople
 			tags: 'hrnr'
-			descr: 'amount of people for ${descr}'
+			descr: '# people for ${descr}'
 			aggregatetype: .avg
 		)!
 		_ := costpeople_row.action(action: .multiply, rows: [nrpeople_row])!

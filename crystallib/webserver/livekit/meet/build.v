@@ -39,26 +39,3 @@ pub fn build(config BuildConfig) ! {
 
 	osal.exec(cmd: 'bash ${path}/build.sh')!
 }
-
-pub fn update_templates() !{
-	pathlib.get_dir(path:'${os.dir(@FILE)}/templates')!
-	
-	for name, url in templates {
-		mut path := osal.download(
-			name: name
-			reset: true
-			minsize_kb: 1
-			url: url
-			dest: '${os.dir(@FILE)}/templates/${name}'
-		)!
-
-		content := path.read()!
-		mut fixed := content.replace('@{app.static_url}', '#{app.static_url}')
-		fixed = fixed.replace('@@', '@') // escape templating syntax
-		fixed = fixed.replace('@', '@@') // escape templating syntax
-		fixed = fixed.replace('#{app.static_url}', '@{app.static_url}')
-		fixed = fixed.replace('$', '@{dollar}')
-		fixed = fixed.replace('@@{dollar}', '@{dollar}')
-		path.write(fixed)!
-	}
-}

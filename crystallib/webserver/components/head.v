@@ -31,6 +31,7 @@ pub fn (link Link) html() string {
 }
 
 pub struct Script {
+pub:
 	source string
 	async string
 }

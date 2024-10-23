@@ -15,7 +15,19 @@ pub mut:
 pub fn (mut r Row) copy(args_ RowCopyArgs) !&Row {
 	mut row_result := r
 	mut args := args_
-	if args.aggregatetype == .unknown {
+	if args.name==""{
+		return error("name cannot be empty for copy, args:${args} \non ${r}")
+	}
+	if args.tags==""{
+		args.tags = r.tags
+	}
+	if args.descr==""{
+		args.descr = r.description
+	}
+	if args.subgroup==""{
+		args.subgroup = r.subgroup
+	}
+	if args.aggregatetype==.unknown{
 		args.aggregatetype = r.aggregatetype
 	}
 	if args.name.len > 0 {

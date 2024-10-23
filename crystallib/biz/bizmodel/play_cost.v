@@ -53,7 +53,7 @@ fn (mut m BizModel) cost_define_action(action Action) ! {
 		name: 'cost_${name}'
 		growth: cost
 		tags: 'department:${department} ocost'
-		descr: '"cost overhead for department ${department}'
+		descr: 'cost overhead for department ${department}'
 		extrapolate: extrap
 	)!
 	cost_row.action(action: .reverse)!

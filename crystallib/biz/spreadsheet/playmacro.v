@@ -68,6 +68,7 @@ pub fn playmacro(action Action) !string {
 	}
 
 	rowname_show := p.get_default_true('rowname_show')
+	descr_show := p.get_default_true('descr_show')
 
 	args := RowGetArgs{
 		rowname: rowname
@@ -80,6 +81,7 @@ pub fn playmacro(action Action) !string {
 		title: title
 		size: size
 		rowname_show: rowname_show
+		descr_show: descr_show
 	}
 
 	mut content := ''

@@ -43,30 +43,8 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: 1fr 4fr;
-            gap: 2rem;
             padding: 0rem 2rem 2rem 2rem;
             flex: 1;
-        }
-
-        /* Sidebar styling */
-        .sidebar {
-            color: white;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            color: #c9c9d1;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .sidebar a:hover {
-            background-color: #0077b6;
-            color: #ffffff;
-            border-radius: 0.25rem;
         }
 
         /* Main content area styling */
@@ -117,11 +95,6 @@
 
     <!-- Dashboard Layout: Sidebar and Main Content -->
     <div class="grid-container">
-        <!-- Sidebar -->
-        <article>
-            @{view.sidebar.html()}
-        </article>
-
         <!-- Main content area -->
         <article class="main-content">
             @{view.main.html()}

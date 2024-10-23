@@ -9,6 +9,7 @@ pub mut:
 	employees map[string]&Employee
 	departments map[string]&Department
 	costcenters map[string]&Costcenter
+	products map[string]&Product
 }
 
 pub struct Employee {
@@ -43,3 +44,15 @@ pub:
 	department           string
 }
 
+
+pub struct Product {
+pub mut:
+	name                 string
+	title          string
+	description          string
+	order 				 int
+	has_revenue		 bool
+	has_items bool 
+	has_oneoffs bool
+	nr_months_recurring int
+}

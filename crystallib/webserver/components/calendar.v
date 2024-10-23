@@ -33,7 +33,6 @@ fn (mut self CalendarView) validate() ! {
 	}
 }
 
-
 fn (mut event CalendarEvent) validate() ! {
     // Check date format (dd/mm/yy)
     date_parts := event.date.split('/')

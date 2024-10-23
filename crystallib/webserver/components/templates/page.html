@@ -5,4 +5,7 @@
             @page.content.html()
         </section>
     </div>
-  </main>
+</main>
+@for script in page.scripts
+@{script.html()}
+@end

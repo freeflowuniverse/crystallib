@@ -2,7 +2,27 @@ module components
 
 import freeflowuniverse.crystallib.data.markdownparser.elements
 
+pub interface IView {
+    html() string
+mut:
+    main IComponent
+    navbar Navbar
+}
+
 pub struct View {
+pub mut:
+    navbar Navbar
+    main IComponent
+    content elements.Doc
+    markdown MarkdownContent
+    title string
+}
+
+pub fn (view View) html() string {
+    return $tmpl('./templates/view.html')
+}
+
+pub struct DashboardView {
 pub mut:
     navbar Navbar
     sidebar Sidebar
@@ -12,8 +32,8 @@ pub mut:
     title string
 }
 
-pub fn (view View) html() string {
-    return $tmpl('./templates/view.html')
+pub fn (view DashboardView) html() string {
+    return $tmpl('./templates/view_dashboard.html')
 }
 
 fn model_web_example() View {
