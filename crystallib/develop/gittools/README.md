@@ -2,7 +2,8 @@
 
 This project demonstrates the use of the `gittools` and `osal` modules from the `freeflowuniverse/crystallib` library to automate basic Git operations such as cloning a repository, creating branches, committing changes, and pushing them to a remote repository.
 
-The script provides functionalities like:
+Features:
+
 - Cloning or retrieving an existing repository.
 - Creating and checking out new branches.
 - Detecting file changes, adding them to staging, and committing.
@@ -15,6 +16,8 @@ The following example workflow is included in the script:
 
 ```v
 // Initializes the Git structure.
+import freeflowuniverse.crystallib.develop.gittools
+
 coderoot := '~/code'
 mut gs_default := gittools.new(coderoot: coderoot)!
 
@@ -28,7 +31,7 @@ repo_path := repo.get_path()!
 file_name := create_new_file(repo_path, runtime)!
 
 // Create a new branch, checkout, add changes, commit, and push.
-repo.create_branch(branch_name: branch_name, checkout: false)!
+repo.branch_create(branch_name: branch_name, checkout: false)!
 repo.checkout(branch_name: branch_name, pull: false)!
 
 if repo.has_changes() {
@@ -41,7 +44,7 @@ if repo.has_changes() {
 repo.checkout(checkout_to_base_branch: true, pull: true)!
 
 // Create tag from the base branch
-repo.create_tag(tag_name: tag_name)!
+repo.tag_create(tag_name: tag_name)!
 ```
 
 ## Tests

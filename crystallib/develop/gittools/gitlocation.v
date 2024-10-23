@@ -2,6 +2,26 @@ module gittools
 
 import freeflowuniverse.crystallib.core.pathlib
 
+
+// GitLocation uniquely identifies a Git repository, its online URL, and its location in the filesystem.
+@[heap]
+pub struct GitLocation {
+pub mut:
+	provider string // Git provider (e.g., GitHub)
+	account  string // Account name
+	name     string // Repository name
+	branch   string // Branch name
+	tag      string // Tag name
+	path     string // Path in the repository (not the filesystem)
+	anker    string // Position in a file
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
 // Get GitLocation from a path within the Git repository
 pub fn (mut gs GitStructure) gitlocation_from_path(path string) !GitLocation {
 	mut full_path := pathlib.get(path)

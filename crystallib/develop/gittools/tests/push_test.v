@@ -31,7 +31,7 @@ fn test_push_changes() {
     runtime := time.now().unix()
     branch_name := "testing_${runtime}"
     
-    repo.create_branch(branch_name: branch_name, checkout: false)!
+    repo.branch_create(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
     repo.checkout(branch_name: branch_name, pull: false)!

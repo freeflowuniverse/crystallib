@@ -12,7 +12,7 @@ import time
 // - Create a new branch.
 // - Verify that the branch is not checked out.
 [test]
-fn test_create_branch() {
+fn test_branch_create() {
     repo_setup := setup_repo()!
 
     mut gs := gittools.new(coderoot: repo_setup.coderoot)!
@@ -25,7 +25,7 @@ fn test_create_branch() {
     runtime := time.now().unix()
     branch_name := "testing_${runtime}"
     
-    repo.create_branch(branch_name: branch_name, checkout: false)!
+    repo.branch_create(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
     repo_setup.clean()!
@@ -52,7 +52,7 @@ fn test_checkout() {
     runtime := time.now().unix()
     branch_name := "testing_${runtime}"
     
-    repo.create_branch(branch_name: branch_name, checkout: false)!
+    repo.branch_create(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
     repo.checkout(branch_name: branch_name, pull: false)!
@@ -69,7 +69,7 @@ fn test_checkout() {
 // - Create a new tag.
 // - Verify the tag was created.
 [test]
-fn test_create_tag() {
+fn test_tag_create() {
     repo_setup := setup_repo()!
     
     mut gs := gittools.new(coderoot: repo_setup.coderoot)!
@@ -82,8 +82,8 @@ fn test_create_tag() {
     runtime := time.now().unix()
     tag_name := "tag_${runtime}"
 
-    repo.create_tag(tag_name: tag_name)!
-    assert repo.is_tag_exists(tag_name: tag_name)! == true
+    repo.tag_create(tag_name: tag_name)!
+    assert repo.tag_exists(tag_name: tag_name)! == true
 
     repo_setup.clean()!
 }
@@ -111,7 +111,7 @@ fn test_checkout_to_base_branch() {
     runtime := time.now().unix()
     branch_name := "testing_${runtime}"
     
-    repo.create_branch(branch_name: branch_name, checkout: false)!
+    repo.branch_create(branch_name: branch_name, checkout: false)!
     assert repo.status_local.branch != branch_name 
     
     repo.checkout(branch_name: branch_name, pull: false)!

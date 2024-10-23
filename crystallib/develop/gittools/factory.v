@@ -29,11 +29,20 @@ pub fn getset(args_ GitStructureConfig) !&GitStructure {
 	mut redis := c.redis()!
 	redis.set(gitstructure_config_key(key), datajson)!
 
-	return get(GitStructureGetArgs{ coderoot: args_.coderoot })!
+	return get(GitStructureNewArgs{ coderoot: args_.coderoot })!
 }
 
+// GitStructureNewArgs holds parameters for retrieving a GitStructure instance.
+@[params]
+pub struct GitStructureNewArgs {
+pub mut:
+	coderoot string // Root directory for the code
+	reload   bool   // If true, reloads the GitStructure from disk
+}
+
+
 // Create a new GitStructure instance based on the provided arguments.
-pub fn new(args_ GitStructureGetArgs) !&GitStructure {
+pub fn new(args_ GitStructureNewArgs) !&GitStructure {
 	mut args := args_
 	mut key := ''
 
@@ -50,7 +59,7 @@ pub fn new(args_ GitStructureGetArgs) !&GitStructure {
 }
 
 // Retrieve a GitStructure instance based on the given arguments.
-pub fn get(args_ GitStructureGetArgs) !&GitStructure {
+pub fn get(args_ GitStructureNewArgs) !&GitStructure {
 	mut args := args_
 	mut key := ''
 
@@ -63,6 +72,8 @@ pub fn get(args_ GitStructureGetArgs) !&GitStructure {
 			}
 			if args.reload {
 				gs.load()!
+			}else{
+				gs.init()!
 			}
 			return gs
 		}
@@ -73,9 +84,10 @@ pub fn get(args_ GitStructureGetArgs) !&GitStructure {
 	mut redis := c.redis()!
 	mut datajson := redis.get(gitstructure_config_key(key))!
 
-	// if datajson == '' {
-	// 	return error("Unable to find git structure for coderoot: '${args.coderoot}'")
-	// }
+	if datajson == '' {
+		//is a but should never happen because otherwise the get/set was not done propery
+		return error("Unable to find git structure for coderoot, do a getset in stead: '${args.coderoot}'")
+	}
 
 	mut config := json.decode(GitStructureConfig, datajson)!
 

@@ -1,7 +1,6 @@
 module gittools
 
 import freeflowuniverse.crystallib.ui.console
-import freeflowuniverse.crystallib.core.base
 import freeflowuniverse.crystallib.osal
 import os
 import time
@@ -15,101 +14,77 @@ pub mut:
 	name          string              // Repository name
 	status_remote GitRepoStatusRemote // Remote repository status
 	status_local  GitRepoStatusLocal  // Local repository status
+	status_wanted  GitRepoStatusWanted  // what is the status we want?
 	config        GitRepoConfig       // Repository-specific configuration
+	last_load    int               // Epoch timestamp of the last load from reality	
 }
 
-// Arguments used when performing repository operations like branch management or commits.
-@[params]
-pub struct RepositoryArgs {
+// this is the status we want, we need to work towards off
+pub struct GitRepoStatusWanted {
 pub mut:
-	branch_name             string // The branch to act on.
-	tag_name                string // The tag to act on.
-	checkout                bool   // Whether to checkout the branch.
-	pull                    bool   // Whether to pull after checkout.
-	checkout_to_base_branch bool   // Whether to checkout to the base branch (e.g., main).
+	branch   string
+	tag 	 string
+	url      string            // Remote repository URL, is basically the one we want	
+	readonly bool			   // if read only then we cannot push or commit, all changes will be reset when doing pull
 }
 
-// ActionArgs defines parameters for performing Git actions like commit, push, or pull.
-@[params]
-pub struct ActionArgs {
+// GitRepoStatusRemote holds remote status information for a repository.
+pub struct GitRepoStatusRemote {
 pub mut:
-	reload    bool   = true // Whether to reload the repository status.
-	msg       string        // The commit message.
-	branch    string        // The branch to act on.
-	tag       string        // The tag to checkout.
-	recursive bool          // Perform recursive actions (e.g., update submodules).
-	push_tag  bool          // Determine whether the user needs to push the tags or not.
+	ref_default 		string //is the default branch hash
+	branches      map[string]string // Branch name -> commit hash
+	tags          map[string]string // Tag name -> commit hash
 }
 
-// Check if there are any unstaged or untracked changes in the repository.
-pub fn (repo GitRepo) has_changes() !bool {
-	repo.check()!
-	untracked_changes := repo.get_unstaged_changes()!
-	return untracked_changes.len > 0
+// GitRepoStatusLocal holds local status information for a repository.
+pub struct GitRepoStatusLocal {
+pub mut:
+	branches   map[string]string // Branch name -> commit hash
+	branch 	   string //the current branch
+	tag        string // If the local branch is not set, the tag may be set
 }
 
-// Stage all changes in the repository.
-pub fn (mut repo GitRepo) add_changes() ! {
-	repo.check()!
-	repo_path := repo.get_path()!
-	cmd := 'git -C ${repo_path} add . -A'
-	osal.exec(cmd: cmd) or { return error('Cannot add to repo: ${repo_path}. Error: ${err}') }
-	console.print_green('Changes added successfully.')
+// GitRepoConfig holds repository-specific configuration options.
+pub struct GitRepoConfig {
+pub mut:
+	remote_check_period int // Seconds to wait between remote checks (0 = check every time)
 }
 
-// Check if there are staged changes to commit.
-pub fn (repo GitRepo) need_commit() !bool {
-	repo.check()!
-	return repo.get_staged_changes()!.len > 0
-}
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
 
 // Commit the staged changes with the provided commit message.
-pub fn (mut repo GitRepo) commit(args ActionArgs) ! {
-	repo.update_status()!
+pub fn (mut repo GitRepo) commit(msg string) ! {
+	repo.status_update()!
 	if repo.need_commit()! {
-		if args.msg == '' {
+		if msg == '' {
 			return error('Commit message is empty.')
 		}
 		repo_path := repo.get_path()!
-		cmd := 'git -C ${repo_path} commit -m "${args.msg}"'
-		osal.exec(cmd: cmd) or { return error('Cannot commit repo: ${repo_path}. Error: ${err}') }
+		repo.exec('git add . -A') or { 
+				return error('Cannot add to repo: ${repo_path}. Error: ${err}') }
+		repo.exec('git commit -m "${msg}"') or { 
+				return error('Cannot commit repo: ${repo_path}. Error: ${err}') }
 		console.print_green('Changes committed successfully.')
 	} else {
-		console.print_stderr('No changes to commit.')
+		console.print_debug('No changes to commit.')
 	}
 	repo.load()!
 }
 
-// Check if the repository has changes that need to be pushed.
-pub fn (mut repo GitRepo) need_push() !bool {
-	repo.check()!
-	last_remote_commit := repo.get_last_remote_commit() or { return error('Failed to get last remote commit: ${err}') }
-	last_local_commit := repo.get_last_local_commit() or { return error('Failed to get last local commit: ${err}') }
-	return last_local_commit != last_remote_commit
-}
+
+
 
 // Push local changes to the remote repository.
-pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
-	repo.update_status()!
-	if repo.need_push()! {		
-		repo_path := repo.get_path()!
+pub fn (mut repo GitRepo) push() ! {
+	repo.status_update()!
+	if repo.need_push_or_pull()! {		
 		url := repo.get_repo_url()!
 		console.print_header('Pushing changes to ${url}')
-
-		base_branch := repo.get_base_branch()!
-		mut cmd := ''
-
-		if args_.branch == base_branch {
-			'git -C ${repo_path} push'
-		} else {
-			'git -C ${repo_path} push origin HEAD'
-		}
-
-		if args_.push_tag{
-			cmd = 'git -C ${repo_path} push --tags'
-		}
-
-		osal.exec(cmd: cmd) or { return error('Failed to push due to: ${err}') }
+		repo.exec('git push')!
 		console.print_green('Changes pushed successfully.')
 		repo.load()!
 	} else {
@@ -118,29 +93,24 @@ pub fn (mut repo GitRepo) push(args_ ActionArgs) ! {
 	}
 }
 
-// Check if a pull is needed (if remote has new changes).
-pub fn (mut repo GitRepo) need_pull() !bool {
-	repo.get_last_remote_commit(fetch: true)!
-	return repo.status_remote.latest_commit != repo.status_local.latest_commit
+
+@[params]
+pub struct PullCheckoutArgs {
+pub mut:
+	submodules bool //if we want to pull for submodules
 }
 
 // Pull remote content into the repository.
-pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
-	branch_args := RepositoryArgs{
-		branch_name: args_.branch
-		tag_name: args_.tag
-	}
-
-	if repo.need_checkout(branch_args)! {
-		repo.checkout(branch_args)!
+pub fn (mut repo GitRepo) pull(args_ PullCheckoutArgs) ! {
+	repo.status_update()!
+	if repo.need_checkout() {
+		repo.checkout()!
 	}
 
 	repo_path := repo.get_path()!
-	cmd := 'git -C ${repo_path} pull'
-	osal.exec(cmd: cmd) or { return error('Cannot pull repo: ${repo_path}. Error: ${err}') }
+	repo.exec('git pull') or { return error('Cannot pull repo: ${repo_path}. Error: ${err}') }
 
-
-	if args_.recursive {
+	if args_.submodules {
 		repo.update_submodules()!
 	}
 
@@ -148,196 +118,68 @@ pub fn (mut repo GitRepo) pull(args_ ActionArgs) ! {
 	console.print_green('Changes pulled successfully.')
 }
 
-// Determine if the repository needs to checkout to a different branch.
-fn (mut repo GitRepo) need_checkout(args_ RepositoryArgs) !bool {
-	return args_.branch_name != repo.status_local.branch || args_.tag_name != repo.status_local.tag
-}
-
 // Checkout a branch in the repository.
-pub fn (mut repo GitRepo) checkout(args_ RepositoryArgs) ! {
-	mut args := args_
-	if args.branch_name.len > 0 && args.tag_name.len > 0 {
-		return error('You can only specify either the branch name nor tag name.')
-	}
-
-	repo.load()!
-	repo_path := repo.get_path()!
+pub fn (mut repo GitRepo) checkout() ! {
+	repo.status_update()!	
 
 	if repo.need_commit()! {
 		return error('Cannot checkout branch due to uncommitted changes in ${repo_path}.')
 	}
 
-	repo.fetch_all()!
-
-	if args.checkout_to_base_branch {
-		repo.status_local.branch = repo.get_base_branch()!
-	}
-	
-	if args.branch_name.len > 0 {
-		repo.status_local.branch = args.branch_name
-	}
-
-	if args.tag_name.len > 0 {
-		repo.status_local.tag = args.tag_name
-	}
-
-	checkout_to := if args.tag_name.len > 0 {repo.status_local.tag} else {repo.status_local.branch}
-
-	cmd := 'git -C ${repo_path} checkout ${checkout_to}'
-	osal.exec(cmd: cmd) or { return error('Cannot checkout branch: ${repo_path}. Error: ${err}') }
+	repo.exec('git checkout ${checkout_to}') or { return error('Cannot checkout branch: ${repo_path}. Error: ${err}') }
 	console.print_green('Switched to branch ${repo.status_local.branch} successfully.')
 
-	if args.pull {
-		repo.pull(reload: true)!
-	}
+	repo.pull()!
 }
 
 // Create a new branch in the repository.
-pub fn (mut repo GitRepo) create_branch(args_ RepositoryArgs) ! {
-	repo_path := repo.get_path()!
-	cmd := if args_.checkout { 'checkout -b' } else { 'branch -c' }
-	full_cmd := 'git -C ${repo_path} ${cmd} ${args_.branch_name}'
-	osal.exec(cmd: full_cmd) or { return error('Cannot create branch: ${repo_path}. Error: ${err}') }
-	console.print_green('Branch ${args_.branch_name} created successfully.')
+pub fn (mut repo GitRepo) branch_create(branchname string) ! {
+	repo.exec('git checkout -c ${branchname}') or { return error('Cannot Create branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
+	console.print_green('Branch ${branchname} created successfully.')
+	repo.status_local.branch = branchname
+	repo.status_local.tag = ''
+}
 
-	if args_.checkout{
-		repo.status_local.branch = args_.branch_name
-		repo.status_local.tag = ''
-	}
+pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
+	repo.exec('git checkout -b ${branchname}') or { return error('Cannot switch branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
+	console.print_green('Branch ${branchname} switched successfully.')
+	repo.status_local.branch = branchname
+	repo.status_local.tag = ''
+}
+
+
+// Create a new branch in the repository.
+pub fn (mut repo GitRepo) tag_create(tagname string) ! {
+	repo_path := repo.get_path()!
+	repo.exec('git tag ${tagname}') or { return error('Cannot create tag: ${repo_path}. Error: ${err}') }
+	console.print_green('Tag ${tagname} created successfully.')
+}
+
+pub fn (mut repo GitRepo) tag_switch(tagname string) ! {
+	repo.exec('git checkout ${tagname}') or { 
+			return error('Cannot switch to tag: ${tagname}. Error: ${err}') 
+		}
+	console.print_green('Tag ${tagname} activated.')
+	repo.status_local.branch = ''
+	repo.status_local.tag = tagname
 }
 
 // Create a new branch in the repository.
-pub fn (mut repo GitRepo) create_tag(args_ RepositoryArgs) ! {
-	repo_path := repo.get_path()!
-	mut cmd := 'git -C ${repo_path} tag ${args_.tag_name}'
-
-	osal.exec(cmd: cmd) or { return error('Cannot create tag: ${repo_path}. Error: ${err}') }
-	console.print_green('Tag ${args_.tag_name} created successfully.')
-
-	if args_.checkout{
-		cmd = 'git -C ${repo_path} checkout ${args_.tag_name}'
-		osal.exec(cmd: cmd) or { return error('Cannot checkout to tag: ${args_.tag_name}. Error: ${err}') }
-		console.print_green('Tag ${args_.branch_name} activated.')
-		repo.status_local.branch = ''
-		repo.status_local.tag = args_.tag_name
-	}
-}
-
-// Create a new branch in the repository.
-pub fn (mut repo GitRepo) is_tag_exists(args_ RepositoryArgs) !bool {
-	repo.fetch_all()!
-	repo.load()!
-	repo_path := repo.get_path()!
-	mut cmd := 'git -C ${repo_path} show ${args_.tag_name}'
-
-	osal.exec(cmd: cmd) or { return false }
+pub fn (mut repo GitRepo) tag_exists(tag string) !bool {
+	repo.exec('git show ${tag}') or { return false }
 	return true
 }
 
-// Remove cache
-fn (repo GitRepo) delete_cache() ! {
-	mut context := base.context() or { return error('Cannot get the context due to: ${err}') }
-	mut redis := context.redis() or { return error('Cannot get redis due to: ${err}') }
-	cache_key := repo.get_cache_key()
-	redis.del(cache_key) or { return error('Cannot delete the repo cache due to: ${err}') }
-}
 
 // Deletes the Git repository
 pub fn (mut repo GitRepo) delete() ! {
 	repo_path := repo.get_path()!
-	if !os.exists(repo_path) {
-		return error('The repo path ${repo_path} does not exists')
-	}
-
-	repo.delete_cache()!
-	cmd := 'rm -rf ${repo_path}'
-	osal.exec(cmd: cmd) or { return error('Cannot execute the delete command due to: ${err}') }
+	repo.cache_delete()!
+	osal.rm(repo_path)!
 	repo.load()!
 }
 
-// Load repo information
-fn (mut repo GitRepo) load() ! {
-	console.print_debug('load ${repo.get_key()}')
-	path := repo.get_path()!
 
-	repo.load_local_branch_info(path)!
-	repo.load_remote_info(path)!
-
-	repo.status_local.last_check = int(time.now().unix())
-	repo.status_remote.last_check = int(time.now().unix())
-}
-
-// Helper to load local branch or tag info
-fn (mut repo GitRepo) load_local_branch_info(path string) ! {
-	repo.get_last_local_commit()!
-	cmd_result := osal.execute_silent('git -C ${path} rev-parse --abbrev-ref HEAD') or {
-		return error('Failed to fetch branch info: ${err}')
-	}
-
-	branch_or_head := cmd_result.trim_space()
-	if branch_or_head == 'HEAD' {
-		repo.status_local.detached = true
-		repo.status_local.tag = osal.execute_silent('git -C ${path} describe --tags --exact-match') or { '' }.trim_space()
-	} else {
-		repo.status_local.detached = false
-		repo.status_local.branch = branch_or_head
-	}
-}
-
-// Helper to load remote branch and tag information
-fn (mut repo GitRepo) load_remote_info(path string) ! {
-	// Fetch repo URL
-	repo.status_remote.url = osal.execute_silent('git -C ${path} config --get remote.origin.url') or {
-		return error('Failed to fetch remote URL: ${err}')
-	}
-
-	repo.get_last_remote_commit(fetch: true)!
-	repo.load_remote_branches(path)!
-	repo.load_remote_tags(path)!
-}
-
-// Helper to load remote branches
-fn (mut repo GitRepo) load_remote_branches(path string) ! {
-	branches_result := osal.execute_silent('git -C ${path} branch -r --format "%(refname:lstrip=2) %(objectname)"') or {
-		return error('Failed to fetch remote branches: ${err}')
-	}
-
-	for line in branches_result.split('\n') {
-		if line.trim_space() != '' {
-			parts := line.split(' ')
-			if parts.len == 2 {
-				branch_name := parts[0].trim_space().replace('origin/', '')
-				commit_hash := parts[1].trim_space()
-
-				// Update remote branches info
-				repo.status_remote.branches[branch_name] = commit_hash
-
-				// Set the latest remote commit if it matches the current branch
-				if branch_name == repo.status_local.branch {
-					repo.status_remote.latest_commit = commit_hash
-				}
-			}
-		}
-	}
-}
-
-// Helper to load remote tags
-fn (mut repo GitRepo) load_remote_tags(path string) ! {
-	tags_result := osal.execute_silent('git -C ${path} show-ref --tags') or { '' }
-
-	for line in tags_result.split('\n') {
-		if line.trim_space() != '' {
-			parts := line.split(' ')
-			if parts.len == 2 {
-				commit_hash := parts[0].trim_space()
-				tag_name := parts[1].all_after('refs/tags/').trim_space()
-
-				// Update remote tags info
-				repo.status_remote.tags[tag_name] = commit_hash
-			}
-		}
-	}
-}
 
 // Create GitLocation from the path within the Git repository
 pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
@@ -361,7 +203,7 @@ pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
 }
 
 // Check if repo path exists and validate fields
-pub fn (repo GitRepo) check() ! {
+pub fn (repo GitRepo) init() ! {
 	path_string := repo.get_path()!
 	if repo.gs.coderoot.path == '' {
 		return error('Coderoot cannot be empty')
@@ -381,50 +223,57 @@ pub fn (repo GitRepo) check() ! {
 	}
 }
 
-pub fn (mut repo GitRepo) update_status(args StatusUpdateArgs) ! {
-	// Check current time vs last check, if needed (check period) then load
-	repo.redis_load()! // Ensure we have the situation from redis
-	current_time := int(time.now().unix())
-	if args.reload || repo.config.remote_check_period == 0
-		|| current_time - repo.status_remote.last_check >= repo.config.remote_check_period {
-		repo.load()!
-	}
-}
-
-pub fn (mut repo GitRepo) fetch_all() ! {
-	cmd := 'cd ${repo.get_path()!} && git fetch --all'
-	osal.execute_silent(cmd) or {
-		return error('Cannot fetch repo: ${repo.get_path()!}. Error: ${err}')
-	}
-	repo.load()!
-}
 
 // Removes all changes from the repo; be cautious
-pub fn (mut repo GitRepo) remove_changes(args_ ActionArgs) ! {
-	repo.update_status()!
+pub fn (mut repo GitRepo) remove_changes() ! {
+	repo.status_update()!
 	if repo.need_commit()! {
 		console.print_header('Removing changes in ${repo.get_path()!}')
-		cmd := 'cd ${repo.get_path()!} && git reset HEAD --hard && git clean -xfd'
-		res := osal.exec(cmd: cmd, raise_error: false)!
-		if res.exit_code > 0 {
-			console.print_header('Could not remove changes; will re-clone ${repo.get_path()!}')
-			mut p := repo.patho()!
-			p.delete()! // remove path, this will re-clone the full thing
-			// Uncomment to re-clone the repo
+		repo.exec('git reset HEAD --hard && git clean -xfd') or {
+			return error("can't remove changes on repo: ${repo.get_path()!}.\n${err}")
+			// TODO: we can do this fall back later
+			// console.print_header('Could not remove changes; will re-clone ${repo.get_path()!}')
+			// mut p := repo.patho()!
+			// p.delete()! // remove path, this will re-clone the full thing
 			// repo.load_from_url()!
 		}
 	}
 	repo.load()!
 }
 
-
-
-
+//alias for remove changes
+pub fn (mut repo GitRepo) reset() ! {
+	return repo.remove_changes()
+}
 
 // Update submodules
 fn (mut repo GitRepo) update_submodules() ! {
-	cmd := 'cd ${repo.get_path()!} && git submodule update --init --recursive'
-	osal.execute_silent(cmd) or {
+	repo.exec('git submodule update --init --recursive') or {
 		return error('Cannot update submodules for repo: ${repo.get_path()!}. Error: ${err}')
+	}
+}
+
+
+
+fn (repo GitRepo) exec(cmd_ string) !string {
+	repo_path := repo.get_path()!
+	cmd:="cd ${repo_path} && ${cmd_}"
+	if repo.gs.config.log{
+		console.print_green(cmd)
+	}
+	r:=osal.exec(cmd:cmd, stdout: true,debug:true)!
+	return r.output
+}
+
+
+
+pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
+	// Check current time vs last check, if needed (check period) then load
+	repo.cache_get()! // Ensure we have the situation from redis
+	repo.init()!	
+	current_time := int(time.now().unix())
+	if args.reload || repo.config.remote_check_period == 0
+		|| current_time - repo.status_remote.last_check >= repo.config.remote_check_period {
+		repo.load()!
 	}
 }
