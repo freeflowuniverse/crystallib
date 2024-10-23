@@ -310,7 +310,7 @@ fn (repo GitRepo) exec(cmd_ string) !string {
 pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
 	// Check current time vs last check, if needed (check period) then load
 	repo.cache_get()! // Ensure we have the situation from redis
-	repo.init()!	
+	repo.init()!
 	current_time := int(time.now().unix())
 	if args.reload || repo.last_load == 0
 		|| current_time - repo.last_load >= repo.config.remote_check_period {

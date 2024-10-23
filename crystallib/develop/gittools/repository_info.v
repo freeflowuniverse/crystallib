@@ -41,7 +41,7 @@ fn (repo GitRepo) get_changes_staged() ![]string {
 
 
 // Check if there are any unstaged or untracked changes in the repository.
-pub fn (repo GitRepo) has_changes() !bool {
+pub fn (mut repo GitRepo) has_changes() !bool {
 	repo.status_update()!
 	r0:=	repo.get_changes_unstaged()!
 	r1:=	repo.get_changes_staged()!
@@ -53,7 +53,7 @@ pub fn (repo GitRepo) has_changes() !bool {
 
 
 // Check if there are staged changes to commit.
-pub fn (repo GitRepo) need_commit() !bool {
+pub fn (mut repo GitRepo) need_commit() !bool {
 	return repo.has_changes()!
 }
 

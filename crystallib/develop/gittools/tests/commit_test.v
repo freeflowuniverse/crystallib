@@ -39,18 +39,18 @@ fn test_need_commit() {
 
     assert repo.has_changes()! == true
 
-    mut staged_changes := repo.get_staged_changes()!
+    mut staged_changes := repo.get_changes_staged()!
     assert staged_changes.len == 0
 
-    mut unstaged_changes := repo.get_unstaged_changes()!
+    mut unstaged_changes := repo.get_changes_unstaged()!
     assert unstaged_changes.len != 0
 
     repo.add_changes()!
 
-    staged_changes = repo.get_staged_changes()!
+    staged_changes = repo.get_changes_staged()!
     assert staged_changes.len != 0
 
-    unstaged_changes = repo.get_unstaged_changes()!
+    unstaged_changes = repo.get_changes_unstaged()!
     assert unstaged_changes.len == 0
 
     assert repo.need_commit()! == true
@@ -90,28 +90,28 @@ fn test_commit_changes() {
 
     assert repo.has_changes()! == true
 
-    mut staged_changes := repo.get_staged_changes()!
+    mut staged_changes := repo.get_changes_staged()!
     assert staged_changes.len == 0
 
-    mut unstaged_changes := repo.get_unstaged_changes()!
+    mut unstaged_changes := repo.get_changes_unstaged()!
     assert unstaged_changes.len != 0
 
     repo.add_changes()!
 
-    staged_changes = repo.get_staged_changes()!
+    staged_changes = repo.get_changes_staged()!
     assert staged_changes.len != 0
 
-    unstaged_changes = repo.get_unstaged_changes()!
+    unstaged_changes = repo.get_changes_unstaged()!
     assert unstaged_changes.len == 0
 
     assert repo.need_commit()! == true
     commit_msg := 'feat: Added ${file_name} file.'
 	repo.commit(msg: commit_msg)!
 
-    staged_changes = repo.get_staged_changes()!
+    staged_changes = repo.get_changes_staged()!
     assert staged_changes.len == 0
 
-    unstaged_changes = repo.get_unstaged_changes()!
+    unstaged_changes = repo.get_changes_unstaged()!
     assert unstaged_changes.len == 0
 
     repo_setup.clean()!

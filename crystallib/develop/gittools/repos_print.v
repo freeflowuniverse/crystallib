@@ -10,11 +10,8 @@ fn get_repo_status(gr GitRepo) !string {
 	if repo.need_commit()! {
 		statuses << 'COMMIT'
 	}
-	if repo.need_pull()! {
-		statuses << 'PULL'
-	}
-	if repo.need_push()! {
-		statuses << 'PUSH'
+	if repo.need_push_or_pull()! {
+		statuses << 'PULL, PUSH'
 	}
 	return statuses.join(', ')
 }

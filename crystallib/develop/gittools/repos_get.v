@@ -104,7 +104,7 @@ pub fn (mut gitstructure GitStructure) get_repo(args_ ReposGetArgs) !&GitRepo {
 		if args.url.len == 0 {
 			return error('Cannot clone the repository, no URL provided: ${args.url}')
 		}
-		return gitstructure.clone(args.url)!
+		return gitstructure.clone(url: args.url)!
 	}
 
 	if repositories.len > 1 {

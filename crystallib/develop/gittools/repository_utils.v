@@ -78,13 +78,12 @@ fn (self GitRepo) get_http_url() !string {
 
 // Return rich path object from our library crystal lib
 pub fn (repo GitRepo) patho() !pathlib.Path {
-	
 	return pathlib.get_dir(path: repo.get_path()!, create: false)!
 }
 
 pub fn (mut repo GitRepo) display_current_status() ! {
-	staged_changes := repo.get_staged_changes()!
-	unstaged_changes := repo.get_unstaged_changes()!
+	staged_changes := repo.get_changes_staged()!
+	unstaged_changes := repo.get_changes_unstaged()!
 
 	console.print_header('Staged changes:')
 	for f in staged_changes {
