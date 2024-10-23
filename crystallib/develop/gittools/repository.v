@@ -156,14 +156,12 @@ pub fn (mut repo GitRepo) checkout() ! {
 
 // Create a new branch in the repository.
 pub fn (mut repo GitRepo) branch_create(branchname string) ! {
-	repo.exec('git checkout -c ${branchname}') or { return error('Cannot Create branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
+	repo.exec('git branch -c ${branchname}') or { return error('Cannot Create branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
 	console.print_green('Branch ${branchname} created successfully.')
-	repo.status_local.branch = branchname
-	repo.status_local.tag = ''
 }
 
 pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
-	repo.exec('git checkout -b ${branchname}') or { return error('Cannot switch branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
+	repo.exec('git switch ${branchname}') or { return error('Cannot switch branch: ${repo.get_path()!} to ${branchname}\nError: ${err}') }
 	console.print_green('Branch ${branchname} switched successfully.')
 	repo.status_local.branch = branchname
 	repo.status_local.tag = ''

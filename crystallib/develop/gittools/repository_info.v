@@ -76,9 +76,11 @@ fn (mut repo GitRepo) need_checkout() bool {
 		if repo.status_wanted.tag != repo.status_local.tag{
 			return true
 		}		
-	}else{
-		panic("bug, should never be empty")
 	}
+	// it could be empty since the status_wanted are optional. 
+	// else{
+	// 	panic("bug, should never be empty ${repo.status_wanted.branch}, ${repo.status_local.branch}")
+	// }
 	return false
 }
 
