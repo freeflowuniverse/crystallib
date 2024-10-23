@@ -50,7 +50,7 @@ fn (mut repo GitRepo) load_branches() ! {
 
 // Helper to load remote tags
 fn (mut repo GitRepo) load_tags() ! {
-	tags_result := repo.exec('git show-ref --tags')!
+	tags_result := repo.exec('git tag --list')!
 
 	for line in tags_result.split('\n') {
 		if line.trim_space() != '' {
