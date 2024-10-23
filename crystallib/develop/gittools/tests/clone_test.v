@@ -14,13 +14,12 @@ import time
 // - Check if the repository path exists locally.
 [test]
 fn test_clone_repo() {
-	// time.sleep(5 * time.second)
     repo_setup := setup_repo()!
 
     mut gs := gittools.new(coderoot: repo_setup.coderoot)!
-    mut repo := gs.get_repo(name: repo_setup.repo_name, clone: true, url: repo_setup.repo_url)!
+    mut repo := gs.get_repo(url: repo_setup.repo_url)!
     
-    assert repo.name == "repo3"
+    assert repo.name == "repo2"
     repo_path := repo.get_path()!
     assert os.exists(repo_path) == true
     

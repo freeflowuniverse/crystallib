@@ -9,6 +9,11 @@ import freeflowuniverse.crystallib.develop.sourcetree
 
 import os
 
+@[params]
+struct GetParentDir{
+pub mut:
+	create bool
+}
 
 fn (repo GitRepo) get_key() string {
 	return '${repo.gs.key}:${repo.provider}:${repo.account}:${repo.name}'
@@ -28,12 +33,13 @@ pub fn (repo GitRepo) get_relative_path() !string {
 	return mypath.path_relative(repo.gs.coderoot.path) or { panic("couldn't get relative path") }
 }
 
-pub fn (repo GitRepo) get_parent_dir() !string {
+pub fn (repo GitRepo) get_parent_dir(args GetParentDir) !string {
 	repo_path := repo.get_path()!
 	parent_dir := os.dir(repo_path)
-	if !os.exists(parent_dir) {
+	if !os.exists(parent_dir) && !args.create {
 		return error('Parent directory does not exist: ${parent_dir}')
 	}
+	os.mkdir_all(parent_dir)!
 	return parent_dir
 }
 

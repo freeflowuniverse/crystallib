@@ -34,7 +34,6 @@ fn create_new_file(repo_path string, runtime i64)! string {
 fn setup_repo() !GittoolsTests {   
     ts := GittoolsTests{
         coderoot: '/tmp/code',
-        repo_dir: '/tmp/code/github/Mahmoud-Emad',
         repo_url: 'https://github.com/Mahmoud-Emad/repo2.git',
     }
 

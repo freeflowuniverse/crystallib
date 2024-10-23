@@ -55,18 +55,15 @@ pub mut:
 
 //just some initialization mechanism
 pub fn (mut gitstructure GitStructure) repo_new_from_gitlocation(git_location GitLocation) !&GitRepo {
-
 	mut repo := GitRepo{
 		provider: git_location.provider
 		name: git_location.name
 		account: git_location.account
-		gs: gitstructure
+		gs: &gitstructure
 		status_remote: GitRepoStatusRemote{}
 		status_local: GitRepoStatusLocal{}
 		status_wanted: GitRepoStatusWanted{}				
 	}
-
-	repo.init()!
 
 	gitstructure.repos[repo.name] = &repo
 

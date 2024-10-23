@@ -22,19 +22,16 @@ pub fn (mut gitstructure GitStructure) clone(args GitCloneArgs) !&GitRepo {
 	console.print_header("Git clone from the URL: ${args.url}.")
 	git_location := gitstructure.gitlocation_from_url(args.url)!
 
-	
 	mut repo := gitstructure.repo_new_from_gitlocation(git_location)!
 	repo.status_wanted.url = args.url
 
-	if args.sshkey.len>0{
-		//TODO: set the sshkey, save in ~/hero/cfg/sshkeys/$md5hash.pub then add to the git repo
-		panic("implement")
-	}
+	// if args.sshkey.len>0{
+	// 	//TODO: set the sshkey, save in ~/hero/cfg/sshkeys/$md5hash.pub then add to the git repo
+	// 	panic("implement")
+	// }
 
-	// Set the parent directory where the repository should be cloned.
-	parent_dir := repo.get_parent_dir()!
-	
-	
+	parent_dir := repo.get_parent_dir(create: true)!
+
 	mut extra:=""
 	if gitstructure.config.light{
 		extra="--depth 1 --no-single-branch "

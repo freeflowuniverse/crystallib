@@ -37,10 +37,6 @@ pub fn (mut gitstructure GitStructure) get_repos(args_ ReposGetArgs) ![]&GitRepo
 	mut args := args_
 	mut res := []&GitRepo{}
 
-	if args.url.len>0{
-		return error("can't specify url for get_repos.")
-	}
-
 	for _, repo in gitstructure.repos {
 		relpath := repo.get_relative_path()!
 
