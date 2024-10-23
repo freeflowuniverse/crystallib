@@ -45,7 +45,7 @@ pub mut:
 
 // url_get returns the URL of a git address
 fn (self GitRepo) get_repo_url(args GetRepoUrlArgs) !string {
-	url := self.status_remote.url
+	url := self.status_wanted.url
 	if url.len != 0 {
 		if args.with_branch{
 			return '${url}/tree/${self.status_local.branch}'

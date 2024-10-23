@@ -4,25 +4,43 @@ module gittools
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 
+@[params]
+pub struct GitCloneArgs {
+pub mut:
+	url string
+	sshkey string
+}
+
+
+
 // Clones a new repository into the git structure based on the provided arguments.
-pub fn (mut gitstructure GitStructure) clone(url string) !&GitRepo {
+pub fn (mut gitstructure GitStructure) clone(args GitCloneArgs) !&GitRepo {
 	
-	console.print_header("Git clone from the URL: ${url}.")
-	git_location := gitstructure.gitlocation_from_url(url)!
-	mut repo := &GitRepo{
-		provider: git_location.provider
-		name: git_location.name
-		account: git_location.account
-		gs: gitstructure
-		status_remote: GitRepoStatusRemote{
-			url: url
-		}
+	if args.url.len==0{
+		return error("url needs to be specified when doing a clone.")
+	}
+	console.print_header("Git clone from the URL: ${args.url}.")
+	git_location := gitstructure.gitlocation_from_url(args.url)!
+
+	
+	mut repo := gitstructure.repo_new_from_gitlocation(git_location)!
+	repo.status_wanted.url = args.url
+
+	if args.sshkey.len>0{
+		//TODO: set the sshkey, save in ~/hero/cfg/sshkeys/$md5hash.pub then add to the git repo
+		panic("implement")
 	}
 
 	// Set the parent directory where the repository should be cloned.
 	parent_dir := repo.get_parent_dir()!
 	
-	cmd := 'cd ${parent_dir} && git clone ${repo.get_repo_url()!} ${repo.name}'
+	
+	mut extra:=""
+	if gitstructure.config.light{
+		extra="--depth 1 --no-single-branch "
+	}
+
+	cmd := 'cd ${parent_dir} && git clone ${extra} ${repo.get_repo_url()!} ${repo.name}'
 	osal.exec(cmd: cmd) or {
 		return error('Cannot clone the repository due to: \n${err}')
 	}

@@ -16,7 +16,8 @@ pub mut:
 	status_local  GitRepoStatusLocal  // Local repository status
 	status_wanted  GitRepoStatusWanted  // what is the status we want?
 	config        GitRepoConfig       // Repository-specific configuration
-	last_load    int               // Epoch timestamp of the last load from reality	
+	last_load    int               // Epoch timestamp of the last load from reality
+	deploysshkey string //to use with git
 }
 
 // this is the status we want, we need to work towards off
@@ -50,6 +51,28 @@ pub mut:
 	remote_check_period int // Seconds to wait between remote checks (0 = check every time)
 }
 
+
+
+//just some initialization mechanism
+pub fn (mut gitstructure GitStructure) repo_new_from_gitlocation(git_location GitLocation) !&GitRepo {
+
+	mut repo := GitRepo{
+		provider: git_location.provider
+		name: git_location.name
+		account: git_location.account
+		gs: gitstructure
+		status_remote: GitRepoStatusRemote{}
+		status_local: GitRepoStatusLocal{}
+		status_wanted: GitRepoStatusWanted{}				
+	}
+
+	repo.init()!
+
+	gitstructure.repos[repo.name] = &repo
+
+	return &repo
+
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -107,8 +130,7 @@ pub fn (mut repo GitRepo) pull(args_ PullCheckoutArgs) ! {
 		repo.checkout()!
 	}
 
-	repo_path := repo.get_path()!
-	repo.exec('git pull') or { return error('Cannot pull repo: ${repo_path}. Error: ${err}') }
+	repo.exec('git pull') or { return error('Cannot pull repo: ${repo.get_path()!}. Error: ${err}') }
 
 	if args_.submodules {
 		repo.update_submodules()!
@@ -121,15 +143,18 @@ pub fn (mut repo GitRepo) pull(args_ PullCheckoutArgs) ! {
 // Checkout a branch in the repository.
 pub fn (mut repo GitRepo) checkout() ! {
 	repo.status_update()!	
-
+	if repo.status_wanted.readonly{
+		repo.reset()!
+	}	
 	if repo.need_commit()! {
-		return error('Cannot checkout branch due to uncommitted changes in ${repo_path}.')
+		return error('Cannot checkout branch due to uncommitted changes in ${repo.get_path()!}.')
 	}
-
-	repo.exec('git checkout ${checkout_to}') or { return error('Cannot checkout branch: ${repo_path}. Error: ${err}') }
-	console.print_green('Switched to branch ${repo.status_local.branch} successfully.')
-
-	repo.pull()!
+	if repo.status_wanted.tag.len>0{
+		repo.exec('git checkout tags/${repo.status_wanted.tag}')!
+	}
+	if repo.status_wanted.branch.len>0{
+		repo.exec('git checkout ${repo.status_wanted.tag}')!		
+	}
 }
 
 // Create a new branch in the repository.
@@ -145,6 +170,7 @@ pub fn (mut repo GitRepo) branch_switch(branchname string) ! {
 	console.print_green('Branch ${branchname} switched successfully.')
 	repo.status_local.branch = branchname
 	repo.status_local.tag = ''
+	repo.pull()!
 }
 
 
@@ -162,6 +188,7 @@ pub fn (mut repo GitRepo) tag_switch(tagname string) ! {
 	console.print_green('Tag ${tagname} activated.')
 	repo.status_local.branch = ''
 	repo.status_local.tag = tagname
+	repo.pull()!
 }
 
 // Create a new branch in the repository.
@@ -187,18 +214,26 @@ pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
 		return error('Path must be relative, cannot start with / or ~')
 	}
 
+	//TODO: check that path is inside gitrepo
+	//TODO: get relative path in relation to root of gitrepo
+	
+
 	mut git_path := gs.patho()!
 	if !os.exists(git_path.path) {
 		return error('Path does not exist inside the repository: ${git_path.path}')
+	}
+
+	mut branch_or_tag := gs.status_wanted.branch
+	if gs.status_wanted.tag.len>0{
+		branch_or_tag = gs.status_wanted.tag 
 	}
 
 	return GitLocation{
 		provider: gs.provider
 		account:  gs.account
 		name:     gs.name
-		branch:   gs.status_local.branch
-		tag:      gs.status_local.tag
-		path:     path
+		branch_or_tag:   branch_or_tag
+		path:     path //relative path in relation to git repo
 	}
 }
 
@@ -221,13 +256,18 @@ pub fn (repo GitRepo) init() ! {
 	if !os.exists(path_string) {
 		return error('Path does not exist: ${path_string}')
 	}
+	
+	//TODO: check tag or branch set on wanted, and not both
+
+	//TODO: check deploy key has been set in repo
+	// if not do git config core.sshCommand "ssh -i /path/to/deploy_key"
 }
 
 
 // Removes all changes from the repo; be cautious
 pub fn (mut repo GitRepo) remove_changes() ! {
 	repo.status_update()!
-	if repo.need_commit()! {
+	if repo.has_changes()! {
 		console.print_header('Removing changes in ${repo.get_path()!}')
 		repo.exec('git reset HEAD --hard && git clean -xfd') or {
 			return error("can't remove changes on repo: ${repo.get_path()!}.\n${err}")
@@ -237,8 +277,8 @@ pub fn (mut repo GitRepo) remove_changes() ! {
 			// p.delete()! // remove path, this will re-clone the full thing
 			// repo.load_from_url()!
 		}
-	}
-	repo.load()!
+		repo.load()!
+	}	
 }
 
 //alias for remove changes
@@ -261,7 +301,7 @@ fn (repo GitRepo) exec(cmd_ string) !string {
 	if repo.gs.config.log{
 		console.print_green(cmd)
 	}
-	r:=osal.exec(cmd:cmd, stdout: true,debug:true)!
+	r:=osal.exec(cmd:cmd, debug:repo.gs.config.debug)!
 	return r.output
 }
 
@@ -272,8 +312,8 @@ pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
 	repo.cache_get()! // Ensure we have the situation from redis
 	repo.init()!	
 	current_time := int(time.now().unix())
-	if args.reload || repo.config.remote_check_period == 0
-		|| current_time - repo.status_remote.last_check >= repo.config.remote_check_period {
+	if args.reload || repo.last_load == 0
+		|| current_time - repo.last_load >= repo.config.remote_check_period {
 		repo.load()!
 	}
 }

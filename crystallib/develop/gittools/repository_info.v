@@ -13,7 +13,7 @@ module gittools
 // - An array of strings representing file paths of unstaged changes.
 // - Throws an error if the command execution fails.
 pub fn (repo GitRepo) get_changes_unstaged() ![]string {
-	
+
 	unstaged_result := repo.exec('git ls-files --other --modified --exclude-standard') or {
 		return error('Failed to check for unstaged changes: ${err}')
 	}
@@ -30,7 +30,7 @@ pub fn (repo GitRepo) get_changes_unstaged() ![]string {
 // - An array of strings representing file paths of staged changes.
 // - Throws an error if the command execution fails.
 fn (repo GitRepo) get_changes_staged() ![]string {
-	
+
 	staged_result := repo.exec('git diff --name-only --staged') or {
 		return error('Failed to check for staged changes: ${err}')
 	}
@@ -42,6 +42,7 @@ fn (repo GitRepo) get_changes_staged() ![]string {
 
 // Check if there are any unstaged or untracked changes in the repository.
 pub fn (repo GitRepo) has_changes() !bool {
+	repo.status_update()!
 	r0:=	repo.get_changes_unstaged()!
 	r1:=	repo.get_changes_staged()!
 	if r0.len + r1.len > 0{

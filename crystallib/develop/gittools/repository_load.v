@@ -15,8 +15,7 @@ fn (mut repo GitRepo) load() ! {
 	repo.load_branches()!
 	repo.load_tags()!
 
-	repo.status_local.last_check = int(time.now().unix())
-	repo.status_remote.last_check = int(time.now().unix())
+	repo.last_load = int(time.now().unix())
 
 	repo.cache_set()!
 
@@ -27,7 +26,6 @@ fn (mut repo GitRepo) load() ! {
 	}
 	
 }
-
 
 // Helper to load remote tags
 fn (mut repo GitRepo) load_branches() ! {

@@ -10,8 +10,7 @@ pub mut:
 	provider string // Git provider (e.g., GitHub)
 	account  string // Account name
 	name     string // Repository name
-	branch   string // Branch name
-	tag      string // Tag name
+	branch_or_tag   string // Branch name
 	path     string // Path in the repository (not the filesystem)
 	anker    string // Position in a file
 }
@@ -61,7 +60,7 @@ pub fn (mut gs GitStructure) gitlocation_from_url(url string) !GitLocation {
 	mut parts := urllower.split('/')
 	mut anchor := ''
 	mut path := ''
-	mut branch := ''
+	mut branch_or_tag := ''
 
 	// Deal with path and anchor
 	if parts.len > 4 {
@@ -79,7 +78,7 @@ pub fn (mut gs GitStructure) gitlocation_from_url(url string) !GitLocation {
 
 	// Extract branch if available
 	if parts.len > 3 {
-		branch = parts[3]
+		branch_or_tag = parts[3]
 		parts[2] = parts[2].replace('.git', '')
 	}
 
@@ -97,7 +96,7 @@ pub fn (mut gs GitStructure) gitlocation_from_url(url string) !GitLocation {
 		provider: provider
 		account:  account
 		name:     name
-		branch:   branch
+		branch_or_tag:   branch_or_tag
 		path:     path
 		anker:    anchor
 	}

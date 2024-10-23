@@ -11,7 +11,7 @@ import os
 pub struct GitStructureConfig {
 pub mut:
 	coderoot string // Root directory where code is checked out, comes from context if not specified
-	light    bool = true // If true, clones only the last history for all branches
+	light    bool = true // If true, clones only the last history for all branches (clone with only 1 level deep)
 	log      bool = true // If true, logs git commands/statements
 	debug    bool = true
 }

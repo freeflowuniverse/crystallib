@@ -36,7 +36,6 @@ fn setup_repo() !GittoolsTests {
         coderoot: '/tmp/code',
         repo_dir: '/tmp/code/github/Mahmoud-Emad',
         repo_url: 'https://github.com/Mahmoud-Emad/repo2.git',
-        repo_name: 'repo3',
     }
 
     if os.exists(ts.repo_dir){
