@@ -105,7 +105,7 @@ pub fn cmd_run_add_flags(mut cmd_run Command) {
 }
 
 // returns the path of the fetched repo
-fn plbook_code_get(cmd Command) !string {
+pub fn plbook_code_get(cmd Command) !string {
 	mut path := cmd.flags.get_string('path') or { '' }
 	mut url := cmd.flags.get_string('url') or { '' }
 

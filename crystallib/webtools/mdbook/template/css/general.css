@@ -35,6 +35,7 @@ main {
 /* make wide tables scroll if they overflow */
 .table-wrapper {
     overflow-x: auto;
+    text-align: left;
 }
 
 /* Don't change font size in headers. */
@@ -94,9 +95,9 @@ h6:target::before {
     padding: 0 5px 5px 5px;
 }
 .content main {
-    margin-left: auto;
+    margin-left: 20;
     margin-right: auto;
-    max-width: var(--content-max-width);
+    max-width: 1000px;
 }
 .content p { line-height: 1.45em; }
 .content ol { line-height: 1.45em; }
@@ -115,6 +116,8 @@ h6:target::before {
 
 table {
     margin: 0 auto;
+    margin-left: 0;
+    margin-right: 0;
     border-collapse: collapse;
     width: 100%;
 }

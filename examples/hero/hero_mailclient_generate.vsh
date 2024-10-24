@@ -1,4 +1,4 @@
-#!/usr/bin/env -S v -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals -showcc run
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 
 import freeflowuniverse.crystallib.core.generator.generic

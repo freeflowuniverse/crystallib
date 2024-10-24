@@ -11,13 +11,13 @@ Other financial flows can be mentioned here as well.
 
 
 ```js
-!!funding.define
+!!bizmodel.funding_define bizname:'test'
     name:'our_investor'
     descr:'A fantastic super investor.'  
     investment:'3:1000000EUR'
     type:'capital'
 
-!!funding.define
+!!bizmodel.funding_define bizname:'test'
     name:'a_founder'
     descr:'Together Are Strong'  
     investment:'2000000'

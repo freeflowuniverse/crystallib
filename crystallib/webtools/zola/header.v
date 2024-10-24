@@ -62,6 +62,5 @@ extra:
 
 - [Home]("/".md)'
 	mut header_file := pathlib.get_file(path: '${content_dir}/header.md')!
-	console.print_debug('debugzorty ${header_file}')
 	header_file.write(content)!
 }

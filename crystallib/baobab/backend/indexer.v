@@ -8,6 +8,50 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.clients.postgres
 import orm
 
+pub struct Indexer {
+	db sqlite.DB
+}
+
+@[table: 'root_objects']
+pub struct RootObject {
+	id    int    @[primary; sql: serial] // unique serial root object id
+	table string // name of table root object is in
+}
+
+@[params]
+pub struct IndexerConfig {
+	reset bool
+}
+
+pub fn new_indexer(db_path string, config IndexerConfig) !Indexer {
+	if config.reset {
+		reset(db_path)!
+	}
+
+	mut backend := Indexer{
+		db: sqlite.connect(db_path)!
+	}
+
+	sql backend.db {
+		create table RootObject
+	}!
+
+	return backend
+}
+
+// deletes an indexer table belonging to a base object
+pub fn reset(path string) ! {
+	mut db_file := pathlib.get_file(path: path)!
+	db_file.delete()!
+}
+
+// deletes an indexer table belonging to a base object
+pub fn (mut backend Indexer) delete_table[T]() ! {
+	table_name := get_table_name[T]()
+	delete_query := 'delete table ${table_name}'
+	backend.db.exec(delete_query)!
+}
+
 // new creates a new root object entry in the root_objects table,
 // and the table belonging to the type of root object with columns for index fields
 pub fn (mut backend Indexer) new(object RootObject) ! {

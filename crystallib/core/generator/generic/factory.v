@@ -78,12 +78,12 @@ pub fn generate(args_ GeneratorArgs) ! {
 		args.cat = .client
 	}
 
-	if args.name==""{
-		yesno := myconsole.ask_yesno(description: 'Are you happy with name ${args.name}?')!
-		if !yesno {
-			return error("can't continue without a valid name, rename the directory you operate in.")
-		}
-	}
+	// if args.name==""{
+	// 	yesno := myconsole.ask_yesno(description: 'Are you happy with name ${args.name}?')!
+	// 	if !yesno {
+	// 		return error("can't continue without a valid name, rename the directory you operate in.")
+	// 	}
+	// }
 
 	args.classname = myconsole.ask_question(
 		description: 'Class name of the ${mycat}'
@@ -96,9 +96,20 @@ pub fn generate(args_ GeneratorArgs) ! {
 		description: 'Title of the ${mycat} (optional)'
 	)!
 
-	args.default = myconsole.ask_yesno(
-		description: 'Is it ok when doing new() that a default is created (normally yes)?'
-	)!
+	if args.cat == .installer{
+		args.hasconfig = myconsole.ask_yesno(
+			description: 'Does your installer have a config (normally yes)?'
+		)!	
+	}
+
+	if args.hasconfig{
+		args.default = myconsole.ask_yesno(
+			description: 'Is it ok when doing new() that a default is created (normally yes)?'
+		)!
+		args.singleton = !myconsole.ask_yesno(
+			description: 'Can there be multiple instances (normally yes)?'
+		)!
+	}
 
 	// args.supported_platforms = myconsole.ask_dropdown_multiple(
 	// 	description: 'Supported platforms'
@@ -111,9 +122,6 @@ pub fn generate(args_ GeneratorArgs) ! {
 	// 	warning: 'Please select one or more platforms'
 	// )!
 
-	args.singleton = !myconsole.ask_yesno(
-		description: 'Can there be multiple instances (normally yes)?'
-	)!
 
 	if args.cat == .installer {
 		args.templates = myconsole.ask_yesno(
@@ -163,6 +171,7 @@ pub fn create_heroscript(args GeneratorArgs) ! {
 			'0'
 		}}
     startupmanager:${if args.startupmanager { '1' } else { '0' }}
+	hasconfig:${if args.hasconfig { '1' } else { '0' }}
     build:${if args.build {
 			'1'
 		} else {
@@ -179,6 +188,7 @@ pub fn create_heroscript(args GeneratorArgs) ! {
 			'0'
 		}}
     default:${if args.default { '1' } else { '0' }}
+	hasconfig:${if args.hasconfig { '1' } else { '0' }}
     reset:${if args.reset {
 			'1'
 		} else {

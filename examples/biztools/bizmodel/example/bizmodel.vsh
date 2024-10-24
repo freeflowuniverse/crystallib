@@ -1,50 +1,39 @@
-#!/usr/bin/env -S v -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -cg -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+//#!/usr/bin/env -S v -cg -enable-globals run
 
-
-import os
+import freeflowuniverse.crystallib.data.doctree
 import freeflowuniverse.crystallib.biz.bizmodel
-// import freeflowuniverse.crystallib.data.knowledgetree
-// import freeflowuniverse.crystallib.biz.spreadsheet
-// import cli { Command }
+import freeflowuniverse.crystallib.core.playbook
+import freeflowuniverse.crystallib.core.playcmds
+import freeflowuniverse.crystallib.webtools.mdbook
+import os
+
 
 const wikipath = os.dir(@FILE) + '/wiki'
+const summarypath = os.dir(@FILE) + '/wiki/summary.md'
 
-// mut c := context.new()!
+//execute the actions so we have the info populated
+// mut plb:=playbook.new(path: wikipath)!
+// playcmds.run(mut plb,false)!
 
-mut book := bizmodel.new(
-	name: 'example'
-	mdbook_name: 'biz_book'
-	mdbook_path: wikipath
-	mdbook_dest: '/tmp/dest'
-	path: wikipath
+buildpath:="${os.home_dir()}/hero/var/mdbuild/bizmodel"
+
+// just run the doctree & mdbook and it should
+// load the doctree, these are all collections
+mut tree := doctree.new(name: 'bizmodel')!
+tree.scan(path: wikipath)!
+tree.export(dest: buildpath, reset: true)!
+
+// mut bm:=bizmodel.get("test")!
+// println(bm)
+
+mut mdbooks := mdbook.get()!
+mdbooks.generate(
+	name:"bizmodel"
+	summary_path: summarypath
+	doctree_path: buildpath
+	title:        "bizmodel example"
 )!
+mdbook.book_open("bizmodel")!
 
-book.load()! // will generate and open
 
-//// TODO: Kristof check if we have everything then remove
-
-// println('')
-
-// m.sheet.group2row(
-// 	name: 'company_result'
-// 	include: ['pl']
-// 	tags: 'result'
-// 	descr: 'Net Company Result.'
-// )!
-
-// println(m.sheet.wiki(includefilter: ['result'], name: 'Net Company Result.', period_months: 3)!)
-
-// mut company_result := m.sheet.row_get('company_result')!
-// mut cashflow := company_result.recurring(
-// 	name: 'Cashflow'
-// 	tags: 'cashflow'
-// 	descr: 'Cashflow of company.'
-// )!
-
-// // println(cashflow)
-
-// println(m.sheet.wiki(includefilter: ['cashflow'], name: 'cashflow_aggregated', period_months: 3)!)
-
-// cashflow_min := spreadsheet.float_repr(cashflow.min(), .number)
-
-// println('\nThe lowest cash level over the years: ${cashflow_min}\n')

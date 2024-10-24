@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+    <head>
+        <title>PDF Viewer</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css"
+        />
+        <style>
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+            }
+
+            #viewerContainer {
+                width: 90%;
+                margin: 20px auto;
+                border: 1px solid #ccc;
+                background: #fff;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                overflow-y: auto;
+                height: 90vh;
+                transition: width 0.3s ease;
+            }
+
+            #viewerContainer.fullWidth {
+                width: 100%;
+                border-radius: 0;
+            }
+
+            #viewer {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #viewer canvas {
+                max-width: 100%;
+                height: auto !important;
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            .control-panel {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1000;
+                display: flex;
+                gap: 10px;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 10px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .control-panel button {
+                padding: 10px;
+                border: none;
+                background: #007bff;
+                color: #fff;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background 0.3s;
+            }
+
+            .control-panel button:hover {
+                background: #0056b3;
+            }
+
+            .loading-spinner {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: none;
+                z-index: 1001;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="control-panel">
+            <button id="toggleWidthBtn">Toggle Full Width</button>
+            <button id="zoomInBtn">Zoom In</button>
+            <button id="zoomOutBtn">Zoom Out</button>
+        </div>
+        <div id="viewerContainer">
+            <div id="viewer" class="pdfViewer"></div>
+            <div class="loading-spinner" id="loadingSpinner">
+                <paper-spinner active></paper-spinner>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        <script>
+            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        
+            document.addEventListener("DOMContentLoaded", function () {
+                const url = "@{component.pdf_url}";
+                const viewer = document.getElementById("viewer");
+                const viewerContainer = document.getElementById("viewerContainer");
+                const toggleWidthBtn = document.getElementById("toggleWidthBtn");
+                const zoomInBtn = document.getElementById("zoomInBtn");
+                const zoomOutBtn = document.getElementById("zoomOutBtn");
+                const loadingSpinner = document.getElementById("loadingSpinner");
+        
+                let currentScale = 2;
+                let visiblePages = new Set();
+        
+                function sendInteraction(action, data) {
+                    fetch("@{component.log_endpoint}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            event: 'view',
+                            timestamp: new Date().toISOString(),
+                            object: '@{component.name}',
+                            message: JSON.stringify(data)
+                        }),
+                    })
+                        .then((response) => response.json())
+                        .then((data) => console.log("Interaction logged:", data))
+                        .catch((error) => console.error("Error logging interaction:", error));
+                }
+        
+                function updateVisiblePages() {
+                    const currentVisiblePages = new Set(Array.from(visiblePages));
+                    sendInteraction("visiblePages", {
+                        pages: Array.from(currentVisiblePages),
+                    });
+                }
+        
+                function renderPage(page) {
+                    const viewport = page.getViewport({ scale: currentScale });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    viewer.appendChild(canvas);
+        
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport,
+                    };
+        
+                    canvas.setAttribute("data-page-number", page.pageNumber);
+        
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach((entry) => {
+                            const pageNumber = parseInt(entry.target.getAttribute("data-page-number"));
+                            if (entry.isIntersecting) {
+                                visiblePages.add(pageNumber);
+                            } else {
+                                visiblePages.delete(pageNumber);
+                            }
+                            updateVisiblePages();
+                        });
+                    }, { threshold: 0.1 });
+        
+                    observer.observe(canvas);
+        
+                    return page.render(renderContext);
+                }
+        
+                function loadPDF() {
+                    loadingSpinner.style.display = 'block';
+                    pdfjsLib.getDocument(url).promise.then((pdf) => {
+                        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                            pdf.getPage(pageNum).then(renderPage);
+                        }
+                        sendInteraction("pdfLoaded", { totalPages: pdf.numPages });
+                        loadingSpinner.style.display = 'none';
+                    }).catch((error) => {
+                        console.error("Error loading PDF:", error);
+                        sendInteraction("error", { message: error.message });
+                        window.location.href = '/server_error'; // Redirect on error
+                        loadingSpinner.style.display = 'none';
+                    });
+                }
+        
+                if (viewer) {
+                    loadPDF();
+                } else {
+                    console.error("Viewer element not found");
+                    window.location.href = '/server_error'; // Redirect if viewer is missing
+                }
+        
+                toggleWidthBtn.addEventListener("click", () => {
+                    viewerContainer.classList.toggle("fullWidth");
+                    sendInteraction("toggleWidth", {
+                        isFullWidth: viewerContainer.classList.contains("fullWidth"),
+                    });
+                });
+        
+                function updateZoom(delta) {
+                    currentScale += delta;
+                    viewer.innerHTML = "";
+                    visiblePages.clear();
+                    loadPDF();
+                    sendInteraction("zoom", { newScale: currentScale });
+                }
+        
+                zoomInBtn.addEventListener("click", () => updateZoom(0.2));
+                zoomOutBtn.addEventListener("click", () => updateZoom(-0.2));
+            });
+        </script>
+    </body>
+</html>

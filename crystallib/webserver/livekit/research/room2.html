@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveKit Video Conference</title>
+    <script src="https://unpkg.com/livekit-client/dist/livekit-client.min.js"></script>
+</head>
+<body>
+    <main id="main-content" data-lk-theme="default" style="height: 100%;"></main>
+    
+    <script>
+        const CONN_DETAILS_ENDPOINT = '/api/connection-details';
+        const SHOW_SETTINGS_MENU = true; // Replace with actual logic for checking settings
+
+        async function handlePreJoinSubmit(values, roomName, region) {
+            try {
+                const url = new URL(CONN_DETAILS_ENDPOINT, window.location.origin);
+                url.searchParams.append('roomName', roomName);
+                url.searchParams.append('participantName', values.username);
+                if (region) {
+                    url.searchParams.append('region', region);
+                }
+
+                const response = await fetch(url.toString());
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching connection details:', error);
+            }
+        }
+
+        function handlePreJoinError(error) {
+            console.error(error);
+        }
+
+        function renderPreJoin(preJoinDefaults, roomName, region, onSubmit, onError) {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                <div style="display: grid; place-items: center; height: 100%;">
+                    @{PreJoin{}.html()}
+                </div>
+            `;
+        }
+
+        function renderVideoConference(connectionDetails, userChoices, options) {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = `
+                @{VideoConferenceComponent{}.html()}
+            `;
+        }
+
+        function VideoConferenceComponent(props) {
+            const e2eePassphrase = window.location.hash ? decodePassphrase(location.hash.substring(1)) : null;
+            const worker = e2eePassphrase ? new Worker('livekit-client/e2ee-worker') : null;
+            const e2eeEnabled = !!(e2eePassphrase && worker);
+            const keyProvider = new LiveKit.ExternalE2EEKeyProvider();
+            let e2eeSetupComplete = false;
+
+            const roomOptions = {
+                videoCaptureDefaults: {
+                    deviceId: props.userChoices.videoDeviceId || undefined,
+                    resolution: props.options.hq ? LiveKit.VideoPresets.h2160 : LiveKit.VideoPresets.h720,
+                },
+                publishDefaults: {
+                    dtx: false,
+                    videoSimulcastLayers: props.options.hq
+                        ? [LiveKit.VideoPresets.h1080, LiveKit.VideoPresets.h720]
+                        : [LiveKit.VideoPresets.h540, LiveKit.VideoPresets.h216],
+                    red: !e2eeEnabled,
+                    videoCodec: props.options.codec,
+                },
+                audioCaptureDefaults: {
+                    deviceId: props.userChoices.audioDeviceId || undefined,
+                },
+                adaptiveStream: { pixelDensity: 'screen' },
+                dynacast: true,
+                e2ee: e2eeEnabled ? { keyProvider, worker } : undefined,
+            };
+
+            const room = new LiveKit.Room(roomOptions);
+
+            if (e2eeEnabled) {
+                keyProvider.setKey(decodePassphrase(e2eePassphrase)).then(() => {
+                    room.setE2EEEnabled(true).catch((e) => {
+                        if (e instanceof LiveKit.DeviceUnsupportedError) {
+                            alert('Your browser does not support encrypted meetings. Please update it and try again.');
+                            console.error(e);
+                        } else {
+                            throw e;
+                        }
+                    });
+                }).then(() => e2eeSetupComplete = true);
+            } else {
+                e2eeSetupComplete = true;
+            }
+
+            const connectOptions = { autoSubscribe: true };
+
+            document.getElementById('main-content').innerHTML = `
+                @{LiveKitRoom{}.html()}
+                @{VideoConference{}.html()}
+                @{DebugMode{}.html()}
+                @{RecordingIndicator{}.html()}
+            `;
+        }
+
+        function handleOnLeave() {
+            window.location.href = '/';
+        }
+
+        // Main page logic
+        const pageProps = {
+            roomName: 'exampleRoom',
+            region: 'us-east',
+            hq: true,
+            codec: 'vp9',
+        };
+        let preJoinChoices;
+        let connectionDetails;
+
+        const preJoinDefaults = {
+            username: '',
+            videoEnabled: true,
+            audioEnabled: true,
+        };
+
+        renderPreJoin(preJoinDefaults, pageProps.roomName, pageProps.region, async (values) => {
+            preJoinChoices = values;
+            connectionDetails = await handlePreJoinSubmit(values, pageProps.roomName, pageProps.region);
+            if (connectionDetails) {
+                renderVideoConference(connectionDetails, preJoinChoices, { codec: pageProps.codec, hq: pageProps.hq });
+            }
+        }, handlePreJoinError);
+    </script>
+</body>
+</html>

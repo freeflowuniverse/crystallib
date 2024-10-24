@@ -1,9 +1,11 @@
-#!/usr/bin/env -S v -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.installers.infra.zinit as zinitinstaller
 import freeflowuniverse.crystallib.sysadmin.startupmanager
 
-zinitinstaller.install()!
+mut z:=zinitinstaller.get()!
+z.destroy()!
+z.install()!
 
 println("zinit installed")
 
@@ -12,9 +14,10 @@ name:= 'zinit'
 
 mut sm := startupmanager.get()!
 println(sm.list()!)
-sm.start(
+sm.new(
 	name: name
 	cmd: cmd
+	start:false
 )!
 
 println(sm.list()!)

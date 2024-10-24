@@ -555,9 +555,9 @@ function os_update {
         if command -v brew >/dev/null 2>&1; then
             echo 'homebrew installed'
         else 
-            export NONINTERACTIVE=1
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"            
-            unset NONINTERACTIVE
+            #export NONINTERACTIVE=1
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            #unset NONINTERACTIVE
         fi
         set +e
         brew install mc redis curl tmux screen htop wget

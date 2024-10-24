@@ -65,7 +65,7 @@ pub fn install(args_ InstallArgs) ! {
 		mut mypath := pathlib.get_dir(path: '/tmp/grafana/grafana-v${version}')!
 		mypath.copy(dest: '/root/hero/grafana', delete: false, rsync: true)!
 
-		osal.profile_path_add(path: '/root/hero/grafana/bin')!
+		osal.profile_path_add_remove(paths2add: '/root/hero/grafana/bin')!
 	}
 
 	// if args.restart {

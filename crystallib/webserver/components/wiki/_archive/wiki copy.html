@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@@picocss/pico@@2.0.6/css/pico.classless.min.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    </head>
+    <style>
+        /* Custom styles to enhance the nav bar */
+body > main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    height: 100vh;
+    overflow: hidden;
+}
+
+nav {
+    padding: 0rem 1rem;
+    width: 100%; /* Ensure nav takes full width */
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure ul takes full width */
+}
+
+nav ul li {
+    margin: 0 0.5rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    font-weight: 400; /* Reduced font-weight */
+    transition: color 0.3s ease;
+}
+
+.brand {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+navbar-right {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Push to the right */
+    margin-right: 2px; /* Ensure no right margin */
+}
+
+navbar-right a {
+    margin-left: 1rem;
+}
+
+navbar-right input[type="search"] {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--nav-input-border);
+    border-radius: 1rem;
+    background-color: var(--nav-input-background);
+    font-size: 0.8rem;
+    line-height: 1;
+    height: 2rem;
+    width: 300px;
+    margin: 0;
+}
+
+/* Styles for theme icons */
+.theme-icons {
+    display: flex;
+    align-items: center;
+}
+
+.theme-icon {
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    margin-left: 0.5rem;
+}
+
+.theme-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--nav-text);
+}
+
+.theme-icon:hover {
+    background-color: var(--theme-icon-hover);
+}
+
+mynav {
+    flex: 1;
+    min-width: 225px;
+    max-width: 250px;
+    overflow-y: auto;
+    padding-top: 1.3rem;
+    font-size: 0.8rem;
+}
+
+mynav ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+mynav ul ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0.2rem;
+    display: none;
+}
+
+mynav ul li {
+    margin-left: 0.5rem;
+    padding-left: 0.3rem;
+    cursor: pointer;
+    list-style-type: none;
+}
+
+mynav ul li a {
+    text-decoration: none;
+    color: var(--nav-text);
+}
+
+/* Highlight active link */
+mynav ul li a.active {
+    color: var(--nav-active);  /* Highlight the active link */
+    font-weight: bold;
+}
+
+mynav ul li.open > ul {
+    display: block;
+}
+
+.arrow {
+    font-size: 0.8rem;
+    margin-right: 0.2rem;
+}
+
+article {
+    flex: 6;
+    min-width: 200px;
+    max-width: 1200px;
+    overflow-y: auto;
+    height: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    background-color: var(--background-color-article);
+}
+
+article p,
+article li,
+article blockquote,
+article table {
+    font-size: 0.8rem;
+    line-height: 1.4; /* Increased line height */
+    font-weight: 300; /* Reduce font weight to normal */
+    margin-bottom: 0.8rem; /* Slightly increase space between paragraphs */
+}
+
+article table {
+    line-height: 1.1;
+}
+
+article ul li {
+    line-height: 1.2; /* Slightly increase line height */
+    margin-bottom: 0.3rem; /* Adjust margin */
+}
+
+article h1,
+article h2 {
+    font-weight: 600; /* Reduce font-weight for headers */
+}
+article h3,
+article h4,
+article h5 {
+    margin-top: 0rem;
+    font-weight: 500; /* Reduce font-weight for headers */
+}
+
+article h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.7rem; /* Slightly increase space after header */
+}
+
+article h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+}
+article h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+article h4 {
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+}
+
+docnav {
+    flex: 1;
+    min-width: 200px;
+    max-width: 250px;
+    overflow-y: auto;
+    color: var(--nav-text);
+    font-size: 0.6rem;
+}
+
+docnav ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+docnav ul li {
+    margin-left: 0.4rem;
+    padding-left: 0rem;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40ch;
+}
+
+.grid-container {
+        display: grid;
+        grid-template-columns: 1fr 6fr 1fr;
+        gap: 2rem;
+        padding: 0rem 2rem 2rem 2rem;
+        flex: 1;
+    }
+/* 
+@media (max-width: 768px) {
+    nav {
+        margin-top: 0rem;
+    }
+    nav ul {
+        flex-direction: column;
+        align-items: stretch; /* Changed from flex-start to stretch */
+    }
+    nav ul li {
+        margin: 0.5rem 0; /* Added vertical margin */
+    }
+    navbar-right {
+        flex-direction: column;
+        align-items: stretch; /* Changed from flex-start to stretch */
+        margin-left: 2px;
+        width: 100%; /* Ensure full width on mobile */
+    }
+    navbar-right a {
+        margin-left: 0;
+        margin-top: 0.5rem; /* Add some vertical spacing */
+    }
+    navbar-right input[type="search"] {
+        width: 100%;
+        margin: 0.5rem 0; /* Add some vertical spacing */
+    }
+    .theme-icons {
+        margin-top: 0.5rem;
+        justify-content: flex-end; /* Align icons to the right on mobile */
+    }
+} */
+    </style>
+    <body>
+        <textarea id="markdown-nav" style="display: none">
+<!-- @{layout.summary} -->
+        </textarea>
+
+        <textarea id="markdown-input" style="display: none">
+
+        </textarea>
+        <main class="grid-container">
+            <aside>
+                <nav>
+                    @{layout.sidebar.html()}
+                </nav>
+            </aside>
+            <article id="markdown-output">
+                @{layout.main.html()}
+            </article>
+            <docnav>
+                <br />
+                <h5>Doc</h5>
+                <ul id="content-pointers"></ul>
+            </docnav>
+        </main>
+        <!-- <script>
+            // Define the static_url variable to hold the base URL for static assets and pages
+        
+            // Function to log page views
+            function logPageView(page) {
+        
+                // Construct the log payload
+                const logData = {
+                    event: "view",
+                    subject: "user",
+                    message: JSON.stringify({
+                        page: page,
+                        duration: 0 // Assuming you want to start with a duration of 0
+                    }),
+                };
+        
+                // Send the log via a POST request
+                fetch(logEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(logData),
+                }).then(response => {
+                    if (!response.ok) {
+                        console.error("Failed to log page view");
+                    }
+                }).catch(error => {
+                    console.error("Error sending log:", error);
+                });
+            }
+        
+            function convertMarkdown(inputId, outputId, pointersListId = "") {
+                const markdownInputElement = document.getElementById(inputId);
+                if (!markdownInputElement) return;
+        
+                let markdownInput = markdownInputElement.value;
+                // Prepend static_url to image sources in the markdown if they are relative (not starting with http, /, or ./)
+                markdownInput = markdownInput.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+                
+                // Prepend static_url to relative page links in the markdown if they are relative (not starting with http or /)
+                markdownInput = markdownInput.replace(/\[([^\]]*)\]\((?!http|\/)([^)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+
+                const htmlOutput = marked.parse(markdownInput);
+
+                const htmlOutputElement = document.getElementById(outputId);
+                if (!htmlOutputElement) return;
+                htmlOutputElement.innerHTML = htmlOutput;
+        
+                // Add IDs to headers if they don't have one
+                const headers = htmlOutputElement.querySelectorAll("h1, h2");
+                headers.forEach((header, index) => {
+                    if (!header.id) {
+                        header.id = `header-@{dollar}{index}`;
+                    }
+                });
+        
+                // Generate content pointers if pointersListId is provided
+                if (pointersListId) {
+                    const pointersList = document.getElementById(pointersListId);
+                    if (!pointersList) return;
+                    pointersList.innerHTML = "";
+                    headers.forEach((header) => {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = `#@{dollar}{header.id}`;
+                        a.textContent = header.textContent;
+                        li.appendChild(a);
+                        pointersList.appendChild(li);
+                    });
+
+        
+                    // Add event listener to scroll to the section
+                    pointersList.querySelectorAll("a").forEach((anchor) => {
+                        anchor.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            const targetId = anchor.getAttribute("href").substring(1);
+                            const targetElement = document.getElementById(targetId);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: "smooth" });
+                            }
+                        });
+                    });
+                }
+            }
+        
+            function initializeMarkdownConverter(inputId, outputId, pointersListId) {
+                // Convert markdown immediately on page load
+                convertMarkdown(inputId, outputId, pointersListId);
+        
+                // Add event listener to input for real-time conversion
+                const inputElement = document.getElementById(inputId);
+                if (inputElement) {
+                    inputElement.addEventListener("input", () => {
+                        convertMarkdown(inputId, outputId, pointersListId);
+                    });
+                }
+            }
+        
+            function addSummaryLinkListeners() {
+                const summaryLinks = document.querySelectorAll("mynav a");
+        
+                summaryLinks.forEach(link => {
+                    link.addEventListener("click", function(event) {
+                        event.preventDefault();  // Prevent the default link click behavior
+        
+                        // Mark clicked link as active
+                        summaryLinks.forEach(l => l.classList.remove("active"));
+                        link.classList.add("active");
+        
+                        // Collapse all dropdowns
+                        const allItems = document.querySelectorAll("mynav ul li");
+                        allItems.forEach(item => item.classList.remove("open"));
+        
+                        // Keep the clicked item's parent and ancestors open
+                        let parent = link.closest("li");
+                        while (parent) {
+                            parent.classList.add("open");
+                            parent = parent.closest("ul").closest("li");
+                        }
+        
+                        const markdownFile = link.getAttribute("href");  // Get the markdown file path from the link
+        
+                        // Log the page view
+                        logPageView(markdownFile);
+        
+                        // Fetch the markdown content
+                        fetch(markdownFile)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Failed to fetch markdown file");
+                                }
+                                return response.text();  // Get the markdown content as text
+                            })
+                            .then(markdown => {
+                                // Prepend static_url to image and relative links in the fetched markdown
+                                markdown = prependStaticUrl(markdown);
+        
+                                // Convert the fetched markdown to HTML using marked.js
+                                const htmlContent = marked.parse(markdown);
+        
+                                // Update the main content area with the new HTML
+                                const outputElement = document.getElementById("markdown-output");
+                                outputElement.innerHTML = htmlContent;
+        
+                                // Optionally scroll to the top of the content area after update
+                                outputElement.scrollIntoView({ behavior: "smooth" });
+
+
+                // Add IDs to headers if they don't have one
+                const headers = outputElement.querySelectorAll("h1, h2");
+                headers.forEach((header, index) => {
+                    if (!header.id) {
+                        header.id = `header-@{dollar}{index}`;
+                    }
+                });
+                
+                const pointersListId = "content-pointers"
+                // Generate content pointers if pointersListId is provided
+                if (pointersListId) {
+                    const pointersList = document.getElementById(pointersListId);
+                    if (!pointersList) return;
+                    pointersList.innerHTML = "";
+                    headers.forEach((header) => {
+                        const li = document.createElement("li");
+                        const a = document.createElement("a");
+                        a.href = `#@{dollar}{header.id}`;
+                        a.textContent = header.textContent;
+                        li.appendChild(a);
+                        pointersList.appendChild(li);
+                    });
+
+        
+                    // Add event listener to scroll to the section
+                    pointersList.querySelectorAll("a").forEach((anchor) => {
+                        anchor.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            const targetId = anchor.getAttribute("href").substring(1);
+                            const targetElement = document.getElementById(targetId);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({ behavior: "smooth" });
+                            }
+                        });
+                    });
+                }
+                                
+                            })
+                            .catch(error => {
+                                console.error("Error fetching the markdown file:", error);
+                            });
+                    });
+                });
+            }
+        
+            function prependStaticUrl(markdown) {
+                // Prepend static_url to image and relative links
+                markdown = markdown.replace(/!\[([^\]]*)\]\((?!http|\/|\.\/)([^\)]+)\)/g, `![@{dollar}1](@{dollar}{static_url}/@{dollar}2)`);
+                markdown = markdown.replace(/\[([^\]]*)\]\((?!http|\/)(\.\/)?([^)]+)\)/g, `[@{dollar}1](@{dollar}{static_url}/@{dollar}3)`);
+                return markdown;
+            }
+        
+            document.addEventListener("DOMContentLoaded", () => {
+                initializeMarkdownConverter("markdown-input", "markdown-output", "content-pointers");
+                initializeMarkdownConverter("markdown-nav", "mynav");  // Ensure to convert markdown in the summary as well
+                addSummaryLinkListeners();
+                addNavEventListeners();  // Ensure nav items behave correctly
+            });
+        
+            function addNavEventListeners() {
+                const navItems = document.querySelectorAll("mynav ul li");
+        
+                navItems.forEach((item) => {
+                    const nestedList = item.querySelector("ul");
+                    if (nestedList) {
+                        // Add a visual cue for items with children
+                        const arrow = document.createElement("span");
+                        arrow.textContent = "▶";
+                        arrow.classList.add("arrow");
+                        item.insertBefore(arrow, item.firstChild);
+        
+                        // Add click event listener to toggle the nested list
+                        item.addEventListener("click", function (event) {
+                            // Prevent collapsing when clicking inside sub-items
+                            if (event.target.tagName === 'A') return;
+        
+                            event.stopPropagation();
+                            item.classList.toggle("open");
+                            arrow.textContent = item.classList.contains("open") ? "▼" : "▶";
+                        });
+                    }
+                });
+        
+                // Ensure parent dropdowns stay open leading to the active page
+                const activeLink = document.querySelector("mynav a.active");
+                if (activeLink) {
+                    let parent = activeLink.closest("li");
+                    while (parent) {
+                        parent.classList.add("open");
+                        parent = parent.closest("ul").closest("li");
+                    }
+                }
+            }
+        </script> -->
+    </body>
+</html>

@@ -1,0 +1,19 @@
+
+
+!!tfgriddeploy.define_vm_requirement
+    name: 'vm_req_1'
+    description: 'Requirements for a test VM on the TF Grid'
+    cpu: 4 //cores
+    memory: 8 //gbyte of node
+    public_ip4: true
+    public_ip6: false
+    planetary: true
+    mycelium: false
+    nodes: '1,2,3'
+    network_requirement:'net_req_1' //can be empty
+ 
+!!tfgriddeploy.define_network_requirement
+    name: 'net_req_1'
+    ip_range: '192.168.0.0/24'
+    subnet: '255.255.255.0'
+

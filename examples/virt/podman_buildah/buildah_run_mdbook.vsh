@@ -1,9 +1,9 @@
-#!/usr/bin/env -S v -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import os
 import flag
 
-import freeflowuniverse.crystallib.virt.podman
+import freeflowuniverse.crystallib.virt.herocontainers
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.base
 // import freeflowuniverse.crystallib.builder
@@ -21,7 +21,7 @@ additional_args := fp.finalize() or {
 	return
 }
 
-mut pm:=podman.new(herocompile:true,install:false)!
+mut pm:=herocontainers.new(herocompile:true,install:false)!
 
 mut mybuildcontainer := pm.builder_get("builder_heroweb")!
 

@@ -8,7 +8,7 @@ pub struct GeneratorArgs {
 pub mut:
 	name                string
 	classname           string
-	default             bool // means user can just get the object and a default will be created
+	default             bool = true // means user can just get the object and a default will be created
 	title               string
 	supported_platforms []string // only relevant for installers for now
 	singleton           bool     // means there can only be one
@@ -19,6 +19,7 @@ pub mut:
 	cat                 Cat
 	path                string
 	force 				bool
+	hasconfig           bool = true
 }
 
 pub enum Cat {
@@ -53,6 +54,7 @@ fn args_get(path string) !GeneratorArgs {
 				templates:           p.get_default_false('templates')
 				reset:               p.get_default_false('reset')
 				startupmanager:      p.get_default_true('startupmanager')
+				hasconfig:      	 p.get_default_true('hasconfig')
 				build:               p.get_default_false('build')
 				force:               p.get_default_false('force')
 				cat:                 .installer

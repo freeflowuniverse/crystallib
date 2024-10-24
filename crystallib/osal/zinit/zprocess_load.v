@@ -8,18 +8,25 @@ pub fn (mut zp ZProcess) load() ! {
 		$if debug {
 			print_backtrace()
 		}
-		return error('there should be a file ${zp.name}.yaml in /etc/zinit')
+		mut pathyaml := zinitobj.path.file_get_new(zp.name + '.yaml')!
+		content := zp.config_content()!
+		pathyaml.write(content)!
 	}
 
+	// if zinitobj.pathcmds.file_exists(zp.name) {
+	// 	// means we can load the special cmd
+	// 	mut pathcmd := zinitobj.pathcmds.file_get(zp.name)!
+	// 	zp.cmd = pathcmd.read()!
+	// }
+	// if zinitobj.pathtests.file_exists(zp.name) {
+	// 	// means we can load the special cmd
+	// 	mut pathtest := zinitobj.path.file_get(zp.name)!
+	// 	zp.test = pathtest.read()!
+	// }
 	if zinitobj.pathcmds.file_exists(zp.name) {
 		// means we can load the special cmd
 		mut pathcmd := zinitobj.pathcmds.file_get(zp.name)!
 		zp.cmd = pathcmd.read()!
-	}
-	if zinitobj.pathtests.file_exists(zp.name) {
-		// means we can load the special cmd
-		mut pathtest := zinitobj.path.file_get(zp.name)!
-		zp.test = pathtest.read()!
 	}
 
 	mut pathyaml := zinitobj.path.file_get_new(zp.name + '.yaml')!
@@ -33,7 +40,7 @@ pub fn (mut zp ZProcess) load() ! {
 			zp.cmd = line.split('exec:')[1].trim('\'" ')
 		}
 		if line.starts_with('test:') && zp.cmd.len == 0 {
-			zp.test = line.split('test:')[1].trim('\'" ')
+			zp.cmd_test = line.split('test:')[1].trim('\'" ')
 		}
 		if line.starts_with('after:') {
 			st = 'after'

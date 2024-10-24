@@ -4,9 +4,10 @@ import freeflowuniverse.crystallib.osal
 import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.core.texttools
 import freeflowuniverse.crystallib.core.pathlib
+//import freeflowuniverse.crystallib.osal.systemd
 
 @if args.build
-import freeflowuniverse.crystallib.installers
+import freeflowuniverse.crystallib.installers.ulist
 import freeflowuniverse.crystallib.installers.lang.golang
 import freeflowuniverse.crystallib.installers.lang.rust
 import freeflowuniverse.crystallib.installers.lang.python
@@ -29,7 +30,7 @@ fn installed() !bool {
 	// if texttools.version(version) > texttools.version(r[0]) {
 	// 	return false
 	// }
-	return true
+	return false
 }
 
 fn install() ! {
@@ -66,8 +67,8 @@ fn install() ! {
 
 @if args.build
 fn build() ! {
-	mut installer := get()!
-	url := 'https://github.com/threefoldtech/${args.name}'
+	//mut installer := get()!
+	//url := 'https://github.com/threefoldtech/${args.name}'
 
 	// make sure we install base on the node
 	// if osal.platform() != .ubuntu {
@@ -85,20 +86,27 @@ fn build() ! {
 	// exit 1 #todo
 	// '
 	// osal.execute_stdout(cmd)!
-
+	//
+	// //now copy to the default bin path
+    // mut binpath := dest.file_get('...')!
+    // adds it to path
+    // osal.cmd_add(
+    //     cmdname: 'griddriver2'
+    //     source: binpath.path
+    // )!   
 
 }
 
 //get the Upload List of the files
-fn ulist() ?installers.UList {
-	mut installer := get()!
+fn ulist_get() !ulist.UList {
+	//mut installer := get()!
 	//optionally build a UList which is all paths which are result of building, is then used e.g. in upload
+	return ulist.UList{}
 }
-
 
 //uploads to S3 server if configured
 fn upload() ! {
-	mut installer := get()!
+	//mut installer := get()!
 	// installers.upload(
 	// 	cmdname: '${args.name}'
 	// 	source: '??{gitpath}/target/x86_64-unknown-linux-musl/release/${args.name}'
@@ -123,16 +131,10 @@ fn startupcmd () ![]zinit.ZProcessNewArgs{
 	return res
 	
 }
-@end
-
-
-
 
 fn running() !bool {
 	mut installer := get()!
-
 	//THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
-	
 	// this checks health of ${args.name}
 	// curl http://localhost:3333/api/v1/s --oauth2-bearer 1234 works
 	// url:='http://127.0.0.1:??{cfg.port}/api/v1'
@@ -149,10 +151,8 @@ fn running() !bool {
 	// tags := r['Tags'] or { return false }
 	// console.print_debug(tags)
 	// console.print_debug('${args.name} is answering.')
-	return true
+	return false
 }
-
-
 
 fn start_pre()!{
 	
@@ -170,25 +170,40 @@ fn stop_post()!{
 	
 }
 
-
+@end
 
 fn destroy() ! {
-	mut installer := get()!	
-	//THIS IS EXAMPLE CODE AND NEEDS TO BE CHANGED
-	// cmd:="
-	// 	systemctl disable ${args.name}_scheduler.service
-	// 	systemctl disable ${args.name}.service
-	// 	systemctl stop ${args.name}_scheduler.service
-	// 	systemctl stop ${args.name}.service
 
-	// 	systemctl list-unit-files | grep ${args.name}
+	// mut systemdfactory := systemd.new()!
+	// systemdfactory.destroy("zinit")!
 
-	// 	pkill -9 -f ${args.name}
+	// osal.process_kill_recursive(name:'zinit')!
+	// osal.cmd_delete('zinit')!
 
-	// 	ps aux | grep ${args.name}
+    // osal.package_remove('
+    //    podman
+    //    conmon
+    //    buildah
+    //    skopeo
+    //    runc
+    // ')!
 
-	// 	"
-	
-	// osal.exec(cmd: cmd, stdout:true, debug: false)!
+    // //will remove all paths where go/bin is found
+    // osal.profile_path_add_remove(paths2delete:"go/bin")!
+
+    // osal.rm("
+    //    podman
+    //    conmon
+    //    buildah
+    //    skopeo
+    //    runc
+    //    /var/lib/containers
+    //    /var/lib/podman
+    //    /var/lib/buildah
+    //    /tmp/podman
+    //    /tmp/conmon
+    // ")!
+
+
 }
 

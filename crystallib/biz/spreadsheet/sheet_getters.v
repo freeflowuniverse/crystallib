@@ -29,6 +29,7 @@ pub mut:
 	title_sub     string
 	size          string
 	rowname_show  bool = true // show the name of the row
+	descr_show bool
 	description   string
 }
 
@@ -165,7 +166,7 @@ pub fn (mut s Sheet) data_get_as_string(args RowGetArgs) !string {
 }
 
 // use RowGetArgs to get to smaller version of sheet
-pub fn (mut s Sheet) filter(args RowGetArgs) !Sheet {
+pub fn (mut s Sheet) filter(args RowGetArgs) !&Sheet {
 	period_months := match args.period_type {
 		.year { 12 }
 		.month { 1 }

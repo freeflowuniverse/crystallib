@@ -1,8 +1,10 @@
 module doctree
 
 import freeflowuniverse.crystallib.core.pathlib
+
 import freeflowuniverse.crystallib.ui.console
 import os
+import freeflowuniverse.crystallib.core.texttools.regext
 
 @[params]
 pub struct TreeExportArgs {
@@ -12,6 +14,8 @@ pub mut:
 	keep_structure bool // wether the structure of the src collection will be preserved or not
 	exclude_errors bool // wether error reporting should be exported as well
 	production     bool = true
+	toreplace string
+	runactions bool
 }
 
 // export all collections to chosen directory .
@@ -21,10 +25,16 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 	console.print_header('export tree: name:${tree.name} to ${args_.dest}')
 	mut args := args_
 
-	tree.process_includes()! // process definitions (will also do defs
+	if args.toreplace.len>0{
+		mut ri := regext.regex_instructions_new()
+		ri.add_from_text(args.toreplace)!
+		tree.replacer=ri
+	}
+
+	tree.process_includes()!
 
 	tree.process_macros()!
-
+	
 	console.print_header('EXPORT DEBUG')
 
 	// mut c:=tree.collections['tfgridsimulation_farming'] or {panic("aaaa")}
@@ -32,7 +42,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 	// println(p.doc()!)
 	// if true{panic("sdsd")}
 
-	mut path_src := pathlib.get_dir(path: '${args.dest}', create: true)!
+	mut path_src := pathlib.get_dir(path: '${args.dest}/src', create: true)!
 	mut path_edit := pathlib.get_dir(path: '${args.dest}/.edit', create: true)!
 	if !args.production {
 		if args.reset {
@@ -64,7 +74,7 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 				'${dir_src.path}/${page.name}.md'
 			}
 			console.print_debug('export page ${page.name} to ${dest}')
-			mut mydoc := page.export(dest: dest)!
+			mut mydoc := page.export(dest: dest,replacer:tree.replacer)!
 			for linked_page in mydoc.linked_pages {
 				if linked_page !in collection_linked_pages {
 					collection_linked_pages << linked_page
@@ -96,3 +106,5 @@ pub fn (mut tree Tree) export(args_ TreeExportArgs) ! {
 		linked_pages_file.write(collection_linked_pages.join_lines())!
 	}
 }
+
+

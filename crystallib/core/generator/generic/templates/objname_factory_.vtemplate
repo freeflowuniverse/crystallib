@@ -6,6 +6,7 @@ import freeflowuniverse.crystallib.core.playbook
 
 @if args.cat == .installer
 import freeflowuniverse.crystallib.sysadmin.startupmanager
+import freeflowuniverse.crystallib.osal.zinit
 import freeflowuniverse.crystallib.ui.console
 import time
 @end
@@ -23,6 +24,7 @@ pub mut:
     name string = "default"
 }
 
+@if args.hasconfig
 fn args_get (args_ ArgsGet) ArgsGet {
 	mut args:=args_
 	if args.name == ""{
@@ -44,15 +46,20 @@ pub fn get(args_ ArgsGet) !&${args.classname}  {
 		}
 		config_load()!
 	}
-	return ${args.name}_global[args.name] or { panic("bug") }
+	return ${args.name}_global[args.name] or { 
+            println(${args.name}_global)
+            panic("bug in get from factory: ") 
+        }
 }
 
-//switch instance to be used for ${args.name}
-pub fn switch(name string) {
-	${args.name}_default = name
+
+@else
+pub fn get(args_ ArgsGet) !&${args.classname}  {
+    return &${args.classname}{}
 }
+@end
 
-
+@if args.hasconfig
 fn config_exists(args_ ArgsGet) bool {
     mut args := args_get(args_)
 	mut context:=base.context() or { panic("bug") }
@@ -69,7 +76,7 @@ fn config_load(args_ ArgsGet) ! {
 fn config_save(args_ ArgsGet) ! {
 	mut args := args_get(args_)
 	mut context:=base.context()!
-	context.hero_config_set("${args.name}",args.name,heroscript_default())!
+	context.hero_config_set("${args.name}",args.name,heroscript_default()!)!
 }
 
 
@@ -80,54 +87,85 @@ fn set(o ${args.classname})! {
 
 
 ^^[params]
-pub struct InstallPlayArgs {
+pub struct PlayArgs {
 pub mut:
 	name string = 'default'
     heroscript string  //if filled in then plbook will be made out of it
     plbook     ?playbook.PlayBook 
 	reset      bool
+    @if args.startupmanager
 	start      bool
 	stop       bool
 	restart    bool
+    @end
     delete     bool
     configure  bool     //make sure there is at least one installed
-
 }
 
-pub fn play(args_ InstallPlayArgs) ! {
+pub fn play(args_ PlayArgs) ! {
 	
 	mut args:=args_
 
+    @if args.hasconfig
     if args.heroscript == "" {
-        args.heroscript = heroscript_default()
+        args.heroscript = heroscript_default()!
     }
+    @end
     mut plbook := args.plbook or {
         playbook.new(text: args.heroscript)!
     }
     
+    @if args.hasconfig
     mut install_actions := plbook.find(filter: '${args.name}.configure')!
     if install_actions.len > 0 {
         for install_action in install_actions {
             mut p := install_action.params
-            cfg_play(p)!
+            mycfg:=cfg_play(p)!
+            set(mycfg)!
         }
     }
+    @end
 
 }
+
+@end
 
 @if args.cat == .installer
 
-####################################################################################################
-########################### LIVE CYCLE MANAGEMENT FOR INSTALLERS ###################################
-####################################################################################################
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////# LIVE CYCLE MANAGEMENT FOR INSTALLERS ///////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@if args.startupmanager
+fn startupmanager_get(cat zinit.StartupManagerType) !startupmanager.StartupManager {
+	// unknown
+	// screen
+	// zinit
+	// tmux
+	// systemd
+    match cat{
+        .zinit{
+            console.print_debug("startupmanager: zinit")
+            return startupmanager.get(cat:.zinit)!
+        }
+        .systemd{
+            console.print_debug("startupmanager: systemd")
+            return startupmanager.get(cat:.systemd)!
+        }else{
+            console.print_debug("startupmanager: auto")
+            return startupmanager.get()!
+        }
+    }
+}
+
+@if args.hasconfig
 //load from disk and make sure is properly intialized
 pub fn (mut self ${args.classname}) reload() ! {
     switch(self.name)
-    obj_init()!
+    self=obj_init(self)!
 }
+@end
 
+@if args.startupmanager
 pub fn (mut self ${args.classname}) start() ! {
     switch(self.name)
     if self.running()!{
@@ -136,13 +174,21 @@ pub fn (mut self ${args.classname}) start() ! {
 
 	console.print_header('${args.name} start')
 
+    if ! installed()!{
+        install()!
+    }
+
 	configure()!
 
     start_pre()!
 
-	mut sm := startupmanager.get()!
-
     for zprocess in startupcmd()!{
+        mut sm:=startupmanager_get(zprocess.startuptype)!
+
+        console.print_debug('starting ${args.name} with ??{zprocess.startuptype}...')
+
+        sm.new(zprocess)!
+
     	sm.start(zprocess.name)!
     }
 
@@ -158,7 +204,7 @@ pub fn (mut self ${args.classname}) start() ! {
 
 }
 
-pub fn (mut self ${args.classname}) install_start(args RestartArgs) ! {
+pub fn (mut self ${args.classname}) install_start(args InstallArgs) ! {
     switch(self.name)
     self.install(args)!
     self.start()!
@@ -167,8 +213,8 @@ pub fn (mut self ${args.classname}) install_start(args RestartArgs) ! {
 pub fn (mut self ${args.classname}) stop() ! {
     switch(self.name)
     stop_pre()!
-    mut sm := startupmanager.get()!
     for zprocess in startupcmd()!{
+        mut sm:=startupmanager_get(zprocess.startuptype)!
     	sm.stop(zprocess.name)!
     }
     stop_post()!
@@ -182,10 +228,10 @@ pub fn (mut self ${args.classname}) restart() ! {
 
 pub fn (mut self ${args.classname}) running() !bool {
     switch(self.name)
-	mut sm := startupmanager.get()!
 
     //walk over the generic processes, if not running return
     for zprocess in startupcmd()!{
+        mut sm:=startupmanager_get(zprocess.startuptype)!
     	r:=sm.running(zprocess.name)!
         if r==false{
             return false
@@ -196,24 +242,37 @@ pub fn (mut self ${args.classname}) running() !bool {
 @end
 
 @@[params]
-pub struct RestartArgs{
+pub struct InstallArgs{
 pub mut:
     reset bool
 }
 
-pub fn (mut self ${args.classname}) install(args RestartArgs) ! {
+pub fn (mut self ${args.classname}) install(args InstallArgs) ! {
     switch(self.name)
     if args.reset || (!installed()!) {
         install()!
     }    
 }
 
+@if args.build
+pub fn (mut self ${args.classname}) build() ! {
+    switch(self.name)
+    build()!
+}
+@end
+
 pub fn (mut self ${args.classname}) destroy() ! {
     switch(self.name)
 @if args.startupmanager
-    self.stop()!
+    self.stop() or {}
 @end
     destroy()!
 }
 
 @end
+
+
+//switch instance to be used for ${args.name}
+pub fn switch(name string) {
+	${args.name}_default = name
+}

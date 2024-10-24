@@ -1,11 +1,11 @@
-#!/usr/bin/env -S v -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
+#!/usr/bin/env -S v -gc none -no-retry-compilation -cc tcc -d use_openssl -enable-globals run
 
 import freeflowuniverse.crystallib.installers.sysadmintools.daguserver
 
 //will call the installer underneith
 
-mut dserver:=daguserver.new()! 
-dserver.install()! 
+mut dserver:=daguserver.new()!
+dserver.install()!
 dserver.restart()!
 
 println("DAGU installed & running")
@@ -25,7 +25,7 @@ mut dagucl:=dserver.client()!
 
 
 mut mydag:=dagucl.dag_new(
-	name:"test11"	
+	nameswhere:"test11"
 )
 
 // nr                int     @[required]

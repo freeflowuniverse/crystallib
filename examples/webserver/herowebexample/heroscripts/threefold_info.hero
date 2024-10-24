@@ -1,0 +1,67 @@
+!!webdb.infopointer_add
+    name: 'tech'
+    hero_url: 'https://git.ourworld.tf/tfgrid/info_tfgrid/src/branch/development/heroscript/tech'
+    hero_url_pull: false
+    hero_url_reset: false
+    content_path: '~/hero/www/info/tech'
+    acl: 'heroweb'
+    cat: 'website'
+    description: '
+        Website for technology of threedold
+    '
+
+//will have 2 documents inside
+!!webdb.infopointer_add
+    name: 'threefoldoverview'
+    acl: 'public'
+    cat: 'wiki'
+    children: 'tech,threefold_slides'
+    description: '
+        Lean more about ThreeFold Grid
+    '    
+
+//will have a document and a folder inside, threefoldoverview is a folder because has more than 1 file (is automatically a folder then)
+!!webdb.infopointer_add
+    name: 'threefold'
+    acl: 'public'
+    cat: 'wiki'
+    children: 'tech,threefoldoverview'
+    description: '
+        Lean more about ThreeFold Grid
+    '    
+
+!!webdb.infopointer_add
+    name: 'example_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '
+
+!!webdb.infopointer_add
+    name: 'example2_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '
+
+!!webdb.infopointer_add
+    name: 'example3_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '
+
+!!webdb.infopointer_add
+    name: 'example4_pdf'
+    content_path: '~/hero/pdf/dyweb.pdf'
+    acl: 'heroweb'
+    cat: 'pdf'
+    description: '
+        PDF for example
+    '

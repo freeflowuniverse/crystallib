@@ -64,32 +64,8 @@ fn configure() ! {
 	// implement if steps need to be done for configuration
 }
 
-fn running() !bool {
-	mut cfg := get()!
-	// console.print_debug('Dagu is answering.')
-	return true
-}
 
 fn destroy() ! {
-	// THIS IS EXAMPLE CODEAND NEEDS TO BE CHANGED
-	// cmd:="
-	//     systemctl disable rclone_scheduler.service
-	//     systemctl disable rclone.service
-	//     systemctl stop rclone_scheduler.service
-	//     systemctl stop rclone.service
-
-	//     systemctl list-unit-files | grep rclone
-
-	//     pkill -9 -f rclone
-
-	//     ps aux | grep rclone
-
-	//     "
-
-	// osal.exec(cmd: cmd, stdout:true, debug: false)!
-}
-
-fn obj_init() ! {
 }
 
 fn start_pre() ! {

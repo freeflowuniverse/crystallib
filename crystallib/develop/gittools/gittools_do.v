@@ -5,9 +5,10 @@ import freeflowuniverse.crystallib.core.pathlib
 import freeflowuniverse.crystallib.ui.console
 import os
 
-pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree'
+pub const gitcmds = 'clone,commit,pull,push,delete,reload,list,edit,sourcetree,cd'
 
 pub fn (mut gitstructure GitStructure) repos_print(args ReposGetArgs) ! {
+
 	mut r := [][]string{}
 	for mut g in gitstructure.repos_get(args) {
 		st := g.status()!
@@ -47,6 +48,8 @@ pub mut:
 	provider string
 	msg      string
 	url      string
+	branch      string
+	recursive bool
 	pull     bool
 	script   bool = true // run non interactive
 	reset    bool = true // means we will lose changes (only relevant for clone, pull)
@@ -55,7 +58,7 @@ pub mut:
 // do group actions on repo
 // args
 //```
-// cmd      string // clone,commit,pull,push,delete,reload,list,edit,sourcetree
+// cmd      string // clone,commit,pull,push,delete,reload,list,edit,sourcetree,cd
 // filter   string // if used will only show the repo's which have the filter string inside
 // repo     string
 // account  string
@@ -68,7 +71,7 @@ pub mut:
 //```
 pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 	mut args := args_
-	// console.print_debug(args)
+	console.print_debug('git do ${args}')	
 
 	if args.repo == '' && args.account == '' && args.provider == '' && args.filter == '' {
 		curdir := os.getwd()
@@ -111,11 +114,20 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 
 	if args.url.len > 0 {
 		mut locator := gs.locator_new(args.url)!
-		// console.print_debug(locator)
+		if args.branch.len>0{
+			locator.addr.branch=args.branch
+		}
+		//console.print_debug(locator)
 		mut g := gs.repo_get(locator: locator)!
 		g.load()!
+		if args.cmd == 'cd' {
+			return g.addr.path()!.path
+		}
+		if args.reset {
+			g.remove_changes()!
+		}		
 		if args.cmd == 'pull' || args.pull {
-			g.pull()!
+			g.pull(branch:args.branch,recursive:args.recursive)!
 		}
 		if args.cmd == 'push' {
 			st := g.status()!
@@ -123,15 +135,14 @@ pub fn (mut gs GitStructure) do(args_ ReposActionsArgs) !string {
 				if args.msg.len == 0 {
 					return error('please specify message with -m ...')
 				}
-				g.commit_pull_push(msg: args.msg)!
+				g.commit(msg: args.msg)!
 			}
 			g.push()!
 		}
-		if args.reset {
-			g.remove_changes()!
-		}
 		if args.cmd == 'pull' || args.cmd == 'clone' || args.cmd == 'push' {
-			return g.addr.path()!.path
+			gpath:=g.addr.path()!.path
+			console.print_debug('git do ok, on path ${gpath}')				
+			return gpath
 		}
 		repos = [g]
 	}

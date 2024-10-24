@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document Signing</title>
+    <script>
+        async function generateRootKey() {
+            const response = await fetch('/generate_root_key');
+            const rootKey = await response.text();
+            document.getElementById('rootKey').value = rootKey;
+        }
+
+        async function deriveKey() {
+            const rootKey = document.getElementById('rootKey').value;
+            const index = document.getElementById('index').value;
+
+            const response = await fetch('/derive_key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'root_key=' + encodeURIComponent(rootKey) + '&index=' + encodeURIComponent(index)
+            });
+
+            const derivedKey = await response.text();
+            document.getElementById('derivedKey').value = derivedKey;
+        }
+
+        async function signDocument() {
+            const rootKey = document.getElementById('rootKey').value;
+            const derivedKey = document.getElementById('derivedKey').value;
+            const filename = document.getElementById('filename').value;
+            const hash = document.getElementById('hash').value;
+
+            const response = await fetch('/sign_document', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'root_key=' + encodeURIComponent(rootKey) + '&derived_key=' + encodeURIComponent(derivedKey) + '&filename=' + encodeURIComponent(filename) + '&hash=' + encodeURIComponent(hash)
+            });
+
+            const result = await response.text();
+            alert(result);
+        }
+
+        async function verifySignature() {
+            const filename = document.getElementById('filename').value;
+            const userSignature = document.getElementById('userSignature').value;
+
+            const response = await fetch('/verify_signature', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'filename=' + encodeURIComponent(filename) + '&user_signature=' + encodeURIComponent(userSignature)
+            });
+
+            const result = await response.text();
+            alert(result);
+        }
+    </script>
+</head>
+<body>
+    <h1>Document Signing</h1>
+    <button onclick="generateRootKey()">Generate Root Key</button><br>
+    Root Key: <input type="text" id="rootKey"><br>
+
+    <h2>Derive Key</h2>
+    Index: <input type="text" id="index">
+    <button onclick="deriveKey()">Derive Key</button><br>
+    Derived Key: <input type="text" id="derivedKey"><br>
+
+    <h2>Sign Document</h2>
+    Filename: <input type="text" id="filename"><br>
+    Hash: <input type="text" id="hash"><br>
+    <button onclick="signDocument()">Sign Document</button><br>
+
+    <h2>Verify Signature</h2>
+    User Signature: <input type="text" id="userSignature"><br>
+    <button onclick="verifySignature()">Verify Signature</button>
+</body>
+</html>

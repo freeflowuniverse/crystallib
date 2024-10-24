@@ -24,7 +24,7 @@ pub fn install(args_ InstallArgs) ! {
 
 	console.print_header('install mycelium.')
 
-	version := '0.5.3'
+	version := '0.5.6'
 
 	res := os.execute('${osal.profile_path_source_and()} mycelium -V')
 	if res.exit_code == 0 {
@@ -39,9 +39,6 @@ pub fn install(args_ InstallArgs) ! {
 		args.reset = true
 	}
 
-	if check() == false {
-		args.reset = true
-	}
 
 	if args.reset {
 		console.print_header('install mycelium')
@@ -94,7 +91,6 @@ pub fn stop() ! {
 	if osal.is_osx() {
 		mut scr := screen.new(reset: false)!
 		scr.kill(name)!
-		start()!
 	} else {
 		mut sm := startupmanager.get()!
 		sm.stop(name)!
@@ -103,7 +99,7 @@ pub fn stop() ! {
 
 pub fn start(args InstallArgs) ! {
 	if check() {
-		// console.print_header('mycelium was already running')
+		console.print_header('mycelium was already running')
 		return
 	}
 	myinitname := osal.initname()!
@@ -177,7 +173,9 @@ pub fn check() bool {
 	// }
 
 	// TODO: might be dangerous if that one goes out
-	ping_result := osal.ping(address: '40a:152c:b85b:9646:5b71:d03a:eb27:2462', retry: 3)
+	ping_result := osal.ping(address: '40a:152c:b85b:9646:5b71:d03a:eb27:2462', retry: 2) or {
+			return false
+		}
 	if ping_result == .ok {
 		console.print_debug('could reach 40a:152c:b85b:9646:5b71:d03a:eb27:2462')
 		return true

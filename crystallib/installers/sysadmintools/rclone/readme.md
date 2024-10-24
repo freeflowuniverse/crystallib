@@ -2,9 +2,27 @@
 
 
 
-## heroscript
+To get started
 
-```yaml
+```vlang
+
+
+
+import freeflowuniverse.crystallib.installers.something. rclone
+
+mut installer:= rclone.get()!
+
+installer.start()!
+
+
+
+
+```
+
+## example heroscript
+
+
+```hero
 !!rclone.install
     homedir: '/home/user/rclone'
     username: 'admin'
