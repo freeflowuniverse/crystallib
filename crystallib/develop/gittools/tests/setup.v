@@ -37,11 +37,11 @@ fn setup_repo() !GittoolsTests {
         repo_url: 'https://github.com/Mahmoud-Emad/repo2.git',
     }
 
-    if os.exists(ts.repo_dir){
+    if os.exists(ts.coderoot){
         ts.clean()!
     }
 
-    os.mkdir_all(ts.repo_dir)!
+    os.mkdir_all(ts.coderoot)!
     return ts
 }
 

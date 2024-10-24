@@ -4,6 +4,7 @@ import freeflowuniverse.crystallib.ui.console
 import freeflowuniverse.crystallib.osal
 import os
 import time
+import crypto.md5
 
 // GitRepo holds information about a single Git repository.
 pub struct GitRepo {
@@ -230,7 +231,7 @@ pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
 }
 
 // Check if repo path exists and validate fields
-pub fn (repo GitRepo) init() ! {
+pub fn (mut repo GitRepo) init() ! {
 	path_string := repo.get_path()!
 	if repo.gs.coderoot.path == '' {
 		return error('Coderoot cannot be empty')
@@ -248,11 +249,30 @@ pub fn (repo GitRepo) init() ! {
 	if !os.exists(path_string) {
 		return error('Path does not exist: ${path_string}')
 	}
-	
-	//TODO: check tag or branch set on wanted, and not both
 
 	//TODO: check deploy key has been set in repo
 	// if not do git config core.sshCommand "ssh -i /path/to/deploy_key"
+	if repo.deploysshkey.len == 0 {
+		repo.set_sshkey()!
+	}
+	//TODO: check tag or branch set on wanted, and not both
+}
+
+// Set the ssh key on the repo
+fn (mut repo GitRepo) set_sshkey() ! {
+	// TODO: We need to check what should be done here.
+	key := repo.exec('git config core.sshcommand') or {""}
+
+	hashed_key := md5.hexhash(key)
+	file_name := '${hashed_key}.pub'
+	sshkeys_path := os.join_path(os.home_dir(), 'hero/cfg/sshkeys')
+
+	if !os.exists(sshkeys_path) {
+		os.mkdir_all(sshkeys_path)!
+	}
+
+	osal.exec(cmd: "echo ${key} > ${sshkeys_path}/${file_name}")!
+	repo.deploysshkey = key
 }
 
 

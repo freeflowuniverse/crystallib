@@ -25,10 +25,9 @@ pub fn (mut gitstructure GitStructure) clone(args GitCloneArgs) !&GitRepo {
 	mut repo := gitstructure.repo_new_from_gitlocation(git_location)!
 	repo.status_wanted.url = args.url
 
-	// if args.sshkey.len>0{
-	// 	//TODO: set the sshkey, save in ~/hero/cfg/sshkeys/$md5hash.pub then add to the git repo
-	// 	panic("implement")
-	// }
+	if args.sshkey.len>0{
+		repo.set_sshkey()!
+	}
 
 	parent_dir := repo.get_parent_dir(create: true)!
 
