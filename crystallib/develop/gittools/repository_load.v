@@ -43,9 +43,11 @@ fn (mut repo GitRepo) load_branches() ! {
 	mybranch := repo.exec("git branch --show-current")!.split_into_lines().filter(it.trim_space() != '')
 	if mybranch.len==1{
 		repo.status_local.branch = mybranch[0].trim_space()
-	}else{
-		panic("bug: git branch does not give branchname")
 	}
+	// Could be a tag.
+	// else{
+	// 	panic("bug: git branch does not give branchname")
+	// }
 }
 
 // Helper to load remote tags

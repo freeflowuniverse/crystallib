@@ -31,7 +31,7 @@ fn create_new_file(repo_path string)! string {
 //
 // Returns:
 // - GittoolsTests: Struct containing information about the repo setup.
-fn setup_repo() !GittoolsTests {   
+fn setup_repo() !GittoolsTests {
     ts := GittoolsTests{
         coderoot: '/tmp/code',
         repo_url: 'https://github.com/Mahmoud-Emad/repo2.git',
@@ -41,7 +41,7 @@ fn setup_repo() !GittoolsTests {
         ts.clean()!
     }
 
-    os.mkdir_all(ts.repo_dir)! 
+    os.mkdir_all(ts.repo_dir)!
     return ts
 }
 

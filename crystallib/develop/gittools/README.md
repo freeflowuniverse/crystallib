@@ -21,30 +21,27 @@ import freeflowuniverse.crystallib.develop.gittools
 coderoot := '~/code'
 mut gs_default := gittools.new(coderoot: coderoot)!
 
-// Retrieve the repository or clone it if necessary.
+// Retrieve the repository if exists.
 mut repo := gs_default.get_repo(name: 'repo3')!
+// in case the repo is a new repo and you want to clone it
+mut repo := gs_default.get_repo(url: '<repo_url>')!
 
-// Create a new branch and a Python file with the current Unix timestamp in the name.
-runtime := time.now().unix()
-branch_name := "testing_${runtime}"
-repo_path := repo.get_path()!
-file_name := create_new_file(repo_path)!
+// Create a new branch and a V file.
+branch_name := "testing_branch"
+tag_name := "testing_tag"
+file_name := "hello_world.v"
 
 // Create a new branch, checkout, add changes, commit, and push.
-repo.branch_create(branch_name: branch_name, checkout: false)!
-repo.checkout(branch_name: branch_name, pull: false)!
+repo.branch_create(branch_name)!
+repo.branch_switch(branch_name)!
 
 if repo.has_changes() {
-    repo.add_changes()!
-    repo.commit(msg: 'feat: Added ${file_name} file.')!
+    repo.commit(msg: "feat: Added ${file_name} file.")!
     repo.push()!
 }
 
-// Checkout back to the base branch and pull changes.
-repo.checkout(checkout_to_base_branch: true, pull: true)!
-
 // Create tag from the base branch
-repo.tag_create(tag_name: tag_name)!
+repo.tag_create(tag_name)!
 ```
 
 ## Tests
@@ -54,11 +51,8 @@ The project includes several unit tests to ensure that the functionality works c
 To run the tests, use the following command in the project root:
 
 ```bash
-v -enable-globals test crystallib/develop/gittools/tests/branches_tags_test.v 
+v -enable-globals test crystallib/develop/gittools/tests/
 ```
-
-**PS: This command will only run the `branches_tags_test` file. You must change the filename if you want to run a different file.**
-> Running all tests simultaneously is not currently available because Vlang does not support running all tests in multiple threads.
 
 This will run all the test cases and provide feedback on whether they pass or fail.
 

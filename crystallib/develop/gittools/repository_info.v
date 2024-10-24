@@ -62,6 +62,8 @@ pub fn (mut repo GitRepo) need_push_or_pull() !bool {
 	repo.status_update()!
 	last_remote_commit := repo.get_last_remote_commit() or { return error('Failed to get last remote commit: ${err}') }
 	last_local_commit := repo.get_last_local_commit() or { return error('Failed to get last local commit: ${err}') }
+	println('last_local_commit: ${last_local_commit}')
+	println('last_remote_commit: ${last_remote_commit}')
 	return last_local_commit != last_remote_commit
 }
 
@@ -98,28 +100,20 @@ fn (mut repo GitRepo) get_remote_default_branchname() !string {
 	
 }
 
-
 //is always the commit for the branch as known remotely, if not known will return ""
 pub fn (repo GitRepo) get_last_remote_commit() !string {
-
 	if repo.status_local.branch in repo.status_remote.branches{
 		return repo.status_local.branches[repo.status_local.branch]
 	}
-	
-	return ""
 
+	return ""
 }
 
 //get commit for branch, will return '' if local branch doesn't exist remotely
 pub fn (repo GitRepo) get_last_local_commit() !string {
-
 	if repo.status_local.branch in repo.status_local.branches{
 		return repo.status_local.branches[repo.status_local.branch]
 	}
-	
+
 	return error("can't find branch: ${repo.status_local.branch} in local branches:\n${repo.status_local.branches}")
-
 }
-
-
-

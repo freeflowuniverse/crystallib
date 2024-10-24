@@ -104,7 +104,8 @@ pub fn (mut repo GitRepo) push() ! {
 	if repo.need_push_or_pull()! {		
 		url := repo.get_repo_url()!
 		console.print_header('Pushing changes to ${url}')
-		repo.exec('git push')!
+		// We may need to push the locally created branches
+		repo.exec('git push --set-upstream origin ${repo.status_local.branch}')!
 		console.print_green('Changes pushed successfully.')
 		repo.load()!
 	} else {
@@ -192,7 +193,6 @@ pub fn (mut repo GitRepo) tag_exists(tag string) !bool {
 	return true
 }
 
-
 // Deletes the Git repository
 pub fn (mut repo GitRepo) delete() ! {
 	repo_path := repo.get_path()!
@@ -200,8 +200,6 @@ pub fn (mut repo GitRepo) delete() ! {
 	osal.rm(repo_path)!
 	repo.load()!
 }
-
-
 
 // Create GitLocation from the path within the Git repository
 pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
@@ -211,7 +209,6 @@ pub fn (mut gs GitRepo) gitlocation_from_path(path string) !GitLocation {
 
 	//TODO: check that path is inside gitrepo
 	//TODO: get relative path in relation to root of gitrepo
-	
 
 	mut git_path := gs.patho()!
 	if !os.exists(git_path.path) {
@@ -299,8 +296,6 @@ fn (repo GitRepo) exec(cmd_ string) !string {
 	r:=osal.exec(cmd:cmd, debug:repo.gs.config.debug)!
 	return r.output
 }
-
-
 
 pub fn (mut repo GitRepo) status_update(args StatusUpdateArgs) ! {
 	// Check current time vs last check, if needed (check period) then load
