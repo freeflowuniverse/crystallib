@@ -29,7 +29,7 @@ pub fn (repo GitRepo) get_changes_unstaged() ![]string {
 // Returns:
 // - An array of strings representing file paths of staged changes.
 // - Throws an error if the command execution fails.
-fn (repo GitRepo) get_changes_staged() ![]string {
+pub fn (repo GitRepo) get_changes_staged() ![]string {
 
 	staged_result := repo.exec('git diff --name-only --staged') or {
 		return error('Failed to check for staged changes: ${err}')

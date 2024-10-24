@@ -20,7 +20,7 @@ struct GittoolsTests {
 //
 // Returns:
 // - string: Name of the newly created file.
-fn create_new_file(repo_path string, runtime i64)! string {
+fn create_new_file(repo_path string)! string {
 	coded_now := time.now().unix()
 	file_name := 'hello_world_${coded_now}.py'
 	osal.execute_silent("echo \"print('Hello, World!')\" > ${repo_path}/${file_name}")!

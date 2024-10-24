@@ -28,7 +28,7 @@ mut repo := gs_default.get_repo(name: 'repo3')!
 runtime := time.now().unix()
 branch_name := "testing_${runtime}"
 repo_path := repo.get_path()!
-file_name := create_new_file(repo_path, runtime)!
+file_name := create_new_file(repo_path)!
 
 // Create a new branch, checkout, add changes, commit, and push.
 repo.branch_create(branch_name: branch_name, checkout: false)!
