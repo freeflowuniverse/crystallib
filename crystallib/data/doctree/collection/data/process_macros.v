@@ -18,7 +18,7 @@ pub fn (mut page Page) process_macros() ! {
 	}
 
 	if page.changed {
-		page.reparse_doc()!
+		page.reparse_doc(page.doc.markdown()!)!
 		page.process_macros()!
 	}
 }

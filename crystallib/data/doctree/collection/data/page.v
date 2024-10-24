@@ -61,15 +61,16 @@ pub fn new_page(args NewPageArgs) !Page {
 // return doc, reparse if needed
 fn (mut page Page) doc() !&Doc {
 	if page.changed {
-		page.reparse_doc()!
+		content := page.doc.markdown()!
+		page.reparse_doc(content)!
 	}
 
 	return page.doc
 }
 
 // reparse doc markdown and assign new doc to page
-fn (mut page Page) reparse_doc() ! {
-	doc := markdownparser.new(content: page.doc.markdown()!, collection_name: page.collection_name)!
+fn (mut page Page) reparse_doc(content string) ! {
+	doc := markdownparser.new(content: content, collection_name: page.collection_name)!
 	page.element_cache = map[int]Element{}
 	for child in doc.children_recursive() {
 		page.element_cache[child.id] = child
@@ -91,6 +92,10 @@ pub fn (mut page Page) get_linked_pages() ![]string {
 pub fn (mut page Page) get_markdown() !string {
 	mut doc := page.doc()!
 	return doc.markdown()!
+}
+
+pub fn (mut page Page) set_content(content string) ! {
+	page.reparse_doc(content)!
 }
 
 fn (mut page Page) get_element(element_id int) !Element {

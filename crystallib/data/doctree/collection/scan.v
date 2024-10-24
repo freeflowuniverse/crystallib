@@ -54,6 +54,10 @@ fn (mut collection Collection) scan_directory(mut p Path) ! {
 			continue
 		}
 
+		if entry.extension_lower() == '' {
+			continue
+		}
+
 		match entry.extension_lower() {
 			'md' {
 				collection.add_page(mut entry)!

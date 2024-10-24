@@ -5,6 +5,7 @@
 ## @error.cat
 
 path: @error.path.path
+
 msg: @error.msg
 
 @end

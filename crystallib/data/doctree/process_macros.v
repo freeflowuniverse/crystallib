@@ -14,7 +14,7 @@ pub mut:
 
 // adds all action elements to a playbook, calls playmacros.play on the playbook,
 // which processes the macros, then reprocesses every page with the actions' new content
-fn (mut tree Tree) process_actions_and_macros() ! {
+pub fn (mut tree Tree) process_actions_and_macros() ! {
 	console.print_green('Processing actions and macros')
 
 	// first process the generic actions, which can be executed as is

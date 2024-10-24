@@ -5,7 +5,7 @@ import freeflowuniverse.crystallib.data.doctree.pointer
 import freeflowuniverse.crystallib.core.playbook
 import freeflowuniverse.crystallib.ui.console
 
-fn (mut tree Tree) process_includes() ! {
+pub fn (mut tree Tree) process_includes() ! {
 	console.print_green('Processing page includes')
 	graph := tree.generate_pages_graph()!
 
