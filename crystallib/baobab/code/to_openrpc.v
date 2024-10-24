@@ -1,4 +1,4 @@
-module generator
+module code
 
 import freeflowuniverse.crystallib.core.codemodel { File, Function, Module, Struct }
 import freeflowuniverse.crystallib.core.pathlib
